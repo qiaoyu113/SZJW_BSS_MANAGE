@@ -128,7 +128,9 @@ npm run lint -- --fix
 
 2.views中命名文件名规则：
 
-- 第一个单词小写，第二个单词首字母大写
+- Views下文件夹命名全部为小写，单词之间用‘-’连接
+- Views文件夹内vue文件全部首字母大写
+- Vue中最外层class name需和vue文件名、component name一致，首字母大写
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 
@@ -137,9 +139,11 @@ npm run lint -- --fix
 - 路径配置全部在src/router/roles.js内
 - 命名时单词首字母大写
 - path格式为小写，单词中间使用-连接
-- name和components、view中模块name一致
+- Router内ts文件为小写命名，和views下文件夹名称一致
+- Router中所有name首字母为大写，path为小写，title中首个单词为小写后面单词首字母为大写
 - hidden为是否展示在菜单栏中（例：子页面为hidden: true）
-- apiUrl为对应页面的router-roles权限
+- apiUrl为对应页面的router-roles权限，不设置权限配置‘root’
+- 不在菜单中展示的路由配置activeMenu指向父级菜单
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 
@@ -147,7 +151,7 @@ npm run lint -- --fix
 
 - 命名时单词首字母大写
 - 文件夹名称为模块Name
-- 文件夹内统一为index.vue，通过文件夹名指向
+- Import使用命名首字母全部大写
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 
@@ -159,13 +163,11 @@ npm run lint -- --fix
 - 首行缩进为0，代码上下缩进为2个空格
 - 判断及循环置前，紧跟动态属性，顺序已在esLint中配置，如果顺序问题错误，terminal中会体现
 
-- Script:
-- 冒号：后面要保留一个空格
-- 等号= 前后要保留一个空格
-- 括号() 后面如有{} 要保留一个空格
-- 逗号， 后面要保留一个空格
-- js中换行最好统一都加分号；
-- js中条件项需要引号时，首选单引号
+- TypeScript:
+- 数据都要定义类型
+- 正常情况可定义any类型，再针对算法、功能数据需严谨定义专属类型和联合类型
+- Interface接口定义首字母必须要大写
+- 赋值的时候，变量的形状必须和接口的形状保持一致。非必须赋值属性需配置可选属性
 - script中先import、再export default
 - function中then和catch中都需将error展示；example:this.$message.error(err);
 
@@ -173,6 +175,7 @@ npm run lint -- --fix
 - rel="stylesheet" lang="scss"
 - 减少scope的使用
 - 样式首层class命名与模块Name统一
+- 移动端和PC分开写时，移动端class名为Name后 + ‘-m’
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 
