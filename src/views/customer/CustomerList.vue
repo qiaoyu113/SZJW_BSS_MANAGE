@@ -239,6 +239,11 @@ export default class extends Vue {
         setTimeout(() => {
           this.listLoading = false
         }, 0.5 * 1000)
+      } else {
+        this.$message.error(data)
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
       }
     }
 

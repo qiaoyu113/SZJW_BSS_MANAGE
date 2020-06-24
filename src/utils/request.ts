@@ -30,6 +30,9 @@ service.interceptors.response.use(
     // if (versions !== store.getters.version) {
     //   res.code = 40101
     // }
+    if (res.errorCode) {
+      res.message = '接口错误' + res.errorCode + ',请联系技术人员。'
+    }
     if (res.code === 40101 || res.code === 40301) {
       Message({
         message: res.message,
