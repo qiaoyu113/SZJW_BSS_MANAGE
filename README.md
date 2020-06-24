@@ -1,4 +1,4 @@
-# 梧桐车服BSS前端工程
+# 三足金乌BSS前端工程
 
 该文件为新版梧桐BSS端前端项目的基础架构和介绍
 
@@ -116,7 +116,7 @@ npm run lint -- --fix
 ## 代码规范
 
 ```bash
-1.文字按功能命名（v1.12.2 later）：
+1.文字按功能命名：
 
 - 注：main（正文用字）；assist（辅助用字）；stress（强调用字）；title（标题用字）；xtitle（大一号标题用字）
 
@@ -144,6 +144,7 @@ npm run lint -- --fix
 - hidden为是否展示在菜单栏中（例：子页面为hidden: true）
 - apiUrl为对应页面的router-roles权限，不设置权限配置‘root’
 - 不在菜单中展示的路由配置activeMenu指向父级菜单
+- title需配置中英文
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 
