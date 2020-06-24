@@ -136,7 +136,7 @@ npm run lint -- --fix
 
 3.router命名极配置：
 
-- 路径配置全部在src/router/roles.js内
+- 路径配置全部在src/router内,按照对应view文件名注入
 - 命名时单词首字母大写
 - path格式为小写，单词中间使用-连接
 - Router内ts文件为小写命名，和views下文件夹名称一致
