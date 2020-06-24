@@ -15,7 +15,7 @@
 
 ```bash
 # 克隆项目
-git clone ?
+git clone http://firmiana-gitlab.yunniao.cn/firmiana/szjw_bss_web
 
 # 安装依赖
 yarn install / npm install
