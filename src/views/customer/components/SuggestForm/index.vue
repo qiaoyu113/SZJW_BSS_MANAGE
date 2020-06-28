@@ -73,7 +73,7 @@ import { TimestampYMD } from '@/utils/index'
 export default class extends Vue {
     @Prop({ default: {} }) private listQuery: any
     @Prop({ default: () => [] }) private DateValue!: any[]
-    private optionsCity: any[] = [] // 字典查询定义
+    private optionsCity: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
     private DateValueChild: any[] = [] // DateValue的赋值项
     private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate'] // 添加过滤listQuery中key的名称
 
@@ -214,5 +214,8 @@ export default class extends Vue {
   left: 0 !important;
   width: 100%;
   overflow-x: auto;
+}
+.el-form-item__label{
+  color: #999999;
 }
 </style>

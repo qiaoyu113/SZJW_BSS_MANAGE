@@ -1,26 +1,9 @@
 <template>
   <div :class="isPC ? 'DriverList' : 'DriverList-m'">
     <SuggestContainer
-      :tab="[
-        {
-          label: '待跟进',
-          name: '0'
-        },
-        {
-          label: '跟进中',
-          name: '1'
-        },
-        {
-          label: '已面试',
-          name: '2'
-        },
-        {
-          label: '已面试',
-          name: '3'
-        }
-      ]"
+      :tab="tab"
       :tags="tags"
-      active-name="0"
+      :active-name="listQuery.state"
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
@@ -30,123 +13,150 @@
         @handle-tags="handleTags"
       />
     </SuggestContainer>
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      height="250"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%"
-    >
-      <el-table-column
-        fixed
-        width="150px"
-        align="center"
-        label="货主编号"
-      >
-        <template slot-scope="scope">
-          <span>{{ scope.row.customerId }}</span>
-        </template>
-      </el-table-column>
 
-      <el-table-column
-        width="180px"
-        align="center"
-        label="货主"
+    <div class="table_box">
+      <!--操作栏-->
+      <TableHeader
+        :tab="tab"
+        :active-name="listQuery.state"
       >
-        <template slot-scope="scope">
-          <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
-        </template>
-      </el-table-column>
+        <el-button
+          :class="isPC ? 'btn-item' : 'btn-item-m'"
+          type="primary"
+          size="small"
+        >
+          创建客户
+        </el-button>
+        <el-button
+          :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
+          type="primary"
+          size="small"
+        >
+          筛选
+        </el-button>
+      </tableheader>
 
-      <el-table-column
-        class-name="status-col"
-        label="类型"
-        width="180px"
-      >
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | articleStatusFilter">
-            {{ row.primaryClassificationName }}<span v-if="row.secondaryClassificationName">/{{ row.secondaryClassificationName }}</span>
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        width="160px"
-        align="center"
-        label="合同状态"
-      >
-        <template slot-scope="{row}">
-          {{ row.contractEffectiveness }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        width="180px"
-        align="center"
-        label="创建时间"
-      >
-        <template slot-scope="scope">
-          <p>{{ scope.row.createDate | Timestamp }}</p>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        width="180px"
-        align="center"
-        label="创建人"
-      >
-        <template slot-scope="scope">
-          <p><span v-if="scope.row.creatorName">({{ scope.row.creatorName }})</span></p>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        min-width="120px"
-        align="center"
-        label="合同止期"
-      >
-        <template slot-scope="scope">
-          <span>{{ scope.row.contractEnd | Timestamp }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        min-width="120"
-        align="center"
-        label="线路销售"
-      >
-        <template slot-scope="{row}">
-          {{ row.lineSaleName | DataIsNull }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        align="center"
-        label="操作"
-        width="120"
-        fixed="right"
-      >
-        <template slot-scope="scope">
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-edit"
-            @click="goDetail(scope.row.customerId)"
+      <!--table表单-->
+      <div class="table_center">
+        <el-table
+          v-loading="listLoading"
+          :data="list"
+          :row-style="{height: '20px'}"
+          :cell-style="{padding: '5px 0'}"
+          size="mini"
+          :height="'100%'"
+          fit
+          :border="isPC"
+          stripe
+          highlight-current-row
+          style="width: 100%"
+        >
+          <el-table-column
+            fixed
+            align="left"
+            label="货主编号"
           >
-            详情
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getList"
-    />
+            <template slot-scope="scope">
+              <span>{{ scope.row.customerId }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            align="left"
+            label="货主"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            class-name="status-col"
+            label="类型"
+          >
+            <template slot-scope="{row}">
+              <el-tag :type="row.status | articleStatusFilter">
+                {{ row.primaryClassificationName }}<span v-if="row.secondaryClassificationName">/{{ row.secondaryClassificationName }}</span>
+              </el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            align="left"
+            label="合同状态"
+          >
+            <template slot-scope="{row}">
+              {{ row.contractEffectiveness }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            align="left"
+            label="创建时间"
+          >
+            <template slot-scope="scope">
+              <p>{{ scope.row.createDate | Timestamp }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            align="left"
+            label="创建人"
+          >
+            <template slot-scope="scope">
+              <p><span v-if="scope.row.creatorName">({{ scope.row.creatorName }})</span></p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            align="left"
+            label="合同止期"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.contractEnd | Timestamp }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            align="left"
+            label="线路销售"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            align="left"
+            label="操作"
+            fixed="right"
+          >
+            <template slot-scope="scope">
+              <el-dropdown>
+                <span class="el-dropdown-link">
+                  更多操作<i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    icon="el-icon-files"
+                    @click="goDetail(scope.row.customerId)"
+                  >
+                    详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList"
+      />
+    </div>
   </div>
 </template>
 
@@ -156,9 +166,11 @@ import { GetCustomerList } from '@/api/customer'
 import { IArticleData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
+import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SuggestForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
+import '@/styles/common.scss'
 
 interface IState {
   [key: string]: any;
@@ -169,6 +181,7 @@ interface IState {
     components: {
       Pagination,
       SuggestContainer,
+      TableHeader,
       SuggestForm
     }
   })
@@ -180,6 +193,24 @@ export default class extends Vue {
     private listLoading = true
     private tags: any[] = []
     private DateValue: any[] = []
+    private tab: any[] = [
+      {
+        label: '待跟进',
+        name: '0'
+      },
+      {
+        label: '跟进中',
+        name: '1'
+      },
+      {
+        label: '已面试',
+        name: '2'
+      },
+      {
+        label: '已面试',
+        name: '3'
+      }
+    ]
     private listQuery: IState = {
       key: '',
       city: '',
@@ -256,13 +287,35 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
   .DriverList{
-    padding: 20px;
+    padding: 15px;
     padding-bottom: 0;
     box-sizing: border-box;
-    .el-table{
-      height: calc(100vh - 310px) !important;
-      border: 1px solid #dfe6ec;
-      overflow-y: scroll;
+    .btn-item{
+      background: #649CEE;
+      border-radius: 4px;
+      border-radius: 4px;
+      border: none;
+    }
+    .btn-item-filtrate{
+      background: #FFA000;
+      border-radius: 4px;
+      border-radius: 4px;
+      border: none;
+    }
+    .table_box{
+      height: calc(100vh - 225px) !important;
+      background: #FFFFFF;
+      // border: 1px solid #dfe6ec;
+      box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
+      overflow: hidden;
+      .table_center{
+        height: calc(100vh - 360px) !important;
+        padding:30px;
+        padding-bottom: 0;
+        box-sizing: border-box;
+        background: #FFFFFF;
+        overflow-y: scroll;
+      }
     }
     .edit-input {
       padding-right: 100px;
@@ -273,7 +326,7 @@ export default class extends Vue {
       top: 10px;
     }
     .pagination-container{
-      background: #f8f9fa;
+      background: #fff;
     }
   }
 
@@ -283,10 +336,22 @@ export default class extends Vue {
   .DriverList-m{
     padding-bottom: 0;
     box-sizing: border-box;
-    .el-table{
-      height: calc(100vh - 250px) !important;
-      border: 1px solid #dfe6ec;
-      overflow-y: scroll;
+    .el-table td{
+        border: none;
+    }
+    .table_box{
+      height: calc(100vh - 183px) !important;
+      background: #FFFFFF;
+      // border: 1px solid #dfe6ec;
+      box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
+      overflow: hidden;
+      .table_center{
+        height: calc(100vh - 300px) !important;
+        padding-bottom: 0;
+        box-sizing: border-box;
+        background: #FFFFFF;
+        overflow-y: scroll;
+      }
     }
     .edit-input {
       padding-right: 100px;

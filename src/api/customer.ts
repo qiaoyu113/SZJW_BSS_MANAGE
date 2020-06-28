@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export const GetCustomerList = (data: any) =>
   request({
-    url: '/api/bss/v1/bss/line/customer/selectListByKey',
+    url: 'api/bss/v1/bss/customer/pool/selectListByQuery',
     method: 'post',
     data
   })

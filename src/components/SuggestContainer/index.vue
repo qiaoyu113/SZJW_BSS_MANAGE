@@ -1,6 +1,6 @@
 <template>
   <div
-    class="SuggestContainer"
+    :class="isPC ? 'SuggestContainer' : 'SuggestContainer-m'"
   >
     <div
       v-if="!tab.length"
@@ -8,7 +8,6 @@
     >
       <div class="routerName">
         {{ TitleName ? TitleName : $t('route.' + $route.meta.title) }}
-        <span />
       </div>
     </div>
     <div
@@ -25,7 +24,15 @@
           :key="item.id"
           :label="item.label"
           :name="item.name"
-        />
+        >
+          <span
+            slot="label"
+            class="tab_label"
+          >{{ item.label }} <i
+            v-if="item.num"
+            class="tab_num"
+          >{{ item.num }}</i> </span>
+        </el-tab-pane>
       </el-tabs>
     </div>
 
@@ -51,6 +58,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { SettingsModule } from '@/store/modules/settings'
 
 @Component({
   name: 'SuggestContainer'
@@ -74,6 +82,10 @@ export default class extends Vue {
   created() {
     this.TitleName = this.getTitle(this.title)
     this.activeValue = this.activeName
+  }
+
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   private getTitle(title: any) {
@@ -119,21 +131,46 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .SuggestContainer-m{
-  padding: 0;
-  .el-collapse-item__header{
-    height: auto;
-  }
-}
-.SuggestContainer{
+    padding: 0;
     width: 100%;
     background: #FFFFFF;
-    box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
-    margin-bottom: 10px;
+    box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.85);
     box-sizing: border-box;
-    .el-collapse-item__header{
-      height: auto;
+    .el-tag{
+      background: #649CEE;
+      box-shadow: 0 2px 4px 0 rgb(99, 154, 238,0.5);
+      border-radius: 24px;
+      border-radius: 24px;
+      font-size: 12px;
+      color: #FFFFFF;
+      border:none;
+      .el-icon-close{
+        opacity: 0.5;
+        background: #FFFFFF;
+        color: #649CEE;
+      }
+    }
+    .tab_label{
+      position: relative;
+      .tab_num{
+        display: inline-block;
+        position: relative;
+        top: -8px;
+        right: -1px;
+        background: #FFA000;
+        height: 20px;
+        line-height: 20px;
+        border-radius: 20px;
+        padding: 0 4px;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-style: normal;
+      }
+    }
+    .el-tabs__active-bar{
+      background: #FFA000;
     }
     .title{
         width: 100%;
@@ -161,13 +198,129 @@ export default class extends Vue {
     .el-collapse-item__header{
       display: block;
       text-align: center;
-      color:#666;
       font-size: 14px;
       letter-spacing:1px;
+      height: auto;
+      background:#CED3DD;
+      color: #182B5C;
+      font-weight: normal;
     }
     .tab-box{
       padding:0 30px;
       box-sizing: border-box;
+      background:#384F86;
+      .el-tabs__item{
+        color:#fff;
+      }
+      .el-tabs__nav-wrap::after{
+        background-color: #384F86;
+      }
+      .el-tabs__header{
+        margin: 0;
+        height:50px;
+        line-height: 50px;
+      }
+    }
+    .el-collapse{
+      border-top: none;
+    }
+    .el-tag{
+      margin: 0 10px;
+    }
+    .el-collapse-item__header{
+      display: block;
+      text-align: center;
+      font-size: 14px;
+      letter-spacing:1px;
+      height: auto;
+      background:#CED3DD;
+      color: #182B5C;
+      font-weight: normal;
+    }
+}
+.SuggestContainer{
+    width: 100%;
+    background: #FFFFFF;
+    box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.85);
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    .el-tag{
+      background: #649CEE;
+      box-shadow: 0 2px 4px 0 rgb(99, 154, 238,0.5);
+      border-radius: 24px;
+      border-radius: 24px;
+      font-size: 12px;
+      color: #FFFFFF;
+      border:none;
+      .el-icon-close{
+        opacity: 0.5;
+        background: #FFFFFF;
+        color: #649CEE;
+      }
+    }
+    .tab_label{
+      position: relative;
+      .tab_num{
+        display: inline-block;
+        position: relative;
+        top: -8px;
+        right: -1px;
+        background: #FFA000;
+        height: 20px;
+        line-height: 20px;
+        border-radius: 20px;
+        padding: 0 4px;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-style: normal;
+      }
+    }
+    .el-tabs__active-bar{
+      background: #FFA000;
+    }
+    .title{
+        width: 100%;
+        border-bottom: 2px solid #F8F9FA;
+    }
+    .routerName{
+        width:max-content;
+        height: 50px;
+        line-height: 50px;
+        padding:0 30px;
+        box-sizing: border-box;
+        font-size: 15px;
+        color: #4A4A4A;
+        span{
+            width:100%;
+            height: 5px;
+            background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);
+            border-radius: 2.5px;
+            border-radius: 2.5px;
+            position: relative;
+            bottom: 2px;
+            display: block;
+        }
+    }
+    .el-collapse-item__header{
+      display: block;
+      text-align: center;
+      font-size: 14px;
+      letter-spacing:1px;
+      height: auto;
+      background:#CED3DD;
+      color: #182B5C;
+      font-weight: normal;
+    }
+    .tab-box{
+      padding:0 30px;
+      box-sizing: border-box;
+      background:#384F86;
+      .el-tabs__item{
+        color:#fff;
+      }
+      .el-tabs__nav-wrap::after{
+        background-color: #384F86;
+      }
       .el-tabs__header{
         margin: 0;
         height:50px;

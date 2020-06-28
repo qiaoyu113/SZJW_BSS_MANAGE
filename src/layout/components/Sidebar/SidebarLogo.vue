@@ -28,6 +28,27 @@
         <h1 class="sidebar-title">
           {{ title }}
         </h1>
+        <!-- <div class="user">
+          <div class="tags">
+            <p class="tag_list">
+              北京市
+            </p>
+            <p class="tag_list">
+              共享一组
+            </p>
+            <p class="tag_list">
+              共享GBL
+            </p>
+          </div>
+          <div class="user_info">
+            <p class="user_name">
+              刘德华
+            </p>
+            <p class="user_phone">
+              13888888888
+            </p>
+          </div>
+        </div> -->
       </router-link>
     </transition>
   </div>
@@ -86,6 +107,42 @@ export default class extends Vue {
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }
+
+    & .user {
+      & .tags{
+          display: flex;
+          padding:5px 0;
+          box-sizing: border-box;
+          & .tag_list{
+            flex: 1;
+            color: #4C85C6;
+            font-size: 12px;
+            border: 1px solid #4C85C6;
+            border-radius: 25px;
+            height: 20px;
+            line-height: 18px;
+            margin: 0 3px;
+          }
+        }
+      & .user_info{
+        & .user_name{
+          width: 66px;
+          height: 66px;
+          line-height: 66px;
+          text-align: center;
+          border-radius: 100%;
+          font-size: 14px;
+          opacity: 0.9;
+          background: #399FFB;
+          margin: 15px auto 0;
+        }
+        & .user_phone{
+          font-size: 15px;
+          color: #CED3DD;
+          line-height: 10px;
+        }
+      }
+    }
   }
 
   &.collapse {
@@ -93,5 +150,6 @@ export default class extends Vue {
       margin-right: 0px;
     }
   }
+
 }
 </style>
