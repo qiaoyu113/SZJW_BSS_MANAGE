@@ -27,7 +27,6 @@ export default class extends Vue {
 
   @Watch('activeName', { deep: true })
   private onListQueryChange(value: any) {
-    console.log(this.activeName)
     this.handleTab()
   }
 
@@ -45,8 +44,6 @@ export default class extends Vue {
     }
     for (let index = 0; index < this.tab.length; index++) {
       const element = this.tab[index].name
-      console.log(element)
-      console.log(this.active)
       if (element.toString() === this.active.toString()) this.tabName = this.tab[index].label
     }
   }
