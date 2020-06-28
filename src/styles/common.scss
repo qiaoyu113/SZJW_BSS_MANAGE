@@ -9,11 +9,13 @@
 
 .el-table th{
     background-color: #F6F6F6;
+    color: #333;
 } 
 
-// .el-table td{
+.el-table td{
     // border: none;
-// }
+    color: #333;
+}
 
 .el-table--striped .el-table__body tr.el-table__row--striped td{
     background:  #F8F9FA;

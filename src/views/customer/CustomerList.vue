@@ -240,7 +240,7 @@ export default class extends Vue {
 
     // 所有请求方法
     private fetchData() {
-      this.getList()
+      this.getList(this.listQuery)
     }
 
     // 处理tags方法
@@ -260,7 +260,9 @@ export default class extends Vue {
     }
 
     // 请求列表
-    private async getList() {
+    private async getList(value: any) {
+      this.listQuery.page = value.page
+      this.listQuery.limit = value.limit
       this.listLoading = true
       const { data } = await GetCustomerList(this.listQuery)
       if (data.success) {
