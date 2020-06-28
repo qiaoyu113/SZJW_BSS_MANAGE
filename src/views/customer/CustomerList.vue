@@ -336,9 +336,6 @@ export default class extends Vue {
   .DriverList-m{
     padding-bottom: 0;
     box-sizing: border-box;
-    .el-table td{
-        border: none;
-    }
     .table_box{
       height: calc(100vh - 183px) !important;
       background: #FFFFFF;
