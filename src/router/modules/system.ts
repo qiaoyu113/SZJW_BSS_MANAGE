@@ -8,7 +8,7 @@ const systemRouter: RouteConfig = {
   name: 'System',
   meta: {
     title: 'systemTitle',
-    icon: 'client',
+    icon: 'system',
     apiUrl: 'root'
   },
   children: [
@@ -55,6 +55,18 @@ const systemRouter: RouteConfig = {
       meta: {
         title: 'permissionManage',
         activeMenu: '/system/permissionmanage',
+        noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'systemsetting', /* 权限管理 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/SystemSetting.vue'),
+      name: 'SystemSetting',
+      meta: {
+        title: 'systemSetting',
+        activeMenu: '/system/systemsetting',
         noCache: false,
         icon: '',
         apiUrl: 'root'

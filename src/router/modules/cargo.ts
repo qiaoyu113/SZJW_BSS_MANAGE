@@ -5,10 +5,10 @@ const cargoRouter: RouteConfig = {
   path: '/cargo', /* 货源中心 */
   component: Layout,
   redirect: '/cargo/cluelist',
-  name: 'ClueList',
+  name: 'Cargo',
   meta: {
     title: 'cargoTitle',
-    icon: 'client',
+    icon: 'cargo',
     apiUrl: 'root'
   },
   children: [

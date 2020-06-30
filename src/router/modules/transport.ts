@@ -8,7 +8,7 @@ const transportRouter: RouteConfig = {
   name: 'Transport',
   meta: {
     title: 'transportTitle',
-    icon: 'client',
+    icon: 'transport',
     apiUrl: 'root'
   },
   children: [

@@ -27,13 +27,29 @@
         >
           创建客户
         </el-button>
-        <el-button
-          :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
-          type="primary"
-          size="small"
-        >
-          筛选
-        </el-button>
+
+        <el-dropdown :hide-on-click="false">
+          <el-button
+            :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
+            type="primary"
+            size="small"
+          >
+            筛选
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-checkbox-group v-model="checkList">
+              <el-dropdown-item>
+                <el-checkbox label="复选框A" />
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-checkbox label="复选框B" />
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-checkbox label="复选框C" />
+              </el-dropdown-item>
+            </el-checkbox-group>
+          </el-dropdown-menu>
+        </el-dropdown>
       </tableheader>
 
       <!--table表单-->
@@ -195,6 +211,7 @@ export default class extends Vue {
     private listLoading = true
     private tags: any[] = []
     private DateValue: any[] = []
+    private checkList: any[] = ['复选框A', '复选框B']
     private tab: any[] = [
       {
         label: '待跟进',
@@ -299,6 +316,7 @@ export default class extends Vue {
       border-radius: 4px;
       border-radius: 4px;
       border: none;
+      margin:0 10px;
     }
     .btn-item-filtrate{
       background: #FFA000;
@@ -340,6 +358,19 @@ export default class extends Vue {
   .ClueList-m{
     padding-bottom: 0;
     box-sizing: border-box;
+    .btn-item-m{
+      background: #649CEE;
+      border-radius: 4px;
+      border-radius: 4px;
+      border: none;
+      margin:0 10px;
+    }
+    .btn-item-filtrate-m{
+      background: #FFA000;
+      border-radius: 4px;
+      border-radius: 4px;
+      border: none;
+    }
     .table_box{
       height: calc(100vh - 183px) !important;
       background: #FFFFFF;
