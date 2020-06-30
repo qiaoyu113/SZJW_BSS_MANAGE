@@ -88,6 +88,10 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
+  get themeColor() {
+    return SettingsModule.theme
+  }
+
   private getTitle(title: any) {
     if (title === '功能栏') {
       if (this.$route.meta.title) {

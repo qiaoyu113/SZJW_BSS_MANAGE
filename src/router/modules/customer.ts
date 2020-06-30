@@ -1,7 +1,7 @@
 import { RouteConfig } from 'vue-router'
 import Layout from '@/layout/index.vue'
 
-const driverRouter: RouteConfig = {
+const customerRouter: RouteConfig = {
   path: '/customer',
   component: Layout,
   redirect: '/customer/list',
@@ -38,4 +38,4 @@ const driverRouter: RouteConfig = {
   ]
 }
 
-export default driverRouter
+export default customerRouter

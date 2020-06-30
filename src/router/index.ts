@@ -9,7 +9,10 @@ import Layout from '@/layout/index.vue'
 // import chartsRouter from './modules/charts'
 // import tableRouter from './modules/table'
 // import nestedRouter from './modules/nested'
-import driverRouter from './modules/driver'
+// import driverRouter from './modules/driver'
+import cargoRouter from './modules/cargo'
+import transportRouter from './modules/transport'
+import systemRouter from './modules/system'
 import customerRouter from './modules/customer'
 
 Vue.use(Router)
@@ -74,22 +77,27 @@ export const constantRoutes: RouteConfig[] = [
     component: () => import(/* webpackChunkName: "401" */ '@/views/error-page/401.vue'),
     meta: { hidden: true }
   },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
+  //       name: 'Dashboard',
+  //       meta: {
+  //         title: 'dashboard',
+  //         icon: 'dashboard',
+  //         affix: true
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
-        name: 'Dashboard',
-        meta: {
-          title: 'dashboard',
-          icon: 'dashboard',
-          affix: true
-        }
-      }
-    ]
+    redirect: '/cargo'
   },
   {
     path: '/redirect',
@@ -172,8 +180,11 @@ export const constantRoutes: RouteConfig[] = [
  * the routes that need to be dynamically loaded based on user roles
 */
 export const asyncRoutes: RouteConfig[] = [
-  driverRouter,
+  // driverRouter,
   customerRouter,
+  cargoRouter,
+  transportRouter,
+  systemRouter,
   {
     path: '*',
     redirect: '/404',

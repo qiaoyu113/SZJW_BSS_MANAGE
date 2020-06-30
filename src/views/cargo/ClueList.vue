@@ -1,5 +1,5 @@
 <template>
-  <div :class="isPC ? 'DriverList' : 'DriverList-m'">
+  <div :class="isPC ? 'ClueList' : 'ClueList-m'">
     <SuggestContainer
       :tab="tab"
       :tags="tags"
@@ -7,7 +7,7 @@
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
-      <SuggestForm
+      <ClueListForm
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
@@ -165,12 +165,12 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { GetCustomerList } from '@/api/customer'
-import { IArticleData } from '@/api/types'
+import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { SuggestForm } from './components'
+import { ClueListForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
@@ -179,18 +179,18 @@ interface IState {
 }
 
   @Component({
-    name: 'DriverList',
+    name: 'ClueList',
     components: {
       Pagination,
       SuggestContainer,
       TableHeader,
-      SuggestForm
+      ClueListForm
     }
   })
 
 export default class extends Vue {
     private total = 0
-    private list: IArticleData[] = []
+    private list: CargoListData[] = []
     private page: Object | undefined = ''
     private listLoading = true
     private tags: any[] = []
@@ -290,7 +290,7 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .DriverList{
+  .ClueList{
     padding: 15px;
     padding-bottom: 0;
     box-sizing: border-box;
@@ -337,7 +337,7 @@ export default class extends Vue {
 </style>
 
 <style lang="scss" scoped>
-  .DriverList-m{
+  .ClueList-m{
     padding-bottom: 0;
     box-sizing: border-box;
     .table_box{

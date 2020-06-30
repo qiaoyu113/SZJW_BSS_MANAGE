@@ -17,6 +17,25 @@ export interface IArticleData {
   [propName: string]: any;
 }
 
+export interface CargoListData {
+  id: number
+  status: string
+  title: string
+  abstractContent: string
+  fullContent: string
+  sourceURL: string
+  imageURL: string
+  timestamp: string | number
+  platforms: string[]
+  disableComment: boolean
+  importance: number
+  author: string
+  reviewer: string
+  type: string
+  pageviews: number
+  [propName: string]: any;
+}
+
 export interface IRoleData {
   key: string
   name: string
