@@ -61,13 +61,13 @@ export default class extends Vue {
     display: flex;
     .TableHeader_title{
         // float:left;
-        flex: 1;
+        flex: 0.4;
         font-size: 14px;
         color: #649CEE;
         line-height: 30px;
     }
     .TableHeader_button{
-        flex: 1;
+        flex: 0.6;
         text-align: right;
         box-sizing: border-box;
     }
