@@ -157,9 +157,9 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     icon="el-icon-files"
-                    @click="goDetail(scope.row.customerId)"
+                    @click.native="goDetail(scope.row.customerNo)"
                   >
-                    详情
+                    详情1
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -301,7 +301,7 @@ export default class extends Vue {
 
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'CustomerDetail', query: { id: id } })
+      this.$router.push({ name: 'ClueDetail', query: { id: id } })
     }
 }
 </script>
@@ -398,4 +398,14 @@ export default class extends Vue {
     }
   }
 
+</style>
+
+<style lang="scss" scope>
+.el-collapse-item__content{
+    padding-bottom:0;
+}
+
+.el-form-item__label{
+  color: #999999;
+}
 </style>

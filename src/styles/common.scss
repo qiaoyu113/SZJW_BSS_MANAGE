@@ -30,3 +30,11 @@
     border-radius: 4px;
     border: none;
 }
+
+@media screen and (max-width: 700px) {
+    .el-picker-panel{
+        left: 0 !important;
+        width: 100%;
+        overflow-x: auto;
+      }
+}
