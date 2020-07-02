@@ -56,7 +56,7 @@ export default class extends Vue {
     background: #FFFFFF;
     overflow: hidden;
     border: 1px solid  #F8F9FA;
-    padding: 10px 30px;
+    padding: 10px 18px;
     box-sizing: border-box;
     display: flex;
     .TableHeader_title{

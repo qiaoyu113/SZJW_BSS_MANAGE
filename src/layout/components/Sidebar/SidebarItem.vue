@@ -29,6 +29,7 @@
       popper-append-to-body
     >
       <template slot="title">
+        <span class="border" />
         <svg-icon
           v-if="item.meta && item.meta.icon"
           :name="item.meta.icon"
@@ -124,8 +125,25 @@ export default class extends Vue {
 </script>
 
 <style lang="scss">
+.el-submenu>.el-submenu__title {
+  i{
+    color: $menuText;
+  }
+}
 .el-submenu.is-active > .el-submenu__title {
   color: $subMenuActiveText !important;
+  background: $subMenuActiveBg!important;
+  .border{
+      height: 100%;
+      width: 5px;
+      display: inline;
+      background: $subMenuBorder;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+  }
 }
 
 .full-mode {
@@ -133,7 +151,6 @@ export default class extends Vue {
   .el-submenu .el-menu-item {
     min-width: $sideBarWidth !important;
     background-color: $subMenuBg !important;
-
     &:hover {
       background-color: $subMenuHover !important;
     }

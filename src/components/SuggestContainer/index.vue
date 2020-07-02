@@ -318,7 +318,7 @@ export default class extends Vue {
     .tab-box{
       padding:0 30px;
       box-sizing: border-box;
-      background:#384F86;
+      background:$subMenuBg;
       .el-tabs__item{
         color:#fff;
       }

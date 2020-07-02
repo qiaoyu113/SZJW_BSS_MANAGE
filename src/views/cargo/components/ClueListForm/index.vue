@@ -66,6 +66,7 @@ import { GetDictionary } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
+import '@/styles/common.scss'
 
 @Component({
   name: 'SuggestForm',
@@ -151,7 +152,11 @@ export default class extends Vue {
 
     private async getDictionary() {
       const { data } = await GetDictionary({ dictType: 'online_city' })
-      this.optionsCity = data.data
+      if (data.success) {
+        this.optionsCity = data.data
+      } else {
+        this.$message.error(data)
+      }
     }
 
     private changData() {
@@ -189,6 +194,12 @@ export default class extends Vue {
                 margin: 0 auto 10px;
             }
         }
+        .el-select {
+          width: 100%;
+        }
+        .el-input{
+          width: 78%;
+        }
     }
     .menuBox{
         padding: 20px 30px 0 0;
@@ -204,6 +215,12 @@ export default class extends Vue {
                 margin: 0 auto 10px;
             }
         }
+        .el-select {
+          width: 25%;
+        }
+        .el-input{
+          width: 75%;
+        }
     }
   }
 </style>
@@ -211,11 +228,6 @@ export default class extends Vue {
 <style lang="scss" scope>
 .el-collapse-item__content{
     padding-bottom:0;
-}
-.el-picker-panel{
-  left: 0 !important;
-  width: 100%;
-  overflow-x: auto;
 }
 .el-form-item__label{
   color: #999999;

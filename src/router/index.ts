@@ -12,10 +12,10 @@ import Layout from '@/layout/index.vue'
 // import driverRouter from './modules/driver'
 import cargoRouter from './modules/cargo'
 import transportRouter from './modules/transport'
-import deliveryRouter from './modules/delivery'
+// import deliveryRouter from './modules/delivery'
 import systemRouter from './modules/system'
 import orderRouter from './modules/order'
-import customerRouter from './modules/customer'
+// import customerRouter from './modules/customer'
 
 Vue.use(Router)
 
@@ -183,10 +183,10 @@ export const constantRoutes: RouteConfig[] = [
 */
 export const asyncRoutes: RouteConfig[] = [
   // driverRouter,
-  customerRouter,
+  // customerRouter,
   cargoRouter,
   orderRouter,
-  deliveryRouter,
+  // deliveryRouter,
   transportRouter,
   systemRouter,
   {
