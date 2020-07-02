@@ -22,12 +22,12 @@
         to="/"
       >
         <img
-          src="favicon.ico"
-          class="sidebar-logo"
+          src="@/assets/image/title-logo.png"
+          class="sidebar-logo-pc"
         >
-        <h1 class="sidebar-title">
+        <!-- <h1 class="sidebar-title">
           {{ title }}
-        </h1>
+        </h1> -->
         <!-- <div class="user">
           <div class="tags">
             <p class="tag_list">
@@ -82,7 +82,7 @@ export default class extends Vue {
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background: #2b2f3a;
+  background: #182B5C;
   text-align: center;
   overflow: hidden;
 
@@ -93,6 +93,12 @@ export default class extends Vue {
     & .sidebar-logo {
       width: 32px;
       height: 32px;
+      vertical-align: middle;
+      margin-right: 12px;
+    }
+
+    & .sidebar-logo-pc {
+      width: 110px;
       vertical-align: middle;
       margin-right: 12px;
     }

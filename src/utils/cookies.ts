@@ -13,6 +13,9 @@ const sizeKey = 'size'
 export const getSize = () => Cookies.get(sizeKey)
 export const setSize = (size: string) => Cookies.set(sizeKey, size)
 
+const setCookie = 'None'
+export const setCookies = (size: string) => Cookies.set('SameSite', setCookie)
+
 // User
 const tokenKey = 'token'
 // export class User {

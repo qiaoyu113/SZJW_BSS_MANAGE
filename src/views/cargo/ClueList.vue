@@ -28,7 +28,10 @@
           创建客户
         </el-button>
 
-        <el-dropdown :hide-on-click="false">
+        <el-dropdown
+          :hide-on-click="false"
+          trigger="click"
+        >
           <el-button
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
@@ -38,14 +41,11 @@
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-checkbox-group v-model="checkList">
-              <el-dropdown-item>
-                <el-checkbox label="复选框A" />
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <el-checkbox label="复选框B" />
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <el-checkbox label="复选框C" />
+              <el-dropdown-item
+                v-for="item in dropdownList"
+                :key="item"
+              >
+                <el-checkbox :label="item" />
               </el-dropdown-item>
             </el-checkbox-group>
           </el-dropdown-menu>
@@ -68,6 +68,7 @@
           style="width: 100%"
         >
           <el-table-column
+            v-if="checkList.indexOf('货主编号') > -1"
             fixed
             align="left"
             label="货主编号"
@@ -78,6 +79,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('货主') > -1"
             align="left"
             label="货主"
           >
@@ -87,6 +89,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('类型') > -1"
             class-name="status-col"
             label="类型"
           >
@@ -98,6 +101,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('合同状态') > -1"
             align="left"
             label="合同状态"
           >
@@ -107,6 +111,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('创建时间') > -1"
             align="left"
             label="创建时间"
           >
@@ -116,6 +121,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('创建人') > -1"
             align="left"
             label="创建人"
           >
@@ -125,6 +131,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('合同止期') > -1"
             align="left"
             label="合同止期"
           >
@@ -134,6 +141,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('线路销售') > -1"
             align="left"
             label="线路销售"
           >
@@ -152,12 +160,14 @@
                 <span
                   class="el-dropdown-link"
                 >
-                  更多操作<i class="el-icon-arrow-down el-icon--right" />
+                  更多操作<i
+                    v-if="isPC"
+                    class="el-icon-arrow-down el-icon--right"
+                  />
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    icon="el-icon-files"
-                    @click="goDetail(scope.row.customerId)"
+                    @click.native="goDetail(scope.row.customerNo)"
                   >
                     详情
                   </el-dropdown-item>
@@ -211,7 +221,8 @@ export default class extends Vue {
     private listLoading = true
     private tags: any[] = []
     private DateValue: any[] = []
-    private checkList: any[] = ['复选框A', '复选框B']
+    private dropdownList: any[] = ['货主编号', '货主', '类型', '合同状态', '创建时间', '创建人', '合同止期', '线路销售']
+    private checkList: any[] = this.dropdownList
     private tab: any[] = [
       {
         label: '待跟进',
@@ -301,7 +312,7 @@ export default class extends Vue {
 
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'CustomerDetail', query: { id: id } })
+      this.$router.push({ name: 'ClueDetail', query: { id: id } })
     }
 }
 </script>
@@ -398,4 +409,14 @@ export default class extends Vue {
     }
   }
 
+</style>
+
+<style lang="scss" scope>
+.el-collapse-item__content{
+    padding-bottom:0;
+}
+
+.el-form-item__label{
+  color: #999999;
+}
 </style>

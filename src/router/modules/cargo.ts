@@ -25,6 +25,19 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
+      path: 'cluedetail', /* 线索详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueDetail.vue'),
+      name: 'ClueDetail',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'clueDetail',
+        hidden: true,
+        icon: '',
+        noCache: false
+      }
+    },
+    {
       path: 'myclue', /* 我的线索 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/MyClue.vue'),
       name: 'MyClue',

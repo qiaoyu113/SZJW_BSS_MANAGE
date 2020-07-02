@@ -146,5 +146,6 @@ export default class extends Vue {
   border: none;
   height: 100%;
   width: 100% !important;
+  background: $subMenuBg !important;
 }
 </style>

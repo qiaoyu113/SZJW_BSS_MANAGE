@@ -12,13 +12,15 @@ $panGreen: #30B08F;
 
 // Sidebar
 $sideBarWidth: 210px;
-$subMenuBg:#1f2d3d;
+$subMenuBg:#2F448A;
 // $subMenuBg: #649CEE;
-$subMenuHover:#001528;
-$subMenuActiveText:#f4f4f5;
-$menuBg:#182B5C;
-$menuText:#bfcbd9;
-$menuActiveText:#409EFF; // Also see settings.sidebarTextTheme
+$subMenuHover:#364E8F;
+$subMenuActiveText:#fff;
+$subMenuActiveBg: #577AC0;
+$subMenuBorder: #65A0EF;
+$menuBg:#364E8F;
+$menuText:#fff;
+$menuActiveText:#399FFB; // Also see settings.sidebarTextTheme
 
 // Login page
 $lightGray: #eee;
@@ -32,4 +34,6 @@ $loginCursorColor: #fff;
   menuBg: $menuBg;
   menuText: $menuText;
   menuActiveText: $menuActiveText;
+  subMenuActiveBg: $subMenuActiveBg;
+  subMenuBorder: $subMenuBorder;
 }
