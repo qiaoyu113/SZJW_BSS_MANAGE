@@ -2,21 +2,22 @@ import { RouteConfig } from 'vue-router'
 import Layout from '@/layout/index.vue'
 
 const orderRouter: RouteConfig = {
-  path: '/order', /* 订单管理 */
+  path: '/join', /* 加盟中心 */
   component: Layout,
-  redirect: '/order/list',
-  name: 'Order',
+  redirect: '/join/list',
+  name: 'Join',
   meta: {
-    title: 'orderTitle',
-    icon: 'order',
+    title: 'joinTitle',
+    icon: 'join',
     apiUrl: 'root'
   },
   children: [
     {
       path: 'creatorder', /* 创建订单 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/order/CreatOrder.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/CreatOrder.vue'),
       name: 'CreatOrder',
       meta: {
+        hidden: true,
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
         title: 'creatOrder',
         noCache: false
@@ -24,7 +25,7 @@ const orderRouter: RouteConfig = {
     },
     {
       path: 'ordermanage', /* 订单管理 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/order/OrderManage.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/OrderManage.vue'),
       name: 'OrderManage',
       meta: {
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
@@ -34,7 +35,7 @@ const orderRouter: RouteConfig = {
     },
     {
       path: 'refundorder', /* 退款订单 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/order/RefundOrder.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/RefundOrder.vue'),
       name: 'RefundOrder',
       meta: {
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
@@ -44,7 +45,7 @@ const orderRouter: RouteConfig = {
     },
     {
       path: 'contractlist', /* 合同列表 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/order/ContractList.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/ContractList.vue'),
       name: 'ContractList',
       meta: {
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
@@ -53,10 +54,21 @@ const orderRouter: RouteConfig = {
       }
     },
     {
+      path: 'dealmanage', /* 成交管理 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealManage.vue'),
+      name: 'DealManage',
+      meta: {
+        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        title: 'dealManage',
+        noCache: false
+      }
+    },
+    {
       path: 'dealstatistics', /* 成交统计 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/order/DealStatistics.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealStatistics.vue'),
       name: 'DealStatistics',
       meta: {
+        hidden: true,
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
         title: 'dealStatistics',
         noCache: false

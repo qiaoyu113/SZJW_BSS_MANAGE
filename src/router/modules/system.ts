@@ -71,6 +71,30 @@ const systemRouter: RouteConfig = {
         icon: '',
         apiUrl: 'root'
       }
+    },
+    {
+      path: 'buycartype', /* 购车车型 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/BuyCarType.vue'),
+      name: 'BuyCarType',
+      meta: {
+        title: 'carType',
+        activeMenu: '/system/systemsetting',
+        noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'rentcartype', /* 租车车型 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RentCarType.vue'),
+      name: 'RentCarType',
+      meta: {
+        title: 'rentCar',
+        activeMenu: '/system/systemsetting',
+        noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
     }
   ]
 }

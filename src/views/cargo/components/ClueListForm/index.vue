@@ -194,6 +194,12 @@ export default class extends Vue {
                 margin: 0 auto 10px;
             }
         }
+        .el-select {
+          width: 100%;
+        }
+        .el-input{
+          width: 78%;
+        }
     }
     .menuBox{
         padding: 20px 30px 0 0;
@@ -209,6 +215,12 @@ export default class extends Vue {
                 margin: 0 auto 10px;
             }
         }
+        .el-select {
+          width: 25%;
+        }
+        .el-input{
+          width: 75%;
+        }
     }
   }
 </style>
@@ -217,11 +229,6 @@ export default class extends Vue {
 .el-collapse-item__content{
     padding-bottom:0;
 }
-// .el-picker-panel{
-//   left: 0 !important;
-//   width: 100%;
-//   overflow-x: auto;
-// }
 .el-form-item__label{
   color: #999999;
 }

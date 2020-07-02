@@ -5,7 +5,7 @@
     <div class="title">
       {{ title }}<span class="border" />
     </div>
-    <div class="context">
+    <div :class="md ? 'context_d' : 'context'">
       <slot />
     </div>
   </div>
@@ -20,6 +20,7 @@ import { SettingsModule } from '@/store/modules/settings'
 })
 export default class extends Vue {
   @Prop({ default: '' }) private title: any // 默认无法识别显示空
+  @Prop({ default: false }) private md: any // 是否为移动端详情
 
   private TitleName: any
 
@@ -50,19 +51,23 @@ export default class extends Vue {
         padding:0 30px;
         box-sizing: border-box;
         .border{
-            width:30px;
-            height: 5px;
+            width:5px;
+            height: 17px;
             position: absolute;
-            left: 30px;
-            bottom: -1px;
+            left: 16px;
+            top: 4px;
+            bottom: 0;
+            margin: auto;
             background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);
             border-radius: 2.5px;
             border-radius: 2.5px;
             display: inline-block;
         }
     }
-    .context{
+    .context, .context_d{
         width:100%;
+        padding: 30px;
+        box-sizing: border-box;
     }
 }
 </style>
@@ -74,9 +79,36 @@ export default class extends Vue {
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     .title{
         width:100%;
-        font-size: 18px;
+        height: 45px;
+        line-height: 40px;
+        font-size: 15px;
         color: #4A4A4A;
-        border: 1px solid #F8F9FA;
+        font-weight: 500;
+        border: 2px solid #F8F9FA;
+        position: relative;
+        padding:0 20px;
+        box-sizing: border-box;
+        .border{
+            width: 4px;
+            height: 14px;
+            position: absolute;
+            left: 10px;
+            top: -1px;
+            bottom: 0;
+            margin: auto;
+            background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);
+            border-radius: 2.5px;
+            border-radius: 2.5px;
+            display: inline-block;
+        }
+    }
+    .context{
+        width:100%;
+        padding: 20px 30px;
+        box-sizing: border-box;
+    }
+    .context_d{
+        width:100%;
     }
 }
 </style>
