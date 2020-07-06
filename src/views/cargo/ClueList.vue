@@ -232,8 +232,8 @@
       :title="`测试标题`"
       :center="true"
       :before-close="beforeClose"
-      @cancel="cancel"
-      @confirm="confirm"
+      :cancel="cancel"
+      :confirm="confirm"
     >
       <p>确认要关闭弹窗吗</p>
     </Dialog>

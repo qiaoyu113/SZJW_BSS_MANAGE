@@ -63,6 +63,11 @@ export const onlyNumber: DirectiveOptions = {
     el.addEventListener('focusout', (event:any) => { // 此处会在 el-input 的 @change 后执行
       const e:any = event || window.event
       content = parseFloat(e.target.value)
+      if (Number.isNaN(content)) {
+        e.target.value = ''
+        setVal(e.target.value)
+        return
+      }
       if (!content) {
         content = 0.00
       }
