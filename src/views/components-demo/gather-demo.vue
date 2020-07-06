@@ -31,17 +31,43 @@
         </div>
       </div>
     </div>
+
+    <div class="demo-container">
+      <!--批量操作-->
+      <div class="demo-list">
+        <h4>
+          批量操作
+        </h4>
+        <div class="demo">
+          <Operation
+            :operation-list="operationList"
+            @olclick="olClick"
+          />
+        </div>
+        <div class="tip">
+          <p> <span>【operation-list】</span> 为批量操作列（Array） </p>
+          <p> <span>【icon】</span> operation-list中图标配置 </p>
+          <p> <span>【name】</span> operation-list中名称配置 </p>
+          <p> <span>【color】</span> operation-list中背景色配置 </p>
+        </div>
+        <div class="fucTip">
+          <p> <span>[olclick]</span> 点击操作时回调方法 </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
+import Operation from '@/components/Operation/index.vue'
 
 @Component({
   name: 'Gather',
   components: {
-    SuggestContainer
+    SuggestContainer,
+    Operation
   }
 })
 export default class extends Vue {
@@ -81,11 +107,23 @@ export default class extends Vue {
     private handleDate(value:any) {
       this.DateValue = value
     }
+
+    // [SuggestContainer]处理query方法
+    private handleQuery(value:any, key:any) {
+      this.listQuery[key] = value
+    }
+
+    // [Operation]批量操作点击回调
+    private operationList: any[] = [{ icon: 'el-icon-phone', name: '1', color: '#999' }, { icon: 'el-icon-star-off', name: '2', color: '#978374' }]
+    private olClick(item: any) {
+      console.log(item)
+    }
 }
 </script>
 
 <style lang="scss">
 .demo-container{
+    margin-bottom: 30px;
     .demo-list{
         width: 100%;
         border: 2px solid #e5e5e5;

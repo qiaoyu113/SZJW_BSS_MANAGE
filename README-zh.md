@@ -116,13 +116,16 @@ npm run lint -- --fix
 ## 代码规范
 
 ```bash
-1.文字按功能命名：
+1.主题色配置：
 
 - 注：main（正文用字）；assist（辅助用字）；stress（强调用字）；title（标题用字）；xtitle（大一号标题用字）
 
-- 文字使用场所                命名
-- 正文使用                 F_font_main
-- 辅助用字                 F_font_assist
+- 使用场所                命名
+- 主题色                  $main
+- 主按钮色                $main-btn
+- 辅助钮色                $assist-btn
+- 主字体色                $main-font
+- 辅助字体色               $assist-font
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 
