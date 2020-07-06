@@ -298,13 +298,12 @@ export default class extends Vue {
       background: #649CEE;
       border-radius: 4px;
       border-radius: 4px;
-      border: none;
+      // border: none;
     }
     .btn-item-filtrate{
-      background: #FFA000;
+      background: $butYellow;
       border-radius: 4px;
-      border-radius: 4px;
-      border: none;
+      border-color: $butYellow;
     }
     .table_box{
       height: calc(100vh - 225px) !important;
