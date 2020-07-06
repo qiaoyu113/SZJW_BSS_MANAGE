@@ -342,19 +342,53 @@ export default class extends Vue {
         code: 'SX-BJ-198002069437',
         phone: '14798446913',
         city: '秦皇岛市',
-        status: '1'
+        status: 1
+      }
+    ]
+    columns:any[] =[]
+
+    array:any[] = [
+      {
+        fixed: 'left',
+        key: 'name',
+        label: '姓名'
+      },
+      {
+        key: 'code',
+        label: '编号'
+      },
+      {
+        key: 'phone',
+        label: '电话'
+      },
+      {
+        key: 'city',
+        label: '城市'
+      },
+      {
+        key: 'status',
+        label: '状态',
+        slot: true
       }
     ]
 
-    // [SuggestContainer]处理选择日期方法
-    private handleDate(value:any) {
-      this.DateValue = value
+    mounted() {
+      this.columns = [...this.array]
+      this.form.checkbox = this.array.map(item => item.key)
+      this.formItem[this.formItem.length - 1].options = [...this.array].map(item => {
+        item.value = item.key
+        return item
+      })
     }
 
-    // [SuggestContainer]处理query方法
-    private handleQuery(value:any, key:any) {
-      this.listQuery[key] = value
+  @Watch('form.checkbox', { deep: true })
+    onCheckBox(val:any) {
+      this.columns = this.array.filter(item => val.includes(item.key))
     }
+  // [SuggestContainer]处理选择日期方法
+  private handleDate(value:any) {
+    this.DateValue = value
+  }
 
     // [Operation]批量操作点击回调
     private operationList: any[] = [{ icon: 'el-icon-phone', name: '1', color: '#999' }, { icon: 'el-icon-star-off', name: '2', color: '#978374' }]
@@ -377,6 +411,10 @@ export default class extends Vue {
     private beforeClose(done: any) {
       this.$message.info('点击了X')
       done()
+    }
+    // [SuggestContainer]处理query方法
+    private handleQuery(value:any, key:any) {
+      this.listQuery[key] = value
     }
 
     // only-number

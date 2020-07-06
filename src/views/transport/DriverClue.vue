@@ -253,7 +253,7 @@ export default class extends Vue {
       city: '秦皇岛市',
       carType: '金杯',
       channel: '58同城',
-      status: '1',
+      status: 1,
       followPerson: 'tom',
       lastTime: Date.now()
     }
@@ -313,7 +313,7 @@ export default class extends Vue {
     for (let i = 0; i < 10; i++) {
       this.arry.push({ ...this.tableData[0], ...{ lastTime: Date.now() } })
     }
-    this.tableData = this.arry.slice(0, 4)
+    this.tableData = this.arry.slice(0, 10)
   }
 
   /**
