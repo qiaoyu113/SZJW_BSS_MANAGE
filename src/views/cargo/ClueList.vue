@@ -26,7 +26,8 @@
           size="small"
           name="cluelist_creat_btn"
         >
-          创建客户
+          <i class="el-icon-s-operation" />
+          <span v-if="isPC">创建客户</span>
         </el-button>
 
         <el-dropdown
@@ -38,7 +39,8 @@
             type="primary"
             size="small"
           >
-            筛选
+            <i class="el-icon-s-operation" />
+            <span v-if="isPC">筛选</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-checkbox-group v-model="checkList">
@@ -192,10 +194,12 @@
       </div>
       <pagination
         v-show="total>0"
+        :operation-list="operationList"
         :total="total"
         :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
         @pagination="getList"
+        @olclick="olClicks"
       />
     </div>
   </div>
@@ -234,6 +238,7 @@ export default class extends Vue {
     private listLoading = true
     private tags: any[] = []
     private DateValue: any[] = []
+    private operationList: any[] = [{ icon: 'el-icon-phone', name: '1', color: '#999' }, { icon: 'el-icon-star-off', name: '2', color: '#978374' }]
     private dropdownList: any[] = ['货主编号', '货主', '类型', '合同状态', '创建时间', '创建人', '合同止期', '线路销售']
     private checkList: any[] = this.dropdownList
     private tab: any[] = [
@@ -354,6 +359,11 @@ export default class extends Vue {
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
       this.$router.push({ name: 'ClueDetail', query: { id: id } })
+    }
+
+    // 批量操作
+    private olClicks(item: any) {
+      console.log(item)
     }
 }
 </script>

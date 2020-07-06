@@ -58,24 +58,22 @@ export default class extends Vue {
 <style lang="scss" scope>
 .DetailItem-m{
     width: 100%;
-    display: flex;
-    padding: 14px;
+    padding: 10px 14px;
     box-sizing: border-box;
     border-bottom: 1px solid #F8F9FA;
     .detail-title{
-        flex: 1;
-        font-size: 14px;
+        width: 100%;
+        font-size: 12px;
         color: #666;
         font-weight: 400;
         text-align: left;
         padding-right: 15px;
+        padding-bottom: 10px;
         box-sizing: border-box;
     }
     .detail-value{
-        flex: 2;
-        text-align: right;
+        width: 100%;
         font-size: 14px;
-        color: #333;
         font-weight: 400;
     }
 }
