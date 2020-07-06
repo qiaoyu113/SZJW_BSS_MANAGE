@@ -154,7 +154,6 @@
           <el-table-column
             align="left"
             label="操作"
-            fixed="right"
             :width="isPC ? 'auto' : '50'"
           >
             <template slot-scope="scope">
