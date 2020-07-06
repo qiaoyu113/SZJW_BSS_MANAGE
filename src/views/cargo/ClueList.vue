@@ -382,6 +382,7 @@ export default class extends Vue {
       // border: 1px solid #dfe6ec;
       box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
       overflow: hidden;
+      transform: translateZ(0);
       .table_center{
         height: calc(100vh - 360px) !important;
         padding:30px;
@@ -429,6 +430,7 @@ export default class extends Vue {
       // border: 1px solid #dfe6ec;
       box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
       overflow: hidden;
+      transform: translateZ(0);
       .table_center{
         height: calc(100vh - 300px) !important;
         padding-bottom: 0;
