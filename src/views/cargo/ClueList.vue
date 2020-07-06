@@ -72,6 +72,7 @@
           <el-table-column
             v-if="checkList.indexOf('货主编号') > -1"
             align="left"
+            fixed
             label="货主编号"
           >
             <template slot-scope="scope">
@@ -154,6 +155,7 @@
           <el-table-column
             align="left"
             label="操作"
+            fixed="right"
             :width="isPC ? 'auto' : '50'"
           >
             <template slot-scope="scope">
