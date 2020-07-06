@@ -24,6 +24,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
+          name="cluelist_creat_btn"
         >
           创建客户
         </el-button>
@@ -66,11 +67,12 @@
           stripe
           highlight-current-row
           style="width: 100%"
+          @cell-click="tableClick"
         >
           <el-table-column
             v-if="checkList.indexOf('货主编号') > -1"
-            fixed
             align="left"
+            fixed
             label="货主编号"
           >
             <template slot-scope="scope">
@@ -154,15 +156,26 @@
             align="left"
             label="操作"
             fixed="right"
+            :width="isPC ? 'auto' : '50'"
           >
             <template slot-scope="scope">
               <el-dropdown>
                 <span
+                  v-if="isPC"
                   class="el-dropdown-link"
                 >
                   更多操作<i
                     v-if="isPC"
                     class="el-icon-arrow-down el-icon--right"
+                  />
+                </span>
+                <span
+                  v-else
+                  style="font-size: 18px;"
+                  class="el-dropdown-link"
+                >
+                  <i
+                    class="el-icon-setting el-icon--right"
                   />
                 </span>
                 <el-dropdown-menu slot="dropdown">
@@ -239,6 +252,14 @@ export default class extends Vue {
       {
         label: '已面试',
         name: '3'
+      },
+      {
+        label: '已面试',
+        name: '4'
+      },
+      {
+        label: '已面试',
+        name: '5'
       }
     ]
     private listQuery: IState = {
@@ -310,6 +331,26 @@ export default class extends Vue {
       }
     }
 
+    // 添加明细原因 row 当前行 column 当前列
+    private tableClick(row:any, column:any, cell:any, event:any) {
+      // switch (column.label) {
+      //   case '原因说明':
+      //     this.tabClickIndex = row.index
+      //     this.tabClickLabel = column.label
+      //     break
+      //   case '判责金额(元)':
+      //     this.tabClickIndex = row.index
+      //     this.tabClickLabel = column.label
+      //     break
+      //   case '备注':
+      //     this.tabClickIndex = row.index
+      //     this.tabClickLabel = column.label
+      //     break
+      //   default: return
+      // }
+      console.log('添加明细原因', row, column, cell, event)
+    }
+
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
       this.$router.push({ name: 'ClueDetail', query: { id: id } })
@@ -341,6 +382,7 @@ export default class extends Vue {
       // border: 1px solid #dfe6ec;
       box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
       overflow: hidden;
+      transform: translateZ(0);
       .table_center{
         height: calc(100vh - 360px) !important;
         padding:30px;
@@ -388,6 +430,7 @@ export default class extends Vue {
       // border: 1px solid #dfe6ec;
       box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
       overflow: hidden;
+      transform: translateZ(0);
       .table_center{
         height: calc(100vh - 300px) !important;
         padding-bottom: 0;
