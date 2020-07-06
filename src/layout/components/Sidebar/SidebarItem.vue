@@ -136,7 +136,6 @@ export default class extends Vue {
   .border{
       height: 100%;
       width: 5px;
-      display: inline;
       background: $subMenuBorder;
       position: absolute;
       left: 0;

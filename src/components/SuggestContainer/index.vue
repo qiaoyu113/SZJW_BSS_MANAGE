@@ -248,6 +248,17 @@ export default class extends Vue {
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.85);
     margin-bottom: 10px;
     box-sizing: border-box;
+    .el-tabs__nav{
+      display: flex;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      .el-tabs__item{
+        flex: 1;
+        text-align: center;
+        line-height: 50px;
+      }
+    }
     .el-tag{
       background: #649CEE;
       box-shadow: 0 2px 4px 0 rgb(99, 154, 238,0.5);

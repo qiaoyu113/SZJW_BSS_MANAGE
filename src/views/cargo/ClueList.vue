@@ -239,6 +239,14 @@ export default class extends Vue {
       {
         label: '已面试',
         name: '3'
+      },
+      {
+        label: '已面试',
+        name: '3'
+      },
+      {
+        label: '已面试',
+        name: '3'
       }
     ]
     private listQuery: IState = {
