@@ -232,8 +232,8 @@
       :title="`测试标题`"
       :center="true"
       :before-close="beforeClose"
-      @cancel="cancel"
-      @confirm="confirm"
+      :cancel="cancel"
+      :confirm="confirm"
     >
       <p>确认要关闭弹窗吗</p>
     </Dialog>
@@ -293,11 +293,13 @@ export default class extends Vue {
   private tab: any[] = [
     {
       label: '待跟进',
-      name: '0'
+      name: '0',
+      num: 187
     },
     {
       label: '跟进中',
-      name: '1'
+      name: '1',
+      num: 1
     },
     {
       label: '已面试',

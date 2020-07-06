@@ -22,14 +22,14 @@
       >
         <el-button
           v-if="showCancelButton"
-          @click="cancel"
+          @click="onCancel"
         >
           {{ cancelButtonText }}
         </el-button>
         <el-button
           v-if="showConfirmButton"
           type="primary"
-          @click="confirm"
+          @click="onConfirm"
         >
           {{ confirmButtonText }}
         </el-button>
@@ -54,6 +54,8 @@ export default class extends Vue {
   @Prop({ default: '确定' }) private confirmButtonText!: string;
   @Prop({ default: '提示' }) private title!: string;
   @Prop({ default: '' }) private customClass!: string;
+  @Prop({ default: false }) private cancel!: any;
+  @Prop({ default: false }) private confirm!: any;
 
   get show() {
     return this.visible
@@ -65,15 +67,18 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
-  private confirm() {
-    this.$emit('confirm', () => {
+  private onConfirm() {
+    this.confirm && typeof this.confirm === 'function' ? this.confirm(() => {
       this.show = false
-    })
+    }) : this.hideDialog()
   }
-  private cancel() {
-    this.$emit('cancel', () => {
+  private onCancel() {
+    this.cancel && typeof this.cancel === 'function' ? this.cancel(() => {
       this.show = false
-    })
+    }) : this.hideDialog()
+  }
+  private hideDialog() {
+    this.show = false
   }
   mounted() {}
 
