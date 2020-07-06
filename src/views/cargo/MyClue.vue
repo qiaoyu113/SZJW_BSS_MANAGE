@@ -152,8 +152,8 @@ interface IState {
   [key: string]: any;
 }
   interface tags {
-    type:string,
-    key:string
+    label:string,
+    name:string
   }
   @Component({
     name: 'MyClue',
