@@ -75,6 +75,7 @@
       :total="page.total"
       :page.sync="page.page"
       :limit.sync="page.limit"
+      @olclick="handleOlClick"
       @pagination="handlePageSizeChange"
     />
   </div>
@@ -97,11 +98,11 @@ interface PageObj {
 export default class extends Vue {
   @Prop({ default: () => [] }) tableData!:any[]
   @Prop({ default: () => [] }) columns!:any[]
-  @Prop({ default: () => ({ current: 1, size: 20, total: 0 }) }) page!:PageObj
-  private operationList: any[] = [
+  @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }
-  ];
+  ] }) operationList!:any[]
+  @Prop({ default: () => ({ current: 1, size: 20, total: 0 }) }) page!:PageObj
 
   get isPC() {
     return SettingsModule.isPC
@@ -123,6 +124,9 @@ export default class extends Vue {
   }
    @Emit('onCommand')
    handleCommand(command:any) {
+   }
+   @Emit('olclick')
+   handleOlClick(value:any) {
    }
 }
 </script>

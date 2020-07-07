@@ -93,6 +93,7 @@
             :page="page"
             @onPageSize="handlePageSize"
             @onCommand="handleCommandChange"
+            @olclick="handleOlClick"
           >
             <template v-slot:operate="scope">
               <el-button
@@ -455,6 +456,10 @@ export default class extends Vue {
     // [SuggestContainer]处理query方法
     private handleQuery(value:any, key:any) {
       this.listQuery[key] = value
+    }
+
+    private handleOlClick(value:any) {
+      console.log('xx:', value)
     }
 
     // only-number
