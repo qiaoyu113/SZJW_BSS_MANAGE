@@ -9,7 +9,6 @@ export default {
     clueDetail: 'ClueDetail',
     myClue: 'MyClue',
     ownerList: 'OwnerList',
-    myOwner: 'MyOwner',
     tenderManage: 'TenderManage',
     transportTitle: 'TransportCenter',
     lineManage: 'LineManage',
