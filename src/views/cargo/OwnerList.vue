@@ -59,6 +59,7 @@
       <!--table表单-->
       <div class="table_center">
         <el-table
+          ref="multipleTable"
           v-loading="listLoading"
           :data="list"
           :row-style="{height: '20px'}"
@@ -70,75 +71,126 @@
           stripe
           highlight-current-row
           style="width: 100%"
+          row-key="customerNo"
           @cell-click="tableClick"
+          @selection-change="handleSelectionChange"
         >
           <el-table-column
+            reserve-selection
+            type="selection"
+            width="55"
+          />
+          <el-table-column
             v-if="checkList.indexOf('货主编号') > -1"
+            :key="Math.random()"
             align="left"
             fixed
             label="货主编号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.customerId }}</span>
+              <span>{{ scope.row.customerId | DataIsNull }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('货主') > -1"
+            v-if="checkList.indexOf('线索编号') > -1"
             align="left"
-            label="货主"
+            label="线索编号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
+              <span>{{ scope.row.clueId | DataIsNull }} </span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('类型') > -1"
+            v-if="checkList.indexOf('销售') > -1"
             class-name="status-col"
-            label="类型"
-          >
-            <template slot-scope="{row}">
-              <el-tag :type="row.status | articleStatusFilter">
-                {{ row.primaryClassificationName
-                }}<span
-                  v-if="row.secondaryClassificationName"
-                >/{{ row.secondaryClassificationName }}</span>
-              </el-tag>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('合同状态') > -1"
-            align="left"
-            label="合同状态"
-          >
-            <template slot-scope="{row}">
-              {{ row.contractEffectiveness }}
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('创建时间') > -1"
-            align="left"
-            label="创建时间"
+            label="销售"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.createDate | Timestamp }}</p>
+              <span>{{ scope.row.lineSaleName | DataIsNull }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('创建人') > -1"
+            v-if="checkList.indexOf('公司简称') > -1"
             align="left"
-            label="创建人"
+            label="公司简称"
+          >
+            <template slot-scope="{row}">
+              {{ row.company | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('分类') > -1"
+            align="left"
+            label="分类"
+          >
+            <template slot-scope="scope">
+              <p>{{ scope.row.primaryClassificationName | DataIsNull }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('城市') > -1"
+            align="left"
+            label="城市"
           >
             <template slot-scope="scope">
               <p>
-                <span
-                  v-if="scope.row.creatorName"
-                >({{ scope.row.creatorName }})</span>
+                <span>{{ scope.row.cityName | DataIsNull }}</span>
               </p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('联系人') > -1"
+            align="left"
+            label="联系人"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.bussinessName | DataIsNull }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('联系电话') > -1"
+            align="left"
+            label="联系电话"
+          >
+            <template slot-scope="{row}">
+              {{ row.bussinessPhone | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('身份证号') > -1"
+            align="left"
+            label="身份证号"
+          >
+            <template slot-scope="{row}">
+              {{ row.bussinessCard | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('是否为合同期内') > -1"
+            align="left"
+            label="是否为合同期内"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('创建日期') > -1"
+            align="left"
+            label="创建日期"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -147,22 +199,23 @@
             align="left"
             label="合同止期"
           >
-            <template slot-scope="scope">
-              <span>{{ scope.row.contractEnd | Timestamp }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('线路销售') > -1"
-            align="left"
-            label="线路销售"
-          >
             <template slot-scope="{row}">
               {{ row.lineSaleName | DataIsNull }}
             </template>
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('备注') > -1"
+            align="left"
+            label="备注"
+          >
+            <template slot-scope="{row}">
+              {{ row.remark | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            :key="Math.random()"
             align="left"
             label="操作"
             fixed="right"
@@ -208,6 +261,18 @@
         @olclick="olClicks"
       />
     </div>
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleSelection"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="slotProp">
+        <span>{{ slotProp.item.creater }}</span>
+        <span>{{ slotProp.item.clientPhone }}</span>
+        <span>{{ slotProp.item.city }}</span>
+      </template>
+    </PitchBox>
 
     <!-- <Dialog
       :visible.sync="showDialog"
@@ -229,19 +294,18 @@
     </Dialog> -->
     <Dialog
       :visible.sync="showDialog"
-      :title="`测试标题`"
+      :title="`清空确认`"
       :center="true"
-      :before-close="beforeClose"
-      @cancel="cancel"
-      @confirm="confirm"
+      :confirm="confirm"
     >
-      <p>确认要关闭弹窗吗</p>
+      <p>确认清空所有选择吗？</p>
     </Dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Form as ElForm, Input } from 'element-ui'
 import { GetCustomerList } from '@/api/customer'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
@@ -249,6 +313,8 @@ import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
+import SelfTable from '@/components/base/SelfTable.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
 import { OwnerListForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -264,143 +330,147 @@ interface IState {
     SuggestContainer,
     TableHeader,
     OwnerListForm,
-    Dialog
+    Dialog,
+    SelfTable,
+    PitchBox
   }
 })
 export default class extends Vue {
-  private showDialog: boolean= false;
-  private total = 0;
-  private list: CargoListData[] = [];
-  private page: Object | undefined = '';
-  private listLoading = true;
-  private tags: any[] = [];
-  private DateValue: any[] = [];
-  private operationList: any[] = [
-    { icon: 'el-icon-phone', name: '1', color: '#999' },
-    { icon: 'el-icon-star-off', name: '2', color: '#978374' }
-  ];
-  private dropdownList: any[] = [
-    '货主编号',
-    '货主',
-    '类型',
-    '合同状态',
-    '创建时间',
-    '创建人',
-    '合同止期',
-    '线路销售'
-  ];
-  private checkList: any[] = this.dropdownList;
-  private tab: any[] = [
-    {
-      label: '待跟进',
-      name: '0',
-      num: 187
-    },
-    {
-      label: '跟进中',
-      name: '1',
-      num: 1
-    },
-    {
-      label: '已面试',
-      name: '2'
-    },
-    {
-      label: '已面试',
-      name: '3'
-    },
-    {
-      label: '已面试',
-      name: '4'
-    },
-    {
-      label: '已面试',
-      name: '5'
+    private showDialog: boolean= false;
+    private drawer: boolean= false;
+    private total = 0;
+    private list: CargoListData[] = [];
+    private page: Object | undefined = '';
+    private listLoading = true;
+    private tags: any[] = [];
+    private DateValue: any[] = [];
+    private multipleSelection: any[] = []
+    private operationList: any[] = [
+      { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: '3' },
+      { icon: 'el-icon-thumb', name: '分配货主', color: '#5E7BBB', key: '1' },
+      { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
+    ];
+    private dropdownList: any[] = [
+      '货主编号',
+      '线索编号',
+      '销售',
+      '公司简称',
+      '分类',
+      '城市',
+      '联系人',
+      '联系电话',
+      '身份证号',
+      '是否为合同期内',
+      '创建日期',
+      '合同止期',
+      '备注',
+      '操作'
+    ];
+    private checkList: any[] = this.dropdownList;
+    private tab: any[] = [
+      {
+        label: '待跟进',
+        name: '0',
+        num: 187
+      },
+      {
+        label: '跟进中',
+        name: '1',
+        num: 1
+      },
+      {
+        label: '已面试',
+        name: '2'
+      },
+      {
+        label: '已面试',
+        name: '3'
+      },
+      {
+        label: '已面试',
+        name: '4'
+      },
+      {
+        label: '已面试',
+        name: '5'
+      }
+    ];
+    private listQuery: IState = {
+      key: '',
+      city: '',
+      page: 1,
+      limit: 30,
+      endDate: '',
+      startDate: '',
+      state: '',
+      lineSaleId: ''
+    };
+
+    created() {
+      this.fetchData()
     }
-  ];
-  private listQuery: IState = {
-    key: '',
-    city: '',
-    page: 1,
-    limit: 30,
-    endDate: '',
-    startDate: '',
-    state: '',
-    lineSaleId: ''
-  };
 
-  created() {
-    this.fetchData()
-  }
+    mounted() {}
 
-  mounted() {}
-
-  activated() {
+    activated() {
     // this.handleScroll()
-  }
-
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-  // 测试dialog
-  private confirm(done: any) {
-    this.$message.info('点击了确定')
-    done()
-  }
-  private cancel(done: any) {
-    this.$message.info('点击了取消')
-    done()
-  }
-  private beforeClose(done: any) {
-    this.$message.info('点击了X')
-    done()
-  }
-  // 所有请求方法
-  private fetchData() {
-    this.getList(this.listQuery)
-  }
-
-  // 处理tags方法
-  private handleTags(value: any) {
-    console.log(value)
-    this.tags = value
-  }
-
-  // 处理query方法
-  private handleQuery(value: any, key: any) {
-    this.listQuery[key] = value
-    this.fetchData()
-  }
-
-  // 处理选择日期方法
-  private handleDate(value: any) {
-    this.DateValue = value
-  }
-
-  // 请求列表
-  private async getList(value: any) {
-    this.listQuery.page = value.page
-    this.listQuery.limit = value.limit
-    this.listLoading = true
-    const { data } = await GetCustomerList(this.listQuery)
-    if (data.success) {
-      this.list = data.data
-      data.page = await HandlePages(data.page)
-      this.total = data.page.total
-      setTimeout(() => {
-        this.listLoading = false
-      }, 0.5 * 1000)
-    } else {
-      this.$message.error(data)
-      setTimeout(() => {
-        this.listLoading = false
-      }, 0.5 * 1000)
     }
-  }
 
-  // 添加明细原因 row 当前行 column 当前列
-  private tableClick(row: any, column: any, cell: any, event: any) {
+    // 判断是否是PC
+    get isPC() {
+      return SettingsModule.isPC
+    }
+    // 确认清除
+    private confirm(done:any) {
+      (this.$refs.multipleTable as any).clearSelection()
+      this.multipleSelection = []
+      done()
+    }
+    // 所有请求方法
+    private fetchData() {
+      this.getList(this.listQuery)
+    }
+
+    // 处理tags方法
+    private handleTags(value: any) {
+      console.log(value)
+      this.tags = value
+    }
+
+    // 处理query方法
+    private handleQuery(value: any, key: any) {
+      this.listQuery[key] = value
+      this.fetchData()
+    }
+
+    // 处理选择日期方法
+    private handleDate(value: any) {
+      this.DateValue = value
+    }
+
+    // 请求列表
+    private async getList(value: any) {
+      this.listQuery.page = value.page
+      this.listQuery.limit = value.limit
+      this.listLoading = true
+      const { data } = await GetCustomerList(this.listQuery)
+      if (data.success) {
+        this.list = data.data
+        data.page = await HandlePages(data.page)
+        this.total = data.page.total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
+      } else {
+        this.$message.error(data)
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
+      }
+    }
+
+    // 添加明细原因 row 当前行 column 当前列
+    private tableClick(row: any, column: any, cell: any, event: any) {
     // switch (column.label) {
     //   case '原因说明':
     //     this.tabClickIndex = row.index
@@ -416,18 +486,47 @@ export default class extends Vue {
     //     break
     //   default: return
     // }
-    console.log('添加明细原因', row, column, cell, event)
-  }
+      console.log('添加明细原因', row, column, cell, event)
+    }
 
-  // 按钮操作
-  private goDetail(id: string | (string | null)[] | null | undefined) {
-    this.$router.push({ name: 'ClueDetail', query: { id: id } })
-  }
+    // 按钮操作
+    private goDetail(id: string | (string | null)[] | null | undefined) {
+      this.$router.push({ name: 'ClueDetail', query: { id: id } })
+    }
 
-  // 批量操作
-  private olClicks(item: any) {
-    console.log(item)
-  }
+    // 批量操作
+    private olClicks(item: any) {
+      if (item.key === '2') {
+        if (this.multipleSelection.length) {
+          this.showDialog = true
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '请先选择货主再进行操作！'
+          })
+        }
+      } else if (item.key === '1') {
+        console.log(this.multipleSelection)
+      } else if (item.key === '3') {
+        this.drawer = true
+      }
+    }
+
+    // table选择框
+    handleSelectionChange(val: any) {
+      this.multipleSelection = val
+    }
+
+    // 关闭查看已选
+    private changeDrawer(val: any) {
+      this.drawer = val
+    }
+
+    // 删除选中项目
+    private deletDrawerList(item:any, i:any) {
+      (this.$refs.multipleTable as any).toggleRowSelection(item, false)
+      this.multipleSelection.splice(i, 1)
+    }
 }
 </script>
 
