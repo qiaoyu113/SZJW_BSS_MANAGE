@@ -13,3 +13,14 @@ export const GetDriverList = (data: any) =>
     method: 'post',
     data
   })
+
+/**
+   *
+   * 获取司机索引列表
+   */
+export const GetDriverIndexesList = (data: any) =>
+  request({
+    url: '/api/bss/v1/bss/driver/selectListByKey',
+    method: 'post',
+    data
+  })

@@ -95,13 +95,14 @@ private formItem:any[] = [
     ]
 ```
 
-| 字段     | 解释                      | 类型   | 是否必填 |
-| -------- | ------------------------- | ------ | -------- |
-| type     | 表单组件类型              | Number | 是       |
-| label    | 汉字显示                  | String | 是       |
-| key      | v-model绑定form对应的属性 | String | 是       |
-| options  | 下拉框，radio等对应的列表 | Array  | 否       |
-| tagAttrs | Input、select等对应的属性 | Object | 否       |
+| 字段     | 解释                               | 类型   | 是否必填 |
+| -------- | ---------------------------------- | ------ | -------- |
+| type     | 表单组件类型                       | Number | 是       |
+| label    | 汉字显示                           | String | 是       |
+| key      | v-model绑定form对应的属性          | String | 是       |
+| options  | 下拉框，radio等对应的列表          | Array  | 否       |
+| tagAttrs | Input、select等对应的属性          | Object | 否       |
+| rules    | 表单校验(参考element-ui的表单验证) | Object | 否       |
 
 > type的类型
 
@@ -112,6 +113,12 @@ private formItem:any[] = [
 | 3    | 日期时间区间 | Number |
 | 4    | radio        | Number |
 | 5    | checkbox     | Number |
+
+> 表单触发的事件
+
+| 事件名 | 类型     | 返回值  |
+| ------ | -------- | ------- |
+| onPass | Function | Boolean |
 
 
 

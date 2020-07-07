@@ -11,11 +11,18 @@ export const articleStatusFilter = (status: string) => {
   return statusMap[status]
 }
 
-export const a = () => {
-  return 123
-}
 
 // Filter to uppercase the first character
 export const uppercaseFirstChar = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export const hidePhone = (cellValue:string) => {
+  if (Number(cellValue) && String(cellValue).length === 11) {
+    let mobile = String(cellValue)
+    let reg = /^(\d{3})\d{4}(\d{4})$/
+    return mobile.replace(reg, '$1****$2')
+  } else {
+    return cellValue
+  }
 }
