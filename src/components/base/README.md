@@ -146,11 +146,12 @@ private formItem:any[] = [
 
 > self-table可以传任何el-table支持的属性
 
-| 字段      | 类型   | 解释               | 是否必填 |
-| --------- | ------ | ------------------ | -------- |
-| tableData | Array  | 和el-table传的一样 | 是       |
-| columns   | Array  | 定义列的数组       | 是       |
-| page      | Object | 分页的对象         | 是       |
+| 字段          | 类型   | 解释                                 | 是否必填 |
+| ------------- | ------ | ------------------------------------ | -------- |
+| tableData     | Array  | 和el-table传的一样                   | 是       |
+| columns       | Array  | 定义列的数组                         | 是       |
+| page          | Object | 分页的对象                           | 是       |
+| operationList | Array  | 批量操作(具体选项参考批量操作的组件) | 否       |
 
 > columns字段
 
@@ -189,4 +190,5 @@ private formItem:any[] = [
 | ---------- | -------- | ---------------------- |
 | onPageSize | function | 分页触发的事件         |
 | onCommand  | Function | 点击下拉菜单触发的事件 |
+| olclick    | Function | 批量操作触发的事件     |
 
