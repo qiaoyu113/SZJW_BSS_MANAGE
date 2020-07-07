@@ -115,5 +115,8 @@ export default class extends Vue {
   .selfForm >>> .el-select {
     width:100%;
   }
+  .selfForm >>> .el-date-editor {
+     width:100%;
+  }
 
 </style>
