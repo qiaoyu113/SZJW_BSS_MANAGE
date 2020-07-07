@@ -26,13 +26,45 @@
 
           slot-scope="scope"
         >
-          <slot
-            v-if="item.slot"
-            :name="item.key"
-            :row="scope.row"
-          />
+          <template v-if="item.moreOp && item.moreOp.length > 0">
+            <el-dropdown @command="handleCommand">
+              <span class="el-dropdown-link">
+                <slot
+                  v-if="item.slot"
+                  :name="item.key"
+                  :row="scope.row"
+                />
+                <template v-else>
+                  {{ scope.row[item.key] }}
+                </template>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  v-for="(sub,index) in item.moreOp"
+                  :key="'dropdown-'+sub.value+index"
+                  :command="sub.value"
+                  v-bind="sub.tagAttrs || {}"
+                >
+                  <template v-if="isPC">
+                    {{ sub.label }}
+                  </template>
+                  <i
+                    v-else
+                    :class="sub.icon"
+                  />
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
           <template v-else>
-            {{ scope.row[item.key] }}
+            <slot
+              v-if="item.slot"
+              :name="item.key"
+              :row="scope.row"
+            />
+            <template v-else>
+              {{ scope.row[item.key] }}
+            </template>
           </template>
         </template>
       </el-table-column>
@@ -50,7 +82,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import Pagination from '@/components/Pagination/index.vue'
-
+import { SettingsModule } from '@/store/modules/settings'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -70,6 +102,10 @@ export default class extends Vue {
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }
   ];
+
+  get isPC() {
+    return SettingsModule.isPC
+  }
   multipleSelection:any[] =[]
 
   /**
@@ -84,8 +120,10 @@ export default class extends Vue {
    */
    @Emit('onPageSize')
   handlePageSizeChange(value:PageObj) {
-
   }
+   @Emit('onCommand')
+   handleCommand(command:any) {
+   }
 }
 </script>
 <style lang="scss" scoped>
