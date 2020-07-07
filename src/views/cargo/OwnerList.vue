@@ -524,8 +524,7 @@ export default class extends Vue {
 
     // 删除选中项目
     private deletDrawerList(item:any, i:any) {
-      (this.$refs.multipleTable as any).toggleRowSelection(item, false)
-      this.multipleSelection.splice(i, 1)
+      (this.$refs.multipleTable as any).toggleRowSelection(item)
     }
 }
 </script>
