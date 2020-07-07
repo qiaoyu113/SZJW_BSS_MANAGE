@@ -96,6 +96,9 @@
             @olclick="handleOlClick"
           >
             <template v-slot:operate="scope">
+              <!--下面这行不要用-->
+              <span v-if="false">{{ scope }}</span>
+              <!--上面这行不要用-->
               <el-button
                 v-if="isPC"
                 type="text"
