@@ -287,7 +287,7 @@ export default class extends Vue {
         height: 20px;
         line-height: 20px;
         border-radius: 20px;
-        padding: 0 4px;
+        padding: 0 7px;
         box-sizing: border-box;
         font-size: 12px;
         font-style: normal;
