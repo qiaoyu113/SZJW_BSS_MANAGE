@@ -142,6 +142,9 @@ export default class extends Vue {
     background: #FFFFFF;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.85);
     box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    z-index: 1000;
     .el-tag{
       background: #649CEE;
       box-shadow: 0 2px 4px 0 rgb(99, 154, 238,0.5);
@@ -167,7 +170,7 @@ export default class extends Vue {
         height: 20px;
         line-height: 20px;
         border-radius: 20px;
-        padding: 0 4px;
+        padding: 0 7px;
         box-sizing: border-box;
         font-size: 12px;
         font-style: normal;

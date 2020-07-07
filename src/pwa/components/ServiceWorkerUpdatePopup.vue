@@ -6,8 +6,8 @@ import { Component, Vue } from 'vue-property-decorator'
 })
 export default class extends Vue {
   private refreshing = false
-  private notificationText = 'New content is available!'
-  private refreshButtonText = 'Refresh'
+  private notificationText = '发现您有新的版本，请点击更新！'
+  private refreshButtonText = '更新'
   private registration: ServiceWorkerRegistration | null = null
 
   created() {
@@ -33,7 +33,7 @@ export default class extends Vue {
     const h = this.$createElement
     this.registration = (e as CustomEvent).detail
     this.$notify.info({
-      title: 'Update available',
+      title: '更新提示',
       message: h('div', { class: 'sw-update-popup' }, [
         this.notificationText,
         h('br'),

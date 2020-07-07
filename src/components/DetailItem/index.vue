@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="isPC ? 'DetailItem' : 'DetailItem-m'"
-  >
+  <div :class="isPC ? 'DetailItem' : 'DetailItem-m'">
     <div class="detail-title">
       {{ name }}:
     </div>
@@ -19,11 +17,10 @@ import { SettingsModule } from '@/store/modules/settings'
   name: 'DetailItem'
 })
 export default class extends Vue {
-  @Prop({ default: '' }) private name: any // 默认无法识别显示空
-  @Prop({ default: '暂无数据' }) private value: any // 默认无法识别显示空
+  @Prop({ default: '' }) private name: any; // 默认无法识别显示空
+  @Prop({ default: '暂无数据' }) private value: any; // 默认无法识别显示空
 
-  created() {
-  }
+  created() {}
 
   get isPC() {
     return SettingsModule.isPC
@@ -32,50 +29,48 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scope>
-.DetailItem{
-    width: 100%;
-    display: flex;
-    padding: 10px;
+.DetailItem {
+  width: 100%;
+  display: flex;
+  padding: 10px;
+  box-sizing: border-box;
+  .detail-title {
+    flex: 1;
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    text-align: right;
+    padding-right: 16px;
     box-sizing: border-box;
-    .detail-title{
-        flex: 1;
-        font-size: 14px;
-        color: #666;
-        font-weight: 400;
-        text-align: right;
-        padding-right: 16px;
-        box-sizing: border-box;
-    }
-    .detail-value{
-        flex: 2;
-        font-size: 14px;
-        color: #333;
-        font-weight: 500;
-    }
+  }
+  .detail-value {
+    flex: 2;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+  }
 }
 </style>
 
 <style lang="scss" scope>
 .DetailItem-m{
     width: 100%;
-    display: flex;
-    padding: 14px;
+    padding: 10px 14px;
     box-sizing: border-box;
     border-bottom: 1px solid #F8F9FA;
     .detail-title{
-        flex: 1;
-        font-size: 14px;
+        width: 100%;
+        font-size: 12px;
         color: #666;
         font-weight: 400;
         text-align: left;
         padding-right: 15px;
+        padding-bottom: 10px;
         box-sizing: border-box;
     }
     .detail-value{
-        flex: 2;
-        text-align: right;
+        width: 100%;
         font-size: 14px;
-        color: #333;
         font-weight: 400;
     }
 }
