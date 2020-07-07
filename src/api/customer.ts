@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
+// 获取线索
 export const GetCustomerList = (data: any) =>
   request({
-    url: 'api/bss/v1/bss/customer/pool/selectListByQuery',
+    url: 'api/bss/v1/bss/line/task/selectListByConditionsQuery',
     method: 'post',
     data
   })
