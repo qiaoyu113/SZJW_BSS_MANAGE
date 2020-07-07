@@ -2,13 +2,12 @@
   <div class="selfTable">
     <el-table
       ref="multipleTable"
-      class="table_center"
-      height="100%"
+      max-height="400px"
       :row-style="{height: '20px'}"
       :cell-style="{padding: '5px 0'}"
       :data="tableData"
       v-bind="$attrs"
-      style="width: 100%"
+      style="width: 100%; "
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -24,19 +23,17 @@
         :fixed="item.fixed"
       >
         <template
-          v-if="item.slot"
+
           slot-scope="scope"
         >
           <slot
+            v-if="item.slot"
             :name="item.key"
             :row="scope.row"
           />
-        </template>
-        <template
-          v-show="!item.slot"
-          slot-scope="scope"
-        >
-          {{ scope.row[item.key] }}
+          <template v-else>
+            {{ scope.row[item.key] }}
+          </template>
         </template>
       </el-table-column>
     </el-table>
@@ -93,14 +90,10 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .selfTable{
-    height: calc(100vh - 225px) !important;
+    padding: 10px;
     background: #FFFFFF;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     overflow: hidden;
-    .table_center{
-      height: calc(100vh - 360px) !important;
-      background: #FFFFFF;
-      overflow-y: scroll;
-    }
+
   }
 </style>
