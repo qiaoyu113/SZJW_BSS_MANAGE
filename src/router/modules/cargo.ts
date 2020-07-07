@@ -62,18 +62,6 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
-      path: 'myowner', /* 我的货主 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/MyOwner.vue'),
-      name: 'MyOwner',
-      meta: {
-        title: 'myOwner',
-        activeMenu: '/cargo/myowner',
-        noCache: false,
-        icon: '',
-        apiUrl: 'root'
-      }
-    },
-    {
       path: 'linemanage', /* 线路清单 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/LineManage.vue'),
       name: 'LineManage',

@@ -22,7 +22,11 @@
         </div>
         <div class="tip">
           <p> <span>【tab】</span> 为状态列表数据（Array） </p>
+          <p> <span>【label】</span> 为【tab】中的属性:展示名称 </p>
+          <p> <span>【name】</span> 为【tab】中的属性:唯一标志符 </p>
+          <p> <span>【num】</span> 为【tab】中的属性:状态数量 </p>
           <p> <span>【tags】</span> 为点击筛选后展示状态数据（Array） </p>
+          <p> <span>【matchName】</span> 为子form模块中的方法，通过switch，case自定义那么来判断取值，赋值给tags展示在tags状态栏中 </p>
           <p> <span>【listQuery.state】</span> 需要和tab中name对应，点击tag栏修改listQuery.state的值（String） </p>
         </div>
         <div class="fucTip">
@@ -46,9 +50,10 @@
         </div>
         <div class="tip">
           <p> <span>【operation-list】</span> 为批量操作列（Array） </p>
-          <p> <span>【icon】</span> operation-list中图标配置 </p>
-          <p> <span>【name】</span> operation-list中名称配置 </p>
-          <p> <span>【color】</span> operation-list中背景色配置 </p>
+          <p> <span>【icon】</span> 【operation-list】中图标配置 </p>
+          <p> <span>【name】</span> 【operation-list】中名称配置 </p>
+          <p> <span>【color】</span>【operation-list】中背景色配置 </p>
+          <p> <span>【自定义】</span>【operation-list】中自定义配置 </p>
         </div>
         <div class="fucTip">
           <p> <span>[olclick]</span> 点击操作时回调方法 </p>
@@ -233,15 +238,18 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '状态1',
-        name: '0'
+        name: '0',
+        num: 10
       },
       {
         label: '状态2',
-        name: '1'
+        name: '1',
+        num: 20
       },
       {
         label: '状态3',
-        name: '2'
+        name: '2',
+        num: 3
       },
       {
         label: '状态4',

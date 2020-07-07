@@ -10,7 +10,6 @@ export default {
     ownerList: '货主列表',
     driverDetail: '司机详情',
     customerTitle: '客户管理',
-    myOwner: '我的货主',
     lineManage: '线路清单',
     tenderManage: '标书管理',
     transportTitle: '运力中心',
