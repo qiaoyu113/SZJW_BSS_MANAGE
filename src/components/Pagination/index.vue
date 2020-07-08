@@ -8,7 +8,7 @@
       @olclick="olclick"
     />
     <el-pagination
-      :small="!isPC"
+      :small="small"
       :background="background"
       :current-page.sync="currentPage"
       :page-size.sync="pageSize"
@@ -44,6 +44,7 @@ export default class extends Vue {
   @Prop({ default: true }) private background!: boolean
   @Prop({ default: true }) private autoScroll!: boolean
   @Prop({ default: false }) private hidden!: boolean
+  @Prop({ default: !SettingsModule.isPC }) private small!: boolean
   // 批量操作按钮
   @Prop({ default: [] }) private operationList!:[]
   private showList: Boolean = false

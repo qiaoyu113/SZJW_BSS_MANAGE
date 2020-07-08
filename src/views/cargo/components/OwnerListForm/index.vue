@@ -139,12 +139,6 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
-                  type="danger"
-                >
-                  分配货主
-                </el-button>
-                <el-button
-                  :class="isPC ? 'filter-item' : 'filter-item-m'"
                 >
                   重置
                 </el-button>
