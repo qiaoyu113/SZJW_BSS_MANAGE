@@ -25,7 +25,7 @@
           type="primary"
           size="small"
           name="cluelist_creat_btn"
-          @click="showDialog = true"
+          @click="showDialog.visible = true"
         >
           <i class="el-icon-s-operation" />
           <span v-if="isPC">创建客户</span>
@@ -276,7 +276,7 @@
 
     <!-- <Dialog
       :visible.sync="showDialog"
-      :title="`测试标题`"
+      :title="`分配货主`"
       :show-cancel-button="true"
       :show-confirm-button="true"
       @confirm="confirm"
@@ -286,19 +286,14 @@
         :date-value="DateValue"
         @handle-tags="handleTags"
       />
-      <ClueListForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
-      />
     </Dialog> -->
     <Dialog
-      :visible.sync="showDialog"
-      :title="`清空确认`"
+      :visible.sync="showDialog.visible"
+      :title="showDialog.title"
       :center="true"
       :confirm="confirm"
     >
-      <p>确认清空所有选择吗？</p>
+      <p>{{ showDialog.text }}</p>
     </Dialog>
   </div>
 </template>
@@ -336,7 +331,12 @@ interface IState {
   }
 })
 export default class extends Vue {
-    private showDialog: boolean= false;
+    private showDialog: Object= {
+      visible: false,
+      title: '提示',
+      text: '内容',
+      name: ''
+    };
     private drawer: boolean= false;
     private total = 0;
     private list: CargoListData[] = [];
@@ -422,8 +422,12 @@ export default class extends Vue {
     }
     // 确认清除
     private confirm(done:any) {
-      (this.$refs.multipleTable as any).clearSelection()
-      this.multipleSelection = []
+      if (this.showDialog[name] === '1') {
+        (this.$refs.multipleTable as any).clearSelection()
+        this.multipleSelection = []
+      } else {
+        console.log(12)
+      }
       done()
     }
     // 所有请求方法
@@ -498,7 +502,12 @@ export default class extends Vue {
     private olClicks(item: any) {
       if (item.key === '2') {
         if (this.multipleSelection.length) {
-          this.showDialog = true
+          this.showDialog = {
+            visible: true,
+            title: '清空确认',
+            text: '确认清空所有选择吗？',
+            name: '1'
+          }
         } else {
           this.$message({
             type: 'warning',
@@ -506,7 +515,19 @@ export default class extends Vue {
           })
         }
       } else if (item.key === '1') {
-        console.log(this.multipleSelection)
+        if (this.multipleSelection.length) {
+          this.showDialog = {
+            visible: true,
+            title: '提示',
+            text: '分配货主后关联的相关线索也会分配给该销售！',
+            name: '2'
+          }
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '请先选择货主再进行操作！'
+          })
+        }
       } else if (item.key === '3') {
         this.drawer = true
       }
