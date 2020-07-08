@@ -1,12 +1,13 @@
 <template>
   <el-row
-    :gutter="isPC ? 20 :0"
+    :gutter="20"
     class="selfForm"
   >
     <el-form
       ref="ruleForm"
-      :form="listQuery"
+      :model="listQuery"
       v-bind="$attrs"
+      :rules="rules"
     >
       <el-col
         v-for="(item,idx) in formItem"
@@ -73,15 +74,14 @@
           </el-checkbox-group>
           <slot v-else-if="item.slot" />
         </el-form-item>
-        <div class="btn">
-          <slot name="btn" />
-        </div>
       </el-col>
+      <div class="clearfix" />
     </el-form>
+    <slot name="btn" />
   </el-row>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
@@ -97,10 +97,26 @@ export default class extends Vue {
     @Prop({ default: '80px' }) labelWith!:String
     @Prop({ default: () => {} }) listQuery!:IState
     @Prop({ default: () => [] }) formItem!:any[]
-    @Prop({ default: 8 }) pcCol!:Number
+    @Prop({ default: 6 }) pcCol!:Number
     @Prop({ default: () => {} }) rules!:IState
     get isPC() {
       return SettingsModule.isPC
+    }
+    submitForm() {
+      ((this.$refs['ruleForm']) as any).validate((valid:boolean) => {
+        if (valid) {
+          this.handlePass(valid)
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    }
+    resetForm() {
+      ((this.$refs['ruleForm']) as any).resetFields()
+    }
+    @Emit('onPass')
+    handlePass(isPass:boolean) {
     }
 }
 </script>
@@ -108,10 +124,19 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .selfForm {
    padding:20px;
+   .clearfix {
+     display: block;
+     content:'';
+     overflow: hidden;
+     clear: both;
+   }
   }
 </style>
 
 <style scoped>
+  .selfForm >>> .el-input {
+     width:100%;
+  }
   .selfForm >>> .el-select {
     width:100%;
   }

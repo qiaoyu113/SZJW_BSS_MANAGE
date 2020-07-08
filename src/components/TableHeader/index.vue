@@ -91,7 +91,7 @@ export default class extends Vue {
         line-height: 30px;
     }
     .TableHeader_button{
-        flex: 1;
+        flex: 2;
         text-align: right;
         box-sizing: border-box;
     }
