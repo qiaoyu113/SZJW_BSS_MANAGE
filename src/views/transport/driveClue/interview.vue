@@ -8,7 +8,7 @@
         <span class="name">面试信息表</span> <span class="tag">专车</span>
         <div class="step">
           <el-steps
-            :active="1"
+            :active="active"
             align-center
           >
             <el-step
@@ -26,31 +26,71 @@
           </el-steps>
         </div>
       </div>
-      <self-form
-        ref="SelfForm"
-        :list-query="listQuery"
-        :form-item="formItem"
-        label-with="80px"
-        :pc-col="12"
-        :rules="rules"
-        @onPass="handlePassClick"
-      >
-        <template slot="btn">
-          <el-col
-            :span="isPC ? 12 :24"
-            :offset="isPC ? 6 :0"
-          >
-            <el-button
-              style="width:100%;"
-              type="primary"
-              name="interview_next_btn"
-              @click="handleNextClick"
+      <!-- 基本信息 -->
+      <template v-if="active === 0">
+        <self-form
+          ref="SelfForm"
+          :list-query="listQuery"
+          :form-item="formItem"
+          label-with="80px"
+          :pc-col="12"
+          :rules="rules"
+          @onPass="handlePassClick"
+        >
+          <template slot="btn">
+            <el-col
+              class="btn"
+              :span="isPC ? 12 :24"
+              :offset="isPC ? 6 :0"
             >
-              下一步
-            </el-button>
-          </el-col>
-        </template>
-      </self-form>
+              <el-button
+                style="width:100%;"
+                type="primary"
+                name="interview_next_btn"
+                @click="handleNextClick"
+              >
+                下一步
+              </el-button>
+            </el-col>
+          </template>
+        </self-form>
+      </template>
+      <!-- 面试信息 -->
+      <template v-else-if="active ===1">
+        <div class="interviewInfo">
+          <h4 class="text">
+            根据金数据面试表实现
+            不包括基本信息中的属性
+            不包括加盟经理、小组，取当前用户数据
+          </h4>
+          <el-row>
+            <el-col
+              :span="8"
+              :offset="2"
+            >
+              <el-button
+                type="primary"
+                class="btn"
+                style="width:100%"
+              >
+                上一步
+              </el-button>
+            </el-col>
+            <el-col
+              :span="8"
+              :offset="2"
+            >
+              <el-button
+                type="primary"
+                class="btn"
+                style="width:100%"
+              >
+                提交
+              </el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </template>
     </el-card>
   </div>
 </template>
@@ -72,6 +112,7 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private active:number = 1
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -146,7 +187,7 @@ export default class extends Vue {
   }
 
   handlePassClick(val:boolean) {
-    console.log(val)
+    this.active = 1
   }
 }
 </script>
@@ -171,9 +212,22 @@ export default class extends Vue {
       border-top:1px solid #DADBE7;
     }
    }
+   .text {
+     margin-top: 50px;
+     text-align: center;
+   }
   }
 </style>
 
 <style scoped>
+  .interview >>> .el-card {
+    padding: 0px;
+    height: calc(100vh - 140px);
+  }
 
+  @media screen and (min-width: 701px) {
+    .btn {
+      margin-top:160px;
+    }
+  }
 </style>

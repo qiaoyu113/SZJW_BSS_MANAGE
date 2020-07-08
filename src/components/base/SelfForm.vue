@@ -17,6 +17,7 @@
         <el-form-item
           :label="item.label"
           :prop="item.key"
+          :label-width="item.w"
         >
           <!-- 输入框 -->
           <el-input
@@ -72,7 +73,10 @@
               :label="sub.value"
             />
           </el-checkbox-group>
-          <slot v-else-if="item.slot" />
+          <slot
+            v-else-if="item.slot"
+            :name="item.type"
+          />
         </el-form-item>
       </el-col>
       <div class="clearfix" />
@@ -134,14 +138,21 @@ export default class extends Vue {
 </style>
 
 <style scoped>
+  .selfForm >>> .el-form-item__content {
+    display: flex;
+    flex: 1;
+  }
   .selfForm >>> .el-input {
-     width:100%;
+    display: flex;
+    flex: 1;
   }
   .selfForm >>> .el-select {
-    width:100%;
+    display: flex;
+    flex: 1;
   }
   .selfForm >>> .el-date-editor {
-     width:100%;
+    display: flex;
+    flex: 1;
   }
 
 </style>

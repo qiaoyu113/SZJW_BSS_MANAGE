@@ -10,30 +10,31 @@
       <self-form
         :list-query="listQuery"
         :form-item="formItem"
-        label-with="80px"
+        label-width="80px"
       >
-        <template slot="btn">
-          <el-col :span="12">
-            <el-button
-              style="width:100%;"
-              type="warning"
-              name="driverclue_reset_btn"
-              @click="handleResetClick"
-            >
-              重置
-            </el-button>
-          </el-col>
-          <el-col :span="12">
-            <el-button
-              style="width:100%;"
-              type="primary"
-              name="driverclue_filter_btn"
-              @click="handleFilterClick"
-            >
-              筛选
-            </el-button>
-          </el-col>
-        </template>
+        <div
+          slot="btn"
+          :class="isPC ? 'btnPc' : ''"
+        >
+          <el-button
+
+            type="warning"
+            :class="isPC ? '' : 'btnMobile'"
+            name="driverclue_reset_btn"
+            @click="handleResetClick"
+          >
+            重置
+          </el-button>
+          <el-button
+
+            :class="isPC ? '' : 'btnMobile'"
+            type="primary"
+            name="driverclue_filter_btn"
+            @click="handleFilterClick"
+          >
+            筛选
+          </el-button>
+        </div>
       </self-form>
     </suggest-container>
     <!-- 表格顶部的按钮 -->
@@ -250,23 +251,26 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '姓名'
+        placeholder: '请输入姓名'
       },
+      label: '姓名',
       key: 'name'
     },
     {
       type: 1,
       tagAttrs: {
-        placeholder: '电话'
+        placeholder: '请输入电话'
       },
+      label: '电话',
       key: 'phone'
     },
     {
       type: 2,
       key: 'carType',
       tagAttrs: {
-        placeholder: '车型'
+        placeholder: '请选择车型'
       },
+      label: '车型',
       options: [
         {
           label: '依维柯',
@@ -281,8 +285,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '来源渠道'
+        placeholder: '请选择来源渠道'
       },
+      label: '来源渠道',
       key: 'channel',
       options: [
         {
@@ -294,8 +299,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '工作城市'
+        placeholder: '请选择工作城市'
       },
+      label: '工作城市',
       key: 'city',
       options: [
         {
@@ -307,8 +313,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '跟进人'
+        placeholder: '请选择跟进人'
       },
+      label: '跟进人',
       key: 'followPerson',
       options: [
         {
@@ -320,8 +327,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '只看我的'
+        placeholder: '请选择'
       },
+      label: '只看我的',
       key: 'onlyCan',
       options: [
         {
@@ -333,9 +341,6 @@ export default class extends Vue {
           value: 2
         }
       ]
-    },
-    {
-      slot: true
     }
   ]
 
@@ -546,6 +551,16 @@ export default class extends Vue {
       &.giveup {
         background: $--color-danger;
       }
+    }
+    .btnPc {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:100%;
     }
   }
 </style>
