@@ -5,6 +5,8 @@ export default {
     driverList: '司机列表',
     cargoTitle: '货源中心',
     clueList: '线索列表',
+    addClue: '新增线索',
+    editClue: '编辑线索',
     clueDetail: '线索详情',
     myClue: '我的线索',
     ownerList: '货主列表',

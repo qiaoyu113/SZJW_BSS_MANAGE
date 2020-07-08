@@ -25,6 +25,32 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
+      path: 'addclue', /* 新增线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      name: 'AddClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'addClue',
+        hidden: true,
+        icon: '',
+        noCache: false
+      }
+    },
+    {
+      path: 'editclue', /* 编辑线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      name: 'EditClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'editClue',
+        hidden: true,
+        icon: '',
+        noCache: false
+      }
+    },
+    {
       path: 'cluedetail', /* 线索详情 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueDetail.vue'),
       name: 'ClueDetail',

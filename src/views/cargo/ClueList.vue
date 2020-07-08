@@ -23,6 +23,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           name="cluelist_creat_btn"
+          @click="createClue"
         >
           <i class="el-icon-s-operation" />
           <span v-if="isPC">新增线索</span>
@@ -63,6 +64,7 @@
       <!--table表单-->
       <div class="table_center">
         <el-table
+          ref="multipleTable"
           v-loading="listLoading"
           :data="list"
           :row-style="{height: '20px'}"
@@ -264,7 +266,7 @@
                     转化
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
+                    @click.native="goEdit(scope.row.customerNo)"
                   >
                     编辑
                   </el-dropdown-item>
@@ -343,6 +345,7 @@
       </el-table>
       <pagination
         v-show="dialogTotal > 0"
+        :small="true"
         :operation-list="[]"
         :total="dialogTotal"
         :page.sync="dialogListQuery.page"
@@ -350,6 +353,19 @@
         @pagination="getDialogList"
       />
     </Dialog>
+    <!-- 右侧侧边栏 -->
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleSelection"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="{item}">
+        <span>{{ item.customerName }}</span>
+        <span>{{ item.customerName }}</span>
+        <span>{{ item.customerName }}</span>
+      </template>
+    </PitchBox>
   </div>
 </template>
 
@@ -363,6 +379,7 @@ import { ClueListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
 
 import { GetCustomerList } from '@/api/customer'
 import { CargoListData } from '@/api/types'
@@ -382,7 +399,8 @@ interface IState {
     ClueListForm,
     TableHeader,
     Pagination,
-    Dialog
+    Dialog,
+    PitchBox
   }
 })
 export default class extends Vue {
@@ -428,7 +446,21 @@ export default class extends Vue {
     lineSaleId: ''
   };
 
-  private dropdownList: any[] = ['线索编号', '分配状态', '销售', '线索状态', '线索来源', '城市', '公司', '姓名', '手机号', '职务', '创建日期', '更新日期', '备注'];
+  private dropdownList: any[] = [
+    '线索编号',
+    '分配状态',
+    '销售',
+    '线索状态',
+    '线索来源',
+    '城市',
+    '公司',
+    '姓名',
+    '手机号',
+    '职务',
+    '创建日期',
+    '更新日期',
+    '备注'
+  ];
   private checkList: any[] = this.dropdownList;
 
   // table
@@ -439,16 +471,16 @@ export default class extends Vue {
   private multipleSelection: any[] = [];
   // 分页
   private operationList: any[] = [
-    { icon: 'el-icon-edit-outline', name: '批量分配线索', color: '#978374', value: 1 },
-    { icon: 'el-icon-tickets', name: '查看选中', color: '#978374', value: 2 },
-    { icon: 'el-icon-document-delete', name: '取消选中', color: '#999', value: 3 }
+    { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: 1 },
+    { icon: 'el-icon-thumb', name: '分配线索', color: '#5E7BBB', key: 2 },
+    { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: 3 }
   ];
   // message 提示
   private showMessage: boolean = false;
-  private messageBox: IState ={
+  private messageBox: IState = {
     title: '',
     message: ''
-  }
+  };
   // 弹窗
   private dialogLoading: boolean = false;
   private showDialog: boolean = false;
@@ -459,7 +491,10 @@ export default class extends Vue {
   private dialogListQuery: IState = {
     page: 1,
     limit: 10
-  }
+  };
+  // 侧边栏
+  private drawer: boolean = false;
+
   // 计算属性
   get isPC() {
     return SettingsModule.isPC
@@ -503,7 +538,7 @@ export default class extends Vue {
     // console.log('添加明细原因', row, column, cell, event)
   }
   // 选中
-  handleSelectionChange(val:any) {
+  private handleSelectionChange(val: any) {
     this.multipleSelection = val
   }
   // 请求列表
@@ -520,7 +555,9 @@ export default class extends Vue {
       this.$message.error(data)
     }
     setTimeout(() => {
-      const el = document.querySelector('.el-table .el-table__body-wrapper') as HTMLElement
+      const el = document.querySelector(
+        '.el-table .el-table__body-wrapper'
+      ) as HTMLElement
       el.scroll(0, 0)
       this.listLoading = false
     }, 0.5 * 1000)
@@ -530,26 +567,42 @@ export default class extends Vue {
   private goDetail(id: string | (string | null)[] | null | undefined) {
     this.$router.push({ name: 'ClueDetail', query: { id: id } })
   }
-
+  private goEdit(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'EditClue', query: { id: id } })
+  }
+  // 新增线索
+  private createClue() {
+    this.$router.push({ name: 'AddClue' })
+  }
   // 批量操作
   private olClicks(item: any) {
-    const val: number = item.value
-    if (this.multipleSelection.length === 0 && val !== 3) {
+    const key: number = item.key
+    if (this.multipleSelection.length === 0) {
       this.$message.warning(`请先选择线索`)
       return
     }
-    switch (val) {
-      case 1: // 批量分配线索
+    switch (key) {
+      case 1: // 查看选中
+        this.drawer = true
+        break
+      case 2: // 批量分配线索
+        if (key === 2) {
+          this.messageBox.title = '提示'
+          this.messageBox.message = '已选线索中包含已分配状态线索3条，请确认要对这些线索重新分配！'
+          this.showMessage = true
+        }
         this.showDialog = true
         this.$nextTick(() => {
           this.getDialogList(this.dialogListQuery)
         })
         break
-      case 2: // 查看选中
-
-        break
       case 3: // 取消选中
-
+        this.$confirm('确认清空所有选择吗？', '确认清空', {
+          type: 'warning'
+        }).then(() => {
+          (this.$refs.multipleTable as any).clearSelection()
+          this.multipleSelection = []
+        }).catch(() => {})
         break
       default:
         break
@@ -557,26 +610,33 @@ export default class extends Vue {
   }
 
   // table index
-  indexMethod(type: string) {
-    let page: number, limit:number
+  private indexMethod(type: string) {
+    let page: number, limit: number
     if (type === 'listQuery') {
       ({ page, limit } = this.listQuery)
     } else if (type === 'dialogListQuery') {
       ({ page, limit } = this.listQuery)
     }
     return (index: number) => {
-      return (index + 1) + (page - 1) * limit
+      return index + 1 + (page - 1) * limit
     }
   }
   // 弹窗操作
-  confirm(done: any) {
+  private confirm(done: any) {
     // 提交操作
     console.log(111)
   }
   // 弹窗表格选中
-  handleSelectionDialog(val: any) {
+  private handleSelectionDialog(val: any) {
     this.multipleSelectionDialog = val
   }
+  // 确认清除
+  // private confirm(done:any) {
+  //   (this.$refs.multipleTable as any).clearSelection()
+  //   this.multipleSelection = []
+  //   done()
+  // }
+  // 获取弹窗list
   async getDialogList(value: any) {
     this.dialogListQuery.page = value.page
     this.dialogListQuery.limit = value.limit
@@ -592,6 +652,17 @@ export default class extends Vue {
       this.dialogLoading = false
     }, 0.5 * 1000)
   }
+  // 侧边栏
+  // 删除选中项目
+  private deletDrawerList(item: any, i: any) {
+    (this.$refs.multipleTable as any).toggleRowSelection(item, false)
+    this.multipleSelection.splice(i, 1)
+  }
+  // 关闭查看已选
+  private changeDrawer(val: any) {
+    this.drawer = val
+  }
+
   created() {
     this.fetchData()
   }
@@ -618,7 +689,6 @@ export default class extends Vue {
     }
   }
 }
-
 </style>
 
 <style lang="scss" scoped>
@@ -641,15 +711,15 @@ export default class extends Vue {
 }
 </style>
 <style lang="scss" scoped>
-.mb10{
+.mb10 {
   margin-bottom: 10px;
 }
 .btn-item,
-.btn-item-m{
+.btn-item-m {
   margin: 0 10px;
 }
 .btn-item-filtrate,
-.btn-item-filtrate-m{
+.btn-item-filtrate-m {
   background-color: $assist-btn;
   border-color: $assist-btn;
 }

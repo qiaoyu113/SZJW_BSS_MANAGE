@@ -6,6 +6,8 @@ export default {
     driverDetail: 'DriverDetail',
     cargoTitle: 'CargoCenter',
     clueList: 'ClueList',
+    addClue: 'addClue',
+    editClue: 'editClue',
     clueDetail: 'ClueDetail',
     myClue: 'MyClue',
     ownerList: 'OwnerList',
