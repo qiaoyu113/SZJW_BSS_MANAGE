@@ -11,7 +11,7 @@
     >
       <el-col
         v-for="(item,idx) in formItem"
-        :key="item.type + idx"
+        :key="item.label + idx"
         :span="isPC ? pcCol : 24"
       >
         <el-form-item
@@ -73,6 +73,12 @@
               :label="sub.value"
             />
           </el-checkbox-group>
+          <el-date-picker
+            v-else-if="item.type ===6"
+            v-model="listQuery[item.key]"
+            type="date"
+            placeholder="选择日期"
+          />
           <slot
             v-else-if="item.slot"
             :name="item.type"
@@ -98,7 +104,6 @@ import '@/styles/common.scss'
   })
 export default class extends Vue {
     // 判断是否是PC
-    @Prop({ default: '80px' }) labelWith!:String
     @Prop({ default: () => {} }) listQuery!:IState
     @Prop({ default: () => [] }) formItem!:any[]
     @Prop({ default: 6 }) pcCol!:Number
@@ -153,6 +158,11 @@ export default class extends Vue {
   .selfForm >>> .el-date-editor {
     display: flex;
     flex: 1;
+  }
+
+  .selfForm >>> .el-radio {
+    height:36px;
+    line-height: 36px;
   }
 
 </style>

@@ -51,8 +51,21 @@ const transportRouter: RouteConfig = {
       }
     },
     {
+      path: 'followClue', /* 线索跟进 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/followClue.vue'),
+      name: 'FollowClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverclue',
+        title: 'driverClue',
+        hidden: true,
+        icon: '',
+        noCache: false
+      }
+    },
+    {
       path: 'driverlist', /* 司机列表 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/DriverList.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/DriverList.vue'),
       name: 'DriverList',
       meta: {
         apiUrl: '/bss/v1/bss/line/customer/selectListByKey',

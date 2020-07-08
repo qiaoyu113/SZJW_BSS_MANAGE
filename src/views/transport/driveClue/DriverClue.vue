@@ -105,6 +105,7 @@
       :page="page"
       @onPageSize="handlePageSize"
       @olclick="handleOlClick"
+      @onCommand="handleCommandChange"
     >
       <template v-slot:phone="scope">
         <span v-if="scope.row.isShow">{{ scope.row.phone | hidePhone }}</span>
@@ -127,7 +128,25 @@
       <template v-slot:lastTime="scope">
         <span>{{ scope.row.lastTime | Timestamp }}</span>
       </template>
+      <template v-slot:op="scope">
+        <el-button
+          v-if="isPC"
+          :a="scope"
+          type="text"
+        >
+          更多操作
+        </el-button>
+        <i
+          v-else
+          class="el-icon-setting"
+        />
+      </template>
     </self-table>
+    <!-- 线索分配 -->
+    <clue-distribution
+      id="1"
+      ref="clueDistribution"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -139,6 +158,7 @@ import TableHeader from '@/components/TableHeader/index.vue'
 import { GetDriverIndexesList } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
+import ClueDistribution from './components/clueDistribution.vue'
 interface IState {
   [key: string]: any;
 }
@@ -162,7 +182,8 @@ interface PageObj {
     SuggestContainer,
     SelfForm,
     SelfTable,
-    TableHeader
+    TableHeader,
+    ClueDistribution
   }
 })
 
@@ -366,7 +387,6 @@ export default class extends Vue {
    */
   private columns:any[] = [
     {
-      fixed: 'left',
       key: 'name',
       label: '姓名',
       disabled: true
@@ -405,6 +425,34 @@ export default class extends Vue {
       slot: true,
       key: 'lastTime',
       label: '最后时间'
+    },
+    {
+      slot: true,
+      fixed: 'right',
+      key: 'op',
+      label: '操作',
+      moreOp: [
+        {
+          label: '修改线索',
+          value: 'edit',
+          icon: 'el-icon-edit'
+        },
+        {
+          label: '分配线索',
+          value: 'distribution',
+          icon: 'el-icon-s-custom'
+        },
+        {
+          label: '发起面试',
+          value: 'interview',
+          icon: 'el-icon-chat-dot-square'
+        },
+        {
+          label: '线索跟进',
+          value: 'follow',
+          icon: 'el-icon-chat-dot-square'
+        }
+      ]
     }
   ]
 
@@ -530,6 +578,36 @@ export default class extends Vue {
     this.$router.push({
       path: '/transport/interview'
     })
+  }
+  /**
+   * 更多操作
+   */
+  handleCommandChange(key:string|number, row:any) {
+    console.log('xxx:', key, row)
+    if (key === 'edit') { // 修改线索
+      this.$router.push({
+        path: '/transport/createClue',
+        query: {
+          id: row.id
+        }
+      })
+    } else if (key === 'distribution') { // 分配线索
+      (this.$refs.clueDistribution as any).openDialog()
+    } else if (key === 'interview') { // 发起面试
+      this.$router.push({
+        path: '/transport/interview',
+        query: {
+          id: row.id
+        }
+      })
+    } else if (key === 'follow') { // 线索跟进
+      this.$router.push({
+        path: '/transport/followClue',
+        query: {
+          id: row.id
+        }
+      })
+    }
   }
 }
 </script>
