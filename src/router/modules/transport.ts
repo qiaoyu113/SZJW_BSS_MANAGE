@@ -14,12 +14,38 @@ const transportRouter: RouteConfig = {
   children: [
     {
       path: 'driverclue', /* 司机线索 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/DriverClue.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/DriverClue.vue'),
       name: 'DriverClue',
       meta: {
         apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
         activeMenu: '/transport/driverclue',
         title: 'driverClue',
+        icon: '',
+        noCache: false
+      }
+    },
+    {
+      path: 'createClue', /* 创建司机线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
+      name: 'CreateClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverclue',
+        title: 'driverClue',
+        hidden: true,
+        icon: '',
+        noCache: false
+      }
+    },
+    {
+      path: 'interview', /* 发起面试 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/interview.vue'),
+      name: 'Interview',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverclue',
+        title: 'driverClue',
+        hidden: true,
         icon: '',
         noCache: false
       }

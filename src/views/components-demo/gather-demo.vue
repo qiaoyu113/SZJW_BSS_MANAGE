@@ -92,11 +92,23 @@
             :columns="columns"
             :page="page"
             @onPageSize="handlePageSize"
+            @onCommand="handleCommandChange"
+            @olclick="handleOlClick"
           >
-            <template v-slot:status="scope">
-              <span v-if="scope.row.status === 1">待分配</span>
-              <span v-else-if="scope.row.status === 2">待跟进</span>
-              <span v-else-if="scope.row.status === 3">已面试</span>
+            <template v-slot:operate="scope">
+              <!--下面这行不要用-->
+              <span v-if="false">{{ scope }}</span>
+              <!--上面这行不要用-->
+              <el-button
+                v-if="isPC"
+                type="text"
+              >
+                更多操作
+              </el-button>
+              <i
+                v-else
+                class="el-icon-setting"
+              />
             </template>
           </self-table>
         </div>
@@ -316,24 +328,37 @@ export default class extends Vue {
       {
         type: 1,
         label: '姓名',
-        placeholder: '请输入姓名',
-        key: 'name'
+        key: 'name',
+        tagAttrs: {
+          placeholder: '请输入姓名'
+        }
       },
       {
         type: 1,
         label: '电话',
-        placeholder: '请输入电话',
-        key: 'phone'
+        key: 'phone',
+        tagAttrs: {
+          placeholder: '请输入电话'
+        }
       },
       {
         type: 2,
         label: '来源渠道',
-        placeholder: '请选择来源渠道',
         key: 'channel',
+        tagAttrs: {
+          // disabled: true,
+          clearable: true,
+          multiple: true,
+          placeholder: '请选择来源渠道'
+        },
         options: [
           {
             label: '58同城',
             value: '58'
+          },
+          {
+            label: '朋友圈',
+            value: 'wechat'
           }
         ]
       },
@@ -383,15 +408,13 @@ export default class extends Vue {
         name: '段秀英',
         code: 'SX-BJ-198002069437',
         phone: '14798446913',
-        city: '秦皇岛市',
-        status: 1
+        city: '秦皇岛市'
       }
     ]
     columns:any[] =[]
 
     array:any[] = [
       {
-        fixed: 'left',
         key: 'name',
         label: '姓名'
       },
@@ -408,9 +431,22 @@ export default class extends Vue {
         label: '城市'
       },
       {
-        key: 'status',
-        label: '状态',
-        slot: true
+        fixed: 'right',
+        key: 'operate',
+        label: '操作',
+        slot: true,
+        moreOp: [
+          {
+            label: '编辑',
+            value: 'edit',
+            icon: 'el-icon-edit'
+          },
+          {
+            label: '删除',
+            value: 'delete',
+            icon: 'el-icon-delete'
+          }
+        ]
       }
     ]
 
@@ -459,6 +495,10 @@ export default class extends Vue {
       this.listQuery[key] = value
     }
 
+    private handleOlClick(value:any) {
+      console.log('xx:', value)
+    }
+
     // only-number
     private onlyNumber: any = {};
 
@@ -483,7 +523,6 @@ export default class extends Vue {
       this.page.page = page.page
       this.page.limit = page.limit
     }
-
     // 批量操作
     private drawer: boolean= false;
     private multipleSelection: any[] = [{
@@ -501,6 +540,10 @@ export default class extends Vue {
     // 关闭查看已选
     private changeDrawer(val: any) {
       this.drawer = val
+    }
+    // 表格下拉菜单
+    handleCommandChange(key:string|number) {
+      console.log('xxx:', key)
     }
 }
 </script>
