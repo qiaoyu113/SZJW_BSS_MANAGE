@@ -257,6 +257,7 @@ export default class extends Vue {
    *表单对象
    */
   private listQuery:IState = {
+    state: 'all',
     name: '',
     phone: '',
     carType: '',
@@ -542,7 +543,7 @@ export default class extends Vue {
    */
   handleFilterClick() {
     for (let key in this.listQuery) {
-      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1)) {
+      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && key !== 'state') {
         this.tags.push({
           type: 'info',
           name: this.listQuery[key],
