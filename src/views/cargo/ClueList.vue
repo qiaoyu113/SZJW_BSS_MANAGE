@@ -267,7 +267,7 @@ interface IState {
     Dialog
   }
 })
-export default class extends Vue {
+export default class ClueList extends Vue {
   private showDialog: boolean= false;
   private total = 0;
   private list: CargoListData[] = [];

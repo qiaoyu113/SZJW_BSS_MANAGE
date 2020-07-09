@@ -2,7 +2,7 @@
   <div class="selfTable">
     <el-table
       ref="multipleTable"
-      max-height="400px"
+      max-height="0"
       :row-style="{height: '20px'}"
       :cell-style="{padding: '5px 0'}"
       :data="tableData"
