@@ -23,11 +23,10 @@
         :fixed="item.fixed"
       >
         <template
-
           slot-scope="scope"
         >
           <template v-if="item.moreOp && item.moreOp.length > 0">
-            <el-dropdown @command="handleCommand">
+            <el-dropdown @command="(e) => handleCommand(e,scope.row)">
               <span class="el-dropdown-link">
                 <slot
                   v-if="item.slot"
@@ -123,7 +122,7 @@ export default class extends Vue {
   handlePageSizeChange(value:PageObj) {
   }
    @Emit('onCommand')
-   handleCommand(command:any) {
+   handleCommand(command:any, row:any) {
    }
    @Emit('olclick')
    handleOlClick(value:any) {
