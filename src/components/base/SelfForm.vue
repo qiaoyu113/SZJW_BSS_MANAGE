@@ -10,9 +10,9 @@
       :rules="rules"
     >
       <el-col
-        v-for="(item,idx) in formItem"
-        :key="item.label + idx"
-        :span="isPC ? pcCol : 24"
+        v-for="item in formItem"
+        :key="item.label || item.key"
+        :span="isPC ? item.col || pcCol : 24"
       >
         <el-form-item
           :label="item.label"
@@ -73,15 +73,22 @@
               :label="sub.value"
             />
           </el-checkbox-group>
+          <!-- 选择日期 -->
           <el-date-picker
             v-else-if="item.type ===6"
             v-model="listQuery[item.key]"
             type="date"
             placeholder="选择日期"
           />
+          <!-- 显示文本 -->
+          <span
+            v-else-if="item.type ===7"
+            v-bind="item.tagAttrs || {}"
+          >{{ listQuery[item.key] | DataIsNull }}</span>
           <slot
             v-else-if="item.slot"
             :name="item.type"
+            :row="listQuery"
           />
         </el-form-item>
       </el-col>
@@ -164,5 +171,14 @@ export default class extends Vue {
     height:36px;
     line-height: 36px;
   }
+</style>
 
+<style>
+  @media screen and (max-width: 700px) {
+    .el-picker-panel{
+      left: 0 !important;
+      width: 100%!important;
+      overflow-x: auto;
+    }
+  }
 </style>

@@ -1,5 +1,6 @@
 <template>
-  <div class="followByPhoneOrWechat">
+  <div>
+    <!-- 司机跟进 -->
     <Dialog
       :visible.sync="showAlert"
       :title="title"
@@ -19,15 +20,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
-
 interface IState {
   [key: string]: any;
 }
 @Component({
-  name: 'FollowByPhoneOrWechat',
+  name: 'FollowDialog',
   components: {
     Dialog,
     SelfForm
@@ -36,34 +36,28 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: '' }) type!:string
   private showAlert = false
+  private title:string = ''
   private dialogForm:IState = {
     desc: ''
   }
-  private title:string = ''
 
   private dialogItems:any[] = [
     {
       type: 1,
       key: 'desc',
       tagAttrs: {
-        placeholder: '跟进情况描述',
+        placeholder: '描述跟进情况(50字以内)',
         type: 'textarea',
-        rows: 3
+        rows: 3,
+        maxlength: 50,
+        'show-word-limit': true
       }
     }
   ]
 
   @Watch('type')
   onTypeChange(val:string) {
-    if (val === 'phone') {
-      this.title = '电话跟进'
-    } else if (val === 'wechat') {
-      this.title = '微信跟进'
-    } else if (val === 'noValid') {
-      this.title = '无效线索'
-    } else if (val === 'noFollow') {
-      this.title = '无法跟进'
-    }
+    this.title = val
   }
   /**
    *发开模态框
@@ -80,21 +74,17 @@ export default class extends Vue {
   handleClosed() {
     this.dialogForm.desc = ''
   }
+
   cancel() {
     this.showAlert = false
   }
   confirm() {
     if (!this.dialogForm.desc) {
-      return this.$message.error('请输入跟进情况描述')
+      return this.$message.error('请输入跟进情况')
     }
     this.showAlert = false
   }
 }
 </script>
-<style scoped>
-  @media screen and (max-width: 700px) {
-    .followByPhoneOrWechat >>> .el-col {
-      border-bottom:none!important;
-    }
-  }
+<style lang="scss" scoped>
 </style>
