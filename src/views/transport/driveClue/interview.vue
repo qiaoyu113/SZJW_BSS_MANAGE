@@ -70,8 +70,9 @@
             >
               <el-button
                 type="primary"
-                class="btn"
-                style="width:100%"
+                class="inter_btn"
+                name="interview_last_btn"
+                @click.stop="handleLastStep"
               >
                 上一步
               </el-button>
@@ -82,10 +83,47 @@
             >
               <el-button
                 type="primary"
-                class="btn"
-                style="width:100%"
+                class="inter_btn"
+                name="interview_add_btn"
+                @click="handleAddClick"
               >
                 提交
+              </el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </template>
+      <template v-else-if="active ===2">
+        <div class="interviewFinish">
+          <div class="content">
+            <i class="el-icon-success" />
+            <h4>面试已完成</h4>
+          </div>
+          <el-row>
+            <el-col
+              :span="isPC ? 8 :10"
+              :offset="isPC ? 2 :1"
+            >
+              <el-button
+                type="warning"
+                class="finish_btn"
+                name="interview_finish_btn"
+                @click.stop="handleFinishClick"
+              >
+                完成
+              </el-button>
+            </el-col>
+            <el-col
+              :span="isPC ? 8 :10"
+              :offset="isPC ? 2 :1"
+            >
+              <el-button
+                type="primary"
+                class="finish_btn"
+                name="interview_createOrder_btn"
+                @click="handleCreateOeder"
+              >
+                直接创建订单
               </el-button>
             </el-col>
           </el-row>
@@ -112,7 +150,7 @@ interface IState {
   }
 })
 export default class extends Vue {
-  private active:number = 1
+  private active:number = 0
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -182,12 +220,44 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
+  /**
+   * 下一步
+   */
   handleNextClick() {
     ((this.$refs.SelfForm) as any).submitForm()
   }
 
+  /**
+   * 下一步表单验证通过
+   */
   handlePassClick(val:boolean) {
     this.active = 1
+  }
+
+  /**
+   *上一步
+   */
+  handleLastStep() {
+    this.active = 0
+  }
+
+  /**
+   *提交
+   */
+  handleAddClick() {
+    this.active = 2
+  }
+  /**
+   *完成按钮
+   */
+  handleFinishClick() {
+
+  }
+  /**
+   *直接创建订单
+   */
+  handleCreateOeder() {
+
   }
 }
 </script>
@@ -216,18 +286,27 @@ export default class extends Vue {
      margin-top: 50px;
      text-align: center;
    }
-  }
-</style>
-
-<style scoped>
-  .interview >>> .el-card {
-    padding: 0px;
-    height: calc(100vh - 140px);
-  }
-
-  @media screen and (min-width: 701px) {
-    .btn {
-      margin-top:160px;
-    }
+   .inter_btn {
+     margin-top:50px;
+     width: 100%;
+   }
+   .interviewFinish {
+     .content {
+       padding: 50px 0px;
+       text-align: center;
+       .el-icon-success {
+         color:#4CAF50;
+         font-size:60px;
+       }
+       h4 {
+         color:#000;
+         font-weight: bold;
+         font-size:18px;
+       }
+     }
+     .finish_btn {
+        width:100%;
+     }
+   }
   }
 </style>

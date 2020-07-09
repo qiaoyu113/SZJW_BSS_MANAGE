@@ -66,11 +66,11 @@ export default class extends Vue {
   private listQuery:IState = {
     name: '',
     phone: '',
+    wechat: '',
     carType: '',
     channel: '',
     city: '',
-    followPerson: '',
-    onlyCan: ''
+    followPerson: ''
   }
   /**
    *表单数组
@@ -91,6 +91,28 @@ export default class extends Vue {
       },
       label: '电话',
       key: 'phone'
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入微信'
+      },
+      label: '微信',
+      key: 'wechat'
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择工作城市'
+      },
+      label: '工作城市',
+      key: 'city',
+      options: [
+        {
+          label: '华北大区',
+          value: 'huabei'
+        }
+      ]
     },
     {
       type: 2,
@@ -127,46 +149,14 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择工作城市'
+        placeholder: '请选择业务线'
       },
-      label: '工作城市',
-      key: 'city',
-      options: [
-        {
-          label: '华北大区',
-          value: 'huabei'
-        }
-      ]
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择跟进人'
-      },
-      label: '跟进人',
+      label: '业务线',
       key: 'followPerson',
       options: [
         {
           label: 'tom',
           value: 'tom'
-        }
-      ]
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择'
-      },
-      label: '只看我的',
-      key: 'onlyCan',
-      options: [
-        {
-          label: '是',
-          value: 1
-        },
-        {
-          label: '否',
-          value: 2
         }
       ]
     }
@@ -177,6 +167,9 @@ export default class extends Vue {
     ],
     phone: [
       { required: true, message: '请输入电话', trigger: 'blur' }
+    ],
+    wechat: [
+      { required: true, message: '请输入微信', trigger: 'blur' }
     ],
     carType: [
       { required: true, message: '请选择车型', trigger: 'change' }
@@ -189,9 +182,6 @@ export default class extends Vue {
     ],
     followPerson: [
       { required: true, message: '请选择跟进人', trigger: 'change' }
-    ],
-    onlyCan: [
-      { required: true, message: '请选择只看我的', trigger: 'change' }
     ]
   }
   get isPC() {

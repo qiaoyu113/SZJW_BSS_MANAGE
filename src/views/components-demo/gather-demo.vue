@@ -542,8 +542,8 @@ export default class extends Vue {
       this.drawer = val
     }
     // 表格下拉菜单
-    handleCommandChange(key:string|number) {
-      console.log('xxx:', key)
+    handleCommandChange(key:string|number, row:any) {
+      console.log('xxx:', key, row)
     }
 }
 </script>
