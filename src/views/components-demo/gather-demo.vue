@@ -96,6 +96,9 @@
             @olclick="handleOlClick"
           >
             <template v-slot:operate="scope">
+              <!--下面这行不要用-->
+              <span v-if="false">{{ scope }}</span>
+              <!--上面这行不要用-->
               <el-button
                 v-if="isPC"
                 type="text"
@@ -213,6 +216,38 @@
         </div>
       </div>
     </div>
+
+    <div class="demo-container">
+      <!--弹窗-->
+      <div class="demo-list">
+        <h4>
+          选中列表
+        </h4>
+        <button @click="olClicks">
+          模拟table点击选中
+        </button>
+        <PitchBox
+          :drawer.sync="drawer"
+          :drawer-list="multipleSelection"
+          @deletDrawerList="deletDrawerList"
+          @changeDrawer="changeDrawer"
+        >
+          <template slot-scope="slotProp">
+            <span>{{ slotProp.item.creater }}</span>
+            <span>{{ slotProp.item.clientPhone }}</span>
+            <span>{{ slotProp.item.city }}</span>
+          </template>
+        </PitchBox>
+        <div class="tip">
+          <p> <span>【drawer】</span> 是否展示弹窗（Boolean） </p>
+          <p> <span>【multipleSelection】</span> table表check数组 </p>
+        </div>
+        <div class="fucTip">
+          <p> <span>[deletDrawerList]</span> 同步删除table中check的【multipleSelection】数组 </p>
+          <p> <span>[changeDrawer]</span> 关闭展示弹窗 </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -224,6 +259,7 @@ import SelfForm from '@/components/base/SelfForm.vue'
 import SelfTable from '@/components/base/SelfTable.vue'
 import Dialog from '@/components/Dialog/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
+import PitchBox from '@/components/PitchBox/index.vue'
 
 interface PageObj {
   page:Number,
@@ -237,6 +273,7 @@ interface PageObj {
     Operation,
     Dialog,
     SelfForm,
+    PitchBox,
     SelfTable
   }
 })
@@ -486,12 +523,27 @@ export default class extends Vue {
       this.page.page = page.page
       this.page.limit = page.limit
     }
-
-    /**
-     * 表格下拉菜单
-     */
-    handleCommandChange(key:string|number) {
-      console.log('xxx:', key)
+    // 批量操作
+    private drawer: boolean= false;
+    private multipleSelection: any[] = [{
+      creater: '黄杰',
+      clientPhone: '13888888888',
+      city: '成都市'
+    }]
+    private olClicks(item: any) {
+      this.drawer = true
+    }
+    // 删除选中项目
+    private deletDrawerList(item:any, i:any) {
+      (this.$refs.multipleTable as any).toggleRowSelection(item)
+    }
+    // 关闭查看已选
+    private changeDrawer(val: any) {
+      this.drawer = val
+    }
+    // 表格下拉菜单
+    handleCommandChange(key:string|number, row:any) {
+      console.log('xxx:', key, row)
     }
 }
 </script>
