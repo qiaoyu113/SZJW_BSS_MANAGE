@@ -78,7 +78,6 @@
           @onPageSize="handlePageSize"
           @onCommand="handleCommandChange"
           @olclick="handleOlClick"
-          @tableClick="tableClick"
         >
           <template v-slot:operate="scope">
             <el-button
@@ -283,10 +282,6 @@ export default class LineManage extends Vue {
       }
     ]
 
-    private tableClick(row: any, column: any, cell: any, event: any) {
-      this.id = row.clientPhone
-      console.log('添加明细原因', row, column, cell, event)
-    }
     /**
      * 分页
      */
