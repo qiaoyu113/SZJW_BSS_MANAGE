@@ -4,36 +4,36 @@
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
           <el-row>
-            <el-form :label-width="isPC ? '120px' : '28%'">
-              <el-col :span="isPC ? 8 : 24">
-                <el-form-item label="线索编号">
+            <el-form :label-width="isPC ? '120px' : '30%'">
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="货主编号">
                   <el-input
                     v-model="listQuery.name"
-                    placeholder="请输入线索编号"
+                    placeholder="请输入货主编号"
                     clearable
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 8 : 24">
-                <el-form-item label="姓名">
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="联系人">
                   <el-input
                     v-model="listQuery.name"
-                    placeholder="请输入姓名"
+                    placeholder="请输入联系人"
                     clearable
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 8 : 24">
-                <el-form-item label="手机号">
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="联系电话">
                   <el-input
                     v-model="listQuery.name"
-                    placeholder="请输入手机号"
+                    placeholder="请输入联系电话"
                     clearable
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 8 : 24">
-                <el-form-item label="线索状态">
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="公司简介">
                   <el-select
                     v-model="listQuery.city"
                     placeholder="请选择"
@@ -47,8 +47,8 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 8 : 24">
-                <el-form-item label="线索来源">
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="分类">
                   <el-select
                     v-model="listQuery.city"
                     placeholder="请选择"
@@ -62,7 +62,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 8 : 24">
+              <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="城市">
                   <el-select
                     v-model="listQuery.city"
@@ -77,8 +77,8 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 8 : 24">
-                <el-form-item label="分配状态">
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="是否为合同期内">
                   <el-select
                     v-model="listQuery.city"
                     placeholder="请选择"
@@ -92,7 +92,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 8 : 24">
+              <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="销售">
                   <el-select
                     v-model="listQuery.city"
@@ -120,8 +120,21 @@
                   />
                 </el-form-item>
               </el-col>
+              <el-col :span="isPC ? 12 : 24">
+                <el-form-item label="合同止期">
+                  <el-date-picker
+                    v-model="DateValueChild"
+                    :class="isPC ? '' : 'el-date-m'"
+                    type="daterange"
+                    value-format="timestamp"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    @change="changData()"
+                  />
+                </el-form-item>
+              </el-col>
               <el-col
-                :span="isPC ? 12 : 24"
+                :span="isPC ? 24 : 24"
                 class="btn-box"
               >
                 <el-button
@@ -253,7 +266,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .SuggestForm {
   width: 100%;
   .filter-container {
@@ -267,10 +280,6 @@ export default class extends Vue {
     }
     .btn-box {
       text-align: center;
-      .filter-item {
-        float: right;
-        margin-left: 30px;
-      }
       .filter-item-m {
         width: 80%;
         margin: 0 auto 10px;
@@ -290,7 +299,9 @@ export default class extends Vue {
       text-align: center;
       .filter-item {
         float: right;
-        margin-left: 30px;
+        // height: 34px;
+        font-size: 14px;
+        margin-left: 10px;
       }
       .filter-item-m {
         width: 80%;

@@ -1,86 +1,51 @@
 <template>
   <div
-    :class="isPC ? 'pagination-container' : 'pagination-container-m'"
+    v-if="operationList.length"
+    :class="isPC ? 'operation' : 'operation-m'"
   >
-    <Operation
-      v-if="total>0"
-      :operation-list="operationList"
-      @olclick="olclick"
-    />
-    <el-pagination
-      :small="small"
-      :background="background"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
-      :layout="isPC ? layout : layoutmini"
-      :page-sizes="pageSizes"
-      :total="total"
-      v-bind="$attrs"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+    <div
+      class="operation-main"
+      @click="showList = !showList"
+    >
+      <i class="el-icon-sort el-icon-left" />
+      <span>批量操作</span>
+    </div>
+    <div
+      v-if="showList"
+      class="operation-list"
+    >
+      <div
+        v-for="item in operationList"
+        :key="item.name"
+        class="ol"
+        @click="olclick(item)"
+      >
+        <div
+          class="ol-icon"
+          :style="'background:' + item.color"
+        >
+          <i :class="item.icon" />
+        </div>
+        <span>{{ item.name }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { scrollTo } from '@/utils/scroll-to'
 import { SettingsModule } from '@/store/modules/settings'
-import Operation from '@/components/Operation/index.vue'
 
 @Component({
-  name: 'Pagination',
-  components: {
-    Operation
-  }
+  name: 'Operation'
 })
 export default class extends Vue {
-  @Prop({ required: true }) private total!: number
-  @Prop({ default: 1 }) private page!: number
-  @Prop({ default: 20 }) private limit!: number
-  @Prop({ default: () => [10, 20, 30, 40, 50] }) private pageSizes!: number[]
-  @Prop({ default: 'total, sizes, prev, pager, next, jumper' }) private layout!: string
-  @Prop({ default: 'prev, pager, next' }) private layoutmini!: string
-  @Prop({ default: true }) private background!: boolean
-  @Prop({ default: true }) private autoScroll!: boolean
-  @Prop({ default: false }) private hidden!: boolean
-  @Prop({ default: !SettingsModule.isPC }) private small!: boolean
   // 批量操作按钮
   @Prop({ default: [] }) private operationList!:[]
   private showList: Boolean = false
 
-  get currentPage() {
-    return this.page
-  }
-
   get isPC() {
     return SettingsModule.isPC
-  }
-
-  set currentPage(value) {
-    this.$emit('update:page', value)
-  }
-
-  get pageSize() {
-    return this.limit
-  }
-
-  set pageSize(value) {
-    this.$emit('update:listQuery.limit', value)
-  }
-
-  handleSizeChange(value: number) {
-    this.$emit('pagination', { page: this.currentPage, limit: value })
-    if (this.autoScroll) {
-      scrollTo(0, 800)
-    }
-  }
-
-  handleCurrentChange(value: number) {
-    this.$emit('pagination', { page: value, limit: this.pageSize })
-    if (this.autoScroll) {
-      scrollTo(0, 800)
-    }
   }
 
   olclick(value:any) {
@@ -91,12 +56,6 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.pagination-container {
-  background: #fff;
-  padding: 32px;
-  box-sizing: border-box;
-  text-align: right;
-  display: flex;
   .operation{
     flex: 1;
     text-align: left;
@@ -168,14 +127,8 @@ export default class extends Vue {
   .el-pagination{
     flex: 6;
   }
-}
 
-.pagination-container-m{
-  padding: 16px;
-  box-sizing: border-box;
-  text-align: center;
-  display: flex;
-  .operation{
+  .operation-m{
     flex: 1;
     text-align: left;
     position: relative;
@@ -246,12 +199,4 @@ export default class extends Vue {
       cursor: pointer;
     }
   }
-  .el-pagination{
-    flex: 4;
-  }
-}
-
-.pagination-container.hidden {
-  display: none;
-}
 </style>

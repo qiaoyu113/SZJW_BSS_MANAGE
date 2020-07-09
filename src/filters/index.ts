@@ -15,3 +15,13 @@ export const articleStatusFilter = (status: string) => {
 export const uppercaseFirstChar = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
+export const hidePhone = (cellValue:string) => {
+  if (Number(cellValue) && String(cellValue).length === 11) {
+    let mobile = String(cellValue)
+    let reg = /^(\d{3})\d{4}(\d{4})$/
+    return mobile.replace(reg, '$1****$2')
+  } else {
+    return cellValue
+  }
+}
