@@ -103,6 +103,7 @@ private formItem:any[] = [
 | options  | 下拉框，radio等对应的列表          | Array  | 否       |
 | tagAttrs | Input、select等对应的属性          | Object | 否       |
 | rules    | 表单校验(参考element-ui的表单验证) | Object | 否       |
+| col      | 单元格独占几列                     | Number | 否       |
 
 > type的类型
 
@@ -110,9 +111,11 @@ private formItem:any[] = [
 | ---- | ------------ | ------ |
 | 1    | 输入框       | Number |
 | 2    | 下拉框       | Number |
-| 3    | 日期时间区间 | Number |
+| 3    | 日期时间区间 | Array  |
 | 4    | radio        | Number |
 | 5    | checkbox     | Number |
+| 6    | date         | Date   |
+| 7    | 文本展示     | String |
 
 > 表单触发的事件
 
