@@ -34,7 +34,7 @@ const cargoRouter: RouteConfig = {
         title: 'addClue',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -47,7 +47,59 @@ const cargoRouter: RouteConfig = {
         title: 'editClue',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
+      }
+    },
+    {
+      path: 'followclue', /* 跟进线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      name: 'FollowClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'followClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'conversionclue', /* 转化货主 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ConversionClue.vue'),
+      name: 'ConversionClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'conversionClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'importclue', /* 导入 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportClue.vue'),
+      name: 'ImportClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'importClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'importdetail', /* 导入详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportDetail.vue'),
+      name: 'ImportDetail',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'importDetail',
+        hidden: true,
+        icon: '',
+        noCache: true
       }
     },
     {
@@ -60,7 +112,7 @@ const cargoRouter: RouteConfig = {
         title: 'clueDetail',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
       }
     },
     {
