@@ -294,7 +294,9 @@ export default class CreatLine extends Vue {
   }
 }
 </style>
-<style lang="scss" scope>
+<style lang="scss" scoped>
+</style>
+<style lang="scss" scoped>
 @media screen and (min-width: 701px) {
   .el-select {
     width: 100%;

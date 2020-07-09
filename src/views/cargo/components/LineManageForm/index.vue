@@ -3,15 +3,8 @@
     <div class-name="sub-navbar">
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
-          <div class="demo">
-            <!-- <self-form
-              v-model="listQuery"
-              :list-query="listQuery"
-              :form-item="formItem"
-              label-with="80px"
-            />
-          </div> -->
-            <el-row>
+          <div class="demo" />
+          <!-- <el-row>
               <el-form :label-width="isPC ? '120px' : '28%'">
                 <el-col :span="isPC ? pccol : 24">
                   <el-form-item label="城市">
@@ -145,8 +138,7 @@
                   </el-button>
                 </el-col>
               </el-form>
-            </el-row>
-          </div>
+            </el-row> -->
         </div>
       </div>
     </div>
@@ -188,174 +180,7 @@ export default class LineManageForm extends Vue {
     creattime: [],
     startDate: []
   }
-  private formItem:any[] = [
-    {
-      type: 2,
-      key: 'name',
-      tagAttrs: {
-        placeholder: '请选择城市'
-      },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
-    },
-    {
-      type: 1,
-      key: 'soldName',
-      tagAttrs: {
-        placeholder: '请选择线路销售'
-      }
-    },
-    {
-      type: 2,
-      key: 'state',
-      tagAttrs: {
-      // disabled: true,
-        // clearable: true,
-        // multiple: true,
-        placeholder: '请选择审核状态'
-      },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
-    },
-    {
-      type: 2,
-      key: 'cartype',
-      tagAttrs: {
-      // disabled: true,
-        // clearable: true,
-        // multiple: true,
-        placeholder: '请选择车型'
-      },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
-    },
-    {
-      type: 1,
-      key: 'soldnum',
-      tagAttrs: {
-        placeholder: '请输入线路名称/线路编号'
-      }
-    },
-    {
-      type: 1,
-      key: 'huozhuName',
-      tagAttrs: {
-        placeholder: '请输入货主名称'
-      }
-    },
-    {
-      type: 2,
-      key: 'upstatus',
-      tagAttrs: {
-      // disabled: true,
-        // clearable: true,
-        // multiple: true,
-        placeholder: '请选择上架状态'
-      },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
-    },
-    {
-      type: 2,
-      key: 'linearea',
-      tagAttrs: {
-      // disabled: true,
-        // clearable: true,
-        // multiple: true,
-        placeholder: '请选择线路区域'
-      },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
-    },
-    {
-      type: 2,
-      key: 'fancang',
-      tagAttrs: {
-      // disabled: true,
-        // clearable: true,
-        // multiple: true,
-        placeholder: '请选择是否需要返仓'
-      },
-      options: [
-        {
-          label: '是',
-          value: '1'
-        },
-        {
-          label: '否',
-          value: '0'
-        }
-      ]
-    },
-    {
-      type: 2,
-      key: 'stopstatus',
-      tagAttrs: {
-      // disabled: true,
-        // clearable: true,
-        // multiple: true,
-        placeholder: '请选择停用状态'
-      },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
-    },
-    {
-      type: 3,
-      key: 'creattime'
-    },
-    {
-      type: 3,
-      key: 'starttime'
-    }
-  ]
+
   @Watch('form', { deep: true })
   private changeform(value: any) {
     this.listQuery = value

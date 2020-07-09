@@ -7,11 +7,35 @@
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
-      <LineManageForm
+      <self-form
         :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
-      />
+        :form-item="formItem"
+        label-width="100px"
+      >
+        <div
+          slot="btn"
+          :class="isPC ? 'btnPc' : ''"
+        >
+          <el-button
+
+            type="warning"
+            :class="isPC ? '' : 'btnMobile'"
+            name="linemanage_reset_btn"
+            @click="handleResetClick"
+          >
+            重置
+          </el-button>
+          <el-button
+
+            :class="isPC ? '' : 'btnMobile'"
+            type="primary"
+            name="linemanage_filter_btn"
+            @click="handleFilterClick"
+          >
+            筛选
+          </el-button>
+        </div>
+      </self-form>
     </SuggestContainer>
 
     <div class="table_box">
@@ -71,46 +95,258 @@
         <self-table
           ref="selfTable"
           v-loading="listLoading"
+          :operation-list="operationList"
           border
           :table-data="tableData"
           :columns="columns"
           :page="page"
-          @onPageSize="handlePageSize"
-          @onCommand="handleCommandChange"
           @olclick="handleOlClick"
+          @onPageSize="handlePageSize"
         >
           <template v-slot:operate="scope">
-            <el-button
-              v-if="isPC"
-              :a="scope"
-              type="text"
-            >
-              更多操作
-            </el-button>
-            <i
-              v-else
-              class="el-icon-setting"
-            />
+            <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+              <span class="el-dropdown-link">
+                <el-button
+                  v-if="isPC"
+                  :a="scope"
+                  type="text"
+                >
+                  更多操作
+                </el-button>
+                <i
+                  v-else
+                  class="el-icon-setting"
+                />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  command="edit"
+                >
+                  <template v-if="isPC">
+                    编辑
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-edit"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="take"
+                >
+                  <template v-if="isPC">
+                    拍照
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-camera"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="stopuse"
+                >
+                  <template v-if="isPC">
+                    停用
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-camera"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="gowork"
+                >
+                  <template v-if="isPC">
+                    上岗
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-camera"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="putaway"
+                >
+                  <template v-if="isPC">
+                    上架
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-camera"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="getaway"
+                >
+                  <template v-if="isPC">
+                    下架
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-camera"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="copy"
+                >
+                  <template v-if="isPC">
+                    复制
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-camera"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="audit"
+                >
+                  <template v-if="isPC">
+                    审核
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-camera"
+                  />
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
           <template v-slot:detail="scope">
-            <el-button
-              v-if="isPC"
-              :a="scope"
-              type="text"
+            <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+              <span class="el-dropdown-link">
+                <el-button
+                  v-if="isPC"
+                  :a="scope"
+                  type="text"
+                >
+                  详情
+                </el-button>
+                <i
+                  v-else
+                  class="el-icon-setting"
+                />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  command="linedetail"
+                >
+                  <template v-if="isPC">
+                    查看线路详情
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-edit"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="showpic"
+                >
+                  <template v-if="isPC">
+                    查看线路照片
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-delete"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="showtender"
+                >
+                  <template v-if="isPC">
+                    查看全部标书
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-edit"
+                  />
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="showlog"
+                >
+                  <template v-if="isPC">
+                    操作日志
+                  </template>
+                  <i
+                    v-else
+                    class="el-icon-edit"
+                  />
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+
+          <template v-slot:customerName="scope">
+            <span>{{ scope.row.customerName }}</span>
+            <img
+              class="overshop"
+              src="https://oss-qzn.yunniao.cn/img/1b819fc72e5a4153b749ff46dbe9ac19"
+              alt=""
             >
-              详情
-            </el-button>
-            <i
-              v-else
-              class="el-icon-setting"
-            />
           </template>
         </self-table>
       </div>
     </div>
+
+    <!-- 上架 -->
+    <Dialog
+      :visible.sync="showPutDio"
+      :title="`上架`"
+      :center="true"
+      :cancel="putCancel"
+      :confirm="putConfirm"
+    >
+      <div>
+        <div class="dioBox">
+          <span>等待上车有效期（天）：</span>
+          <el-date-picker
+            v-model="diaUpcar"
+            type="date"
+            placeholder="选择日期"
+          />
+        </div>
+        <div class="dioBox">
+          <span>可上车数：</span>
+          <el-input
+            v-model="diaUpcarNum"
+            type="number"
+            placeholder="请输入可上车数量"
+          />
+        </div>
+        <p class="dioBox">
+          目前有效期至：2020-07-01
+        </p>
+        <p class="dioBox">
+          目前已上车数量：3辆
+        </p>
+      </div>
+    </Dialog>
+
+    <!-- 下架 -->
+    <Dialog
+      :visible.sync="showGetDio"
+      :title="`下架`"
+      :center="true"
+      :cancel="getCancel"
+      :confirm="getConfirm"
+    >
+      <div>
+        <div class="dioBox">
+          <p class="dioBox">
+            线路编号：SL2020030101
+          </p>
+          <p class="dioBox">
+            已上车数量：0辆
+          </p>
+          <p class="dioBox">
+            是否确认将此线路失效？
+          </p>
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 <script lang="ts">
+import Dialog from '@/components/Dialog/index.vue'
+import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages } from '@/utils/index'
 import { GetCustomerList } from '@/api/customer'
@@ -118,7 +354,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { LineManageForm } from './components'
+// import { LineManageForm } from './components'
 import SelfTable from '@/components/base/SelfTable.vue'
 import '@/styles/common.scss'
 
@@ -138,12 +374,16 @@ import '@/styles/common.scss'
       Pagination,
       SuggestContainer,
       BettwenTitle,
-      LineManageForm,
-      SelfTable
+      SelfTable,
+      SelfForm,
+      Dialog
     }
   })
 
 export default class LineManage extends Vue {
+  private id:string = ''
+  private diaUpcar:string = ''
+  private diaUpcarNum:string = ''
   private tab: any[] = [
     {
       label: '待上架',
@@ -165,7 +405,6 @@ export default class LineManage extends Vue {
     }
   ];
   private total = 0;
-  private id:string = '';
   private list: any[] = [];
   private limit: number = 20;
   // private page: Object | undefined = '';
@@ -173,11 +412,196 @@ export default class LineManage extends Vue {
   private tags: any[] = [];
   private DateValue: any[] = [];
   private operationList: any[] = [
-    { icon: 'el-icon-phone', name: '1', color: '#999' },
-    { icon: 'el-icon-star-off', name: '2', color: '#978374' }
+    { icon: 'el-icon-edit-outline', name: '编辑', color: '#999' },
+    { icon: 'el-icon-edit', name: '复制', color: '#978374' },
+    { icon: 'el-icon-view', name: '审核', color: '#978374' }
   ];
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
+  private formItem:any[] = [
+    {
+      type: 2,
+      key: 'name',
+      label: '城市',
+      tagAttrs: {
+        placeholder: '请选择城市'
+      },
+      options: [
+        {
+          label: '58同城',
+          value: '58'
+        },
+        {
+          label: '朋友圈',
+          value: 'wechat'
+        }
+      ]
+    },
+    {
+      type: 1,
+      label: '线路销售',
+      key: 'soldName',
+      tagAttrs: {
+        placeholder: '请选择线路销售'
+      }
+    },
+    {
+      type: 2,
+      key: 'state',
+      label: '审核状态',
+      tagAttrs: {
+        // disabled: true,
+      // clearable: true,
+      // multiple: true,
+        placeholder: '请选择审核状态'
+      },
+      options: [
+        {
+          label: '58同城',
+          value: '58'
+        },
+        {
+          label: '朋友圈',
+          value: 'wechat'
+        }
+      ]
+    },
+    {
+      type: 2,
+      label: '选择车型',
+      key: 'cartype',
+      tagAttrs: {
+        // disabled: true,
+      // clearable: true,
+      // multiple: true,
+        placeholder: '请选择车型'
+      },
+      options: [
+        {
+          label: '58同城',
+          value: '58'
+        },
+        {
+          label: '朋友圈',
+          value: 'wechat'
+        }
+      ]
+    },
+    {
+      type: 1,
+      label: '线路名称/线路编号',
+      w: '140px',
+      key: 'soldnum',
+      tagAttrs: {
+        placeholder: '请输入线路名称/线路编号'
+      }
+    },
+    {
+      type: 1,
+      label: '货主名称',
+      key: 'huozhuName',
+      tagAttrs: {
+        placeholder: '请输入货主名称'
+      }
+    },
+    {
+      type: 2,
+      label: '上架状态',
+      key: 'upstatus',
+      tagAttrs: {
+        // disabled: true,
+      // clearable: true,
+      // multiple: true,
+        placeholder: '请选择上架状态'
+      },
+      options: [
+        {
+          label: '58同城',
+          value: '58'
+        },
+        {
+          label: '朋友圈',
+          value: 'wechat'
+        }
+      ]
+    },
+    {
+      type: 2,
+      label: '线路区域',
+      key: 'linearea',
+      tagAttrs: {
+        // disabled: true,
+      // clearable: true,
+      // multiple: true,
+        placeholder: '请选择线路区域'
+      },
+      options: [
+        {
+          label: '58同城',
+          value: '58'
+        },
+        {
+          label: '朋友圈',
+          value: 'wechat'
+        }
+      ]
+    },
+    {
+      type: 2,
+      key: 'fancang',
+      label: '是否需要返仓',
+      tagAttrs: {
+        // disabled: true,
+      // clearable: true,
+      // multiple: true,
+        placeholder: '请选择是否需要返仓'
+      },
+      options: [
+        {
+          label: '是',
+          value: '1'
+        },
+        {
+          label: '否',
+          value: '0'
+        }
+      ]
+    },
+    {
+      type: 2,
+      label: '停用状态',
+      key: 'stopstatus',
+      tagAttrs: {
+        // disabled: true,
+      // clearable: true,
+      // multiple: true,
+        placeholder: '请选择停用状态'
+      },
+      options: [
+        {
+          label: '58同城',
+          value: '58'
+        },
+        {
+          label: '朋友圈',
+          value: 'wechat'
+        }
+      ]
+    },
+    {
+      col: 12,
+      label: '创建时间',
+      type: 3,
+      key: 'creattime'
+    },
+    {
+      col: 12,
+      label: '工作开始时间段',
+      w: '130px',
+      type: 3,
+      key: 'starttime'
+    }
+  ]
   private listQuery: IState = {
     key: '',
     city: '',
@@ -198,137 +622,192 @@ export default class LineManage extends Vue {
     creattime: [],
     starttime: []
   };
-      page:PageObj ={
-        page: 1,
-        limit: 10,
-        total: 20
-      }
-    private tableData:any[] = []
+  private showPutDio:boolean = false
+  private showGetDio:boolean = false
+  page:PageObj ={
+    page: 1,
+    limit: 10,
+    total: 20
+  }
+  private tableData:any[] = []
 
-    private columns:any[] = [
-      {
-        key: 'customerNo',
-        label: '货主编号',
-        disabled: true
-      },
-      {
-        key: 'customerName',
-        label: '货主'
-      },
-      {
-        key: 'distributionType',
-        label: '类型'
-      },
-      {
-        key: 'clueStatus',
-        label: '合同状态'
-      },
-      {
-        key: 'createDate',
-        label: '创建时间'
-      },
-      {
-        key: 'creater',
-        label: '创建人'
-      },
-      {
-        key: 'customerNo',
-        label: '合同止期'
-      },
-      {
-        key: 'clientsName',
-        label: '线路销售'
-      },
-      {
-        fixed: 'right',
-        key: 'operate',
-        label: '操作',
-        slot: true,
-        moreOp: [
-          {
-            label: '编辑',
-            value: 'edit',
-            icon: 'el-icon-edit'
-          },
-          {
-            label: '删除',
-            value: 'delete',
-            icon: 'el-icon-delete'
-          },
-          {
-            label: '拍照',
-            value: 'take',
-            icon: 'el-icon-camera'
-          }
-        ]
-      },
-      {
-        fixed: 'right',
-        key: 'detail',
-        slot: true,
-        label: '详情',
-        moreOp: [
-          {
-            label: '查看线路详情',
-            value: 'detail',
-            icon: 'el-icon-delete'
-          },
-          {
-            label: '查看线路照片',
-            value: 'show',
-            icon: 'el-icon-camera'
-          }
-        ]
-      }
-    ]
+  private columns:any[] = [
+    {
+      key: 'customerNo',
+      label: '货主编号',
+      disabled: true
+    },
+    {
+      key: 'customerName',
+      label: '货主',
+      slot: true
+    },
+    {
+      key: 'distributionType',
+      label: '类型'
+    },
+    {
+      key: 'clueStatus',
+      label: '合同状态'
+    },
+    {
+      key: 'createDate',
+      label: '创建时间'
+    },
+    {
+      key: 'creater',
+      label: '创建人'
+    },
+    {
+      key: 'customerNo',
+      label: '合同止期'
+    },
+    {
+      key: 'clientsName',
+      label: '线路销售'
+    },
+    {
+      fixed: 'right',
+      key: 'operate',
+      label: '操作',
+      slot: true
+    },
+    {
+      fixed: 'right',
+      key: 'detail',
+      slot: true,
+      label: '详情'
+    }
+  ]
+  private handleOlClick(val:any) {
+    console.log('op:', val)
+  }
 
-    /**
+  /**
+   *重置按钮
+   */
+  handleResetClick() {
+    this.listQuery = {
+      key: '',
+      city: '',
+      page: 1,
+      limit: 30,
+      endDate: '',
+      startDate: '',
+      state: '',
+      lineSaleId: '',
+      name: '',
+      soldName: '',
+      soldnum: '',
+      huozhuName: '',
+      upstatus: '',
+      linearea: '',
+      fancang: '',
+      stopstatus: '',
+      creattime: [],
+      starttime: []
+    }
+  }
+  /**
+   *筛选按钮
+   */
+  handleFilterClick() {
+    for (let key in this.listQuery) {
+      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1)) {
+        this.tags.push({
+          type: 'info',
+          name: this.listQuery[key],
+          key: key
+        })
+      }
+    }
+
+    console.log('filter:', this.listQuery)
+  }
+
+  /**
      * 分页
      */
-    handlePageSize(page:any) {
-      this.page.page = page.page
-      this.page.limit = page.limit
-      this.fetchData()
-    }
-    /**
+  handlePageSize(page:any) {
+    this.page.page = page.page
+    this.page.limit = page.limit
+    this.fetchData()
+  }
+  /**
      * 表格下拉菜单
      */
-    handleCommandChange(key:string|number) {
-      switch (key) {
-        case 'take':
-          this.$router.push({ path: 'takepicture', query: { id: this.id } })
-          break
-        default:
-          break
-      }
+  handleCommandChange(key:string|number, row:any) {
+    console.log(key)
+    this.id = row.clientPhone
+    switch (key) {
+      case 'edit':
+        this.$router.push({ path: 'lineedit', query: { id: row.clientPhone } })
+        break
+      case 'copy':
+        this.$router.push({ path: 'linecopy', query: { id: row.clientPhone } })
+        break
+      case 'audit':
+        this.$router.push({ path: 'lineaudit', query: { id: row.clientPhone } })
+        break
+      case 'take':
+        this.$router.push({ path: 'takepicture', query: { id: row.clientPhone } })
+        break
+      case 'showtender':
+        this.$router.push({ path: 'showtender', query: { id: row.clientPhone } })
+        break
+      case 'showlog':
+        this.$router.push({ path: 'showlog', query: { id: row.clientPhone } })
+        break
+      case 'putaway':
+        this.showPutDio = true
+        break
+      case 'getaway':
+        this.showGetDio = true
+        break
+      case 'linedetail':
+        this.$router.push({ path: 'linedetail', query: { id: row.clientPhone } })
+        break
+      default:
+        break
     }
+  }
 
-    private handleOlClick(value:any) {
-      console.log('xx:', value)
-    }
+  // 上架操作
+  private putConfirm(done: any) {
+    this.$message.info('点击了确定')
+    done()
+  }
+  private putCancel(done: any) {
+    this.$message.info('点击了取消')
+    done()
+  }
+  // 下架操作
+  private getConfirm(done:any) {
+    this.$message.info('点击了确定')
+    done()
+  }
+  private getCancel(done: any) {
+    this.$message.info('点击了取消')
+    done()
+  }
 
-    private olClicks(item: any) {
-      console.log(item)
-    }
+  private olClicks(item: any) {
+    console.log(item)
+  }
 
-    created() {
-      this.fetchData()
-      this.dropdownList = [...this.columns]
-      this.checkList = this.dropdownList.map(item => item.label)
-    }
+  created() {
+    this.fetchData()
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+  }
 
     @Watch('checkList', { deep: true })
-    private checkListChange(val:any) {
-      this.columns = this.dropdownList.filter(item => val.includes(item.label))
-    }
+  private checkListChange(val:any) {
+    this.columns = this.dropdownList.filter(item => val.includes(item.label))
+  }
     // 所有请求方法
     private fetchData() {
       this.getList(this.listQuery)
-    }
-
-    private goDetail(id:string) {
-      console.log(id, 'id')
-      this.$router.push({ path: 'linedetail', query: { id: id } })
     }
 
     // 处理tags方法
@@ -430,6 +909,20 @@ export default class LineManage extends Vue {
   .pagination-container {
     background: #fff;
   }
+  .overshop{
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+  .dioBox{
+    margin-bottom: 20px;
+    padding: 0 20px;
+    .el-input{
+      width: 200px!important;
+    }
+  }
 }
 </style>
 <style lang="scss" scoped>
@@ -471,6 +964,13 @@ export default class LineManage extends Vue {
       overflow-y: scroll;
     }
   }
+    .overshop{
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
   .edit-input {
     padding-right: 100px;
   }
@@ -497,4 +997,14 @@ export default class LineManage extends Vue {
 .el-form-item__label {
   color: #999999;
 }
+    .btnPc {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:100%;
+    }
 </style>

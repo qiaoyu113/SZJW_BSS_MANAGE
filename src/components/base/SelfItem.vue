@@ -1,5 +1,5 @@
 <template>
-  <div class="SelfItem">
+  <div :class="isPC ? 'SelfItem' : 'SelfItem-m'">
     <el-col
       :span="isPC ? pccol : 24"
     >
@@ -119,4 +119,10 @@ export default class SelfItem extends Vue {
   }
 }
 </script>
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.SelfItem-m{
+      .el-input, .el-date-editor, .el-textarea {
+    width: 80%;
+  }
+}
+</style>

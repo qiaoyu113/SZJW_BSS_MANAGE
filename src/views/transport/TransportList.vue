@@ -182,6 +182,7 @@
         :total="total"
         :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
+        :operation-list="operationList"
         @pagination="getList"
       />
     </div>
@@ -229,7 +230,7 @@ export default class extends Vue {
         name: '0'
       },
       {
-        label: '带上岗',
+        label: '待上岗',
         name: '1'
       },
       {
@@ -251,6 +252,10 @@ export default class extends Vue {
       state: '',
       lineSaleId: ''
     }
+    private operationList: any[] = [
+      { icon: 'el-icon-phone', name: '1', color: '#999' },
+      { icon: 'el-icon-star-off', name: '2', color: '#978374' }
+    ];
 
     created() {
       this.fetchData()
@@ -260,7 +265,7 @@ export default class extends Vue {
     }
 
     activated() {
-    // this.handleScroll()
+      // this.handleScroll()
     }
 
     // 判断是否是PC

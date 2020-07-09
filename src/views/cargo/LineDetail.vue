@@ -1,260 +1,239 @@
 <template>
   <div :class="isPC ? 'LineDetail' : 'LineDetail-m'">
     <SectionContainer
-      title="详情信息"
+      title="基础信息"
       :md="true"
     >
       <el-row>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="姓名"
-            value="刘德华123123"
+            name="货主姓名"
+            value="北京京东"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="手机号"
-            value="15071362991"
+            name="内部使用线路名称"
+            value="北京京东传站618"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="地址"
-            value="武汉市黄陂区前川街人信城"
+            name="备注信息/线路描述"
+            value="北京京东传站618"
           />
         </el-col>
 
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="线路类型"
+            value="替换型"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="可上车数"
+            value="1辆"
+          />
+        </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="仓位置"
             value="四川省成都市青白江区祥福镇宇培分拨中心"
           />
         </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="上架有效期（天）"
+            value="1998年7月1日"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="线路稳定性"
+            value="2-4个月（一般稳定）"
+          />
+        </el-col>
+      </el-row>
+    </SectionContainer>
+    <SectionContainer
+      title="配送信息"
+      :md="true"
+    >
+      <el-row>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="选择车型："
+            value="4.2米厢货"
+          />
+        </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="预计日工作时间"
-            value="04:30-11:30"
+            name="配送区域："
+            value="北京市朝阳区全区域"
+          />
+        </el-col>
+
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="具体区域范围："
+            value="全区域"
+          />
+        </el-col>
+
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="是否需要返仓"
+            value="是"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="是否需要回单"
+            value="是"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="预计每日平均配送点位数"
+            value="2"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="预计每日平均总公里数（公里）"
+            value="60"
           />
         </el-col>
       </el-row>
     </SectionContainer>
 
-    <el-form
-      ref="ruleForm"
-      :model="ruleForm"
-      :rules="rules"
-      :label-width="isPC ? '160px' : '80px'"
+    <SectionContainer
+      title="结算信息"
+      :md="true"
     >
-      <SectionContainer title="基本信息">
-        <el-row>
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动名称"
-              prop="name"
-            >
-              <el-input v-model="ruleForm.name1" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动名称"
-              prop="name"
-            >
-              <el-input v-model="ruleForm.name1" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动名称"
-              prop="name"
-            >
-              <el-input v-model="ruleForm.name2" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动名称"
-              prop="name"
-            >
-              <el-input v-model="ruleForm.name3" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动名称"
-              prop="name"
-            >
-              <el-input v-model="ruleForm.name4" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动区域"
-              prop="region"
-            >
-              <el-select
-                v-model="ruleForm.region"
-                placeholder="请选择活动区域"
-              >
-                <el-option
-                  label="区域一"
-                  value="shanghai"
-                />
-                <el-option
-                  label="区域二"
-                  value="beijing"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动区域"
-              prop="region"
-            >
-              123
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </SectionContainer>
-
-      <SectionContainer title="面试信息">
-        <el-row>
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动名称"
-              prop="name"
-            >
-              <el-input v-model="ruleForm.name" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动区域"
-              prop="region"
-            >
-              <el-select
-                v-model="ruleForm.region"
-                placeholder="请选择活动区域"
-              >
-                <el-option
-                  label="区域一"
-                  value="shanghai"
-                />
-                <el-option
-                  label="区域二"
-                  value="beijing"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="活动时间"
-              required
-            >
-              <el-col :span="11">
-                <el-form-item prop="date1">
-                  <el-date-picker
-                    v-model="ruleForm.date1"
-                    type="date"
-                    placeholder="选择日期"
-                    style="width: 100%;"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col
-                class="line"
-                :span="2"
-              >
-                -
-              </el-col>
-              <el-col :span="11">
-                <el-form-item prop="date2">
-                  <el-time-picker
-                    v-model="ruleForm.date2"
-                    placeholder="选择时间"
-                    style="width: 100%;"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-form-item
-          label="即时配送"
-          prop="delivery"
-        >
-          <el-switch v-model="ruleForm.delivery" />
-        </el-form-item>
-        <el-form-item
-          label="活动性质"
-          prop="type"
-        >
-          <el-checkbox-group v-model="ruleForm.type">
-            <el-checkbox
-              label="美食/餐厅线上活动"
-              name="type"
-            />
-            <el-checkbox
-              label="地推活动"
-              name="type"
-            />
-            <el-checkbox
-              label="线下主题活动"
-              name="type"
-            />
-            <el-checkbox
-              label="单纯品牌曝光"
-              name="type"
-            />
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item
-          label="特殊资源"
-          prop="resource"
-        >
-          <el-radio-group v-model="ruleForm.resource">
-            <el-radio label="线上品牌商赞助" />
-            <el-radio label="线下场地免费" />
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item
-          label="活动形式"
-          prop="desc"
-        >
-          <el-input
-            v-model="ruleForm.desc"
-            type="textarea"
+      <el-row>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="每日配送趟数："
+            value="4"
           />
-        </el-form-item>
-        <el-form-item>
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              立即创建
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
-      </sectioncontainer>
-    </el-form>
+        </el-col>
+        <el-col
+          v-for="index in 4"
+          :key="index"
+          :span="isPC ? 6 : 24"
+        >
+          <DetailItem
+            name="预计工作时间"
+            value="09:00-10:22"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="预计每日平均总公里数（公里）"
+            value="60"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="预计月出车天数"
+            value="30"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="结算方式"
+            value="整车"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="货主单趟报价"
+            value="300"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="预计货主月报价"
+            value="24000"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="结算周期"
+            value="月结"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="结算天数"
+            value="30天"
+          />
+        </el-col>
+        <el-col :span="24">
+          <template class="detail-group">
+            <span class="detail-title">配送周期:</span>
+            <el-checkbox-group v-model="checkList">
+              <el-checkbox
+                label="全选"
+                disabled
+              />
+              <el-checkbox
+                label="周一"
+                disabled
+              />
+              <el-checkbox
+                label="周二"
+                disabled
+              />
+              <el-checkbox
+                label="周三"
+                disabled
+              />
+              <el-checkbox
+                label="周四"
+                disabled
+              />
+              <el-checkbox
+                label="周五"
+                disabled
+              />
+              <el-checkbox
+                label="周六"
+                disabled
+              />
+              <el-checkbox
+                label="周日"
+                disabled
+              />
+            </el-checkbox-group>
+          </template>
+        </el-col>
+      </el-row>
+    </sectioncontainer>
+    <SectionContainer
+      title="线路角色"
+      :md="true"
+    >
+      <el-row>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="线路打分"
+            value="90"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="线路角色"
+            value="梧桐专车"
+          />
+        </el-col>
+      </el-row>
+    </SectionContainer>
   </div>
 </template>
 
@@ -286,6 +265,9 @@ export default class extends Vue {
     resource: '',
     desc: ''
   }
+
+  private checkList:any[] = ['周一', '周末']
+
   private rules:any = {
     name: [
       { required: true, message: '请输入活动名称', trigger: 'blur' },
@@ -351,6 +333,18 @@ export default class extends Vue {
     color: #4a4a4a;
     font-weight: 400;
   }
+  .detail-group{
+    display: flex;
+    align-items: center;
+  }
+  .detail-title{
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    text-align: right;
+    padding-right: 16px;
+    box-sizing: border-box;
+  }
 }
 </style>
 
@@ -360,6 +354,19 @@ export default class extends Vue {
   .el-form-item__label{
     color: #4a4a4a;
     font-weight: 400;
+  }
+    .detail-group{
+    display: flex;
+    align-items: center;
+  }
+  .detail-title{
+    flex: 0.3;
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    text-align: right;
+    padding-right: 16px;
+    box-sizing: border-box;
   }
 }
 </style>

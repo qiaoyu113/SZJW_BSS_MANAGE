@@ -111,7 +111,7 @@ var token = localStorage.getItem('token')
   components: {}
 })
 export default class TakePicture extends Vue {
-  private isdetail:boolean = true
+  private isdetail:boolean = false
   private postForm:any = {
     id: '',
     warehouseLoadingLocation: '',
