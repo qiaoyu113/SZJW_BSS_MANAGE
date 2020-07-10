@@ -154,3 +154,32 @@ aside {
 .no-padding {
   padding: 0px !important;
 }
+// MessageBox 组件
+.el-message-box{
+  border-radius: 6px;
+  padding-bottom: 20px;
+  border: none;
+  max-width: 90vw;
+}
+.el-message-box__header{
+  padding: 0 0 0 20px;
+  background: #2f448a;
+  .el-message-box__title{
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: left;
+  }
+  .el-message-box__headerbtn{
+    top: 10px;
+    .el-message-box__close {
+      color: #fff;
+      font-size: 20px;
+    }
+  }
+}
+.el-message-box__content{
+  padding: 20px;
+}

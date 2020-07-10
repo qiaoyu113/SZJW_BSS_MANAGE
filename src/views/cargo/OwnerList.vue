@@ -72,7 +72,6 @@
           highlight-current-row
           style="width: 100%"
           row-key="customerNo"
-          @cell-click="tableClick"
           @selection-change="handleSelectionChange"
         >
           <el-table-column
@@ -175,16 +174,6 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('是否为合同期内') > -1"
-            align="left"
-            label="是否为合同期内"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
-
-          <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
             align="left"
             label="创建日期"
@@ -241,7 +230,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
+                    @click.native="goDetail(scope.row.customerId)"
                   >
                     详情
                   </el-dropdown-item>
@@ -254,6 +243,7 @@
       <pagination
         v-show="total > 0"
         :operation-list="operationList"
+        :small="true"
         :total="total"
         :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
@@ -274,19 +264,67 @@
       </template>
     </PitchBox>
 
-    <!-- <Dialog
-      :visible.sync="showDialog"
+    <!-- 批量分配货主 -->
+    <Dialog
+      :visible.sync="assignShowDialog"
       :title="`分配货主`"
-      :show-cancel-button="true"
-      :show-confirm-button="true"
-      @confirm="confirm"
+      :confirm="confirmAssign"
     >
-      <ClueListForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
+      <el-alert
+        class="mb10"
+        :title="`已选货主${multipleSelectionAssign.length}位，请选择销售！(货主其关联的线索也会分配给该销售)`"
+        type="warning"
+        :closable="false"
       />
-    </Dialog> -->
+      <el-table
+        v-loading="dialogLoading"
+        :data="dialogList"
+        size="mini"
+        stripe
+        highlight-current-row
+        height="38vh"
+        style="width: 100%;"
+        align="left"
+        row-key="id"
+        @selection-change="handleSelectionDialog"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          reserve-selection
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          width="55"
+          label="序号"
+          :index="indexMethod('dialogListQuery')"
+          align="center"
+        />
+        <el-table-column
+          label="销售姓名"
+          prop="name"
+        />
+        <el-table-column
+          label="联系电话"
+          prop="name"
+        />
+        <el-table-column
+          label="线索数量"
+          prop="name"
+        />
+      </el-table>
+      <pagination
+        v-show="dialogTotal > 0"
+        :small="true"
+        :operation-list="[]"
+        :total="dialogTotal"
+        :page.sync="dialogListQuery.page"
+        :limit.sync="dialogListQuery.limit"
+        @pagination="getDialogList"
+      />
+    </Dialog>
+    <!--提示窗口-->
     <Dialog
       :visible.sync="showDialog.visible"
       :title="showDialog.title"
@@ -405,6 +443,17 @@ export default class extends Vue {
       state: '',
       lineSaleId: ''
     };
+    // 弹窗分配
+    private dialogList: any[] = [];
+    private dialogLoading: boolean= false;
+    private multipleSelectionAssign: any[] = []
+    private assignShowDialog: boolean= false;
+    // 弹窗分页
+    private dialogTotal: number = 0;
+    private dialogListQuery: IState = {
+      page: 1,
+      limit: 20
+    };
 
     created() {
       this.fetchData()
@@ -426,7 +475,8 @@ export default class extends Vue {
         (this.$refs.multipleTable as any).clearSelection()
         this.multipleSelection = []
       } else {
-        console.log(12)
+        this.assignShowDialog = true
+        this.getDialogList(this.dialogListQuery)
       }
       done()
     }
@@ -473,29 +523,27 @@ export default class extends Vue {
       }
     }
 
-    // 添加明细原因 row 当前行 column 当前列
-    private tableClick(row: any, column: any, cell: any, event: any) {
-    // switch (column.label) {
-    //   case '原因说明':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   case '判责金额(元)':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   case '备注':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   default: return
-    // }
-      console.log('添加明细原因', row, column, cell, event)
+    // 获取弹窗list
+    async getDialogList(value: any) {
+      this.dialogListQuery.page = value.page
+      this.dialogListQuery.limit = value.limit
+      this.dialogLoading = true
+      const { data } = await GetCustomerList(this.dialogListQuery)
+      console.log(data)
+      if (data.success) {
+        this.dialogList = data.data
+        this.dialogTotal = data.page.total
+      } else {
+        this.$message.error(data)
+      }
+      setTimeout(() => {
+        this.dialogLoading = false
+      }, 0.5 * 1000)
     }
 
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'ClueDetail', query: { id: id } })
+      this.$router.push({ name: 'OwnerDetail', query: { id: id } })
     }
 
     // 批量操作
@@ -546,6 +594,37 @@ export default class extends Vue {
     // 删除选中项目
     private deletDrawerList(item:any, i:any) {
       (this.$refs.multipleTable as any).toggleRowSelection(item)
+    }
+
+    // 弹窗操作
+    private confirmAssign(done: any) {
+      // 提交操作
+      console.log(111333)
+      if (this.multipleSelectionAssign.length) {
+        this.assignShowDialog = false
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '请先选择货主再进行操作！'
+        })
+      }
+      // done()
+    }
+    // 弹窗表格选中
+    private handleSelectionDialog(val: any) {
+      this.multipleSelectionAssign = val
+    }
+    // table index
+    private indexMethod(type: string) {
+      let page: number, limit: number
+      if (type === 'listQuery') {
+        ({ page, limit } = this.listQuery)
+      } else if (type === 'dialogListQuery') {
+        ({ page, limit } = this.listQuery)
+      }
+      return (index: number) => {
+        return index + 1 + (page - 1) * limit
+      }
     }
 }
 </script>

@@ -28,13 +28,13 @@
         >
           <down-tool class="right-menu-item hover-effect" />
         </el-tooltip>
-        <el-tooltip
+        <!-- <el-tooltip
           :content="$t('navbar.open')"
           effect="dark"
           placement="bottom"
         >
           <open-new class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
         <el-tooltip
           :content="$t('navbar.screenfull')"
           effect="dark"
@@ -42,13 +42,13 @@
         >
           <screenfull class="right-menu-item hover-effect" />
         </el-tooltip>
-        <el-tooltip
+        <!-- <el-tooltip
           :content="$t('navbar.size')"
           effect="dark"
           placement="bottom"
         >
           <size-select class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
         <el-tooltip
           :content="$t('navbar.language')"
           effect="dark"

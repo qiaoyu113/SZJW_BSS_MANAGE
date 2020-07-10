@@ -1,7 +1,7 @@
 <template>
   <div :class="isPC ? 'DetailItem' : 'DetailItem-m'">
     <div class="detail-title">
-      {{ name }}:
+      {{ name }}
     </div>
     <div class="detail-value">
       {{ value }}
@@ -31,20 +31,21 @@ export default class extends Vue {
 <style lang="scss" scope>
 .DetailItem {
   width: 100%;
-  display: flex;
-  padding: 10px;
+  // display: flex;
+  padding: 15px;
   box-sizing: border-box;
   .detail-title {
-    flex: 1;
-    font-size: 14px;
-    color: #666;
+    // flex: 1;
+    font-size: 13px;
+    color: #9e9e9e;
     font-weight: 400;
-    text-align: right;
+    // text-align: right;
     padding-right: 16px;
     box-sizing: border-box;
+    padding-bottom: 6px;
   }
   .detail-value {
-    flex: 2;
+    // flex: 2;
     font-size: 14px;
     color: #333;
     font-weight: 500;

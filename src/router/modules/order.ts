@@ -54,6 +54,28 @@ const orderRouter: RouteConfig = {
       }
     },
     {
+      path: 'dealform', /* 交付 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealForm.vue'),
+      name: 'DealForm',
+      meta: {
+        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        title: 'dealForm',
+        noCache: false,
+        hidden: true
+      }
+    },
+    {
+      path: 'dealmanagedetail', /* 交付详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealManageDetail.vue'),
+      name: 'DealManageDetail',
+      meta: {
+        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        title: 'dealManageDetail',
+        noCache: false,
+        hidden: true
+      }
+    },
+    {
       path: 'dealmanage', /* 成交管理 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealManage.vue'),
       name: 'DealManage',
