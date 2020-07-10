@@ -41,7 +41,7 @@
         <template slot="title">
           <span v-if="tags.length"><el-tag
             v-for="(tag, index) in tags"
-            :key="tag.name"
+            :key="tag.name+'-'+index"
             closable
             :type="tag.type"
             @close="closeTags(index)"

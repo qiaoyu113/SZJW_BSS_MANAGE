@@ -85,9 +85,11 @@
         ref="driverListTable"
         v-loading="listLoading"
         border
+        :operation-list="operationList"
         :table-data="tableData"
         :columns="columns"
         :page="page"
+        @olclick="handleOlClick"
         @onPageSize="handlePageSize"
       >
         <template v-slot:op="scope">
@@ -213,6 +215,19 @@
         @onRows="rows = []"
       />
     </el-card>
+
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleRows"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="slotProp">
+        <span>{{ slotProp.item.a }}</span>
+        <span>{{ slotProp.item.b }}</span>
+        <span>{{ slotProp.item.c }}</span>
+      </template>
+    </PitchBox>
   </div>
 </template>
 <script lang="ts">
@@ -223,6 +238,8 @@ import SelfTable from '@/components/base/SelfTable.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import ManagerDialog from './components/managerDialog.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
+import { unique, getLabel } from '@/utils/index.ts'
 interface IState {
     [key: string]: any;
 }
@@ -246,7 +263,8 @@ interface Tab {
     SelfTable,
     SuggestContainer,
     ManagerDialog,
-    TableHeader
+    TableHeader,
+    PitchBox
   }
 })
 export default class extends Vue {
@@ -285,7 +303,6 @@ export default class extends Vue {
   ]
   private tags:any[] = []
   private type:string = ''
-  private rows:any[] = []
 
   private dropdownList:any[] = []
   private checkList:any[] =[]
@@ -494,7 +511,7 @@ export default class extends Vue {
 
   private tableData:any[] = [
     {
-      a: '12131312313',
+      a: '121313123131',
       b: 'tom',
       c: '15021578502',
       d: '共享',
@@ -509,7 +526,7 @@ export default class extends Vue {
       status: 1
     },
     {
-      a: '12131312313',
+      a: '121313123132',
       b: 'tom',
       c: '15021578502',
       d: '共享',
@@ -524,7 +541,7 @@ export default class extends Vue {
       status: 2
     },
     {
-      a: '12131312313',
+      a: '121313123133',
       b: 'tom',
       c: '15021578502',
       d: '共享',
@@ -539,7 +556,7 @@ export default class extends Vue {
       status: 3
     },
     {
-      a: '12131312313',
+      a: '121313123134',
       b: 'tom',
       c: '15021578502',
       d: '共享',
@@ -613,6 +630,19 @@ export default class extends Vue {
     }
   ]
 
+  private operationList = [
+    {
+      icon: 'el-icon-view',
+      name: '查看选中',
+      color: '#673BB8'
+    },
+    {
+      icon: 'el-icon-circle-close',
+      name: '清空选择',
+      color: '#F54436'
+    }
+  ]
+
   /**
    *分页对象
    */
@@ -629,21 +659,22 @@ export default class extends Vue {
 
   @Watch('checkList', { deep: true })
   private checkListChange(val:any) {
-    this.columns = this.dropdownList.filter(item => val.includes(item.label))
+    setTimeout(() => {
+      this.columns = this.dropdownList.filter(item => val.includes(item.label))
+    }, 20)
   }
   /**
    * 查询
    */
   private handleQueryClick() {
-    console.log(this.listQuery)
+    let blackLists = ['state']
     for (let key in this.listQuery) {
-      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1)) {
-        if (Array.isArray(this.listQuery[key]) && this.listQuery[key].length === 0) {
-          // 啥也不操作
-        } else if (key !== 'state') {
+      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+        let name = getLabel(this.formItem, this.listQuery, key)
+        if (name) {
           this.tags.push({
             type: 'info',
-            name: this.listQuery[key],
+            name,
             key: key
           })
         }
@@ -732,7 +763,11 @@ export default class extends Vue {
    * 删除顶部表单的选项
    */
   handleQuery(value:any, key:any) {
-    this.listQuery[key] = value
+    if (key === 'time') {
+      this.listQuery[key] = []
+    } else {
+      this.listQuery[key] = value
+    }
   }
 
   /**
@@ -756,6 +791,52 @@ export default class extends Vue {
       })
     })
   }
+
+  // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
+   private drawer:boolean = false
+  /**
+   *当前页勾选中的数组集合
+   */
+  private rows:any[] = []
+  /**
+   *多页表格选中的数组
+   */
+  private multipleRows:any[] = []
+  // 删除选中项目
+  private deletDrawerList(item:any, i:any) {
+    this.multipleRows.splice(i, 1)
+    let idx = this.rows.findIndex(sub => sub.a === item.a)
+    if (idx !== -1) {
+      this.rows.splice(idx, 1)
+    }
+    (this.$refs.driverListTable as any).toggleRowSelection();
+    (this.$refs.driverListTable as any).toggleRowSelection(this.rows)
+    if (this.multipleRows.length === 0) {
+      this.drawer = false
+    }
+  }
+  // 关闭查看已选
+  private changeDrawer(val: any) {
+    this.drawer = val
+  }
+  /**
+   * 批量操作的按钮
+   */
+  handleOlClick(val:any) {
+    if (val.name === '查看选中') {
+      this.rows = (this.$refs.driverListTable as any).multipleSelection || []
+      this.multipleRows = unique([...this.rows, ...this.multipleRows], 'a')
+      if (this.multipleRows.length > 0) {
+        this.drawer = true
+      } else {
+        this.$message.error('请先选择')
+      }
+    } else if (val.name === '清空选择') {
+      (this.$refs.driverListTable as any).toggleRowSelection()
+      this.multipleRows = []
+    }
+  }
+  // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
 }
 
 </script>
