@@ -25,6 +25,32 @@ const systemRouter: RouteConfig = {
       }
     },
     {
+      path: 'createuser',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
+      name: 'CreateUser',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/system/usermanage',
+        title: 'createUser',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'edituser',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
+      name: 'EditUser',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/system/usermanage',
+        title: 'editUser',
+        icon: '',
+        hidden: true,
+        noCache: true
+      }
+    },
+    {
       path: 'rolemanage', /* 角色管理 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RoleManage.vue'),
       name: 'RoleManage',
@@ -34,6 +60,32 @@ const systemRouter: RouteConfig = {
         noCache: false,
         icon: '',
         apiUrl: 'root'
+      }
+    },
+    {
+      path: 'createrole',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
+      name: 'CreateRole',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/system/rolemanage',
+        title: 'createRole',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'editRole',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
+      name: 'EditRole',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/system/rolemanage',
+        title: 'editRole',
+        icon: '',
+        hidden: true,
+        noCache: true
       }
     },
     {

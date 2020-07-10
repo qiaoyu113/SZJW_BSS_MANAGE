@@ -13,7 +13,6 @@
         @handle-tags="handleTags"
       />
     </SuggestContainer>
-
     <div class="table_box">
       <!--操作栏-->
       <TableHeader
@@ -23,12 +22,20 @@
         <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
-          size="small"
           name="cluelist_creat_btn"
-          @click="showDialog = true"
+          @click="createClue"
         >
           <i class="el-icon-s-operation" />
-          <span v-if="isPC">创建客户</span>
+          <span v-if="isPC">新增线索</span>
+        </el-button>
+        <el-button
+          :class="isPC ? 'btn-item' : 'btn-item-m'"
+          type="primary"
+          name="cluelist_creat_btn"
+          @click="goImport"
+        >
+          <i class="el-icon-s-operation" />
+          <span v-if="isPC">导入</span>
         </el-button>
 
         <el-dropdown
@@ -38,7 +45,6 @@
           <el-button
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
-            size="small"
           >
             <i class="el-icon-s-operation" />
             <span v-if="isPC">筛选</span>
@@ -59,6 +65,7 @@
       <!--table表单-->
       <div class="table_center">
         <el-table
+          ref="multipleTable"
           v-loading="listLoading"
           :data="list"
           :row-style="{height: '20px'}"
@@ -70,13 +77,29 @@
           stripe
           highlight-current-row
           style="width: 100%"
+          align="left"
+          row-key="id"
           @cell-click="tableClick"
+          @selection-change="handleSelectionChange"
         >
           <el-table-column
-            v-if="checkList.indexOf('货主编号') > -1"
-            align="left"
+            type="selection"
+            width="55"
+            reserve-selection
+            align="center"
+          />
+          <el-table-column
+            :key="Math.random()"
+            type="index"
+            width="55"
+            label="序号"
+            :index="indexMethod('listQuery')"
+            align="center"
             fixed
-            label="货主编号"
+          />
+          <el-table-column
+            v-if="checkList.indexOf('线索编号') > -1"
+            label="线索编号"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.customerId }}</span>
@@ -84,9 +107,8 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('货主') > -1"
-            align="left"
-            label="货主"
+            v-if="checkList.indexOf('分配状态') > -1"
+            label="分配状态"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
@@ -94,9 +116,9 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('类型') > -1"
+            v-if="checkList.indexOf('销售') > -1"
             class-name="status-col"
-            label="类型"
+            label="销售"
           >
             <template slot-scope="{row}">
               <el-tag :type="row.status | articleStatusFilter">
@@ -109,9 +131,8 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('合同状态') > -1"
-            align="left"
-            label="合同状态"
+            v-if="checkList.indexOf('线索状态') > -1"
+            label="线索状态"
           >
             <template slot-scope="{row}">
               {{ row.contractEffectiveness }}
@@ -119,9 +140,8 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('创建时间') > -1"
-            align="left"
-            label="创建时间"
+            v-if="checkList.indexOf('线索来源') > -1"
+            label="线索来源"
           >
             <template slot-scope="scope">
               <p>{{ scope.row.createDate | Timestamp }}</p>
@@ -129,9 +149,8 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('创建人') > -1"
-            align="left"
-            label="创建人"
+            v-if="checkList.indexOf('城市') > -1"
+            label="城市"
           >
             <template slot-scope="scope">
               <p>
@@ -143,9 +162,8 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('合同止期') > -1"
-            align="left"
-            label="合同止期"
+            v-if="checkList.indexOf('公司') > -1"
+            label="公司"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.contractEnd | Timestamp }}</span>
@@ -153,17 +171,63 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('线路销售') > -1"
-            align="left"
-            label="线路销售"
+            v-if="checkList.indexOf('姓名') > -1"
+            label="姓名"
           >
             <template slot-scope="{row}">
               {{ row.lineSaleName | DataIsNull }}
             </template>
           </el-table-column>
-
           <el-table-column
-            align="left"
+            v-if="checkList.indexOf('手机号') > -1"
+            label="手机号"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="checkList.indexOf('职务') > -1"
+            label="职务"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="checkList.indexOf('创建日期') > -1"
+            label="创建日期"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="checkList.indexOf('更新日期') > -1"
+            label="更新日期"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="checkList.indexOf('备注') > -1"
+            label="备注"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="checkList.indexOf('姓名') > -1"
+            label="姓名"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineSaleName | DataIsNull }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :key="Math.random()"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -192,6 +256,21 @@
                   >
                     详情
                   </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goFollow(scope.row.customerNo)"
+                  >
+                    跟进
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goConversion(scope.row.customerNo)"
+                  >
+                    转化
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goEdit(scope.row.customerNo)"
+                  >
+                    编辑
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -208,88 +287,125 @@
         @olclick="olClicks"
       />
     </div>
-
-    <!-- <Dialog
-      :visible.sync="showDialog"
-      :title="`测试标题`"
-      :show-cancel-button="true"
-      :show-confirm-button="true"
-      @confirm="confirm"
+    <!-- 提示信息 -->
+    <Dialog
+      :visible.sync="showMessage"
+      :title="messageBox.title"
     >
-      <ClueListForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
-      />
-      <ClueListForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
-      />
-    </Dialog> -->
+      <p>{{ messageBox.message }}</p>
+    </Dialog>
+    <!-- 批量分配线索 -->
     <Dialog
       :visible.sync="showDialog"
-      :title="`测试标题`"
-      :center="true"
-      :before-close="beforeClose"
-      :cancel="cancel"
+      :title="`批量分配线索`"
       :confirm="confirm"
     >
-      <p>确认要关闭弹窗吗</p>
+      <el-alert
+        class="mb10"
+        :title="`已选线索${multipleSelection.length}条，请选择销售`"
+        type="warning"
+        :closable="false"
+      />
+      <el-table
+        v-loading="dialogLoading"
+        :data="dialogList"
+        size="mini"
+        stripe
+        highlight-current-row
+        height="38vh"
+        style="width: 100%;"
+        align="left"
+        row-key="id"
+        @selection-change="handleSelectionDialog"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          reserve-selection
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          width="55"
+          label="序号"
+          :index="indexMethod('dialogListQuery')"
+          align="center"
+        />
+        <el-table-column
+          label="销售姓名"
+          prop="name"
+        />
+        <el-table-column
+          label="联系电话"
+          prop="name"
+        />
+        <el-table-column
+          label="线索数量"
+          prop="name"
+        />
+      </el-table>
+      <pagination
+        v-show="dialogTotal > 0"
+        :small="true"
+        :operation-list="[]"
+        :total="dialogTotal"
+        :page.sync="dialogListQuery.page"
+        :limit.sync="dialogListQuery.limit"
+        @pagination="getDialogList"
+      />
     </Dialog>
+    <!-- 右侧侧边栏 -->
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleSelection"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="{item}">
+        <span>{{ item.customerName }}</span>
+        <span>{{ item.customerName }}</span>
+        <span>{{ item.customerName }}</span>
+      </template>
+    </PitchBox>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+
+import SuggestContainer from '@/components/SuggestContainer/index.vue'
+import SelfForm from '@/components/base/SelfForm.vue'
+import SelfTable from '@/components/base/SelfTable.vue'
+import { ClueListForm } from './components'
+import TableHeader from '@/components/TableHeader/index.vue'
+import Pagination from '@/components/Pagination/index.vue'
+import Dialog from '@/components/Dialog/index.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
+
 import { GetCustomerList } from '@/api/customer'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
-import Pagination from '@/components/Pagination/index.vue'
-import TableHeader from '@/components/TableHeader/index.vue'
-import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
-import { ClueListForm } from './components'
+
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
 interface IState {
   [key: string]: any;
 }
-
 @Component({
   name: 'ClueList',
   components: {
-    Pagination,
     SuggestContainer,
-    TableHeader,
+    SelfTable,
     ClueListForm,
-    Dialog
+    TableHeader,
+    Pagination,
+    Dialog,
+    PitchBox
   }
 })
-export default class ClueList extends Vue {
-  private showDialog: boolean= false;
-  private total = 0;
-  private list: CargoListData[] = [];
-  private page: Object | undefined = '';
-  private listLoading = true;
+export default class extends Vue {
   private tags: any[] = [];
-  private DateValue: any[] = [];
-  private operationList: any[] = [
-    { icon: 'el-icon-phone', name: '1', color: '#999' },
-    { icon: 'el-icon-star-off', name: '2', color: '#978374' }
-  ];
-  private dropdownList: any[] = [
-    '货主编号',
-    '货主',
-    '类型',
-    '合同状态',
-    '创建时间',
-    '创建人',
-    '合同止期',
-    '线路销售'
-  ];
-  private checkList: any[] = this.dropdownList;
   private tab: any[] = [
     {
       label: '待跟进',
@@ -318,6 +434,8 @@ export default class ClueList extends Vue {
       name: '5'
     }
   ];
+
+  private DateValue: any[] = [];
   private listQuery: IState = {
     key: '',
     city: '',
@@ -329,75 +447,78 @@ export default class ClueList extends Vue {
     lineSaleId: ''
   };
 
-  created() {
-    this.fetchData()
-  }
+  private dropdownList: any[] = [
+    '线索编号',
+    '分配状态',
+    '销售',
+    '线索状态',
+    '线索来源',
+    '城市',
+    '公司',
+    '姓名',
+    '手机号',
+    '职务',
+    '创建日期',
+    '更新日期',
+    '备注'
+  ];
+  private checkList: any[] = this.dropdownList;
 
-  mounted() {}
+  // table
+  private total = 0;
+  private list: CargoListData[] = [];
+  private page: Object | undefined = '';
+  private listLoading = true;
+  private multipleSelection: any[] = [];
+  // 分页
+  private operationList: any[] = [
+    { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: 1 },
+    { icon: 'el-icon-thumb', name: '分配线索', color: '#5E7BBB', key: 2 },
+    { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: 3 }
+  ];
+  // message 提示
+  private showMessage: boolean = false;
+  private messageBox: IState = {
+    title: '',
+    message: ''
+  };
+  // 弹窗
+  private dialogLoading: boolean = false;
+  private showDialog: boolean = false;
+  private multipleSelectionDialog: any[] = [];
+  private dialogList: any[] = [];
+  // 弹窗分页
+  private dialogTotal: number = 0;
+  private dialogListQuery: IState = {
+    page: 1,
+    limit: 10
+  };
+  // 侧边栏
+  private drawer: boolean = false;
 
-  activated() {
-    // this.handleScroll()
-  }
-
-  // 判断是否是PC
+  // 计算属性
   get isPC() {
     return SettingsModule.isPC
   }
-  // 测试dialog
-  private confirm(done: any) {
-    this.$message.info('点击了确定')
-    done()
-  }
-  private cancel(done: any) {
-    this.$message.info('点击了取消')
-    done()
-  }
-  private beforeClose(done: any) {
-    this.$message.info('点击了X')
-    done()
+  // 事件处理
+  // 处理tags方法
+  private handleTags(value: any) {
+    this.tags = value
   }
   // 所有请求方法
   private fetchData() {
     this.getList(this.listQuery)
   }
-
-  // 处理tags方法
-  private handleTags(value: any) {
-    this.tags = value
-  }
-
   // 处理query方法
   private handleQuery(value: any, key: any) {
     this.listQuery[key] = value
     this.fetchData()
   }
-
   // 处理选择日期方法
   private handleDate(value: any) {
-    this.DateValue = value
+    // this.DateValue = value
   }
-
-  // 请求列表
-  private async getList(value: any) {
-    this.listQuery.page = value.page
-    this.listQuery.limit = value.limit
-    this.listLoading = true
-    const { data } = await GetCustomerList(this.listQuery)
-    if (data.success) {
-      this.list = data.data
-      data.page = await HandlePages(data.page)
-      this.total = data.page.total
-      setTimeout(() => {
-        this.listLoading = false
-      }, 0.5 * 1000)
-    } else {
-      this.$message.error(data)
-      setTimeout(() => {
-        this.listLoading = false
-      }, 0.5 * 1000)
-    }
-  }
-
+  // button
   // 添加明细原因 row 当前行 column 当前列
   private tableClick(row: any, column: any, cell: any, event: any) {
     // switch (column.label) {
@@ -415,17 +536,151 @@ export default class ClueList extends Vue {
     //     break
     //   default: return
     // }
-    console.log('添加明细原因', row, column, cell, event)
+    // console.log('添加明细原因', row, column, cell, event)
+  }
+  // 选中
+  private handleSelectionChange(val: any) {
+    this.multipleSelection = val
+  }
+  // 请求列表
+  private async getList(value: any) {
+    this.listQuery.page = value.page
+    this.listQuery.limit = value.limit
+    this.listLoading = true
+    const { data } = await GetCustomerList(this.listQuery)
+    if (data.success) {
+      this.list = data.data
+      data.page = await HandlePages(data.page)
+      this.total = data.page.total
+    } else {
+      this.$message.error(data)
+    }
+    setTimeout(() => {
+      const el = document.querySelector(
+        '.el-table .el-table__body-wrapper'
+      ) as HTMLElement
+      el.scroll(0, 0)
+      this.listLoading = false
+    }, 0.5 * 1000)
   }
 
   // 按钮操作
+  // 详情
   private goDetail(id: string | (string | null)[] | null | undefined) {
     this.$router.push({ name: 'ClueDetail', query: { id: id } })
   }
+  // 编辑
+  private goEdit(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'EditClue', query: { id: id } })
+  }
+  // 跟进
+  private goFollow(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'FollowUpClue', query: { id: id } })
+  }
+  // 转化
+  private goConversion(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'ConversionClue', query: { id: id } })
+  }
+  // 导入
+  private goImport(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'ImportClue', query: { id: id } })
+  }
 
+  // 新增线索
+  private createClue() {
+    this.$router.push({ name: 'AddClue' })
+  }
   // 批量操作
   private olClicks(item: any) {
-    console.log(item)
+    const key: number = item.key
+    if (this.multipleSelection.length === 0) {
+      this.$message.warning(`请先选择线索`)
+      return
+    }
+    switch (key) {
+      case 1: // 查看选中
+        this.drawer = true
+        break
+      case 2: // 批量分配线索
+        if (key === 2) {
+          this.messageBox.title = '提示'
+          this.messageBox.message = '已选线索中包含已分配状态线索3条，请确认要对这些线索重新分配！'
+          this.showMessage = true
+        }
+        this.showDialog = true
+        this.$nextTick(() => {
+          this.getDialogList(this.dialogListQuery)
+        })
+        break
+      case 3: // 取消选中
+        this.$confirm('确认清空所有选择吗？', '确认清空', {
+          type: 'warning'
+        }).then(() => {
+          (this.$refs.multipleTable as any).clearSelection()
+          this.multipleSelection = []
+        }).catch(() => {})
+        break
+      default:
+        break
+    }
+  }
+
+  // table index
+  private indexMethod(type: string) {
+    let page: number, limit: number
+    if (type === 'listQuery') {
+      ({ page, limit } = this.listQuery)
+    } else if (type === 'dialogListQuery') {
+      ({ page, limit } = this.listQuery)
+    }
+    return (index: number) => {
+      return index + 1 + (page - 1) * limit
+    }
+  }
+  // 弹窗操作
+  private confirm(done: any) {
+    // 提交操作
+    console.log(111)
+  }
+  // 弹窗表格选中
+  private handleSelectionDialog(val: any) {
+    this.multipleSelectionDialog = val
+  }
+  // 确认清除
+  // private confirm(done:any) {
+  //   (this.$refs.multipleTable as any).clearSelection()
+  //   this.multipleSelection = []
+  //   done()
+  // }
+  // 获取弹窗list
+  async getDialogList(value: any) {
+    this.dialogListQuery.page = value.page
+    this.dialogListQuery.limit = value.limit
+    this.dialogLoading = true
+    const { data } = await GetCustomerList(this.dialogListQuery)
+    if (data.success) {
+      this.dialogList = data.data
+      this.dialogTotal = data.page.total
+    } else {
+      this.$message.error(data)
+    }
+    setTimeout(() => {
+      this.dialogLoading = false
+    }, 0.5 * 1000)
+  }
+  // 侧边栏
+  // 删除选中项目
+  private deletDrawerList(item: any, i: any) {
+    (this.$refs.multipleTable as any).toggleRowSelection(item, false)
+    this.multipleSelection.splice(i, 1)
+  }
+  // 关闭查看已选
+  private changeDrawer(val: any) {
+    this.drawer = val
+  }
+
+  created() {
+    this.fetchData()
   }
 }
 </script>
@@ -435,23 +690,9 @@ export default class ClueList extends Vue {
   padding: 15px;
   padding-bottom: 0;
   box-sizing: border-box;
-  .btn-item {
-    background: #649cee;
-    border-radius: 4px;
-    border-radius: 4px;
-    border: none;
-    margin: 0 10px;
-  }
-  .btn-item-filtrate {
-    background: #ffa000;
-    border-radius: 4px;
-    border-radius: 4px;
-    border: none;
-  }
   .table_box {
     height: calc(100vh - 225px) !important;
     background: #ffffff;
-    // border: 1px solid #dfe6ec;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
     transform: translateZ(0);
@@ -461,19 +702,7 @@ export default class ClueList extends Vue {
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
-      overflow-y: scroll;
     }
-  }
-  .edit-input {
-    padding-right: 100px;
-  }
-  .cancel-btn {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-  }
-  .pagination-container {
-    background: #fff;
   }
 }
 </style>
@@ -482,23 +711,9 @@ export default class ClueList extends Vue {
 .ClueList-m {
   padding-bottom: 0;
   box-sizing: border-box;
-  .btn-item-m {
-    background: #649cee;
-    border-radius: 4px;
-    border-radius: 4px;
-    border: none;
-    margin: 0 10px;
-  }
-  .btn-item-filtrate-m {
-    background: #ffa000;
-    border-radius: 4px;
-    border-radius: 4px;
-    border: none;
-  }
   .table_box {
     height: calc(100vh - 183px) !important;
     background: #ffffff;
-    // border: 1px solid #dfe6ec;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
     transform: translateZ(0);
@@ -507,29 +722,21 @@ export default class ClueList extends Vue {
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
-      overflow-y: scroll;
     }
-  }
-  .edit-input {
-    padding-right: 100px;
-  }
-  .cancel-btn {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-  }
-  .pagination-container {
-    background: #f8f9fa;
   }
 }
 </style>
-
-<style lang="scss" scope>
-.el-collapse-item__content {
-  padding-bottom: 0;
+<style lang="scss" scoped>
+.mb10 {
+  margin-bottom: 10px;
 }
-
-.el-form-item__label {
-  color: #999999;
+.btn-item,
+.btn-item-m {
+  margin: 0 10px;
+}
+.btn-item-filtrate,
+.btn-item-filtrate-m {
+  background-color: $assist-btn;
+  border-color: $assist-btn;
 }
 </style>
