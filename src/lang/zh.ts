@@ -20,6 +20,7 @@ export default {
     showTender: '查看全部标书',
     showPicture: '查看线路图片',
     showLog: '操作日志',
+    wechatShow: '小程序预览',
     tenderManage: '标书管理',
     transportTitle: '运力中心',
     transportList: '运力列表',

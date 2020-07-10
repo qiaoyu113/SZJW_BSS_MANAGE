@@ -165,7 +165,7 @@ const cargoRouter: RouteConfig = {
     },
     {
       path: 'showpicture', /* 查看拍照 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ShowPicture.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/TakePicture.vue'),
       name: 'ShowPicture',
       meta: {
         title: 'showPicture',
@@ -195,6 +195,19 @@ const cargoRouter: RouteConfig = {
       name: 'ShowLog',
       meta: {
         title: 'showLog',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'wechatshow', /* 小程序预览 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/WechatShow.vue'),
+      name: 'WechatShow',
+      meta: {
+        title: 'wechatShow',
         activeMenu: '/cargo/linemanage',
         noCache: false,
         hidden: true,

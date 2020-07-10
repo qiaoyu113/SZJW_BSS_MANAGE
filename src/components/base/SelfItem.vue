@@ -12,7 +12,7 @@
         <el-input
           v-model="ruleForm[params.prop]"
           :type="params.kind"
-          :placeholder="params.placeholder"
+          v-bind="params.tagAttrs || {}"
         />
       </el-form-item>
       <el-form-item
@@ -29,6 +29,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :placeholder="params.placeholder"
+          v-bind="params.tagAttrs || {}"
         />
       </el-form-item>
 
@@ -43,6 +44,7 @@
             v-for="(item,index) in params.radio"
             :key="'radio-'+item.type+'-'+index"
             :label="item.type"
+            v-bind="params.tagAttrs || {}"
           >
             {{ item.label }}
           </el-radio>
@@ -70,6 +72,7 @@
       >
         <el-select
           v-model="ruleForm[params.prop]"
+          v-bind="params.tagAttrs || {}"
         >
           <el-option
             v-for="(sub,index) in params.options"
@@ -85,7 +88,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import CascaderMore from '@/views/transport/components/TransportListForm/CascaderMore.vue'
+import CascaderMore from '@/components/base/CascaderMore.vue'
 import '@/styles/common.scss'
 interface params {
   prop:string,
@@ -126,3 +129,29 @@ export default class SelfItem extends Vue {
   }
 }
 </style>
+<style scoped>
+.CascaderMore{
+  flex: 1;
+}
+.SelfItem >>> .el-form-item__content {
+    display: flex;
+    flex: 1;
+  }
+  .SelfItem >>> .el-input {
+    display: flex;
+    flex: 1;
+  }
+  .SelfItem >>> .el-select {
+    display: flex;
+    flex: 1;
+  }
+  .SelfItem >>> .el-date-editor {
+    display: flex;
+    flex: 1;
+  }
+
+  .SelfItem >>> .el-radio {
+    height:36px;
+    line-height: 36px;
+  }
+  </style>

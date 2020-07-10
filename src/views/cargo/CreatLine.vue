@@ -14,11 +14,26 @@
         <el-row class="detail">
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'huozhuname',type: 1,label: '货主名称',placeholder: '请输入并选择货主'}"
+            :params="{prop: 'huozhuname',type: 5,label: '货主名称',tagAttrs: {placeholder: '请输入选择货主',filterable: true},options: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }]}"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'linename',type: 1,label: '内部使用线路名称',placeholder: '名称应具有辨识度'}"
+            :params="{prop: 'linename',type: 1,label: '内部使用线路名称',tagAttrs: {placeholder: '名称应具有辨识度'}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -74,11 +89,6 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :pccol="12"
-            :params="{prop: 'cangweizhi',type: 4,label: '配送区域',kind: '2',iswrite: true}"
-          />
-          <SelfItem
-            :rule-form="ruleForm"
             :params="{prop: 'linetype',type: 3,label: '是否需要返仓',radio: [{label: '是',type: 1},{label: '否',type: 2}]}"
           />
           <SelfItem
@@ -88,14 +98,19 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'linename',type: 1,label: '预计每日平均配送点位数',placeholder: '请输入',kind: 'number'}"
-            :pccol="12"
+            :pccol="8"
             :width="200"
           />
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'linename',type: 1,label: '预计每日平均总公里数（公里）',placeholder: '请输入',kind: 'number'}"
-            :pccol="12"
+            :pccol="8"
             :width="240"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :pccol="12"
+            :params="{prop: 'cangweizhi',type: 4,label: '配送区域',kind: '2',iswrite: true}"
           />
         </el-row>
       </SectionContainer>
@@ -130,6 +145,27 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'linetype',type: 3,label: '结算天数',radio: [{label: '现结',type: 1},{label: '周结',type: 2},{label: '月结',type: 3},{label: '季度结',type: 4}]}"
+          />
+
+          <SelfItem
+            v-if="ruleForm['linetype'] === 1"
+            :rule-form="ruleForm"
+            :params="{prop: 'linename',type: 1,label: '货主单趟报价',placeholder: '请输入',kind: 'number'}"
+          />
+          <SelfItem
+            v-if="ruleForm['linetype']"
+            :rule-form="ruleForm"
+            :params="{prop: 'linename',type: 1,label: '预计货主预报价',placeholder: '请输入',kind: 'number'}"
+          />
+          <SelfItem
+            v-if="ruleForm['linetype'] === 2"
+            :rule-form="ruleForm"
+            :params="{prop: 'linename',type: 1,label: '每趟保底（元）',placeholder: '请输入',kind: 'number'}"
+          />
+          <SelfItem
+            v-if="ruleForm['linetype'] === 2"
+            :rule-form="ruleForm"
+            :params="{prop: 'linename',type: 1,label: '每趟提成单价（元）',placeholder: '请输入',kind: 'number'}"
           />
         </el-row>
       </SectionContainer>
@@ -172,28 +208,123 @@
         title="线路角色"
         :md="true"
       >
-        <div>线路打分</div>
-        <div>线路角色</div>
+        <el-row>
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{prop: 'cartype',type: 5,label: '所属销售',placeholder: '请选择所属销售',options: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }]}"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{prop: 'linename',type: 1,label: '线路打分',placeholder: '请输入'}"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{prop: 'linename',type: 1,label: '线路角色',placeholder: '请输入'}"
+          />
+        </el-row>
       </SectionContainer>
 
-      <el-form-item>
-        <div class="btn_box">
-          <el-button
-            type="primary"
-            @click="submitForm('ruleForm')"
-          >
-            立即创建
-          </el-button>
-          <el-button @click="resetForm('ruleForm')">
-            重置
-          </el-button>
+      <div class="btn_box">
+        <el-button
+          v-if="pageStatus === 1"
+          type="primary"
+          name="CreatLine-btn-creat"
+          @click="submitForm('ruleForm')"
+        >
+          立即创建
+        </el-button>
+        <el-button
+          v-if="pageStatus === 2"
+          type="primary"
+          name="CreatLine-btn-creat"
+          @click="submitForm('ruleForm')"
+        >
+          重新提交
+        </el-button>
+        <el-button
+          v-if="pageStatus === 3"
+          type="primary"
+          name="CreatLine-btn-creat"
+          @click="submitForm('ruleForm')"
+        >
+          提交
+        </el-button>
+
+        <el-button
+          v-if="pageStatus === 4"
+          type="primary"
+          name="CreatLine-btn-creat"
+          @click="submitForm('ruleForm')"
+        >
+          审核通过
+        </el-button>
+        <el-button
+          v-if="pageStatus === 4"
+          type="primary"
+          name="CreatLine-btn-creat"
+          @click="submitForm('ruleForm')"
+        >
+          审核拒绝
+        </el-button>
+
+        <el-button
+          v-if="!(pageStatus === 4)"
+          name="CreatLine-btn-cancel"
+          @click="showDio = true"
+        >
+          取消
+        </el-button>
+
+        <el-button
+          v-if="!(pageStatus === 4)"
+          name="CreatLine-btn-reset"
+          @click="resetForm('ruleForm')"
+        >
+          重置
+        </el-button>
+        <el-button
+          v-if="pageStatus === 1"
+          name="CreatLine-btn-xcxshow"
+          @click="resetForm('ruleForm')"
+        >
+          小程序预览
+        </el-button>
+      </div>
+
+      <Dialog
+        :visible.sync="showDio"
+        :title="`取消上传`"
+        :center="true"
+        :cancel="picCancel"
+        :confirm="picConfirm"
+      >
+        <div>
+          <div class="dioBox">
+            线路未提交，是否放弃编辑？
+          </div>
         </div>
-      </el-form-item>
+      </Dialog>
     </el-form>
   </div>
 </template>
 <script lang="ts">
 import { Form as ElForm, Input } from 'element-ui'
+import Dialog from '@/components/Dialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -204,11 +335,14 @@ import '@/styles/common.scss'
   name: 'CreatLine',
   components: {
     SelfItem,
-    SectionContainer
+    SectionContainer,
+    Dialog
   }
 })
 export default class CreatLine extends Vue {
+  private pageStatus:number = 0
   private pccol:number=6
+  private showDio:boolean = false
   private ruleForm:any = {
     huozhuname: '',
     linename: '',
@@ -268,9 +402,29 @@ export default class CreatLine extends Vue {
   private resetForm(formName:any) {
     (this.$refs[formName] as ElForm).resetFields()
   }
+
+  private picCancel(done: any) {
+    done()
+  }
+  private picConfirm(done: any) {
+    this.showDio = false
+    this.$router.go(-1)
+  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+  created() {
+    let routeArr = this.$route.path.split('/')
+    if (routeArr[2] === 'creatline') {
+      this.pageStatus = 1
+    } else if (routeArr[2] === 'lineedit') {
+      this.pageStatus = 2
+    } else if (routeArr[2] === 'linecopy') {
+      this.pageStatus = 3
+    } else if (routeArr[2] === 'lineaudit') {
+      this.pageStatus = 4
+    }
   }
 }
 </script>
@@ -279,9 +433,13 @@ export default class CreatLine extends Vue {
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  .el-form-item__label{
+  .btn-content{
     color: #4a4a4a;
     font-weight: 400;
+  }
+  .btn_box{
+    padding-top: 40px;
+    box-sizing: border-box;
   }
 }
 </style>
@@ -292,16 +450,24 @@ export default class CreatLine extends Vue {
     color: #4a4a4a;
     font-weight: 400;
   }
+  .btn_box{
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button{
+      width: 100%;
+    }
+    .el-button{
+      margin: 0 0 20px 0;
+    }
+  }
 }
 </style>
 <style lang="scss" scoped>
-</style>
-<style lang="scss" scoped>
 @media screen and (min-width: 701px) {
-  .el-select {
+  .SelfItem .el-select {
     width: 100%;
   }
-  .el-input, .el-date-editor, .el-textarea {
+  .SelfItem  .el-input, .el-date-editor, .el-textarea {
     width: 75%;
   }
   // .el-cascader{
@@ -309,12 +475,12 @@ export default class CreatLine extends Vue {
   // }
 }
 
-// @media screen and (max-width: 700px) {
-//   .el-select {
-//     width: 100%;
-//   }
-//   .el-input{
-//     width: 90%;
-//   }
-// }
+@media screen and (max-width: 700px) {
+  .el-select {
+    width: 100%;
+  }
+  .el-input{
+    width: 90%;
+  }
+}
 </style>

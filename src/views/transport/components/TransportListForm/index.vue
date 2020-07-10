@@ -90,14 +90,12 @@ import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
 import transportItem from './TransportItem.vue'
-import cascaderMore from './CascaderMore.vue'
 import '@/styles/common.scss'
 
 @Component({
   name: 'SuggestForm',
   components: {
-    transportItem,
-    cascaderMore
+    transportItem
   }
 })
 export default class extends Vue {

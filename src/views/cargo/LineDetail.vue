@@ -65,21 +65,21 @@
       <el-row>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="选择车型："
+            name="选择车型"
             value="4.2米厢货"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="配送区域："
+            name="配送区域"
             value="北京市朝阳区全区域"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="具体区域范围："
+            name="具体区域范围"
             value="全区域"
           />
         </el-col>
@@ -118,7 +118,7 @@
       <el-row>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="每日配送趟数："
+            name="每日配送趟数"
             value="4"
           />
         </el-col>
@@ -174,8 +174,11 @@
             value="30天"
           />
         </el-col>
-        <el-col :span="24">
-          <template class="detail-group">
+        <el-col
+          :span="24"
+          class="detail-group"
+        >
+          <template>
             <span class="detail-title">配送周期:</span>
             <el-checkbox-group v-model="checkList">
               <el-checkbox
@@ -234,6 +237,28 @@
         </el-col>
       </el-row>
     </SectionContainer>
+    <div class="steps">
+      <el-steps
+        :active="2"
+        align-center
+      >
+        <el-step
+          title="创建线路"
+          description="张明明  2020-09-10"
+        />
+        <el-step
+          title="外线BGL已审核"
+          description="张明明"
+        />
+        <el-step
+          title="标书可上岗"
+          description="张明明"
+        />
+        <el-step
+          title="售罄"
+        />
+      </el-steps>
+    </div>
   </div>
 </template>
 
@@ -334,10 +359,12 @@ export default class extends Vue {
     font-weight: 400;
   }
   .detail-group{
+    padding: 10px;
     display: flex;
     align-items: center;
   }
   .detail-title{
+
     font-size: 14px;
     color: #666;
     font-weight: 400;
@@ -345,33 +372,49 @@ export default class extends Vue {
     padding-right: 16px;
     box-sizing: border-box;
   }
+    .steps{
+      margin: 60px 0 30px 0;
+      }
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .LineDetail-m {
   width: 100%;
   .el-form-item__label{
     color: #4a4a4a;
     font-weight: 400;
   }
-    .detail-group{
-    display: flex;
-    align-items: center;
-  }
-  .detail-title{
-    flex: 0.3;
-    font-size: 14px;
-    color: #666;
-    font-weight: 400;
-    text-align: right;
-    padding-right: 16px;
+  .detail-group{
+    padding: 10px 14px;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
+    border-bottom: 1px solid #F8F9FA
   }
+
+   .detail-title{
+      width: 100%;
+      display: block;
+      font-size: 12px;
+      color: #666;
+      font-weight: 400;
+      text-align: left;
+      padding-right: 15px;
+      padding-bottom: 10px;
+      box-sizing: border-box;
+    }
+    .steps{
+      margin: 30px 0 20px 0;
+    }
 }
 </style>
-
-<style lang="scss" scope>
+<style>
+  .steps >>> .el-step .el-step__title {
+    font-size: 12px;
+    line-height: 24px;
+  }
+</style>
+<style scope>
 @media screen and (min-width: 701px) {
   .el-select {
     width: 100%;

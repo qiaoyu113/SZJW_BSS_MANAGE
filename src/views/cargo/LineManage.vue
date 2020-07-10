@@ -46,7 +46,16 @@
       >
         <template v-slot:left>
           <div>
-            <span>12332313213</span>
+            <span>统计：已查询到
+              <span class="numCol">700</span>
+              条线路，总计可上岗
+              <span class="numCol">100</span>
+              个，已上岗
+              <span class="numCol">40</span>
+              个，已下线
+              <span class="numCol">20</span>
+              个
+            </span>
           </div>
         </template>
 
@@ -386,22 +395,27 @@ export default class LineManage extends Vue {
   private diaUpcarNum:string = ''
   private tab: any[] = [
     {
-      label: '待上架',
+      label: '全部',
       name: '0',
       num: 187
     },
     {
-      label: '已上架',
+      label: '待上架',
       name: '1',
+      num: 187
+    },
+    {
+      label: '已上架',
+      name: '2',
       num: 1
     },
     {
       label: '已售罄',
-      name: '2'
+      name: '3'
     },
     {
       label: '已停用',
-      name: '3'
+      name: '4'
     }
   ];
   private total = 0;
@@ -767,6 +781,9 @@ export default class LineManage extends Vue {
       case 'linedetail':
         this.$router.push({ path: 'linedetail', query: { id: row.clientPhone } })
         break
+      case 'showpic':
+        this.$router.push({ path: 'showpicture', query: { id: row.clientPhone } })
+        break
       default:
         break
     }
@@ -986,6 +1003,10 @@ export default class LineManage extends Vue {
 </style>
 
 <style lang="scss" scope>
+.numCol{
+  color: #649CEE;
+  margin: 0!important;
+}
 .btn-main-color{
     border: 1px solid $main-btn;
     color:$main-btn
