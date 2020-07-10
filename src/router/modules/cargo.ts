@@ -25,6 +25,84 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
+      path: 'addclue', /* 新增线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      name: 'AddClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'addClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'editclue', /* 编辑线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      name: 'EditClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'editClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'followupclue', /* 跟进线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      name: 'FollowUpClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'followUpClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'conversionclue', /* 转化货主 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ConversionClue.vue'),
+      name: 'ConversionClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'conversionClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'importclue', /* 导入 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportClue.vue'),
+      name: 'ImportClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'importClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'importdetail', /* 导入详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportDetail.vue'),
+      name: 'ImportDetail',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'importDetail',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
       path: 'cluedetail', /* 线索详情 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueDetail.vue'),
       name: 'ClueDetail',
@@ -34,7 +112,7 @@ const cargoRouter: RouteConfig = {
         title: 'clueDetail',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
       }
     },
     {
