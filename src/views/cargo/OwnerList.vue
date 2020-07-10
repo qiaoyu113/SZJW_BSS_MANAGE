@@ -25,7 +25,7 @@
           type="primary"
           size="small"
           name="cluelist_creat_btn"
-          @click="showDialog = true"
+          @click="showDialog.visible = true"
         >
           <i class="el-icon-s-operation" />
           <span v-if="isPC">创建客户</span>
@@ -72,7 +72,6 @@
           highlight-current-row
           style="width: 100%"
           row-key="customerNo"
-          @cell-click="tableClick"
           @selection-change="handleSelectionChange"
         >
           <el-table-column
@@ -175,16 +174,6 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('是否为合同期内') > -1"
-            align="left"
-            label="是否为合同期内"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
-
-          <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
             align="left"
             label="创建日期"
@@ -241,7 +230,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
+                    @click.native="goDetail(scope.row.customerId)"
                   >
                     详情
                   </el-dropdown-item>
@@ -254,6 +243,7 @@
       <pagination
         v-show="total > 0"
         :operation-list="operationList"
+        :small="true"
         :total="total"
         :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
@@ -274,31 +264,74 @@
       </template>
     </PitchBox>
 
-    <!-- <Dialog
-      :visible.sync="showDialog"
-      :title="`测试标题`"
-      :show-cancel-button="true"
-      :show-confirm-button="true"
-      @confirm="confirm"
-    >
-      <ClueListForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
-      />
-      <ClueListForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
-      />
-    </Dialog> -->
+    <!-- 批量分配货主 -->
     <Dialog
-      :visible.sync="showDialog"
-      :title="`清空确认`"
+      :visible.sync="assignShowDialog"
+      :title="`分配货主`"
+      :confirm="confirmAssign"
+    >
+      <el-alert
+        class="mb10"
+        :title="`已选货主${multipleSelectionAssign.length}位，请选择销售！(货主其关联的线索也会分配给该销售)`"
+        type="warning"
+        :closable="false"
+      />
+      <el-table
+        v-loading="dialogLoading"
+        :data="dialogList"
+        size="mini"
+        stripe
+        highlight-current-row
+        height="38vh"
+        style="width: 100%;"
+        align="left"
+        row-key="id"
+        @selection-change="handleSelectionDialog"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          reserve-selection
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          width="55"
+          label="序号"
+          :index="indexMethod('dialogListQuery')"
+          align="center"
+        />
+        <el-table-column
+          label="销售姓名"
+          prop="name"
+        />
+        <el-table-column
+          label="联系电话"
+          prop="name"
+        />
+        <el-table-column
+          label="线索数量"
+          prop="name"
+        />
+      </el-table>
+      <pagination
+        v-show="dialogTotal > 0"
+        :small="true"
+        :operation-list="[]"
+        :total="dialogTotal"
+        :page.sync="dialogListQuery.page"
+        :limit.sync="dialogListQuery.limit"
+        @pagination="getDialogList"
+      />
+    </Dialog>
+    <!--提示窗口-->
+    <Dialog
+      :visible.sync="showDialog.visible"
+      :title="showDialog.title"
       :center="true"
       :confirm="confirm"
     >
-      <p>确认清空所有选择吗？</p>
+      <p>{{ showDialog.text }}</p>
     </Dialog>
   </div>
 </template>
@@ -336,7 +369,12 @@ interface IState {
   }
 })
 export default class extends Vue {
-    private showDialog: boolean= false;
+    private showDialog: Object= {
+      visible: false,
+      title: '提示',
+      text: '内容',
+      name: ''
+    };
     private drawer: boolean= false;
     private total = 0;
     private list: CargoListData[] = [];
@@ -369,30 +407,9 @@ export default class extends Vue {
     private checkList: any[] = this.dropdownList;
     private tab: any[] = [
       {
-        label: '待跟进',
+        label: '全部',
         name: '0',
         num: 187
-      },
-      {
-        label: '跟进中',
-        name: '1',
-        num: 1
-      },
-      {
-        label: '已面试',
-        name: '2'
-      },
-      {
-        label: '已面试',
-        name: '3'
-      },
-      {
-        label: '已面试',
-        name: '4'
-      },
-      {
-        label: '已面试',
-        name: '5'
       }
     ];
     private listQuery: IState = {
@@ -404,6 +421,17 @@ export default class extends Vue {
       startDate: '',
       state: '',
       lineSaleId: ''
+    };
+    // 弹窗分配
+    private dialogList: any[] = [];
+    private dialogLoading: boolean= false;
+    private multipleSelectionAssign: any[] = []
+    private assignShowDialog: boolean= false;
+    // 弹窗分页
+    private dialogTotal: number = 0;
+    private dialogListQuery: IState = {
+      page: 1,
+      limit: 20
     };
 
     created() {
@@ -422,8 +450,13 @@ export default class extends Vue {
     }
     // 确认清除
     private confirm(done:any) {
-      (this.$refs.multipleTable as any).clearSelection()
-      this.multipleSelection = []
+      if (this.showDialog[name] === '1') {
+        (this.$refs.multipleTable as any).clearSelection()
+        this.multipleSelection = []
+      } else {
+        this.assignShowDialog = true
+        this.getDialogList(this.dialogListQuery)
+      }
       done()
     }
     // 所有请求方法
@@ -469,36 +502,39 @@ export default class extends Vue {
       }
     }
 
-    // 添加明细原因 row 当前行 column 当前列
-    private tableClick(row: any, column: any, cell: any, event: any) {
-    // switch (column.label) {
-    //   case '原因说明':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   case '判责金额(元)':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   case '备注':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   default: return
-    // }
-      console.log('添加明细原因', row, column, cell, event)
+    // 获取弹窗list
+    async getDialogList(value: any) {
+      this.dialogListQuery.page = value.page
+      this.dialogListQuery.limit = value.limit
+      this.dialogLoading = true
+      const { data } = await GetCustomerList(this.dialogListQuery)
+      console.log(data)
+      if (data.success) {
+        this.dialogList = data.data
+        this.dialogTotal = data.page.total
+      } else {
+        this.$message.error(data)
+      }
+      setTimeout(() => {
+        this.dialogLoading = false
+      }, 0.5 * 1000)
     }
 
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'ClueDetail', query: { id: id } })
+      this.$router.push({ name: 'OwnerDetail', query: { id: id } })
     }
 
     // 批量操作
     private olClicks(item: any) {
       if (item.key === '2') {
         if (this.multipleSelection.length) {
-          this.showDialog = true
+          this.showDialog = {
+            visible: true,
+            title: '清空确认',
+            text: '确认清空所有选择吗？',
+            name: '1'
+          }
         } else {
           this.$message({
             type: 'warning',
@@ -506,7 +542,19 @@ export default class extends Vue {
           })
         }
       } else if (item.key === '1') {
-        console.log(this.multipleSelection)
+        if (this.multipleSelection.length) {
+          this.showDialog = {
+            visible: true,
+            title: '提示',
+            text: '分配货主后关联的相关线索也会分配给该销售！',
+            name: '2'
+          }
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '请先选择货主再进行操作！'
+          })
+        }
       } else if (item.key === '3') {
         this.drawer = true
       }
@@ -525,6 +573,37 @@ export default class extends Vue {
     // 删除选中项目
     private deletDrawerList(item:any, i:any) {
       (this.$refs.multipleTable as any).toggleRowSelection(item)
+    }
+
+    // 弹窗操作
+    private confirmAssign(done: any) {
+      // 提交操作
+      console.log(111333)
+      if (this.multipleSelectionAssign.length) {
+        this.assignShowDialog = false
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '请先选择货主再进行操作！'
+        })
+      }
+      // done()
+    }
+    // 弹窗表格选中
+    private handleSelectionDialog(val: any) {
+      this.multipleSelectionAssign = val
+    }
+    // table index
+    private indexMethod(type: string) {
+      let page: number, limit: number
+      if (type === 'listQuery') {
+        ({ page, limit } = this.listQuery)
+      } else if (type === 'dialogListQuery') {
+        ({ page, limit } = this.listQuery)
+      }
+      return (index: number) => {
+        return index + 1 + (page - 1) * limit
+      }
     }
 }
 </script>
