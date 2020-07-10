@@ -197,7 +197,7 @@ import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { TransportListForm } from './components'
+import { TransportListForm } from './components/index'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
