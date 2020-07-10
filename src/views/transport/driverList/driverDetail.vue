@@ -138,7 +138,7 @@ export default class extends Vue {
 
   ]
 
-  private activeName:string = 'f1'
+  private activeName:string = 'f6'
 
   private orderLists = [
     {
@@ -234,8 +234,8 @@ export default class extends Vue {
   /**
    *tab切换
    */
-  handleClick() {
-
+  handleClick(tab:any) {
+    this.activeName = tab.name
   }
 }
 </script>
