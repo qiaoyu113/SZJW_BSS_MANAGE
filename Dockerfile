@@ -11,4 +11,5 @@ RUN cd /code && ls -la  &&  yarn dist
 
 FROM registry-vpc.cn-beijing.aliyuncs.com/wutong-library/nginx:1.19.0
 COPY --from=builder /code/web /site/web
+RUN rm /etc/nginx/conf.d/default.conf
 ADD nginx.config /etc/nginx/conf.d/site.conf
