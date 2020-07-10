@@ -1,5 +1,5 @@
 <template>
-  <div :class="isPC ? 'BuyCarType' : 'BuyCarType-m'">
+  <div :class="isPC ? 'ImportClue' : 'ImportClue-m'">
     <SuggestContainer
       :tab="tab"
       :tags="tags"
@@ -7,7 +7,7 @@
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
-      <BuyCarForm
+      <ImportListForm
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
@@ -19,17 +19,20 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <el-button :class="isPC ? 'btn-item' : 'btn-item-m'">
-          <i class="el-icon-download" />
-          <span v-if="isPC">导出</span>
-        </el-button>
         <el-button
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
-          @click="showDialog('create')"
         >
-          <i class="el-icon-s-operation" />
-          <span v-if="isPC">新建商品</span>
+          <i class="el-icon-upload2" />
+          <span v-if="isPC">线索模板导入</span>
+        </el-button>
+        <el-button :class="isPC ? 'btn-item' : 'btn-item-m'">
+          <i class="el-icon-download" />
+          <span v-if="isPC">线索模板下载</span>
+        </el-button>
+        <el-button :class="isPC ? 'btn-item' : 'btn-item-m'">
+          <i class="el-icon-download" />
+          <span v-if="isPC">线索模板说明</span>
         </el-button>
         <el-dropdown
           :hide-on-click="false"
@@ -75,14 +78,22 @@
         >
           <el-table-column
             :key="Math.random()"
-            prop="date"
-            label="商品编号"
+            type="index"
+            width="55"
+            label="序号"
+            :index="indexMethod"
+            align="center"
             fixed
           />
           <el-table-column
-            v-if="checkList.includes('购车车型')"
+            v-if="checkList.includes('导入日期')"
             prop="date"
-            label="购车车型"
+            label="导入日期"
+          />
+          <el-table-column
+            v-if="checkList.includes('文档名称')"
+            prop="date"
+            label="文档名称"
           >
             <template slot-scope="{row}">
               <el-button type="text">
@@ -91,75 +102,25 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="checkList.includes('车辆信息')"
+            v-if="checkList.includes('导入结果')"
             prop="date"
-            label="车辆信息"
+            label="导入结果"
           />
           <el-table-column
-            v-if="checkList.includes('供应商')"
+            v-if="checkList.includes('线索总数')"
             prop="date"
-            label="供应商"
+            label="线索总数"
           />
           <el-table-column
-            v-if="checkList.includes('无税加个（元）')"
+            v-if="checkList.includes('失败记录数')"
             prop="date"
-            label="无税加个（元）"
+            label="失败记录数"
           />
           <el-table-column
-            v-if="checkList.includes('城市')"
+            v-if="checkList.includes('检测错误数')"
             prop="date"
-            label="城市"
+            label="检测错误数"
           />
-          <el-table-column
-            v-if="checkList.includes('车型状态')"
-            prop="date"
-            label="车型状态"
-          />
-          <el-table-column
-            v-if="checkList.includes('创建时间')"
-            prop="date"
-            label="创建时间"
-          />
-          <el-table-column
-            v-if="checkList.includes('创建人')"
-            prop="date"
-            label="创建人"
-          />
-          <el-table-column
-            :key="Math.random()"
-            label="操作"
-            fixed="right"
-            :width="isPC ? 'auto' : '50'"
-          >
-            <template slot-scope="{row}">
-              <el-dropdown>
-                <span
-                  v-if="isPC"
-                  class="el-dropdown-link"
-                >
-                  更多操作<i
-                    v-if="isPC"
-                    class="el-icon-arrow-down el-icon--right"
-                  />
-                </span>
-                <span
-                  v-else
-                  style="font-size: 18px;"
-                  class="el-dropdown-link"
-                >
-                  <i class="el-icon-setting el-icon--right" />
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    下{{ row }}架
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    编辑
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
         </el-table>
       </div>
       <pagination
@@ -171,43 +132,15 @@
         @pagination="getList"
       />
     </div>
-    <Dialog
-      :visible.sync="dialogVisible"
-      :title="dialogTit"
-      :confirm="confirm"
-    >
-      <el-form
-        ref="dialogForm"
-        :model="dialogForm"
-        label-width="80px"
-      >
-        <el-form-item label="供应商">
-          <el-input v-model="dialogForm.name" />
-        </el-form-item>
-        <el-form-item label="车型">
-          <el-input v-model="dialogForm.name" />
-        </el-form-item>
-        <el-form-item label="车辆信息">
-          <el-input v-model="dialogForm.name" />
-        </el-form-item>
-        <el-form-item label="无税价格">
-          <el-input v-model="dialogForm.name" />
-        </el-form-item>
-        <el-form-item label="适用城市">
-          <el-input v-model="dialogForm.name" />
-        </el-form-item>
-      </el-form>
-    </Dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { BuyCarForm } from './components'
+import { ImportListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
 import { CargoListData } from '@/api/types'
 
 import { SettingsModule } from '@/store/modules/settings'
@@ -218,31 +151,17 @@ interface IState {
 }
 
 @Component({
-  name: 'BuyCarType',
+  name: 'ImportClue',
   components: {
     SuggestContainer,
-    BuyCarForm,
+    ImportListForm,
     TableHeader,
-    Pagination,
-    Dialog
+    Pagination
   }
 })
 export default class extends Vue {
   private tags: any[] = [];
-  private tab: any[] = [
-    {
-      label: '全部',
-      name: '0'
-    },
-    {
-      label: '已上架',
-      name: '1'
-    },
-    {
-      label: '已下架',
-      name: '2'
-    }
-  ];
+  private tab: any[] = [];
   private DateValue: any[] = [];
   private listQuery: IState = {
     key: '',
@@ -255,14 +174,12 @@ export default class extends Vue {
     lineSaleId: ''
   };
   private dropdownList: any[] = [
-    '购车车型',
-    '车辆信息',
-    '供应商',
-    '无税价格（元）',
-    '城市',
-    '车型状态',
-    '创建时间',
-    '创建人'
+    '导入日期',
+    '文档名称',
+    '导入结果',
+    '线索总数',
+    '失败记录数',
+    '检测错误数'
   ];
   private checkList: any[] = this.dropdownList;
   // table
@@ -270,13 +187,6 @@ export default class extends Vue {
   private list: CargoListData[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
-  // dialog
-  private dialogVisible: boolean = false;
-  private dialogTit: string = '';
-  private dialogForm: IState = {
-    name: ''
-  };
-
   // 计算属性
   get isPC() {
     return SettingsModule.isPC
@@ -309,24 +219,10 @@ export default class extends Vue {
     let { page, limit } = this.listQuery
     return index + 1 + (page - 1) * limit
   }
-
-  // dialog
-  showDialog(key: string) {
-    if (key === 'create') {
-      // 新建
-      this.dialogVisible = true
-    } else {
-      // 编辑
-      console.log('编辑')
-    }
-  }
-  confirm(done: any) {
-
-  }
 }
 </script>
 <style lang="scss" scoped>
-.BuyCarType {
+.ImportClue {
   padding: 15px;
   padding-bottom: 0;
   box-sizing: border-box;
@@ -356,5 +252,8 @@ export default class extends Vue {
 }
 </style>
 <style scoped>
-
+.ImportClue >>> .TableHeader_title,
+.ImportClue-m >>> .TableHeader_title {
+  display: none;
+}
 </style>

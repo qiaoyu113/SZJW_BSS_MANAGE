@@ -6,94 +6,25 @@
           <el-row>
             <el-form :label-width="isPC ? '120px' : '28%'">
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="线索编号">
+                <el-form-item label="购买车型">
                   <el-input
                     v-model="listQuery.name"
-                    placeholder="请输入线索编号"
+                    placeholder="请输入购买车型"
                     clearable
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="姓名">
+                <el-form-item label="供应商">
                   <el-input
                     v-model="listQuery.name"
-                    placeholder="请输入姓名"
+                    placeholder="请输入供应商"
                     clearable
                   />
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="手机号">
-                  <el-input
-                    v-model="listQuery.name"
-                    placeholder="请输入手机号"
-                    clearable
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="线索状态">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="线索来源">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="城市">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="分配状态">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="销售">
                   <el-select
                     v-model="listQuery.city"
                     placeholder="请选择"
