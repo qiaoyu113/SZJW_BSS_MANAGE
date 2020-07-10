@@ -1,73 +1,245 @@
 <template>
   <div class="DriverList">
     <el-card>
-      <!-- 查询表单 -->
-      <self-form
-        :list-query="listQuery"
-        :form-item="formItem"
+      <suggest-container
+        :tab="tab"
+        :tags="tags"
+        :active-name="listQuery.state"
+        @handle-query="handleQuery"
       >
-        <div
-          slot="btn1"
-          :class="isPC ? 'btnPc' : ''"
+        <!-- 查询表单 -->
+        <self-form
+          :list-query="listQuery"
+          :form-item="formItem"
+          label-width="80px"
+        >
+          <div
+            slot="btn1"
+            :class="isPC ? 'btnPc' : ''"
+          >
+            <el-button
+              type="primary"
+              :class="isPC ? '' : 'btnMobile'"
+              name="driverlist_query_btn"
+              size="small"
+              @click="handleQueryClick"
+            >
+              查询
+            </el-button>
+            <el-button
+              :class="isPC ? '' : 'btnMobile'"
+              name="driverlist_reset_btn"
+              size="small"
+              @click="handleResetClick"
+            >
+              重置
+            </el-button>
+            <el-button
+              :class="isPC ? '' : 'btnMobile'"
+              type="primary"
+              name="driverlist_manager_btn"
+              size="small"
+              @click="handleModifyManager"
+            >
+              修改加盟经理
+            </el-button>
+          </div>
+        </self-form>
+      </suggest-container>
+      <!-- 表格顶部的按钮 -->
+      <table-header
+        :tab="[]"
+        active-name=""
+      >
+        <el-dropdown
+          :hide-on-click="false"
+          trigger="click"
         >
           <el-button
             type="primary"
-            :class="isPC ? '' : 'btnMobile'"
-            name="driverlist_query_btn"
-            @click="handleQueryClick"
+            size="small"
+            style="margin-left:10px"
+            name="driverclue_column_btn"
           >
-            查询
+            <i
+              class="el-icon-s-operation"
+            />
           </el-button>
-          <el-button
-            :class="isPC ? '' : 'btnMobile'"
-            name="driverlist_reset_btn"
-            @click="handleResetClick"
-          >
-            重置
-          </el-button>
-          <el-button
-            :class="isPC ? '' : 'btnMobile'"
-            type="primary"
-            name="driverlist_manager_btn"
-            @click="handleModifyManager"
-          >
-            修改加盟经理
-          </el-button>
-        </div>
-      </self-form>
-
+          <el-dropdown-menu slot="dropdown">
+            <el-checkbox-group v-model="checkList">
+              <el-dropdown-item
+                v-for="item in dropdownList"
+                :key="item.label"
+              >
+                <el-checkbox
+                  :label="item.label"
+                  :disabled="item.disabled"
+                />
+              </el-dropdown-item>
+            </el-checkbox-group>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </table-header>
+      <!-- 表格 -->
       <self-table
-        ref="selfTable"
+        ref="driverListTable"
         v-loading="listLoading"
         border
+        :operation-list="operationList"
         :table-data="tableData"
         :columns="columns"
         :page="page"
+        @olclick="handleOlClick"
         @onPageSize="handlePageSize"
-        @onCommand="handleCommandChange"
       >
         <template v-slot:op="scope">
-          <el-button
-            v-if="isPC"
-            :a="scope"
-            type="text"
-          >
-            更多操作
-          </el-button>
-          <i
-            v-else
-            class="el-icon-setting"
-          />
+          <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+            <span class="el-dropdown-link">
+              <el-button
+                v-if="isPC"
+                :a="scope"
+                type="text"
+              >
+                更多操作
+              </el-button>
+              <i
+                v-else
+                class="el-icon-setting"
+              />
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                v-if="[4].includes(scope.row.status)"
+                command="distribution"
+              >
+                <template v-if="isPC">
+                  分配
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="[1,2,3].includes(scope.row.status)"
+                command="follow"
+              >
+                <template v-if="isPC">
+                  跟进
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="[2].includes(scope.row.status)"
+                command="giveup"
+              >
+                <template v-if="isPC">
+                  放弃
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="[1,2,3,4].includes(scope.row.status)"
+                command="edit"
+              >
+                <template v-if="isPC">
+                  编辑
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="[1,2,3,4].includes(scope.row.status)"
+                command="detail"
+              >
+                <template v-if="isPC">
+                  详情
+                </template>
+                <i
+                  v-else
+                  class="el-icon-chat-dot-square"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="[3].includes(scope.row.status)"
+                command="account"
+              >
+                <template v-if="isPC">
+                  账户
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="[1,2,3].includes(scope.row.status)"
+                command="order"
+              >
+                <template v-if="isPC">
+                  创建订单
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="[3].includes(scope.row.status)"
+                command="transport"
+              >
+                <template v-if="isPC">
+                  创建运力
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </self-table>
+      <manager-dialog
+        ref="driverListManager"
+        :rows="rows"
+        :type="type"
+        @onRows="rows = []"
+      />
     </el-card>
+
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleRows"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="slotProp">
+        <span>{{ slotProp.item.a }}</span>
+        <span>{{ slotProp.item.b }}</span>
+        <span>{{ slotProp.item.c }}</span>
+      </template>
+    </PitchBox>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/base/SelfTable.vue'
+import SuggestContainer from '@/components/SuggestContainer/index.vue'
+import ManagerDialog from './components/managerDialog.vue'
+import TableHeader from '@/components/TableHeader/index.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
+import { unique, getLabel } from '@/utils/index.ts'
 interface IState {
     [key: string]: any;
 }
@@ -77,16 +249,65 @@ interface PageObj {
   total?:Number
 }
 
+interface Tab {
+  label:String,
+  name:String,
+  id:Number,
+  num?:Number | undefined
+}
+
 @Component({
   name: 'DriverList',
   components: {
     SelfForm,
-    SelfTable
+    SelfTable,
+    SuggestContainer,
+    ManagerDialog,
+    TableHeader,
+    PitchBox
   }
 })
 export default class extends Vue {
   private listLoading:boolean = false
+  private tab:Tab[] = [
+    {
+      label: '全部',
+      name: 'all',
+      id: 0,
+      num: 187
+    },
+    {
+      label: '待跟进',
+      name: 'tab1',
+      id: 1,
+      num: 5
+    },
+    {
+      label: '已跟进',
+      name: 'tab2',
+      id: 2,
+      num: 1
+    },
+    {
+      label: '已成交',
+      name: 'tab3',
+      id: 3,
+      num: 1
+    },
+    {
+      label: '已放弃',
+      name: 'tab4',
+      id: 4,
+      num: 1
+    }
+  ]
+  private tags:any[] = []
+  private type:string = ''
+
+  private dropdownList:any[] = []
+  private checkList:any[] =[]
   private listQuery:IState = {
+    state: 'all',
     city: '',
     code: '',
     name: '',
@@ -209,6 +430,7 @@ export default class extends Vue {
       type: 4,
       key: 'up',
       label: '是否有待上岗运力',
+      w: '130px',
       options: [
         {
           label: '是',
@@ -223,6 +445,7 @@ export default class extends Vue {
     {
       type: 4,
       key: 'quit',
+      w: '130px',
       label: '是否有已退出运力',
       options: [
         {
@@ -239,6 +462,7 @@ export default class extends Vue {
       type: 3,
       key: 'time',
       label: '创建时间',
+      col: 12,
       tagAttrs: {
         pickerOptions: {
           shortcuts: [{
@@ -279,24 +503,72 @@ export default class extends Vue {
     },
     {
       slot: true,
+      col: 24,
+      w: '0px',
       type: 'btn1'
     }
   ]
 
   private tableData:any[] = [
     {
-      a: '12131312313',
+      a: '121313123131',
+      b: 'tom',
+      c: '15021578502',
+      d: '共享',
+      e: '北京市',
+      f: '待跟进',
+      g: '面试转化',
+      h: '王利',
+      i: Date.now(),
+      j: 5,
+      k: '王利',
+      l: '15021578502',
+      status: 1
+    },
+    {
+      a: '121313123132',
+      b: 'tom',
+      c: '15021578502',
+      d: '共享',
+      e: '北京市',
+      f: '已跟进',
+      g: '面试转化',
+      h: '王利1',
+      i: Date.now(),
+      j: 5,
+      k: '王利',
+      l: '15021578502',
+      status: 2
+    },
+    {
+      a: '121313123133',
       b: 'tom',
       c: '15021578502',
       d: '共享',
       e: '北京市',
       f: '已成交',
       g: '面试转化',
-      h: '王利',
+      h: '王利2',
       i: Date.now(),
       j: 5,
       k: '王利',
-      l: '15021578502'
+      l: '15021578502',
+      status: 3
+    },
+    {
+      a: '121313123134',
+      b: 'tom',
+      c: '15021578502',
+      d: '共享',
+      e: '北京市',
+      f: '已放弃',
+      g: '面试转化',
+      h: '王利3',
+      i: Date.now(),
+      j: 5,
+      k: '王利',
+      l: '15021578502',
+      status: 4
     }
   ]
 
@@ -353,54 +625,21 @@ export default class extends Vue {
       key: 'op',
       label: '操作',
       fixed: 'right',
-      slot: true,
-      moreOp: [
-        {
-          label: '分配',
-          value: 'distribution',
-          icon: 'el-icon-edit'
-        },
-        {
-          label: '跟进',
-          value: 'follow',
-          icon: 'el-icon-edit'
-        },
-        {
-          label: '放弃',
-          value: 'giveup',
-          icon: 'el-icon-edit'
-        },
-        {
-          label: '编辑',
-          value: 'edit',
-          icon: 'el-icon-edit'
-        },
-        {
-          label: '详情',
-          value: 'detail',
-          icon: 'el-icon-chat-dot-square'
-        },
-        {
-          label: '账户',
-          value: 'account',
-          icon: 'el-icon-chat-dot-square'
-        },
-        {
-          label: '创建订单',
-          value: 'order',
-          icon: 'el-icon-chat-dot-square'
-        },
-        {
-          label: '创建运力',
-          value: 'transport',
-          icon: 'el-icon-chat-dot-square'
-        }
-      ]
+      disabled: true,
+      slot: true
+    }
+  ]
+
+  private operationList = [
+    {
+      icon: 'el-icon-view',
+      name: '查看选中',
+      color: '#673BB8'
     },
     {
-      key: 'u',
-      label: '详情',
-      slot: true
+      icon: 'el-icon-circle-close',
+      name: '清空选择',
+      color: '#F54436'
     }
   ]
 
@@ -412,11 +651,35 @@ export default class extends Vue {
     limit: 20,
     total: 100
   }
+
+  mounted() {
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+  }
+
+  @Watch('checkList', { deep: true })
+  private checkListChange(val:any) {
+    setTimeout(() => {
+      this.columns = this.dropdownList.filter(item => val.includes(item.label))
+    }, 20)
+  }
   /**
    * 查询
    */
   private handleQueryClick() {
-    console.log(this.listQuery)
+    let blackLists = ['state']
+    for (let key in this.listQuery) {
+      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+        let name = getLabel(this.formItem, this.listQuery, key)
+        if (name) {
+          this.tags.push({
+            type: 'info',
+            name,
+            key: key
+          })
+        }
+      }
+    }
   }
   /**
    *重置
@@ -445,7 +708,13 @@ export default class extends Vue {
    * 修改加盟经理
    */
   handleModifyManager() {
-
+    let rows = (this.$refs.driverListTable as any).multipleSelection || []
+    if (rows.length === 0) {
+      return this.$message.error('请选择司机')
+    }
+    this.type = 'modify'
+    this.rows = rows;
+    (this.$refs.driverListManager as any).openDialog()
   }
 
   /**
@@ -460,32 +729,114 @@ export default class extends Vue {
    * 更多操作
    */
   handleCommandChange(key:string|number, row:any) {
-    console.log('xxx:', key, row)
-    if (key === 'edit') { // 修改线索
+    if (key === 'distribution') { // 分配
+      this.type = 'distribution'
+      this.rows = [row];
+      (this.$refs.driverListManager as any).openDialog()
+    } else if (key === 'follow') { // 跟进
       this.$router.push({
-        path: '/transport/createClue',
+        path: '/transport/followDriver'
+      })
+    } else if (key === 'giveup') { // 放弃
+      this.handleGiveupClick()
+    } else if (key === 'edit') { // 编辑
+      this.$router.push({
+        path: '/transport/editDriver',
         query: {
-          id: row.id
+          id: '1'
         }
       })
-    } else if (key === 'distribution') { // 分配线索
-      (this.$refs.clueDistribution as any).openDialog()
-    } else if (key === 'interview') { // 发起面试
+    } else if (key === 'detail') { // 详情
       this.$router.push({
-        path: '/transport/interview',
-        query: {
-          id: row.id
-        }
+        path: '/transport/driverDetail'
       })
-    } else if (key === 'follow') { // 线索跟进
-      this.$router.push({
-        path: '/transport/followClue',
-        query: {
-          id: row.id
-        }
-      })
+    } else if (key === 'account') { // 账户
+
+    } else if (key === 'order') { // 创建订单
+
+    } else if (key === 'transport') { // 创建运力
+
     }
   }
+
+  /**
+   * 删除顶部表单的选项
+   */
+  handleQuery(value:any, key:any) {
+    if (key === 'time') {
+      this.listQuery[key] = []
+    } else {
+      this.listQuery[key] = value
+    }
+  }
+
+  /**
+   * 放弃操作
+   */
+  handleGiveupClick() {
+    this.$confirm('点击确定后,该司机将从司机列表中移出?', '是否放弃跟进该司机', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+      center: true
+    }).then(() => {
+      this.$message({
+        type: 'success',
+        message: '删除成功!'
+      })
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消删除'
+      })
+    })
+  }
+
+  // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
+   private drawer:boolean = false
+  /**
+   *当前页勾选中的数组集合
+   */
+  private rows:any[] = []
+  /**
+   *多页表格选中的数组
+   */
+  private multipleRows:any[] = []
+  // 删除选中项目
+  private deletDrawerList(item:any, i:any) {
+    this.multipleRows.splice(i, 1)
+    let idx = this.rows.findIndex(sub => sub.a === item.a)
+    if (idx !== -1) {
+      this.rows.splice(idx, 1)
+    }
+    (this.$refs.driverListTable as any).toggleRowSelection();
+    (this.$refs.driverListTable as any).toggleRowSelection(this.rows)
+    if (this.multipleRows.length === 0) {
+      this.drawer = false
+    }
+  }
+  // 关闭查看已选
+  private changeDrawer(val: any) {
+    this.drawer = val
+  }
+  /**
+   * 批量操作的按钮
+   */
+  handleOlClick(val:any) {
+    if (val.name === '查看选中') {
+      this.rows = (this.$refs.driverListTable as any).multipleSelection || []
+      this.multipleRows = unique([...this.rows, ...this.multipleRows], 'a')
+      if (this.multipleRows.length > 0) {
+        this.drawer = true
+      } else {
+        this.$message.error('请先选择')
+      }
+    } else if (val.name === '清空选择') {
+      (this.$refs.driverListTable as any).toggleRowSelection()
+      this.multipleRows = []
+    }
+  }
+  // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
 }
 
 </script>
@@ -496,6 +847,7 @@ export default class extends Vue {
       display: flex;
       flex-flow: row nowrap;
       justify-content: flex-end;
+      width: 100%;
     }
     .btnMobile {
       margin-left: 0;
@@ -503,4 +855,18 @@ export default class extends Vue {
       width:100%;
     }
   }
+</style>
+
+<style>
+  @media screen and (max-width:700px) {
+    .el-message-box__wrapper {
+      top:0!important;
+      left:5%!important;
+      right:5%!important;
+    }
+    .el-message-box {
+      width:100%;
+    }
+  }
+
 </style>
