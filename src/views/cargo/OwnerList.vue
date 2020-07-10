@@ -407,30 +407,9 @@ export default class extends Vue {
     private checkList: any[] = this.dropdownList;
     private tab: any[] = [
       {
-        label: '待跟进',
+        label: '全部',
         name: '0',
         num: 187
-      },
-      {
-        label: '跟进中',
-        name: '1',
-        num: 1
-      },
-      {
-        label: '已面试',
-        name: '2'
-      },
-      {
-        label: '已面试',
-        name: '3'
-      },
-      {
-        label: '已面试',
-        name: '4'
-      },
-      {
-        label: '已面试',
-        name: '5'
       }
     ];
     private listQuery: IState = {
