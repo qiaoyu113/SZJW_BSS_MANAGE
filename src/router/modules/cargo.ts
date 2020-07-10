@@ -51,13 +51,13 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
-      path: 'followclue', /* 跟进线索 */
+      path: 'followupclue', /* 跟进线索 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
-      name: 'FollowClue',
+      name: 'FollowUpClue',
       meta: {
         apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
         activeMenu: '/cargo/cluelist',
-        title: 'followClue',
+        title: 'followUpClue',
         hidden: true,
         icon: '',
         noCache: true

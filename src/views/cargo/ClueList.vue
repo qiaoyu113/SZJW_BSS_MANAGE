@@ -575,7 +575,7 @@ export default class extends Vue {
   }
   // 跟进
   private goFollow(id: string | (string | null)[] | null | undefined) {
-    this.$router.push({ name: 'FollowClue', query: { id: id } })
+    this.$router.push({ name: 'FollowUpClue', query: { id: id } })
   }
   // 转化
   private goConversion(id: string | (string | null)[] | null | undefined) {

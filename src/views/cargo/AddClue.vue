@@ -620,7 +620,7 @@ export default class extends Vue {
   mounted() {
     // this.id = this.$route.query.id
     this.isEdit = this.$route.name === 'EditClue'
-    this.isFollow = this.$route.name === 'FollowClue'
+    this.isFollow = this.$route.name === 'FollowUpClue'
     // console.log(this.$router)
     // this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
     //   confirmButtonText: '确定',
