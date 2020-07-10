@@ -21,7 +21,7 @@ const transportRouter: RouteConfig = {
         activeMenu: '/transport/driverclue',
         title: 'driverClue',
         icon: '',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -34,7 +34,7 @@ const transportRouter: RouteConfig = {
         title: 'driverClue',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -47,19 +47,71 @@ const transportRouter: RouteConfig = {
         title: 'driverClue',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
+      }
+    },
+    {
+      path: 'followClue', /* 线索跟进 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/followClue.vue'),
+      name: 'FollowClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverclue',
+        title: 'driverClue',
+        hidden: true,
+        icon: '',
+        noCache: true
       }
     },
     {
       path: 'driverlist', /* 司机列表 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/DriverList.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/DriverList.vue'),
       name: 'DriverList',
       meta: {
         apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
         activeMenu: '/transport/driverlist',
         title: 'driverList',
         icon: '',
-        noCache: false
+        noCache: true
+      }
+    },
+    {
+      path: 'editDriver', /* 编辑司机 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/editDriver.vue'),
+      name: 'EditDriver',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverlist',
+        title: 'driverList',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'followDriver', /* 跟进司机 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/followDriver.vue'),
+      name: 'FollowDriver',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverlist',
+        title: 'driverList',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'driverDetail', /* 跟进司机 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/driverDetail.vue'),
+      name: 'driverDetail',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverlist',
+        title: 'driverList',
+        hidden: true,
+        icon: '',
+        noCache: true
       }
     },
     {

@@ -10,13 +10,14 @@
       :rules="rules"
     >
       <el-col
-        v-for="(item,idx) in formItem"
-        :key="item.type + idx"
-        :span="isPC ? pcCol : 24"
+        v-for="item in formItem"
+        :key="item.label || item.key"
+        :span="isPC ? item.col || pcCol : 24"
       >
         <el-form-item
           :label="item.label"
           :prop="item.key"
+          :label-width="item.w"
         >
           <!-- 输入框 -->
           <el-input
@@ -72,7 +73,23 @@
               :label="sub.value"
             />
           </el-checkbox-group>
-          <slot v-else-if="item.slot" />
+          <!-- 选择日期 -->
+          <el-date-picker
+            v-else-if="item.type ===6"
+            v-model="listQuery[item.key]"
+            type="date"
+            placeholder="选择日期"
+          />
+          <!-- 显示文本 -->
+          <span
+            v-else-if="item.type ===7"
+            v-bind="item.tagAttrs || {}"
+          >{{ listQuery[item.key] | DataIsNull }}</span>
+          <slot
+            v-else-if="item.slot"
+            :name="item.type"
+            :row="listQuery"
+          />
         </el-form-item>
       </el-col>
       <div class="clearfix" />
@@ -94,7 +111,6 @@ import '@/styles/common.scss'
   })
 export default class extends Vue {
     // 判断是否是PC
-    @Prop({ default: '80px' }) labelWith!:String
     @Prop({ default: () => {} }) listQuery!:IState
     @Prop({ default: () => [] }) formItem!:any[]
     @Prop({ default: 6 }) pcCol!:Number
@@ -134,14 +150,35 @@ export default class extends Vue {
 </style>
 
 <style scoped>
+  .selfForm >>> .el-form-item__content {
+    display: flex;
+    flex: 1;
+  }
   .selfForm >>> .el-input {
-     width:100%;
+    display: flex;
+    flex: 1;
   }
   .selfForm >>> .el-select {
-    width:100%;
+    display: flex;
+    flex: 1;
   }
   .selfForm >>> .el-date-editor {
-     width:100%;
+    display: flex;
+    flex: 1;
   }
 
+  .selfForm >>> .el-radio {
+    height:36px;
+    line-height: 36px;
+  }
+</style>
+
+<style>
+  @media screen and (max-width: 700px) {
+    .el-picker-panel{
+      left: 0 !important;
+      width: 100%!important;
+      overflow-x: auto;
+    }
+  }
 </style>

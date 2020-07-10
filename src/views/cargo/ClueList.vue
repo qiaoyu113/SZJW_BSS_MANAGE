@@ -32,6 +32,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           name="cluelist_creat_btn"
+          @click="goImport"
         >
           <i class="el-icon-s-operation" />
           <span v-if="isPC">导入</span>
@@ -256,12 +257,12 @@
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
+                    @click.native="goFollow(scope.row.customerNo)"
                   >
                     跟进
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
+                    @click.native="goConversion(scope.row.customerNo)"
                   >
                     转化
                   </el-dropdown-item>
@@ -564,12 +565,27 @@ export default class extends Vue {
   }
 
   // 按钮操作
+  // 详情
   private goDetail(id: string | (string | null)[] | null | undefined) {
     this.$router.push({ name: 'ClueDetail', query: { id: id } })
   }
+  // 编辑
   private goEdit(id: string | (string | null)[] | null | undefined) {
     this.$router.push({ name: 'EditClue', query: { id: id } })
   }
+  // 跟进
+  private goFollow(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'FollowUpClue', query: { id: id } })
+  }
+  // 转化
+  private goConversion(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'ConversionClue', query: { id: id } })
+  }
+  // 导入
+  private goImport(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ name: 'ImportClue', query: { id: id } })
+  }
+
   // 新增线索
   private createClue() {
     this.$router.push({ name: 'AddClue' })

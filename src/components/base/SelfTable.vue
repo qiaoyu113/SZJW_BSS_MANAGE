@@ -2,10 +2,10 @@
   <div class="selfTable">
     <el-table
       ref="multipleTable"
-      max-height="400px"
       :row-style="{height: '20px'}"
       :cell-style="{padding: '5px 0'}"
       :data="tableData"
+      max-height="400px"
       v-bind="$attrs"
       style="width: 100%; "
       @selection-change="handleSelectionChange"
@@ -15,19 +15,18 @@
         width="50"
       />
       <el-table-column
-        v-for="(item,idx) in columns"
-        :key="'table-'+idx"
+        v-for="item in columns"
+        :key="item.key"
         :align="item.align || 'center'"
         :min-width="item.width || 100"
         :label="item.label"
         :fixed="item.fixed"
       >
         <template
-
           slot-scope="scope"
         >
           <template v-if="item.moreOp && item.moreOp.length > 0">
-            <el-dropdown @command="handleCommand">
+            <el-dropdown @command="(e) => handleCommand(e,scope.row)">
               <span class="el-dropdown-link">
                 <slot
                   v-if="item.slot"
@@ -115,6 +114,18 @@ export default class extends Vue {
   handleSelectionChange(val:any) {
     this.multipleSelection = val
   }
+  /**
+   * 切换勾选
+   */
+  toggleRowSelection(rows:any[]) {
+    if (rows) {
+      rows.forEach(row => {
+        (this.$refs.multipleTable as any).toggleRowSelection(row)
+      })
+    } else {
+      (this.$refs.multipleTable as any).clearSelection()
+    }
+  }
 
   /**
    * 分页和切换页码
@@ -123,7 +134,7 @@ export default class extends Vue {
   handlePageSizeChange(value:PageObj) {
   }
    @Emit('onCommand')
-   handleCommand(command:any) {
+   handleCommand(command:any, row:any) {
    }
    @Emit('olclick')
    handleOlClick(value:any) {

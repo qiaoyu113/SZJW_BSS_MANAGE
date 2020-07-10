@@ -34,7 +34,7 @@ const cargoRouter: RouteConfig = {
         title: 'addClue',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -47,7 +47,59 @@ const cargoRouter: RouteConfig = {
         title: 'editClue',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
+      }
+    },
+    {
+      path: 'followupclue', /* 跟进线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      name: 'FollowUpClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'followUpClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'conversionclue', /* 转化货主 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ConversionClue.vue'),
+      name: 'ConversionClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'conversionClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'importclue', /* 导入 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportClue.vue'),
+      name: 'ImportClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'importClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'importdetail', /* 导入详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportDetail.vue'),
+      name: 'ImportDetail',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/cargo/cluelist',
+        title: 'importDetail',
+        hidden: true,
+        icon: '',
+        noCache: true
       }
     },
     {
@@ -60,7 +112,7 @@ const cargoRouter: RouteConfig = {
         title: 'clueDetail',
         hidden: true,
         icon: '',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -120,6 +172,136 @@ const cargoRouter: RouteConfig = {
         title: 'tenderManage',
         activeMenu: '/cargo/tendermanage',
         noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'creatline', /* 创建新线路 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/CreatLine.vue'),
+      name: 'CreatLine',
+      meta: {
+        title: 'creatLine',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        icon: '',
+        apiUrl: 'root',
+        hidden: true
+      }
+    },
+    {
+      path: 'linedetail', /* 线路详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/LineDetail.vue'),
+      name: 'LineDetail',
+      meta: {
+        title: 'lineDetail',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        icon: '',
+        hidden: true,
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'lineedit', /* 编辑新线路 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/CreatLine.vue'),
+      name: 'LineEdit',
+      meta: {
+        title: 'lineEdit',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        icon: '',
+        hidden: true,
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'linecopy', /* 复制线路 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/CreatLine.vue'),
+      name: 'LineCopy',
+      meta: {
+        title: 'lineCopy',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        icon: '',
+        hidden: true,
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'lineaudit', /* 审核线路 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/CreatLine.vue'),
+      name: 'LineAudit',
+      meta: {
+        title: 'lineAudit',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        icon: '',
+        hidden: true,
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'takepicture', /* 拍照 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/TakePicture.vue'),
+      name: 'TakePicture',
+      meta: {
+        title: 'takePicture',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        icon: '',
+        hidden: true,
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'showpicture', /* 查看拍照 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/TakePicture.vue'),
+      name: 'ShowPicture',
+      meta: {
+        title: 'showPicture',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'showtender', /* 查看标书 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ShowTender.vue'),
+      name: 'ShowTender',
+      meta: {
+        title: 'showTender',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'showlog', /* 查看操作日志 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ShowLog.vue'),
+      name: 'ShowLog',
+      meta: {
+        title: 'showLog',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'wechatshow', /* 小程序预览 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/WechatShow.vue'),
+      name: 'WechatShow',
+      meta: {
+        title: 'wechatShow',
+        activeMenu: '/cargo/linemanage',
+        noCache: false,
+        hidden: true,
         icon: '',
         apiUrl: 'root'
       }

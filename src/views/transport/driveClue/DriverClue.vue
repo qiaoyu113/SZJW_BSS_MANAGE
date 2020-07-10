@@ -10,30 +10,31 @@
       <self-form
         :list-query="listQuery"
         :form-item="formItem"
-        label-with="80px"
+        label-width="80px"
       >
-        <template slot="btn">
-          <el-col :span="12">
-            <el-button
-              style="width:100%;"
-              type="warning"
-              name="driverclue_reset_btn"
-              @click="handleResetClick"
-            >
-              重置
-            </el-button>
-          </el-col>
-          <el-col :span="12">
-            <el-button
-              style="width:100%;"
-              type="primary"
-              name="driverclue_filter_btn"
-              @click="handleFilterClick"
-            >
-              筛选
-            </el-button>
-          </el-col>
-        </template>
+        <div
+          slot="btn"
+          :class="isPC ? 'btnPc' : ''"
+        >
+          <el-button
+
+            type="warning"
+            :class="isPC ? '' : 'btnMobile'"
+            name="driverclue_reset_btn"
+            @click="handleResetClick"
+          >
+            重置
+          </el-button>
+          <el-button
+
+            :class="isPC ? '' : 'btnMobile'"
+            type="primary"
+            name="driverclue_filter_btn"
+            @click="handleFilterClick"
+          >
+            筛选
+          </el-button>
+        </div>
       </self-form>
     </suggest-container>
     <!-- 表格顶部的按钮 -->
@@ -95,7 +96,7 @@
     </table-header>
     <!-- 表格 -->
     <self-table
-      ref="selfTable"
+      ref="driverClueTable"
       v-loading="listLoading"
       border
       :operation-list="operationList"
@@ -126,7 +127,86 @@
       <template v-slot:lastTime="scope">
         <span>{{ scope.row.lastTime | Timestamp }}</span>
       </template>
+      <template v-slot:op="scope">
+        <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+          <el-button
+            v-if="isPC"
+            :a="scope"
+            type="text"
+          >
+            更多操作
+          </el-button>
+          <i
+            v-else
+            class="el-icon-setting"
+          />
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              command="edit"
+            >
+              <template v-if="isPC">
+                修改线索
+              </template>
+              <i
+                v-else
+                class="el-icon-edit"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="distribution"
+            >
+              <template v-if="isPC">
+                分配线索
+              </template>
+              <i
+                v-else
+                class="el-icon-s-custom"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="interview"
+            >
+              <template v-if="isPC">
+                发起面试
+              </template>
+              <i
+                v-else
+                class="el-icon-chat-dot-square"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="follow"
+            >
+              <template v-if="isPC">
+                线索跟进
+              </template>
+              <i
+                v-else
+                class="el-icon-chat-dot-square"
+              />
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </template>
     </self-table>
+    <!-- 线索分配 -->
+    <clue-distribution
+      id="1"
+      ref="clueDistribution"
+    />
+
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleRows"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="slotProp">
+        <span>{{ slotProp.item.name }}</span>
+        <span>{{ slotProp.item.code }}</span>
+        <span>{{ slotProp.item.phone }}</span>
+      </template>
+    </PitchBox>
   </div>
 </template>
 <script lang="ts">
@@ -138,6 +218,9 @@ import TableHeader from '@/components/TableHeader/index.vue'
 import { GetDriverIndexesList } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
+import ClueDistribution from './components/clueDistribution.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
+import { unique, getLabel } from '@/utils/index.ts'
 interface IState {
   [key: string]: any;
 }
@@ -161,7 +244,9 @@ interface PageObj {
     SuggestContainer,
     SelfForm,
     SelfTable,
-    TableHeader
+    TableHeader,
+    ClueDistribution,
+    PitchBox
   }
 })
 
@@ -221,7 +306,7 @@ export default class extends Vue {
       color: '#673BB8'
     },
     {
-      icon: 'el-icon-finished',
+      icon: 'el-icon-s-operation',
       name: '分配线索',
       color: '#3F51B6'
     },
@@ -235,6 +320,7 @@ export default class extends Vue {
    *表单对象
    */
   private listQuery:IState = {
+    state: 'all',
     name: '',
     phone: '',
     carType: '',
@@ -250,23 +336,26 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '姓名'
+        placeholder: '请输入姓名'
       },
+      label: '姓名',
       key: 'name'
     },
     {
       type: 1,
       tagAttrs: {
-        placeholder: '电话'
+        placeholder: '请输入电话'
       },
+      label: '电话',
       key: 'phone'
     },
     {
       type: 2,
       key: 'carType',
       tagAttrs: {
-        placeholder: '车型'
+        placeholder: '请选择车型'
       },
+      label: '车型',
       options: [
         {
           label: '依维柯',
@@ -281,8 +370,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '来源渠道'
+        placeholder: '请选择来源渠道'
       },
+      label: '来源渠道',
       key: 'channel',
       options: [
         {
@@ -294,8 +384,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '工作城市'
+        placeholder: '请选择工作城市'
       },
+      label: '工作城市',
       key: 'city',
       options: [
         {
@@ -307,8 +398,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '跟进人'
+        placeholder: '请选择跟进人'
       },
+      label: '跟进人',
       key: 'followPerson',
       options: [
         {
@@ -320,8 +412,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '只看我的'
+        placeholder: '请选择'
       },
+      label: '只看我的',
       key: 'onlyCan',
       options: [
         {
@@ -333,9 +426,6 @@ export default class extends Vue {
           value: 2
         }
       ]
-    },
-    {
-      slot: true
     }
   ]
 
@@ -345,7 +435,7 @@ export default class extends Vue {
   private tableData:any[] = [
     {
       name: '段秀英',
-      code: 'SX-BJ-198002069437',
+      code: 'SX-BJ-',
       phone: '14798446913',
       city: '秦皇岛市',
       carType: '金杯',
@@ -361,7 +451,6 @@ export default class extends Vue {
    */
   private columns:any[] = [
     {
-      fixed: 'left',
       key: 'name',
       label: '姓名',
       disabled: true
@@ -400,6 +489,12 @@ export default class extends Vue {
       slot: true,
       key: 'lastTime',
       label: '最后时间'
+    },
+    {
+      slot: true,
+      fixed: 'right',
+      key: 'op',
+      label: '操作'
     }
   ]
 
@@ -418,7 +513,8 @@ export default class extends Vue {
     this.dropdownList = [...this.columns]
     this.checkList = this.dropdownList.map(item => item.label)
     for (let i = 0; i < 10; i++) {
-      this.arry.push({ ...this.tableData[0], ...{ lastTime: Date.now(), isShow: i % 2 === 0, status: i % 3 + 1 } })
+      let num = Math.random().toString(16).slice(2)
+      this.arry.push({ ...this.tableData[0], ...{ lastTime: Date.now(), isShow: i % 2 === 0, status: i % 3 + 1, code: this.tableData[0].code + num } })
     }
     this.tableData = this.arry.slice(0, 10)
   }
@@ -449,15 +545,11 @@ export default class extends Vue {
    * 删除顶部表单的选项
    */
   handleQuery(value:any, key:any) {
-    this.listQuery[key] = value
-  }
-
-  /**
-   * 获取选中节点的集合
-   */
-  handleGetNodeClick() {
-    let nodes = (this.$refs.selfTable as any).multipleSelection
-    console.log(nodes)
+    if (key === 'time') {
+      this.listQuery[key] = []
+    } else {
+      this.listQuery[key] = value
+    }
   }
 
   /**
@@ -488,27 +580,24 @@ export default class extends Vue {
    *筛选按钮
    */
   handleFilterClick() {
+    let blackLists = ['state']
     for (let key in this.listQuery) {
-      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1)) {
-        this.tags.push({
-          type: 'info',
-          name: this.listQuery[key],
-          key: key
-        })
+      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+        let name = getLabel(this.formItem, this.listQuery, key)
+        if (name) {
+          this.tags.push({
+            type: 'info',
+            name: name,
+            key: key
+          })
+        }
       }
     }
-
-    console.log('filter:', this.listQuery)
   }
+
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
-  }
-  /**
-   * 批量操作的按钮
-   */
-  handleOlClick(val:any) {
-    console.log('op:', val)
   }
   /**
    * 创建线索
@@ -526,6 +615,88 @@ export default class extends Vue {
       path: '/transport/interview'
     })
   }
+  /**
+   * 更多操作
+   */
+  handleCommandChange(key:string|number, row:any) {
+    console.log('xxx:', key, row)
+    if (key === 'edit') { // 修改线索
+      this.$router.push({
+        path: '/transport/createClue',
+        query: {
+          id: row.id
+        }
+      })
+    } else if (key === 'distribution') { // 分配线索
+      (this.$refs.clueDistribution as any).openDialog()
+    } else if (key === 'interview') { // 发起面试
+      this.$router.push({
+        path: '/transport/interview',
+        query: {
+          id: row.id
+        }
+      })
+    } else if (key === 'follow') { // 线索跟进
+      this.$router.push({
+        path: '/transport/followClue',
+        query: {
+          id: row.id
+        }
+      })
+    }
+  }
+  // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
+  private drawer:boolean = false
+  /**
+   *当前页勾选中的数组集合
+   */
+  private rows:any[] = []
+  /**
+   *多页表格选中的数组
+   */
+  private multipleRows:any[] = []
+  // 删除选中项目
+  private deletDrawerList(item:any, i:any) {
+    this.multipleRows.splice(i, 1)
+    let idx = this.rows.findIndex(sub => sub.code === item.code)
+    if (idx !== -1) {
+      this.rows.splice(idx, 1)
+    }
+    (this.$refs.driverClueTable as any).toggleRowSelection();
+    (this.$refs.driverClueTable as any).toggleRowSelection(this.rows)
+    if (this.multipleRows.length === 0) {
+      this.drawer = false
+    }
+  }
+  // 关闭查看已选
+  private changeDrawer(val: any) {
+    this.drawer = val
+  }
+  /**
+   * 批量操作的按钮
+   */
+  handleOlClick(val:any) {
+    if (val.name === '查看选中') {
+      this.rows = (this.$refs.driverClueTable as any).multipleSelection || []
+      this.multipleRows = unique([...this.rows, ...this.multipleRows], 'code')
+      if (this.multipleRows.length > 0) {
+        this.drawer = true
+      } else {
+        this.$message.error('请先选择')
+      }
+    } else if (val.name === '清空选择') {
+      (this.$refs.driverClueTable as any).toggleRowSelection()
+      this.multipleRows = []
+    } else if (val.name === '分配线索') {
+      if (this.multipleRows.length > 0) {
+        this.drawer = true;
+        (this.$refs.clueDistribution as any).openDialog()
+      } else {
+        this.$message.error('请先选择')
+      }
+    }
+  }
+  // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
 }
 </script>
 <style lang="scss" scoped>
@@ -546,6 +717,16 @@ export default class extends Vue {
       &.giveup {
         background: $--color-danger;
       }
+    }
+    .btnPc {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:100%;
     }
   }
 </style>

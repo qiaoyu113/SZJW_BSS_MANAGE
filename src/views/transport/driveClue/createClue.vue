@@ -3,54 +3,41 @@
     <el-card header="人工线索录入">
       <self-form
         ref="SelfForm"
-        :pc-col="8"
         :list-query="listQuery"
         :form-item="formItem"
-        label-with="0px"
+        label-width="80px"
         :rules="rules"
         @onPass="handlePassClick"
       >
-        <template slot="btn">
-          <el-col
-            :span="8"
-            class="btn"
+        <div
+          slot="btn"
+          :class="isPC ? 'btnPc' : ''"
+        >
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
+            type="warning"
+            name="createClue_cancel_btn"
+            @click="handleCancelClick"
           >
-            <el-button
-              style="width:100%;"
-              type="warning"
-              name="createClue_cancel_btn"
-              @click="handleCancelClick"
-            >
-              取消
-            </el-button>
-          </el-col>
-          <el-col
-            :span="8"
-            class="btn"
+            取消
+          </el-button>
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
+            type="primary"
+            name="driverclue_save_btn"
+            @click="handleSaveClick"
           >
-            <el-button
-              style="width:100%;"
-              type="primary"
-              name="driverclue_save_btn"
-              @click="handleSaveClick"
-            >
-              保存
-            </el-button>
-          </el-col>
-          <el-col
-            :span="8"
-            class="btn"
+            保存
+          </el-button>
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
+            type="primary"
+            name="driverclue_saveInterview_btn"
+            @click="handleSaveAndInterviewClick"
           >
-            <el-button
-              style="width:100%;"
-              type="primary"
-              name="driverclue_saveInterview_btn"
-              @click="handleSaveAndInterviewClick"
-            >
-              保存并面试
-            </el-button>
-          </el-col>
-        </template>
+            保存并面试
+          </el-button>
+        </div>
       </self-form>
     </el-card>
   </div>
@@ -79,11 +66,11 @@ export default class extends Vue {
   private listQuery:IState = {
     name: '',
     phone: '',
+    wechat: '',
     carType: '',
     channel: '',
     city: '',
-    followPerson: '',
-    onlyCan: ''
+    followPerson: ''
   }
   /**
    *表单数组
@@ -92,23 +79,48 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '姓名'
+        placeholder: '请输入姓名'
       },
+      label: '姓名',
       key: 'name'
     },
     {
       type: 1,
       tagAttrs: {
-        placeholder: '电话'
+        placeholder: '请输入电话'
       },
+      label: '电话',
       key: 'phone'
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入微信'
+      },
+      label: '微信',
+      key: 'wechat'
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择工作城市'
+      },
+      label: '工作城市',
+      key: 'city',
+      options: [
+        {
+          label: '华北大区',
+          value: 'huabei'
+        }
+      ]
     },
     {
       type: 2,
       key: 'carType',
       tagAttrs: {
-        placeholder: '车型'
+        placeholder: '请选择车型'
       },
+      label: '车型',
       options: [
         {
           label: '依维柯',
@@ -123,8 +135,9 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '来源渠道'
+        placeholder: '请选择来源渠道'
       },
+      label: '来源渠道',
       key: 'channel',
       options: [
         {
@@ -136,43 +149,14 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '工作城市'
+        placeholder: '请选择业务线'
       },
-      key: 'city',
-      options: [
-        {
-          label: '华北大区',
-          value: 'huabei'
-        }
-      ]
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '跟进人'
-      },
+      label: '业务线',
       key: 'followPerson',
       options: [
         {
           label: 'tom',
           value: 'tom'
-        }
-      ]
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '只看我的'
-      },
-      key: 'onlyCan',
-      options: [
-        {
-          label: '是',
-          value: 1
-        },
-        {
-          label: '否',
-          value: 2
         }
       ]
     }
@@ -183,6 +167,9 @@ export default class extends Vue {
     ],
     phone: [
       { required: true, message: '请输入电话', trigger: 'blur' }
+    ],
+    wechat: [
+      { required: true, message: '请输入微信', trigger: 'blur' }
     ],
     carType: [
       { required: true, message: '请选择车型', trigger: 'change' }
@@ -195,10 +182,10 @@ export default class extends Vue {
     ],
     followPerson: [
       { required: true, message: '请选择跟进人', trigger: 'change' }
-    ],
-    onlyCan: [
-      { required: true, message: '请选择只看我的', trigger: 'change' }
     ]
+  }
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   /**
@@ -237,18 +224,15 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .CreateClue {
     padding: 20px;
-  }
-</style>
-
-<style scoped>
-  .CreateClue >>> .el-card__body {
-    padding: 0px;
-    height: calc(100vh - 130px);
-  }
-
-  @media screen and (min-width: 701px) {
-    .btn {
-      margin-top:210px;
+    .btnPc {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:100%;
     }
   }
 </style>
