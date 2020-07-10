@@ -15,8 +15,8 @@
         width="50"
       />
       <el-table-column
-        v-for="(item,idx) in columns"
-        :key="'table-'+idx"
+        v-for="item in columns"
+        :key="item.key"
         :align="item.align || 'center'"
         :min-width="item.width || 100"
         :label="item.label"
@@ -113,6 +113,18 @@ export default class extends Vue {
    */
   handleSelectionChange(val:any) {
     this.multipleSelection = val
+  }
+  /**
+   * 切换勾选
+   */
+  toggleRowSelection(rows:any[]) {
+    if (rows) {
+      rows.forEach(row => {
+        (this.$refs.multipleTable as any).toggleRowSelection(row)
+      })
+    } else {
+      (this.$refs.multipleTable as any).clearSelection()
+    }
   }
 
   /**

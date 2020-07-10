@@ -198,3 +198,61 @@ export const HandlePages = (str: any) => {
     return str
   }
 }
+
+/**
+   * 表格查看全部选中使用的过滤重复数组对象
+   */
+export const unique = (array:any[], key:string) => {
+  let obj:any = {}
+  let arr = []
+  array.forEach(item => {
+    if (!obj[item[key]]) {
+      obj[item[key]] = []
+    }
+    obj[item[key]].push(item)
+  })
+  for (let i in obj) {
+    arr.push(...[obj[i][0]])
+  }
+  return arr
+}
+
+/**
+ * 获取label
+ */
+export const getLabel = (formItem:any[], listQuery:any, key:string) => {
+  let options:number[] = [2, 4, 5]
+  let label:string = ''
+  for (let i = 0; i < formItem.length; i++) {
+    let item = formItem[i]
+    if (item.key === key) {
+      if ([1, 6].includes(item.type)) { // input、date  // 处理input和选择日期
+        label = listQuery[key]
+        break
+      } else if ([2, 4, 5].includes(item.type)) { // 下拉框、 radio、checkbox
+        if (item.key === key && item.options && item.options.length > 0) {
+          for (let j = 0; j < item.options.length; j++) {
+            let sub = item.options[j]
+            if (sub.value === listQuery[key]) {
+              label = sub.label
+              break
+            }
+          }
+          break
+        }
+      } else if (item.type === 3) { // 处理日期区间
+        let time:any[] = []
+        if (listQuery[key].length === 2) {
+          for (let i = 0; i < listQuery[key].length; i++) {
+            let item = listQuery[key][i]
+            time.push(parseTime(item, '{y}-{m}-{d}'))
+          }
+          label = time.join('-')
+        }
+        break
+      }
+    }
+  }
+
+  return label
+}
