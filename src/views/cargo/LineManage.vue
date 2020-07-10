@@ -102,7 +102,7 @@
       </BettwenTitle>
       <div class="table_center">
         <self-table
-          ref="selfTable"
+          ref="LineManageTable"
           v-loading="listLoading"
           :operation-list="operationList"
           border
@@ -351,9 +351,22 @@
         </div>
       </div>
     </Dialog>
+
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleRows"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="slotProp">
+        <span>{{ slotProp.item.customerNo }}</span>
+        <span>{{ slotProp.item.customerName }}</span>
+      </template>
+    </PitchBox>
   </div>
 </template>
 <script lang="ts">
+import { unique, getLabel } from '@/utils/index.ts'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -365,6 +378,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 // import { LineManageForm } from './components'
 import SelfTable from '@/components/base/SelfTable.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
 import '@/styles/common.scss'
 
   interface PageObj {
@@ -385,7 +399,8 @@ import '@/styles/common.scss'
       BettwenTitle,
       SelfTable,
       SelfForm,
-      Dialog
+      Dialog,
+      PitchBox
     }
   })
 
@@ -426,7 +441,7 @@ export default class LineManage extends Vue {
   private tags: any[] = [];
   private DateValue: any[] = [];
   private operationList: any[] = [
-    { icon: 'el-icon-edit-outline', name: '编辑', color: '#999' },
+    { icon: 'el-icon-edit-outline', name: '查看选中', color: '#999' },
     { icon: 'el-icon-edit', name: '复制', color: '#978374' },
     { icon: 'el-icon-view', name: '审核', color: '#978374' }
   ];
@@ -673,7 +688,7 @@ export default class LineManage extends Vue {
       label: '创建人'
     },
     {
-      key: 'customerNo',
+      key: 'customerNo22',
       label: '合同止期'
     },
     {
@@ -693,9 +708,6 @@ export default class LineManage extends Vue {
       label: '详情'
     }
   ]
-  private handleOlClick(val:any) {
-    console.log('op:', val)
-  }
 
   /**
    *重置按钮
@@ -726,13 +738,17 @@ export default class LineManage extends Vue {
    *筛选按钮
    */
   handleFilterClick() {
+    let blackLists = ['state']
     for (let key in this.listQuery) {
-      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1)) {
-        this.tags.push({
-          type: 'info',
-          name: this.listQuery[key],
-          key: key
-        })
+      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+        let name = getLabel(this.formItem, this.listQuery, key)
+        if (name) {
+          this.tags.push({
+            type: 'info',
+            name,
+            key: key
+          })
+        }
       }
     }
 
@@ -834,7 +850,11 @@ export default class LineManage extends Vue {
 
     // 处理query方法
     private handleQuery(value: any, key: any) {
-      this.listQuery[key] = value
+      if (key === 'creattime' || key === 'starttime') {
+        this.listQuery[key] = []
+      } else {
+        this.listQuery[key] = value
+      }
       this.fetchData()
     }
 
@@ -870,6 +890,52 @@ export default class LineManage extends Vue {
     get isPC() {
       return SettingsModule.isPC
     }
+
+    // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
+   private drawer:boolean = false
+  /**
+   *当前页勾选中的数组集合
+   */
+  private rows:any[] = []
+  /**
+   *多页表格选中的数组
+   */
+  private multipleRows:any[] = []
+  // 删除选中项目
+  private deletDrawerList(item:any, i:any) {
+    this.multipleRows.splice(i, 1)
+    let idx = this.rows.findIndex(sub => sub.customerNo === item.customerNo)
+    if (idx !== -1) {
+      this.rows.splice(idx, 1)
+    }
+    (this.$refs.LineManageTable as any).toggleRowSelection();
+    (this.$refs.LineManageTable as any).toggleRowSelection(this.rows)
+    if (this.multipleRows.length === 0) {
+      this.drawer = false
+    }
+  }
+  // 关闭查看已选
+  private changeDrawer(val: any) {
+    this.drawer = val
+  }
+  /**
+   * 批量操作的按钮
+   */
+  handleOlClick(val:any) {
+    if (val.name === '查看选中') {
+      this.rows = (this.$refs.LineManageTable as any).multipleSelection || []
+      this.multipleRows = unique([...this.rows, ...this.multipleRows], 'customerNo')
+      if (this.multipleRows.length > 0) {
+        this.drawer = true
+      } else {
+        this.$message.error('请先选择')
+      }
+    } else if (val.name === '清空选择') {
+      (this.$refs.LineManageTable as any).toggleRowSelection()
+      this.multipleRows = []
+    }
+  }
+  // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
 }
 </script>
 
@@ -967,7 +1033,6 @@ export default class LineManage extends Vue {
     color: $main-btn;
   }
   .table_box {
-    height: calc(100vh - 183px) !important;
     background: #ffffff;
     // border: 1px solid #dfe6ec;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);

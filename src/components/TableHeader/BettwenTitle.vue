@@ -3,10 +3,10 @@
     :class="isPC ? 'BettwenTitle' : 'BettwenTitle-m'"
   >
     <div class="BettwenTitle_left">
-      <span style="margin-right:10px">{{ tabName }}</span>
+      <span class="tabName">{{ tabName }}</span>
       <div class="tagInfo">
         <i
-          style="font-size:23px;color:#FFA000;"
+          style="font-size:23px;color:#FFA000;margin-right:10px"
           class="el-icon-warning"
           color="#FFA000"
         />
@@ -67,12 +67,16 @@ export default class extends Vue {
       .BettwenTitle_left{
         display: flex;
         align-items: center;
-          float:left;
-          flex: 0.6;
-          box-sizing: border-box;
-          font-size: 12px;
-          color: #649CEE;
-          line-height: 20px;
+        float:left;
+        flex: 0.6;
+        box-sizing: border-box;
+        font-size: 12px;
+        color: #649CEE;
+        line-height: 20px;
+        .tabName{
+          margin-right:10px;
+          width:40px;
+        }
       }
       .BettwenTitle_right{
           margin-top: 10px;
@@ -80,13 +84,13 @@ export default class extends Vue {
           text-align: right;
           box-sizing: border-box;
       }
-    }
-    .tagInfo{
+      .tagInfo{
       // width: 100%;
+      flex: 1;
       background: rgba(100,156,238,0.08);
       border: 1px solid #649CEE;
       border-radius: 4px;
-      padding: 8px 14px;
+      padding: 4px 7px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
@@ -96,6 +100,7 @@ export default class extends Vue {
       span{
         margin-left: 10px;
       }
+    }
     }
 
 </style>
@@ -109,6 +114,10 @@ export default class extends Vue {
     box-sizing: border-box;
     display: flex;
     align-items: center;
+    .tabName{
+          margin-right:10px;
+          width:40px;
+        }
       .BettwenTitle_left{
           // float:left;
           flex: 0.6;

@@ -221,7 +221,6 @@ export const unique = (array:any[], key:string) => {
  * 获取label
  */
 export const getLabel = (formItem:any[], listQuery:any, key:string) => {
-  let options:number[] = [2, 4, 5]
   let label:string = ''
   for (let i = 0; i < formItem.length; i++) {
     let item = formItem[i]

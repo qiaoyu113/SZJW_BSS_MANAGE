@@ -269,7 +269,6 @@
           v-if="pageStatus === 4"
           type="primary"
           name="CreatLine-btn-creat"
-          @click="submitForm('ruleForm')"
         >
           审核通过
         </el-button>
@@ -277,7 +276,7 @@
           v-if="pageStatus === 4"
           type="primary"
           name="CreatLine-btn-creat"
-          @click="submitForm('ruleForm')"
+          @click="auditBack = true"
         >
           审核拒绝
         </el-button>
@@ -308,7 +307,7 @@
 
       <Dialog
         :visible.sync="showDio"
-        :title="`取消上传`"
+        :title="`取消提交`"
         :center="true"
         :cancel="picCancel"
         :confirm="picConfirm"
@@ -316,6 +315,27 @@
         <div>
           <div class="dioBox">
             线路未提交，是否放弃编辑？
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        :visible.sync="auditBack"
+        :title="`审核拒绝`"
+        :center="true"
+        :cancel="auditCancel"
+        :confirm="auditConfirm"
+      >
+        <div>
+          <div class="dioBox">
+            <span>拒绝原因：</span>
+            <el-input
+              v-model="auditBackText"
+              type="textarea"
+              placeholder="请输入拒绝原因"
+              maxlength="100"
+              show-word-limit
+            />
           </div>
         </div>
       </Dialog>
@@ -343,6 +363,8 @@ export default class CreatLine extends Vue {
   private pageStatus:number = 0
   private pccol:number=6
   private showDio:boolean = false
+  private auditBack:boolean = false
+  private auditBackText:string = ''
   private ruleForm:any = {
     huozhuname: '',
     linename: '',
@@ -407,8 +429,13 @@ export default class CreatLine extends Vue {
     done()
   }
   private picConfirm(done: any) {
-    this.showDio = false
-    this.$router.go(-1)
+    done(this.$router.go(-1))
+  }
+  private auditConfirm(done: any) {
+    done(this.$router.go(-1))
+  }
+  private auditCancel(done:any) {
+    this.auditBack = false
   }
   // 判断是否是PC
   get isPC() {
@@ -441,6 +468,15 @@ export default class CreatLine extends Vue {
     padding-top: 40px;
     box-sizing: border-box;
   }
+    .dioBox{
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding: 0 20px;
+      .el-input{
+        width: 200px!important;
+      }
+  }
 }
 </style>
 <style lang="scss" scoped>
@@ -458,6 +494,13 @@ export default class CreatLine extends Vue {
     }
     .el-button{
       margin: 0 0 20px 0;
+    }
+  }
+    .dioBox{
+    margin-bottom: 20px;
+    padding: 0 20px;
+    .el-input{
+      width: 200px!important;
     }
   }
 }
