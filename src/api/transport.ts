@@ -6,3 +6,11 @@ export const GetDriverDetail = (id: number, params: any) =>
     method: 'get',
     params
   })
+
+/* 获取开通城市 */
+export const GetReginByCityCode = (data: any[]) =>
+  request({
+    url: '/api/base/user/area/getCityByCode',
+    method: 'post',
+    data
+  })

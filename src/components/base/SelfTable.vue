@@ -2,10 +2,10 @@
   <div class="selfTable">
     <el-table
       ref="multipleTable"
-      max-height="400px"
       :row-style="{height: '20px'}"
       :cell-style="{padding: '5px 0'}"
       :data="tableData"
+      max-height="400px"
       v-bind="$attrs"
       style="width: 100%; "
       @selection-change="handleSelectionChange"
