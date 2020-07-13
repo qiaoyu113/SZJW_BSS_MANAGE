@@ -8,9 +8,12 @@
       max-height="400px"
       v-bind="$attrs"
       style="width: 100%; "
+      v-on="$listeners"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
+        v-if="index"
+        :reserve-selection="true"
         type="selection"
         width="50"
       />
@@ -97,6 +100,7 @@ interface PageObj {
 export default class extends Vue {
   @Prop({ default: () => [] }) tableData!:any[]
   @Prop({ default: () => [] }) columns!:any[]
+  @Prop({ default: true }) index!:boolean
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }
