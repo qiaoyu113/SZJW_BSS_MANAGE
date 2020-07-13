@@ -116,7 +116,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'transportlist', /* 运力列表 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/TransportList.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/transportList/TransportList.vue'),
       name: 'TransportList',
       meta: {
         title: 'transportList',
@@ -127,13 +127,65 @@ const transportRouter: RouteConfig = {
       }
     },
     {
+      path: 'creattransport', /* 创建运力 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/transportList/CreatTransport.vue'),
+      name: 'CreatTransport',
+      meta: {
+        title: 'creatTransport',
+        activeMenu: '/transport/transportlist',
+        noCache: false,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'transportdetail', /* 运力详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/transportList/TransportDetail.vue'),
+      name: 'TransportDetail',
+      meta: {
+        title: 'transportDetail',
+        activeMenu: '/transport/transportlist',
+        noCache: true,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
       path: 'accountlist', /* 司机账户 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/AccountList.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/accountList/AccountList.vue'),
       name: 'AccountList',
       meta: {
         title: 'accountList',
         activeMenu: '/transport/accountlist',
         noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'accorderdetail', /* 司机账户订单详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/accountList/AccOrderDetail.vue'),
+      name: 'AccOrderDetail',
+      meta: {
+        title: 'accOrderDetail',
+        activeMenu: '/transport/accountlist',
+        noCache: true,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'accountdetail', /* 司机订单详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/accountList/AccountDetail.vue'),
+      name: 'AccountDetail',
+      meta: {
+        title: 'accountDetail',
+        activeMenu: '/transport/accountlist',
+        noCache: true,
+        hidden: true,
         icon: '',
         apiUrl: 'root'
       }

@@ -179,7 +179,7 @@
           class="detail-group"
         >
           <template>
-            <span class="detail-title">配送周期:</span>
+            <span class="detail-title">配送周期</span>
             <el-checkbox-group v-model="checkList">
               <el-checkbox
                 label="全选"
@@ -359,22 +359,29 @@ export default class extends Vue {
     font-weight: 400;
   }
   .detail-group{
-    padding: 10px;
-    display: flex;
-    align-items: center;
+    padding: 15px;
   }
-  .detail-title{
+  // .detail-title{
 
-    font-size: 14px;
-    color: #666;
-    font-weight: 400;
-    text-align: right;
-    padding-right: 16px;
-    box-sizing: border-box;
-  }
+  //   font-size: 14px;
+  //   color: #666;
+  //   font-weight: 400;
+  //   text-align: right;
+  //   padding-right: 16px;
+  //   box-sizing: border-box;
+  // }
     .steps{
       margin: 60px 0 30px 0;
       }
+       .detail-title {
+    font-size: 13px;
+    color: #9e9e9e;
+    font-weight: 400;
+    padding-right: 16px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-bottom: 6px;
+}
 }
 </style>
 
@@ -387,22 +394,17 @@ export default class extends Vue {
   }
   .detail-group{
     padding: 10px 14px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    border-bottom: 1px solid #F8F9FA
   }
 
-   .detail-title{
-      width: 100%;
-      display: block;
-      font-size: 12px;
-      color: #666;
-      font-weight: 400;
-      text-align: left;
-      padding-right: 15px;
-      padding-bottom: 10px;
-      box-sizing: border-box;
-    }
+ .detail-title {
+    font-size: 13px;
+    color: #9e9e9e;
+    font-weight: 400;
+    padding-right: 16px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-bottom: 6px;
+}
     .steps{
       margin: 30px 0 20px 0;
     }
@@ -415,7 +417,7 @@ export default class extends Vue {
   }
 </style>
 <style scope>
-@media screen and (min-width: 701px) {
+/* @media screen and (min-width: 701px) {
   .el-select {
     width: 100%;
   }
@@ -431,5 +433,5 @@ export default class extends Vue {
   .el-input{
     width: 90%;
   }
-}
+} */
 </style>
