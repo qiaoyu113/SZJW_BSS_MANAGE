@@ -29,15 +29,15 @@
             <div class="fee">
               <span class="item">
                 <h4>总运费</h4>
-                <p>￥{{ listQuery.g }}</p>
+                <p>￥{{ listQuery.all }}</p>
               </span>
               <span class="item">
                 <h4>总抽佣金额</h4>
-                <p>￥{{ listQuery.h }}</p>
+                <p>￥{{ listQuery.yong }}</p>
               </span>
               <span class="item">
                 <h4>账户余额</h4>
-                <p>￥{{ listQuery.i }}</p>
+                <p>￥{{ listQuery.yu }}</p>
               </span>
             </div>
           </el-col>

@@ -2,7 +2,7 @@
   <div :class="isPC ? 'AccountDetail' : 'AccountDetail-m' ">
     <div class="accountBox">
       <account-info
-        :list-query="accountObj"
+        :list-query="orderObj"
         :form-item="formItem"
       />
     </div>
@@ -12,7 +12,7 @@
         @tab-click="handleClick"
       >
         <el-tab-pane
-          label="抽样明细"
+          label="抽佣明细"
           name="f1"
         >
           <!--table表单-->
@@ -124,17 +124,16 @@
           </el-card>
         </el-tab-pane>
         <el-tab-pane
-          label="订单"
+          label="缴费明细"
           name="f2"
         >
-          <template
-            v-for="(item,index) in list"
-          >
-            <account-order
-              :key="index"
-              :item="item"
-            />
-          </template>
+          123
+        </el-tab-pane>
+        <el-tab-pane
+          label="退款明细"
+          name="f3"
+        >
+          456
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -144,7 +143,6 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetCustomerList } from '@/api/customer'
 import { SettingsModule } from '@/store/modules/settings'
-import AccountInfo from './components/accountInfo.vue'
 import { HandlePages } from '@/utils/index'
 import accountOrder from './components/accountOrder.vue'
 import Pagination from '@/components/Pagination/index.vue'
@@ -158,7 +156,6 @@ interface IState {
   @Component({
     name: 'TransportList',
     components: {
-      AccountInfo,
       Pagination,
       accountOrder
     }
@@ -181,56 +178,74 @@ export default class extends Vue {
     lineSaleId: ''
   }
 
-  private accountObj = {
-    name: '穆家祥',
-    a: '20200709313331',
-    b: '15021578502',
-    c: '北京市',
+  private orderObj = {
+    a: 'DD2062160325621',
+    b: '梧桐共享',
+    c: '带车',
     d: '4.2米厢货',
-    e: '共享一组、专车二组',
-    f: '李威山',
-    g: 100000,
-    h: 100,
-    i: 200000
+    e: '3个月',
+    f: '￥4000.00',
+    g: '6.5%',
+    h: '2020-12-12',
+    all: 200000,
+    yong: 1000,
+    yu: 3000
   }
   private formItem:any[] = [
     {
+      type: 7,
       key: 'a',
-      label: '司机编号:',
-      slot: true,
-      type: 'detail',
-      col: 8
+      label: '订单编号:',
+      col: 24,
+      tagAttrs: {
+        style: {
+          fontWeight: 'bold',
+          fontSize: '16px'
+        }
+      }
     },
     {
       type: 7,
       key: 'b',
       col: 8,
-      label: '联系方式:'
+      label: '商品分类:'
     },
     {
       type: 7,
       key: 'c',
       col: 8,
-      label: '工作城市:',
+      label: '合作模式:',
       slot: true
     },
     {
       key: 'd',
       type: 7,
       col: 8,
-      label: '业务线:'
+      label: '合作车型:'
     },
     {
       key: 'e',
       type: 7,
       col: 8,
-      label: '加盟小组:'
+      label: '合作期限:'
     },
     {
       key: 'f',
       type: 7,
       col: 8,
-      label: '加盟经理:'
+      label: '订单金额:'
+    },
+    {
+      key: 'g',
+      type: 7,
+      col: 8,
+      label: '抽佣比例:'
+    },
+    {
+      key: 'h',
+      type: 7,
+      col: 8,
+      label: '支付时间:'
     }
   ]
 

@@ -189,9 +189,9 @@ export default class extends Vue {
       d: '4.2米厢货',
       e: '共享一组、专车二组',
       f: '李威山',
-      g: 100000,
-      h: 100,
-      i: 200000
+      all: 100000,
+      yong: 100,
+      yu: 200000
     }
     private formItem:any[] = [
       {
