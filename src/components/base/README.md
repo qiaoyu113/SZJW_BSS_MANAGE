@@ -95,20 +95,21 @@ private formItem:any[] = [
     ]
 ```
 
-| 字段     | 解释                               | 类型   | 是否必填 |
-| -------- | ---------------------------------- | ------ | -------- |
-| type     | 表单组件类型                       | Number | 是       |
-| label    | 汉字显示                           | String | 是       |
-| key      | v-model绑定form对应的属性          | String | 是       |
-| options  | 下拉框，radio等对应的列表          | Array  | 否       |
-| tagAttrs | Input、select等对应的属性          | Object | 否       |
-| rules    | 表单校验(参考element-ui的表单验证) | Object | 否       |
-| col      | 单元格独占几列                     | Number | 否       |
+| 字段      | 解释                               | 类型     | 是否必填 |
+| --------- | ---------------------------------- | -------- | -------- |
+| type      | 表单组件类型                       | Number   | 是       |
+| label     | 汉字显示                           | String   | 是       |
+| key       | v-model绑定form对应的属性          | String   | 是       |
+| options   | 下拉框，radio等对应的列表          | Array    | 否       |
+| tagAttrs  | Input、select等对应的属性          | Object   | 否       |
+| rules     | 表单校验(参考element-ui的表单验证) | Object   | 否       |
+| col       | 单元格独占几列                     | Number   | 否       |
+| listeners | 出入组件的事件                     | Function | 否       |
 
 > type的类型
 
 | 值   | 解释         | 类型   |
-| ---- | ------------ | ------ |
+| :--- | ------------ | ------ |
 | 1    | 输入框       | Number |
 | 2    | 下拉框       | Number |
 | 3    | 日期时间区间 | Array  |
@@ -116,6 +117,7 @@ private formItem:any[] = [
 | 5    | checkbox     | Number |
 | 6    | date         | Date   |
 | 7    | 文本展示     | String |
+| 8    | 阶联框       | Array  |
 
 > 表单触发的事件
 
