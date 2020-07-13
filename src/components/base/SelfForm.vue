@@ -18,18 +18,21 @@
           :label="item.label"
           :prop="item.key"
           :label-width="item.w"
+          :class="item.class"
         >
           <!-- 输入框 -->
           <el-input
             v-if="item.type === 1"
             v-model="listQuery[item.key]"
             v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
           />
           <!-- 下拉框 -->
           <el-select
             v-else-if="item.type === 2"
             v-model="listQuery[item.key]"
             v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
           >
             <el-option
               v-for="(sub,index) in item.options"
@@ -48,17 +51,19 @@
             value-format="timestamp"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            v-on="item.listeners"
           />
 
           <el-radio-group
             v-else-if="item.type ===4"
             v-model="listQuery[item.key]"
-            v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
           >
             <el-radio
               v-for="(sub,index) in item.options"
               :key="'radio-'+sub.value+'-'+index"
               :label="sub.value"
+              v-bind="item.tagAttrs || {}"
             >
               {{ sub.label }}
             </el-radio>
@@ -66,12 +71,16 @@
           <el-checkbox-group
             v-else-if="item.type ===5"
             v-model="listQuery[item.key]"
+            v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
           >
             <el-checkbox
               v-for="(sub,index) in item.options"
               :key="'checkbox-'+sub.value+'-'+index"
               :label="sub.value"
-            />
+            >
+              {{ sub.label }}
+            </el-checkbox>>
           </el-checkbox-group>
           <!-- 选择日期 -->
           <el-date-picker
@@ -79,16 +88,24 @@
             v-model="listQuery[item.key]"
             type="date"
             placeholder="选择日期"
+            v-on="item.listeners"
           />
           <!-- 显示文本 -->
           <span
             v-else-if="item.type ===7"
             v-bind="item.tagAttrs || {}"
           >{{ listQuery[item.key] | DataIsNull }}</span>
+          <el-cascader
+            v-else-if="item.type ===8"
+            v-model="listQuery[item.key]"
+            v-bind="item.tagAttrs || {}"
+            :options="item.options"
+            v-on="item.listeners"
+          />
           <slot
             v-else-if="item.slot"
             :name="item.type"
-            :row="listQuery"
+            :row="{...listQuery,...{key: item.key}}"
           />
         </el-form-item>
       </el-col>
