@@ -11,41 +11,41 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="角色中文名称"
-              prop="name"
+              prop="nick"
             >
               <el-input
-                v-model="ruleForm.name"
-                placeholder=""
+                v-model="ruleForm.nick"
+                maxlength="10"
+                placeholder="请输入角色中文名称"
               />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="角色英文名称"
+              maxlength="20"
               prop="name"
             >
               <el-input
                 v-model="ruleForm.name"
-                placeholder=""
+                placeholder="请输入角色英文名称"
               />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="产品线"
-              prop="name"
+              prop="productLine"
             >
               <el-select
-                v-model="ruleForm.region"
+                v-model="ruleForm.productLine"
                 placeholder="请选择"
               >
                 <el-option
-                  label="区域一"
-                  value="shanghai"
-                />
-                <el-option
-                  label="区域二"
-                  value="beijing"
+                  v-for="(item, index) in productList"
+                  :key="index"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
                 />
               </el-select>
             </el-form-item>
@@ -54,12 +54,12 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="角色描述"
-              prop="name"
+              prop="description"
             >
               <el-input
-                v-model="ruleForm.name2"
-                placeholder="请输入"
-                maxlength="10"
+                v-model="ruleForm.description"
+                placeholder="请输入角色描述"
+                maxlength="50"
               />
             </el-form-item>
           </el-col>
@@ -67,7 +67,10 @@
       </SectionContainer>
       <SectionContainer title="角色授权">
         <RoleTree
+          ref="tree"
           :data="data"
+          :props="defaultProps"
+          node-key="id"
           :show-checkbox="true"
         >
           <template slot-scope="{node,data}">
@@ -79,10 +82,13 @@
               size="mini"
               @click.stop.native
             >
-              <el-radio-button label="上海" />
-              <el-radio-button label="北京" />
-              <el-radio-button label="广州" />
-              <el-radio-button label="深圳" />
+              <el-radio-button
+                v-for="(item, index) in scopeList"
+                :key="index"
+                :label="item.dictValue"
+              >
+                {{ item.dictLabel }}
+              </el-radio-button>
             </el-radio-group>
           </template>
         </RoleTree>
@@ -106,11 +112,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Form as ElForm, Input } from 'element-ui'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { RoleTree } from './components'
+import { GetDictionaryList } from '@/api/common'
+import { authorityList, createRole, getRoleDetail, updateRole } from '@/api/system'
 
 import '@/styles/common.scss'
 @Component({
@@ -126,114 +133,165 @@ export default class extends Vue {
   private id: any = ''
   private ruleForm:any = {
     name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: ''
+    nick: '',
+    productLine: '',
+    description: ''
   }
-  private data:any = [{
-    id: 1,
-    label: '一级 1',
-    children: [{
-      id: 4,
-      label: '二级 1-1',
-      children: [{
-        id: 9,
-        label: '三级 1-1-1'
-      }, {
-        id: 10,
-        label: '三级 1-1-2'
-      }]
-    }]
-  }, {
-    id: 2,
-    label: '一级 2',
-    children: [{
-      id: 5,
-      label: '二级 2-1'
-    }, {
-      id: 6,
-      label: '二级 2-2'
-    }]
-  }, {
-    id: 3,
-    label: '一级 3',
-    children: [{
-      id: 7,
-      label: '二级 3-1'
-    }, {
-      id: 8,
-      label: '二级 3-2'
-    }]
-  }]
+  private defaultProps: any = {
+    children: 'childAuth',
+    label: 'authName'
+  };
+  private authorityList: any = []
+  private data:any = []
+  private productList: any = []
+  private scopeList: any = []
   private rules:any = {
+    nick: [
+      { required: true, message: '请输入角色中文名称', trigger: 'blur' },
+      { pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/, message: '请输入2-10个中文', trigger: 'blur' }
+    ],
     name: [
-      { required: true, message: '请输入活动名称', trigger: 'blur' },
-      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+      { required: true, message: '请输入角色英文名称', trigger: 'blur' },
+      { pattern: /^[a-z]+$/i, message: '请输入2-20位英文名称', trigger: 'blur' }
     ],
-    region: [
-      { required: true, message: '请选择活动区域', trigger: 'change' }
+    productLine: [
+      { required: true, message: '请选择产品线', trigger: 'change' }
     ],
-    date1: [
-      { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-    ],
-    date2: [
-      { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-    ],
-    type: [
-      { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-    ],
-    resource: [
-      { required: true, message: '请选择活动资源', trigger: 'change' }
-    ],
-    desc: [
-      { required: true, message: '请填写活动形式', trigger: 'blur' }
+    description: [
+      { required: true, message: '请输入描述', trigger: 'blur' }
     ]
   }
-  private cities: Array<string>=['上海', '北京', '广州', '深圳']
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
 
   private submitForm(formName:any) {
-    (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
+    (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
-        alert('submit!')
-      } else {
-        console.log('error submit!!')
-        return false
+        if (this.isEdit) {
+          this.submitEditForm()
+          return
+        }
+        const postData = {
+          ...this.ruleForm
+        }
+        postData.authorities = this.getCheckedNodes()
+        const { data } = await createRole(postData)
+        if (data.success) {
+          this.$message.success(`创建成功`)
+          setTimeout(() => {
+            (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+            (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+              name: 'RoleManage'
+            })
+            this.$nextTick(() => {
+              this.$router.push({ name: 'RoleManage' })
+            })
+          }, 800)
+        } else {
+          this.$message.error(data)
+        }
       }
     })
   }
-
-  private resetForm(formName:any) {
-    (this.$refs[formName] as ElForm).resetFields()
+  private async submitEditForm() {
+    const postData = {
+      ...this.ruleForm
+    }
+    postData.roleId = postData.id
+    postData.authorities = this.getCheckedNodes()
+    delete postData.id
+    const { data } = await updateRole(postData)
+    if (data.success) {
+      this.$message.success(`编辑成功`)
+      setTimeout(() => {
+        (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+        (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+          name: 'RoleManage'
+        })
+        this.$nextTick(() => {
+          this.$router.push({ name: 'RoleManage' })
+        })
+      }, 800)
+    } else {
+      this.$message.error(data)
+    }
   }
-  private c(node:any, data:any) {
-    console.log(node, data)
+  private resetForm(formName:any) {
+    this.resetChecked();
+    (this.$refs[formName] as any).resetFields()
+  }
+  private getCheckedNodes() {
+    const list = (this.$refs['tree'] as any).$refs['roleTree'].getCheckedNodes()
+    return list.map((item: any) => ({
+      authorityId: item.id,
+      dataScope: item.checked
+    }))
+  }
+  private resetChecked() {
+    (this.$refs['tree'] as any).$refs['roleTree'].setCheckedKeys([])
+  }
+
+  private async getDictionary() {
+    const { data } = await GetDictionaryList(['busi_type', 'data_scope'])
+    if (data.success) {
+      this.productList = data.data.busi_type
+      this.scopeList = data.data.data_scope
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async getAuth() {
+    const { data } = await authorityList()
+    if (data.success) {
+      this.data = this.traverseTree(data.data)
+      if (this.isEdit) {
+        const checked = this.authorityList.map((item: any) => item.authorityId);
+        (this.$refs['tree'] as any).$refs['roleTree'].setCheckedKeys(checked)
+      }
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async fetchData() {
+    if (this.isEdit && this.id) {
+      const { data } = await getRoleDetail(Number(this.id))
+      if (data.success) {
+        this.ruleForm = data.data
+        this.ruleForm.productLine = String(data.data.productLine)
+        this.authorityList = data.data.authorities
+      } else {
+        this.$message.error(data)
+      }
+    }
+    this.getDictionary()
+    this.getAuth()
+  }
+  private traverseTree(data:any) {
+    var setChecked = (list: any) => {
+      for (var i in list) {
+        let checked = '4'
+        if (this.isEdit && this.authorityList && this.authorityList.length > 0) {
+          const item = this.authorityList.find((d: any) => d.authorityId === list[i].id)
+          if (item) {
+            checked = String(item.dataScope)
+          }
+        }
+        list[i].checked = checked
+
+        if (list[i].childAuth) {
+          setChecked(list[i].childAuth)
+        }
+      }
+    }
+    setChecked(data)
+    return data
   }
   mounted() {
-    // this.id = this.$route.query.id
-    console.log(this.$route)
-    this.isEdit = this.$route.name === 'EditUser'
-    // console.log(this.$router)
-    // this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-    //   confirmButtonText: '确定',
-    //   cancelButtonText: '取消',
-    //   type: 'warning'
-    // }).then(() => {
-    //   (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-    //   (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
-    //     name: 'ClueList'
-    //   })
-    //   this.$nextTick(() => {
-    //     this.$router.push({ name: 'ClueList' })
-    //   })
-    // })
+    this.id = this.$route.query.id
+    this.isEdit = this.$route.name === 'EditRole'
+    this.fetchData()
   }
 }
 </script>

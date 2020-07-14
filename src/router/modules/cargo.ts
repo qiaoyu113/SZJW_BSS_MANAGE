@@ -166,10 +166,49 @@ const cargoRouter: RouteConfig = {
     },
     {
       path: 'tendermanage', /* 标书管理 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/TenderManage.vue'),
+      component: () => import(/* webpackChunkName: "tender" */ '@/views/cargo/TenderManage.vue'),
       name: 'TenderManage',
       meta: {
         title: 'tenderManage',
+        activeMenu: '/cargo/tendermanage',
+        noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'tenderDetail', /* 标书详情 */
+      component: () => import(/* webpackChunkName: "tender" */ '@/views/cargo/TenderDetail.vue'),
+      name: 'TenderDetail',
+      meta: {
+        title: 'tenderManage',
+        activeMenu: '/cargo/tendermanage',
+        noCache: false,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'tenderEdit', /* 标书编辑 */
+      component: () => import(/* webpackChunkName: "tender" */ '@/views/cargo/TenderDetail.vue'),
+      name: 'tenderEdit',
+      meta: {
+        title: 'tenderManage',
+        hidden: true,
+        activeMenu: '/cargo/tendermanage',
+        noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'tenderLog', /* 标书日志 */
+      component: () => import(/* webpackChunkName: "tender" */ '@/views/cargo/TenderLog.vue'),
+      name: 'tenderLog',
+      meta: {
+        title: 'tenderManage',
+        hidden: true,
         activeMenu: '/cargo/tendermanage',
         noCache: false,
         icon: '',
