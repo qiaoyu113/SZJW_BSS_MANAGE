@@ -408,20 +408,18 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item>
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
       </SectionContainer>
+      <div class="btn_box">
+        <el-button
+          type="primary"
+          @click="submitForm('ruleForm')"
+        >
+          提交
+        </el-button>
+        <el-button @click="resetForm('ruleForm')">
+          重置
+        </el-button>
+      </div>
     </el-form>
   </div>
 </template>
@@ -561,6 +559,11 @@ export default class extends Vue {
   .el-date-editor--daterange{
       width: 100%;
   }
+
+  .btn_box{
+    padding-top: 20px;
+    box-sizing: border-box;
+  }
 }
 </style>
 
@@ -617,6 +620,16 @@ export default class extends Vue {
       width: 100%;
       padding: 10px 20px;
       box-sizing: border-box;
+  }
+  .btn_box{
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button{
+      width: 100%;
+    }
+    .el-button{
+      margin: 0 0 20px 0;
+    }
   }
 }
 </style>

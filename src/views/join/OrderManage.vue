@@ -25,7 +25,7 @@
           type="primary"
           size="small"
           name="cluelist_creat_btn"
-          @click="showDialog.visible = true"
+          @click="$router.push({name: 'CreatOrder'})"
         >
           <i class="el-icon-s-operation" />
           <span v-if="isPC">创建订单</span>
