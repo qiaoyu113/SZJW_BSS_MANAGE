@@ -4,12 +4,10 @@
       :tab="tab"
       :tags="tags"
       :active-name="listQuery.state"
-      @handle-date="handleDate"
       @handle-query="handleQuery"
     >
       <UserListForm
         :list-query="listQuery"
-        :date-value="DateValue"
         @handle-tags="handleTags"
       />
     </SuggestContainer>
@@ -70,7 +68,7 @@
           @cell-click="tableClick"
         >
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + 'd'"
             prop="date"
             label="姓名"
             fixed
@@ -97,7 +95,7 @@
             label="组织"
           />
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + 'a'"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -149,12 +147,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { UserListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import { CargoListData } from '@/api/types'
+import { getUserList } from '@/api/system'
 
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -175,16 +173,14 @@ interface IState {
 export default class extends Vue {
   private tags: any[] = [];
   private tab: any[] = [];
-  private DateValue: any[] = [];
   private listQuery: IState = {
-    key: '',
-    city: '',
+    mobile: '',
+    nickName: '',
+    officeId: '',
+    roleId: '',
+    status: '',
     page: 1,
-    limit: 30,
-    endDate: '',
-    startDate: '',
-    state: '',
-    lineSaleId: ''
+    limit: 30
   };
   private dropdownList: any[] = [
     '手机',
@@ -194,7 +190,7 @@ export default class extends Vue {
   private checkList: any[] = this.dropdownList;
   // table
   private total = 0;
-  private list: CargoListData[] = [];
+  private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
   // 计算属性
@@ -215,17 +211,34 @@ export default class extends Vue {
     this.listQuery[key] = value
     this.fetchData()
   }
-  // 处理选择日期方法
-  private handleDate(value: any) {
-    // this.DateValue = value
-  }
   // button
   // 添加明细原因 row 当前行 column 当前列
   private tableClick(row: any, column: any, cell: any, event: any) {}
   // 请求列表
-  private async getList(value: any) {}
+  private async getList(value: any) {
+    this.listQuery.page = value.page
+    this.listQuery.limit = value.limit
+    this.listLoading = true
+    const { data } = await getUserList(this.listQuery)
+    if (data.success) {
+      this.list = data.data
+      this.total = data.page.total
+    } else {
+      this.$message.error(data)
+    }
+    setTimeout(() => {
+      const el = document.querySelector(
+        '.el-table .el-table__body-wrapper'
+      ) as HTMLElement
+      el.scroll(0, 0)
+      this.listLoading = false
+    }, 0.5 * 1000)
+  }
   private goCreateUser() {
     this.$router.push({ name: 'CreateUser' })
+  }
+  mounted() {
+    this.fetchData()
   }
 }
 </script>

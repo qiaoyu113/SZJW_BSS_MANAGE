@@ -24,7 +24,7 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
         // target: `http://localhost:${mockServerPort}/mock-api/v1`,
-        target: `http://firmiana-bss.m1.yunniao.cn`,
+        target: `http://szjw-domain-base.d2.yunniao.cn`,
         changeOrigin: true, // needed for virtual hosted sites
         ws: true, // proxy websockets
         pathRewrite: {

@@ -57,29 +57,25 @@
           @cell-click="tableClick"
         >
           <el-table-column
-            :key="Math.random()"
-            prop="date"
+            v-if="checkList.includes('名称')"
+            :key="checkList.length + 'nick'"
+            prop="nick"
             label="名称"
             fixed
           />
           <el-table-column
             v-if="checkList.includes('描述')"
-            prop="date"
+            prop="description"
             label="描述"
-          >
-            <template slot-scope="{row}">
-              <el-button type="text">
-                {{ row.name }}
-              </el-button>
-            </template>
-          </el-table-column>
+          />
           <el-table-column
             v-if="checkList.includes('人数')"
-            prop="date"
+            prop="usedUserCount"
             label="人数"
           />
           <el-table-column
-            :key="Math.random()"
+            v-if="checkList.includes('操作')"
+            :key="checkList.length"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -103,10 +99,14 @@
                   <i class="el-icon-setting el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    删{{ row }}除
+                  <el-dropdown-item
+                    @click.native="deleteRole(row)"
+                  >
+                    删除
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="editRole(row)"
+                  >
                     编辑
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -115,14 +115,6 @@
           </el-table-column>
         </el-table>
       </div>
-      <pagination
-        v-show="total > 0"
-        :operation-list="[]"
-        :total="total"
-        :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
-        @pagination="getList"
-      />
     </div>
   </div>
 </template>
@@ -131,8 +123,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
-import Pagination from '@/components/Pagination/index.vue'
-import { CargoListData } from '@/api/types'
+import { roleList, createRole, updateRole, deleteRole } from '@/api/system'
 
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -145,11 +136,11 @@ interface IState {
   name: 'RoleManage',
   components: {
     SuggestContainer,
-    TableHeader,
-    Pagination
+    TableHeader
   }
 })
 export default class extends Vue {
+  private loading: boolean = false;
   private tags: any[] = [];
   private tab: any[] = [
     {
@@ -157,25 +148,16 @@ export default class extends Vue {
       name: '0'
     }
   ];
-  private DateValue: any[] = [];
-  private listQuery: IState = {
-    key: '',
-    city: '',
-    page: 1,
-    limit: 30,
-    endDate: '',
-    startDate: '',
-    state: '',
-    lineSaleId: ''
-  };
   private dropdownList: any[] = [
+    '名称',
     '描述',
-    '人数'
+    '人数',
+    '操作'
   ];
   private checkList: any[] = this.dropdownList;
   // table
   private total = 0;
-  private list: CargoListData[] = [];
+  private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
   // 计算属性
@@ -184,29 +166,47 @@ export default class extends Vue {
   }
   // 事件处理
   // 处理tags方法
-  private handleTags(value: any) {
-    this.tags = value
-  }
   // 所有请求方法
   private fetchData() {
-    this.getList(this.listQuery)
-  }
-  // 处理query方法
-  private handleQuery(value: any, key: any) {
-    this.listQuery[key] = value
-    this.fetchData()
-  }
-  // 处理选择日期方法
-  private handleDate(value: any) {
-    // this.DateValue = value
+    this.getList()
   }
   // button
   // 添加明细原因 row 当前行 column 当前列
   private tableClick(row: any, column: any, cell: any, event: any) {}
   // 请求列表
-  private async getList(value: any) {}
+  private async getList() {
+    this.listLoading = true
+    const { data } = await roleList()
+    this.listLoading = false
+    if (data.success) {
+      this.list = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
   private goCreateUser() {
     this.$router.push({ name: 'CreateRole' })
+  }
+  private editRole(row: any) {
+    this.$router.push({ name: 'EditRole', query: { id: row.id } })
+  }
+  private deleteRole(item: any) {
+    this.$confirm(`您确定要删除“${item.roleName}”吗？`, '删除组织', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async() => {
+      const { data } = await deleteRole(item.id)
+      if (data.success) {
+        this.$message.success(`删除成功`)
+        this.getList()
+      } else {
+        this.$message.error(data)
+      }
+    })
+  }
+  mounted() {
+    this.fetchData()
   }
 }
 </script>
@@ -224,6 +224,23 @@ export default class extends Vue {
     .table_center {
       height: calc(100vh - 246px) !important;
       padding: 30px;
+      padding-bottom: 0;
+      box-sizing: border-box;
+      background: #ffffff;
+    }
+  }
+}
+.RoleManage-m{
+  padding-bottom: 0;
+  box-sizing: border-box;
+  .table_box {
+    height: calc(100vh - 84px) !important;
+    background: #ffffff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    overflow: hidden;
+    transform: translateZ(0);
+    .table_center {
+      height: calc(100vh - 140px) !important;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
