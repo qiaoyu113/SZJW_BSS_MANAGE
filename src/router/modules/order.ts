@@ -19,7 +19,44 @@ const orderRouter: RouteConfig = {
       meta: {
         hidden: true,
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        activeMenu: '/join/ordermanage',
         title: 'creatOrder',
+        noCache: false
+      }
+    },
+    {
+      path: 'orderdetail', /* 订单详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/OrderDetail.vue'),
+      name: 'OrderDetail',
+      meta: {
+        hidden: true,
+        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        activeMenu: '/join/ordermanage',
+        title: 'orderDetail',
+        noCache: false
+      }
+    },
+    {
+      path: 'orderlog', /* 订单日志 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/OrderLog.vue'),
+      name: 'OrderLog',
+      meta: {
+        hidden: true,
+        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        activeMenu: '/join/ordermanage',
+        title: 'orderLog',
+        noCache: false
+      }
+    },
+    {
+      path: 'orderaudit', /* 订单审核 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/OrderAudit.vue'),
+      name: 'OrderAudit',
+      meta: {
+        hidden: true,
+        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        activeMenu: '/join/ordermanage',
+        title: 'orderAudit',
         noCache: false
       }
     },
@@ -38,6 +75,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/RefundOrder.vue'),
       name: 'RefundOrder',
       meta: {
+        hidden: true,
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
         title: 'refundOrder',
         noCache: false
@@ -54,11 +92,24 @@ const orderRouter: RouteConfig = {
       }
     },
     {
+      path: 'contractdetail', /* 合同详情 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/ContractDetail.vue'),
+      name: 'ContractDetail',
+      meta: {
+        hidden: true,
+        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        activeMenu: '/join/contractlist',
+        title: 'contractDetail',
+        noCache: false
+      }
+    },
+    {
       path: 'dealform', /* 交付 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealForm.vue'),
       name: 'DealForm',
       meta: {
         apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        activeMenu: '/join/contractlist',
         title: 'dealForm',
         noCache: false,
         hidden: true
