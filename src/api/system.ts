@@ -6,6 +6,41 @@ export const getUserList = (params: any) =>
     method: 'get',
     params
   })
+// 用户管理-账号禁用
+export const enableOrDisable = (data: any) =>
+  request({
+    url: `/v1/base/user/enableOrDisable`,
+    method: 'post',
+    data
+  })
+
+// 用户管理-重置密码
+export const resetPassword = (data: any) =>
+  request({
+    url: `/v1/base/user/password/reset`,
+    method: 'post',
+    data
+  })
+// 用户管理-创建用户
+export const createUser = (data: any) =>
+  request({
+    url: `/v1/base/user/create`,
+    method: 'post',
+    data
+  })
+// 用户管理-编辑用户
+export const updateUser = (data: any) =>
+  request({
+    url: `/v1/base/user/update`,
+    method: 'post',
+    data
+  })
+// 用户管理-用户详情
+export const userDetail = (id: number) =>
+  request({
+    url: `/v1/base/user/${id}`,
+    method: 'get'
+  })
 
 // 组织管理-组织列表
 export const getOfficeList2 = (params: any) =>

@@ -74,7 +74,7 @@
           :show-checkbox="true"
         >
           <template slot-scope="{node,data}">
-            <span @click="c(node,data)">{{ node.label }}</span>
+            <span>{{ node.label }}</span>
             <el-radio-group
               v-show="node.checked && node.level !== 1"
               v-model="data.checked"
@@ -234,10 +234,9 @@ export default class extends Vue {
   }
 
   private async getDictionary() {
-    const { data } = await GetDictionaryList(['busi_type', 'data_scope'])
+    const { data } = await GetDictionaryList(['busi_type'])
     if (data.success) {
       this.productList = data.data.busi_type
-      this.scopeList = data.data.data_scope
     } else {
       this.$message.error(data)
     }

@@ -34,3 +34,35 @@ export const GetDriverDetail = (params: any) =>
     method: 'get',
     params
   })
+
+// 合同详情
+export const GetContractDetail = (params: any) =>
+  request({
+    url: '/order/contract/contractDetail',
+    method: 'get',
+    params
+  })
+
+// 交付提交
+export const SubmitOrderDeliver = (params: any) =>
+  request({
+    url: '/order/vl/orderDeliver/submitOrderDeliver',
+    method: 'post',
+    params
+  })
+
+// 交付详情
+export const GetOrderDeliverDetail = (params: any) =>
+  request({
+    url: '/order/vl/orderDeliver/orderDeliverDetail',
+    method: 'get',
+    params
+  })
+
+// 交付详情
+export const SelectOrderInfo = (params: any) =>
+  request({
+    url: '/order/v1/order/orderDeliver/selectOrderInfo',
+    method: 'get',
+    params
+  })

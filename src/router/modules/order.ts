@@ -18,7 +18,7 @@ const orderRouter: RouteConfig = {
       name: 'CreatOrder',
       meta: {
         hidden: true,
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'creatOrder',
         noCache: false
@@ -30,7 +30,7 @@ const orderRouter: RouteConfig = {
       name: 'OrderDetail',
       meta: {
         hidden: true,
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'orderDetail',
         noCache: false
@@ -42,7 +42,7 @@ const orderRouter: RouteConfig = {
       name: 'OrderLog',
       meta: {
         hidden: true,
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'orderLog',
         noCache: false
@@ -54,7 +54,7 @@ const orderRouter: RouteConfig = {
       name: 'OrderAudit',
       meta: {
         hidden: true,
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'orderAudit',
         noCache: false
@@ -65,7 +65,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/OrderManage.vue'),
       name: 'OrderManage',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         title: 'orderManage',
         noCache: false
       }
@@ -76,7 +76,7 @@ const orderRouter: RouteConfig = {
       name: 'RefundOrder',
       meta: {
         hidden: true,
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         title: 'refundOrder',
         noCache: false
       }
@@ -86,7 +86,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/ContractList.vue'),
       name: 'ContractList',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         title: 'contractList',
         noCache: false
       }
@@ -97,7 +97,7 @@ const orderRouter: RouteConfig = {
       name: 'ContractDetail',
       meta: {
         hidden: true,
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/join/contractlist',
         title: 'contractDetail',
         noCache: false
@@ -108,7 +108,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealForm.vue'),
       name: 'DealForm',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/join/contractlist',
         title: 'dealForm',
         noCache: false,
@@ -120,7 +120,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealManageDetail.vue'),
       name: 'DealManageDetail',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         title: 'dealManageDetail',
         noCache: false,
         hidden: true
@@ -131,7 +131,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealManage.vue'),
       name: 'DealManage',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         title: 'dealManage',
         noCache: false
       }
@@ -142,7 +142,7 @@ const orderRouter: RouteConfig = {
       name: 'DealStatistics',
       meta: {
         hidden: true,
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
+        apiUrl: 'root',
         title: 'dealStatistics',
         noCache: false
       }

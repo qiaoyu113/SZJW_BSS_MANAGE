@@ -12,11 +12,10 @@ const hasPermission = (roles: string[], route: RouteConfig) => {
   // }
   let roleArr = (localStorage.getItem('permission') && (window as any).localStorage.getItem('permission').split(','))
   let a = (localStorage.getItem('permission') as any).split(',')
-
   if (!roleArr.length) {
     localStorage.clear()
     UserModule.ResetToken()
-    location.reload()
+    // location.reload()
   }
   if (route.meta.apiUrl === 'root') {
     return true

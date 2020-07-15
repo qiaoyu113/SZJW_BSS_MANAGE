@@ -95,7 +95,7 @@
           >
             <el-form-item
               v-if="activeName === 'first'"
-              label="权限名称"
+              label="组织名称"
               prop="name"
             >
               <el-input
@@ -111,7 +111,7 @@
           >
             <el-form-item
               v-if="activeName === 'second'"
-              label="权限名称"
+              label="组织名称"
               prop="name"
             >
               <el-input
@@ -124,7 +124,7 @@
         </el-tabs>
         <el-form-item
           v-else
-          label="权限名称"
+          label="组织名称"
           prop="name"
         >
           <el-input

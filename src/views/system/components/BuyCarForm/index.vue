@@ -7,11 +7,23 @@
             <el-form :label-width="isPC ? '120px' : '28%'">
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="购买车型">
-                  <el-input
-                    v-model="listQuery.name"
-                    placeholder="请输入购买车型"
-                    clearable
-                  />
+                  <el-select
+                    v-model="listQuery.carType"
+                    multiple
+                    filterable
+                    remote
+                    reserve-keyword
+                    placeholder="请输入关键词"
+                    :remote-method="getCarType"
+                    :loading="loading"
+                  >
+                    <el-option
+                      v-for="item in optionsCar"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
@@ -90,9 +102,12 @@ import '@/styles/common.scss'
 export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
-  private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
+
   private DateValueChild: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
+  private loading: boolean = false;
+  private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
+  private optionsCar: any[] = [];
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
@@ -132,16 +147,11 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  get routes() {
-    return PermissionModule.routes
+  private async getCarType() {
+    // const {data} = await
   }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
   created() {
-    this.getDictionary()
+    // this.getDictionary()
   }
 
   // 匹配创建tags标签
@@ -161,15 +171,6 @@ export default class extends Vue {
         break
     }
     return vodeName
-  }
-
-  private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
-    if (data.success) {
-      this.optionsCity = data.data
-    } else {
-      this.$message.error(data)
-    }
   }
 
   private changData() {

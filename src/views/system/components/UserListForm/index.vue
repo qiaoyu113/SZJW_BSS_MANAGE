@@ -4,9 +4,16 @@
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
           <el-row>
-            <el-form :label-width="isPC ? '120px' : '28%'">
+            <el-form
+              ref="ruleForm"
+              :model="listQuery"
+              :label-width="isPC ? '120px' : '28%'"
+            >
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="姓名">
+                <el-form-item
+                  label="姓名"
+                  prop="nickName"
+                >
                   <el-input
                     v-model="listQuery.nickName"
                     placeholder="请输入姓名"
@@ -15,7 +22,10 @@
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="电话">
+                <el-form-item
+                  label="电话"
+                  prop="mobile"
+                >
                   <el-input
                     v-model="listQuery.mobile"
                     placeholder="请输入电话"
@@ -24,10 +34,14 @@
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="角色">
+                <el-form-item
+                  label="角色"
+                  prop="roleId"
+                >
                   <el-select
                     v-model="listQuery.roleId"
                     placeholder="请选择"
+                    clearable
                   >
                     <el-option
                       v-for="item in optionsRoles"
@@ -39,10 +53,13 @@
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="组织机构">
+                <el-form-item
+                  label="组织机构"
+                  prop="officeId"
+                >
                   <el-cascader
                     ref="cascaderOff"
-                    v-model="listQuery.officeId"
+                    v-model="officeList"
                     :options="optionsOffice"
                     :show-all-levels="false"
                     :props="{
@@ -52,18 +69,23 @@
                       checkStrictly: true
                     }"
                     clearable
+                    @change="handleChange"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="状态">
+                <el-form-item
+                  label="状态"
+                  prop="city"
+                >
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.status"
                     placeholder="请选择"
+                    clearable
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
+                      v-for="(item, index) in optionsStatus"
+                      :key="index"
                       :label="item.code"
                       :value="item.codeVal"
                     />
@@ -76,12 +98,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="resetForm('ruleForm')"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="searchForm"
                 >
                   查询
                 </el-button>
@@ -96,12 +120,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { roleList, getOfficeList } from '@/api/system'
 
 import '@/styles/common.scss'
+import { off } from 'codemirror'
 
 @Component({
   name: 'SuggestForm',
@@ -115,7 +139,17 @@ export default class extends Vue {
   private QUERY_KEY_LIST: any[] = ['page', 'limit']; // 添加过滤listQuery中key的名称
   private optionsRoles: any[] = []
   private optionsOffice: any[] = []
-
+  private officeList: any[] = []
+  private optionsStatus: any[] = [
+    {
+      codeVal: 1,
+      code: '启用'
+    },
+    {
+      codeVal: 2,
+      code: '禁用'
+    }
+  ]
   // listQuery同步tags公共方法
   @Watch('listQuery', { deep: true })
   private onListQueryChange(value: any) {
@@ -130,6 +164,9 @@ export default class extends Vue {
           })
         }
       }
+    }
+    if (!value.officeId) {
+      this.officeList = []
     }
     this.$emit('handle-tags', tags)
   }
@@ -148,6 +185,9 @@ export default class extends Vue {
       case 'nickName':
         vodeName = value
         break
+      case 'status':
+        vodeName = this.optionsStatus.find((item) => item.codeVal === value)['code']
+        break
       case 'roleId':
         vodeName = this.optionsRoles.find((item) => item.id === value)['nick']
         break
@@ -161,13 +201,22 @@ export default class extends Vue {
     return vodeName
   }
 
-  private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'status' })
-    if (data.success) {
-      this.optionsCity = data.data
-    } else {
-      this.$message.error(data)
+  private handleChange(value:any) {
+    this.listQuery.officeId = value.slice().pop() || ''
+  }
+  // 重置
+  private resetForm(name: string) {
+    this.officeList = []
+    for (const key in this.listQuery) {
+      if (!this.QUERY_KEY_LIST.includes(key)) {
+        this.listQuery[key] = ''
+      }
     }
+    // QUERY_KEY_LIST
+  }
+  // 查询
+  private searchForm() {
+    this.$emit('handle-query')
   }
   // 获取角色
   private async getRoleList() {
@@ -203,7 +252,6 @@ export default class extends Vue {
   private fetchData() {
     this.getRoleList()
     this.getOfficeList()
-    this.getDictionary()
   }
   created() {
     this.fetchData()
@@ -234,7 +282,8 @@ export default class extends Vue {
         margin: 0 auto 10px;
       }
     }
-    .el-select {
+    .el-select,
+    .el-cascader{
       width: 100%;
     }
     .el-input {

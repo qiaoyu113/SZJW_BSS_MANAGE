@@ -17,7 +17,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/DriverClue.vue'),
       name: 'DriverClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverclue',
         title: 'driverClue',
         icon: '',
@@ -29,7 +29,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
       name: 'CreateDriverClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverclue',
         title: 'createDriverClue',
         hidden: true,
@@ -55,7 +55,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/interview.vue'),
       name: 'Interview',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverclue',
         title: 'driverInterview',
         hidden: true,
@@ -68,7 +68,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/followClue.vue'),
       name: 'FollowClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverclue',
         title: 'driverFollowClue',
         hidden: true,
@@ -81,7 +81,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/DriverList.vue'),
       name: 'DriverList',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverlist',
         title: 'driverList',
         icon: '',
@@ -93,7 +93,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/editDriver.vue'),
       name: 'EditDriver',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverlist',
         title: 'editDriver',
         hidden: true,
@@ -106,7 +106,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/followDriver.vue'),
       name: 'FollowDriver',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverlist',
         title: 'followDriver',
         hidden: true,
@@ -119,7 +119,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/driverDetail.vue'),
       name: 'driverDetail',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/transport/driverlist',
         title: 'driverDetail',
         hidden: true,
