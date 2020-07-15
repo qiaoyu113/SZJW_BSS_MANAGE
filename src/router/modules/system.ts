@@ -17,7 +17,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/UserManage.vue'),
       name: 'UserManage',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/system/usermanage',
         title: 'userManage',
         icon: '',
@@ -29,7 +29,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
       name: 'CreateUser',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/system/usermanage',
         title: 'createUser',
         hidden: true,
@@ -42,7 +42,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
       name: 'EditUser',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/system/usermanage',
         title: 'editUser',
         icon: '',
@@ -67,7 +67,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'CreateRole',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/system/rolemanage',
         title: 'createRole',
         hidden: true,
@@ -80,7 +80,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'EditRole',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/system/rolemanage',
         title: 'editRole',
         icon: '',
