@@ -208,8 +208,7 @@ import { BuyCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
-import { CargoListData } from '@/api/types'
-
+import { getProductList } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
@@ -245,14 +244,16 @@ export default class extends Vue {
   ];
   private DateValue: any[] = [];
   private listQuery: IState = {
-    key: '',
+    busiType: 1, // 业务类型：1购车，2租车
+    carType: '',
     city: '',
-    page: 1,
-    limit: 30,
+    productCode: '',
+    status: '',
+    supplier: '',
     endDate: '',
     startDate: '',
-    state: '',
-    lineSaleId: ''
+    page: 1,
+    limit: 20
   };
   private dropdownList: any[] = [
     '购车车型',
@@ -267,7 +268,7 @@ export default class extends Vue {
   private checkList: any[] = this.dropdownList;
   // table
   private total = 0;
-  private list: CargoListData[] = [];
+  private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
   // dialog
@@ -303,7 +304,25 @@ export default class extends Vue {
   // 添加明细原因 row 当前行 column 当前列
   private tableClick(row: any, column: any, cell: any, event: any) {}
   // 请求列表
-  private async getList(value: any) {}
+  private async getList(value: any) {
+    this.listQuery.page = value.page
+    this.listQuery.limit = value.limit
+    this.listLoading = true
+    const { data } = await getProductList(this.listQuery)
+    if (data.success) {
+      this.list = data.data
+      this.total = data.page.total
+    } else {
+      this.$message.error(data)
+    }
+    setTimeout(() => {
+      const el = document.querySelector(
+        '.el-table .el-table__body-wrapper'
+      ) as HTMLElement
+      el.scroll(0, 0)
+      this.listLoading = false
+    }, 0.5 * 1000)
+  }
   // table index
   private indexMethod(index: number) {
     let { page, limit } = this.listQuery
@@ -322,6 +341,9 @@ export default class extends Vue {
   }
   confirm(done: any) {
 
+  }
+  mounted() {
+    this.fetchData()
   }
 }
 </script>
