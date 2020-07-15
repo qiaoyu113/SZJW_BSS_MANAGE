@@ -8,21 +8,21 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="司机姓名"
-            :value="ContractDetail.driverInfoVO.name"
+            :value="ContractDetail.driverInfoBusiVO.name"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟经理"
-            :value="ContractDetail.driverInfoVO.phone"
+            :value="ContractDetail.driverInfoBusiVO.phone"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            :value="ContractDetail.city"
+            :value="ContractDetail.driverInfoBusiVO.workCity"
           />
         </el-col>
       </el-row>
@@ -35,42 +35,42 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合同编号"
-            :value="ContractDetail.busiType"
+            :value="ContractDetail.fileNo"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单单号"
-            :value="ContractDetail.cooperationModelName"
+            :value="ContractDetail.orderId"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合同名称"
-            :value="ContractDetail.cooperationTime"
+            :value="ContractDetail.subject"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="司机姓名"
-            :value="ContractDetail.rake"
+            :value="ContractDetail.driverInfoBusiVO.name + (ContractDetail.driverInfoBusiVO.phone)"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合同归属"
-            :value="ContractDetail.incomeGuarantee"
+            :value="ContractDetail.busiTypeName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合同状态"
-            :value="ContractDetail.incomeGuarantee"
+            :value="ContractDetail.statusName"
           />
         </el-col>
       </el-row>
@@ -97,19 +97,19 @@
             <el-col :span="24">
               <DetailItem
                 name="合同生成时间"
-                value="这个信息是中介"
+                :value="ContractDetail.createDate + (ContractDetail.remark)"
               />
             </el-col>
             <el-col :span="24">
               <DetailItem
                 name="合同签约时间"
-                value="这个信息是中介"
+                :value="ContractDetail.signTime + ' 由' + ContractDetail.driverInfoBusiVO.name + (ContractDetail.driverInfoBusiVO.phone) + '签署成功;'"
               />
             </el-col>
             <el-col :span="24">
               <DetailItem
                 name="合同过期时间"
-                value="这个信息是中介"
+                :value="ContractDetail.signTime + ' 由系统到期自动失效'"
               />
             </el-col>
           </div>
@@ -122,7 +122,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetOrderDetail } from '@/api/join'
+import { GetContractDetail } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -137,24 +137,18 @@ import '@/styles/common.scss'
 export default class extends Vue {
     private id: any = ''
     private ContractDetail: any = {
-      'busiType': '',
+      'busiType': 0,
       'busiTypeName': '',
-      'buyCarCompany': '',
-      'capacityQuota': '',
-      'carPrice': '',
-      'city': '',
-      'confirmId': '',
-      'confirmTime': '',
-      'cooperationCar': '',
-      'cooperationCarName': '',
-      'cooperationModel': '',
-      'cooperationTime': '',
+      'certifiationIdcardNo': '',
+      'certifiationName': '',
+      'certifiationPhone': '',
+      'contractId': '',
       'createDate': '',
       'createId': '',
-      'createSource': '',
-      'deliverDate': '',
+      'createName': '',
       'driverId': '',
-      'driverInfoVO': {
+      'remark': '',
+      'driverInfoBusiVO': {
         'address': '',
         'bankCardNo': '',
         'busiType': '',
@@ -172,9 +166,12 @@ export default class extends Vue {
         'exterUserId': '',
         'gmId': '',
         'gmName': '',
+        'gmTeam': '',
+        'gmTeamId': '',
         'idNo': '',
         'name': '',
         'phone': '',
+        'remark': '',
         'sourceChannel': '',
         'sourceChannelName': '',
         'status': '',
@@ -185,31 +182,16 @@ export default class extends Vue {
         'workCity': '',
         'workCityName': ''
       },
-      'goodsAmount': '',
-      'id': '',
-      'incomeGuarantee': '',
-      'inspectionTime': '',
-      'insuranceTime': '',
-      'isDeliver': '',
-      'isPay': '',
-      'isRefund': '',
-      'leaseCarCompany': '',
-      'notPassId': '',
-      'notPassTime': '',
-      'operateFlag': '',
+      'fileNo': '',
+      'fileUrl': '',
       'orderId': '',
-      'orderPayRecordInfoVOList': [],
-      'passId': '',
-      'passTime': '',
-      'payCompleteTime': '',
-      'payType': '',
-      'plateNo': '',
-      'rake': '',
-      'refundTime': '',
-      'remarks': '',
+      'signTime': '',
       'status': '',
+      'statusName': '',
+      'subject': '',
       'updateDate': '',
-      'updateId': ''
+      'updateId': '',
+      'updateName': ''
     }
     private ruleForm: any = {
       name: '',
@@ -251,7 +233,6 @@ export default class extends Vue {
 
     mounted() {
       this.id = this.$route.query.id
-      console.log(this.id)
       this.getDetail(this.id)
     }
 
@@ -262,9 +243,9 @@ export default class extends Vue {
       return SettingsModule.isPC
     }
 
-    // 请求列表
+    // 请求详情
     private async getDetail(value: any) {
-      const { data } = await GetOrderDetail({ id: value })
+      const { data } = await GetContractDetail({ contractId: value })
       if (data.success) {
         let datas = data.data
         this.ContractDetail = datas

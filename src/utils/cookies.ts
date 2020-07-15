@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import { Message } from 'element-ui'
 
 // App
 const sidebarStatusKey = 'sidebar_status'
@@ -32,6 +33,11 @@ const tokenKey = 'token'
 export const getToken = () => Cookies.get(tokenKey)
 export const setToken = (token: string) => Cookies.set(tokenKey, token)
 export const setUser = (user: any) => {
+  if (!user.stringPermissions.length) {
+    Message.error('该账号无任何菜单权限，无法访问')
+    // 本地开发出现无权限账号使用
+    // user.stringPermissions = ['root']
+  }
   localStorage.setItem(tokenKey, user.token)
   localStorage.setItem('role', user.busiPermission)
   localStorage.setItem('permission', user.stringPermissions)

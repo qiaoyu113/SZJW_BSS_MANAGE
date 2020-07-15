@@ -19,14 +19,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="司机姓名"
-            value="刘德华123123"
+            value="ContractDetail."
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            value="15071362991"
+            value="ContractDetail."
           />
         </el-col>
 
@@ -427,7 +427,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { SubmitOrderDeliver, GetOrderDeliverDetail } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -444,6 +444,148 @@ import '@/styles/common.scss'
 export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
+    private ContractDetail: any = {
+      'cooperationModel': true,
+      'dealId': 0,
+      'dealTime': '2020-07-15T03:12:48.618Z',
+      'deliveryTime': '2020-07-15T03:12:48.618Z',
+      'engineInvoiceNo': 'string',
+      'engineNo': 'string',
+      'financialRebate': 0,
+      'gpsDeviceNo': 'string',
+      'gpsSimNo': 'string',
+      'gpsSupplier': 0,
+      'id': 0,
+      'insuranceRebate': 0,
+      'operationId': 0,
+      'orderDeliverRebateFORMs': [
+        {
+          'chassis': 0,
+          'createDate': '2020-07-15T03:12:48.618Z',
+          'createId': 0,
+          'delFlag': true,
+          'gps': 0,
+          'id': 0,
+          'orderId': 'string',
+          'priceType': 0,
+          'tailgate': 0,
+          'updateDate': '2020-07-15T03:12:48.618Z',
+          'updateId': 0,
+          'vehicle': 0
+        }
+      ],
+      'orderDeliverRebateVOs': [
+        {
+          'chassis': 0,
+          'createDate': '2020-07-15T03:12:48.618Z',
+          'createId': 0,
+          'delFlag': true,
+          'gps': 0,
+          'id': 0,
+          'orderId': 'string',
+          'priceType': 0,
+          'tailgate': 0,
+          'updateDate': '2020-07-15T03:12:48.618Z',
+          'updateId': 0,
+          'vehicle': 0
+        }
+      ],
+      'orderId': 'string',
+      'orderInfoVO': {
+        'busiType': 0,
+        'busiTypeName': 0,
+        'buyCarCompany': 0,
+        'capacityQuota': 0,
+        'carPrice': 0,
+        'city': 0,
+        'confirmId': 0,
+        'confirmTime': '2020-07-15T03:12:48.619Z',
+        'cooperationCar': 0,
+        'cooperationCarName': 'string',
+        'cooperationModel': 0,
+        'cooperationTime': 0,
+        'createDate': '2020-07-15T03:12:48.619Z',
+        'createId': 0,
+        'createSource': 0,
+        'deliverDate': '2020-07-15T03:12:48.619Z',
+        'driverId': 'string',
+        'driverInfoVO': {
+          'address': 'string',
+          'bankCardNo': 'string',
+          'busiType': 0,
+          'busiTypeName': 'string',
+          'carType': 0,
+          'carTypeName': 'string',
+          'clueId': 'string',
+          'corpUserId': 'string',
+          'createDate': '2020-07-15T03:12:48.619Z',
+          'createId': 0,
+          'createName': 'string',
+          'delFlag': true,
+          'driverId': 'string',
+          'email': 'string',
+          'exterUserId': 'string',
+          'gmId': 0,
+          'gmName': 'string',
+          'idNo': 'string',
+          'name': 'string',
+          'phone': 0,
+          'sourceChannel': 0,
+          'sourceChannelName': 'string',
+          'status': 0,
+          'statusName': 'string',
+          'updateDate': '2020-07-15T03:12:48.619Z',
+          'updateId': 0,
+          'updateName': 'string',
+          'workCity': 0,
+          'workCityName': 'string'
+        },
+        'goodsAmount': 0,
+        'id': 0,
+        'incomeGuarantee': 0,
+        'inspectionTime': '2020-07-15T03:12:48.619Z',
+        'insuranceTime': '2020-07-15T03:12:48.619Z',
+        'isDeliver': 0,
+        'isPay': 0,
+        'isRefund': 0,
+        'leaseCarCompany': 0,
+        'notPassId': 0,
+        'notPassTime': '2020-07-15T03:12:48.619Z',
+        'operateFlag': 'string',
+        'orderId': 'string',
+        'orderPayRecordInfoVOList': [
+          {
+            'createDate': '2020-07-15T03:12:48.619Z',
+            'money': 0,
+            'operateType': 0,
+            'outTradeNo': 'string',
+            'payDate': '2020-07-15T03:12:48.619Z',
+            'payImageUrl': 'string',
+            'payType': 0,
+            'prepayId': 'string',
+            'remarks': 'string',
+            'serviceFee': 0,
+            'status': 0,
+            'transactionId': 'string',
+            'updateDate': '2020-07-15T03:12:48.619Z'
+          }
+        ],
+        'passId': 0,
+        'passTime': '2020-07-15T03:12:48.619Z',
+        'payCompleteTime': '2020-07-15T03:12:48.619Z',
+        'payType': 0,
+        'plateNo': 'string',
+        'rake': 0,
+        'refundTime': '2020-07-15T03:12:48.619Z',
+        'remarks': 'string',
+        'status': 0,
+        'updateDate': '2020-07-15T03:12:48.619Z',
+        'updateId': 0
+      },
+      'otherRebate': 0,
+      'plateNoRebate': 0,
+      'status': 0
+    }
     private list: any = [
       { name: '采购价', a: '2', a1: '3', a2: '4' },
       { name: '销售价', a: '2', a1: '3', a2: '4' },
@@ -473,6 +615,7 @@ export default class extends Vue {
 
     created() {
       this.id = this.$route.query.id
+      this.getDetail(this.id)
     }
 
     mounted() {
@@ -484,6 +627,17 @@ export default class extends Vue {
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
+    }
+
+    // 请求详情
+    private async getDetail(value: any) {
+      const { data } = await GetOrderDeliverDetail({ orderId: value })
+      if (data.success) {
+        let datas = data.data
+        this.ContractDetail = datas
+      } else {
+        this.$message.error(data)
+      }
     }
 
     private submitForm(formName:any) {

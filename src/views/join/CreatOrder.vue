@@ -216,7 +216,7 @@
                 placeholder="请选择租赁公司"
               >
                 <el-option
-                  v-for="item in optionsCity"
+                  v-for="item in optionsRentCompany"
                   :key="item.codeVal"
                   :label="item.code"
                   :value="item.codeVal"
@@ -235,7 +235,7 @@
                 placeholder="请选择购车公司"
               >
                 <el-option
-                  v-for="item in optionsCity"
+                  v-for="item in optionsCompany"
                   :key="item.codeVal"
                   :label="item.code"
                   :value="item.codeVal"
@@ -255,7 +255,7 @@
                 placeholder="请选择合作车型"
               >
                 <el-option
-                  v-for="item in optionsCity"
+                  v-for="item in optionsCar2"
                   :key="item.codeVal"
                   :label="item.code"
                   :value="item.codeVal"
@@ -275,7 +275,7 @@
                 placeholder="请选择合作车型"
               >
                 <el-option
-                  v-for="item in optionsCity"
+                  v-for="item in optionsCar"
                   :key="item.codeVal"
                   :label="item.code"
                   :value="item.codeVal"
@@ -310,27 +310,29 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div class="follow">
-          <p>
-            <span class="follow_title">
-              车辆信息
-            </span>
-          </p>
+        <div v-if="ruleForm.cooperationModel !== '3' && ruleForm.cooperationCar">
+          <div class="follow">
+            <p>
+              <span class="follow_title">
+                车辆信息
+              </span>
+            </p>
+          </div>
+          <el-row>
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="车辆信息"
+                :value="ruleForm.carPrice"
+              />
+            </el-col>
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="无税车价"
+                :value="ruleForm.carPrice"
+              />
+            </el-col>
+          </el-row>
         </div>
-        <el-row>
-          <el-col :span="isPC ? 6 : 24">
-            <DetailItem
-              name="车辆信息"
-              :value="ruleForm.carPrice"
-            />
-          </el-col>
-          <el-col :span="isPC ? 6 : 24">
-            <DetailItem
-              name="无税车价"
-              :value="ruleForm.carPrice"
-            />
-          </el-col>
-        </el-row>
       </SectionContainer>
       <SectionContainer
         :title="`支付信息` + `( 订单金额：¥` + orderPrice + ` )`"
@@ -641,7 +643,10 @@ export default class CreatLine extends Vue {
   private readyPay: number = 0
   private orderPrice: number = 0
   private orderIndex:number = 0
-  private optionsCity: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
+  private optionsCar: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
+  private optionsCar2: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
+  private optionsCompany: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
+  private optionsRentCompany: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
   private driverList: any[] = []
   private payNumber: any = ''
   private billDetail: any = {}
@@ -815,25 +820,16 @@ export default class CreatLine extends Vue {
   }
   // 查字典
   private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
+    const { data } = await GetDictionary({ dictType: 'Intentional_compartment' })
     if (data.success) {
-      this.optionsCity = data.data
+      this.optionsCar = data.data
     } else {
       this.$message.error(data)
     }
   }
 
   created() {
-    let routeArr = this.$route.path.split('/')
-    if (routeArr[2] === 'creatline') {
-      this.pageStatus = 1
-    } else if (routeArr[2] === 'lineedit') {
-      this.pageStatus = 2
-    } else if (routeArr[2] === 'linecopy') {
-      this.pageStatus = 3
-    } else if (routeArr[2] === 'lineaudit') {
-      this.pageStatus = 4
-    }
+    this.getDictionary()
   }
 
   // 添加金额
