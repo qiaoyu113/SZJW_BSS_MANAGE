@@ -23,6 +23,7 @@
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
+import { UpdateDriverBDManager, driverDownToGm } from '@/api/transport.ts'
 interface IState {
   [key: string]: any;
 }
@@ -90,12 +91,62 @@ export default class extends Vue {
   cancel() {
     this.showAlert = false
   }
-  confirm() {
-    if (!this.dialogForm.manager) {
-      return this.$message.error('请选择加盟经理')
+  async confirm() {
+    try {
+      if (!this.dialogForm.manager) {
+        return this.$message.error('请选择加盟经理')
+      }
+      if (this.type === 'modify') {
+        this.modifyManager()
+      } else if (this.type === 'distribution') {
+        this.driverDownToGm()
+      }
+    } catch (err) {
+      console.log(`confirm fail:${err}`)
     }
-    this.showAlert = false
-    this.$message.success('已成功分配加盟经理')
+  }
+
+  /**
+ *分配加盟经理
+ */
+  async driverDownToGm() {
+    try {
+      let params = {
+        driverId: 'SJ202007131005',
+        gmId: 123456
+      }
+      let { data: res } = await driverDownToGm(params)
+      if (res.success) {
+        this.showAlert = false
+        this.$message.success('操作成功')
+        this.getList()
+      }
+    } catch (err) {
+      console.log(`driver to gm fail:${err}`)
+    }
+  }
+  /**
+ *修改加盟经理
+ */
+  async modifyManager() {
+    try {
+      let params = {
+        driverId: ['SJ202007131005'],
+        gmId: 1234
+      }
+
+      let { data: res } = await UpdateDriverBDManager(params)
+      if (res.success) {
+        this.showAlert = false
+        this.$message.success('操作成功')
+        this.getList()
+      }
+    } catch (err) {
+      console.log(`modify manager fail:${err}`)
+    }
+  }
+  @Emit('onRefresh')
+  getList() {
   }
 }
 </script>

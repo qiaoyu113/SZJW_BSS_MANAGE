@@ -23,13 +23,16 @@
               司机跟进
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="成交意向">
+              <el-dropdown-item :command="5">
                 成交意向
               </el-dropdown-item>
-              <el-dropdown-item command="征信通过情况">
+              <el-dropdown-item :command="6">
                 征信通过情况
               </el-dropdown-item>
-              <el-dropdown-item command="其他">
+              <el-dropdown-item :command="7">
+                跟车情况
+              </el-dropdown-item>
+              <el-dropdown-item :command="8">
                 其他
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -40,6 +43,8 @@
       <followDialog
         ref="followDialog"
         :type="type"
+        :driver-id="driverId"
+        @onRefresh="getDriverFollow"
       />
     </el-card>
   </div>
@@ -49,6 +54,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import FollowDialog from './components/followDialog.vue'
 import FollowItem from './components/followItem.vue'
+import { DriverFollowFormation } from '@/api/transport.ts'
 interface IState {
     [key: string]: any;
 }
@@ -61,14 +67,15 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private driverId:number|string = ''
   private listQuery:IState = {
-    name: '穆家祥',
-    code: 'SHS121313131',
-    phone: '15021578502',
-    city: '北京市',
-    line: '共享',
-    group: '共享一组',
-    manager: '王利'
+    name: '',
+    code: '',
+    phone: '',
+    city: '',
+    line: '',
+    group: '',
+    manager: ''
   }
 
   private formItem:any[] = [
@@ -86,7 +93,7 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'code',
+      key: 'driverId',
       label: '司机编号:',
       tagAttrs: {
         style: {
@@ -102,41 +109,50 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'city',
+      key: 'workCityName',
       label: '工作城市:'
     },
     {
       type: 7,
-      key: 'line',
+      key: 'busiTypeName',
       label: '业务线:'
     },
     {
       type: 7,
-      key: 'group',
+      key: 'gmTeam',
       label: '加盟小组:'
     },
     {
       type: 7,
-      key: 'manager',
+      key: 'gmIdName',
       label: '加盟经理:'
     }
 
   ]
-  lists:any[] = [
-    {
-      tag: '征信通过情况',
-      desc: '征信已通过',
-      name: '穆家祥',
-      time: Date.now()
-    },
-    {
-      tag: '成交意向',
-      desc: '有较高成交意向',
-      name: '穆家祥',
-      time: Date.now()
-    }
-  ]
+  lists:any[] = []
   private type:string = ''
+
+  mounted() {
+    this.driverId = (this.$route as any).query.id
+    this.getDriverFollow()
+  }
+  /**
+   *司机跟进信息
+   */
+  async getDriverFollow() {
+    try {
+      let params = {
+        driverId: this.driverId
+      }
+      let { data: res } = await DriverFollowFormation(params)
+      if (res.success) {
+        this.listQuery = res.data.driverInfoFormationVOList[0]
+        this.lists = res.data.driverFollowFormationVOList || []
+      }
+    } catch (err) {
+      console.log(`get driver info:${err}`)
+    }
+  }
 
   /**
    * 司机跟进

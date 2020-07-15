@@ -214,6 +214,7 @@
         ref="driverListManager"
         :rows="rows"
         :type="type"
+        @onRefresh="handleGetList"
         @onRows="rows = []"
       />
     </el-card>
@@ -242,6 +243,8 @@ import ManagerDialog from './components/managerDialog.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { getLabel } from '@/utils/index.ts'
+import { DriverFollowUpToDown } from '@/api/transport.ts'
+import { delayTime } from '@/settings.ts'
 interface IState {
     [key: string]: any;
 }
@@ -658,7 +661,12 @@ export default class extends Vue {
     this.dropdownList = [...this.columns]
     this.checkList = this.dropdownList.map(item => item.label)
   }
+  /**
+   *获取列表
+   */
+  getList() {
 
+  }
   @Watch('checkList', { deep: true })
   private checkListChange(val:any) {
     this.columns = this.dropdownList.filter(item => val.includes(item.label))
@@ -698,6 +706,7 @@ export default class extends Vue {
       quit: 1,
       time: []
     }
+    this.tags = []
   }
 
   // 判断是否是PC
@@ -735,20 +744,26 @@ export default class extends Vue {
       (this.$refs.driverListManager as any).openDialog()
     } else if (key === 'follow') { // 跟进
       this.$router.push({
-        path: '/transport/followDriver'
+        path: '/transport/followDriver',
+        query: {
+          id: 'SJ202007131005'
+        }
       })
     } else if (key === 'giveup') { // 放弃
-      this.handleGiveupClick()
+      this.handleGiveupClick('SJ202007131005')
     } else if (key === 'edit') { // 编辑
       this.$router.push({
         path: '/transport/editDriver',
         query: {
-          id: '1'
+          id: 'SJ202007131005'
         }
       })
     } else if (key === 'detail') { // 详情
       this.$router.push({
-        path: '/transport/driverDetail'
+        path: '/transport/driverDetail',
+        query: {
+          id: 'SJ202007131005'
+        }
       })
     } else if (key === 'account') { // 账户
 
@@ -773,17 +788,27 @@ export default class extends Vue {
   /**
    * 放弃操作
    */
-  handleGiveupClick() {
+  handleGiveupClick(driverId:string) {
     this.$confirm('点击确定后,该司机将从司机列表中移出?', '是否放弃跟进该司机', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning',
       center: true
-    }).then(() => {
-      this.$message({
-        type: 'success',
-        message: '删除成功!'
-      })
+    }).then(async() => {
+      try {
+        let params = {
+          driverId
+        }
+        let { data: res } = await DriverFollowUpToDown(params)
+        if (res.success) {
+          this.$message.success('操作成功')
+          setTimeout(() => {
+            this.getList()
+          }, delayTime)
+        }
+      } catch (err) {
+        console.log(`give up fail:${err}`)
+      }
     }).catch(() => {
       this.$message({
         type: 'info',
@@ -832,6 +857,15 @@ export default class extends Vue {
     this.rows = row
   }
   // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
+  /**
+     *刷新表格
+     */
+  handleGetList() {
+    this.page.page = 1
+    setTimeout(() => {
+      this.getList()
+    }, delayTime)
+  }
 }
 
 </script>

@@ -60,6 +60,9 @@ import OrderInfo from './components/orderInfo.vue'
 import TransportInfo from './components/transportInfo.vue'
 import bidInfo from './components/bidInfo.vue'
 import AccountInfo from './components/accountInfo.vue'
+import { GetDriverDetail, DriverFollowFormation, driverDetailToCarrierInfo, driverDetailToOrderInfo } from '@/api/transport.ts'
+import { Location, Route } from 'vue-router'
+
 interface IState {
     [key: string]: any;
 }
@@ -76,15 +79,16 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private driverId:string | number = ''
   private listQuery:IState = {
-    name: '穆家祥',
-    code: 'SHS121313131',
-    phone: '15021578502',
-    city: '北京市',
-    line: '共享',
-    group: '共享一组',
-    manager: '王利'
-  }
+    name: '',
+    driverId: '',
+    phone: '',
+    workCityName: '',
+    busiTypeName: '',
+    gmTeam: '',
+    gmIdName: ''
+  } // 司机信息
 
   private formItem:any[] = [
     {
@@ -101,7 +105,7 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'code',
+      key: 'driverId',
       label: '司机编号:',
       tagAttrs: {
         style: {
@@ -117,28 +121,28 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'city',
+      key: 'workCityName',
       label: '工作城市:'
     },
     {
       type: 7,
-      key: 'line',
+      key: 'busiTypeName',
       label: '业务线:'
     },
     {
       type: 7,
-      key: 'group',
+      key: 'gmTeam',
       label: '加盟小组:'
     },
     {
       type: 7,
-      key: 'manager',
+      key: 'gmIdName',
       label: '加盟经理:'
     }
 
   ]
 
-  private activeName:string = 'f6'
+  private activeName:string = 'f1'
 
   private orderLists = [
     {
@@ -216,26 +220,94 @@ export default class extends Vue {
     h: 200000
   }
 
-  private followLists:any[] = [
-    {
-      tag: '征信通过情况',
-      desc: '征信已通过',
-      name: '穆家祥',
-      time: Date.now()
-    },
-    {
-      tag: '成交意向',
-      desc: '有较高成交意向',
-      name: '穆家祥',
-      time: Date.now()
+  private followLists:any[] = []
+
+  mounted() {
+    this.driverId = (this.$route as any).query.id
+    this.getDriverDetail()
+  }
+
+  /**
+   *获取司机详情
+   */
+  async getDriverDetail() {
+    try {
+      let params = {
+        driverId: this.driverId
+      }
+      let { data: res } = await GetDriverDetail(params)
+      if (res.success) {
+        this.listQuery = res.data.driverInfoFormationVOList[0]
+      }
+    } catch (err) {
+      console.log('get driver detail fail:', err)
     }
-  ]
+  }
 
   /**
    *tab切换
    */
   handleClick(tab:any) {
     this.activeName = tab.name
+    if (this.activeName === 'f1') {
+      // 基本信息
+    } else if (this.activeName === 'f2') {
+      this.orderInfo()
+    } else if (this.activeName === 'f3') {
+      this.transportInfo()
+    } else if (this.activeName === 'f4') {
+      // 标书信息
+    } else if (this.activeName === 'f5') {
+      // 账号信息
+    } else if (this.activeName === 'f6') {
+      this.followFormation()
+    }
+  }
+  /**
+   * 跟进信息
+   */
+  async followFormation() {
+    try {
+      let params = {
+        driverId: this.driverId
+      }
+      let { data: res } = await DriverFollowFormation(params)
+      if (res.success) {
+        this.followLists = res.data.driverFollowFormationVOList || []
+      }
+    } catch (err) {
+      console.log(`follow formation fail:${err}`)
+    }
+  }
+  /**
+   * 运力信息
+   */
+  async transportInfo() {
+    try {
+      let params = {}
+      let { data: res } = await driverDetailToCarrierInfo(params)
+      if (res.success) {
+        this.transportLists = res.data
+        console.log(res.data)
+      }
+    } catch (err) {
+      console.log(`transport info fail:${err}`)
+    }
+  }
+  /**
+   * 获取订单信息
+   */
+  async orderInfo() {
+    try {
+      let params = {}
+      let { data: res } = await driverDetailToOrderInfo(params)
+      if (res.success) {
+        this.orderLists = res.data
+        console.log(res.data)
+      }
+    } catch (err) {
+      console.log(`orderInfo info fail:${err}`)
+    }
   }
 }
 </script>

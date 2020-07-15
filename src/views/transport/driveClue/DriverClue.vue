@@ -576,6 +576,7 @@ export default class extends Vue {
       followPerson: '',
       onlyCan: ''
     }
+    this.tags = []
   }
 
   /**
@@ -624,7 +625,7 @@ export default class extends Vue {
     console.log('xxx:', key, row)
     if (key === 'edit') { // 修改线索
       this.$router.push({
-        path: '/transport/createClue',
+        path: '/transport/editClue',
         query: {
           id: row.id
         }
