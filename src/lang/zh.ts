@@ -32,6 +32,7 @@ export default {
     transportTitle: '运力中心',
     transportList: '运力列表',
     creatTransport: '创建运力',
+    editorTransport: '编辑运力',
     transportDetail: '运力详情',
     driverClue: '司机线索',
     accountList: '司机账户',

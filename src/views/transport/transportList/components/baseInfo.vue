@@ -18,7 +18,7 @@
             :to="{path: '/'}"
             class="link"
           >
-            {{ row.i }}
+            {{ row.driverId }}
           </router-link>
         </template>
       </self-form>
@@ -41,82 +41,82 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 7,
-      key: 'a',
+      key: 'carrierId',
       label: '运力编号:'
     },
     {
       type: 7,
-      key: 'b',
+      key: 'name',
       label: '姓名:'
     },
     {
       type: 7,
-      key: 'c',
+      key: 'phone',
       label: '联系方式:'
     },
     {
       type: 7,
-      key: 'd',
+      key: 'busiType',
       label: '业务线:'
     },
     {
-      key: 'e',
+      key: 'workCity',
       type: 7,
       label: '工作城市:'
     },
     {
-      key: 'f',
+      key: 'carTypeName',
       type: 7,
       label: '意向车型:'
     },
     {
-      key: 'g',
+      key: 'plateNo',
       type: 7,
       label: '车牌号:'
     },
     {
-      key: 'h',
+      key: 'statusName',
       type: 7,
       label: '运力状态:'
     },
     {
-      key: 'i',
+      key: 'driverId',
       type: 'detail',
       label: '所属司机编号:',
       slot: true
     },
     {
-      key: 'j',
+      key: 'driverName',
       type: 7,
       label: '所属司机:'
     },
     {
-      key: 'q',
+      key: 'driverPhone',
       type: 7,
       label: '所属司机手机号:'
     },
     {
-      key: 'l',
+      key: 'gmIdName',
       type: 7,
       label: '运营经理:'
     },
     {
-      key: 'm',
+      key: 'gmPhone',
       type: 7,
       label: '运营经理手机号:'
     },
     {
-      key: 'n',
+      key: 'createName',
       type: 7,
       label: '创建人:'
     },
     {
-      key: 'o',
+      key: 'createPhone',
       type: 7,
       label: '创建人手机号:'
     },
     {
-      key: 'p',
+      key: 'createDate',
       type: 7,
       label: '创建时间:'
     }
@@ -125,51 +125,51 @@ export default class extends Vue {
   private formItemOther:any[] = [
     {
       type: 7,
-      key: 'a',
+      key: 'age',
       label: '司机年龄:'
     },
     {
       type: 7,
-      key: 'b',
+      key: 'householdTypeName',
       label: '城镇户口:'
     },
     {
       type: 7,
-      key: 'c',
+      key: 'workExperienceName',
       label: '货物运输经验（月）:'
     },
     {
       type: 7,
-      key: 'd',
+      key: 'homeDistrict',
       label: '家庭住址:'
     },
     {
-      key: 'e',
+      key: 'cargoTypeName',
       type: 7,
       label: '配送货物类型:'
     },
     {
-      key: 'f',
+      key: 'expMonthlyIncomeName',
       type: 7,
       label: '期望月收入:'
     },
     {
-      key: 'g',
+      key: 'avgMonthlyIncomeName',
       type: 7,
       label: '平均月收入:'
     },
     {
-      key: 'h',
+      key: 'isIndebtedName',
       type: 7,
       label: '是否存在还贷款:'
     },
     {
-      key: 'i',
+      key: 'maxWorkTimeName',
       type: 7,
       label: '可接受一天工作时长:'
     },
     {
-      key: 'j',
+      key: 'remarks',
       type: 7,
       label: '备注:'
     }

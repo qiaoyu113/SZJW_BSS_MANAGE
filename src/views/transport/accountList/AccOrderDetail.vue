@@ -127,13 +127,89 @@
           label="缴费明细"
           name="f2"
         >
-          123
+          <el-card>
+            <div class="table_center">
+              <el-table
+                v-loading="payLoading"
+                :data="payData"
+                style="width: 100%"
+                :row-style="{height: '20px'}"
+                :cell-style="{padding: '5px 0'}"
+                size="mini"
+                fit
+                :border="isPC"
+                stripe
+                highlight-current-row
+              >
+                <el-table-column
+                  prop="date"
+                  label="缴费渠道"
+                  width="180"
+                />
+                <el-table-column
+                  prop="name"
+                  label="交易编号（只有小程序有）"
+                  width="180"
+                />
+                <el-table-column
+                  prop="address"
+                  label="交易截图（只有线下有）"
+                />
+                <el-table-column
+                  prop="address"
+                  label="缴费时间"
+                />
+                <el-table-column
+                  prop="address"
+                  label="缴费金额"
+                />
+              </el-table>
+            </div>
+          </el-card>
         </el-tab-pane>
         <el-tab-pane
           label="退款明细"
           name="f3"
         >
-          456
+          <el-card>
+            <div class="table_center">
+              <el-table
+                v-loading="outLoading"
+                :data="outData"
+                style="width: 100%"
+                :row-style="{height: '20px'}"
+                :cell-style="{padding: '5px 0'}"
+                size="mini"
+                fit
+                :border="isPC"
+                stripe
+                highlight-current-row
+              >
+                <el-table-column
+                  prop="date"
+                  label="缴费渠道"
+                  width="180"
+                />
+                <el-table-column
+                  prop="name"
+                  label="交易编号（只有小程序有）"
+                  width="180"
+                />
+                <el-table-column
+                  prop="address"
+                  label="交易截图（只有线下有）"
+                />
+                <el-table-column
+                  prop="address"
+                  label="缴费时间"
+                />
+                <el-table-column
+                  prop="address"
+                  label="缴费金额"
+                />
+              </el-table>
+            </div>
+          </el-card>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -143,6 +219,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetCustomerList } from '@/api/customer'
 import { SettingsModule } from '@/store/modules/settings'
+import AccountInfo from './components/accountInfo.vue'
 import { HandlePages } from '@/utils/index'
 import accountOrder from './components/accountOrder.vue'
 import Pagination from '@/components/Pagination/index.vue'
@@ -156,6 +233,7 @@ interface IState {
   @Component({
     name: 'TransportList',
     components: {
+      AccountInfo,
       Pagination,
       accountOrder
     }
@@ -163,9 +241,30 @@ interface IState {
 
 export default class extends Vue {
   private activeName:string = 'f2'
-  private listLoading = true
+  private listLoading:boolean = true
   private list: CargoListData[] = []
   private total = 0;
+  private payLoading:boolean = true
+  private outLoading:boolean = true
+  private outData:any[] = []
+  private payData:any[] = [
+    {
+      date: '2016-05-02',
+      name: '王小虎',
+      address: '上海市普陀区金沙江路 1518 弄'
+    }, {
+      date: '2016-05-04',
+      name: '王小虎',
+      address: '上海市普陀区金沙江路 1517 弄'
+    }, {
+      date: '2016-05-01',
+      name: '王小虎',
+      address: '上海市普陀区金沙江路 1519 弄'
+    }, {
+      date: '2016-05-03',
+      name: '王小虎',
+      address: '上海市普陀区金沙江路 1516 弄'
+    }]
   private operationList: any[] = [{}]
   private listQuery: IState = {
     key: '',
@@ -197,6 +296,7 @@ export default class extends Vue {
       key: 'a',
       label: '订单编号:',
       col: 24,
+      // class: 'font-bold',
       tagAttrs: {
         style: {
           fontWeight: 'bold',
@@ -252,6 +352,8 @@ export default class extends Vue {
   // 所有请求方法
   private fetchData() {
     this.getList(this.listQuery)
+    this.getPay()
+    this.outPay()
   }
 
   handleClick(tab:any) {
@@ -279,6 +381,13 @@ export default class extends Vue {
     }
   }
 
+  private getPay() {
+    this.payLoading = false
+  }
+
+  private outPay() {
+    this.outLoading = false
+  }
   created() {
     this.fetchData()
   }
@@ -292,6 +401,9 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .AccountDetail{
+  // .font-bold{
+  //   font-weight: bold;
+  // }
   width: 100%;
   .accountBox{
     padding: 20px 20px 0 20px;

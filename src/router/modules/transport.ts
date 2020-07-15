@@ -140,6 +140,19 @@ const transportRouter: RouteConfig = {
       }
     },
     {
+      path: 'editortransport', /* 编辑运力 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/transportList/CreatTransport.vue'),
+      name: 'EditorTransport',
+      meta: {
+        title: 'editorTransport',
+        activeMenu: '/transport/transportlist',
+        noCache: false,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
       path: 'transportdetail', /* 运力详情 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/transportList/TransportDetail.vue'),
       name: 'TransportDetail',

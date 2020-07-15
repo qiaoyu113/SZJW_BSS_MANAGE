@@ -13,204 +13,22 @@
             <div class="baseBox">
               <self-form
                 class="base"
-                :list-query="listQuery"
+                :list-query="detailQuery"
                 :form-item="formItem"
                 label-width="80px"
               >
                 <template slot="detail">
                   <router-link
-                    :to="{path: '/'}"
+                    :to="{path: '/',query: {}}"
                     class="link"
                   >
-                    详情>>
+                    详情>>{{ detailQuery.orderId }}
                   </router-link>
                 </template>
               </self-form>
 
               <base-info :item="baseObj" />
               <base-info :item="otherObj" />
-              <!-- <SectionContainer
-                title="基本信息"
-                :md="true"
-              >
-                <el-row>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="运力编号"
-                      value="HDNSONOSNOS"
-                    />
-                  </el-col>
-
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="姓名"
-                      value="穆佳祥"
-                    />
-                  </el-col>
-
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="联系方式"
-                      value="18848885135"
-                    />
-                  </el-col>
-
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="业务线"
-                      value="共享"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="工作城市"
-                      value="杭州市"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="意向车型"
-                      value="4.2米厢货"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="车牌号"
-                      value="1998年7月1日"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="运力状态"
-                      value="待上岗"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="所属司机编号"
-                      value="515616161ad"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="所属司机"
-                      value="穆佳祥"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="所属司机手机号"
-                      value="18848885135"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="运营经理"
-                      value="王利"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="运营经理手机号"
-                      value="18848885135"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="创建人"
-                      value="王利"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="创建人手机号"
-                      value="18848885135"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="创建时间"
-                      value="2020.9.5"
-                    />
-                  </el-col>
-                </el-row>
-              </SectionContainer>
-              <SectionContainer
-                title="其他信息"
-                :md="true"
-              >
-                <el-row>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="司机年龄"
-                      value="23"
-                    />
-                  </el-col>
-
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="户口类型"
-                      value="城镇户口"
-                    />
-                  </el-col>
-
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="货物运输经验（月）"
-                      value="34"
-                    />
-                  </el-col>
-
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="家庭住址"
-                      value="浙江省杭州市萧山区"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="配送货物类型"
-                      value="水果"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="期望月收入"
-                      value="10000以上"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="平均月收入"
-                      value="9000"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="是否存在还贷款"
-                      value="否"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="可接受一天工作时长"
-                      value="10小时"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="平均月收入"
-                      value="9000"
-                    />
-                  </el-col>
-                  <el-col :span="isPC ? 6 : 24">
-                    <DetailItem
-                      name="备注"
-                      value="我要9000"
-                    />
-                  </el-col>
-                </el-row>
-              </SectionContainer> -->
             </div>
           </el-card>
         </el-tab-pane>
@@ -220,7 +38,10 @@
         >
           <el-card>
             <div class="bidBox">
-              <bid-info :lists="bidLists" />
+              <bid-info
+                :lists="bidLists"
+                :form-item="bidForm"
+              />
             </div>
           </el-card>
         </el-tab-pane>
@@ -232,7 +53,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { carrierDetail } from '@/api/transport'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -257,21 +78,22 @@ interface IState {
 
 export default class extends Vue {
   private activeName:string = 'first'
-  private listQuery:IState = {
-    orderNum: 'DD202005060001',
-    shopType: '梧桐共享',
-    orderType: '带车',
-    orderCar: '4.2米厢货',
-    orderTime: '3个月',
-    orderMoney: '订单金额',
-    orderPay: '微信小程序',
-    payTime: '2020-09-08 12:00'
+  private carrierId:string = ''
+  private detailQuery:IState = {
+    orderId: 'DD202005060001',
+    busiTypeName: '梧桐共享',
+    cooperationModel: '带车',
+    cooperationCarName: '4.2米厢货',
+    cooperationTime: '3个月',
+    goodsAmount: '订单金额',
+    payType: '微信小程序',
+    deliverDate: '2020-09-08 12:00'
   }
 
   private formItem:any[] = [
     {
       type: 7,
-      key: 'orderNum',
+      key: 'orderId',
       label: '订单编号:',
       col: 24,
       tagAttrs: {
@@ -283,41 +105,42 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'shopType',
+      key: 'busiTypeName',
       label: '商品分类:'
     },
     {
       type: 7,
-      key: 'orderType',
+      key: 'cooperationModel',
       label: '合作模式:'
     },
     {
       type: 7,
-      key: 'orderCar',
+      key: 'cooperationCarName',
       label: '合作车型:'
     },
     {
       type: 7,
-      key: 'orderTime',
+      key: 'cooperationTime',
       label: '合作期限:'
     },
     {
       type: 7,
-      key: 'orderMoney',
+      key: 'goodsAmount',
       label: '订单金额:'
     },
     {
       type: 7,
-      key: 'orderPay',
+      key: 'payType',
       label: '支付方式:'
     },
     {
       type: 7,
-      key: 'payTime',
+      key: 'deliverDate',
       label: '支付时间:'
     },
     {
       slot: true,
+      key: 'driverId',
       w: '10px',
       type: 'detail'
     }
@@ -334,71 +157,109 @@ export default class extends Vue {
     }
   ]
 
+  private bidForm:any[] = [
+    {
+      type: 7,
+      key: 'a',
+      label: '运力姓名:'
+    },
+    {
+      type: 7,
+      key: 'b',
+      label: '标书名称:'
+    },
+    {
+      type: 'c',
+      key: 'c',
+      label: '创建时间:',
+      slot: true
+    },
+    {
+      key: 'd',
+      type: 7,
+      label: '线路编号:'
+    },
+    {
+      key: 'e',
+      type: 7,
+      label: '线路名称:'
+    },
+    {
+      slot: true,
+      w: '10px',
+      type: 'detail'
+    }
+  ]
+
   private baseObj:any = {
     title: '基本信息',
-    a: 'ZSS2020006446216',
-    b: '穆家祥',
-    c: '18848885135',
-    d: '共享',
-    e: '杭州市',
-    f: '4.2米厢货',
-    g: '京A B1556',
-    h: '待上岗',
-    i: 'ZOIHDOIANDOANDOPI313',
-    j: '司机xingming',
-    q: '1848885135',
-    l: '运营经理名字',
-    m: '运营手机号',
-    n: '创建人姓名',
-    o: '创建人手机号',
-    p: '创建时间'
+    carrierId: 'ZSS2020006446216',
+    name: '穆家祥',
+    phone: '18848885135',
+    busiType: '共享',
+    workCity: '杭州市',
+    carTypeName: '4.2米厢货',
+    plateNo: '京A B1556',
+    statusName: '待上岗',
+    driverId: 'ZOIHDOIANDOANDOPI313',
+    driverName: '司机xingming',
+    driverPhone: '1848885135',
+    gmIdName: '运营经理名字',
+    gmPhone: '运营手机号',
+    createName: '创建人姓名',
+    createPhone: '创建人手机号',
+    createDate: '创建时间'
   }
 
-    private otherObj:any = {
-      title: '其他信息',
-      a: '23',
-      b: '城镇户口',
-      c: '34',
-      d: '浙江省杭州市萧山区',
-      e: '水果',
-      f: '10000以上',
-      g: '9000',
-      h: '否',
-      i: '10小时',
-      j: '备注'
-    }
+  private otherObj:any = {
+    title: '其他信息',
+    age: '23',
+    householdTypeName: '城镇户口',
+    workExperienceName: '34',
+    homeDistrict: '浙江省杭州市萧山区',
+    cargoTypeName: '水果',
+    expMonthlyIncomeName: '10000以上',
+    avgMonthlyIncomeName: '9000',
+    isIndebtedName: '否',
+    maxWorkTimeName: '10小时',
+    remarks: '备注'
+  }
 
-    private handleClick(tab:any, event:any) {
-      console.log(tab, event)
-    }
-    created() {
-    }
+  private handleClick(tab:any, event:any) {
+    console.log(tab, event)
+  }
 
-    mounted() {
+  private async carrierDetail() {
+    let { data } = await carrierDetail({ carrierId: this.carrierId })
+    if (data.success) {
+      this.detailQuery = data.data
+    } else {
+      this.$message.error(data)
     }
+  }
 
-    activated() {
+  private fetchData() {
+    this.carrierDetail()
+  }
+  created() {
+    let carrierId = (this.$route.query.carrierId as string)
+    if (carrierId) {
+      this.carrierId = carrierId
     }
+    this.carrierId = 'YL202007131001'
+  }
 
-    // 判断是否是PC
-    get isPC() {
-      return SettingsModule.isPC
-    }
+  mounted() {
+    this.fetchData()
+  }
 
-    private submitForm(formName:any) {
-      (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
-        if (valid) {
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    }
+  activated() {
+  }
 
-    private resetForm(formName:any) {
-      (this.$refs[formName] as ElForm).resetFields()
-    }
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
 }
 </script>
 

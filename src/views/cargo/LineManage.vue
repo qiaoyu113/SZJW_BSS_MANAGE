@@ -106,11 +106,13 @@
           v-loading="listLoading"
           :operation-list="operationList"
           border
+          row-key="id"
           :table-data="tableData"
           :columns="columns"
           :page="page"
           @olclick="handleOlClick"
           @onPageSize="handlePageSize"
+          @selection-change="handleChange"
         >
           <template v-slot:operate="scope">
             <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
@@ -354,7 +356,7 @@
 
     <PitchBox
       :drawer.sync="drawer"
-      :drawer-list="multipleRows"
+      :drawer-list="rows"
       @deletDrawerList="deletDrawerList"
       @changeDrawer="changeDrawer"
     >
@@ -897,20 +899,11 @@ export default class LineManage extends Vue {
    *当前页勾选中的数组集合
    */
   private rows:any[] = []
-  /**
-   *多页表格选中的数组
-   */
-  private multipleRows:any[] = []
   // 删除选中项目
   private deletDrawerList(item:any, i:any) {
-    this.multipleRows.splice(i, 1)
-    let idx = this.rows.findIndex(sub => sub.customerNo === item.customerNo)
-    if (idx !== -1) {
-      this.rows.splice(idx, 1)
-    }
-    (this.$refs.LineManageTable as any).toggleRowSelection();
-    (this.$refs.LineManageTable as any).toggleRowSelection(this.rows)
-    if (this.multipleRows.length === 0) {
+    let arr:any[] = [item];
+    (this.$refs.LineManageTable as any).toggleRowSelection(arr)
+    if (this.rows.length === 0) {
       this.drawer = false
     }
   }
@@ -918,22 +911,26 @@ export default class LineManage extends Vue {
   private changeDrawer(val: any) {
     this.drawer = val
   }
+
   /**
    * 批量操作的按钮
    */
   handleOlClick(val:any) {
     if (val.name === '查看选中') {
-      this.rows = (this.$refs.LineManageTable as any).multipleSelection || []
-      this.multipleRows = unique([...this.rows, ...this.multipleRows], 'customerNo')
-      if (this.multipleRows.length > 0) {
+      if (this.rows.length > 0) {
         this.drawer = true
       } else {
         this.$message.error('请先选择')
       }
     } else if (val.name === '清空选择') {
       (this.$refs.LineManageTable as any).toggleRowSelection()
-      this.multipleRows = []
     }
+  }
+  /**
+   * 勾选表格
+   */
+  handleChange(row:any) {
+    this.rows = row
   }
   // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
 }

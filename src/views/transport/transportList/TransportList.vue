@@ -4,14 +4,37 @@
       :tab="tab"
       :tags="tags"
       :active-name="listQuery.state"
-      @handle-date="handleDate"
       @handle-query="handleQuery"
     >
-      <TransportListForm
+      <!-- 查询表单 -->
+      <self-form
         :list-query="listQuery"
-        :date-value="DateValue"
-        @handle-tags="handleTags"
-      />
+        :form-item="formItem"
+        label-width="100px"
+      >
+        <div
+          slot="btn1"
+          :class="isPC ? 'btnPc' : ''"
+        >
+          <el-button
+            type="primary"
+            :class="isPC ? '' : 'btnMobile'"
+            name="transportList_query_btn"
+            size="small"
+            @click="handleQueryClick"
+          >
+            查询
+          </el-button>
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
+            name="transportList_reset_btn"
+            size="small"
+            @click="handleResetClick"
+          >
+            重置
+          </el-button>
+        </div>
+      </self-form>
     </SuggestContainer>
 
     <div class="table_box">
@@ -45,186 +68,176 @@
             <el-checkbox-group v-model="checkList">
               <el-dropdown-item
                 v-for="item in dropdownList"
-                :key="item"
+                :key="item.label"
               >
-                <el-checkbox :label="item" />
+                <el-checkbox
+                  :label="item.label"
+                  :disabled="item.disabled"
+                />
               </el-dropdown-item>
             </el-checkbox-group>
           </el-dropdown-menu>
         </el-dropdown>
+
+        <el-button
+          :class="isPC ? 'btn-item' : 'btn-item-m'"
+          type="primary"
+          size="small"
+          name="Transport_btn_change"
+          @click="handleModifyManager"
+        >
+          修改运营经理
+        </el-button>
       </tableheader>
 
       <!--table表单-->
-      <div class="table_center">
-        <el-table
-          v-loading="listLoading"
-          :data="list"
-          :row-style="{height: '20px'}"
-          :cell-style="{padding: '5px 0'}"
-          size="mini"
-          :height="'100%'"
-          fit
-          :border="isPC"
-          stripe
-          highlight-current-row
-          style="width: 100%"
-        >
-          <el-table-column
-            v-if="checkList.indexOf('货主编号') > -1"
-            fixed
-            align="left"
-            label="货主编号"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.customerId }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('货主') > -1"
-            align="left"
-            label="货主"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('类型') > -1"
-            class-name="status-col"
-            label="类型"
-          >
-            <template slot-scope="{row}">
-              <el-tag :type="row.status | articleStatusFilter">
-                {{ row.primaryClassificationName }}<span v-if="row.secondaryClassificationName">/{{ row.secondaryClassificationName }}</span>
-              </el-tag>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('合同状态') > -1"
-            align="left"
-            label="合同状态"
-          >
-            <template slot-scope="{row}">
-              {{ row.contractEffectiveness }}
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('创建时间') > -1"
-            align="left"
-            label="创建时间"
-          >
-            <template slot-scope="scope">
-              <p>{{ scope.row.createDate | Timestamp }}</p>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('创建人') > -1"
-            align="left"
-            label="创建人"
-          >
-            <template slot-scope="scope">
-              <p><span v-if="scope.row.creatorName">({{ scope.row.creatorName }})</span></p>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('合同止期') > -1"
-            align="left"
-            label="合同止期"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.contractEnd | Timestamp }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('线路销售') > -1"
-            align="left"
-            label="线路销售"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            align="left"
-            label="操作"
-            fixed="right"
-          >
-            <template slot-scope="scope">
-              <el-dropdown>
-                <span
-                  class="el-dropdown-link"
-                >
-                  更多操作<i
-                    v-if="isPC"
-                    class="el-icon-arrow-down el-icon--right"
-                  />
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
-                  >
-                    详情
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
-                  >
-                    编辑
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
-                  >
-                    停用
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
-                  >
-                    激活
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
-                  >
-                    选择线路
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
+      <self-table
+        ref="transportList"
+        v-loading="listLoading"
+        border
+        row-key="a"
         :operation-list="operationList"
-        @pagination="getList"
-      />
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        @olclick="handleOlClick"
+        @onPageSize="handlePageSize"
+        @selection-change="handleChange"
+      >
+        <template v-slot:op="scope">
+          <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+            <span class="el-dropdown-link">
+              <el-button
+                v-if="isPC"
+                :a="scope"
+                type="text"
+              >
+                更多操作
+              </el-button>
+              <i
+                v-else
+                class="el-icon-setting"
+              />
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                v-if="[4].includes(scope.row.status)"
+                command="distribution"
+              >
+                <template v-if="isPC">
+                  分配
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="editor"
+              >
+                <template v-if="isPC">
+                  编辑
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="detail"
+              >
+                <template v-if="isPC">
+                  详情
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="stop"
+              >
+                <template v-if="isPC">
+                  停用
+                </template>
+                <i
+                  v-else
+                  class="el-icon-chat-dot-square"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="gowork"
+              >
+                <template v-if="isPC">
+                  上岗
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="alive"
+              >
+                <template v-if="isPC">
+                  激活
+                </template>
+                <i
+                  v-else
+                  class="el-icon-edit"
+                />
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </self-table>
     </div>
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="rows"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="slotProp">
+        <span>{{ slotProp.item.name }}</span>
+        <span>{{ slotProp.item.phone }}</span>
+      </template>
+    </PitchBox>
+
+    <!-- 修改运营经理 -->
+    <manager-dialog
+      ref="transportDia"
+      :rows="rows"
+      :type="type"
+      @onRows="rows = []"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { GetCustomerList } from '@/api/customer'
 import { CargoListData } from '@/api/types'
+import PitchBox from '@/components/PitchBox/index.vue'
 import { HandlePages } from '@/utils/index'
+import SelfTable from '@/components/base/SelfTable.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { TransportListForm } from './components'
+import { TransportListForm } from '../components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
+import { getLabel } from '@/utils/index.ts'
+import SelfForm from '@/components/base/SelfForm.vue'
+import ManagerDialog from './components/managerDialog.vue'
 
 interface IState {
   [key: string]: any;
+}
+interface PageObj {
+  page:Number,
+  limit:Number,
+  total?:Number
 }
 
   @Component({
@@ -233,19 +246,22 @@ interface IState {
       Pagination,
       SuggestContainer,
       TableHeader,
-      TransportListForm
+      TransportListForm,
+      SelfForm,
+      SelfTable,
+      PitchBox,
+      ManagerDialog
     }
   })
 
 export default class extends Vue {
+    private type:string = ''
     private total = 0
     private list: CargoListData[] = []
-    private page: Object | undefined = ''
-    private listLoading = true
+    private dropdownList:any[] = []
+    private checkList:any[] =[]
+    private listLoading = false
     private tags: any[] = []
-    private DateValue: any[] = []
-    private dropdownList: any[] = ['货主编号', '货主', '类型', '合同状态', '创建时间', '创建人', '合同止期', '线路销售']
-    private checkList: any[] = this.dropdownList
     private tab: any[] = [
       {
         label: '全部',
@@ -264,19 +280,381 @@ export default class extends Vue {
         name: '3'
       }
     ]
-    private listQuery: IState = {
-      key: '',
-      city: '',
+    private columns:any[] = [
+      {
+        key: 'carrierId',
+        label: '运力编号'
+      },
+      {
+        key: 'name',
+        label: '运力姓名'
+      },
+      {
+        key: 'phone',
+        label: '运力手机号'
+      },
+      {
+        key: 'busiTypeName',
+        label: '业务线'
+      },
+      {
+        key: 'workCityName',
+        label: '工作城市'
+      },
+      {
+        key: 'carTypeName',
+        label: '车型'
+      },
+      {
+        key: 'plateNo',
+        label: '车牌号'
+      },
+      {
+        key: 'statusName',
+        label: '运力状态'
+      },
+      {
+        key: 'driverId',
+        label: '所属司机'
+      },
+      {
+        key: 'driverPhone',
+        label: '所属司机手机号'
+      },
+      {
+        key: 'gmIdName',
+        label: '运营经理'
+      },
+      {
+        key: 'gmPhone',
+        label: '运营经理手机号'
+      },
+      {
+        key: 'createName',
+        label: '创建人'
+      },
+      {
+        key: 'createDate',
+        label: '创建时间'
+      },
+      {
+        key: 'op',
+        label: '操作',
+        fixed: 'right',
+        disabled: true,
+        slot: true
+      }
+    ]
+    private tableData:any[] = [
+      {
+        carrierId: '121313123131',
+        name: 'tom',
+        phone: '15021578502',
+        busiTypeName: '共享',
+        workCityName: '北京市',
+        statusName: '待跟进',
+        driverId: '面试转化',
+        driverPhone: '王利',
+        gmIdName: Date.now(),
+        gmPhone: 5,
+        createName: '王利',
+        createDate: '15021578502'
+      },
+      {
+        carrierId: '121313123131',
+        name: 'tom',
+        phone: '15021578502',
+        busiTypeName: '共享',
+        workCityName: '北京市',
+        statusName: '待跟进',
+        driverId: '面试转化',
+        driverPhone: '王利',
+        gmIdName: Date.now(),
+        gmPhone: 5,
+        createName: '王利',
+        createDate: '15021578502'
+      }
+    ]
+    /**
+     *分页对象
+    */
+    private page:PageObj = {
       page: 1,
-      limit: 30,
-      endDate: '',
-      startDate: '',
-      state: '',
-      lineSaleId: ''
+      limit: 20,
+      total: 100
     }
+    private listQuery:IState = {
+      state: 'all',
+      workCityName: '',
+      carrierId: '',
+      name: '',
+      phone: '',
+      carTypeName: '',
+      busiTypeName: '',
+      gmGroup: '',
+      gmIdName: '',
+      dirverName: '',
+      driverPhone: '',
+      createDate: []
+    }
+
+    private formItem:any[] = [
+      {
+        type: 2,
+        key: 'workCityName',
+        label: '工作城市',
+        tagAttrs: {
+          placeholder: '请选择工作城市'
+        }
+      },
+      {
+        type: 1,
+        key: 'carrierId',
+        label: '运力编号',
+        tagAttrs: {
+          placeholder: '请输入司机编号'
+        }
+      },
+      {
+        type: 1,
+        key: 'name',
+        label: '运力姓名',
+        tagAttrs: {
+          placeholder: '请输入姓名'
+        }
+      },
+      {
+        type: 1,
+        key: 'phone',
+        label: '运力手机号',
+        tagAttrs: {
+          placeholder: '请输入手机号'
+        }
+      },
+      {
+        type: 2,
+        key: 'carTypeName',
+        label: '车型',
+        tagAttrs: {
+          placeholder: '请选择业绩线'
+        },
+        options: [
+          {
+            label: '专车',
+            value: 'car1'
+          },
+          {
+            label: '共享',
+            value: 'share1'
+          }
+        ]
+      },
+      {
+        type: 2,
+        key: 'busiTypeName',
+        label: '业务线',
+        tagAttrs: {
+          placeholder: '请选择加盟小组'
+        },
+        options: [
+          {
+            label: '专车',
+            value: 'car2'
+          },
+          {
+            label: '共享',
+            value: 'share2'
+          }
+        ]
+      },
+      {
+        type: 2,
+        key: 'gmGroup',
+        label: '运营小组',
+        tagAttrs: {
+          placeholder: '请选择运营小组'
+        },
+        options: [
+          {
+            label: '专车',
+            value: 'car3'
+          },
+          {
+            label: '共享',
+            value: 'share3'
+          }
+        ]
+      },
+      {
+        type: 2,
+        key: 'gmIdName',
+        label: '运营经理',
+        tagAttrs: {
+          placeholder: '请选择运营经理'
+        }
+      },
+      {
+        type: 1,
+        key: 'dirverName',
+        label: '所属司机姓名',
+        w: '130px',
+        tagAttrs: {
+          placeholder: '请输入所属司机姓名'
+        }
+      },
+      {
+        type: 1,
+        key: 'driverPhone',
+        label: '所属司机手机号',
+        w: '130px',
+        tagAttrs: {
+          placeholder: '请输入所属司机手机号'
+        }
+      },
+      {
+        type: 3,
+        key: 'createDate',
+        label: '创建时间',
+        col: 12,
+        tagAttrs: {
+          pickerOptions: {
+            shortcuts: [{
+              text: '今天',
+              onClick(picker:any) {
+                const end = new Date()
+                const start = new Date()
+                picker.$emit('pick', [start, end])
+              }
+            }, {
+              text: '昨天',
+              onClick(picker:any) {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 1)
+                picker.$emit('pick', [start, start])
+              }
+            }, {
+              text: '近7天',
+              onClick(picker:any) {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+                picker.$emit('pick', [start, end])
+              }
+            }, {
+              text: '近30天',
+              onClick(picker:any) {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+                picker.$emit('pick', [start, end])
+              }
+            }]
+          }
+        }
+
+      },
+      {
+        slot: true,
+        col: 24,
+        w: '0px',
+        type: 'btn1'
+      }
+    ]
+
+    /**
+   * 查询
+   */
+    private handleQueryClick() {
+      let blackLists = ['state']
+      for (let key in this.listQuery) {
+        if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+          let name = getLabel(this.formItem, this.listQuery, key)
+          if (name) {
+            this.tags.push({
+              type: 'info',
+              name,
+              key: key
+            })
+          }
+        }
+      }
+    }
+    /**
+   *重置
+   */
+    private handleResetClick() {
+      this.tags = []
+      this.listQuery = {
+        workCityName: '',
+        carrierId: '',
+        name: '',
+        phone: '',
+        carTypeName: '',
+        busiTypeName: '',
+        gmGroup: '',
+        gmIdName: '',
+        dirverName: '',
+        driverPhone: '',
+        createDate: []
+      }
+    }
+
+    private gmConfirm(done: any) {
+      this.$message.info('点击了确定')
+      done()
+    }
+    private gmCancel(done: any) {
+      this.$message.info('点击了取消')
+      done()
+    }
+
+    /**
+   * 修改加盟经理
+   */
+    handleModifyManager() {
+      let rows = (this.$refs.transportList as any).multipleSelection || []
+      if (rows.length === 0) {
+        return this.$message.error('请选择司机')
+      }
+      this.type = 'modify'
+      this.rows = rows;
+      (this.$refs.transportDia as any).openDialog()
+    }
+
+    /**
+   * 放弃操作
+   */
+    handleGiveupClick() {
+      this.$confirm('点击确定后,该司机将从司机列表中移出?', '是否放弃跟进该司机', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    }
+
     private operationList: any[] = [
-      { icon: 'el-icon-phone', name: '1', color: '#999' },
-      { icon: 'el-icon-star-off', name: '2', color: '#978374' }
+      {
+        icon: 'el-icon-view',
+        name: '查看选中',
+        color: '#673BB8'
+      },
+      {
+        icon: 'el-icon-circle-close',
+        name: '清空选择',
+        color: '#F54436'
+      }
     ];
 
     private creatTransport() {
@@ -288,6 +666,12 @@ export default class extends Vue {
     }
 
     mounted() {
+      this.dropdownList = [...this.columns]
+      this.checkList = this.dropdownList.map(item => item.label)
+    }
+    @Watch('checkList', { deep: true })
+    private checkListChange(val:any) {
+      this.columns = this.dropdownList.filter(item => val.includes(item.label))
     }
 
     activated() {
@@ -301,58 +685,183 @@ export default class extends Vue {
 
     // 所有请求方法
     private fetchData() {
-      this.getList(this.listQuery)
+      // this.getList(this.listQuery)
     }
 
-    // 处理tags方法
-    private handleTags(value:any) {
-      this.tags = value
+    private stopTransport() {
+      this.$confirm('是否解绑标书', '停用', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message.error('请先解绑标书，才能停用该运力')
+        // this.$message({
+        //   type: 'success',
+        //   message: '运力停用成功!'
+        // })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     }
 
-    // 处理query方法
-    private handleQuery(value:any, key:any) {
-      this.listQuery[key] = value
-      this.fetchData()
+    private aliveTransport() {
+      this.$confirm('该运力选中的订单状态是否为：已退款', '激活', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message.error('该运力选中的订单已退款，不可激活')
+        // this.$message({
+        //   type: 'success',
+        //   message: '激活成功!'
+        // })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     }
 
-    // 处理选择日期方法
-    private handleDate(value:any) {
-      this.DateValue = value
-    }
+    /**
+   * 更多操作
+   */
+    handleCommandChange(key:string|number, row:any) {
+      console.log(key)
+      // this.id = row.clientPhone
+      switch (key) {
+        case 'gowork':
 
-    // 请求列表
-    private async getList(value: any) {
-      this.listQuery.page = value.page
-      this.listQuery.limit = value.limit
-      this.listLoading = true
-      const { data } = await GetCustomerList(this.listQuery)
-      if (data.success) {
-        this.list = data.data
-        data.page = await HandlePages(data.page)
-        this.total = data.page.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
-      } else {
-        this.$message.error(data)
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
+          break
+        case 'alive':
+          this.aliveTransport()
+          break
+        case 'stop':
+          this.stopTransport()
+          break
+        case 'editor':
+          this.$router.push({ path: 'editortransport', query: { driverId: 'SJ202007131003', orderId: 'DD202007131004' } })
+          break
+        case 'detail':
+          this.$router.push({ path: 'transportdetail', query: { id: row.clientPhone } })
+          break
+        default:
+          break
       }
     }
-
-    // 按钮操作
-    private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ path: 'transportdetail', query: { id: id } })
+    /**
+ * 分页
+ */
+    handlePageSize(page:any) {
+      this.page.page = page.page
+      this.page.limit = page.limit
+      // this.fetchData()
     }
+
+    // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
+   private drawer:boolean = false
+  /**
+   *当前页勾选中的数组集合
+   */
+  private rows:any[] = []
+  // 删除选中项目
+  private deletDrawerList(item:any, i:any) {
+    let arr:any[] = [item];
+    (this.$refs.transportList as any).toggleRowSelection(arr)
+    if (this.rows.length === 0) {
+      this.drawer = false
+    }
+  }
+  // 关闭查看已选
+  private changeDrawer(val: any) {
+    this.drawer = val
+  }
+
+  /**
+   * 批量操作的按钮
+   */
+  handleOlClick(val:any) {
+    if (val.name === '查看选中') {
+      if (this.rows.length > 0) {
+        this.drawer = true
+      } else {
+        this.$message.error('请先选择')
+      }
+    } else if (val.name === '清空选择') {
+      (this.$refs.transportList as any).toggleRowSelection()
+    }
+  }
+  /**
+   * 勾选表格
+   */
+  handleChange(row:any) {
+    this.rows = row
+  }
+  // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
+
+  // 处理tags方法
+  private handleTags(value:any) {
+    this.tags = value
+  }
+
+  /**
+   * 删除顶部表单的选项
+   */
+  handleQuery(value:any, key:any) {
+    if (key === 'time') {
+      this.listQuery[key] = []
+    } else {
+      this.listQuery[key] = value
+    }
+  }
+
+  // 请求列表
+  private async getList(value: any) {
+    this.listQuery.page = value.page
+    this.listQuery.limit = value.limit
+    this.listLoading = true
+    const { data } = await GetCustomerList(this.listQuery)
+    if (data.success) {
+      this.list = data.data
+      data.page = await HandlePages(data.page)
+      this.total = data.page.total
+      setTimeout(() => {
+        this.listLoading = false
+      }, 0.5 * 1000)
+    } else {
+      this.$message.error(data)
+      setTimeout(() => {
+        this.listLoading = false
+      }, 0.5 * 1000)
+    }
+  }
+
+  // 按钮操作
+  private goDetail(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({ path: 'transportdetail', query: { id: id } })
+  }
 }
 </script>
 
 <style lang="scss" scoped>
   .TransportList{
-    padding: 15px;
     padding-bottom: 0;
     box-sizing: border-box;
+    padding: 15px;
+    .btnPc {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+      width: 100%;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:100%;
+    }
     .btn-item{
       background: #649CEE;
       border-radius: 4px;

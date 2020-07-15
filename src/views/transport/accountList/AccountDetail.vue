@@ -199,6 +199,7 @@ export default class extends Vue {
         key: 'name',
         label: '姓名:',
         col: 24,
+        // class: 'font-bold',
         tagAttrs: {
           style: {
             fontWeight: 'bold',
@@ -282,6 +283,9 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .AccountDetail{
+  // .font-bold{
+  //   font-weight: bold;
+  // }
   width: 100%;
   .accountBox{
     padding: 20px 20px 0 20px;
