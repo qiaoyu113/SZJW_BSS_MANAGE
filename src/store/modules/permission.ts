@@ -47,7 +47,6 @@ export const filterAsyncRoutes = (routes: RouteConfig[], roles: string[]) => {
       res.push(r)
     }
   })
-  console.log(res)
   return res
 }
 
@@ -70,11 +69,9 @@ class Permission extends VuexModule implements IPermissionState {
   @Action
   public GenerateRoutes(roles: string[]) {
     let accessedRoutes
-    console.log(roles)
     if (roles.includes('admin')) {
-      // accessedRoutes = asyncRoutes
+      accessedRoutes = asyncRoutes
       accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      console.log(accessedRoutes)
     } else {
       accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
     }

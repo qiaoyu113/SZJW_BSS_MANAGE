@@ -19,28 +19,28 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="司机姓名"
-            value="ContractDetail."
+            :value="ContractDetail.driverInfoVO.name"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            value="ContractDetail."
+            :value="ContractDetail.driverInfoVO.workCityName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟小组"
-            value="武汉市黄陂区前川街人信城"
+            :value="ContractDetail.driverInfoVO.gmTeam"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟经理"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.driverInfoVO.gmName"
           />
         </el-col>
       </el-row>
@@ -59,70 +59,70 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="订单单号"
-              value="刘德华123123"
+              :value="ContractDetail.orderId"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="商品分类"
-              value="15071362991"
+              :value="ContractDetail.busiTypeName"
             />
           </el-col>
-
+          {{ ContractDetail.cooperationModel }}
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="合租模式"
-              value="武汉市黄陂区前川街人信城"
+              :value="ContractDetail.cooperationModel === '1' ? '购车' : (ContractDetail.cooperationModel === '2' ? '租车' : ContractDetail.cooperationModel === '3' ? '带车' : '暂无数据')"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="合作期限"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="ContractDetail.cooperationTime"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="订单金额"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="ContractDetail.goodsAmount"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="订单成交时间"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="ContractDetail.deliverDate"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="供应商"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="ContractDetail.deliverDate"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="购买车型"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="ContractDetail.cooperationCar"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="车辆信息"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              value="xxx"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="无税报价"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="ContractDetail.carPrice"
             />
           </el-col>
         </el-row>
@@ -132,7 +132,7 @@
               label="车牌号"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.carNo" />
+              <el-input v-model="ContractDetail.plateNo" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -148,7 +148,7 @@
               label="运营经理"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.carNo" />
+              <el-input v-model="ContractDetail.operationId" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -164,7 +164,7 @@
               label="发动机号"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.engineNo" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -172,7 +172,7 @@
               label="发动机发票号"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fapiaohao" />
+              <el-input v-model="ContractDetail.engineInvoiceNo" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -181,7 +181,7 @@
               prop="carNo"
             >
               <el-date-picker
-                v-model="ruleForm.jiaocheriqi"
+                v-model="ContractDetail.deliveryTime"
                 :class="isPC ? '' : 'el-date-m'"
                 type="daterange"
                 value-format="timestamp"
@@ -305,7 +305,7 @@
               label="金融返利"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.financialRebate" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -313,7 +313,7 @@
               label="保险返利"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.insuranceRebate" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -321,7 +321,7 @@
               label="上牌返利"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.plateNoRebate" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -329,7 +329,7 @@
               label="其他返利"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.otherRebate" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -345,7 +345,7 @@
               label="供应商"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.gpsSupplier" />
             </el-form-item>
           </el-col>
 
@@ -354,7 +354,7 @@
               label="设备ID号"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.gpsDeviceNo" />
             </el-form-item>
           </el-col>
 
@@ -363,7 +363,7 @@
               label="SIM号"
               prop="carNo"
             >
-              <el-input v-model="ruleForm.fadongjihao" />
+              <el-input v-model="ContractDetail.gpsSimNo" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -380,7 +380,7 @@
               prop="carNo"
             >
               <el-date-picker
-                v-model="ruleForm.jiaocheriqi"
+                v-model="ContractDetail.dealTime"
                 :class="isPC ? '' : 'el-date-m'"
                 type="daterange"
                 value-format="timestamp"
@@ -397,7 +397,7 @@
               prop="carNo"
             >
               <el-date-picker
-                v-model="ruleForm.jiaocheriqi"
+                v-model="ContractDetail.deliverDate"
                 :class="isPC ? '' : 'el-date-m'"
                 type="daterange"
                 value-format="timestamp"
@@ -427,7 +427,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { SubmitOrderDeliver, GetOrderDeliverDetail } from '@/api/join'
+import { SubmitOrderDeliver, SelectOrderInfo } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -445,146 +445,98 @@ export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
     private ContractDetail: any = {
-      'cooperationModel': true,
-      'dealId': 0,
-      'dealTime': '2020-07-15T03:12:48.618Z',
-      'deliveryTime': '2020-07-15T03:12:48.618Z',
-      'engineInvoiceNo': 'string',
-      'engineNo': 'string',
-      'financialRebate': 0,
-      'gpsDeviceNo': 'string',
-      'gpsSimNo': 'string',
-      'gpsSupplier': 0,
-      'id': 0,
-      'insuranceRebate': 0,
-      'operationId': 0,
-      'orderDeliverRebateFORMs': [
-        {
-          'chassis': 0,
-          'createDate': '2020-07-15T03:12:48.618Z',
-          'createId': 0,
-          'delFlag': true,
-          'gps': 0,
-          'id': 0,
-          'orderId': 'string',
-          'priceType': 0,
-          'tailgate': 0,
-          'updateDate': '2020-07-15T03:12:48.618Z',
-          'updateId': 0,
-          'vehicle': 0
-        }
-      ],
-      'orderDeliverRebateVOs': [
-        {
-          'chassis': 0,
-          'createDate': '2020-07-15T03:12:48.618Z',
-          'createId': 0,
-          'delFlag': true,
-          'gps': 0,
-          'id': 0,
-          'orderId': 'string',
-          'priceType': 0,
-          'tailgate': 0,
-          'updateDate': '2020-07-15T03:12:48.618Z',
-          'updateId': 0,
-          'vehicle': 0
-        }
-      ],
-      'orderId': 'string',
-      'orderInfoVO': {
-        'busiType': 0,
-        'busiTypeName': 0,
-        'buyCarCompany': 0,
-        'capacityQuota': 0,
-        'carPrice': 0,
-        'city': 0,
-        'confirmId': 0,
-        'confirmTime': '2020-07-15T03:12:48.619Z',
-        'cooperationCar': 0,
-        'cooperationCarName': 'string',
-        'cooperationModel': 0,
-        'cooperationTime': 0,
-        'createDate': '2020-07-15T03:12:48.619Z',
-        'createId': 0,
-        'createSource': 0,
-        'deliverDate': '2020-07-15T03:12:48.619Z',
-        'driverId': 'string',
-        'driverInfoVO': {
-          'address': 'string',
-          'bankCardNo': 'string',
-          'busiType': 0,
-          'busiTypeName': 'string',
-          'carType': 0,
-          'carTypeName': 'string',
-          'clueId': 'string',
-          'corpUserId': 'string',
-          'createDate': '2020-07-15T03:12:48.619Z',
-          'createId': 0,
-          'createName': 'string',
-          'delFlag': true,
-          'driverId': 'string',
-          'email': 'string',
-          'exterUserId': 'string',
-          'gmId': 0,
-          'gmName': 'string',
-          'idNo': 'string',
-          'name': 'string',
-          'phone': 0,
-          'sourceChannel': 0,
-          'sourceChannelName': 'string',
-          'status': 0,
-          'statusName': 'string',
-          'updateDate': '2020-07-15T03:12:48.619Z',
-          'updateId': 0,
-          'updateName': 'string',
-          'workCity': 0,
-          'workCityName': 'string'
-        },
-        'goodsAmount': 0,
-        'id': 0,
-        'incomeGuarantee': 0,
-        'inspectionTime': '2020-07-15T03:12:48.619Z',
-        'insuranceTime': '2020-07-15T03:12:48.619Z',
-        'isDeliver': 0,
-        'isPay': 0,
-        'isRefund': 0,
-        'leaseCarCompany': 0,
-        'notPassId': 0,
-        'notPassTime': '2020-07-15T03:12:48.619Z',
-        'operateFlag': 'string',
-        'orderId': 'string',
-        'orderPayRecordInfoVOList': [
-          {
-            'createDate': '2020-07-15T03:12:48.619Z',
-            'money': 0,
-            'operateType': 0,
-            'outTradeNo': 'string',
-            'payDate': '2020-07-15T03:12:48.619Z',
-            'payImageUrl': 'string',
-            'payType': 0,
-            'prepayId': 'string',
-            'remarks': 'string',
-            'serviceFee': 0,
-            'status': 0,
-            'transactionId': 'string',
-            'updateDate': '2020-07-15T03:12:48.619Z'
-          }
-        ],
-        'passId': 0,
-        'passTime': '2020-07-15T03:12:48.619Z',
-        'payCompleteTime': '2020-07-15T03:12:48.619Z',
-        'payType': 0,
-        'plateNo': 'string',
-        'rake': 0,
-        'refundTime': '2020-07-15T03:12:48.619Z',
-        'remarks': 'string',
-        'status': 0,
-        'updateDate': '2020-07-15T03:12:48.619Z',
-        'updateId': 0
+      'busiType': '',
+      'busiTypeName': '',
+      'buyCarCompany': '',
+      'capacityQuota': '',
+      'carPrice': '',
+      'city': '',
+      'confirmId': '',
+      'confirmTime': '',
+      'cooperationCar': '',
+      'cooperationCarName': '',
+      'cooperationModel': '',
+      'cooperationTime': '',
+      'createDate': '',
+      'createId': '',
+      'createSource': '',
+      'deliverDate': '',
+      'driverId': '',
+      'driverInfoVO': {
+        'address': '',
+        'bankCardNo': '',
+        'busiType': '',
+        'busiTypeName': '',
+        'carType': '',
+        'carTypeName': '',
+        'clueId': '',
+        'corpUserId': '',
+        'createDate': '',
+        'createId': '',
+        'createName': '',
+        'delFlag': true,
+        'driverId': '',
+        'email': '',
+        'exterUserId': '',
+        'gmId': '',
+        'gmName': '',
+        'gmTeam': '',
+        'gmTeamId': '',
+        'idNo': '',
+        'name': '',
+        'phone': '',
+        'remark': '',
+        'sourceChannel': '',
+        'sourceChannelName': '',
+        'status': '',
+        'statusName': '',
+        'updateDate': '',
+        'updateId': '',
+        'updateName': '',
+        'workCity': '',
+        'workCityName': ''
       },
-      'otherRebate': 0,
-      'plateNoRebate': 0,
-      'status': 0
+      'goodsAmount': '',
+      'id': '',
+      'incomeGuarantee': '',
+      'inspectionTime': '',
+      'insuranceTime': '',
+      'isDeliver': '',
+      'isPay': '',
+      'isRefund': '',
+      'leaseCarCompany': '',
+      'notPassId': '',
+      'notPassTime': '',
+      'operateFlag': '',
+      'orderId': '',
+      'orderPayRecordInfoVOList': [
+        {
+          'createDate': '',
+          'money': '',
+          'operateType': '',
+          'outTradeNo': '',
+          'payDate': '',
+          'payImageUrl': '',
+          'payType': '',
+          'prepayId': '',
+          'remarks': '',
+          'serviceFee': '',
+          'status': '',
+          'transactionId': '',
+          'updateDate': ''
+        }
+      ],
+      'passId': '',
+      'passTime': '',
+      'payCompleteTime': '',
+      'payType': '',
+      'plateNo': '',
+      'rake': '',
+      'refundTime': '',
+      'remarks': '',
+      'status': '',
+      'updateDate': '',
+      'updateId': ''
     }
     private list: any = [
       { name: '采购价', a: '2', a1: '3', a2: '4' },
@@ -631,10 +583,9 @@ export default class extends Vue {
 
     // 请求详情
     private async getDetail(value: any) {
-      const { data } = await GetOrderDeliverDetail({ orderId: value })
+      const { data } = await SelectOrderInfo({ orderId: value })
       if (data.success) {
-        let datas = data.data
-        this.ContractDetail = datas
+        this.ContractDetail = data.data
       } else {
         this.$message.error(data)
       }
@@ -644,6 +595,8 @@ export default class extends Vue {
       (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
         if (valid) {
           alert('submit!')
+          this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
+          this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
         } else {
           console.log('error submit!!')
           return false

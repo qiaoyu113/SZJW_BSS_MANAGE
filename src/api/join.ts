@@ -58,3 +58,11 @@ export const GetOrderDeliverDetail = (params: any) =>
     method: 'get',
     params
   })
+
+// 交付详情
+export const SelectOrderInfo = (params: any) =>
+  request({
+    url: '/order/v1/order/orderDeliver/selectOrderInfo',
+    method: 'get',
+    params
+  })
