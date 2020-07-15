@@ -8,28 +8,28 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="司机姓名"
-            :value="ContractDetail.driverInfoBusiVO.name"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.name"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            :value="ContractDetail.driverInfoBusiVO.name"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.workCityName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟小组"
-            value="武汉市黄陂区前川街人信城"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.gmTeam"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟经理"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.gmName"
           />
         </el-col>
       </el-row>
@@ -43,77 +43,77 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单单号"
-            value="刘德华123123"
+            :value="ContractDetail.orderInfoVO.orderId"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="商品分类"
-            value="15071362991"
+            :value="ContractDetail.busiTypeName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合租模式"
-            value="武汉市黄陂区前川街人信城"
+            :value="ContractDetail.cooperationModel === 1 ? '购车' : (ContractDetail.cooperationModel === 2 ? '租车' : ContractDetail.cooperationModel === 3 ? '带车' : '暂无数据')"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合作期限"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.cooperationTime"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单金额"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.goodsAmount"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.deliverDate"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="供应商"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.deliverDate"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="购买车型"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.cooperationCar"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="车辆信息"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            value="xxx"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="无税报价"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.carPrice"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="车牌号"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.plateNo"
           />
         </el-col>
       </el-row>
@@ -127,7 +127,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="运营经理"
-            value="刘德华123123"
+            :value="ContractDetail.operationName"
           />
         </el-col>
       </el-row>
@@ -141,19 +141,19 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交车日期"
-            value="刘德华123123"
+            :value="ContractDetail.deliveryTime"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="发动机号"
-            value="刘德华123123"
+            :value="ContractDetail.engineNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="发动机发票号"
-            value="刘德华123123"
+            :value="ContractDetail.engineInvoiceNo"
           />
         </el-col>
       </el-row>
@@ -236,25 +236,25 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="金融返利"
-            value="刘德华123123"
+            :value="ContractDetail.financialRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="保险返利"
-            value="刘德华123123"
+            :value="ContractDetail.insuranceRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="上牌返利"
-            value="刘德华123123"
+            :value="ContractDetail.plateNoRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="其他返利"
-            value="刘德华123123"
+            :value="ContractDetail.otherRebate"
           />
         </el-col>
       </el-row>
@@ -268,21 +268,21 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="供应商"
-            value="刘德华123123"
+            :value="ContractDetail.gpsSupplier"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="设备ID号"
-            value="刘德华123123"
+            :value="ContractDetail.gpsDeviceNo"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="SIM号"
-            value="刘德华123123"
+            :value="ContractDetail.gpsSimNo"
           />
         </el-col>
       </el-row>
@@ -296,14 +296,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            value="刘德华123123"
+            :value="ContractDetail.dealTime"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交付完成时间"
-            value="刘德华123123"
+            :value="ContractDetail.deliverDate"
           />
         </el-col>
       </el-row>
@@ -333,146 +333,146 @@ export default class extends Vue {
     private tabVal: any = '1'
     private list: any = [{ name: '12', a: '2', a1: '3', a2: '4' }];
     private ContractDetail: any = {
-      'cooperationModel': true,
-      'dealId': 0,
-      'dealTime': '2020-07-15T03:12:48.618Z',
-      'deliveryTime': '2020-07-15T03:12:48.618Z',
-      'engineInvoiceNo': 'string',
-      'engineNo': 'string',
-      'financialRebate': 0,
-      'gpsDeviceNo': 'string',
-      'gpsSimNo': 'string',
-      'gpsSupplier': 0,
-      'id': 0,
-      'insuranceRebate': 0,
-      'operationId': 0,
+      'cooperationModel': 1,
+      'dealId': '',
+      'dealTime': '',
+      'deliveryTime': '',
+      'engineInvoiceNo': '',
+      'engineNo': '',
+      'financialRebate': '',
+      'gpsDeviceNo': '',
+      'gpsSimNo': '',
+      'gpsSupplier': '',
+      'id': '',
+      'insuranceRebate': '',
+      'operationId': '',
       'orderDeliverRebateFORMs': [
         {
-          'chassis': 0,
-          'createDate': '2020-07-15T03:12:48.618Z',
-          'createId': 0,
-          'delFlag': true,
-          'gps': 0,
-          'id': 0,
-          'orderId': 'string',
-          'priceType': 0,
-          'tailgate': 0,
-          'updateDate': '2020-07-15T03:12:48.618Z',
-          'updateId': 0,
-          'vehicle': 0
+          'chassis': '',
+          'createDate': '',
+          'createId': '',
+          'delFlag': '',
+          'gps': '',
+          'id': '',
+          'orderId': '',
+          'priceType': '',
+          'tailgate': '',
+          'updateDate': '',
+          'updateId': '',
+          'vehicle': ''
         }
       ],
       'orderDeliverRebateVOs': [
         {
-          'chassis': 0,
-          'createDate': '2020-07-15T03:12:48.618Z',
-          'createId': 0,
+          'chassis': '',
+          'createDate': '',
+          'createId': '',
           'delFlag': true,
-          'gps': 0,
-          'id': 0,
-          'orderId': 'string',
-          'priceType': 0,
-          'tailgate': 0,
-          'updateDate': '2020-07-15T03:12:48.618Z',
-          'updateId': 0,
-          'vehicle': 0
+          'gps': '',
+          'id': '',
+          'orderId': '',
+          'priceType': '',
+          'tailgate': '',
+          'updateDate': '',
+          'updateId': '',
+          'vehicle': ''
         }
       ],
       'orderId': 'string',
       'orderInfoVO': {
-        'busiType': 0,
-        'busiTypeName': 0,
-        'buyCarCompany': 0,
-        'capacityQuota': 0,
-        'carPrice': 0,
-        'city': 0,
-        'confirmId': 0,
-        'confirmTime': '2020-07-15T03:12:48.619Z',
-        'cooperationCar': 0,
-        'cooperationCarName': 'string',
-        'cooperationModel': 0,
-        'cooperationTime': 0,
-        'createDate': '2020-07-15T03:12:48.619Z',
-        'createId': 0,
-        'createSource': 0,
-        'deliverDate': '2020-07-15T03:12:48.619Z',
-        'driverId': 'string',
+        'busiType': '',
+        'busiTypeName': '',
+        'buyCarCompany': '',
+        'capacityQuota': '',
+        'carPrice': '',
+        'city': '',
+        'confirmId': '',
+        'confirmTime': '',
+        'cooperationCar': '',
+        'cooperationCarName': '',
+        'cooperationModel': '',
+        'cooperationTime': '',
+        'createDate': '',
+        'createId': '',
+        'createSource': '',
+        'deliverDate': '',
+        'driverId': '',
         'driverInfoVO': {
-          'address': 'string',
-          'bankCardNo': 'string',
+          'address': '',
+          'bankCardNo': '',
           'busiType': 0,
-          'busiTypeName': 'string',
+          'busiTypeName': '',
           'carType': 0,
-          'carTypeName': 'string',
-          'clueId': 'string',
-          'corpUserId': 'string',
-          'createDate': '2020-07-15T03:12:48.619Z',
-          'createId': 0,
-          'createName': 'string',
+          'carTypeName': '',
+          'clueId': '',
+          'corpUserId': '',
+          'createDate': '',
+          'createId': '',
+          'createName': '',
           'delFlag': true,
-          'driverId': 'string',
-          'email': 'string',
-          'exterUserId': 'string',
-          'gmId': 0,
-          'gmName': 'string',
-          'idNo': 'string',
-          'name': 'string',
-          'phone': 0,
-          'sourceChannel': 0,
-          'sourceChannelName': 'string',
-          'status': 0,
-          'statusName': 'string',
-          'updateDate': '2020-07-15T03:12:48.619Z',
-          'updateId': 0,
-          'updateName': 'string',
-          'workCity': 0,
-          'workCityName': 'string'
+          'driverId': '',
+          'email': '',
+          'exterUserId': '',
+          'gmId': '',
+          'gmName': '',
+          'idNo': '',
+          'name': '',
+          'phone': '',
+          'sourceChannel': '',
+          'sourceChannelName': '',
+          'status': '',
+          'statusName': '',
+          'updateDate': '',
+          'updateId': '',
+          'updateName': '',
+          'workCity': '',
+          'workCityName': ''
         },
-        'goodsAmount': 0,
-        'id': 0,
-        'incomeGuarantee': 0,
-        'inspectionTime': '2020-07-15T03:12:48.619Z',
-        'insuranceTime': '2020-07-15T03:12:48.619Z',
-        'isDeliver': 0,
-        'isPay': 0,
-        'isRefund': 0,
-        'leaseCarCompany': 0,
-        'notPassId': 0,
-        'notPassTime': '2020-07-15T03:12:48.619Z',
-        'operateFlag': 'string',
-        'orderId': 'string',
+        'goodsAmount': '',
+        'id': '',
+        'incomeGuarantee': '',
+        'inspectionTime': '',
+        'insuranceTime': '',
+        'isDeliver': '',
+        'isPay': '',
+        'isRefund': '',
+        'leaseCarCompany': '',
+        'notPassId': '',
+        'notPassTime': '',
+        'operateFlag': '',
+        'orderId': '',
         'orderPayRecordInfoVOList': [
           {
-            'createDate': '2020-07-15T03:12:48.619Z',
-            'money': 0,
-            'operateType': 0,
-            'outTradeNo': 'string',
-            'payDate': '2020-07-15T03:12:48.619Z',
-            'payImageUrl': 'string',
-            'payType': 0,
-            'prepayId': 'string',
-            'remarks': 'string',
-            'serviceFee': 0,
-            'status': 0,
-            'transactionId': 'string',
-            'updateDate': '2020-07-15T03:12:48.619Z'
+            'createDate': '',
+            'money': '',
+            'operateType': '',
+            'outTradeNo': '',
+            'payDate': '',
+            'payImageUrl': '',
+            'payType': '',
+            'prepayId': '',
+            'remarks': '',
+            'serviceFee': '',
+            'status': '',
+            'transactionId': '',
+            'updateDate': ''
           }
         ],
-        'passId': 0,
-        'passTime': '2020-07-15T03:12:48.619Z',
-        'payCompleteTime': '2020-07-15T03:12:48.619Z',
-        'payType': 0,
-        'plateNo': 'string',
-        'rake': 0,
-        'refundTime': '2020-07-15T03:12:48.619Z',
-        'remarks': 'string',
-        'status': 0,
-        'updateDate': '2020-07-15T03:12:48.619Z',
-        'updateId': 0
+        'passId': '',
+        'passTime': '',
+        'payCompleteTime': '',
+        'payType': '',
+        'plateNo': '',
+        'rake': '',
+        'refundTime': '',
+        'remarks': '',
+        'status': '',
+        'updateDate': '',
+        'updateId': ''
       },
-      'otherRebate': 0,
-      'plateNoRebate': 0,
-      'status': 0
+      'otherRebate': '',
+      'plateNoRebate': '',
+      'status': ''
     }
     private ruleForm:any = {
       name: '',
