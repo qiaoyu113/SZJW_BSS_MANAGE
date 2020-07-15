@@ -35,7 +35,7 @@ export const deleteUser = (username: string) =>
 
 export const login = (data: any) =>
   request({
-    url: '/api/auth/bss/getToken',
+    url: '/auth/v1/auth/bss/getToken',
     method: 'post',
     data
   })

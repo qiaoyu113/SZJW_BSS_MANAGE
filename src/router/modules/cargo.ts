@@ -17,7 +17,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueList.vue'),
       name: 'ClueList',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'clueList',
         icon: '',
@@ -29,7 +29,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
       name: 'AddClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'addClue',
         hidden: true,
@@ -42,7 +42,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
       name: 'EditClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'editClue',
         hidden: true,
@@ -55,7 +55,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
       name: 'FollowUpClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'followUpClue',
         hidden: true,
@@ -68,7 +68,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ConversionClue.vue'),
       name: 'ConversionClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'conversionClue',
         hidden: true,
@@ -81,7 +81,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportClue.vue'),
       name: 'ImportClue',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'importClue',
         hidden: true,
@@ -94,7 +94,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportDetail.vue'),
       name: 'ImportDetail',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'importDetail',
         hidden: true,
@@ -107,7 +107,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueDetail.vue'),
       name: 'ClueDetail',
       meta: {
-        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        apiUrl: 'root',
         activeMenu: '/cargo/cluelist',
         title: 'clueDetail',
         hidden: true,
