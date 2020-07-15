@@ -23,6 +23,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
+import { ClueDispatch } from '@/api/driver'
 interface IState {
   [key: string]: any;
 }
@@ -34,7 +35,7 @@ interface IState {
   }
 })
 export default class extends Vue {
-  @Prop({ default: 1 }) id!:number
+  @Prop({ default: () => [] }) rows!:any[]
   private showAlert = false
   private dialogForm:IState = {
     followPerson: ''
@@ -73,11 +74,22 @@ export default class extends Vue {
   cancel() {
     this.showAlert = false
   }
-  confirm() {
-    if (!this.dialogForm.followPerson) {
-      return this.$message.error('请选择人进人')
+  async confirm() {
+    try {
+      if (!this.dialogForm.followPerson) {
+        return this.$message.error('请选择人进人')
+      }
+      let params = {
+        clueIds: [],
+        userId: this.dialogForm.followPerson
+      }
+      let { data: res } = await ClueDispatch(params)
+      if (res.success) {
+        this.showAlert = false
+      }
+    } catch (err) {
+      console.log(`confirm fail:${err}`)
     }
-    this.showAlert = false
   }
 }
 </script>

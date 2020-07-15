@@ -87,6 +87,7 @@
             v-else-if="item.type ===6"
             v-model="listQuery[item.key]"
             type="date"
+
             placeholder="选择日期"
             v-on="item.listeners"
           />
@@ -100,6 +101,14 @@
             v-model="listQuery[item.key]"
             v-bind="item.tagAttrs || {}"
             :options="item.options"
+            v-on="item.listeners"
+          />
+          <!-- 选择日期时分秒 -->
+          <el-date-picker
+            v-else-if="item.type ===9"
+            v-model="listQuery[item.key]"
+            type="datetime"
+            placeholder="选择日期"
             v-on="item.listeners"
           />
           <slot
@@ -135,10 +144,10 @@ export default class extends Vue {
     get isPC() {
       return SettingsModule.isPC
     }
-    submitForm() {
+    submitForm(args:any) {
       ((this.$refs['ruleForm']) as any).validate((valid:boolean) => {
         if (valid) {
-          this.handlePass(valid)
+          this.handlePass(valid, args)
         } else {
           console.log('error submit!!')
           return false
@@ -149,7 +158,7 @@ export default class extends Vue {
       ((this.$refs['ruleForm']) as any).resetFields()
     }
     @Emit('onPass')
-    handlePass(isPass:boolean) {
+    handlePass(isPass:boolean, args:any) {
     }
 }
 </script>
@@ -180,6 +189,10 @@ export default class extends Vue {
     flex: 1;
   }
   .selfForm >>> .el-date-editor {
+    display: flex;
+    flex: 1;
+  }
+  .selfForm >>> .el-cascader {
     display: flex;
     flex: 1;
   }

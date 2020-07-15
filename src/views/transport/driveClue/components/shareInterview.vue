@@ -1,0 +1,313 @@
+<template>
+  <div class="shareInterview">
+    <self-form
+      ref="form"
+      :list-query="listQuery"
+      :form-item="formItem"
+      label-width="100px"
+      :pc-col="12"
+      :rules="rules"
+      @onPass="handlePassClick"
+    />
+  </div>
+</template>
+<script lang="ts">
+import { Vue, Component, Emit, Prop } from 'vue-property-decorator'
+import SelfForm from '@/components/base/SelfForm.vue'
+import { ShareInterview } from '@/api/driver'
+interface IState {
+  [key: string]: any;
+}
+@Component({
+  name: 'ShareInterview',
+  components: {
+    SelfForm
+  }
+})
+export default class extends Vue {
+  @Prop({ default: () => {} }) form!:any
+  private listQuery:IState = {
+    interviewDate: '',
+    interviewAddress: [],
+    interviewDistrict: '',
+    gmId: '',
+    home: [],
+    liveDistrict: '',
+    sourceChannel: '',
+    drivingLicenceType: '',
+    isLocalPlate: '',
+    originIncomeAvg: '',
+    expIncomeAvg: '',
+    workDuration: '',
+    scatteredJobRate: '',
+    isNewEnergy: ''
+  }
+  private formItem:any[] = [
+    {
+      type: 6,
+      key: 'interviewDate',
+      label: '面试日期:',
+      tagAttrs: {
+        placeholder: '面试日期'
+      }
+    },
+    {
+      type: 8,
+      key: 'interviewAddress',
+      label: '面试地址:',
+      tagAttrs: {
+        placeholder: '面试地址',
+        listeners: {
+          'change': this.handleInterviewAddressChange
+        }
+      },
+      options: []
+    },
+    {
+      type: 1,
+      key: 'interviewDistrict',
+      label: '详细面试地址:',
+      w: '150px',
+      tagAttrs: {
+        placeholder: '详细面试地址',
+        type: 'textarea',
+        rows: 2,
+        maxlength: 32,
+        'show-word-limit': true
+      }
+    },
+    {
+      type: 2,
+      key: 'gmId',
+      label: '加盟经理:',
+      tagAttrs: {
+        placeholder: '拓展经理'
+      },
+      options: []
+    },
+    {
+      type: 8,
+      key: 'home',
+      label: '现住址:',
+      tagAttrs: {
+        placeholder: '现住址',
+        listeners: {
+          'change': this.handleCurrentAddressChange
+        }
+      },
+      options: []
+    },
+    {
+      type: 1,
+      key: 'liveDistrict',
+      label: '详细住址:',
+      tagAttrs: {
+        placeholder: '详细住址',
+        type: 'textarea',
+        rows: 2,
+        maxlength: 32,
+        'show-word-limit': true
+      }
+    },
+    {
+      type: 2,
+      key: 'sourceChannel',
+      label: '邀约渠道:',
+      tagAttrs: {
+        placeholder: '邀约渠道',
+        filterable: true
+      },
+      options: []
+    },
+    {
+      type: 4,
+      key: 'drivingLicenceType',
+      label: '驾照类型:',
+      tagAttrs: {
+        placeholder: '驾照类型'
+      },
+      options: []
+    },
+    {
+      type: 4,
+      key: 'isLocalPlate',
+      label: '是否工作地车牌:',
+      w: '130px',
+      tagAttrs: {
+        placeholder: '是否工作地车牌'
+      },
+      options: [
+        {
+          label: '是',
+          value: true
+        },
+        {
+          label: '否',
+          value: false
+        }
+      ]
+    },
+    {
+      type: 1,
+      key: 'originIncomeAvg',
+      label: '原收入(去油)(元/月):',
+      w: '160px',
+      tagAttrs: {
+        placeholder: '原收入(去油)(元/月)(请输入0-25000之间的数字)',
+        type: 'number'
+      }
+    },
+    {
+      type: 1,
+      key: 'expIncomeAvg',
+      label: '期望收入(去油)(元/月):',
+      w: '170px',
+      tagAttrs: {
+        placeholder: '期望收入（去油）（元/月） (请输入3000-25000之间的数字)',
+        type: 'number'
+      }
+    },
+    {
+      type: 1,
+      key: 'workDuration',
+      label: '从业时间(月):',
+      w: '120px',
+      tagAttrs: {
+        placeholder: '从业时间（月） (请输入0-500之间的数字)',
+        type: 'number'
+      }
+    },
+    {
+      type: 1,
+      key: 'scatteredJobRate',
+      label: '零散活占比(%):',
+      w: '130px',
+      tagAttrs: {
+        placeholder: '零散活占比（%） (请输入0-100之间的数字)',
+        type: 'number'
+      }
+    },
+    {
+      type: 4,
+      key: 'isNewEnergy',
+      label: '是否新能源:',
+      tagAttrs: {
+
+      },
+      options: [
+        {
+          label: '是',
+          value: true
+        },
+        {
+          label: '否',
+          value: false
+        }
+      ]
+    }
+  ]
+
+  private rules = {
+    interviewDate: [
+      { required: true, message: '请输入活动名称', trigger: 'blur' }
+    ],
+    interviewAddress: [
+      { required: true, message: '请选择面试地址', trigger: 'blur' }
+    ],
+    interviewDistrict: [
+      { required: true, message: '请输入详细面试地址', trigger: 'blur' }
+    ],
+    gmId: [
+      { required: true, message: '请选择加盟经理', trigger: 'blur' }
+    ],
+    home: [
+      { required: true, message: '请选择现住址', trigger: 'blur' }
+    ],
+    liveDistrict: [
+      { required: true, message: '请输入详细住址', trigger: 'blur' }
+    ],
+    sourceChannel: [
+      { required: true, message: '请选择邀约渠道', trigger: 'blur' }
+    ],
+    drivingLicenceType: [
+      { required: true, message: '请选择驾照类型', trigger: 'blur' }
+    ],
+    isLocalPlate: [
+      { required: true, message: '请选择是否工作地车牌', trigger: 'blur' }
+    ],
+    originIncomeAvg: [
+      { required: true, message: '请输入原收入(去油)(元/月)', trigger: 'blur' }
+    ],
+    expIncomeAvg: [
+      { required: true, message: '请输入期望收入(去油)(元/月)', trigger: 'blur' }
+    ],
+    workDuration: [
+      { required: true, message: '请输入从业时间(月)', trigger: 'blur' }
+    ],
+    scatteredJobRate: [
+      { required: true, message: '请输入零散活占比(%)', trigger: 'blur' }
+    ],
+    isNewEnergy: [
+      { required: true, message: '请选择是否新能源', trigger: 'blur' }
+    ]
+  }
+  /**
+   *现住址
+   */
+  handleCurrentAddressChange(val:any) {
+
+  }
+  /**
+   *面试地址
+   */
+  handleInterviewAddressChange(val:any) {
+
+  }
+  async handlePassClick() {
+    try {
+      let params = {
+        interviewDate: this.listQuery.interviewDate,
+        gmId: this.listQuery.gmId,
+        sourceChannel: this.listQuery.sourceChannel,
+        drivingLicenceType: this.listQuery.drivingLicenceType,
+        isLocalPlate: this.listQuery.isLocalPlate,
+        originIncomeAvg: this.listQuery.originIncomeAvg,
+        expIncomeAvg: this.listQuery.expIncomeAvg,
+        workDuration: this.listQuery.workDuration,
+        scatteredJobRate: this.listQuery.scatteredJobRate,
+        isNewEnergy: this.listQuery.isNewEnergy,
+        interviewProvince: this.listQuery.interviewAddress[0],
+        interviewCity: this.listQuery.interviewAddress[1],
+        interviewCounty: this.listQuery.interviewAddress[2],
+        interviewDistrict: this.listQuery.interviewDistrict,
+        liveProvince: this.listQuery.home[0],
+        liveCity: this.listQuery.home[1],
+        liveCounty: this.listQuery.home[2],
+        liveDistrict: this.listQuery.liveDistrict,
+        name: this.form.name,
+        phone: this.form.phone,
+        workCity: this.form.workCity,
+        carType: this.form.carType,
+        clueId: this.form.clueId
+      }
+      let { data: res } = await ShareInterview(params)
+      if (res.success) {
+        this.handleFinish()
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`share add fail:${err}`)
+    }
+  }
+
+  @Emit('onFinish')
+  handleFinish() {
+  }
+}
+</script>
+<style lang="scss" scoped>
+  .shareInterview {
+
+  }
+</style>

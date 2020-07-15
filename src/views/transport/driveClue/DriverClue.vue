@@ -57,6 +57,7 @@
         type="primary"
         size="small"
         name="driverclue_interview_btn"
+        :disabled="true"
         @click="handleInterviewClick"
       >
         <i
@@ -193,8 +194,8 @@
     </self-table>
     <!-- 线索分配 -->
     <clue-distribution
-      id="1"
       ref="clueDistribution"
+      :rows="rows"
     />
 
     <PitchBox
@@ -217,7 +218,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import SelfTable from '@/components/base/SelfTable.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
-import { GetDriverIndexesList } from '@/api/driver'
+import { } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import ClueDistribution from './components/clueDistribution.vue'
@@ -525,24 +526,25 @@ export default class extends Vue {
   private checkListChange(val:any) {
     this.columns = this.dropdownList.filter(item => val.includes(item.label))
   }
+
   /**
    * 获取列表
    */
-  async getList() {
-    try {
-      let { data: res } = await GetDriverIndexesList({ ...this.listQuery, ...this.page })
-      if (res.success) {
-        this.tableData = res.data
-        res.page = await HandlePages(res.page)
-        this.page.total = res.page.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
-      }
-    } catch (err) {
-      console.log(`get list fail:`, err)
-    }
-  }
+  // async getList() {
+  //   try {
+  //     let { data: res } = await GetDriverIndexesList({ ...this.listQuery, ...this.page })
+  //     if (res.success) {
+  //       this.tableData = res.data
+  //       res.page = await HandlePages(res.page)
+  //       this.page.total = res.page.total
+  //       setTimeout(() => {
+  //         this.listLoading = false
+  //       }, 0.5 * 1000)
+  //     }
+  //   } catch (err) {
+  //     console.log(`get list fail:`, err)
+  //   }
+  // }
   /**
    * 删除顶部表单的选项
    */
@@ -627,23 +629,27 @@ export default class extends Vue {
       this.$router.push({
         path: '/transport/editClue',
         query: {
-          id: row.id
+          id: 'TXS202007151002'
         }
       })
     } else if (key === 'distribution') { // 分配线索
+      if (this.rows.length === 0) {
+        return this.$message.error('请先选择司机线索')
+      }
       (this.$refs.clueDistribution as any).openDialog()
     } else if (key === 'interview') { // 发起面试
       this.$router.push({
         path: '/transport/interview',
         query: {
-          id: row.id
+          id: 'TXS202007151002',
+          busiType: 0 + ''
         }
       })
     } else if (key === 'follow') { // 线索跟进
       this.$router.push({
         path: '/transport/followClue',
         query: {
-          id: row.id
+          id: 'TXS202007151002'
         }
       })
     }

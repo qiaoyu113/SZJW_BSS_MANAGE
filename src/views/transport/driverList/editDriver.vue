@@ -129,7 +129,7 @@ export default class extends Vue {
    */
   private validatePhone = (rule: any, value: string, callback: Function) => {
     if (!phoneReg.test(this.listQuery.phone)) {
-      callback(new Error('请输入正确的手机号'))
+      return callback(new Error('请输入正确的手机号'))
     }
     callback()
   }
@@ -138,8 +138,8 @@ export default class extends Vue {
       { required: true, message: '请输入姓名', trigger: 'blur' }
     ],
     phone: [
-      { required: true, message: '请输入手机号', trigger: 'blur' }
-      // { validator: this.validatePhone, trigger: 'blur' }
+      { required: true, message: '请输入手机号', trigger: 'blur' },
+      { validator: this.validatePhone, trigger: 'blur' }
     ],
     email: [
       { required: false, type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }

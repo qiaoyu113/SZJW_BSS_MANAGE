@@ -29,7 +29,7 @@
             物流从业经验
           </p>
           <p class="text">
-            暂无数据
+            xxx
           </p>
         </el-col>
         <el-col
@@ -40,7 +40,7 @@
             货物经验
           </p>
           <p class="text">
-            暂无数据
+            {{ obj.experience | DataIsNull }}
           </p>
         </el-col>
         <el-col
@@ -51,7 +51,7 @@
             期望月收入
           </p>
           <p class="text">
-            暂无数据
+            {{ obj.expIncomeAvg | DataIsNull }}
           </p>
         </el-col>
         <el-col
@@ -62,7 +62,7 @@
             可接受一天工作时长
           </p>
           <p class="text">
-            暂无数据
+            xxx
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -70,7 +70,7 @@
             意向车型
           </p>
           <p class="text">
-            暂无数据
+            {{ obj.intentDrivingCarTypeName | DataIsNull }}
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -78,7 +78,12 @@
             户口类型
           </p>
           <p class="text">
-            暂无数据
+            <template v-if="obj.householdType ===1">
+              农村
+            </template>
+            <template v-else-if="obj.householdType ===2">
+              城镇
+            </template>
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -86,7 +91,7 @@
             是否有在还贷款
           </p>
           <p class="text">
-            暂无数据
+            xxxx
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -94,7 +99,7 @@
             家里有几个孩子
           </p>
           <p class="text">
-            暂无数据
+            {{ obj.childNum | DataIsNull }}
           </p>
         </el-col>
       </el-row>
@@ -116,6 +121,7 @@ import { SettingsModule } from '@/store/modules/settings'
 export default class extends Vue {
   @Prop({ default: '专车' }) name!:string
   @Prop({ default: false }) isAdd!:boolean
+  @Prop({ default: () => {} }) obj!:any
 
   // 判断是否是PC
   get isPC() {

@@ -5,7 +5,15 @@
         slot="header"
         class="header"
       >
-        <span class="name">面试信息表</span> <span class="tag">专车</span>
+        <span class="name">面试信息表</span>
+        <span
+          v-if="listQuery.busiType === 0"
+          class="tag"
+        >专车</span>
+        <span
+          v-else-if="listQuery.busiType === 1"
+          class="tag"
+        >共享</span>
         <div class="step">
           <el-steps
             :active="active"
@@ -32,7 +40,7 @@
           ref="SelfForm"
           :list-query="listQuery"
           :form-item="formItem"
-          label-with="80px"
+          label-width="100px"
           :pc-col="12"
           :rules="rules"
           @onPass="handlePassClick"
@@ -57,12 +65,19 @@
       </template>
       <!-- 面试信息 -->
       <template v-else-if="active ===1">
+        <special-interview
+          v-if="+listQuery.busiType ===0"
+          ref="specialInterview"
+          :form="listQuery"
+          @onFinish="handleStepFinish"
+        />
+        <share-interview
+          v-else-if="+listQuery.busiType ===1"
+          ref="shareInterview"
+          :form="listQuery"
+          @onFinish="handleStepFinish"
+        />
         <div class="interviewInfo">
-          <h4 class="text">
-            根据金数据面试表实现
-            不包括基本信息中的属性
-            不包括加盟经理、小组，取当前用户数据
-          </h4>
           <el-row>
             <el-col
               :span="8"
@@ -135,10 +150,13 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
-import { GetDriverIndexesList } from '@/api/driver'
+import { InterviewBasic } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
-
+import { GetDictionary } from '@/api/common'
+import { phoneReg } from '@/utils/index.ts'
+import SpecialInterview from './components/specialInterview.vue'
+import ShareInterview from './components/shareInterview.vue'
 interface IState {
   [key: string]: any;
 }
@@ -146,22 +164,27 @@ interface IState {
 @Component({
   name: 'Interview',
   components: {
-    SelfForm
+    SelfForm,
+    SpecialInterview,
+    ShareInterview
   }
 })
 export default class extends Vue {
-  private active:number = 0
+  private active:number = 1
   private listQuery:IState = {
     name: '',
     phone: '',
-    city: '',
-    carType: ''
+    workCity: '',
+    carType: '',
+    busiType: '',
+    clueId: ''
   }
 
   private formItem:any[] = [
     {
       type: 1,
       key: 'name',
+      label: '姓名:',
       tagAttrs: {
         placeholder: '姓名'
       }
@@ -169,37 +192,41 @@ export default class extends Vue {
     {
       type: 1,
       key: 'phone',
+      label: '电话:',
       tagAttrs: {
         placeholder: '电话'
       }
     },
     {
       type: 2,
-      key: 'city',
+      key: 'workCity',
+      label: '工作城市:',
       tagAttrs: {
-        placeholder: '工作城市'
+        placeholder: '工作城市',
+        filterable: true
       },
-      options: [
-        {
-          label: '北京',
-          value: 'beijing'
-        }
-      ]
+      options: []
     },
     {
       type: 2,
       key: 'carType',
+      label: '车型:',
       tagAttrs: {
-        placeholder: '车型'
+        placeholder: '车型',
+        filterable: true
       },
-      options: [
-        {
-          label: '金杯',
-          value: 'jinbei'
-        }
-      ]
+      options: []
     }
   ]
+  /**
+   * 校验手机号
+   */
+  private validatePhone = (rule: any, value: string, callback: Function) => {
+    if (!phoneReg.test(value)) {
+      return callback(new Error('请输入正确的手机号'))
+    }
+    callback()
+  }
   private rules:IState ={
     name: [
       { required: true, message: '请输入姓名', trigger: 'blur' }
@@ -207,7 +234,7 @@ export default class extends Vue {
     phone: [
       { required: true, message: '请输入电话', trigger: 'blur' }
     ],
-    city: [
+    workCity: [
       { required: true, message: '请选择城市', trigger: 'change' }
     ],
     carType: [
@@ -220,6 +247,35 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
+  mounted() {
+    this.listQuery.clueId = (this.$route as any).query.id
+    this.listQuery.busiType = +(this.$route as any).query.busiType
+    this.getBaseInfo()
+  }
+
+  /**
+   *获取基础信息
+   */
+  async getBaseInfo() {
+    try {
+      let requestArrs = [
+        GetDictionary({ dictType: 'online_city' }), // 工作城市
+        GetDictionary({ dictType: 'Intentional_compartment' }) // 车型
+      ]
+
+      let res = await Promise.all(requestArrs)
+      if (res && requestArrs.length === res.length) {
+        this.formItem[2].options = res[0].data.data.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+        this.formItem[3].options = res[1].data.data.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
+  }
   /**
    * 下一步
    */
@@ -230,8 +286,18 @@ export default class extends Vue {
   /**
    * 下一步表单验证通过
    */
-  handlePassClick(val:boolean) {
-    this.active = 1
+  async handlePassClick(val:boolean) {
+    try {
+      let params = { ...this.listQuery }
+      let { data: res } = await InterviewBasic(params)
+      if (res.success) {
+        this.active = 1
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    }
   }
 
   /**
@@ -245,6 +311,16 @@ export default class extends Vue {
    *提交
    */
   handleAddClick() {
+    if (this.listQuery.busiType === 0) {
+      (this.$refs.specialInterview as any).$refs.form.submitForm()
+    } else if (this.listQuery.busiType === 1) {
+      (this.$refs.shareInterview as any).$refs.form.submitForm()
+    }
+  }
+  /**
+   *填写金数据，提交成功
+   */
+  handleStepFinish() {
     this.active = 2
   }
   /**
@@ -281,10 +357,6 @@ export default class extends Vue {
       padding: 20px 10% 0px;
       border-top:1px solid #DADBE7;
     }
-   }
-   .text {
-     margin-top: 50px;
-     text-align: center;
    }
    .inter_btn {
      margin-top:50px;
