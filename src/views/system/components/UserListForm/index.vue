@@ -8,7 +8,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="姓名">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.nickName"
                     placeholder="请输入姓名"
                     clearable
                   />
@@ -17,7 +17,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="电话">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.mobile"
                     placeholder="请输入电话"
                     clearable
                   />
@@ -26,31 +26,33 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="角色">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.roleId"
                     placeholder="请选择"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsRoles"
+                      :key="item.id"
+                      :label="item.nick"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="组织机构">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
+                  <el-cascader
+                    ref="cascaderOff"
+                    v-model="listQuery.officeId"
+                    :options="optionsOffice"
+                    :show-all-levels="false"
+                    :props="{
+                      label: 'name',
+                      value: 'id',
+                      children: 'officeVOs',
+                      checkStrictly: true
+                    }"
+                    clearable
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
@@ -69,7 +71,7 @@
                 </el-form-item>
               </el-col>
               <el-col
-                :span="isPC ? 12 : 24"
+                :span="isPC ? 18 : 24"
                 class="btn-box"
               >
                 <el-button
@@ -97,7 +99,8 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GetDictionary } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
-import { TimestampYMD } from '@/utils/index'
+import { roleList, getOfficeList } from '@/api/system'
+
 import '@/styles/common.scss'
 
 @Component({
@@ -109,12 +112,9 @@ export default class extends Vue {
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private DateValueChild: any[] = []; // DateValue的赋值项
-  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
-
-  @Watch('DateValue', { deep: true })
-  private onDateChange(value: any) {
-    this.DateValueChild = value
-  }
+  private QUERY_KEY_LIST: any[] = ['page', 'limit']; // 添加过滤listQuery中key的名称
+  private optionsRoles: any[] = []
+  private optionsOffice: any[] = []
 
   // listQuery同步tags公共方法
   @Watch('listQuery', { deep: true })
@@ -122,23 +122,12 @@ export default class extends Vue {
     let tags: any = []
     for (var key in value) {
       if (this.QUERY_KEY_LIST.indexOf(key) < 0) {
-        if (value[key] && key === 'endDate') {
+        if (value[key]) {
           tags.unshift({
-            name:
-              TimestampYMD(value['startDate']) +
-              '-' +
-              TimestampYMD(value['endDate']),
+            name: this.matchName(key, value[key]),
             type: '',
             key: key
           })
-        } else {
-          if (value[key]) {
-            tags.unshift({
-              name: this.matchName(key, value[key]),
-              type: '',
-              key: key
-            })
-          }
         }
       }
     }
@@ -149,29 +138,21 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
-  created() {
-    this.getDictionary()
-  }
-
   // 匹配创建tags标签
   private matchName(key: any, value: any) {
     let vodeName = ''
+    const offList = (this.$refs.cascaderOff as any).getCheckedNodes()// 获取选中的组织
     switch (key) {
       // 根据listQuery中的key来判断
-      case 'city':
-        for (let entry of this.optionsCity) {
-          if (entry.codeVal === value) {
-            vodeName = entry.code
-          }
-        }
+      case 'mobile':
+      case 'nickName':
+        vodeName = value
+        break
+      case 'roleId':
+        vodeName = this.optionsRoles.find((item) => item.id === value)['nick']
+        break
+      case 'officeId':
+        vodeName = offList && offList[0] ? offList[0].label : ''
         break
       default:
         vodeName = ''
@@ -181,22 +162,51 @@ export default class extends Vue {
   }
 
   private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
+    const { data } = await GetDictionary({ dictType: 'status' })
     if (data.success) {
       this.optionsCity = data.data
     } else {
       this.$message.error(data)
     }
   }
-
-  private changData() {
-    if (this.DateValueChild) {
-      this.listQuery.startDate = this.DateValueChild[0]
-      this.listQuery.endDate = this.DateValueChild[1]
+  // 获取角色
+  private async getRoleList() {
+    const { data } = await roleList()
+    if (data.success) {
+      this.optionsRoles = data.data
     } else {
-      this.listQuery.startDate = ''
-      this.listQuery.endDate = ''
+      this.$message.error(data)
     }
+  }
+  // 获取组织管理列表
+  private async getOfficeList() {
+    const { data } = await getOfficeList()
+    if (data.success) {
+      this.optionsOffice = this.traverseTree(data.data)
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private traverseTree(data:any) {
+    var setChecked = (list: any) => {
+      for (var i in list) {
+        if (list[i].officeVOs && list[i].officeVOs.length > 0) {
+          setChecked(list[i].officeVOs)
+        } else {
+          delete list[i].officeVOs
+        }
+      }
+    }
+    setChecked(data)
+    return data
+  }
+  private fetchData() {
+    this.getRoleList()
+    this.getOfficeList()
+    this.getDictionary()
+  }
+  created() {
+    this.fetchData()
   }
 }
 </script>

@@ -3,8 +3,16 @@
     <div class="detail-title">
       {{ name }}
     </div>
-    <div class="detail-value">
-      {{ value }}
+    <img
+      v-if="type === 'image'"
+      style="width: 100%"
+      :src="valueName"
+    >
+    <div
+      v-else
+      class="detail-value"
+    >
+      {{ valueName }}
     </div>
   </div>
 </template>
@@ -18,9 +26,18 @@ import { SettingsModule } from '@/store/modules/settings'
 })
 export default class extends Vue {
   @Prop({ default: '' }) private name: any; // 默认无法识别显示空
-  @Prop({ default: '暂无数据' }) private value: any; // 默认无法识别显示空
+  @Prop({ default: '暂无数据' }) private value!: string | number; // 默认无法识别显示空type
+  @Prop({ default: '' }) private type: any; // 默认无法识别显示空
+  private valueName: any
 
-  created() {}
+  created() {
+    let val = this.value.toString()
+    if (!val) {
+      this.valueName = '暂无数据'
+    } else {
+      this.valueName = val
+    }
+  }
 
   get isPC() {
     return SettingsModule.isPC
@@ -32,7 +49,7 @@ export default class extends Vue {
 .DetailItem {
   width: 100%;
   // display: flex;
-  padding: 15px;
+  padding: 0 15px 10px;
   box-sizing: border-box;
   .detail-title {
     // flex: 1;
@@ -49,6 +66,7 @@ export default class extends Vue {
     font-size: 14px;
     color: #333;
     font-weight: 500;
+    line-height: 36px;
   }
 }
 </style>
