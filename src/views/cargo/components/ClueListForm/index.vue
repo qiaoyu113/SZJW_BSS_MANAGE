@@ -33,21 +33,6 @@
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="线索状态">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="线索来源">
                   <el-select
                     v-model="listQuery.city"
