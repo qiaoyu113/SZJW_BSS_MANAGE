@@ -44,6 +44,7 @@
             :key="tag.name+'-'+index"
             closable
             :type="tag.type"
+            disable-transitions
             @close="closeTags(index)"
           >
             {{ tag.name }}

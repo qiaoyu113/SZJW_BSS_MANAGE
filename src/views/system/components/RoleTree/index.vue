@@ -6,6 +6,7 @@
         class="tree"
       >
         <el-tree
+          ref="roleTree"
           default-expand-all
           :show-checkbox="showCheckbox"
           :data="data"
@@ -52,6 +53,7 @@ export default class extends Vue {
   padding-bottom: 20px;
   .tree {
     overflow-x: auto;
+    overflow-y: hidden;
   }
   .el-tree {
     min-width: 100%;

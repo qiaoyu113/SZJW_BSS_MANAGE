@@ -79,6 +79,7 @@ export default class extends Vue {
 .SectionContainer-m{
     width: 100%;
     background: #FFFFFF;
+    margin-bottom: 4px;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     .title{
         width:100%;

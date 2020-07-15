@@ -11,10 +11,10 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="姓名"
-              prop="name"
+              prop="userName"
             >
               <el-input
-                v-model="ruleForm.name"
+                v-model="ruleForm.userName"
                 placeholder=""
               />
             </el-form-item>
@@ -22,10 +22,10 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="电话"
-              prop="name"
+              prop="mobile"
             >
               <el-input
-                v-model="ruleForm.name"
+                v-model="ruleForm.mobile"
                 placeholder=""
               />
             </el-form-item>
@@ -33,10 +33,10 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="角色"
-              prop="name"
+              prop="roleId"
             >
               <el-select
-                v-model="ruleForm.region"
+                v-model="ruleForm.roleId"
                 placeholder="请选择"
               >
                 <el-option
@@ -54,10 +54,10 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="组织机构"
-              prop="name"
+              prop="officeId"
             >
               <el-input
-                v-model="ruleForm.name2"
+                v-model="ruleForm.officeId"
                 placeholder="请输入"
                 maxlength="10"
               />
@@ -67,10 +67,10 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="密码"
-              prop="name"
+              prop="passwd"
             >
               <el-input
-                v-model="ruleForm.name3"
+                v-model="ruleForm.passwd"
                 placeholder="请输入"
                 maxlength="10"
               />
@@ -80,10 +80,10 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="确认密码"
-              prop="name"
+              prop="passwd2"
             >
               <el-select
-                v-model="ruleForm.region"
+                v-model="ruleForm.passwd2"
                 placeholder="请选择"
               >
                 <el-option
@@ -122,7 +122,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
-
+import { getOfficeList } from '@/api/system'
 import '@/styles/common.scss'
 @Component({
   name: 'CreateUser',
@@ -144,23 +144,22 @@ export default class extends Vue {
     desc: ''
   }
   private rules:any = {
-    name: [
-      { required: true, message: '请输入活动名称', trigger: 'blur' },
-      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+    userName: [
+      { required: true, message: '请输入活动名称', trigger: 'blur' }
     ],
-    region: [
+    mobile: [
       { required: true, message: '请选择活动区域', trigger: 'change' }
     ],
-    date1: [
+    roleId: [
       { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
     ],
-    date2: [
+    officeId: [
       { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
     ],
-    type: [
+    passwd: [
       { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
     ],
-    resource: [
+    passwd2: [
       { required: true, message: '请选择活动资源', trigger: 'change' }
     ],
     desc: [
@@ -188,7 +187,19 @@ export default class extends Vue {
     (this.$refs[formName] as ElForm).resetFields()
   }
 
+  // 获取组织列表
+  private async getOfficeList() {
+    const { data } = await getOfficeList()
+    console.log(data)
+    if (data.success) {
+      // this.optionsCity = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
+
   mounted() {
+    this.getOfficeList()
     // this.id = this.$route.query.id
     console.log(this.$route)
     this.isEdit = this.$route.name === 'EditUser'
