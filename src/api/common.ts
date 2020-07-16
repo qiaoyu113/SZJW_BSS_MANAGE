@@ -1,15 +1,23 @@
 import request from '@/utils/request'
-let prefix = `/base`
+const baseURL = '/base'
 export const GetDictionary = (data: any) =>
   request({
-    url: '/base/v1/base/dict/dictData/list',
+    url: `${baseURL}/v1/base/dict/dictData/list`,
     method: 'get',
     params: data
   })
 // 批量查询字典
 export const GetDictionaryList = (data: any) =>
   request({
-    url: '/v1/base/dict/dict/list/types',
+    url: `${baseURL}/v1/base/dict/dict/list/types`,
+    method: 'post',
+    data
+  })
+
+// 地区
+export const GetArea = (data: any) =>
+  request({
+    url: `${baseURL}/v1/base/area/getCityByCode`,
     method: 'post',
     data
   })
@@ -20,7 +28,7 @@ export const GetDictionaryList = (data: any) =>
    */
 export const GetCityByCode = (data: any) =>
   request({
-    url: `${prefix}/v1/base/area/getCityByCode`,
+    url: `${baseURL}/v1/base/area/getCityByCode`,
     method: 'post',
     data
   })
@@ -31,7 +39,7 @@ export const GetCityByCode = (data: any) =>
    */
 export const GetManagerLists = () =>
   request({
-    url: `${prefix}/v1/base/user/getManagerListByUserId`,
+    url: `${baseURL}/v1/base/user/getManagerListByUserId`,
     method: 'post'
   })
 
@@ -40,6 +48,6 @@ export const GetManagerLists = () =>
    */
 export const GetOpenCityData = () =>
   request({
-    url: `${prefix}/v1/base/area/getOpenCityData`,
+    url: `${baseURL}/v1/base/area/getOpenCityData`,
     method: 'get'
   })
