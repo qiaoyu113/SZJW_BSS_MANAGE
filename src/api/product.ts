@@ -1,8 +1,9 @@
 import request from '@/utils/request'
+const baseURL = '/product'
 // 分页查询商品信息
 export const getProductList = (params: any) =>
   request({
-    url: `/v1/product/product/list/page`,
+    url: `${baseURL}/v1/product/product/list/page`,
     method: 'get',
     params
   })
@@ -10,7 +11,7 @@ export const getProductList = (params: any) =>
 // 创建商品
 export const createProduct = (data: any) =>
   request({
-    url: `/v1/product/product/create`,
+    url: `${baseURL}/v1/product/product/create`,
     method: 'post',
     data
   })
@@ -18,7 +19,15 @@ export const createProduct = (data: any) =>
 // 编辑商品
 export const updateProduct = (data: any) =>
   request({
-    url: `/v1/product/product/update`,
+    url: `${baseURL}/v1/product/product/update`,
+    method: 'post',
+    data
+  })
+
+// 上架或者下架商品
+export const shelvesOrTheshelves = (data: any) =>
+  request({
+    url: `${baseURL}/v1/product/product/shelvesOrTheshelves`,
     method: 'post',
     data
   })
@@ -26,7 +35,7 @@ export const updateProduct = (data: any) =>
 // 系统设置
 export const settingSystem = (data: any) =>
   request({
-    url: `/v1/product/product/system/setting`,
+    url: `${baseURL}/v1/product/product/system/setting`,
     method: 'post',
     data
   })
@@ -34,6 +43,6 @@ export const settingSystem = (data: any) =>
 // 获取系统设置
 export const getSettingSystem = () =>
   request({
-    url: `/v1/product/product/system/setting`,
+    url: `${baseURL}/v1/product/product/system/setting`,
     method: 'get'
   })
