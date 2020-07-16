@@ -109,8 +109,8 @@
     </el-card>
     <!-- 线索分配 -->
     <clue-distribution
-      :id="1"
       ref="clueDistribution"
+      :rows="[{clueId: id}]"
     />
     <!-- 跟进记录 -->
     <el-card style="margin-top:20px;">
@@ -206,7 +206,6 @@
     </el-card>
     <!-- 面试表 -->
     <interview-card
-      :name="baseForm.busiType === 0 ? '专车':'共享'"
       :is-add="true"
       :obj="interviewObj"
       @onBtn="handleBtnClick"
@@ -233,7 +232,7 @@ import ClueDistribution from './components/clueDistribution.vue'
 import InterviewCard from './components/interviewCard.vue'
 import FollowByPhoneOrWechat from './components/followByPhoneOrWechat.vue'
 import InviteInterview from './components/inviteInterview.vue'
-import { ClueFollowList, GetClueDetailByClueId } from '@/api/driver'
+import { ClueFollowList, GetClueDetailByClueId, GetInterviewDetail } from '@/api/driver'
 @Component({
   name: 'FollowClue',
   components: {
@@ -281,7 +280,7 @@ export default class extends Vue {
       let params = {
         clueId: this.id
       }
-      let { data: res } = await GetClueDetailByClueId(params)
+      let { data: res } = await GetInterviewDetail(params)
       if (res.success) {
         this.interviewObj = res.data
       } else {
@@ -346,9 +345,12 @@ export default class extends Vue {
   /**
    * 填写面试表或修改面试表
    */
-  handleBtnClick() {
+  handleBtnClick(flag:boolean) {
     this.$router.push({
-      path: '/transport/interview'
+      path: '/transport/interview',
+      query: {
+        id: this.id + ''
+      }
     })
   }
 }

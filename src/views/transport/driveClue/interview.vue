@@ -66,15 +66,17 @@
       <!-- 面试信息 -->
       <template v-else-if="active ===1">
         <special-interview
-          v-if="+listQuery.busiType ===0"
+          v-if="String(listQuery.busiType) ==='0'"
           ref="specialInterview"
           :form="listQuery"
+          :obj="form"
           @onFinish="handleStepFinish"
         />
         <share-interview
-          v-else-if="+listQuery.busiType ===1"
+          v-else-if="String(listQuery.busiType) ==='1'"
           ref="shareInterview"
           :form="listQuery"
+          :obj="form"
           @onFinish="handleStepFinish"
         />
         <div class="interviewInfo">
@@ -150,7 +152,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
-import { InterviewBasic } from '@/api/driver'
+import { InterviewBasic, GetInterviewEditDetail } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { GetDictionary } from '@/api/common'
@@ -179,6 +181,7 @@ export default class extends Vue {
     busiType: '',
     clueId: ''
   }
+  private form:any = {} // 编辑面试表单的时候获取的信息
 
   private formItem:any[] = [
     {
@@ -250,9 +253,30 @@ export default class extends Vue {
   mounted() {
     this.listQuery.clueId = (this.$route as any).query.id
     this.listQuery.busiType = +(this.$route as any).query.busiType
-    this.getBaseInfo()
+    // this.getBaseInfo()
+    this.getEditDetail()
   }
 
+  /**
+   *获取面试编辑信息
+   */
+  async getEditDetail() {
+    try {
+      let params = {
+        clueId: this.listQuery.clueId
+      }
+      let { data: res } = await GetInterviewEditDetail(params)
+      if (res.success) {
+        // this.listQuery.name = res.data.name
+        // this.listQuery.phone = res.data.phone
+        // this.listQuery.workCity = res.data.intentWorkCity
+        // this.listQuery.busiType = res.data.intentDrivingCarType
+        this.form = res.data
+      }
+    } catch (err) {
+      console.log(`get interview info fail:`, err)
+    }
+  }
   /**
    *获取基础信息
    */
@@ -260,7 +284,9 @@ export default class extends Vue {
     try {
       let requestArrs = [
         GetDictionary({ dictType: 'online_city' }), // 工作城市
-        GetDictionary({ dictType: 'Intentional_compartment' }) // 车型
+        GetDictionary({ dictType: 'Intentional_compartment' }), // 车型
+        GetDictionary({ dictType: 'source_channel' }), // 司机(线索)来源渠道
+        GetDictionary({ dictType: 'accep_payment_range' }) // 可接受首付范围"
       ]
 
       let res = await Promise.all(requestArrs)

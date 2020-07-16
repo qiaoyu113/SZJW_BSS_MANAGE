@@ -38,7 +38,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 
-import { EditDriverInfo, driverDetailByDriverId } from '@/api/transport.ts'
+import { EditDriverInfo, driverDetailByDriverId } from '@/api/driver'
 import { phoneReg } from '@/utils/index.ts'
 
 interface IState {

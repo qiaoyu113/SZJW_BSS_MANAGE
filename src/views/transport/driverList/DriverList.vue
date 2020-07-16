@@ -4,7 +4,7 @@
       <suggest-container
         :tab="tab"
         :tags="tags"
-        :active-name="listQuery.state"
+        :active-name="listQuery.status"
         @handle-query="handleQuery"
       >
         <!-- 查询表单 -->
@@ -94,6 +94,9 @@
         @onPageSize="handlePageSize"
         @selection-change="handleChange"
       >
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        </template>
         <template v-slot:op="scope">
           <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
             <span class="el-dropdown-link">
@@ -243,8 +246,10 @@ import ManagerDialog from './components/managerDialog.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { getLabel } from '@/utils/index.ts'
-import { DriverFollowUpToDown } from '@/api/transport.ts'
+import { DriverFollowUpToDown, GetDriverList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
+import { HandlePages } from '@/utils/index'
+import { GetManagerLists, GetOpenCityData } from '@/api/common'
 interface IState {
     [key: string]: any;
 }
@@ -277,33 +282,33 @@ export default class extends Vue {
   private tab:Tab[] = [
     {
       label: '全部',
-      name: 'all',
+      name: '',
       id: 0,
-      num: 187
+      num: 0
     },
     {
       label: '待跟进',
-      name: 'tab1',
+      name: '1',
       id: 1,
-      num: 5
+      num: 0
     },
     {
       label: '已跟进',
-      name: 'tab2',
+      name: '2',
       id: 2,
-      num: 1
+      num: 0
     },
     {
       label: '已成交',
-      name: 'tab3',
+      name: '3',
       id: 3,
-      num: 1
+      num: 0
     },
     {
       label: '已放弃',
-      name: 'tab4',
+      name: '4',
       id: 4,
-      num: 1
+      num: 0
     }
   ]
   private tags:any[] = []
@@ -312,15 +317,15 @@ export default class extends Vue {
   private dropdownList:any[] = []
   private checkList:any[] =[]
   private listQuery:IState = {
-    state: 'all',
-    city: '',
-    code: '',
+    status: '',
+    workCity: '',
+    driverId: '',
     name: '',
     phone: '',
-    line: '',
-    group: '',
-    manager: '',
-    resource: '',
+    busiType: '',
+    gmTeam: '',
+    gmId: '',
+    sourceChannel: '',
     up: true,
     quit: 1,
     time: []
@@ -329,15 +334,17 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 2,
-      key: 'city',
+      key: 'workCity',
       label: '工作城市',
       tagAttrs: {
-        placeholder: '请选择工作城市'
-      }
+        placeholder: '请选择工作城市',
+        filterable: true
+      },
+      options: []
     },
     {
       type: 1,
-      key: 'code',
+      key: 'driverId',
       label: '司机编号',
       tagAttrs: {
         placeholder: '请输入司机编号'
@@ -361,7 +368,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      key: 'line',
+      key: 'busiType',
       label: '业绩线',
       tagAttrs: {
         placeholder: '请选择业绩线'
@@ -369,65 +376,47 @@ export default class extends Vue {
       options: [
         {
           label: '专车',
-          value: 'car1'
+          value: 0
         },
         {
           label: '共享',
-          value: 'share1'
+          value: 1
         }
       ]
     },
     {
       type: 2,
-      key: 'group',
+      key: 'gmTeam',
       label: '加盟小组',
       tagAttrs: {
         placeholder: '请选择加盟小组'
       },
-      options: [
-        {
-          label: '专车',
-          value: 'car2'
-        },
-        {
-          label: '共享',
-          value: 'share2'
-        }
-      ]
+      options: []
     },
     {
       type: 2,
-      key: 'manager',
+      key: 'gmId',
       label: '加盟经理',
       tagAttrs: {
         placeholder: '请选择加盟经理'
       },
-      options: [
-        {
-          label: '专车',
-          value: 'car3'
-        },
-        {
-          label: '共享',
-          value: 'share3'
-        }
-      ]
+      options: []
     },
     {
       type: 2,
-      key: 'resource',
+      key: 'sourceChannel',
       label: '司机来源',
       tagAttrs: {
         placeholder: '请选择司机来源'
       },
       options: [
         {
-          label: '专车',
-          value: 'car5'
+          label: '面试转换',
+          value: 1
         },
         {
-          label: '共享',
-          value: 'share5'
+          label: '自动创建',
+          value: 2
         }
       ]
     },
@@ -514,117 +503,60 @@ export default class extends Vue {
     }
   ]
 
-  private tableData:any[] = [
-    {
-      a: '121313123131',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
-      f: '待跟进',
-      g: '面试转化',
-      h: '王利',
-      i: Date.now(),
-      j: 5,
-      k: '王利',
-      l: '15021578502',
-      status: 1
-    },
-    {
-      a: '121313123132',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
-      f: '已跟进',
-      g: '面试转化',
-      h: '王利1',
-      i: Date.now(),
-      j: 5,
-      k: '王利',
-      l: '15021578502',
-      status: 2
-    },
-    {
-      a: '121313123133',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
-      f: '已成交',
-      g: '面试转化',
-      h: '王利2',
-      i: Date.now(),
-      j: 5,
-      k: '王利',
-      l: '15021578502',
-      status: 3
-    },
-    {
-      a: '121313123134',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
-      f: '已放弃',
-      g: '面试转化',
-      h: '王利3',
-      i: Date.now(),
-      j: 5,
-      k: '王利',
-      l: '15021578502',
-      status: 4
-    }
-  ]
+  private tableData:any[] = []
 
   private columns:any[] = [
     {
-      key: 'a',
+      key: 'driverId',
       label: '司机编号'
     },
     {
-      key: 'b',
+      key: 'name',
       label: '司机姓名'
     },
     {
-      key: 'c',
-      label: '手机号'
+      key: 'phone',
+      label: '手机号',
+      width: '120px'
     },
     {
-      key: 'd',
+      key: 'busiTypeName',
       label: '业务线'
     },
     {
-      key: 'e',
+      key: 'workCityName',
       label: '工作城市'
     },
     {
-      key: 'f',
+      key: 'statusName',
       label: '司机状态'
     },
     {
-      key: 'g',
+      key: 'sourceChannelName',
       label: '司机来源'
     },
     {
-      key: 'h',
+      key: 'createName',
       label: '创建人'
     },
     {
-      key: 'i',
-      label: '创建时间'
+      key: 'createDate',
+      label: '创建时间',
+      slot: true,
+      width: '180px'
     },
     {
-      key: 'j',
+      key: 'carrierCount',
       label: '运力数'
     },
     {
-      key: 'k',
+      key: 'gmName',
       label: '加盟经理'
     },
     {
-      key: 'l',
-      label: '加盟经理手机号'
+      key: 'gmMobile',
+      label: '加盟经理手机号',
+      width: '120px'
     },
     {
       key: 'op',
@@ -654,18 +586,104 @@ export default class extends Vue {
   private page:PageObj = {
     page: 1,
     limit: 20,
-    total: 100
+    total: 0
   }
 
   mounted() {
     this.dropdownList = [...this.columns]
     this.checkList = this.dropdownList.map(item => item.label)
+    this.getList()
+    this.getManagers()
+    this.getOpenCitys()
+  }
+
+  /**
+   *获取加盟经理列表
+   */
+  async getManagers() {
+    try {
+      let { data: res } = await GetManagerLists()
+      if (res.success) {
+        this.formItem[6].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get manager fail:${err}`)
+    }
+  }
+
+  /**
+   *获取开通城市
+   */
+  async getOpenCitys() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.formItem[0].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
+    }
   }
   /**
    *获取列表
    */
-  getList() {
+  async getList() {
+    try {
+      this.listLoading = true
+      let params:any = {
+        limit: this.page.limit,
+        page: this.page.page
+        // carrierStatus: ''
+      }
+      this.listQuery.status && (params.status = +this.listQuery.status)
+      this.listQuery.workCity && (params.workCity = this.listQuery.workCity)
+      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.name && (params.name = this.listQuery.name)
+      this.listQuery.phone && (params.phone = this.listQuery.phone)
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.gmTeam !== '' && (params.gmTeam = this.listQuery.gmTeam)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.sourceChannel && (params.sourceChannel = this.listQuery.sourceChannel)
 
+      if (this.listQuery.time.length > 1) {
+        params.startDate = this.listQuery.time[0]
+        params.endDate = this.listQuery.time[1]
+      }
+      let { data: res } = await GetDriverList(params)
+      this.listLoading = false
+      if (res.success) {
+        res.page = await HandlePages(res.page)
+        this.page.total = res.page.total
+        this.tableData = res.data
+        for (let i = 0; i < this.tab.length; i++) {
+          let item = this.tab[i]
+          if (item.name === this.listQuery.status) {
+            item.num = res.title.all
+          } else {
+            item.num = 0
+          }
+        }
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      this.listLoading = false
+      console.log(`get lists fail:`, err)
+    }
   }
   @Watch('checkList', { deep: true })
   private checkListChange(val:any) {
@@ -677,8 +695,9 @@ export default class extends Vue {
   private handleQueryClick() {
     let blackLists = ['state']
     for (let key in this.listQuery) {
-      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+      if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
+        console.log(name, key)
         if (name) {
           this.tags.push({
             type: 'info',
@@ -688,25 +707,28 @@ export default class extends Vue {
         }
       }
     }
+    this.getList()
   }
   /**
    *重置
    */
   private handleResetClick() {
     this.listQuery = {
-      city: '',
-      code: '',
+      status: '',
+      workCity: '',
+      driverId: '',
       name: '',
       phone: '',
-      line: '',
-      group: '',
-      manager: '',
-      resource: '',
+      busiType: '',
+      gmTeam: '',
+      gmId: '',
+      sourceChannel: '',
       up: true,
       quit: 1,
       time: []
     }
     this.tags = []
+    this.getList()
   }
 
   // 判断是否是PC
@@ -746,23 +768,23 @@ export default class extends Vue {
       this.$router.push({
         path: '/transport/followDriver',
         query: {
-          id: 'SJ202007131005'
+          id: row.driverId
         }
       })
     } else if (key === 'giveup') { // 放弃
-      this.handleGiveupClick('SJ202007131005')
+      this.handleGiveupClick(row.driverId)
     } else if (key === 'edit') { // 编辑
       this.$router.push({
         path: '/transport/editDriver',
         query: {
-          id: 'SJ202007131005'
+          id: row.driverId
         }
       })
     } else if (key === 'detail') { // 详情
       this.$router.push({
         path: '/transport/driverDetail',
         query: {
-          id: 'SJ202007131005'
+          id: row.driverId
         }
       })
     } else if (key === 'account') { // 账户
@@ -778,11 +800,14 @@ export default class extends Vue {
    * 删除顶部表单的选项
    */
   handleQuery(value:any, key:any) {
-    if (key === 'time') {
+    if (key === 'state') {
+      this.listQuery.status = value
+    } else if (key === 'time') {
       this.listQuery[key] = []
     } else {
       this.listQuery[key] = value
     }
+    this.getList()
   }
 
   /**

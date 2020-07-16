@@ -12,9 +12,10 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Emit, Prop } from 'vue-property-decorator'
+import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { ShareInterview } from '@/api/driver'
+import { GetCityByCode, GetManagerLists } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -26,6 +27,7 @@ interface IState {
 })
 export default class extends Vue {
   @Prop({ default: () => {} }) form!:any
+  @Prop({ default: () => {} }) obj!:any
   private listQuery:IState = {
     interviewDate: '',
     interviewAddress: [],
@@ -57,11 +59,11 @@ export default class extends Vue {
       label: '面试地址:',
       tagAttrs: {
         placeholder: '面试地址',
-        listeners: {
-          'change': this.handleInterviewAddressChange
+        props: {
+          lazy: true,
+          lazyLoad: this.loadinterviewAddress
         }
-      },
-      options: []
+      }
     },
     {
       type: 1,
@@ -81,7 +83,8 @@ export default class extends Vue {
       key: 'gmId',
       label: '加盟经理:',
       tagAttrs: {
-        placeholder: '拓展经理'
+        placeholder: '加盟经理',
+        filterable: true
       },
       options: []
     },
@@ -91,18 +94,18 @@ export default class extends Vue {
       label: '现住址:',
       tagAttrs: {
         placeholder: '现住址',
-        listeners: {
-          'change': this.handleCurrentAddressChange
+        props: {
+          lazy: true,
+          lazyLoad: this.loadhomeAddress
         }
-      },
-      options: []
+      }
     },
     {
       type: 1,
       key: 'liveDistrict',
       label: '详细住址:',
       tagAttrs: {
-        placeholder: '详细住址',
+        placeholder: '现住址详细住址',
         type: 'textarea',
         rows: 2,
         maxlength: 32,
@@ -251,17 +254,100 @@ export default class extends Vue {
       { required: true, message: '请选择是否新能源', trigger: 'blur' }
     ]
   }
+
+  mounted() {
+    this.getManagers()
+  }
+
+  /**
+   *获取加盟经理列表
+   */
+  async getManagers() {
+    try {
+      let { data: res } = await GetManagerLists()
+      if (res.success) {
+        this.formItem[3].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get manager fail:${err}`)
+    }
+  }
+
+  @Watch('obj', { deep: true })
+  handleObjChange(val:any) {
+    this.listQuery = { ...this.listQuery, ...this.obj }
+  }
+
+  /**
+     * 加载城市
+     */
+  async loadCityByCode(params:string[]) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: params.length > 2
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
   /**
    *现住址
    */
-  handleCurrentAddressChange(val:any) {
-
+  async loadhomeAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.loadCityByCode(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
   }
   /**
    *面试地址
-   */
-  handleInterviewAddressChange(val:any) {
-
+  */
+  async loadinterviewAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.loadCityByCode(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
   }
   async handlePassClick() {
     try {

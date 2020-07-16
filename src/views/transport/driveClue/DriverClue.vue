@@ -195,7 +195,7 @@
     <!-- 线索分配 -->
     <clue-distribution
       ref="clueDistribution"
-      :rows="rows"
+      :rows="[{clueId: clueId}]"
     />
 
     <PitchBox
@@ -254,6 +254,7 @@ interface PageObj {
 })
 
 export default class extends Vue {
+  private clueId:string =''
   private listLoading = false
   private tab:Tab[] = [
     {
@@ -624,7 +625,6 @@ export default class extends Vue {
    * 更多操作
    */
   handleCommandChange(key:string|number, row:any) {
-    console.log('xxx:', key, row)
     if (key === 'edit') { // 修改线索
       this.$router.push({
         path: '/transport/editClue',
@@ -633,9 +633,7 @@ export default class extends Vue {
         }
       })
     } else if (key === 'distribution') { // 分配线索
-      if (this.rows.length === 0) {
-        return this.$message.error('请先选择司机线索')
-      }
+      this.clueId = row.clueId;
       (this.$refs.clueDistribution as any).openDialog()
     } else if (key === 'interview') { // 发起面试
       this.$router.push({

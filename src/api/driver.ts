@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-let prefix = '/api/driver'
+let prefix = '/driver'
 /**
  * 创建司机线索--人工录入
  */
@@ -55,6 +55,13 @@ export const ClueFollowList = (params: any) =>
     params
   })
 
+export const GetInterviewDetail = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/clue/clue/interview/detail`,
+    method: 'get',
+    params
+  })
+
 /**
    *
    * 司机线索跟进
@@ -68,6 +75,17 @@ export const ClueFollow = (data: any) =>
 
 /**
    *
+   * 编辑面试表获取面试表信息
+   */
+export const GetInterviewEditDetail = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/clue/clue/interview/edit/detail`,
+    method: 'get',
+    params
+  })
+
+/**
+   *
    * 填写面试表---step1
    */
 export const InterviewBasic = (data: any) =>
@@ -77,9 +95,150 @@ export const InterviewBasic = (data: any) =>
     data
   })
 
+/**
+   *
+   * 共享金数据保存-面试表
+   */
 export const ShareInterview = (data: any) =>
   request({
     url: `${prefix}/v1/driver/clue/clue/share/interview`,
+    method: 'post',
+    data
+  })
+
+/**
+   *
+   * 专车金数据保存-面试表
+   */
+export const SpecialInterview = (data: any) =>
+  request({
+    url: `${prefix}/v1/driver/clue/clue/special/interview`,
+    method: 'post',
+    data
+  })
+
+// ------------司机列表接口-----------------
+
+/**
+ *
+ * 获取司机详情
+ */
+export const GetDriverDetail = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverDetailByInview`,
+    method: 'post',
+    params
+  })
+
+/**
+ *
+ *编辑司机信息
+ */
+export const EditDriverInfo = (data: any) =>
+  request({
+    url: `${prefix}/v1/driver/updateDriver`,
+    method: 'post',
+    data
+  })
+
+/**
+ *
+ * 司机跟进页面信息
+ */
+export const DriverFollowFormation = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverFollowFormation`,
+    method: 'post',
+    params
+  })
+
+/**
+ *
+ * 司机跟进页 --司机跟进操作
+ */
+export const DriverFollowOp = (data: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverFollowSave`,
+    method: 'post',
+    data
+  })
+
+/**
+ *
+ * 司机放弃操作
+ */
+export const DriverFollowUpToDown = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverFollowUpToDown`,
+    method: 'post',
+    params
+  })
+
+/**
+ *
+ * 司机列表--修改加盟经理
+ */
+export const UpdateDriverBDManager = (data: any) =>
+  request({
+    url: `${prefix}/v1/driver/updateDriverBDManager`,
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+
+/**
+ *
+ * 分配加盟经理
+ */
+export const driverDownToGm = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverDownToGm`,
+    method: 'post',
+    params
+  })
+
+/**
+ *
+ * 通过driverId获取司机信息
+ */
+export const driverDetailByDriverId = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverDetail`,
+    method: 'get',
+    params
+  })
+
+/**
+ *
+ * 司机详情-运力信息
+ */
+export const driverDetailToCarrierInfo = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverDetailToCarrierInfo`,
+    method: 'post',
+    params
+  })
+
+/**
+ *
+ *司机详情-获取订单信息
+ */
+export const driverDetailToOrderInfo = (params: any) =>
+  request({
+    url: `${prefix}/v1/driver/driverDetailToOrderInfo`,
+    method: 'post',
+    params
+  })
+
+/**
+   *
+   * 获取司机列表
+   */
+export const GetDriverList = (data: any) =>
+  request({
+    url: `${prefix}/v1/driver/getDriverList`,
     method: 'post',
     data
   })

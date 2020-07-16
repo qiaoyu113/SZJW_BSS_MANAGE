@@ -15,7 +15,10 @@
           label="基本信息"
           name="f1"
         >
-          <base-info />
+          <base-info
+            :busi-type-name="listQuery.busiTypeName"
+            :obj="baseObj"
+          />
         </el-tab-pane>
         <el-tab-pane
           label="订单信息"
@@ -60,7 +63,7 @@ import OrderInfo from './components/orderInfo.vue'
 import TransportInfo from './components/transportInfo.vue'
 import bidInfo from './components/bidInfo.vue'
 import AccountInfo from './components/accountInfo.vue'
-import { GetDriverDetail, DriverFollowFormation, driverDetailToCarrierInfo, driverDetailToOrderInfo } from '@/api/transport.ts'
+import { GetDriverDetail, DriverFollowFormation, driverDetailToCarrierInfo, driverDetailToOrderInfo } from '@/api/driver'
 import { Location, Route } from 'vue-router'
 
 interface IState {
@@ -144,51 +147,9 @@ export default class extends Vue {
 
   private activeName:string = 'f1'
 
-  private orderLists = [
-    {
-      code: '1231313',
-      a: '梧桐共享',
-      b: '带车',
-      c: '4.2米厢货',
-      d: 3,
-      e: 4000,
-      f: 6.5,
-      g: Date.now()
-    },
-    {
-      code: '1231313qqwq',
-      a: '梧桐共享',
-      b: '带车',
-      c: '4.2米厢货',
-      d: 3,
-      e: 4000,
-      f: 6.5,
-      g: Date.now()
-    }
-  ]
+  private orderLists = []
 
-  private transportLists = [
-    {
-      code: 'YY1231313',
-      a: '穆家祥',
-      b: '15021578502',
-      c: '杭州市',
-      d: '京A B1556',
-      e: '4.2米厢货',
-      f: '待上岗',
-      g: Date.now()
-    },
-    {
-      code: 'YYY1231313qqwq',
-      a: '穆家祥',
-      b: '15021578502',
-      c: '杭州市',
-      d: '京A B1556',
-      e: '4.2米厢货',
-      f: '待上岗',
-      g: Date.now()
-    }
-  ]
+  private transportLists = []
   private bidLists = [
     {
       code: '202007091001',
@@ -220,6 +181,8 @@ export default class extends Vue {
     h: 200000
   }
 
+  private baseObj = {}
+
   private followLists:any[] = []
 
   mounted() {
@@ -238,6 +201,7 @@ export default class extends Vue {
       let { data: res } = await GetDriverDetail(params)
       if (res.success) {
         this.listQuery = res.data.driverInfoFormationVOList[0]
+        this.baseObj = res.data.driverClueInterViewInfoVOList[0]
       }
     } catch (err) {
       console.log('get driver detail fail:', err)
@@ -284,11 +248,12 @@ export default class extends Vue {
    */
   async transportInfo() {
     try {
-      let params = {}
+      let params = {
+        driverId: this.driverId
+      }
       let { data: res } = await driverDetailToCarrierInfo(params)
       if (res.success) {
-        this.transportLists = res.data
-        console.log(res.data)
+        this.transportLists = res.data || []
       }
     } catch (err) {
       console.log(`transport info fail:${err}`)
@@ -299,11 +264,12 @@ export default class extends Vue {
    */
   async orderInfo() {
     try {
-      let params = {}
+      let params = {
+        driverId: this.driverId
+      }
       let { data: res } = await driverDetailToOrderInfo(params)
       if (res.success) {
-        this.orderLists = res.data
-        console.log(res.data)
+        this.orderLists = res.data || []
       }
     } catch (err) {
       console.log(`orderInfo info fail:${err}`)

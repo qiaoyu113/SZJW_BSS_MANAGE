@@ -20,10 +20,11 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { ClueDispatch } from '@/api/driver'
+import { GetManagerLists } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -38,24 +39,47 @@ export default class extends Vue {
   @Prop({ default: () => [] }) rows!:any[]
   private showAlert = false
   private dialogForm:IState = {
-    followPerson: ''
+    userId: ''
   }
 
   private dialogItems:any[] = [
     {
       type: 2,
-      key: 'followPerson',
+      key: 'userId',
       tagAttrs: {
-        placeholder: '请选择跟进人'
+        placeholder: '请选择跟进人',
+        filterable: true
       },
-      options: [
-        {
-          label: 'jack',
-          value: 'jack'
-        }
-      ]
+      options: []
     }
   ]
+
+  @Watch('showAlert')
+  onShowAlertChange(val:boolean) {
+    if (val) {
+      this.getManagers()
+    }
+  }
+  /**
+   *获取加盟经理列表
+   */
+  async getManagers() {
+    try {
+      let { data: res } = await GetManagerLists()
+      if (res.success) {
+        this.dialogItems[0].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get manager fail:${err}`)
+    }
+  }
   /**
    *发开模态框
    */
@@ -69,23 +93,28 @@ export default class extends Vue {
     this.showAlert = false
   }
   handleClosed() {
-    this.dialogForm.followPerson = ''
+    this.dialogForm.userId = ''
   }
   cancel() {
     this.showAlert = false
   }
   async confirm() {
     try {
-      if (!this.dialogForm.followPerson) {
+      if (!this.dialogForm.userId) {
         return this.$message.error('请选择人进人')
       }
+      let clueIds = this.rows.map(function(item:any) {
+        return item.clueId
+      })
       let params = {
-        clueIds: [],
-        userId: this.dialogForm.followPerson
+        clueIds,
+        userId: this.dialogForm.userId
       }
       let { data: res } = await ClueDispatch(params)
       if (res.success) {
         this.showAlert = false
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`confirm fail:${err}`)

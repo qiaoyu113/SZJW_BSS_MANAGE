@@ -23,7 +23,8 @@
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
-import { UpdateDriverBDManager, driverDownToGm } from '@/api/transport.ts'
+import { UpdateDriverBDManager, driverDownToGm } from '@/api/driver'
+import { GetManagerLists } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -40,7 +41,7 @@ export default class extends Vue {
   private showAlert = false
   private title:string = ''
   private dialogForm:IState = {
-    followPerson: ''
+    gmId: ''
   }
 
   private dialogItems:any[] = [
@@ -52,21 +53,38 @@ export default class extends Vue {
         placeholder: '请选择新的加盟经理',
         filterable: true
       },
-      options: [
-        {
-          label: 'jack',
-          value: 'jack'
-        }
-      ]
+      options: []
     }
   ]
 
   @Watch('type')
   onTypeChange(val:string) {
+    this.getManagers()
     if (this.type === 'modify') {
       this.title = '修改加盟经理'
     } else if (this.type === 'distribution') {
       this.title = '分配加盟经理'
+    }
+  }
+
+  /**
+   *获取加盟经理列表
+   */
+  async getManagers() {
+    try {
+      let { data: res } = await GetManagerLists()
+      if (res.success) {
+        this.dialogItems[0].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get manager fail:${err}`)
     }
   }
   /**
@@ -82,7 +100,7 @@ export default class extends Vue {
     this.showAlert = false
   }
   handleClosed() {
-    this.dialogForm.manager = ''
+    this.dialogForm.gmId = ''
     this.setEmptyRows([])
   }
   @Emit('onRows')
@@ -112,8 +130,8 @@ export default class extends Vue {
   async driverDownToGm() {
     try {
       let params = {
-        driverId: 'SJ202007131005',
-        gmId: 123456
+        driverId: this.rows[0].driverId,
+        gmId: this.dialogForm.gmId
       }
       let { data: res } = await driverDownToGm(params)
       if (res.success) {
@@ -130,9 +148,12 @@ export default class extends Vue {
  */
   async modifyManager() {
     try {
+      let driverId = this.rows.map(function(item:any) {
+        return item.driverId
+      })
       let params = {
-        driverId: ['SJ202007131005'],
-        gmId: 1234
+        driverId,
+        gmId: this.dialogForm.gmId
       }
 
       let { data: res } = await UpdateDriverBDManager(params)

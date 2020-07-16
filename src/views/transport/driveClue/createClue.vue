@@ -44,7 +44,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { CreateActivity, EditActivity, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
@@ -190,6 +190,7 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+
   mounted() {
     this.getBaseInfo()
     this.id = (this.$route.query.id) as number | string

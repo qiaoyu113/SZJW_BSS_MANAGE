@@ -23,7 +23,7 @@
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
-import { DriverFollowOp } from '@/api/transport.ts'
+import { DriverFollowOp } from '@/api/driver'
 interface IState {
   [key: string]: any;
 }

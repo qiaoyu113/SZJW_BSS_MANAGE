@@ -12,8 +12,10 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
+import { SpecialInterview } from '@/api/driver'
+import { GetCityByCode, GetManagerLists } from '@/api/common'
 @Component({
   name: 'SpecialInterview',
   components: {
@@ -22,10 +24,11 @@ import SelfForm from '@/components/base/SelfForm.vue'
 })
 export default class extends Vue {
     @Prop({ default: () => {} }) form!:any
+    @Prop({ default: () => {} }) obj!:any
 
     private listQuery = {
       gmId: '',
-      b: '',
+      inviteType: '',
       sourceChannel: '',
       whereKnow: '',
       heavyAgentName: '',
@@ -39,6 +42,7 @@ export default class extends Vue {
       intentWorkDuration: '',
       originIncomeAvg: '',
       expIncomeAvg: '',
+      householdType: '',
       houseAddress: [],
       householdDistrict: '',
       childNum: '',
@@ -47,6 +51,7 @@ export default class extends Vue {
       livingAge: '',
       drivingLicenceType: '',
       hasOwnCar: '',
+      ownCarNum: '',
       maxAdvancePayment: '',
       heavyLifting: '',
       providePersonalCredit: '',
@@ -63,13 +68,14 @@ export default class extends Vue {
         key: 'gmId',
         label: '加盟经理:',
         tagAttrs: {
-          placeholder: '加盟经理'
+          placeholder: '加盟经理',
+          filterable: true
         },
         options: []
       },
       {
         type: 2,
-        key: 'b',
+        key: 'inviteType',
         label: '邀约方式:',
         tagAttrs: {
           placeholder: '邀约方式'
@@ -121,11 +127,11 @@ export default class extends Vue {
         label: '面试地址:',
         tagAttrs: {
           placeholder: '现居住地址',
-          listeners: {
-            'change': this.handleInterviewAddressChange
+          props: {
+            lazy: true,
+            lazyLoad: this.loadinterviewAddress
           }
-        },
-        options: []
+        }
       },
       {
         type: 1,
@@ -147,11 +153,11 @@ export default class extends Vue {
         w: '130px',
         tagAttrs: {
           placeholder: '意向工作区域',
-          listeners: {
-            'change': this.handleIntentionChange
+          props: {
+            lazy: true,
+            lazyLoad: this.loadintentAddress
           }
-        },
-        options: []
+        }
       },
       {
         type: 1,
@@ -210,7 +216,7 @@ export default class extends Vue {
       {
         type: 4,
         label: '户籍类型',
-        key: '',
+        key: 'householdType',
         options: [
           {
             label: '农村',
@@ -228,11 +234,11 @@ export default class extends Vue {
         label: '户籍地址:',
         tagAttrs: {
           placeholder: '户籍地址',
-          listeners: {
-            'change': this.handlehouseChange
+          props: {
+            lazy: true,
+            lazyLoad: this.loadhouseAddress
           }
-        },
-        options: []
+        }
       },
       {
         type: 1,
@@ -325,7 +331,7 @@ export default class extends Vue {
       },
       {
         type: 2, // 有几辆
-        key: '',
+        key: 'ownCarNum',
         w: '0px',
         col: 4,
         options: [
@@ -394,14 +400,6 @@ export default class extends Vue {
         options: []
       },
       {
-        type: 1,
-        key: '',
-        label: '补充信息',
-        tagAttrs: {
-          placeholder: '请输入补充信息'
-        }
-      },
-      {
         type: 4,
         key: 'isAdvancedIntention',
         label: '是否是高意向司机',
@@ -434,7 +432,7 @@ export default class extends Vue {
       gmId: [
         { required: true, message: '请选择加盟经理', trigger: 'blur' }
       ],
-      b: [
+      inviteType: [
         { required: true, message: '请选择邀约方式', trigger: 'blur' }
       ],
       sourceChannel: [
@@ -476,6 +474,9 @@ export default class extends Vue {
       expIncomeAvg: [
         { required: true, message: '请输入期望月均净收入，去油去电', trigger: 'blur' }
       ],
+      householdType: [
+        { required: true, message: '请选择户籍类型', trigger: 'blur' }
+      ],
       houseAddress: [
         { required: true, message: '请选择户籍地址', trigger: 'blur' }
       ],
@@ -499,6 +500,9 @@ export default class extends Vue {
       ],
       hasOwnCar: [
         { required: true, message: '请选择是否有自己的货车', trigger: 'blur' }
+      ],
+      ownCarNum: [
+        { required: true, message: '请输入', trigger: 'blur' }
       ],
       maxAdvancePayment: [
         { required: true, message: '请选择最大可支付首付款', trigger: 'blur' }
@@ -525,28 +529,181 @@ export default class extends Vue {
         { required: true, message: '请输入remarks', trigger: 'blur' }
       ]
     }
-
-    handlePassClick() {
-
-    }
-
-    /**
-     *先居住地址
-    */
-    handleInterviewAddressChange(val:any) {
-
+    mounted() {
+      this.getManagers()
     }
     /**
-   *意向地址
+   *获取加盟经理列表
    */
-    handleIntentionChange(val:any) {
+    async getManagers() {
+      try {
+        let { data: res } = await GetManagerLists()
+        if (res.success) {
+          this.formItem[0].options = res.data.map(function(item:any) {
+            return {
+              label: item.name,
+              value: item.id
+            }
+          })
+        } else {
+          this.$message.error(res.errorMsg)
+        }
+      } catch (err) {
+        console.log(`get manager fail:${err}`)
+      }
+    }
 
+    @Watch('obj', { deep: true })
+    handleObjChange(val:any) {
+      this.listQuery = { ...this.listQuery, ...this.obj }
+    }
+
+    async handlePassClick() {
+      try {
+        let params = {
+          gmId: this.listQuery.gmId,
+          inviteType: this.listQuery.inviteType,
+          sourceChannel: this.listQuery.sourceChannel,
+          whereKnow: this.listQuery.whereKnow,
+          heavyAgentName: this.listQuery.heavyAgentName,
+          age: this.listQuery.age,
+          interviewProvince: this.listQuery.interviewAddress[0],
+          interviewCity: this.listQuery.interviewAddress[1],
+          interviewCounty: this.listQuery.interviewAddress[2],
+          interviewDistrict: this.listQuery.interviewDistrict,
+          intentWorkProvince: this.listQuery.intentAddress[0],
+          intentWorkCity: this.listQuery.intentAddress[1],
+          intentWorkCounty: this.listQuery.intentAddress[2],
+          intentWorkDistrict: this.listQuery.intentWorkDistrict,
+          intentDeliveryMode: this.listQuery.intentDeliveryMode,
+          intentCargoType: this.listQuery.intentCargoType,
+          intentWorkDuration: this.listQuery.intentWorkDuration,
+          originIncomeAvg: this.listQuery.originIncomeAvg,
+          expIncomeAvg: this.listQuery.expIncomeAvg,
+          householdType: this.listQuery.householdType,
+          householdProvince: this.listQuery.houseAddress[0],
+          householdCity: this.listQuery.houseAddress[1],
+          householdCounty: this.listQuery.houseAddress[2],
+          householdDistrict: this.listQuery.householdDistrict,
+          childNum: this.listQuery.childNum,
+          experience: this.listQuery.experience,
+          drivingAge: this.listQuery.drivingAge,
+          livingAge: this.listQuery.livingAge,
+          drivingLicenceType: this.listQuery.drivingLicenceType,
+          hasOwnCar: this.listQuery.hasOwnCar,
+          ownCarNum: this.listQuery.ownCarNum,
+          maxAdvancePayment: this.listQuery.maxAdvancePayment,
+          heavyLifting: this.listQuery.heavyLifting,
+          providePersonalCredit: this.listQuery.providePersonalCredit,
+          strategyRight: this.listQuery.strategyRight,
+          cooperateFocusPoint: this.listQuery.cooperateFocusPoint,
+          cooperateKeyFactor: this.listQuery.cooperateKeyFactor,
+          isAdvancedIntention: this.listQuery.isAdvancedIntention,
+          remarks: this.listQuery.remarks,
+          name: this.form.name,
+          phone: this.form.phone,
+          workCity: this.form.workCity,
+          carType: this.form.carType,
+          clueId: this.form.clueId
+        }
+        let { data: res } = await SpecialInterview(params)
+        if (res.success) {
+          this.handleFinish()
+        } else {
+          this.$message.error(res.errorMsg)
+        }
+      } catch (err) {
+        console.log(`special interview fail:${err}`)
+      }
+    }
+
+    @Emit('onFinish')
+    handleFinish() {
+    }
+    /**
+     * 面试地址
+     */
+    async loadinterviewAddress(node:any, resolve:any) {
+      let params:string[] = []
+      if (node.level === 0) {
+        params = ['100000']
+      } else if (node.level === 1) {
+        params = ['100000']
+        params.push(node.value)
+      } else if (node.level === 2) {
+        params = ['100000']
+        params.push(node.parent.value)
+        params.push(node.value)
+      }
+      try {
+        let nodes = await this.loadCityByCode(params)
+        resolve(nodes)
+      } catch (err) {
+        resolve([])
+      }
     }
     /**
      *户籍地址
-    */
-    handlehouseChange(val:any) {
+     */
+    async loadhouseAddress(node:any, resolve:any) {
+      let params:string[] = []
+      if (node.level === 0) {
+        params = ['100000']
+      } else if (node.level === 1) {
+        params = ['100000']
+        params.push(node.value)
+      } else if (node.level === 2) {
+        params = ['100000']
+        params.push(node.parent.value)
+        params.push(node.value)
+      }
+      try {
+        let nodes = await this.loadCityByCode(params)
+        resolve(nodes)
+      } catch (err) {
+        resolve([])
+      }
+    }
 
+    /**
+     * 加载城市
+     */
+    async loadCityByCode(params:string[]) {
+      try {
+        let { data: res } = await GetCityByCode(params)
+        if (res.success) {
+          const nodes = res.data.map(function(item:any) {
+            return {
+              value: item.code,
+              label: item.name,
+              leaf: params.length > 2
+            }
+          })
+          return nodes
+        }
+      } catch (err) {
+        console.log(`load city by code fail:${err}`)
+      }
+    }
+    /**
+     *意向工作区域
+     */
+    async loadintentAddress(params:string[]) {
+      try {
+        let { data: res } = await GetCityByCode(params)
+        if (res.success) {
+          const nodes = res.data.map(function(item:any) {
+            return {
+              value: item.code,
+              label: item.name,
+              leaf: params.length > 2
+            }
+          })
+          return nodes
+        }
+      } catch (err) {
+        console.log(`load city by code fail:${err}`)
+      }
     }
 }
 </script>
