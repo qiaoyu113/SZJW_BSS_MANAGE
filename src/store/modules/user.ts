@@ -60,29 +60,33 @@ class User extends VuexModule implements IUserState {
     let { username, password } = userInfo
     username = username.trim()
     const { data } = await login({ username, password })
-    if (data.data.flag) {
-      setToken(data.data.token)
-      setUser(data.data)
-      let roleName = ''
-      if (data.data.busiPermission && data.data.busiPermission.length > 0) {
-        data.data.busiPermission.forEach((Item:any) => {
-          if (Item === '0') roleName = '梧桐专车 '
-          if (Item === '1') roleName = roleName + ' 梧桐共享'
-        })
+    if (data.success) {
+      if (data.data.flag) {
+        setToken(data.data.token)
+        setUser(data.data)
+        let roleName = ''
+        if (data.data.busiPermission && data.data.busiPermission.length > 0) {
+          data.data.busiPermission.forEach((Item:any) => {
+            if (Item === '0') roleName = '梧桐专车 '
+            if (Item === '1') roleName = roleName + ' 梧桐共享'
+          })
+        } else {
+          roleName = '暂无角色'
+        }
+        this.SET_EMAIL(roleName)
+        this.SET_TOKEN(data.data.token)
+        this.SET_NAME(data.data.bssLoginName ? data.data.bssLoginName : '暂无名称')
+        this.SET_ROLES(['admin'])
+        PermissionModule.GenerateRoutes(this.roles)
+        // Add generated routes
+        router.addRoutes(PermissionModule.dynamicRoutes)
+        // // Reset visited views and cached views
+        TagsViewModule.delAllViews()
       } else {
-        roleName = '暂无角色'
+        Message.error(data.data.msg)
       }
-      this.SET_EMAIL(roleName)
-      this.SET_TOKEN(data.data.token)
-      this.SET_NAME(data.data.bssLoginName ? data.data.bssLoginName : '暂无名称')
-      this.SET_ROLES(['admin'])
-      PermissionModule.GenerateRoutes(this.roles)
-      // Add generated routes
-      router.addRoutes(PermissionModule.dynamicRoutes)
-      // // Reset visited views and cached views
-      TagsViewModule.delAllViews()
     } else {
-      Message.error(data.data.msg)
+      Message.error(data.errorMsg)
     }
   }
 

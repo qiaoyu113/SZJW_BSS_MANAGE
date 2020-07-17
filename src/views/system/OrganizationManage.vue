@@ -84,66 +84,133 @@
         :model="dialogForm"
         label-width="80px"
       >
-        <el-tabs
-          v-if="addData.type === 3 && isAdd"
-          v-model="activeName"
-          class="dialog-tab"
-        >
-          <el-tab-pane
-            label="卫星城"
-            name="first"
+        <template v-if="isAdd">
+          <el-form-item
+            v-if="addData.type === 2"
+            label="城市"
+            prop="areaCode"
           >
-            <el-form-item
-              v-if="activeName === 'first'"
-              label="组织名称"
-              prop="name"
-            >
-              <el-input
-                v-model="dialogForm.name"
-                placeholder="请输入2-10位中文"
-                maxlength="10"
-              />
-            </el-form-item>
-          </el-tab-pane>
-          <el-tab-pane
-            label="小组"
-            name="second"
+            <el-cascader
+              ref="cascader"
+              v-model="areaList"
+              :options="optionsArea"
+              :props="props"
+              clearable
+              @change="handleChange"
+            />
+            <el-input
+              v-model="dialogForm.name"
+              class="opacity"
+              placeholder="请选择"
+            />
+          </el-form-item>
+          <el-tabs
+            v-else-if="addData.type === 3"
+            v-model="activeName"
+            class="dialog-tab"
+            :tab-click="resetDialog"
           >
-            <el-form-item
-              v-if="activeName === 'second'"
-              label="组织名称"
-              prop="name"
+            <el-tab-pane
+              label="卫星城"
+              name="first"
             >
-              <el-input
-                v-model="dialogForm.name"
-                placeholder="请输入2-10位中文"
-                maxlength="10"
-              />
-            </el-form-item>
-          </el-tab-pane>
-        </el-tabs>
-        <el-form-item
-          v-else
-          label="组织名称"
-          prop="name"
-        >
-          <el-input
-            v-model="dialogForm.name"
-            placeholder="请输入2-10位中文"
-            maxlength="10"
-          />
-        </el-form-item>
+              <el-form-item
+                v-if="activeName === 'first'"
+                label="城市"
+                prop="areaCode"
+              >
+                <el-cascader
+                  ref="cascader"
+                  v-model="areaList"
+                  :options="optionsArea"
+                  :props="props"
+                  :show-all-levels="false"
+                  clearable
+                  placeholder=""
+                  @change="handleChange"
+                />
+                <el-input
+                  v-model="dialogForm.name"
+                  class="opacity"
+                  placeholder="请选择"
+                />
+              </el-form-item>
+            </el-tab-pane>
+            <el-tab-pane
+              label="小组"
+              name="second"
+            >
+              <el-form-item
+                v-if="activeName === 'second'"
+                label="组织名称"
+                prop="name"
+              >
+                <el-input
+                  v-model="dialogForm.name"
+                  placeholder="请输入2-10位中文"
+                  maxlength="10"
+                />
+              </el-form-item>
+            </el-tab-pane>
+          </el-tabs>
+          <el-form-item
+            v-else
+            label="组织名称"
+            prop="name"
+          >
+            <el-input
+              v-model="dialogForm.name"
+              placeholder="请输入2-10位中文"
+              maxlength="10"
+            />
+          </el-form-item>
+        </template>
+        <template v-else>
+          <el-form-item
+            v-if="addData.type === 3 || addData.type === 4"
+            label="城市"
+            prop="areaCode"
+          >
+            <el-cascader
+              ref="cascader"
+              v-model="areaList"
+              :options="optionsArea"
+              :props="props"
+              :show-all-levels="false"
+              clearable
+              placeholder=""
+              @change="handleChange"
+            />
+            <el-input
+              v-model="dialogForm.name"
+              class="opacity"
+              placeholder="请选择"
+            />
+          </el-form-item>
+          <el-form-item
+            v-else
+            label="组织名称"
+            prop="name"
+          >
+            <el-input
+              v-model="dialogForm.name"
+              placeholder="请输入2-10位中文"
+              maxlength="10"
+            />
+          </el-form-item>
+        </template>
       </el-form>
     </Dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
 import Dialog from '@/components/Dialog/index.vue'
+import { GetArea } from '@/api/common'
 import { getOfficeList, createOffice, deleteOffice, sortOffice, updateOffice } from '@/api/system'
 
 import '@/styles/common.scss'
@@ -175,16 +242,53 @@ export default class extends Vue {
     'name': '',
     'parentId': 0,
     'parentIds': '',
+    'areaCode': '', // 区域编码
     'type': 0
   }
+  private optionsArea: any = []
+  private props :any = {
+    label: 'name',
+    value: 'code',
+    lazy: true,
+    async lazyLoad(node: any, resolve: any) {
+      const { value } = node
+      if (node.children.length > 0) {
+        resolve(node.children)
+        return
+      }
+      GetArea(['100000', value])
+        .then(({ data }) => {
+          if (data.success) {
+            const nodes = data.data.map((item: any) => {
+              item.leaf = 2
+              return item
+            })
+            resolve(nodes)
+          } else {
+            this.$message.error(data)
+          }
+        })
+    }
+  }
+  private areaList: any = ['330000', '330100']
   private rules: any = {
     name: [
       { required: true, message: '请输入组织名称', trigger: 'blur' },
       { pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/, message: '请输入2-10个中文', trigger: 'blur' }
+    ],
+    areaCode: [
+      { required: true, message: '请选择城市', trigger: 'change' }
     ]
   }
   private isAdd: boolean = false;
   private disabled: boolean = false;
+
+  @Watch('dialogForm.areaCode')
+  private onval(value:any) {
+    if (value === '') {
+      this.dialogForm.name = ''
+    }
+  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
@@ -202,6 +306,7 @@ export default class extends Vue {
     this.dialogTit = '编辑组织'
     this.isAdd = false
     this.dialogForm.name = data.name
+    this.dialogForm.areaCode = data.areaCode
     this.showDialog = true
   }
   private async upOffice(node:any, item: any) {
@@ -263,7 +368,7 @@ export default class extends Vue {
     ((this.$refs['dialogForm']) as any).validate(async(valid:boolean) => {
       if (valid) {
         this.dialogForm.parentId = this.addData.id
-        this.dialogForm.parentIds = this.addData.parentIds
+        this.dialogForm.parentIds = this.addData.parentIds + ',' + this.addData.id
         if (this.addData.type === 3) {
           this.dialogForm.type = this.activeName === 'first' ? 4 : 5
         } else {
@@ -278,17 +383,22 @@ export default class extends Vue {
             this.$message.success(`创建成功`)
             this.append(data.data)
             this.showDialog = false
+          } else {
+            this.$message.error(data)
           }
         } else {
           // 编辑
           const { data } = await updateOffice({
             id: this.addData.id,
-            name: this.dialogForm.name
+            name: this.dialogForm.name,
+            areaCode: this.dialogForm.areaCode
           })
           if (data.success) {
             this.$message.success(`编辑成功`)
-            this.update(this.dialogForm.name)
+            this.update(this.dialogForm)
             this.showDialog = false
+          } else {
+            this.$message.error(data)
           }
         }
       }
@@ -297,10 +407,19 @@ export default class extends Vue {
   // 清楚dialog
   private resetDialog() {
     this.dialogForm.name = ''
+    this.dialogForm.areaCode = ''
+    this.areaList = []
     this.activeName = 'first'
     this.$nextTick(() => {
       (this.$refs.dialogForm as any).clearValidate()
     })
+  }
+  private handleChange(value:any) {
+    this.dialogForm.areaCode = value.slice().pop() || ''
+    const node = (this.$refs.cascader as any).getCheckedNodes()
+    if (node && node[0]) {
+      this.dialogForm.name = node[0].label
+    }
   }
   // 获取组织管理列表
   private async getOfficeList() {
@@ -348,16 +467,39 @@ export default class extends Vue {
     this.addData.officeVOs.unshift(newChild)
   }
   // update tree节点
-  private update(name: string) {
-    this.$set(this.addNode.data, 'name', name)
+  private update(item: any) {
+    this.$set(this.addNode.data, 'name', item.name)
+    this.$set(this.addNode.data, 'areaCode', item.areaCode)
+  }
+  private async getArea() {
+    const { data } = await GetArea(['100000'])
+    if (data.success) {
+      this.optionsArea = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private fetchData() {
+    this.getOfficeList()
+    this.getArea()
   }
   mounted() {
-    this.getOfficeList()
+    this.fetchData()
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.OrganizationManagement{
+  .el-cascader{
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    color:rgba(0, 0, 0,0);
+    display: block;
+  }
+}
 .mr10 {
   margin-right: 10px;
 }
@@ -390,5 +532,12 @@ export default class extends Vue {
 <style scoped>
 .OrganizationManagement .el-badge >>> sup{
   transform: translateY(6px)
+}
+.OrganizationManagement .el-cascader >>> input{
+  background-color: rgba(0, 0, 0, 0);
+  color: rgba(0, 0, 0, 0);
+}
+.OrganizationManagement .opacity >>> input {
+  border-color: rgba(0, 0, 0, 0);
 }
 </style>

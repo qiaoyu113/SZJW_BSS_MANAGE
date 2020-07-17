@@ -23,6 +23,12 @@ export const updateProduct = (data: any) =>
     method: 'post',
     data
   })
+// 获取所有车型
+export const getCarlist = () =>
+  request({
+    url: `${baseURL}/v1/product/product/carType/list`,
+    method: 'get'
+  })
 
 // 上架或者下架商品
 export const shelvesOrTheshelves = (data: any) =>

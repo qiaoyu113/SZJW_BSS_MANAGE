@@ -25,112 +25,112 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="货主编号"
-              value="刘德华123123"
+              :value="OwnerDetail.customerId"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="线索编号"
-              value="15071362991"
+              :value="OwnerDetail.clueId"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="销售"
-              value="武汉市黄陂区前川街人信城"
+              :value="OwnerDetail.saleName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="电话"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="OwnerDetail.salePhone"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="公司简称"
-              value="04:30-11:30"
+              :value="OwnerDetail.customerCompanyName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="公司主体"
-              value="04:30-11:30"
+              :value="OwnerDetail.customerCompanyMain"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="对接业务联系人"
-              value="04:30-11:30"
+              :value="OwnerDetail.bussinessName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="对接业务联系电话"
-              value="04:30-11:30"
+              :value="OwnerDetail.bussinessPhone"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="职务"
-              value="04:30-11:30"
+              :value="OwnerDetail.bussinessPosition"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="对接业务身份证号"
-              value="04:30-11:30"
+              :value="OwnerDetail.bussinessCard"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="分类"
-              value="04:30-11:30"
+              :value="OwnerDetail.classificationName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="城市"
-              value="04:30-11:30"
+              :value="OwnerDetail.cityNames"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="合同止期"
-              value="04:30-11:30"
+              :value="OwnerDetail.contractEnd"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="创建日期"
-              value="04:30-11:30"
+              :value="OwnerDetail.createDate"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="详细地址"
-              value="04:30-11:30"
+              :value="OwnerDetail.address"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="备注"
-              value="04:30-11:30"
+              :value="OwnerDetail.remark"
             />
           </el-col>
         </el-row>
@@ -142,8 +142,8 @@
         <el-row>
           <el-col :span="isPC ? 12 : 24">
             <el-image
-              :preview-src-list="['https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg']"
-              src="https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg"
+              :preview-src-list="[OwnerDetail.businessLicenseUrl]"
+              src="OwnerDetail.businessLicenseUrl"
             />
           </el-col>
         </el-row>
@@ -161,105 +161,105 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="姓名"
-              value="刘德华123123"
+              :value="OwnerDetail.clueInfoVO.name"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="手机号"
-              value="15071362991"
+              :value="OwnerDetail.clueInfoVO.phone"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="线索编号"
-              value="武汉市黄陂区前川街人信城"
+              :value="OwnerDetail.clueInfoVO.clueId"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="分配状态"
-              value="四川省成都市青白江区祥福镇宇培分拨中心"
+              :value="OwnerDetail.clueInfoVO.distributionState === 1 ? '待分配' : (OwnerDetail.clueInfoVO.distributionState === 2 ? '已分配' : '暂无数据')"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="线索状态"
-              value="04:30-11:30"
+              :value="OwnerDetail.clueInfoVO.clueState === 0 ? '待跟进' : (OwnerDetail.clueInfoVO.clueState === 1 ? '已跟进' : (OwnerDetail.clueInfoVO.clueState === 2 ? '已转化' : (OwnerDetail.clueInfoVO.clueState === 3 ? '无效' : '暂无数据')))"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="线索来源"
-              value="04:30-11:30"
+              :value="OwnerDetail.clueInfoVO.clueSourceName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="公司"
-              value="04:30-11:30"
+              :value="OwnerDetail.clueInfoVO.company"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="职务"
-              value="04:30-11:30"
+              :value="OwnerDetail.bussinessPosition"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="城市"
-              value="04:30-11:30"
+              :value="OwnerDetail.clueInfoVO.cityName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="销售"
-              value="04:30-11:30"
+              :value="OwnerDetail.saleName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="销售电话"
-              value="04:30-11:30"
+              :value="OwnerDetail.salePhone"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="创建日期"
-              value="04:30-11:30"
+              :value="OwnerDetail.clueInfoVO.createDate"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="更新日期"
-              value="04:30-11:30"
+              :value="OwnerDetail.clueInfoVO.createDate"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="详细地址"
-              value="04:30-11:30"
+              :value="OwnerDetail.address"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="备注"
-              value="04:30-11:30"
+              :value="OwnerDetail.remark"
             />
           </el-col>
         </el-row>
@@ -272,74 +272,48 @@
           <el-col :span="isPC ? 8 : 24">
             <DetailItem
               name="是否继续跟进"
-              value="刘德华123123"
+              :value="OwnerDetail.clueState === 1 || OwnerDetail.clueState === 2 ? '是' : '否'"
             />
           </el-col>
-          <el-col :span="isPC ? 8 : 24">
+          <el-col
+            v-for="item in OwnerDetail.clueInfoVO.lineClueDemandVos"
+            :key="item.demandNo"
+            :span="isPC ? 8 : 24"
+          >
             <DetailItem
               name="需求车型"
-              value="刘德华123123"
-            />
-          </el-col>
-          <el-col :span="isPC ? 8 : 24">
-            <DetailItem
-              name="需求车型"
-              value="刘德华123123"
+              :value="item.demandCarType + '/' + item.demandNo"
             />
           </el-col>
         </el-row>
 
-        <div class="follow">
+        <div
+          v-for="(item, index) in OwnerDetail.clueInfoVO.lineClueFollowVos"
+          :key="item.id"
+          class="follow"
+        >
           <p>
             <span class="follow_title">
-              跟进记录1
+              跟进记录{{ index + 1 }}
             </span>
           </p>
           <el-row>
             <el-col :span="isPC ? 8 : 24">
               <DetailItem
                 name="拜访时间"
-                value="刘德华123123"
+                :value="item.visitDate"
               />
             </el-col>
             <el-col :span="isPC ? 8 : 24">
               <DetailItem
                 name="拜访地址"
-                value="刘德华123123"
+                :value="item.visitAddress"
               />
             </el-col>
             <el-col :span="isPC ? 8 : 24">
               <DetailItem
                 name="拜访记录"
-                value="刘德华123123"
-              />
-            </el-col>
-          </el-row>
-        </div>
-
-        <div class="follow">
-          <p>
-            <span class="follow_title">
-              跟进记录2
-            </span>
-          </p>
-          <el-row>
-            <el-col :span="isPC ? 8 : 24">
-              <DetailItem
-                name="是否继续跟进"
-                value="刘德华123123"
-              />
-            </el-col>
-            <el-col :span="isPC ? 8 : 24">
-              <DetailItem
-                name="需求车型"
-                value="刘德华123123"
-              />
-            </el-col>
-            <el-col :span="isPC ? 8 : 24">
-              <DetailItem
-                name="需求车型"
-                value="刘德华123123"
+                :value="item.visitRecord"
               />
             </el-col>
           </el-row>
@@ -352,7 +326,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetOwnerDetail } from '@/api/cargo'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -369,43 +343,69 @@ import '@/styles/common.scss'
 export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
-    private ruleForm:any = {
-      name: '',
-      region: '',
-      date1: '',
-      date2: '',
-      delivery: false,
-      type: [],
-      resource: '',
-      desc: ''
-    }
-    private rules:any = {
-      name: [
-        { required: true, message: '请输入活动名称', trigger: 'blur' },
-        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-      ],
-      region: [
-        { required: true, message: '请选择活动区域', trigger: 'change' }
-      ],
-      date1: [
-        { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-      ],
-      date2: [
-        { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-      ],
-      type: [
-        { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-      ],
-      resource: [
-        { required: true, message: '请选择活动资源', trigger: 'change' }
-      ],
-      desc: [
-        { required: true, message: '请填写活动形式', trigger: 'blur' }
-      ]
+    private OwnerDetail:any = {
+      'address': '',
+      'businessLicenseUrl': '',
+      'bussinessCard': '',
+      'bussinessName': '',
+      'bussinessPhone': '',
+      'bussinessPosition': '',
+      'city': 0,
+      'cityName': '',
+      'classification': 0,
+      'classificationName': 0,
+      'clueId': '',
+      'clueInfoVO': {
+        'address': '',
+        'city': 0,
+        'cityName': '',
+        'clueId': '',
+        'clueSource': 0,
+        'clueSourceName': '',
+        'clueState': 0,
+        'company': '',
+        'createDate': '',
+        'createId': 0,
+        'distributionState': 0,
+        'invalidDescription': '',
+        'lineClueDemandVos': [
+          {
+            'demandCarType': 0,
+            'demandNo': 0,
+            'id': 0
+          }
+        ],
+        'lineClueFollowVos': [
+          {
+            'id': 0,
+            'visitAddress': '',
+            'visitDate': '',
+            'visitRecord': ''
+          }
+        ],
+        'lineSaleId': 0,
+        'lineSaleName': '',
+        'name': '',
+        'phone': '',
+        'position': '',
+        'remark': '',
+        'updateDate': '',
+        'updateId': 0
+      },
+      'contractEnd': '',
+      'createDate': '',
+      'customerCompanyMain': '',
+      'customerCompanyName': '',
+      'customerId': '',
+      'lineSaleId': 0,
+      'remark': '',
+      'saleName': '',
+      'salePhone': ''
     }
 
     created() {
       this.id = this.$route.query.id
+      this.fetchData(this.id)
     }
 
     mounted() {
@@ -417,6 +417,17 @@ export default class extends Vue {
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
+    }
+
+    // 请求详情
+    private async fetchData(value: any) {
+      console.log(value)
+      const { data } = await GetOwnerDetail({ customerId: value })
+      if (data.success) {
+        this.OwnerDetail = data.data
+      } else {
+        this.$message.error(data)
+      }
     }
 
     private submitForm(formName:any) {

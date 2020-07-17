@@ -12,40 +12,49 @@
           <el-col :span="24">
             <el-form-item
               label="是否交付"
-              prop="name"
+              prop="isDelivery"
             >
-              <el-radio-group v-model="ruleForm.region">
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线下场地免费" />
+              <el-radio-group v-model="ruleForm.isDelivery">
+                <el-radio
+                  label="1"
+                >
+                  是
+                </el-radio>
+                <el-radio
+                  label="2"
+                >
+                  否
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item
-              label="是否交付"
-              prop="name"
-            >
-              <el-radio-group v-model="ruleForm.region">
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线下场地免费" />
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
+          <el-col
+            v-if="ruleForm.isDelivery === '1'"
+            :span="24"
+          >
             <el-form-item
               label="适用工作城市"
-              prop="name"
+              prop="city"
             >
-              <el-radio-group v-model="ruleForm.region">
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线上品牌商赞助" />
-                <el-radio label="线下场地免费" />
-              </el-radio-group>
+              <el-checkbox
+                v-model="checkAll"
+                :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange"
+              >
+                全选
+              </el-checkbox>
+              <el-checkbox-group
+                v-model="ruleForm.city"
+                @change="handleCheckedCitiesChange"
+              >
+                <el-checkbox
+                  v-for="item in optionsCity"
+                  :key="item.code"
+                  :label="item.code"
+                >
+                  {{ item.name }}
+                </el-checkbox>
+              </el-checkbox-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -68,12 +77,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { Form as ElForm, Input } from 'element-ui'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { TagsViewModule } from '@/store/modules/tags-view'
-
+import { GetOpenCityData } from '@/api/common'
+import { getSettingSystem, settingSystem } from '@/api/product'
 import '@/styles/common.scss'
 @Component({
   name: 'SystemSetting',
@@ -82,66 +90,97 @@ import '@/styles/common.scss'
   }
 })
 export default class extends Vue {
+  private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
+
   private ruleForm:any = {
-    name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: ''
+    isDelivery: '',
+    city: []
   }
   private rules:any = {
-    name: [
-      { required: true, message: '请输入活动名称', trigger: 'blur' },
-      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+    isDelivery: [
+      { required: true, message: '请选择是否交付', trigger: 'change' }
     ],
-    region: [
-      { required: true, message: '请选择活动区域', trigger: 'change' }
-    ],
-    date1: [
-      { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-    ],
-    date2: [
-      { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-    ],
-    type: [
-      { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-    ],
-    resource: [
-      { required: true, message: '请选择活动资源', trigger: 'change' }
-    ],
-    desc: [
-      { required: true, message: '请填写活动形式', trigger: 'blur' }
+    city: [
+      { required: true, message: '请选择城市', trigger: 'change' }
     ]
+  }
+  private checkAll: boolean= false
+  private isIndeterminate: boolean= false
+
+  @Watch('ruleForm.isDelivery')
+  private onval(value:any) {
+    if (value === '2') {
+      this.ruleForm.city = []
+      this.checkAll = false
+    }
   }
 
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
-
+  private handleCheckAllChange(val: any) {
+    this.ruleForm.city = val ? this.optionsCity.map((item: any) => item.code) : []
+    this.isIndeterminate = false
+  }
+  private handleCheckedCitiesChange(value: any) {
+    console.log(value, this.optionsCity)
+    let checkedCount = value.length
+    this.checkAll = checkedCount === this.optionsCity.length
+    this.isIndeterminate = checkedCount > 0 && checkedCount < this.optionsCity.length
+  }
   private submitForm(formName:any) {
-    (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
+    (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
-        alert('submit!')
-      } else {
-        console.log('error submit!!')
-        return false
+        const formData = new FormData()
+        formData.append('jsonStr', JSON.stringify(this.ruleForm))
+        const { data } = await settingSystem(formData)
+        if (data.success) {
+          this.$message.success(`系统设置保存成功`)
+        } else {
+          this.$message.error(data)
+        }
       }
     })
   }
 
   private resetForm(formName:any) {
-    (this.$refs[formName] as ElForm).resetFields()
+    this.ruleForm.isDelivery = ''
+    this.ruleForm.city = ''
+    this.isIndeterminate = false
+    this.checkAll = false
+    this.$nextTick(() => {
+      (this.$refs[formName] as any).clearValidate()
+    })
   }
-
-  private addCar() {
-    console.log('添加车型')
+  private async getSetting() {
+    const { data } = await getSettingSystem()
+    if (data.success) {
+      // console.log(data.data)
+      if (data.data) {
+        // console.log(data.data)
+        const form = JSON.parse(data.data)
+        this.ruleForm = form
+        this.handleCheckedCitiesChange(this.ruleForm['city'])
+      }
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async getDictionary() {
+    const { data } = await GetOpenCityData()
+    if (data.success) {
+      this.optionsCity = data.data
+    } else {
+      this.$message.error(data)
+    }
+    this.getSetting()
+  }
+  private fetchData() {
+    this.getDictionary()
   }
   mounted() {
-
+    this.fetchData()
   }
 }
 </script>
