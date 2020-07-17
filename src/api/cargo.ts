@@ -108,3 +108,11 @@ export const pictureDetail = (params: any) =>
     method: 'get',
     params
   })
+
+// 获取货主详情
+export const GetOwnerDetail = (data: any) =>
+  request({
+    url: '/line/v1/customer/customerInfo',
+    method: 'get',
+    data
+  })

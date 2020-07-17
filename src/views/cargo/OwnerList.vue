@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
+        @handle-query="getList"
       />
     </SuggestContainer>
 
@@ -117,7 +118,7 @@
             label="公司简称"
           >
             <template slot-scope="{row}">
-              {{ row.company | DataIsNull }}
+              {{ row.customerCompanyName | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -127,7 +128,7 @@
             label="分类"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.primaryClassificationName | DataIsNull }}</p>
+              <p>{{ scope.row.classificationName | DataIsNull }}</p>
             </template>
           </el-table-column>
 
@@ -179,7 +180,7 @@
             label="创建日期"
           >
             <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
+              {{ row.createDate | Timestamp }}
             </template>
           </el-table-column>
 
@@ -189,7 +190,7 @@
             label="合同止期"
           >
             <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
+              {{ row.contractEnd | Timestamp }}
             </template>
           </el-table-column>
 
@@ -234,6 +235,11 @@
                   >
                     详情
                   </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goClue(scope.row.clueId)"
+                  >
+                    编辑
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -272,7 +278,7 @@
     >
       <el-alert
         class="mb10"
-        :title="`已选货主${multipleSelectionAssign.length}位，请选择销售！(货主其关联的线索也会分配给该销售)`"
+        :title="`已选货主${multipleSelection.length}位，请选择销售！(货主其关联的线索也会分配给该销售)`"
         type="warning"
         :closable="false"
       />
@@ -285,15 +291,22 @@
         height="38vh"
         style="width: 100%;"
         align="left"
-        row-key="id"
-        @selection-change="handleSelectionDialog"
+        row-key="saleId"
       >
         <el-table-column
           type="selection"
           width="55"
           reserve-selection
           align="center"
-        />
+        >
+          <template slot-scope="scope">
+            <el-radio
+              v-model="templateRadio"
+              :label="scope.row.messageTemplateId"
+              @change.native="handleSelectionDialog(scope.$index,scope.row)"
+            />
+          </template>
+        </el-table-column>
         <el-table-column
           type="index"
           width="55"
@@ -303,15 +316,15 @@
         />
         <el-table-column
           label="销售姓名"
-          prop="name"
+          prop="saleName"
         />
         <el-table-column
           label="联系电话"
-          prop="name"
+          prop="phone"
         />
         <el-table-column
           label="线索数量"
-          prop="name"
+          prop="nums"
         />
       </el-table>
       <pagination
@@ -339,7 +352,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetCustomerList, GetCustomerSaleList, Distribution } from '@/api/customer'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -420,7 +433,18 @@ export default class extends Vue {
       endDate: '',
       startDate: '',
       state: '',
-      lineSaleId: ''
+      lineSaleId: '',
+
+      bussinessName: '',
+      bussinessPhone: '',
+      classification: '',
+      contractEnd: '',
+      contractEndEndTime: '',
+      contractEndStartTime: '',
+      createDate: '',
+      customerCompanyName: '',
+      customerId: '',
+      pageNumber: ''
     };
     // 弹窗分配
     private dialogList: any[] = [];
@@ -483,6 +507,7 @@ export default class extends Vue {
 
     // 请求列表
     private async getList(value: any) {
+      console.log(value)
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
@@ -507,8 +532,7 @@ export default class extends Vue {
       this.dialogListQuery.page = value.page
       this.dialogListQuery.limit = value.limit
       this.dialogLoading = true
-      const { data } = await GetCustomerList(this.dialogListQuery)
-      console.log(data)
+      const { data } = await GetCustomerSaleList(this.dialogListQuery)
       if (data.success) {
         this.dialogList = data.data
         this.dialogTotal = data.page.total
@@ -523,6 +547,11 @@ export default class extends Vue {
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
       this.$router.push({ name: 'OwnerDetail', query: { id: id } })
+    }
+
+    // 跳转线索
+    private goClue(id: string | (string | null)[] | null | undefined) {
+      this.$router.push({ name: 'EditClue', query: { id: id } })
     }
 
     // 批量操作
@@ -576,10 +605,24 @@ export default class extends Vue {
     }
 
     // 弹窗操作
-    private confirmAssign(done: any) {
+    private async confirmAssign(done: any) {
+      console.log(this.multipleSelection)
+      let linesIds: any = []
+      this.multipleSelection.forEach(i => {
+        linesIds.push(i.lineSaleId)
+      })
       // 提交操作
-      console.log(111333)
       if (this.multipleSelectionAssign.length) {
+        const { data } = await Distribution({
+          linesIds: linesIds,
+          saleId: ''
+        })
+        if (data.success) {
+          this.dialogList = data.data
+          this.dialogTotal = data.page.total
+        } else {
+          this.$message.error(data)
+        }
         this.assignShowDialog = false
       } else {
         this.$message({

@@ -8,28 +8,28 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="司机姓名"
-            value="刘德华123123"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.name"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            value="15071362991"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.workCityName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟小组"
-            value="武汉市黄陂区前川街人信城"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.gmTeam"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟经理"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.driverInfoVO.gmName"
           />
         </el-col>
       </el-row>
@@ -43,77 +43,77 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单单号"
-            value="刘德华123123"
+            :value="ContractDetail.orderInfoVO.orderId"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="商品分类"
-            value="15071362991"
+            :value="ContractDetail.busiTypeName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合租模式"
-            value="武汉市黄陂区前川街人信城"
+            :value="ContractDetail.cooperationModel === 1 ? '购车' : (ContractDetail.cooperationModel === 2 ? '租车' : ContractDetail.cooperationModel === 3 ? '带车' : '暂无数据')"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合作期限"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.cooperationTime"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单金额"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.goodsAmount"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.deliverDate"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="供应商"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.deliverDate"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="购买车型"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.orderInfoVO.cooperationCar"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="车辆信息"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            value="xxx"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="无税报价"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.carPrice"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="车牌号"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ContractDetail.plateNo"
           />
         </el-col>
       </el-row>
@@ -127,7 +127,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="运营经理"
-            value="刘德华123123"
+            :value="ContractDetail.operationName"
           />
         </el-col>
       </el-row>
@@ -141,19 +141,19 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交车日期"
-            value="刘德华123123"
+            :value="ContractDetail.deliveryTime"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="发动机号"
-            value="刘德华123123"
+            :value="ContractDetail.engineNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="发动机发票号"
-            value="刘德华123123"
+            :value="ContractDetail.engineInvoiceNo"
           />
         </el-col>
       </el-row>
@@ -236,25 +236,25 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="金融返利"
-            value="刘德华123123"
+            :value="ContractDetail.financialRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="保险返利"
-            value="刘德华123123"
+            :value="ContractDetail.insuranceRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="上牌返利"
-            value="刘德华123123"
+            :value="ContractDetail.plateNoRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="其他返利"
-            value="刘德华123123"
+            :value="ContractDetail.otherRebate"
           />
         </el-col>
       </el-row>
@@ -268,21 +268,21 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="供应商"
-            value="刘德华123123"
+            :value="ContractDetail.gpsSupplier"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="设备ID号"
-            value="刘德华123123"
+            :value="ContractDetail.gpsDeviceNo"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="SIM号"
-            value="刘德华123123"
+            :value="ContractDetail.gpsSimNo"
           />
         </el-col>
       </el-row>
@@ -296,14 +296,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            value="刘德华123123"
+            :value="ContractDetail.dealTime"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交付完成时间"
-            value="刘德华123123"
+            :value="ContractDetail.deliverDate"
           />
         </el-col>
       </el-row>
@@ -314,7 +314,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetOrderDeliverDetail } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -332,6 +332,148 @@ export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
     private list: any = [{ name: '12', a: '2', a1: '3', a2: '4' }];
+    private ContractDetail: any = {
+      'cooperationModel': 1,
+      'dealId': '',
+      'dealTime': '',
+      'deliveryTime': '',
+      'engineInvoiceNo': '',
+      'engineNo': '',
+      'financialRebate': '',
+      'gpsDeviceNo': '',
+      'gpsSimNo': '',
+      'gpsSupplier': '',
+      'id': '',
+      'insuranceRebate': '',
+      'operationId': '',
+      'orderDeliverRebateFORMs': [
+        {
+          'chassis': '',
+          'createDate': '',
+          'createId': '',
+          'delFlag': '',
+          'gps': '',
+          'id': '',
+          'orderId': '',
+          'priceType': '',
+          'tailgate': '',
+          'updateDate': '',
+          'updateId': '',
+          'vehicle': ''
+        }
+      ],
+      'orderDeliverRebateVOs': [
+        {
+          'chassis': '',
+          'createDate': '',
+          'createId': '',
+          'delFlag': true,
+          'gps': '',
+          'id': '',
+          'orderId': '',
+          'priceType': '',
+          'tailgate': '',
+          'updateDate': '',
+          'updateId': '',
+          'vehicle': ''
+        }
+      ],
+      'orderId': 'string',
+      'orderInfoVO': {
+        'busiType': '',
+        'busiTypeName': '',
+        'buyCarCompany': '',
+        'capacityQuota': '',
+        'carPrice': '',
+        'city': '',
+        'confirmId': '',
+        'confirmTime': '',
+        'cooperationCar': '',
+        'cooperationCarName': '',
+        'cooperationModel': '',
+        'cooperationTime': '',
+        'createDate': '',
+        'createId': '',
+        'createSource': '',
+        'deliverDate': '',
+        'driverId': '',
+        'driverInfoVO': {
+          'address': '',
+          'bankCardNo': '',
+          'busiType': 0,
+          'busiTypeName': '',
+          'carType': 0,
+          'carTypeName': '',
+          'clueId': '',
+          'corpUserId': '',
+          'createDate': '',
+          'createId': '',
+          'createName': '',
+          'delFlag': true,
+          'driverId': '',
+          'email': '',
+          'exterUserId': '',
+          'gmId': '',
+          'gmName': '',
+          'idNo': '',
+          'name': '',
+          'phone': '',
+          'sourceChannel': '',
+          'sourceChannelName': '',
+          'status': '',
+          'statusName': '',
+          'updateDate': '',
+          'updateId': '',
+          'updateName': '',
+          'workCity': '',
+          'workCityName': ''
+        },
+        'goodsAmount': '',
+        'id': '',
+        'incomeGuarantee': '',
+        'inspectionTime': '',
+        'insuranceTime': '',
+        'isDeliver': '',
+        'isPay': '',
+        'isRefund': '',
+        'leaseCarCompany': '',
+        'notPassId': '',
+        'notPassTime': '',
+        'operateFlag': '',
+        'orderId': '',
+        'orderPayRecordInfoVOList': [
+          {
+            'createDate': '',
+            'money': '',
+            'operateType': '',
+            'outTradeNo': '',
+            'payDate': '',
+            'payImageUrl': '',
+            'payType': '',
+            'prepayId': '',
+            'remarks': '',
+            'serviceFee': '',
+            'status': '',
+            'transactionId': '',
+            'updateDate': ''
+          }
+        ],
+        'passId': '',
+        'passTime': '',
+        'payCompleteTime': '',
+        'payType': '',
+        'plateNo': '',
+        'rake': '',
+        'refundTime': '',
+        'remarks': '',
+        'status': '',
+        'updateDate': '',
+        'updateId': ''
+      },
+      'otherRebate': '',
+      'plateNoRebate': '',
+      'status': ''
+    }
     private ruleForm:any = {
       name: '',
       region: '',
@@ -369,6 +511,7 @@ export default class extends Vue {
 
     created() {
       this.id = this.$route.query.id
+      this.getDetail(this.id)
     }
 
     mounted() {
@@ -391,6 +534,17 @@ export default class extends Vue {
           return false
         }
       })
+    }
+
+    // 请求详情
+    private async getDetail(value: any) {
+      const { data } = await GetOrderDeliverDetail({ orderId: value })
+      if (data.success) {
+        let datas = data.data
+        this.ContractDetail = datas
+      } else {
+        this.$message.error(data)
+      }
     }
 
     private resetForm(formName:any) {

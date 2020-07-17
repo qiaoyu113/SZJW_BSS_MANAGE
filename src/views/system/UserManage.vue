@@ -9,6 +9,7 @@
       <UserListForm
         :list-query="listQuery"
         @handle-tags="handleTags"
+        @handle-query="fetchData"
       />
     </SuggestContainer>
     <div class="table_box">
@@ -68,34 +69,30 @@
           @cell-click="tableClick"
         >
           <el-table-column
-            :key="checkList.length + 'd'"
-            prop="date"
+            v-if="checkList.includes('姓名')"
+            :key="checkList.length + 'nickName'"
+            prop="nickName"
             label="姓名"
             fixed
           />
           <el-table-column
             v-if="checkList.includes('手机')"
-            prop="date"
+            prop="mobile"
             label="手机"
-          >
-            <template slot-scope="{row}">
-              <el-button type="text">
-                {{ row.name }}
-              </el-button>
-            </template>
-          </el-table-column>
+          />
           <el-table-column
             v-if="checkList.includes('角色')"
-            prop="date"
+            prop="roleName"
             label="角色"
           />
           <el-table-column
             v-if="checkList.includes('组织')"
-            prop="date"
+            prop="officeName"
             label="组织"
           />
           <el-table-column
-            :key="checkList.length + 'a'"
+            v-if="checkList.includes('操作')"
+            :key="checkList.length"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -119,13 +116,19 @@
                   <i class="el-icon-setting el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    禁{{ row }}用
+                  <el-dropdown-item
+                    @click.native="enableOrDisable(row)"
+                  >
+                    {{ row.status === 1 ? '禁用' : '启用' }}
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="resetPassword(row)"
+                  >
                     重置密码
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goEdit(row)"
+                  >
                     编辑
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -152,7 +155,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { UserListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import { getUserList } from '@/api/system'
+import { getUserList, enableOrDisable, resetPassword } from '@/api/system'
 
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -180,12 +183,14 @@ export default class extends Vue {
     roleId: '',
     status: '',
     page: 1,
-    limit: 30
+    limit: 20
   };
   private dropdownList: any[] = [
+    '姓名',
     '手机',
     '角色',
-    '组织'
+    '组织',
+    '操作'
   ];
   private checkList: any[] = this.dropdownList;
   // table
@@ -234,6 +239,45 @@ export default class extends Vue {
       this.listLoading = false
     }, 0.5 * 1000)
   }
+  // 启用or禁用
+  private async enableOrDisable(row: any) {
+    let { id, status, nickName } = row
+    // status = 1 传2 status = 2 传1
+    let statusText = status === 1 ? '禁用' : '启用'
+    this.$confirm(`您确定要${statusText}“${nickName}”吗？`, `${statusText}用户`, {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async() => {
+      const { data } = await enableOrDisable({ id, status: status ^ 1 ^ 2 })
+      if (data.success) {
+        this.$message.success(`${statusText}成功`)
+        this.fetchData()
+      } else {
+        this.$message.error(data)
+      }
+    })
+  }
+  private async resetPassword(row: any) {
+    let { id } = row
+    this.$confirm(`您确定要将密码重置为手机号吗？`, `重置密码`, {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async() => {
+      const { data } = await resetPassword({ id })
+      if (data.success) {
+        this.$message.success(`重置成功`)
+        this.fetchData()
+      } else {
+        this.$message.error(data)
+      }
+    })
+  }
+  private goEdit(row:any) {
+    const { id } = row
+    this.$router.push({ name: 'EditUser', query: { id } })
+  }
   private goCreateUser() {
     this.$router.push({ name: 'CreateUser' })
   }
@@ -262,6 +306,23 @@ export default class extends Vue {
     }
   }
 }
+.UserManage-m{
+  padding-bottom: 0;
+  box-sizing: border-box;
+  .table_box {
+    height: calc(100vh - 185px) !important;
+    background: #ffffff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    overflow: hidden;
+    transform: translateZ(0);
+    .table_center {
+      height: calc(100vh - 300px) !important;
+      padding-bottom: 0;
+      box-sizing: border-box;
+      background: #ffffff;
+    }
+  }
+}
 .btn-item,
 .btn-item-m {
   margin: 0 10px;
@@ -275,6 +336,7 @@ export default class extends Vue {
 <style scoped>
 .UserManage >>> .TableHeader_title,
 .UserManage-m >>> .TableHeader_title {
-  display: none;
+  /* display: none; */
+  opacity: 0;
 }
 </style>

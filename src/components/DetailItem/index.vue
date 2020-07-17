@@ -68,13 +68,14 @@ export default class extends Vue {
     padding-right: 16px;
     box-sizing: border-box;
     padding-bottom: 6px;
+    line-height: 36px;
   }
   .detail-value {
     // flex: 2;
     font-size: 14px;
     color: #333;
     font-weight: 500;
-    line-height: 36px;
+    // line-height: 36px;
   }
 }
 </style>
