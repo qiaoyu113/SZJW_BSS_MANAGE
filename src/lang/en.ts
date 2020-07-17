@@ -38,6 +38,7 @@ export default {
     joinTitle: 'OrderManage',
     creatOrder: 'CreatOrder',
     orderDetail: 'OrderDetail',
+    orderCheck: 'OrderCheck',
     orderLog: 'OrderLog',
     orderAudit: 'OrderAudit',
     orderManage: 'OrderManage',

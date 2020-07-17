@@ -222,14 +222,14 @@
       <el-button
         type="success"
         name="OrderAudit-btn-pass"
-        @click="submitForm('ruleForm')"
+        @click="auditPass()"
       >
         审核通过
       </el-button>
       <el-button
         name="OrderAudit-btn-nopass"
         type="danger"
-        @click="resetForm('ruleForm')"
+        @click="auditNoPass()"
       >
         审核不通过
       </el-button>
@@ -240,7 +240,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetOrderDetail } from '@/api/join'
+import { GetOrderDetail, PostAuditOrder } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -388,6 +388,34 @@ export default class extends Vue {
         this.orderDetail = datas
       } else {
         this.$message.error(data)
+      }
+    }
+
+    // 审核通过
+    private async auditPass(value: any) {
+      const { data } = await PostAuditOrder({
+        orderId: this.id,
+        operateFlag: 'auditPass',
+        cooperationModel: this.orderDetail.cooperationModel
+      })
+      if (data.success) {
+        this.$message.success('操作成功，审核通过')
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+
+    // 审核通过
+    private async auditNoPass(value: any) {
+      const { data } = await PostAuditOrder({
+        orderId: this.id,
+        operateFlag: 'auditNotPass',
+        cooperationModel: this.orderDetail.cooperationModel
+      })
+      if (data.success) {
+        this.$message.success('操作成功，审核不通过')
+      } else {
+        this.$message.error(data.errorMsg)
       }
     }
 }

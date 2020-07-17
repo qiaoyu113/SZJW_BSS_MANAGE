@@ -54,6 +54,7 @@ export default {
     refundOrder: '订单退款',
     contractList: '合同管理',
     contractDetail: '合同详情',
+    orderCheck: '订单确认',
     dealManageDetail: '交付详情',
     dealForm: '交付',
     dealStatistics: '成交统计',

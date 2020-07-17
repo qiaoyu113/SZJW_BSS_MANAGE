@@ -13,6 +13,13 @@ export const GetDictionaryList = (data: any) =>
     method: 'post',
     data
   })
+// 获取加盟经理列表
+export const GetJoinManageList = (data: any) =>
+  request({
+    url: `${baseURL}/v1/base/user/getManagerListByUserId`,
+    method: 'post',
+    data
+  })
 
 // 地区
 export const GetArea = (data: any) =>

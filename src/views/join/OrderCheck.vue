@@ -1,5 +1,5 @@
 <template>
-  <div :class="isPC ? 'CreatOrder' : 'CreatOrder-m'">
+  <div :class="isPC ? 'OrderCheck' : 'OrderCheck-m'">
     <el-collapse>
       <el-collapse-item
         title="订单攻略"
@@ -341,7 +341,7 @@
         :title="`支付信息` + `( 订单金额：¥` + orderPrice + ` )`"
         :md="true"
       >
-        <p class="hint_title">
+        <!-- <p class="hint_title">
           添加支付金额 <span>（说明：如果分多次支付，需要添加多次支付金额，确保支付金额共计等于订单金额 ）</span>
         </p>
         <el-row
@@ -368,11 +368,11 @@
               </div>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
         <el-row>
           <el-col :span="isPC ? 24 : 24">
             <p class="hint_title">
-              支付记录 <span>(已支付金额： ¥{{ readyPay }}，未支付: ¥ {{ orderPrice - remain - readyPay }} )</span>
+              支付记录
             </p>
             <el-form-item :label="` `">
               <el-table
@@ -385,52 +385,25 @@
                   label="支付金额（元）"
                 />
                 <el-table-column
-                  prop="status"
-                  label="是否支付"
-                >
-                  <template slot-scope="scope">
-                    <el-button
-                      v-if="scope.row.status === '1'"
-                      type="warning"
-                      size="small"
-                      plain
-                      @click="goBill(scope.row, scope.$index)"
-                    >
-                      立即支付
-                    </el-button>
-                    <el-button
-                      v-if="scope.row.status === '3'"
-                      type="text"
-                      size="small"
-                      style="color: #67C23A;"
-                    >
-                      已支付
-                    </el-button>
-                  </template>
-                </el-table-column>
+                  prop="money"
+                  label="支付方式"
+                />
                 <el-table-column
-                  fixed="right"
-                  label="操作"
-                >
-                  <template slot-scope="scope">
-                    <el-button
-                      v-if="scope.row.status === '3'"
-                      type="text"
-                      size="small"
-                      @click="handleClick(scope.row, scope.$index)"
-                    >
-                      查看
-                    </el-button>
-                    <el-button
-                      v-if="scope.row.status === '1'"
-                      type="text"
-                      size="small"
-                      @click="delClick(scope.row, scope.$index)"
-                    >
-                      删除
-                    </el-button>
-                  </template>
-                </el-table-column>
+                  prop="money"
+                  label="支付时间"
+                />
+                <el-table-column
+                  prop="money"
+                  label="支付截图"
+                />
+                <el-table-column
+                  prop="money"
+                  label="交易编号"
+                />
+                <el-table-column
+                  prop="money"
+                  label="备注"
+                />
               </el-table>
             </el-form-item>
           </el-col>
@@ -444,7 +417,7 @@
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
       >
-        立即创建
+        提交审核
       </el-button>
       <el-button
         name="CreatLine-btn-creat"
@@ -624,7 +597,7 @@
 import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
 import { GetDictionaryList } from '@/api/common'
-import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceByTypeAndCityAndSupplierAndCarType, GetOrderDetail } from '@/api/join'
+import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceByTypeAndCityAndSupplierAndCarType, PostConfirmOrder, GetOrderDetail } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -632,7 +605,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/base/SelfItem.vue'
 import '@/styles/common.scss'
 @Component({
-  name: 'CreatOrder',
+  name: 'OrderCheck',
   components: {
     SelfItem,
     SectionContainer,
@@ -641,6 +614,7 @@ import '@/styles/common.scss'
   }
 })
 export default class CreatLine extends Vue {
+  private id:any = ''
   private pageStatus:number = 0
   private remain: number = 0
   private readyPay: number = 0
@@ -899,6 +873,7 @@ export default class CreatLine extends Vue {
   created() {
     let id = this.$route.query.id
     if (id) {
+      this.id = id
       this.getDetail(id)
     }
     this.fetchData()
@@ -914,7 +889,6 @@ export default class CreatLine extends Vue {
       this.$message.error(data)
     }
   }
-
   // 添加金额
   private addPayList() {
     if (this.payNumber) {
@@ -971,6 +945,7 @@ export default class CreatLine extends Vue {
           this.payForm.status = '3'
           this.readyPay = Number(this.readyPay) + Number(this.payForm.money)
           this.ruleForm.orderPayRecordInfoFORMList[index] = Object.assign(this.ruleForm.orderPayRecordInfoFORMList[index], this.payForm)
+          console.log(this.ruleForm.orderPayRecordInfoFORMList)
           Vue.set(this.ruleForm.orderPayRecordInfoFORMList, index, this.ruleForm.orderPayRecordInfoFORMList[index])
           this.showMessageBill = false
         } else {
@@ -1040,15 +1015,15 @@ export default class CreatLine extends Vue {
   private submitForm(formName:any) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        CreateNewOrder({
+        PostConfirmOrder({
           orderInfoFORM: this.ruleForm,
-          operateFlag: 'creat'
+          operateFlag: 'confirm'
         }).then((data: any) => {
           if (data.success) {
             let datas = data.data
             console.log(datas)
           } else {
-            this.$message.error(data.errMessage)
+            this.$message.error(data.errorMsg)
           }
         }).catch(err => {
           this.$message.error(err)
@@ -1067,7 +1042,7 @@ export default class CreatLine extends Vue {
 }
 </script>
 <style lang="scss">
-.CreatOrder {
+.OrderCheck {
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
@@ -1162,7 +1137,7 @@ export default class CreatLine extends Vue {
 }
 </style>
 <style lang="scss">
-.CreatOrder-m {
+.OrderCheck-m {
   width: 100%;
   .driver{
     padding: 10px;

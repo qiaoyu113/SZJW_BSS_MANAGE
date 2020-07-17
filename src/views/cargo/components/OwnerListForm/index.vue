@@ -8,7 +8,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="货主编号">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.customerId"
                     placeholder="请输入货主编号"
                     clearable
                   />
@@ -17,7 +17,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="联系人">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.bussinessName"
                     placeholder="请输入联系人"
                     clearable
                   />
@@ -26,20 +26,20 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="联系电话">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.bussinessPhone"
                     placeholder="请输入联系电话"
                     clearable
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="公司简介">
+                <el-form-item label="公司简称">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.customerCompanyName"
                     placeholder="请选择"
                   >
                     <el-option
-                      v-for="item in optionsCity"
+                      v-for="item in optionsCompany"
                       :key="item.codeVal"
                       :label="item.code"
                       :value="item.codeVal"
@@ -50,14 +50,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="分类">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.classification"
                     placeholder="请选择"
                   >
                     <el-option
                       v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -70,24 +70,9 @@
                   >
                     <el-option
                       v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="是否为合同期内">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -110,13 +95,13 @@
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="创建日期">
                   <el-date-picker
-                    v-model="DateValueChild"
+                    v-model="DateValueChild2"
                     :class="isPC ? '' : 'el-date-m'"
                     type="daterange"
                     value-format="timestamp"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    @change="changData()"
+                    @change="changData2()"
                   />
                 </el-form-item>
               </el-col>
@@ -139,12 +124,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="reset"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="research"
                 >
                   查询
                 </el-button>
@@ -173,7 +160,9 @@ export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
+  private optionsCompany: any[] = []
   private DateValueChild: any[] = []; // DateValue的赋值项
+  private DateValueChild2: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
@@ -187,7 +176,16 @@ export default class extends Vue {
     let tags: any = []
     for (var key in value) {
       if (this.QUERY_KEY_LIST.indexOf(key) < 0) {
-        if (value[key] && key === 'endDate') {
+        if (value[key] && key === 'contractEndEndTime') {
+          tags.unshift({
+            name:
+              TimestampYMD(value['contractEndStartTime']) +
+              '-' +
+              TimestampYMD(value['contractEndEndTime']),
+            type: '',
+            key: key
+          })
+        } else if (value[key] && key === 'endDate') {
           tags.unshift({
             name:
               TimestampYMD(value['startDate']) +
@@ -233,8 +231,24 @@ export default class extends Vue {
       // 根据listQuery中的key来判断
       case 'city':
         for (let entry of this.optionsCity) {
-          if (entry.codeVal === value) {
-            vodeName = entry.code
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'customerId':
+        vodeName = value
+        break
+      case 'bussinessName':
+        vodeName = value
+        break
+      case 'bussinessPhone':
+        vodeName = value
+        break
+      case 'customerCompanyName':
+        for (let entry of this.optionsCompany) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
           }
         }
         break
@@ -261,6 +275,26 @@ export default class extends Vue {
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
+    }
+  }
+
+  private changData2() {
+    if (this.DateValueChild2) {
+      this.listQuery.contractEndStartTime = this.DateValueChild2[0]
+      this.listQuery.contractEndEndTime = this.DateValueChild2[1]
+    } else {
+      this.listQuery.contractEndStartTime = ''
+      this.listQuery.contractEndEndTime = ''
+    }
+  }
+
+  private research() {
+    this.$emit('handle-query', this.listQuery)
+  }
+
+  private reset() {
+    for (let key in this.listQuery) {
+      this.listQuery[key] = ''
     }
   }
 }

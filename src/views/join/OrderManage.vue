@@ -72,62 +72,89 @@
           highlight-current-row
           style="width: 100%"
           row-key="customerNo"
-          @selection-change="handleSelectionChange"
         >
           <el-table-column
-            reserve-selection
-            type="selection"
-            width="55"
-          />
-          <el-table-column
-            v-if="checkList.indexOf('货主编号') > -1"
+            v-if="checkList.indexOf('订单编号') > -1"
             :key="Math.random()"
             align="left"
             fixed
-            label="货主编号"
+            label="订单编号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.customerId | DataIsNull }}</span>
+              <span>{{ scope.row.orderId | DataIsNull }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('线索编号') > -1"
+            v-if="checkList.indexOf('司机姓名') > -1"
             align="left"
-            label="线索编号"
+            label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.clueId | DataIsNull }} </span>
+              <span>{{ scope.row.diverName | DataIsNull }} </span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('销售') > -1"
+            v-if="checkList.indexOf('订单状态') > -1"
             class-name="status-col"
-            label="销售"
+            align="left"
+            label="订单状态"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.lineSaleName | DataIsNull }}</span>
+              <span>{{ scope.row.statusName | DataIsNull }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('公司简称') > -1"
+            v-if="checkList.indexOf('合作模式') > -1"
             align="left"
-            label="公司简称"
+            label="合作模式"
           >
             <template slot-scope="{row}">
-              {{ row.company | DataIsNull }}
+              {{ row.cooperationModelName | DataIsNull }}
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('分类') > -1"
+            v-if="checkList.indexOf('商品分类') > -1"
             align="left"
-            label="分类"
+            label="商品分类"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.primaryClassificationName | DataIsNull }}</p>
+              <p>{{ scope.row.busiTypeName | DataIsNull }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('订单金额') > -1"
+            align="left"
+            label="订单金额"
+          >
+            <template slot-scope="scope">
+              <p>
+                <span>{{ scope.row.goodsAmount | DataIsNull }}</span>
+              </p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('合作期限') > -1"
+            align="left"
+            label="合作期限(月)"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.cooperationTime | DataIsNull }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('支付方式') > -1"
+            align="left"
+            label="支付方式"
+          >
+            <template slot-scope="{row}">
+              {{ row.payTypeName | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -136,70 +163,38 @@
             align="left"
             label="城市"
           >
-            <template slot-scope="scope">
-              <p>
-                <span>{{ scope.row.cityName | DataIsNull }}</span>
-              </p>
+            <template slot-scope="{row}">
+              {{ row.city | DataIsNull }}
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('联系人') > -1"
+            v-if="checkList.indexOf('加盟经理') > -1"
             align="left"
-            label="联系人"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.bussinessName | DataIsNull }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('联系电话') > -1"
-            align="left"
-            label="联系电话"
+            label="加盟经理"
           >
             <template slot-scope="{row}">
-              {{ row.bussinessPhone | DataIsNull }}
+              {{ row.joinManageName | DataIsNull }}
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('身份证号') > -1"
+            v-if="checkList.indexOf('创建人') > -1"
             align="left"
-            label="身份证号"
+            label="创建人"
           >
             <template slot-scope="{row}">
-              {{ row.bussinessCard | DataIsNull }}
+              {{ row.createName | DataIsNull }}
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('创建日期') > -1"
+            v-if="checkList.indexOf('订单创建时间') > -1"
             align="left"
-            label="创建日期"
+            label="订单创建时间"
           >
             <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('合同止期') > -1"
-            align="left"
-            label="合同止期"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('备注') > -1"
-            align="left"
-            label="备注"
-          >
-            <template slot-scope="{row}">
-              {{ row.remark | DataIsNull }}
+              {{ row.createDate | Timestamp }}
             </template>
           </el-table-column>
 
@@ -208,7 +203,7 @@
             align="left"
             label="操作"
             fixed="right"
-            :width="isPC ? 'auto' : '50'"
+            :width="isPC ? '100' : '50'"
           >
             <template slot-scope="scope">
               <el-dropdown>
@@ -230,39 +225,49 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
+                    v-if="scope.row.status === 5"
+                    @click.native="goCreat(scope.row.orderId)"
                   >
                     提交
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
+                    v-if="scope.row.status === 5"
+                    @click.native="cancelHandle(scope.row.orderId)"
                   >
                     取消
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
+                    v-if="scope.row.status === 15 && scope.row.payType !== 1"
+                    @click.native="goCheck(scope.row.orderId, 1)"
                   >
                     确认
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
+                    v-if="scope.row.status === 20"
+                    @click.native="goCheck(scope.row.orderId, 0)"
                   >
                     审核
                   </el-dropdown-item>
-                  <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
-                  >
-                    日志
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
+                  <!-- <el-dropdown-item
+                    @click.native="refundHandle(scope.row)"
                   >
                     退款
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
+                    v-if="scope.row.status === 25"
+                    @click.native="goCreat(scope.row.orderId)"
                   >
                     重新提交审核
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goDetail(scope.row.orderId, 0)"
+                  >
+                    详情
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goDetail(scope.row.customerId, 1)"
+                  >
+                    日志
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -278,81 +283,115 @@
         :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
         @pagination="getList"
-        @olclick="olClicks"
       />
     </div>
-    <PitchBox
-      :drawer.sync="drawer"
-      :drawer-list="multipleSelection"
-      @deletDrawerList="deletDrawerList"
-      @changeDrawer="changeDrawer"
-    >
-      <template slot-scope="slotProp">
-        <span>{{ slotProp.item.creater }}</span>
-        <span>{{ slotProp.item.clientPhone }}</span>
-        <span>{{ slotProp.item.city }}</span>
-      </template>
-    </PitchBox>
 
-    <!-- 批量分配货主 -->
+    <!-- 订单退款审核 -->
     <Dialog
       :visible.sync="assignShowDialog"
-      :title="`分配货主`"
+      :title="`订单退款审核`"
       :confirm="confirmAssign"
     >
-      <el-alert
-        class="mb10"
-        :title="`已选货主${multipleSelectionAssign.length}位，请选择销售！(货主其关联的线索也会分配给该销售)`"
-        type="warning"
-        :closable="false"
-      />
-      <el-table
-        v-loading="dialogLoading"
-        :data="dialogList"
-        size="mini"
-        stripe
-        highlight-current-row
-        height="38vh"
-        style="width: 100%;"
-        align="left"
-        row-key="id"
-        @selection-change="handleSelectionDialog"
-      >
-        <el-table-column
-          type="selection"
-          width="55"
-          reserve-selection
-          align="center"
-        />
-        <el-table-column
-          type="index"
-          width="55"
-          label="序号"
-          :index="indexMethod('dialogListQuery')"
-          align="center"
-        />
-        <el-table-column
-          label="销售姓名"
-          prop="name"
-        />
-        <el-table-column
-          label="联系电话"
-          prop="name"
-        />
-        <el-table-column
-          label="线索数量"
-          prop="name"
-        />
-      </el-table>
-      <pagination
-        v-show="dialogTotal > 0"
-        :small="true"
-        :operation-list="[]"
-        :total="dialogTotal"
-        :page.sync="dialogListQuery.page"
-        :limit.sync="dialogListQuery.limit"
-        @pagination="getDialogList"
-      />
+      <el-row>
+        <el-form
+          ref="refundDetail"
+          :model="refundDetail"
+          :rules="rules"
+          :label-width="isPC ? '120px' : '30%'"
+          class="refundForm"
+        >
+          <el-col :span="isPC ? 24 : 24">
+            <DetailItem
+              name="订单金额"
+              :value="refundDetail.price"
+            />
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <DetailItem
+              name="订单金额"
+              :value="refundDetail.price"
+            />
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="退款金额">
+              <el-input
+                v-model="refundDetail.orderId"
+                placeholder="请输入退款金额"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="退款原因">
+              <el-select
+                v-model="refundDetail.groupId"
+                placeholder="请选择所属小组"
+              >
+                <el-option
+                  v-for="item in optionsSource"
+                  :key="item.codeVal"
+                  :label="item.code"
+                  :value="item.codeVal"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="退款方式">
+              <el-select
+                v-model="refundDetail.groupId"
+                placeholder="请选择退款方式"
+              >
+                <el-option
+                  v-for="item in optionsWay"
+                  :key="item.codeVal"
+                  :label="item.code"
+                  :value="item.codeVal"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item
+              ref="uploadElement"
+              label="退款截图（截图中需要含有交易流水编号、收据等有效证明，图片支持PNG/JPEG/JPG格式，最大限制为5M)"
+              prop="payImageUrl"
+            >
+              <el-upload
+                class="avatar-uploader"
+                :show-file-list="false"
+                action="/index/upload"
+                :before-upload="beforeUpload"
+                :on-change="handleChange"
+                :auto-upload="false"
+                :data="refundDetail"
+              >
+                <img
+                  v-if="refundDetail.payImageUrl"
+                  :src="refundDetail.payImageUrl"
+                  style="width:100%;"
+                >
+                <el-button
+                  type="primary"
+                  icon="el-icon-plus"
+                  circle
+                />
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item
+              label="备注"
+              prop="remarks"
+            >
+              <el-input
+                v-model="refundDetail.remarks"
+                type="textarea"
+              />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
     </Dialog>
     <!--提示窗口-->
     <Dialog
@@ -369,7 +408,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetOrderInfoList, CancelOrder } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -380,6 +419,7 @@ import SelfTable from '@/components/base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { OrderManageForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
+import DetailItem from '@/components/DetailItem/index.vue'
 import '@/styles/common.scss'
 
 interface IState {
@@ -395,43 +435,51 @@ interface IState {
     OrderManageForm,
     Dialog,
     SelfTable,
-    PitchBox
+    PitchBox,
+    DetailItem
   }
 })
 export default class extends Vue {
-    private showDialog: Object= {
+    private showDialog: any= {
       visible: false,
       title: '提示',
       text: '内容',
       name: ''
     };
+    private refundDetail: any = {}
+    private cancelId: any = ''
     private drawer: boolean= false;
     private total = 0;
     private list: CargoListData[] = [];
     private page: Object | undefined = '';
     private listLoading = true;
     private tags: any[] = [];
+    private optionsSource: any[] = []
+    private optionsWay: any[] = []
     private DateValue: any[] = [];
     private multipleSelection: any[] = []
-    private operationList: any[] = [
-      { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: '3' },
-      { icon: 'el-icon-thumb', name: '分配货主', color: '#5E7BBB', key: '1' },
-      { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
-    ];
+    private operationList: any[] = [];
+    private rules:any = {
+      busiType: [
+        { required: true, message: '请选择商品分类', trigger: 'change' }
+      ],
+      cooperationModel: [
+        { required: true, message: '请选择合作模式', trigger: 'change' }
+      ]
+    }
     private dropdownList: any[] = [
-      '货主编号',
-      '线索编号',
-      '销售',
-      '公司简称',
-      '分类',
+      '订单编号',
+      '司机姓名',
+      '订单状态',
+      '合作模式',
+      '商品分类',
+      '订单金额',
+      '合作期限',
+      '支付方式',
       '城市',
-      '联系人',
-      '联系电话',
-      '身份证号',
-      '是否为合同期内',
-      '创建日期',
-      '合同止期',
-      '备注',
+      '加盟经理',
+      '创建人',
+      '订单创建时间',
       '操作'
     ];
     private checkList: any[] = this.dropdownList;
@@ -439,28 +487,32 @@ export default class extends Vue {
       {
         label: '全部',
         name: '0',
-        num: 187
+        num: ''
       },
       {
         label: '待支付',
         name: '1',
-        num: 1
+        num: ''
       },
       {
         label: '待确认',
-        name: '2'
+        name: '2',
+        num: ''
       },
       {
         label: '待审核',
-        name: '3'
+        name: '3',
+        num: ''
       },
       {
         label: '审核不通过',
-        name: '4'
+        name: '4',
+        num: ''
       },
       {
         label: '已成交',
-        name: '5'
+        name: '5',
+        num: ''
       }
     ];
     private listQuery: IState = {
@@ -471,7 +523,30 @@ export default class extends Vue {
       endDate: '',
       startDate: '',
       state: '',
-      lineSaleId: ''
+      lineSaleId: '',
+
+      busiType: '',
+      busiTypeName: '',
+      cityName: '',
+      cooperationModel: '',
+      cooperationModelName: '',
+      createDate: '',
+      createId: '',
+      createName: '',
+      createSource: '',
+      createSourceName: '',
+      deliverDate: '',
+      diverName: '',
+      driverId: '',
+      driverPhone: '',
+      groupName: '',
+      isDeliver: '',
+      joinManageId: '',
+      joinManageName: '',
+      orderId: '',
+      payType: '',
+      payTypeName: '',
+      statusName: ''
     };
     // 弹窗分配
     private dialogList: any[] = [];
@@ -500,17 +575,6 @@ export default class extends Vue {
     get isPC() {
       return SettingsModule.isPC
     }
-    // 确认清除
-    private confirm(done:any) {
-      if (this.showDialog[name] === '1') {
-        (this.$refs.multipleTable as any).clearSelection()
-        this.multipleSelection = []
-      } else {
-        this.assignShowDialog = true
-        this.getDialogList(this.dialogListQuery)
-      }
-      done()
-    }
     // 所有请求方法
     private fetchData() {
       this.getList(this.listQuery)
@@ -533,14 +597,25 @@ export default class extends Vue {
       this.DateValue = value
     }
 
+    // 图片预加载
+    private beforeUpload(file: any) {
+      return true
+    }
+
     // 请求列表
     private async getList(value: any) {
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
-      const { data } = await GetCustomerList(this.listQuery)
+      const { data } = await GetOrderInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.tab[0].num = data.title.all
+        this.tab[1].num = data.title.toBePay
+        this.tab[2].num = data.title.toConfire
+        this.tab[3].num = data.title.toAudit
+        this.tab[4].num = data.title.auditNotPass
+        this.tab[5].num = data.title.haveDeal
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
@@ -559,8 +634,7 @@ export default class extends Vue {
       this.dialogListQuery.page = value.page
       this.dialogListQuery.limit = value.limit
       this.dialogLoading = true
-      const { data } = await GetCustomerList(this.dialogListQuery)
-      console.log(data)
+      const { data } = await GetOrderInfoList(this.dialogListQuery)
       if (data.success) {
         this.dialogList = data.data
         this.dialogTotal = data.page.total
@@ -572,59 +646,27 @@ export default class extends Vue {
       }, 0.5 * 1000)
     }
 
-    // 按钮操作
-    private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'OwnerDetail', query: { id: id } })
-    }
-
-    // 批量操作
-    private olClicks(item: any) {
-      if (item.key === '2') {
-        if (this.multipleSelection.length) {
-          this.showDialog = {
-            visible: true,
-            title: '清空确认',
-            text: '确认清空所有选择吗？',
-            name: '1'
-          }
-        } else {
-          this.$message({
-            type: 'warning',
-            message: '请先选择货主再进行操作！'
-          })
-        }
-      } else if (item.key === '1') {
-        if (this.multipleSelection.length) {
-          this.showDialog = {
-            visible: true,
-            title: '提示',
-            text: '分配货主后关联的相关线索也会分配给该销售！',
-            name: '2'
-          }
-        } else {
-          this.$message({
-            type: 'warning',
-            message: '请先选择货主再进行操作！'
-          })
-        }
-      } else if (item.key === '3') {
-        this.drawer = true
+    // 详情加日志操作
+    private goDetail(id: string | (string | null)[] | null | undefined, type: any) {
+      if (type) {
+        this.$router.push({ name: 'OrderDetail', query: { id: id } })
+      } else {
+        this.$router.push({ name: 'OrderLog', query: { id: id } })
       }
     }
 
-    // table选择框
-    handleSelectionChange(val: any) {
-      this.multipleSelection = val
+    // 提交 重新提交
+    private goCreat(id: string | (string | null)[] | null | undefined) {
+      this.$router.push({ name: 'CreatOrder', query: { id: id } })
     }
 
-    // 关闭查看已选
-    private changeDrawer(val: any) {
-      this.drawer = val
-    }
-
-    // 删除选中项目
-    private deletDrawerList(item:any, i:any) {
-      (this.$refs.multipleTable as any).toggleRowSelection(item)
+    // 确认和审核按钮
+    private goCheck(id: string | (string | null)[] | null | undefined, type: any) {
+      if (type) {
+        this.$router.push({ name: 'OrderDetail', query: { id: id } })
+      } else {
+        this.$router.push({ name: 'OrderAudit', query: { id: id } })
+      }
     }
 
     // 弹窗操作
@@ -641,26 +683,54 @@ export default class extends Vue {
       }
       // done()
     }
-    // 弹窗表格选中
-    private handleSelectionDialog(val: any) {
-      this.multipleSelectionAssign = val
-    }
-    // table index
-    private indexMethod(type: string) {
-      let page: number, limit: number
-      if (type === 'listQuery') {
-        ({ page, limit } = this.listQuery)
-      } else if (type === 'dialogListQuery') {
-        ({ page, limit } = this.listQuery)
+
+    // 弹窗确认
+    private confirm(done:any) {
+      if (this.showDialog.name === '1') {
+        this.cancelPost()
+      } else {
+        this.assignShowDialog = true
+        this.getDialogList(this.dialogListQuery)
       }
-      return (index: number) => {
-        return index + 1 + (page - 1) * limit
+      done()
+    }
+
+    // 选择图片
+    private handleChange(file: any, fileList: any) {
+      this.refundDetail.payImageUrl = URL.createObjectURL(file.raw)
+    }
+
+    // 取消操作
+    private cancelHandle(id: string | (string | null)[] | null | undefined) {
+      this.showDialog = {
+        visible: true,
+        title: '取消订单',
+        text: '确认取消订单吗？如果存在意向金金额，请下线进行退款!',
+        name: '1'
+      }
+      this.cancelId = id
+    }
+    // 订单退款审核
+    private refundHandle(data: any) {
+      this.refundDetail = data
+      this.assignShowDialog = true
+    }
+
+    // 取消请求
+    private async cancelPost() {
+      const { data } = await CancelOrder({ orderId: this.cancelId })
+      if (data.success) {
+        if (data.data.flag) {
+          this.$message.success('订单取消成功')
+        }
+      } else {
+        this.$message.error(data.errorMsg)
       }
     }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .OrderManage {
   padding: 15px;
   padding-bottom: 0;
@@ -705,10 +775,27 @@ export default class extends Vue {
   .pagination-container {
     background: #fff;
   }
+  .refundForm{
+    .el-form-item{
+        padding: 0 15px;
+        box-sizing: border-box;
+      }
+      .el-form-item__label{
+          width: 100% !important;
+          font-size: 13px;
+          color: #9e9e9e;
+          font-weight: 400;
+          text-align: left;
+      }
+      .el-form-item__content{
+          padding-right: 35px;
+          margin-left: 0px !important;
+      }
+  }
 }
 </style>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .OrderManage-m {
   padding-bottom: 0;
   box-sizing: border-box;
@@ -739,6 +826,12 @@ export default class extends Vue {
       background: #ffffff;
       overflow-y: scroll;
     }
+  }
+  .refundForm{
+    .el-form-item__label{
+        color: #4a4a4a;
+        font-weight: 400;
+      }
   }
   .edit-input {
     padding-right: 100px;
