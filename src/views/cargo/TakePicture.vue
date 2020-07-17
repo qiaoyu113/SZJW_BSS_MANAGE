@@ -1,5 +1,3 @@
-/* eslint-disable vue/no-parsing-error */
-/* eslint-disable vue/no-parsing-error */
 <template>
   <div :class="isPC ? 'TakePicture' : 'TakePicture-m'">
     <el-row class="infoLine">
@@ -151,7 +149,8 @@ import Dialog from '@/components/Dialog/index.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
-var token = localStorage.getItem('token')
+import { pictureDetail } from '@/api/cargo'
+// var token = localStorage.getItem('token')
 @Component({
   name: 'TakePicture',
   components: {
@@ -197,10 +196,10 @@ export default class TakePicture extends Vue {
   private getImgUrls:string = this.getImgUrl()
   private imageList:any[] = []
   private showViewer:boolean = false
-  private myHeaders:any = { Authorization: token }
+  private myHeaders:any = { Authorization: '' }
   private getImgUrl() {
     let url
-    if (window.location.host === 'localhost:9529') {
+    if (window.location.host === 'http://192.168.0.134/:9528') {
       url = 'http://firmiana-bss.m1.yunniao.cn/api/base/v1/upload/uploadOSS/img/true/-1'
     } else {
       url = '/api/base/v1/upload/uploadOSS/img/true/-1'
@@ -268,12 +267,12 @@ export default class TakePicture extends Vue {
     //   })
   }
   private getDetails(id:string) {
-    // this.isloading = true;
-    // getLineDetail({ lineId: id }).then(res:any => {
+    this.isloading = true
+    // pictureDetail({ lineId: id }).then(res:any => {
     //   if (res.data.success) {
     //     const data = res.data.data;
     //     this.postForm.lineName = data.lineName;
-    this.getLinePhoto()
+    // this.getLinePhoto()
     //   } else {
     //     this.$message.error(res.data.errorMsg)
     //   }

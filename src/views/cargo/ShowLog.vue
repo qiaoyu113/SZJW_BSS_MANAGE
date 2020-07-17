@@ -18,81 +18,65 @@
         <el-table-column
           fixed
           align="left"
-          label="货主编号"
+          label="创建时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.customerId }}</span>
+            <span>{{ scope.row.createDate | Timestamp }}</span>
           </template>
         </el-table-column>
 
         <el-table-column
-          label="货主"
+          label="操作描述"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
+            <span>{{ scope.row.operDesc }}</span>
           </template>
         </el-table-column>
 
         <el-table-column
           class-name="status-col"
-          label="类型"
-        >
-          <template slot-scope="{row}">
-            <el-tag :type="row.status | articleStatusFilter">
-              {{ row.primaryClassificationName
-              }}<span
-                v-if="row.secondaryClassificationName"
-              >/{{ row.secondaryClassificationName }}</span>
-            </el-tag>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          align="left"
-          label="合同状态"
-        >
-          <template slot-scope="{row}">
-            {{ row.contractEffectiveness }}
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          align="left"
-          label="创建时间"
+          label="操作员"
         >
           <template slot-scope="scope">
-            <p>{{ scope.row.createDate | Timestamp }}</p>
+            <span>{{ scope.row.createrName }}</span>
           </template>
         </el-table-column>
 
         <el-table-column
           align="left"
-          label="创建人"
+          label="执行结果"
+        >
+          <template slot-scope="{row}">
+            {{ row.result }}
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          align="left"
+          label="备注"
+        >
+          <template slot-scope="scope">
+            <p>{{ scope.row.remarks }}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          align="left"
+          label="操作类型"
         >
           <template slot-scope="scope">
             <p>
-              <span
-                v-if="scope.row.creatorName"
-              >({{ scope.row.creatorName }})</span>
+              <span>{{ scope.row.operType }}</span>
             </p>
           </template>
         </el-table-column>
 
         <el-table-column
           align="left"
-          label="合同止期"
+          label="操作后状态"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.contractEnd | Timestamp }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          align="left"
-          label="线路销售"
-        >
-          <template slot-scope="{row}">
-            {{ row.lineSaleName | DataIsNull }}
+            <span>{{ scope.row.afterState }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -108,12 +92,11 @@
   </div>
 </template>
 <script lang="ts">
-import { GetCustomerList } from '@/api/customer'
+import { GetLogList } from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import { CargoListData } from '@/api/types'
 interface IState {
   [key: string]: any;
 }
@@ -127,20 +110,16 @@ interface IState {
 
 export default class ShowLog extends Vue {
   private listLoading = true
-  private list: CargoListData[] = []
+  private list: any[] = []
   private total = 0;
   private operationList: any[] = [{}]
   private listQuery: IState = {
-    key: '',
-    city: '',
     page: 1,
     limit: 30,
-    endDate: '',
-    startDate: '',
-    state: '',
-    lineSaleId: ''
+    lineId: ''
   }
   created() {
+    this.listQuery.lineId = this.$route.query.id
     this.fetchData()
   }
 
@@ -154,7 +133,7 @@ export default class ShowLog extends Vue {
     this.listQuery.page = value.page
     this.listQuery.limit = value.limit
     this.listLoading = true
-    const { data } = await GetCustomerList(this.listQuery)
+    const { data } = await GetLogList(this.listQuery)
     if (data.success) {
       this.list = data.data
       data.page = await HandlePages(data.page)
