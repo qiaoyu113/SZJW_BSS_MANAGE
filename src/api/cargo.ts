@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-const ptrfix = '/api/line'
+const ptrfix = '/line'
 
 export const GetDriverDetail = (id: number, params: any) =>
   request({
@@ -96,7 +96,7 @@ export const shelveLine = (data: any) =>
 // 线路列表
 export const lineListAll = (data: any) =>
   request({
-    url: `/api/line-center/v1/line/lineInfo/queryLineListByConditionsQuery`,
+    url: `${ptrfix}/v1/line/lineInfo/queryLineListByConditionsQuery`,
     method: 'post',
     data
   })
