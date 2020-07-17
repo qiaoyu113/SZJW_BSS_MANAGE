@@ -269,7 +269,7 @@ const cargoRouter: RouteConfig = {
     },
     {
       path: 'lineaudit', /* 审核线路 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/CreatLine.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/LineDetail.vue'),
       name: 'LineAudit',
       meta: {
         title: 'lineAudit',

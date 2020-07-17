@@ -80,14 +80,14 @@ export default class extends Vue {
   private activeName:string = 'first'
   private carrierId:string = ''
   private detailQuery:IState = {
-    orderId: 'DD202005060001',
-    busiTypeName: '梧桐共享',
-    cooperationModel: '带车',
-    cooperationCarName: '4.2米厢货',
-    cooperationTime: '3个月',
-    goodsAmount: '订单金额',
-    payType: '微信小程序',
-    deliverDate: '2020-09-08 12:00'
+    orderId: '',
+    busiTypeName: '',
+    cooperationModel: '',
+    cooperationCarName: '',
+    cooperationTime: '',
+    goodsAmount: '',
+    payType: '',
+    deliverDate: ''
   }
 
   private formItem:any[] = [
@@ -193,36 +193,36 @@ export default class extends Vue {
 
   private baseObj:any = {
     title: '基本信息',
-    carrierId: 'ZSS2020006446216',
-    name: '穆家祥',
-    phone: '18848885135',
-    busiType: '共享',
-    workCity: '杭州市',
-    carTypeName: '4.2米厢货',
-    plateNo: '京A B1556',
-    statusName: '待上岗',
-    driverId: 'ZOIHDOIANDOANDOPI313',
-    driverName: '司机xingming',
-    driverPhone: '1848885135',
-    gmIdName: '运营经理名字',
-    gmPhone: '运营手机号',
-    createName: '创建人姓名',
-    createPhone: '创建人手机号',
-    createDate: '创建时间'
+    carrierId: '',
+    name: '',
+    phone: '',
+    busiType: '',
+    workCity: '',
+    carTypeName: '',
+    plateNo: '',
+    statusName: '',
+    driverId: '',
+    driverName: '',
+    driverPhone: '',
+    gmIdName: '',
+    gmPhone: '',
+    createName: '',
+    createPhone: '',
+    createDate: ''
   }
 
   private otherObj:any = {
     title: '其他信息',
-    age: '23',
-    householdTypeName: '城镇户口',
-    workExperienceName: '34',
-    homeDistrict: '浙江省杭州市萧山区',
-    cargoTypeName: '水果',
-    expMonthlyIncomeName: '10000以上',
-    avgMonthlyIncomeName: '9000',
-    isIndebtedName: '否',
-    maxWorkTimeName: '10小时',
-    remarks: '备注'
+    age: '',
+    householdTypeName: '',
+    workExperienceName: '',
+    homeDistrict: '',
+    cargoTypeName: '',
+    expMonthlyIncomeName: '',
+    avgMonthlyIncomeName: '',
+    isIndebtedName: '',
+    maxWorkTimeName: '',
+    remarks: ''
   }
 
   private handleClick(tab:any, event:any) {
@@ -232,7 +232,9 @@ export default class extends Vue {
   private async carrierDetail() {
     let { data } = await carrierDetail({ carrierId: this.carrierId })
     if (data.success) {
-      this.detailQuery = data.data
+      this.detailQuery = { ...this.detailQuery, ...data.data }
+      this.baseObj = { ...this.baseObj, ...data.data }
+      this.otherObj = { ...this.otherObj, ...data.data }
     } else {
       this.$message.error(data)
     }

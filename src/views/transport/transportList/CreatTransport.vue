@@ -25,22 +25,14 @@
           <div class="chooseBox">
             <div class="creatPhone">
               <span class="phoneLabel">签约司机姓名（手机号）:</span>
-              <!-- <el-input
-                v-model="phoneNum"
-                placeholder="请输入司机姓名或手机号"
-              /> -->
               <el-select
                 v-model="phoneNum"
                 filterable
-                remote
-                clearable
-                reserve-keyword
-                placeholder="请输入关键词"
-                :remote-method="remoteMethod"
-                :loading="loading"
+                placeholder="请选择司机"
+                @change="getOrderList"
               >
                 <el-option
-                  v-for="item in options"
+                  v-for="item in driverOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -56,61 +48,37 @@
             v-if="chooseOrderState"
             class="orderBox"
           >
-            <el-row>
+            <el-row style="width:100%">
               <el-col
-                v-for="index in 9"
+                v-for="(item, index) in orderList"
                 :key="index"
                 :span="6"
               >
                 <div
-
                   class="boxItem"
                 >
                   <i :class="( index ) === activeItem ? 'el-icon-star-on' : 'el-icon-star-off'" />
                   <div
-                    class="orderItem"
-                    @click="() => {
-                      activeItem = index
-                    }"
+                    :class=" item.orderId === 'DD2020071410095' ? 'orderItem' : 'orderItemNo'"
+                    @click="orderGet(index,item)"
                   >
-                    <span class="orderNum">订单编号：DSADASDSA5313</span>
-                    <span>商品分类：梧桐共享</span>
-                    <span>合作模式：带车</span>
-                    <span>合作车型：4.2米厢货</span>
+                    <span class="orderNum">订单编号：{{ item.orderId }}</span>
+                    <span>商品分类：{{ item.busiTypeName }}</span>
+                    <span v-if="item.cooperationModel === 1">合作模式：购车</span>
+                    <span v-if="item.cooperationModel === 2">合作模式：租车</span>
+                    <span v-if="item.cooperationModel === 3">合作模式：带车</span>
+                    <span>合作车型：{{ item.cooperationCarName }}</span>
                     <div class="goDetail">
-                      <span>订单金额：￥4000.00</span>
-                      <span>详情></span>
+                      <span>订单金额：￥{{ item.goodsAmount }}</span>
+                      <span
+                        style="margin-left:20px"
+                        @click="goOrderDetail(item.orderId)"
+                      >详情></span>
                     </div>
                   </div>
                 </div>
               </el-col>
             </el-row>
-            <!-- <div class="boxItem">
-              <i class="el-icon-star-off" />
-              <div class="orderItem">
-                <span class="orderNum">订单编号：DSADASDSA5313</span>
-                <span>商品分类：梧桐共享</span>
-                <span>合作模式：带车</span>
-                <span>合作车型：4.2米厢货</span>
-                <div class="goDetail">
-                  <span>订单金额：￥4000.00</span>
-                  <span>详情></span>
-                </div>
-              </div>
-            </div>
-            <div class="boxItem">
-              <i class="el-icon-star-off" />
-              <div class="orderItem">
-                <span class="orderNum">订单编号：DSADASDSA5313</span>
-                <span>商品分类：梧桐共享</span>
-                <span>合作模式：带车</span>
-                <span>合作车型：4.2米厢货</span>
-                <div class="goDetail">
-                  <span>订单金额：￥4000.00</span>
-                  <span>详情></span>
-                </div>
-              </div>
-            </div> -->
           </div>
           <el-button
             type="primary"
@@ -206,7 +174,7 @@
             选择签约订单
           </p>
           <p class="textWord">
-            绑定订单和运力，改运力的炮火情况收到订单影响
+            绑定订单和运力，该运力的跑活情况收到订单影响
           </p>
         </div>
       </div>
@@ -218,8 +186,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
-import { saveCarrierInfo, transportOrderList } from '@/api/transport'
-import { GetDictionary, GetDictionaryList, GetDictionaryAll } from '@/api/common'
+import { saveCarrierInfo, transportOrderList, transportOrderDetail, driverList } from '@/api/transport'
+import { GetDictionary, GetDictionaryList, GetOpenCityData } from '@/api/common'
 import '@/styles/common.scss'
 
   interface IState {
@@ -235,35 +203,23 @@ import '@/styles/common.scss'
   })
 
 export default class extends Vue {
+  private canClick:boolean = false
+  private IntentionalCompartment:any[] =[]
+  private dayWork:any[] =[]
+  private expectedMonthlyIncome:any[] =[]
+  private typeGoods:any[] =[]
+  private driverId:string = ''
+  private driverOptions:any[] = []
   private chooseOrderState:boolean = false
+  private isHasOrder:boolean = false
   private isEditor:boolean = true
   private activeCreat:number = 1
-  private activeItem:number = 0
+  private activeItem:number | null = null
   private phoneNum:string = ''
   private orderType:number = 0
   private loading:boolean = false
-  private options:any[] = []
   private list:any[] = []
   private orderList:any[] = []
-  private states:any[] = [
-    'Alabama', 'Alaska', 'Arizona',
-    'Arkansas', 'California', 'Colorado',
-    'Connecticut', 'Delaware', 'Florida',
-    'Georgia', 'Hawaii', 'Idaho', 'Illinois',
-    'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-    'Louisiana', 'Maine', 'Maryland',
-    'Massachusetts', 'Michigan', 'Minnesota',
-    'Mississippi', 'Missouri', 'Montana',
-    'Nebraska', 'Nevada', 'New Hampshire',
-    'New Jersey', 'New Mexico', 'New York',
-    'North Carolina', 'North Dakota', 'Ohio',
-    'Oklahoma', 'Oregon', 'Pennsylvania',
-    'Rhode Island', 'South Carolina',
-    'South Dakota', 'Tennessee', 'Texas',
-    'Utah', 'Vermont', 'Virginia',
-    'Washington', 'West Virginia', 'Wisconsin',
-    'Wyoming'
-  ]
   private orderInfo:any = {
     carType: '',
     // 车型
@@ -343,16 +299,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择城市'
       },
-      options: [
-        {
-          label: '58同城',
-          value: '5'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
+      options: []
     },
     {
       type: 1,
@@ -369,16 +316,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择车型'
       },
-      options: [
-        {
-          label: '58同城',
-          value: '5'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
+      options: []
     },
     {
       type: 2,
@@ -387,16 +325,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择运营经理'
       },
-      options: [
-        {
-          label: '58同城',
-          value: '5'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
+      options: []
     }
   ]
   private formItemOther:any[] = [
@@ -451,16 +380,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择配送货物类型'
       },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
+      options: []
     },
     {
       type: 2,
@@ -469,16 +389,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择期望月收入'
       },
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        },
-        {
-          label: '朋友圈',
-          value: 'wechat'
-        }
-      ]
+      options: []
     },
     {
       type: 1,
@@ -513,24 +424,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择可接受一天工作时长'
       },
-      options: [
-        {
-          label: '6小时',
-          value: '1'
-        },
-        {
-          label: '8小时',
-          value: '2'
-        },
-        {
-          label: '10小时',
-          value: '3'
-        },
-        {
-          label: '12小时',
-          value: '4'
-        }
-      ]
+      options: []
     },
     {
       type: 1,
@@ -579,9 +473,12 @@ export default class extends Vue {
       this.$message.error('请填写手机号码或者司机姓名')
       return
     }
-    if (!this.activeItem) {
+    if (this.activeItem === null) {
       this.$message.error('请选择订单')
       return
+    }
+    if (!this.isHasOrder) {
+      return this.$message.error('该司机目前没有创建订单，暂无法创建运力')
     }
     // var phone = this.phoneNum
     // if (!(/^1[3456789]\d{9}$/.test(phone))) {
@@ -623,21 +520,6 @@ export default class extends Vue {
     }
   }
 
-  private remoteMethod(query:any) {
-    if (query !== '') {
-      this.loading = true
-      setTimeout(() => {
-        this.loading = false
-        this.options = this.list.filter(item => {
-          return item.label.toLowerCase()
-            .indexOf(query.toLowerCase()) > -1
-        })
-      }, 200)
-    } else {
-      this.options = []
-    }
-  }
-
   private async getDictionary() {
     const { data } = await GetDictionary({ dictType: 'online_city' })
     if (data.success) {
@@ -655,23 +537,119 @@ export default class extends Vue {
   }
 
   private async getDictionaryAll() {
-    let params:string[] = ['']
-    const { data } = await GetDictionaryAll(params)
-  }
-
-  private async getOrderList() {
-    let { data } = await transportOrderList({ dirverId: 'SJ202007131003' })
+    let params = ['Intentional_compartment', 'type_of_goods', 'expected_monthly_income', 'accept_one_day_of_work']
+    let { data } = await GetDictionaryList(params)
     if (data.success) {
-      this.chooseOrderState = true
-      console.log(data)
+      // eslint-disable-next-line camelcase
+      let { Intentional_compartment, type_of_goods, expected_monthly_income, accept_one_day_of_work } = data.data
+      let cartype = Intentional_compartment.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      let goods = type_of_goods.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      let monthly = expected_monthly_income.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      let daywork = accept_one_day_of_work.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      // eslint-disable-next-line camelcase
+      this.IntentionalCompartment = cartype
+      this.dayWork = daywork
+      this.expectedMonthlyIncome = monthly
+      this.typeGoods = goods
+      this.formItem.map(ele => {
+        if (ele.key === 'carType') {
+          ele.options = cartype
+        }
+      })
+      this.formItemOther.map(ele => {
+        if (ele.key === 'cargoType') {
+          ele.options = goods
+        }
+        if (ele.key === 'expMonthlyIncome') {
+          ele.options = monthly
+        }
+        if (ele.key === 'maxWorkTime') {
+          ele.options = daywork
+        }
+      })
+    } else {
+      this.$message.error(data)
+    }
+    let city = await GetOpenCityData()
+    if (city.data.success) {
+      let arr = city.data.data.map(function(ele:any) {
+        return { value: Number(ele.code), label: ele.name }
+      })
+      this.formItem.map(ele => {
+        if (ele.key === 'workCity') {
+          ele.options = arr
+        }
+      })
     } else {
       this.$message.error(data)
     }
   }
 
+  private orderGet(index:number, ele:any) {
+    if (ele.orderId === 'DD2020071410095') {
+      return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
+    } else {
+      this.isHasOrder = true
+      this.activeItem = index
+    }
+  }
+
+  private async getOrderList(val:any) {
+    let { data } = await transportOrderList({ driverId: val })
+    if (data.success) {
+      this.orderList = data.data
+      if (this.orderList.length === 0) {
+        this.chooseOrderState = false
+      } else {
+        this.chooseOrderState = true
+      }
+    } else {
+      this.$message.error(data)
+    }
+  }
+
+  private goOrderDetail(id:string) {
+    this.$router.push({ path: 'orderdetail', query: { id: id } })
+  }
+
   private fetchData() {
     this.getDictionaryAll()
-    this.getOrderList()
+  }
+
+  private async getCarrierDetail(carrierId:string) {
+    let { data } = await transportOrderDetail({ carrierId: carrierId })
+    if (data.success) {
+      this.activeCreat = 2
+      let orderInfo = data.data
+      // for (let ele in orderInfo) {
+      //   if (orderInfo[ele] === 0) {
+      //     return orderInfo[ele] === ''
+      //   }
+      // }
+      this.orderInfo = orderInfo
+    } else {
+      this.$message.error(data.data.errorMsg)
+    }
+  }
+
+  private async getDriverList() {
+    let { data } = await driverList()
+    if (data.success) {
+      let driverOptions = data.data.map(function(ele:any) {
+        return { value: ele.driverId, label: `${ele.name}(${ele.phone})` }
+      })
+      this.driverOptions = driverOptions
+    } else {
+      this.$message.error(data.data.errorMsg)
+    }
   }
 
   // 判断是否是PC
@@ -695,21 +673,20 @@ export default class extends Vue {
   //   })
   // }
 
-  created() {
+  mounted() {
     this.fetchData()
-    let driverId = this.$route.query.driverId
-    let orderId = this.$route.query.orderId
-    if (driverId && orderId) {
+    let carrierId = this.$route.query.carrierId as string
+    if (carrierId) {
       this.isEditor = false
       this.activeCreat = 2
+      this.orderInfo.carrierId = carrierId
+      this.getCarrierDetail(carrierId)
       // this.phoneNum = driverId as string
     } else {
       this.isEditor = true
       this.activeCreat = 1
+      this.getDriverList()
     }
-    this.list = this.states.map(item => {
-      return { value: `value:${item}`, label: `label:${item}` }
-    })
   }
 }
 </script>
@@ -784,7 +761,29 @@ export default class extends Vue {
           .orderItem{
             cursor: pointer;
             margin-left: 20px;
-            border: 1px solid #DCDFE6;
+            border: 1px solid #648be7;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            color: #140303;
+            span{
+              margin-bottom: 10px;
+            }
+            .goDetail{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .orderNum{
+              font-weight: bold;
+              color: black;
+            }
+          }
+          .orderItemNo{
+            margin-left: 20px;
+            border: 1px solid #bdcdf1;
             padding: 10px 20px;
             box-sizing: border-box;
             display: flex;
@@ -805,6 +804,9 @@ export default class extends Vue {
             }
           }
           .orderItem:last-child{
+            margin-bottom: 0;
+          }
+          .orderItemNo:last-child{
             margin-bottom: 0;
           }
         }

@@ -8,52 +8,52 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="货主姓名"
-            value="北京京东"
+            :value="ruleForm.bussinessName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="内部使用线路名称"
-            value="北京京东传站618"
+            :value="ruleForm.lineName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="备注信息/线路描述"
-            value="北京京东传站618"
+            :value="ruleForm.remark"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路类型"
-            value="替换型"
+            :value="ruleForm.lineTypeName"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="可上车数"
-            value="1辆"
+            :value="ruleForm.deployNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="仓位置"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ruleForm.warehouseDistrict"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="上架有效期（天）"
-            value="1998年7月1日"
+            :value="ruleForm.waitDirveValidity"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路稳定性"
-            value="2-4个月（一般稳定）"
+            :value="ruleForm.stabilityRateName"
           />
         </el-col>
       </el-row>
@@ -66,46 +66,58 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="选择车型"
-            value="4.2米厢货"
+            :value="ruleForm.carTypeName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="配送区域"
-            value="北京市朝阳区全区域"
+            value="字段待定"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="具体区域范围"
-            value="全区域"
+            :value="ruleForm.districtArea"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
+            v-if="ruleForm.returnWarehouse === 1"
             name="是否需要返仓"
             value="是"
+          />
+          <DetailItem
+            v-if="ruleForm.returnWarehouse === 2"
+            name="是否需要返仓"
+            value="否"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
+            v-if="ruleForm.returnBill === 1"
             name="是否需要回单"
             value="是"
+          />
+          <DetailItem
+            v-if="ruleForm.returnBill === 2"
+            name="是否需要回单"
+            value="否"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计每日平均配送点位数"
-            value="2"
+            :value="ruleForm.deliveryNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计每日平均总公里数（公里）"
-            value="60"
+            :value="ruleForm.distance"
           />
         </el-col>
       </el-row>
@@ -119,59 +131,76 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="每日配送趟数"
-            value="4"
+            :value="ruleForm.dayNo"
           />
         </el-col>
         <el-col
-          v-for="index in 4"
+          v-for="index in ruleForm.dayNo"
           :key="index"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
             name="预计工作时间"
-            value="09:00-10:22"
-          />
-        </el-col>
-        <el-col :span="isPC ? 6 : 24">
-          <DetailItem
-            name="预计每日平均总公里数（公里）"
-            value="60"
+            :value="index.workingTimeStart +'-'+ index.workingTimeEnd"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计月出车天数"
-            value="30"
+            :value="ruleForm.monthNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="结算方式"
-            value="整车"
+            :value="ruleForm.incomeSettlementMethodName"
           />
         </el-col>
-        <el-col :span="isPC ? 6 : 24">
+
+        <el-col
+          v-if="ruleForm.incomeSettlementMethodName === 2"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
-            name="货主单趟报价"
-            value="300"
+            name="每趟保底（元）"
+            :value="ruleForm.everyTripGuaranteed"
+          />
+        </el-col>
+        <el-col
+          v-if="ruleForm.incomeSettlementMethodName === 2"
+          :span="isPC ? 6 : 24"
+        >
+          <DetailItem
+            name="每趟提成订单"
+            :value="ruleForm.bussinessName"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计货主月报价"
-            value="24000"
+            :value="ruleForm.shipperOffer"
           />
         </el-col>
-        <el-col :span="isPC ? 6 : 24">
+
+        <el-col
+          v-if="ruleForm.incomeSettlementMethodName === 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
-            name="结算周期"
-            value="月结"
+            name="货主单趟报价"
+            :value="ruleForm.everyTripGuaranteed"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="结算天数"
-            value="30天"
+            :value="ruleForm.settlementDaysName"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="结算周期"
+            :value="ruleForm.settlementCycleName"
           />
         </el-col>
         <el-col
@@ -226,18 +255,21 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路打分"
-            value="90"
+            :value="ruleForm.lineRank"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路角色"
-            value="梧桐专车"
+            :value="ruleForm.busiTypeName"
           />
         </el-col>
       </el-row>
     </SectionContainer>
-    <div class="steps">
+    <div
+      v-if="pageStatus === 1"
+      class="steps"
+    >
       <el-steps
         :active="2"
         align-center
@@ -259,13 +291,56 @@
         />
       </el-steps>
     </div>
+    <div
+      v-if="pageStatus === 2"
+      class="btnBox"
+    >
+      <el-button
+        type="primary"
+        name="lineaudit-btn-creat"
+        @click="pass"
+      >
+        审核通过
+      </el-button>
+      <el-button
+        type="primary"
+        name="lineaudit-btn-creat"
+        @click="auditBack = true"
+      >
+        审核拒绝
+      </el-button>
+    </div>
+
+    <Dialog
+      :visible.sync="auditBack"
+      :title="`驳回原因`"
+      :center="true"
+      :cancel="auditCancel"
+      :confirm="auditConfirm"
+    >
+      <div>
+        <div class="dioBox">
+          <span>原因：</span>
+          <el-input
+            v-model="auditBackText"
+            type="textarea"
+            placeholder="请至少输入5个字符"
+            minlength="5"
+            maxlength="100"
+            rows="5"
+            show-word-limit
+          />
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script lang="ts">
+import Dialog from '@/components/Dialog/index.vue'
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetLineDetail, approvedLine, notApprovedLine } from '@/api/cargo'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -275,57 +350,154 @@ import '@/styles/common.scss'
       name: 'LineDetail',
       components: {
         DetailItem,
-        SectionContainer
+        SectionContainer,
+        Dialog
       }
     })
 
 export default class extends Vue {
+  private auditBack:boolean = false
+  private auditBackText:string = ''
   private ruleForm:any = {
-    name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: ''
+    bussinessName: undefined,
+    carType: undefined,
+    carTypeName: undefined,
+    cargoType: undefined,
+    carry: undefined,
+    city: undefined,
+    cityArea: undefined,
+    cityAreaName: undefined,
+    countyArea: undefined,
+    countyAreaName: undefined,
+    createDate: undefined,
+    createId: undefined,
+    customerId: undefined,
+    dayNo: 0,
+    deadlineVO: undefined,
+    deliveryNo: undefined,
+    deliveryWeekCycle: undefined,
+    deployNo: undefined,
+    distance: undefined,
+    districtArea: undefined,
+    everyTripGuaranteed: undefined,
+    everyUnitPrice: undefined,
+    goodsWeight: undefined,
+    goodsWeightName: undefined,
+    handlingDifficultyDegree: undefined,
+    handlingDifficultyDegreeName: undefined,
+    id: undefined,
+    incomeSettlementMethod: undefined,
+    incomeSettlementMethodName: undefined,
+    lineDeliveryInfoFORMS: [],
+    lineId: undefined,
+    lineName: undefined,
+    lineRank: undefined,
+    lineSaleId: undefined,
+    lineSaleName: undefined,
+    lineType: undefined,
+    lineTypeName: undefined,
+    monthNo: undefined,
+    provinceArea: undefined,
+    provinceAreaName: undefined,
+    remark: undefined,
+    returnBill: undefined,
+    returnWarehouse: undefined,
+    settlementCycle: undefined,
+    settlementCycleName: undefined,
+    settlementDays: undefined,
+    settlementDaysName: undefined,
+    shelvesState: undefined,
+    shelvesStateName: undefined,
+    shipperOffer: undefined,
+    stabilityRate: undefined,
+    stabilityRateName: undefined,
+    timeDiff: undefined,
+    updateDate: undefined,
+    updateId: undefined,
+    waitDirveValidity: undefined,
+    warehouse: undefined,
+    warehouseCity: undefined,
+    warehouseCityName: undefined,
+    warehouseCounty: undefined,
+    warehouseCountyName: undefined,
+    warehouseDistrict: undefined,
+    warehouseProvince: undefined,
+    warehouseProvinceName: undefined,
+    warehouseTown: undefined,
+    warehouseTownName: undefined
   }
+  private pageStatus = 0
+  private lineId:string = ''
 
   private checkList:any[] = ['周一', '周末']
 
-  private rules:any = {
-    name: [
-      { required: true, message: '请输入活动名称', trigger: 'blur' },
-      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-    ],
-    region: [
-      { required: true, message: '请选择活动区域', trigger: 'change' }
-    ],
-    date1: [
-      { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-    ],
-    date2: [
-      { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-    ],
-    type: [
-      { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-    ],
-    resource: [
-      { required: true, message: '请选择活动资源', trigger: 'change' }
-    ],
-    desc: [
-      { required: true, message: '请填写活动形式', trigger: 'blur' }
-    ]
+  private fetchData() {
+    this.GetDetail()
   }
 
-  created() {
+  private async GetDetail() {
+    let { data } = await GetLineDetail({ lineId: 'XL202007100021' })
+    if (data.success) {
+      this.ruleForm = { ...this.ruleForm, ...data.data }
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async auditConfirm(done: any) {
+    if ((this.auditBackText as string).length < 5 && !(this.auditBackText === '')) {
+      return this.$message.error('备注不得小于5个字符')
+    } else {
+      let params = {
+        'lineId': this.lineId,
+        'reason': this.auditBackText
+      }
+      let { data } = await notApprovedLine(params)
+      if (data.success) {
+        this.$message.success('审核拒绝完成')
+        done(this.$router.go(-1))
+      } else {
+        this.$message.error(data.errorMsg || data)
+      }
+    }
+  }
+  private auditCancel(done:any) {
+    this.auditBack = false
+  }
+
+  private async pass() {
+    let params = {
+      'lineId': this.lineId,
+      'reason': ''
+    }
+    let { data } = await approvedLine(params)
+    if (data.success) {
+      this.$message.success('审核通过完成')
+      this.$router.go(-1)
+    } else {
+      this.$message.error(data.errorMsg || data)
+    }
   }
 
   mounted() {
+    let lineId = this.$route.query.id
+    this.lineId = lineId as string
+    if (lineId) {
+      this.fetchData()
+    }
+    let routeArr = this.$route.path.split('/')
+    if (routeArr[2] === 'linedetail') {
+      this.pageStatus = 1
+    } else {
+      this.pageStatus = 2
+    }
   }
 
-  activated() {
-  }
+  // activated() {
+  //   let lineId = this.$route.query.lineId
+  //   if (lineId) {
+  //     this.fetchData()
+  //   }
+  // }
 
   // 判断是否是PC
   get isPC() {
@@ -381,7 +553,21 @@ export default class extends Vue {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     padding-bottom: 6px;
-}
+  }
+  .btnBox{
+    text-align: right;
+    padding-top: 20px;
+  }
+  .dioBox{
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      margin-bottom: 20px;
+      padding: 0 20px;
+      .el-textarea{
+        width: 60%!important;
+      }
+  }
 }
 </style>
 

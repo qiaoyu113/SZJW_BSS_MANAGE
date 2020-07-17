@@ -211,12 +211,17 @@
       :type="type"
       @onRows="rows = []"
     />
+
+    <!-- 上岗 -->
+    <work-dialog
+      ref="workDia"
+      :rows="rowItem"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { GetCustomerList } from '@/api/customer'
 import { CargoListData } from '@/api/types'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { HandlePages } from '@/utils/index'
@@ -227,9 +232,12 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { TransportListForm } from '../components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
+import { GetDictionaryList, GetOpenCityData, getOperManager } from '@/api/common'
+import { updateCarrierStatus, getCarrierInfoList } from '@/api/transport'
 import { getLabel } from '@/utils/index.ts'
 import SelfForm from '@/components/base/SelfForm.vue'
 import ManagerDialog from './components/managerDialog.vue'
+import workDialog from './components/workDialog.vue'
 
 interface IState {
   [key: string]: any;
@@ -250,11 +258,13 @@ interface PageObj {
       SelfForm,
       SelfTable,
       PitchBox,
-      ManagerDialog
+      ManagerDialog,
+      workDialog
     }
   })
 
 export default class extends Vue {
+    private IntentionalCompartment:any[] = []
     private type:string = ''
     private total = 0
     private list: CargoListData[] = []
@@ -262,22 +272,27 @@ export default class extends Vue {
     private checkList:any[] =[]
     private listLoading = false
     private tags: any[] = []
+    private rowItem:any = {}
     private tab: any[] = [
       {
         label: '全部',
-        name: '0'
+        name: '0',
+        num: '0'
       },
       {
         label: '待上岗',
-        name: '1'
+        name: '1',
+        num: '0'
       },
       {
         label: '上岗',
-        name: '2'
+        name: '2',
+        num: '0'
       },
       {
         label: '停用',
-        name: '3'
+        name: '3',
+        num: '0'
       }
     ]
     private columns:any[] = [
@@ -345,36 +360,7 @@ export default class extends Vue {
         slot: true
       }
     ]
-    private tableData:any[] = [
-      {
-        carrierId: '121313123131',
-        name: 'tom',
-        phone: '15021578502',
-        busiTypeName: '共享',
-        workCityName: '北京市',
-        statusName: '待跟进',
-        driverId: '面试转化',
-        driverPhone: '王利',
-        gmIdName: Date.now(),
-        gmPhone: 5,
-        createName: '王利',
-        createDate: '15021578502'
-      },
-      {
-        carrierId: '121313123131',
-        name: 'tom',
-        phone: '15021578502',
-        busiTypeName: '共享',
-        workCityName: '北京市',
-        statusName: '待跟进',
-        driverId: '面试转化',
-        driverPhone: '王利',
-        gmIdName: Date.now(),
-        gmPhone: 5,
-        createName: '王利',
-        createDate: '15021578502'
-      }
-    ]
+    private tableData:any[] = []
     /**
      *分页对象
     */
@@ -384,28 +370,33 @@ export default class extends Vue {
       total: 100
     }
     private listQuery:IState = {
-      state: 'all',
-      workCityName: '',
-      carrierId: '',
-      name: '',
-      phone: '',
-      carTypeName: '',
-      busiTypeName: '',
-      gmGroup: '',
-      gmIdName: '',
-      dirverName: '',
-      driverPhone: '',
-      createDate: []
+      // 'busiType': '',
+      // 'carType': '',
+      // 'carrierId': '',
+      // 'driverName': '',
+      // 'driverPhone': '',
+      // 'endTime': '',
+      // 'gmGroup': '',
+      // 'gmId': '',
+      // 'limit': '',
+      // 'name': '',
+      // 'page': '',
+      // 'pageNumber': '',
+      // 'phone': '',
+      // 'startTime': '',
+      // 'status': '',
+      // 'workCoty': ''
     }
 
     private formItem:any[] = [
       {
         type: 2,
-        key: 'workCityName',
+        key: 'workCoty',
         label: '工作城市',
         tagAttrs: {
           placeholder: '请选择工作城市'
-        }
+        },
+        options: []
       },
       {
         type: 1,
@@ -433,37 +424,28 @@ export default class extends Vue {
       },
       {
         type: 2,
-        key: 'carTypeName',
+        key: 'carType',
         label: '车型',
         tagAttrs: {
-          placeholder: '请选择业绩线'
+          placeholder: '请选择车型'
         },
-        options: [
-          {
-            label: '专车',
-            value: 'car1'
-          },
-          {
-            label: '共享',
-            value: 'share1'
-          }
-        ]
+        options: []
       },
       {
         type: 2,
-        key: 'busiTypeName',
+        key: 'busiType',
         label: '业务线',
         tagAttrs: {
-          placeholder: '请选择加盟小组'
+          placeholder: '业务线'
         },
         options: [
           {
             label: '专车',
-            value: 'car2'
+            value: '0'
           },
           {
             label: '共享',
-            value: 'share2'
+            value: '1'
           }
         ]
       },
@@ -474,28 +456,20 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '请选择运营小组'
         },
-        options: [
-          {
-            label: '专车',
-            value: 'car3'
-          },
-          {
-            label: '共享',
-            value: 'share3'
-          }
-        ]
+        options: []
       },
       {
         type: 2,
-        key: 'gmIdName',
+        key: 'gmId',
         label: '运营经理',
         tagAttrs: {
           placeholder: '请选择运营经理'
-        }
+        },
+        options: []
       },
       {
         type: 1,
-        key: 'dirverName',
+        key: 'driverName',
         label: '所属司机姓名',
         w: '130px',
         tagAttrs: {
@@ -513,7 +487,7 @@ export default class extends Vue {
       },
       {
         type: 3,
-        key: 'createDate',
+        key: 'startTime',
         label: '创建时间',
         col: 12,
         tagAttrs: {
@@ -579,6 +553,7 @@ export default class extends Vue {
           }
         }
       }
+      this.getList(this.listQuery)
     }
     /**
    *重置
@@ -685,20 +660,98 @@ export default class extends Vue {
 
     // 所有请求方法
     private fetchData() {
-      // this.getList(this.listQuery)
+      this.getList(this.listQuery)
+      this.dicList()
     }
 
-    private stopTransport() {
+    private async dicList() {
+      let params = ['Intentional_compartment']
+      let { data } = await GetDictionaryList(params)
+      if (data.success) {
+        // eslint-disable-next-line camelcase
+        let { Intentional_compartment } = data.data
+        let cartype = Intentional_compartment.map(function(ele:any) {
+          return { value: Number(ele.dictValue), label: ele.dictLabel }
+        })
+        // eslint-disable-next-line camelcase
+        this.IntentionalCompartment = cartype
+        console.log(cartype)
+        this.formItem.map(ele => {
+          if (ele.key === 'carType') {
+            ele.options = cartype
+          }
+        })
+      } else {
+        this.$message.error(data)
+      }
+      let city = await GetOpenCityData()
+      if (city.data.success) {
+        let arr = city.data.data.map(function(ele:any) {
+          return { value: ele.code, label: ele.name }
+        })
+        this.formItem.map(ele => {
+          if (ele.key === 'workCoty') {
+            ele.options = arr
+          }
+        })
+      } else {
+        this.$message.error(data)
+      }
+      let manager = await getOperManager()
+      if (manager.data.success) {
+        // let arr = city.data.data.map(function(ele:any) {
+        //   return { value: ele.code, label: ele.name }
+        // })
+        // this.formItem.map(ele => {
+        //   if (ele.key === 'workCoty') {
+        //     ele.options = arr
+        //   }
+        // })
+      } else {
+        this.$message.error(data)
+      }
+    }
+
+    private async updateCarrier(params:any, type:string) {
+      let { data } = await updateCarrierStatus(params)
+      if (data.success) {
+        if (type === '停用') {
+          if (data.data.flag) {
+            this.$message({
+              type: 'success',
+              message: '运力停用成功!'
+            })
+          } else {
+            this.$message.error(data.data.msg)
+          }
+        } else {
+          if (data.data.flag) {
+            this.$message({
+              type: 'success',
+              message: '激活成功!'
+            })
+          } else {
+            this.$message.error(data.data.msg)
+          }
+        }
+      } else {
+        this.$message.error(data)
+      }
+    }
+
+    private stopTransport(row:any) {
       this.$confirm('是否解绑标书', '停用', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message.error('请先解绑标书，才能停用该运力')
-        // this.$message({
-        //   type: 'success',
-        //   message: '运力停用成功!'
-        // })
+        let params = {
+          // 'carrierId': row.carrierId,
+          carrierId: 'YL202007150003',
+          carrierStatus: 2
+          // carrierStatus: row.status
+        }
+        this.updateCarrier(params, '停用')
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -707,17 +760,17 @@ export default class extends Vue {
       })
     }
 
-    private aliveTransport() {
+    private aliveTransport(row:any) {
       this.$confirm('该运力选中的订单状态是否为：已退款', '激活', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message.error('该运力选中的订单已退款，不可激活')
-        // this.$message({
-        //   type: 'success',
-        //   message: '激活成功!'
-        // })
+        let params = {
+          'carrierId': row.carrierId,
+          'carrierStatus': row.status
+        }
+        this.updateCarrier(params, '激活')
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -734,16 +787,17 @@ export default class extends Vue {
       // this.id = row.clientPhone
       switch (key) {
         case 'gowork':
-
+          this.rowItem = row;
+          (this.$refs.workDia as any).openDialog()
           break
         case 'alive':
-          this.aliveTransport()
+          this.aliveTransport(row)
           break
         case 'stop':
-          this.stopTransport()
+          this.stopTransport(row)
           break
         case 'editor':
-          this.$router.push({ path: 'editortransport', query: { driverId: 'SJ202007131003', orderId: 'DD202007131004' } })
+          this.$router.push({ path: 'editortransport', query: { carrierId: 'YL202007131001' } })
           break
         case 'detail':
           this.$router.push({ path: 'transportdetail', query: { id: row.clientPhone } })
@@ -758,7 +812,7 @@ export default class extends Vue {
     handlePageSize(page:any) {
       this.page.page = page.page
       this.page.limit = page.limit
-      // this.fetchData()
+      this.getList(this.listQuery)
     }
 
     // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
@@ -816,6 +870,7 @@ export default class extends Vue {
     } else {
       this.listQuery[key] = value
     }
+    this.getList(this.listQuery)
   }
 
   // 请求列表
@@ -823,9 +878,9 @@ export default class extends Vue {
     this.listQuery.page = value.page
     this.listQuery.limit = value.limit
     this.listLoading = true
-    const { data } = await GetCustomerList(this.listQuery)
+    const { data } = await getCarrierInfoList(this.listQuery)
     if (data.success) {
-      this.list = data.data
+      this.tableData = data.data
       data.page = await HandlePages(data.page)
       this.total = data.page.total
       setTimeout(() => {
