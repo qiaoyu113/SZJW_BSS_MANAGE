@@ -23,12 +23,12 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="角色英文名称"
-              maxlength="20"
               prop="name"
             >
               <el-input
                 v-model="ruleForm.name"
                 placeholder="请输入角色英文名称"
+                maxlength="20"
               />
             </el-form-item>
           </el-col>
