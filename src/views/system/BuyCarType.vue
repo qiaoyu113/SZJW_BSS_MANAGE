@@ -3,7 +3,7 @@
     <SuggestContainer
       :tab="tab"
       :tags="tags"
-      :active-name="listQuery.state"
+      :active-name="listQuery.status"
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
@@ -11,18 +11,19 @@
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
+        @handle-query="search"
       />
     </SuggestContainer>
     <div class="table_box">
       <!--操作栏-->
       <TableHeader
         :tab="tab"
-        :active-name="listQuery.state"
+        :active-name="listQuery.status"
       >
-        <el-button :class="isPC ? 'btn-item' : 'btn-item-m'">
+        <!-- <el-button :class="isPC ? 'btn-item' : 'btn-item-m'">
           <i class="el-icon-download" />
           <span v-if="isPC">导出</span>
-        </el-button>
+        </el-button> -->
         <el-button
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -74,59 +75,67 @@
           @cell-click="tableClick"
         >
           <el-table-column
-            :key="Math.random()"
-            prop="date"
+            v-if="checkList.includes('商品编号')"
+            :key="checkList.length + 'productId'"
+            prop="productId"
             label="商品编号"
             fixed
           />
           <el-table-column
             v-if="checkList.includes('购车车型')"
-            prop="date"
+            prop="name"
             label="购车车型"
-          >
-            <template slot-scope="{row}">
-              <el-button type="text">
-                {{ row.name }}
-              </el-button>
-            </template>
-          </el-table-column>
+          />
           <el-table-column
             v-if="checkList.includes('车辆信息')"
-            prop="date"
+            prop="describe"
             label="车辆信息"
           />
           <el-table-column
             v-if="checkList.includes('供应商')"
-            prop="date"
+            prop="supplier"
             label="供应商"
           />
           <el-table-column
-            v-if="checkList.includes('无税加个（元）')"
-            prop="date"
-            label="无税加个（元）"
+            v-if="checkList.includes('无税价格（元）')"
+            prop="price"
+            label="无税价格（元）"
           />
           <el-table-column
             v-if="checkList.includes('城市')"
-            prop="date"
+            prop="city"
             label="城市"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ formatCity(row.city) }}
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.includes('车型状态')"
             prop="date"
             label="车型状态"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ row.status === 10 ? '已上架' : '已下架' }}
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.includes('创建时间')"
-            prop="date"
+            prop="createDate"
             label="创建时间"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.includes('创建人')"
-            prop="date"
+            prop="createrName"
             label="创建人"
           />
           <el-table-column
-            :key="Math.random()"
+            v-if="checkList.includes('创建人')"
+            :key="checkList.length"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -150,10 +159,14 @@
                   <i class="el-icon-setting el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    下{{ row }}架
+                  <el-dropdown-item
+                    @click.native="shelvesOrTheshelves(row)"
+                  >
+                    {{ row.status === 10 ? '下架' : '上架' }}
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="showDialog(row)"
+                  >
                     编辑
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -175,26 +188,77 @@
       :visible.sync="dialogVisible"
       :title="dialogTit"
       :confirm="confirm"
+      @closed="resetDialog"
     >
       <el-form
         ref="dialogForm"
         :model="dialogForm"
         label-width="80px"
+        :rules="rules"
       >
-        <el-form-item label="供应商">
-          <el-input v-model="dialogForm.name" />
+        <el-form-item
+          label="供应商"
+          prop="supplier"
+        >
+          <el-input
+            v-model="dialogForm.supplier"
+            placeholder="请输入供应商"
+            maxlength="15"
+          />
         </el-form-item>
-        <el-form-item label="车型">
-          <el-input v-model="dialogForm.name" />
+        <el-form-item
+          label="车型"
+          prop="carType"
+        >
+          <el-input
+            v-model="dialogForm.carType"
+            placeholder="请输入车型"
+            maxlength="15"
+          />
         </el-form-item>
-        <el-form-item label="车辆信息">
-          <el-input v-model="dialogForm.name" />
+        <el-form-item
+          label="车辆信息"
+          prop="carDescribe"
+        >
+          <el-input
+            v-model="dialogForm.carDescribe"
+            placeholder="请输入车辆信息"
+            maxlength="50"
+          />
         </el-form-item>
-        <el-form-item label="无税价格">
-          <el-input v-model="dialogForm.name" />
+        <el-form-item
+          label="无税价格"
+          prop="price"
+        >
+          <el-input
+            v-model="dialogForm.price"
+            v-only-number="{min: 0, max: 1000000, precision: 2}"
+            placeholder="请输入无税价格"
+          >
+            <template slot="append">
+              元
+            </template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="适用城市">
-          <el-input v-model="dialogForm.name" />
+        <el-form-item
+          label="适用城市"
+          prop="city"
+        >
+          <el-select
+            v-model="dialogForm.city"
+            placeholder="请选择"
+            multiple
+            collapse-tags
+            clearable
+            :disabled="!isAdd"
+          >
+            <el-option
+              v-for="item in optionsCity"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
     </Dialog>
@@ -208,7 +272,8 @@ import { BuyCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
-import { getProductList } from '@/api/product'
+import { GetOpenCityData } from '@/api/common'
+import { getProductList, shelvesOrTheshelves, createProduct, updateProduct } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
@@ -248,7 +313,7 @@ export default class extends Vue {
     carType: '',
     city: '',
     productCode: '',
-    status: '',
+    status: '0',
     supplier: '',
     endDate: '',
     startDate: '',
@@ -256,6 +321,7 @@ export default class extends Vue {
     limit: 20
   };
   private dropdownList: any[] = [
+    '商品编号',
     '购车车型',
     '车辆信息',
     '供应商',
@@ -263,42 +329,83 @@ export default class extends Vue {
     '城市',
     '车型状态',
     '创建时间',
-    '创建人'
+    '创建人',
+    '操作'
   ];
   private checkList: any[] = this.dropdownList;
+  private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   // table
   private total = 0;
   private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
   // dialog
+  private isAdd: boolean = false;
   private dialogVisible: boolean = false;
   private dialogTit: string = '';
   private dialogForm: IState = {
-    name: ''
+    'busiType': 1,
+    'carDescribe': '', // 车辆描述
+    'carType': '', // 车辆类型
+    'city': [], // 适用地市
+    'price': '', // 价格
+    'supplier': ''// 供应商
   };
+  private rules: any = {
+    'carDescribe': [
+      { required: true, message: '请输入车辆信息', trigger: 'blur' }
+    ],
+    'carType': [
+      { required: true, message: '请输入车型', trigger: 'blur' }
+    ],
+    'city': [
+      { required: true, message: '请选择城市', trigger: 'change' }
+    ],
+    'price': [
+      { required: true, message: '请输入无税价格', trigger: 'blur' }
+    ],
+    'supplier': [
+      { required: true, message: '请输入供应商', trigger: 'blur' }
+    ]
+  }
 
   // 计算属性
   get isPC() {
     return SettingsModule.isPC
   }
   // 事件处理
+  private formatCity(city:any) {
+    const data = this.optionsCity.find((item:any) => {
+      return item.code === city
+    })
+    return data ? data.name : city
+  }
   // 处理tags方法
   private handleTags(value: any) {
     this.tags = value
   }
   // 所有请求方法
   private fetchData() {
+    this.getDictionary()
     this.getList(this.listQuery)
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
-    this.listQuery[key] = value
+    // this.listQuery[key] = value
+    if (key === 'state') {
+      this.listQuery.status = value
+    } else {
+      this.listQuery[key] = value
+    }
     this.fetchData()
+  }
+  // search
+  private search() {
+    this.getList(this.listQuery)
   }
   // 处理选择日期方法
   private handleDate(value: any) {
-    // this.DateValue = value
+    this.DateValue = value
   }
   // button
   // 添加明细原因 row 当前行 column 当前列
@@ -308,7 +415,8 @@ export default class extends Vue {
     this.listQuery.page = value.page
     this.listQuery.limit = value.limit
     this.listLoading = true
-    const { data } = await getProductList(this.listQuery)
+    const postData = this.filterObj(this.listQuery)
+    const { data } = await getProductList(postData)
     if (data.success) {
       this.list = data.data
       this.total = data.page.total
@@ -323,24 +431,104 @@ export default class extends Vue {
       this.listLoading = false
     }, 0.5 * 1000)
   }
-  // table index
-  private indexMethod(index: number) {
-    let { page, limit } = this.listQuery
-    return index + 1 + (page - 1) * limit
+  private filterObj(obj:any) {
+    let result: any = {}
+    Object.keys(obj).filter((key) => obj[key] !== '').forEach((key) => {
+      result[key] = obj[key]
+    })
+    return result
   }
-
+  // 清楚dialog
+  private resetDialog() {
+    this.dialogForm.carDescribe = ''
+    this.dialogForm.carType = ''
+    this.dialogForm.city = ''
+    this.dialogForm.price = ''
+    this.dialogForm.supplier = ''
+    this.dialogForm.id = ''
+    this.$nextTick(() => {
+      (this.$refs.dialogForm as any).clearValidate()
+    })
+  }
   // dialog
-  showDialog(key: string) {
+  private showDialog(key: any) {
     if (key === 'create') {
       // 新建
+      this.isAdd = true
+      this.dialogTit = '新建商品'
       this.dialogVisible = true
     } else {
       // 编辑
-      console.log('编辑')
+      this.isAdd = false
+      // console.log(key)
+      this.dialogForm.carDescribe = key.describe // 车辆描述
+      this.dialogForm.carType = key.name // 车辆描述
+      this.dialogForm.city = typeof key.city === 'string' ? key.city.split(',') : key.city// 车辆描述
+      this.dialogForm.price = key.price // 车辆描述
+      this.dialogForm.supplier = key.supplier // 车辆描述
+      this.dialogForm.id = key.id // 车辆描述
+      this.dialogTit = '编辑商品'
+      this.dialogVisible = true
     }
   }
-  confirm(done: any) {
-
+  // 上架 or 下架
+  private shelvesOrTheshelves(row: any) {
+    let { id, status, productId } = row
+    // status = 10 传20 status = 20 传10
+    let statusText = status === 10 ? '下架' : '上架'
+    this.$confirm(`您确定要${statusText}“${productId}”吗？`, `${statusText}商品`, {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async() => {
+      const { data } = await shelvesOrTheshelves({ id, status: status ^ 10 ^ 20 })
+      if (data.success) {
+        this.$message.success(`${statusText}成功`)
+        this.search()
+      } else {
+        this.$message.error(data)
+      }
+    })
+  }
+  private confirm(done: any) {
+    ((this.$refs['dialogForm']) as any).validate(async(valid:boolean) => {
+      if (valid) {
+        const postData = {
+          ...this.dialogForm
+        }
+        postData.city = postData.city.join()
+        if (this.isAdd) {
+          // 添加
+          delete postData.id
+          const { data } = await createProduct(postData)
+          if (data.success) {
+            this.$message.success(`创建成功`)
+            this.dialogVisible = false
+            this.search()
+          } else {
+            this.$message.error(data)
+          }
+        } else {
+          // 编辑
+          const { data } = await updateProduct(postData)
+          if (data.success) {
+            this.$message.success(`编辑成功`)
+            this.dialogVisible = false
+            this.search()
+          } else {
+            this.$message.error(data)
+          }
+        }
+      }
+    })
+  }
+  private async getDictionary() {
+    const { data } = await GetOpenCityData()
+    if (data.success) {
+      this.optionsCity = data.data
+    } else {
+      this.$message.error(data)
+    }
   }
   mounted() {
     this.fetchData()
@@ -352,6 +540,9 @@ export default class extends Vue {
   padding: 15px;
   padding-bottom: 0;
   box-sizing: border-box;
+  .el-select{
+    display: block;
+  }
   .table_box {
     height: calc(100vh - 225px) !important;
     background: #ffffff;

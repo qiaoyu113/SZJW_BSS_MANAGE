@@ -21,3 +21,9 @@ export const GetArea = (data: any) =>
     method: 'post',
     data
   })
+
+// 获取工作城市
+export const GetOpenCityData = () => request({
+  url: `${baseURL}/v1/base/area/getOpenCityData`,
+  method: 'get'
+})
