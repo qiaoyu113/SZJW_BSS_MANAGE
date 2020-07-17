@@ -24,11 +24,11 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
         // target: `http://localhost:${mockServerPort}/mock-api/v1`,
-        target: `http://szjw-domain-gateway.d2.yunniao.cn`,
+        target: `http://szjw-bss-web-d2.yunniao.cn`,
         changeOrigin: true, // needed for virtual hosted sites
         ws: true, // proxy websockets
         pathRewrite: {
-          // ['^' + process.env.VUE_APP_BASE_API + '/base']: ''
+          ['^' + process.env.VUE_APP_BASE_API + '/base']: ''
         }
       }
     }
