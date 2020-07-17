@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
+        @handle-query="getList"
       />
     </SuggestContainer>
 
@@ -27,7 +28,7 @@
           name="cluelist_creat_btn"
           @click="$router.push({name: 'CreatOrder'})"
         >
-          <i class="el-icon-s-operation" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">创建订单</span>
         </el-button>
 
@@ -260,12 +261,12 @@
                     重新提交审核
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.orderId, 0)"
+                    @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId, 1)"
+                    @click.native="goDetail(scope.row.orderId, 0)"
                   >
                     日志
                   </el-dropdown-item>

@@ -239,31 +239,47 @@
             <el-col :span="24">
               <DetailItem
                 name="订单状态"
-                value="这个信息是中介"
+                :value="orderDetail.driverInfoVO.statusName"
               />
             </el-col>
             <el-col :span="24">
+              <!-- <DetailItem
+                name="订单生成时间"
+                :value="(orderDetail.driverInfoVO.createDate | Timestamp) + (driverInfoVO.driverInfoVO.createName)"
+              /> -->
               <DetailItem
                 name="订单生成时间"
-                value="这个信息是中介"
+                :value="orderDetail.driverInfoVO.createDate | Timestamp"
               />
             </el-col>
             <el-col :span="24">
+              <!-- <DetailItem
+                name="订单确认时间"
+                :value="(orderDetail.driverInfoVO.confirmTime | Timestamp) + (driverInfoVO.driverInfoVO.confirmName)"
+              /> -->
               <DetailItem
                 name="订单确认时间"
-                value="这个信息是中介"
+                :value="orderDetail.driverInfoVO.confirmTime | Timestamp"
               />
             </el-col>
             <el-col :span="24">
+              <!-- <DetailItem
+                name="审核不通过时间"
+                :value="(orderDetail.driverInfoVO.passTime | Timestamp) + (driverInfoVO.driverInfoVO.notPassName)"
+              /> -->
               <DetailItem
                 name="审核不通过时间"
-                value="这个信息是中介"
+                :value="orderDetail.driverInfoVO.passTime | Timestamp"
               />
             </el-col>
             <el-col :span="24">
+              <!-- <DetailItem
+                name="审核通过时间"
+                :value="(orderDetail.driverInfoVO.notPassTime | Timestamp) + (driverInfoVO.driverInfoVO.passName)"
+              /> -->
               <DetailItem
                 name="审核通过时间"
-                value="这个信息是中介"
+                :value="orderDetail.driverInfoVO.notPassTime | Timestamp"
               />
             </el-col>
           </div>
@@ -309,6 +325,14 @@ export default class extends Vue {
       'deliverDate': '',
       'driverId': '',
       'driverInfoVO': {
+        'confirmTime': '',
+        'passTime': '',
+        'notPassTime': '',
+        'passName': '',
+        'notPassName': '',
+        'confirmName': '',
+        'createName': '',
+        'createDate': '',
         'address': '',
         'bankCardNo': '',
         'busiType': '',
@@ -317,9 +341,7 @@ export default class extends Vue {
         'carTypeName': '',
         'clueId': '',
         'corpUserId': '',
-        'createDate': '',
         'createId': '',
-        'createName': '',
         'delFlag': true,
         'driverId': '',
         'email': '',

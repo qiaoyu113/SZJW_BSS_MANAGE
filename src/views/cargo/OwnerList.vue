@@ -21,17 +21,6 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <el-button
-          :class="isPC ? 'btn-item' : 'btn-item-m'"
-          type="primary"
-          size="small"
-          name="cluelist_creat_btn"
-          @click="showDialog.visible = true"
-        >
-          <i class="el-icon-s-operation" />
-          <span v-if="isPC">创建客户</span>
-        </el-button>
-
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
@@ -422,7 +411,7 @@ export default class extends Vue {
       {
         label: '全部',
         name: '0',
-        num: 187
+        num: ''
       }
     ];
     private listQuery: IState = {
@@ -514,6 +503,7 @@ export default class extends Vue {
       const { data } = await GetCustomerList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.tab[0].num = data.page.total
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
@@ -551,7 +541,7 @@ export default class extends Vue {
 
     // 跳转线索
     private goClue(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'EditClue', query: { id: id } })
+      this.$router.push({ name: 'ConversionClue', query: { id: id } })
     }
 
     // 批量操作

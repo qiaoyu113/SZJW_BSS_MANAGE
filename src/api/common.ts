@@ -17,7 +17,7 @@ export const GetDictionaryList = (data: any) =>
 export const GetJoinManageList = (data: any) =>
   request({
     url: `${baseURL}/v1/base/user/getManagerListByUserId`,
-    method: 'post',
+    method: 'get',
     data
   })
 

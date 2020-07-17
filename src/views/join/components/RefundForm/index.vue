@@ -90,12 +90,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="reset"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="research"
                 >
                   查询
                 </el-button>
@@ -213,6 +215,17 @@ export default class extends Vue {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
+  }
+
+  private research() {
+    this.$emit('handle-query', this.listQuery)
+  }
+
+  private reset() {
+    for (let key in this.listQuery) {
+      this.listQuery[key] = ''
+    }
+    this.DateValueChild = []
   }
 }
 </script>

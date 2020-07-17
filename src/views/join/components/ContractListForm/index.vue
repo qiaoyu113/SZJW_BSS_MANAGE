@@ -118,7 +118,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary } from '@/api/common'
+import { GetDictionary, GetJoinManageList } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -228,6 +228,15 @@ export default class extends Vue {
     }
     return vodeName
   }
+  // 获取加盟经理
+  private async getJoinManageList() {
+    const { data } = await GetJoinManageList({})
+    if (data.success) {
+      this.optionsJoin = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
   // 查询城市
   private async getDictionaryCity() {
     const { data } = await GetDictionary({ dictType: 'online_city' })
@@ -271,6 +280,7 @@ export default class extends Vue {
     for (let key in this.listQuery) {
       this.listQuery[key] = ''
     }
+    this.DateValueChild = []
   }
 }
 </script>
