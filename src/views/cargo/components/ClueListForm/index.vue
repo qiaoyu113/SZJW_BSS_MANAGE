@@ -8,7 +8,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="线索编号">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.clueId"
                     placeholder="请输入线索编号"
                     clearable
                   />
@@ -26,7 +26,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="手机号">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.phone"
                     placeholder="请输入手机号"
                     clearable
                   />
@@ -35,14 +35,15 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="线索来源">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.clueSource"
                     placeholder="请选择"
+                    clearable
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in dataTypes.optionsLineSource"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -54,10 +55,10 @@
                     placeholder="请选择"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in dataTypes.optionsCity"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code"
                     />
                   </el-select>
                 </el-form-item>
@@ -65,14 +66,15 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="分配状态">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.distributionState"
                     placeholder="请选择"
+                    clearable
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in dataTypes.optionsDistribution"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
                     />
                   </el-select>
                 </el-form-item>
@@ -80,14 +82,15 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="销售">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.lineSaleId"
                     placeholder="请选择"
+                    clearable
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="(item, index) in dataTypes.optionsSale"
+                      :key="index"
+                      :label="item.saleName"
+                      :value="item.saleId"
                     />
                   </el-select>
                 </el-form-item>
@@ -111,12 +114,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="resetForm"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="search"
                 >
                   查询
                 </el-button>
@@ -144,9 +149,16 @@ import '@/styles/common.scss'
 export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
+  @Prop({ default: () => {} }) private dataTypes!: {
+      optionsCity: [],
+      optionsClue: [],
+      optionsDistribution: [],
+      optionsLineSource: [],
+      optionsSale:[]
+    };
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
-  private DateValueChild: any[] = []; // DateValue的赋值项
-  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
+  private DateValueChild: any = []; // DateValue的赋值项
+  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'startDate']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
@@ -169,7 +181,7 @@ export default class extends Vue {
             key: key
           })
         } else {
-          if (value[key]) {
+          if (value[key] || value[key] === 0) {
             tags.unshift({
               name: this.matchName(key, value[key]),
               type: '',
@@ -186,44 +198,42 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
-  created() {
-    this.getDictionary()
-  }
-
   // 匹配创建tags标签
   private matchName(key: any, value: any) {
     let vodeName = ''
+    const {
+      optionsCity,
+      optionsClue,
+      optionsDistribution,
+      optionsLineSource,
+      optionsSale } = this.dataTypes
+    const cityItem = optionsCity.find((item: any) => item.code === value)
+    const clueItem = optionsClue.find((item: any) => item.code === value)
+    const distributionItem = optionsDistribution.find((item: any) => item.value === value)
+    const sourceItem = optionsLineSource.find((item: any) => item.dictValue === value)
+    const saleItem = optionsSale.find((item: any) => item.saleId === value)
     switch (key) {
       // 根据listQuery中的key来判断
       case 'city':
-        for (let entry of this.optionsCity) {
-          if (entry.codeVal === value) {
-            vodeName = entry.code
-          }
-        }
+        vodeName = cityItem ? cityItem['name'] : value
+        break
+      case 'clueSource':
+        vodeName = sourceItem ? sourceItem['dictLabel'] : value
+        break
+      case 'clueItem':
+        vodeName = clueItem ? clueItem['name'] : value
+        break
+      case 'distributionState':
+        vodeName = distributionItem ? distributionItem['label'] : value
+        break
+      case 'lineSaleId':
+        vodeName = saleItem ? saleItem['saleName'] : value
         break
       default:
-        vodeName = ''
+        vodeName = this.listQuery[key] || ''
         break
     }
     return vodeName
-  }
-
-  private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
-    if (data.success) {
-      this.optionsCity = data.data
-    } else {
-      this.$message.error(data)
-    }
   }
 
   private changData() {
@@ -234,6 +244,19 @@ export default class extends Vue {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
+  }
+
+  private search() {
+    this.$emit('handle-query')
+  }
+  // 重置
+  private resetForm() {
+    for (const key in this.listQuery) {
+      if (!this.QUERY_KEY_LIST.includes(key)) {
+        this.listQuery[key] = ''
+      }
+    }
+    this.DateValueChild = null
   }
 }
 </script>

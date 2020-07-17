@@ -1,8 +1,7 @@
-
 <template>
   <div
     v-loading="loading"
-    :class="isPC ? 'AddClue' : 'AddClue-m'"
+    :class="isPC ? 'FollowUpClue' : 'FollowUpClue-m'"
   >
     <el-form
       ref="ruleForm"
@@ -10,166 +9,7 @@
       :rules="rules"
       :label-width="isPC ? '160px' : '80px'"
     >
-      <SectionContainer title="基本信息">
-        <el-row>
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="分配销售"
-              prop="lineSaleId"
-            >
-              <el-select
-                v-model="ruleForm.lineSaleId"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="(item, index) in optionsSale"
-                  :key="index"
-                  :label="item.saleName"
-                  :value="item.saleId"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="线索来源"
-              prop="clueSource"
-            >
-              <el-select
-                v-model="ruleForm.clueSource"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="(item, index) in optionsLineSource"
-                  :key="index"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-                <el-option
-                  label="区域二"
-                  value="beijing"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="姓名"
-              prop="name"
-            >
-              <el-input
-                v-model="ruleForm.name"
-                placeholder="请输入"
-                maxlength="10"
-              />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="手机号码"
-              prop="phone"
-            >
-              <el-input
-                v-model="ruleForm.phone"
-                placeholder="请输入"
-                maxlength="11"
-              />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="城市"
-              prop="name"
-            >
-              <el-select
-                v-model="ruleForm.region"
-                placeholder="请选择"
-              >
-                <el-option
-                  label="区域一"
-                  value="shanghai"
-                />
-                <el-option
-                  label="区域二"
-                  value="beijing"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="详细地址"
-              prop="region"
-            >
-              <el-input
-                v-model="ruleForm.name3"
-                placeholder="请输入"
-                maxlength="50"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="职务"
-              prop="region"
-            >
-              <el-input
-                v-model="ruleForm.name3"
-                placeholder="请输入"
-                maxlength="20"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="公司"
-              prop="region"
-            >
-              <el-input
-                v-model="ruleForm.name3"
-                placeholder="请输入"
-                maxlength="20"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="备注"
-              prop="region"
-            >
-              <el-input
-                v-model="ruleForm.name3"
-                type="textarea"
-                :autosize="{minRows: 2, maxRows: 4}"
-                placeholder="请输入"
-                maxlength="300"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item v-if="!isEdit">
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
-      </SectionContainer>
-      <SectionContainer
-        v-if="isEdit"
-        title="需求信息"
-      >
+      <SectionContainer title="需求信息">
         <el-row>
           <el-col :span="isPC ? 24 : 24">
             <el-form-item
@@ -254,7 +94,6 @@
       </SectionContainer>
 
       <SectionContainer
-        v-if="isEdit"
         title="跟进记录"
         class="posr"
       >
@@ -367,12 +206,12 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 
-import { GetDictionaryList, GetOpenCityData } from '@/api/common'
-import { GetLineClueDetail, IsFollowClue, GetSaleList } from '@/api/cargo'
+import { GetDictionaryList } from '@/api/common'
+import { GetLineClueDetail, IsFollowClue } from '@/api/cargo'
 
 import '@/styles/common.scss'
 @Component({
-  name: 'AddClue',
+  name: 'FollowUpClue',
   components: {
     SectionContainer
   }
@@ -380,16 +219,9 @@ import '@/styles/common.scss'
 export default class extends Vue {
   private loading: boolean = false;
   private id: any = ''
-  private isEdit: boolean = false; // 是否是编辑页面
   private optionsCity: any = []
-  private optionsSale: any = []
-  private optionsLineSource: any = []
   private ruleForm:any = {
-    'address': '',
-    'city': '',
     'clueId': '',
-    'clueSource': '',
-    'company': '',
     'isFollowUp': '',
     'lineClueDemandForms': [
       {
@@ -403,12 +235,7 @@ export default class extends Vue {
         'visitDate': '',
         'visitRecord': ''
       }
-    ],
-    'lineSaleId': '',
-    'name': '',
-    'phone': '',
-    'position': '',
-    'remark': ''
+    ]
   }
   private rules:any = {
     isFollowUp: [
@@ -422,6 +249,7 @@ export default class extends Vue {
   }
 
   private validateCar(rule:any, value:any, callback:any) {
+    // console.log(rule, value)
     const index = rule.field.split('.')[1]
     const item = this.ruleForm.lineClueDemandForms[index]
     if (!item.demandCarType) {
@@ -460,24 +288,6 @@ export default class extends Vue {
   }
   private removeCar(index:number) {
     this.ruleForm.lineClueDemandForms.splice(index, 1)
-  }
-  // 获取销售
-  private async getSaleList() {
-    const { data } = await GetSaleList()
-    if (data.success) {
-      this.optionsSale = data.data
-    } else {
-      this.$message.error(data)
-    }
-  }
-  // 获取城市
-  private async getCity() {
-    const { data } = await GetOpenCityData()
-    if (data.success) {
-      this.optionsCity = data.data
-    } else {
-      this.$message.error(data)
-    }
   }
   private addCar() {
     // console.log('添加车型')
@@ -518,24 +328,19 @@ export default class extends Vue {
     }
   }
   private async getDictionaryList() {
-    const { data } = await GetDictionaryList(['Intentional_compartment', 'line_clue_source'])
+    const { data } = await GetDictionaryList(['Intentional_compartment'])
     if (data.success) {
       this.optionsCity = data.data.Intentional_compartment
-      this.optionsLineSource = data.data.line_clue_source
     } else {
       this.$message.error(data)
     }
   }
   private fetchData() {
     this.getDictionaryList()
-    this.getSaleList()
-    if (this.isEdit) {
-      this.getDetail()
-    }
+    this.getDetail()
   }
   mounted() {
     this.id = this.$route.query.id
-    this.isEdit = this.$route.name === 'EditClue'
     this.ruleForm.clueId = this.id
     this.fetchData()
     // console.log(this.$router)
