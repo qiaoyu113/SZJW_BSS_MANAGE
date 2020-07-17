@@ -124,6 +124,7 @@ export default class extends Vue {
     this.isIndeterminate = false
   }
   private handleCheckedCitiesChange(value: any) {
+    console.log(value, this.optionsCity)
     let checkedCount = value.length
     this.checkAll = checkedCount === this.optionsCity.length
     this.isIndeterminate = checkedCount > 0 && checkedCount < this.optionsCity.length
@@ -173,10 +174,10 @@ export default class extends Vue {
     } else {
       this.$message.error(data)
     }
+    this.getSetting()
   }
   private fetchData() {
     this.getDictionary()
-    this.getSetting()
   }
   mounted() {
     this.fetchData()
