@@ -670,8 +670,7 @@ export default class extends Vue {
     this.$router.push({
       path: '/transport/interview',
       query: {
-        id: this.rows[0].clueId,
-        busiType: this.rows[0].busiType
+        id: this.rows[0].clueId
       }
     })
   }

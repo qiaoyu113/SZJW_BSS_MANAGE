@@ -59,7 +59,8 @@ export default class extends Vue {
       cooperateFocusPoint: '',
       cooperateKeyFactor: '',
       isAdvancedIntention: '',
-      remarks: ''
+      remarks: '',
+      isLocalPlate: true
     }
 
     private formItem = [
@@ -436,6 +437,25 @@ export default class extends Vue {
           maxlength: 100,
           'show-word-limit': true
         }
+      },
+      {
+        type: 4,
+        key: 'isLocalPlate',
+        label: '是否本地车牌:',
+        w: '130px',
+        tagAttrs: {
+          placeholder: '是否本地车牌'
+        },
+        options: [
+          {
+            value: true,
+            label: '是'
+          },
+          {
+            value: false,
+            label: '否'
+          }
+        ]
       }
     ]
     /**
@@ -742,7 +762,9 @@ export default class extends Vue {
           workCity: this.form.workCity,
           carType: this.form.carType,
           clueId: this.form.clueId,
-          intentDrivingCarType: this.form.carType
+          busiType: this.form.busiType,
+          intentDrivingCarType: this.form.carType,
+          isLocalPlate: this.listQuery.isLocalPlate
         }
         let { data: res } = await SpecialInterview(params)
         if (res.success) {
