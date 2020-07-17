@@ -410,42 +410,38 @@ export default class extends Vue {
     {
       label: '待跟进',
       name: '0',
-      num: 187
+      num: 0
     },
     {
-      label: '跟进中',
+      label: '已跟进',
       name: '1',
-      num: 1
+      num: 0
     },
     {
-      label: '已面试',
+      label: '已转化',
       name: '2'
     },
     {
-      label: '已面试',
+      label: '无效',
       name: '3'
-    },
-    {
-      label: '已面试',
-      name: '4'
-    },
-    {
-      label: '已面试',
-      name: '5'
     }
   ];
 
   private DateValue: any[] = [];
   private listQuery: IState = {
-    key: '',
-    city: '',
+    city: '', // 城市
+    clueState: '0', // 线索状态
+    clueId: '', // 线索编号Id
+    clueSource: '', // 线索来源
+    distributionState: '', // 分配状态
+    phone: '', // 手机号
+    name: '', // 姓名
+    lineSaleId: '', // 销售
+    endDate: '', // 结束时间
+    startDate: '', // 开始时间
     page: 1,
-    limit: 30,
-    endDate: '',
-    startDate: '',
-    state: '',
-    lineSaleId: ''
-  };
+    limit: 20
+  }
 
   private dropdownList: any[] = [
     '线索编号',

@@ -8,7 +8,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="购买车型">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.carType"
                     placeholder="请输入购买车型"
                     clearable
                   />
@@ -17,7 +17,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="供应商">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.supplier"
                     placeholder="请输入供应商"
                     clearable
                   />
@@ -28,14 +28,24 @@
                   <el-select
                     v-model="listQuery.city"
                     placeholder="请选择"
+                    clearable
                   >
                     <el-option
                       v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code"
                     />
                   </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="商品编号">
+                  <el-input
+                    v-model="listQuery.productCode"
+                    placeholder="请输入商品编号"
+                    clearable
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 12 : 24">
@@ -44,7 +54,7 @@
                     v-model="DateValueChild"
                     :class="isPC ? '' : 'el-date-m'"
                     type="daterange"
-                    value-format="timestamp"
+                    value-format="yyyy-MM-dd"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     @change="changData()"
@@ -57,12 +67,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="resetForm"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="search"
                 >
                   查询
                 </el-button>
@@ -77,7 +89,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary } from '@/api/common'
+import { GetOpenCityData } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -90,9 +102,11 @@ import '@/styles/common.scss'
 export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
+
+  private DateValueChild: any = []; // DateValue的赋值项
+  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'status', 'busiType', 'startDate']; // 添加过滤listQuery中key的名称
+  private loading: boolean = false;
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
-  private DateValueChild: any[] = []; // DateValue的赋值项
-  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
@@ -132,54 +146,53 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
   created() {
     this.getDictionary()
   }
 
-  // 匹配创建tags标签
-  private matchName(key: any, value: any) {
-    let vodeName = ''
-    switch (key) {
-      // 根据listQuery中的key来判断
-      case 'city':
-        for (let entry of this.optionsCity) {
-          if (entry.codeVal === value) {
-            vodeName = entry.code
-          }
-        }
-        break
-      default:
-        vodeName = ''
-        break
-    }
-    return vodeName
-  }
-
   private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
+    const { data } = await GetOpenCityData()
     if (data.success) {
       this.optionsCity = data.data
     } else {
       this.$message.error(data)
     }
   }
-
+  // 匹配创建tags标签
+  private matchName(key: any, value: any) {
+    let vodeName = ''
+    const cityName = this.optionsCity.find(item => item.code === value)
+    switch (key) {
+      // 根据listQuery中的key来判断
+      case 'city':
+        vodeName = cityName ? cityName.name : ''
+        break
+      default:
+        vodeName = this.listQuery[key] || ''
+        break
+    }
+    return vodeName
+  }
+  // 重置
+  private resetForm() {
+    for (const key in this.listQuery) {
+      if (!this.QUERY_KEY_LIST.includes(key)) {
+        this.listQuery[key] = ''
+      }
+    }
+    this.DateValueChild = null
+  }
   private changData() {
     if (this.DateValueChild) {
-      this.listQuery.startDate = this.DateValueChild[0]
-      this.listQuery.endDate = this.DateValueChild[1]
+      this.listQuery.startDate = this.DateValueChild[0] + ' 00:00:00'
+      this.listQuery.endDate = this.DateValueChild[1] + ' 23:59:59'
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
+  }
+  private search() {
+    this.$emit('handle-query')
   }
 }
 </script>
