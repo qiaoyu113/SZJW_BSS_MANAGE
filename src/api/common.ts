@@ -29,12 +29,6 @@ export const GetArea = (data: any) =>
     data
   })
 
-// 获取工作城市
-export const GetOpenCityData = () => request({
-  url: `${baseURL}/v1/base/area/getOpenCityData`,
-  method: 'get'
-})
-
 // 工作城市
 export const GetOpenCityData = () =>
   request({
