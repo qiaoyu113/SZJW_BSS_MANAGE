@@ -3,7 +3,7 @@
     <Dialog
       :visible.sync="showAlert"
       title="邀请面试"
-      width="30%"
+      width="40%"
       :before-close="beforeClose"
       :cancel="cancel"
       :confirm="confirm"
@@ -15,17 +15,17 @@
         :list-query="dialogForm"
         :form-item="dialogItems"
         :pc-col="24"
-        label-width="0px"
+        label-width="100px"
         @onPass="handlePass"
       />
     </Dialog>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
-
+import { ClueFollow } from '@/api/driver'
 interface IState {
   [key: string]: any;
 }
@@ -37,58 +37,62 @@ interface IState {
   }
 })
 export default class extends Vue {
-  @Prop({ default: '' }) type!:string
+  @Prop({ default: '' }) clueId!:string|number
   private showAlert = false
   private dialogForm:IState = {
-    date: '',
-    message: '',
-    desc: ''
+    interviewDate: '',
+    isNeedSendsms: true,
+    remarks: ''
   }
-  private title:string = ''
 
   private dialogItems:any[] = [
     {
       type: 6,
-      key: 'date',
+      key: 'interviewDate',
+      label: '面试时间',
       tagAttrs: {
         placeholder: '面试时间'
       }
     },
     {
       type: 2,
-      key: 'message',
+      key: 'isNeedSendsms',
+      label: '是否发短信',
       tagAttrs: {
         placeholder: '是否发短信'
       },
       options: [
         {
           label: '是',
-          value: 1
+          value: true
         },
         {
           label: '否',
-          value: 0
+          value: false
         }
       ]
     },
     {
       type: 1,
-      key: 'desc',
+      key: 'remarks',
+      label: '描述',
       tagAttrs: {
         placeholder: '跟进情况描述',
         type: 'textarea',
-        rows: 3
+        rows: 4,
+        'show-word-limit': true,
+        maxlength: 100
       }
     }
   ]
   private rules:IState = {
-    date: [
+    interviewDate: [
       { required: true, message: '请选择面试时间', trigger: 'blur' }
     ],
-    message: [
-      { required: true, message: '请选择是否发短信', trigger: 'blur' }
+    isNeedSendsms: [
+      { required: true, message: '请选择是否发短信', trigger: 'change' }
     ],
-    desc: [
+    remarks: [
       { required: true, message: '请输入跟进情况描述', trigger: 'blur' }
     ]
   }
@@ -106,18 +110,40 @@ export default class extends Vue {
     this.showAlert = false
   }
   handleClosed() {
-    this.dialogForm.date = ''
-    this.dialogForm.message = ''
-    this.dialogForm.desc = ''
+    this.dialogForm.interviewDate = ''
+    this.dialogForm.isNeedSendsms = true
+    this.dialogForm.remarks = ''
   }
   cancel() {
     this.showAlert = false
   }
-  confirm() {
+  async confirm() {
+    try {
+      let params = {
+        clueId: this.clueId,
+        interviewDate: this.dialogForm.interviewDate,
+        isNeedSendsms: this.dialogForm.isNeedSendsms,
+        remarks: this.dialogForm.remarks,
+        type: 3
+      }
+      let { data: res } = await ClueFollow(params)
+      if (res.success) {
+        this.showAlert = false
+        this.$message.success(`操作成功`)
+        this.getRecord()
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`confirm fail:${err}`)
+    }
     (this.$refs.invite as any).submitForm()
   }
   handlePass() {
     this.showAlert = false
+  }
+  @Emit('getRecord')
+  getRecord() {
   }
 }
 </script>

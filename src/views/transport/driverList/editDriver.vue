@@ -38,6 +38,9 @@ import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 
+import { EditDriverInfo, driverDetailByDriverId } from '@/api/driver'
+import { phoneReg } from '@/utils/index.ts'
+
 interface IState {
     [key: string]: any;
 }
@@ -49,12 +52,15 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private driverId:string = ''
   private listQuery:IState = {
     name: '',
     phone: '',
-    city: '北京市',
-    idCard: '',
-    email: ''
+    idNo: '',
+    email: '',
+    remark: '',
+    workCity: '',
+    workCityName: ''
   }
 
   private formItem:any[] = [
@@ -78,12 +84,12 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'city',
+      key: 'workCityName',
       label: '工作城市:'
     },
     {
       type: 1,
-      key: 'idCard',
+      key: 'idNo',
       label: '身份证号:',
       tagAttrs: {
         placeholder: '请输入身份证号'
@@ -98,7 +104,19 @@ export default class extends Vue {
         maxlength: 10
       }
     },
-
+    {
+      type: 1,
+      key: 'remark',
+      label: '备注:',
+      col: 12,
+      tagAttrs: {
+        placeholder: '请输入备注',
+        maxlength: 100,
+        type: 'textarea',
+        'show-word-limit': true,
+        rows: 3
+      }
+    },
     {
       slot: true,
       col: 24,
@@ -106,15 +124,28 @@ export default class extends Vue {
       type: 'btn1'
     }
   ]
+  /**
+   * 校验手机号
+   */
+  private validatePhone = (rule: any, value: string, callback: Function) => {
+    if (!phoneReg.test(this.listQuery.phone)) {
+      return callback(new Error('请输入正确的手机号'))
+    }
+    callback()
+  }
   private rules:IState = {
     name: [
       { required: true, message: '请输入姓名', trigger: 'blur' }
     ],
     phone: [
-      { required: true, message: '请输入手机号', trigger: 'blur' }
+      { required: true, message: '请输入手机号', trigger: 'blur' },
+      { validator: this.validatePhone, trigger: 'blur' }
     ],
     email: [
       { required: false, type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ],
+    remark: [
+      { required: true, message: '请输入备注', trigger: ['blur'] }
     ]
   }
 
@@ -123,6 +154,37 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
+  mounted() {
+    this.driverId = (this.$route as any).query.id
+    this.getDriverInfoByDriverId()
+  }
+  /**
+   *获取司机信息
+   */
+  async getDriverInfoByDriverId() {
+    try {
+      let params = {
+        driverId: this.driverId
+      }
+      let { data: res } = await driverDetailByDriverId(params)
+      if (res.success) {
+        this.listQuery = {
+          ...this.listQuery,
+          ...{
+            name: res.data.name,
+            phone: res.data.phone,
+            idNo: res.data.idNo,
+            email: res.data.email,
+            remark: res.data.remark,
+            workCity: res.data.workCity,
+            workCityName: res.data.workCityName
+          }
+        }
+      }
+    } catch (err) {
+      console.log(`get driver fail:${err}`)
+    }
+  }
   /**
    *取消按钮
    */
@@ -136,16 +198,30 @@ export default class extends Vue {
    */
   handleConfirmClick() {
     (this.$refs.editDriver as any).submitForm()
-    console.log(this.listQuery)
   }
 
   /**
    * 表单验证通过
    */
-  handlePass() {
-    this.$router.push({
-      path: '/transport/driverlist'
-    })
+  async handlePass() {
+    try {
+      let params = {
+        ...this.listQuery,
+        ...{
+          driverId: this.driverId
+        }
+      }
+
+      let { data: res } = await EditDriverInfo(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        this.$router.push({
+          path: '/transport/driverlist'
+        })
+      }
+    } catch (err) {
+      console.log('edit save fail:', err)
+    }
   }
 }
 </script>

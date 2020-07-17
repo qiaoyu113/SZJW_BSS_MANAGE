@@ -29,16 +29,36 @@ export const GetArea = (data: any) =>
     data
   })
 
-// 工作城市
-export const GetOpenCityData = () =>
-  request({
-    url: `${baseURL}/v1/base/area/getOpenCityData`,
-    method: 'get'
-  })
+// 获取工作城市
+export const GetOpenCityData = () => request({
+  url: `${baseURL}/v1/base/area/getOpenCityData`,
+  method: 'get'
+})
 
 // 运营经理
 export const getOperManager = () =>
   request({
     url: `${baseURL}/v1/base/user/getOperManagerListByUserId`,
+    method: 'post'
+  })
+
+/**
+   *根据父级code获取子列表
+   *
+   */
+export const GetCityByCode = (data: any) =>
+  request({
+    url: `${baseURL}/v1/base/area/getCityByCode`,
+    method: 'post',
+    data
+  })
+
+/**
+   *
+   *获取加盟经理列表
+   */
+export const GetManagerLists = () =>
+  request({
+    url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
     method: 'post'
   })

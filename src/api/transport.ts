@@ -13,7 +13,7 @@ export const GetDriverDetail = (id: number, params: any) =>
 /* 获取开通城市 */
 export const GetReginByCityCode = (data: any[]) =>
   request({
-    url: `${base}/base/user/area/getCityByCode`,
+    url: '/api/base/user/area/getCityByCode',
     method: 'post',
     data
   })
@@ -80,4 +80,20 @@ export const driverList = () =>
   request({
     url: `${ptrfix}/v1/driver/getDriverAll`,
     method: 'get'
+  })
+
+/* 获取司机索引列表 */
+export const GetDriverClueList = (data: any[]) =>
+  request({
+    url: '',
+    method: 'post',
+    data
+  })
+
+/* 修改司机索引 */
+export const EditDriverClue = (data: any[]) =>
+  request({
+    url: '',
+    method: 'post',
+    data
   })

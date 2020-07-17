@@ -27,11 +27,24 @@ const transportRouter: RouteConfig = {
     {
       path: 'createClue', /* 创建司机线索 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
-      name: 'CreateClue',
+      name: 'CreateDriverClue',
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverclue',
-        title: 'driverClue',
+        title: 'createDriverClue',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
+      path: 'editClue', /* 编辑司机线索 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
+      name: 'EditDriverClue',
+      meta: {
+        apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
+        activeMenu: '/transport/driverclue',
+        title: 'editDriverClue',
         hidden: true,
         icon: '',
         noCache: true
@@ -44,7 +57,7 @@ const transportRouter: RouteConfig = {
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverclue',
-        title: 'driverClue',
+        title: 'driverInterview',
         hidden: true,
         icon: '',
         noCache: true
@@ -57,7 +70,7 @@ const transportRouter: RouteConfig = {
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverclue',
-        title: 'driverClue',
+        title: 'driverFollowClue',
         hidden: true,
         icon: '',
         noCache: true
@@ -82,7 +95,7 @@ const transportRouter: RouteConfig = {
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverlist',
-        title: 'driverList',
+        title: 'editDriver',
         hidden: true,
         icon: '',
         noCache: true
@@ -95,20 +108,20 @@ const transportRouter: RouteConfig = {
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverlist',
-        title: 'driverList',
+        title: 'followDriver',
         hidden: true,
         icon: '',
         noCache: true
       }
     },
     {
-      path: 'driverDetail', /* 跟进司机 */
+      path: 'driverDetail', /* 司机详情 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/driverDetail.vue'),
       name: 'driverDetail',
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverlist',
-        title: 'driverList',
+        title: 'driverDetail',
         hidden: true,
         icon: '',
         noCache: true

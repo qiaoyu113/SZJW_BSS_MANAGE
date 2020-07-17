@@ -379,7 +379,7 @@
   </div>
 </template>
 <script lang="ts">
-import { unique, getLabel } from '@/utils/index.ts'
+import { getLabel } from '@/utils/index.ts'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'

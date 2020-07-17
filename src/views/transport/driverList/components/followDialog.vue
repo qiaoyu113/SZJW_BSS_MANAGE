@@ -23,6 +23,7 @@
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
+import { DriverFollowOp } from '@/api/driver'
 interface IState {
   [key: string]: any;
 }
@@ -34,17 +35,18 @@ interface IState {
   }
 })
 export default class extends Vue {
-  @Prop({ default: '' }) type!:string
+  @Prop({ default: '' }) type!:number
+  @Prop({ default: '' }) driverId!:string
   private showAlert = false
   private title:string = ''
   private dialogForm:IState = {
-    desc: ''
+    remarks: ''
   }
 
   private dialogItems:any[] = [
     {
       type: 1,
-      key: 'desc',
+      key: 'remarks',
       tagAttrs: {
         placeholder: '描述跟进情况(50字以内)',
         type: 'textarea',
@@ -56,8 +58,16 @@ export default class extends Vue {
   ]
 
   @Watch('type')
-  onTypeChange(val:string) {
-    this.title = val
+  onTypeChange(val:number) {
+    if (val === 5) {
+      this.title = '成交意向'
+    } else if (val === 6) {
+      this.title = '征信通过情况'
+    } else if (val === 7) {
+      this.title = '跟车情况'
+    } else if (val === 8) {
+      this.title = '其他'
+    }
   }
   /**
    *发开模态框
@@ -72,17 +82,36 @@ export default class extends Vue {
     this.showAlert = false
   }
   handleClosed() {
-    this.dialogForm.desc = ''
+    this.dialogForm.remarks = ''
   }
 
   cancel() {
     this.showAlert = false
   }
-  confirm() {
-    if (!this.dialogForm.desc) {
-      return this.$message.error('请输入跟进情况')
+  async confirm() {
+    try {
+      if (!this.dialogForm.remarks) {
+        return this.$message.error('请输入跟进情况')
+      }
+      let params = {
+        createId: 0,
+        driverId: this.driverId,
+        remarks: this.dialogForm.remarks,
+        type: this.type
+      }
+
+      let { data: res } = await DriverFollowOp(params)
+      if (res.success) {
+        this.showAlert = false
+        this.$message.success('操作成功')
+        this.handleRefresh()
+      }
+    } catch (err) {
+      console.log(`confirm fail:${err}`)
     }
-    this.showAlert = false
+  }
+  @Emit('onRefresh')
+  handleRefresh() {
   }
 }
 </script>
