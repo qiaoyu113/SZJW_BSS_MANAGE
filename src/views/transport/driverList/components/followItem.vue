@@ -9,15 +9,28 @@
         class="left"
       >
         <span
+          v-if="item.type ===5"
           class="tag"
-        >{{ item.tag }}</span>
+        >成交意向</span>
+        <span
+          v-else-if="item.type ===6"
+          class="tag"
+        >征信通过情况</span>
+        <span
+          v-else-if="item.type ===7"
+          class="tag"
+        >跟车情况</span>
+        <span
+          v-else-if="item.type ===8"
+          class="tag"
+        >其他</span>
         <span
           class="desc"
-        >{{ item.desc }}</span>
+        >{{ item.remarks }}</span>
       </div>
       <div class="right">
-        <span class="name">跟进人:{{ item.name }}</span>
-        <span class="time">{{ item.time | Timestamp }}</span>
+        <span class="name">跟进人:{{ item.createName }}</span>
+        <span class="time">{{ item.createDate | Timestamp }}</span>
       </div>
     </li>
   </ul>

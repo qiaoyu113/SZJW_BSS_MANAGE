@@ -28,3 +28,5 @@ const settings: ISettings = {
 }
 
 export default settings
+
+export const delayTime:number = 1500

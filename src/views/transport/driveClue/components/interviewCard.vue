@@ -7,99 +7,24 @@
       >
         <div class="lTitle">
           <span class="interTitle">面试信息</span>
-          <span class="interTag">{{ name }}</span>
+          <span class="interTag">{{ obj.busiType ===0 ? '专车' :'共享' }}</span>
         </div>
         <el-button
           type="primary"
           size="small"
-          @click="handleBtnClick"
+          @click="handleBtnClick(isAdd)"
         >
           {{ isAdd ? '填写面试表' :'修改面试表' }}
         </el-button>
       </div>
-      <el-row
-        v-if="isAdd"
-        class="card_body"
-      >
-        <el-col
-          :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
-        >
-          <p class="title">
-            物流从业经验
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-        <el-col
-          :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
-        >
-          <p class="title">
-            货物经验
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-        <el-col
-          :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
-        >
-          <p class="title">
-            期望月收入
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-        <el-col
-          :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
-        >
-          <p class="title">
-            可接受一天工作时长
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-        <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            意向车型
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-        <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            户口类型
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-        <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            是否有在还贷款
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-        <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            家里有几个孩子
-          </p>
-          <p class="text">
-            暂无数据
-          </p>
-        </el-col>
-      </el-row>
+      <template v-if="obj.busiType ===0">
+        <special-card :form="obj" />
+      </template>
+      <template v-else>
+        <share-card :form="obj" />
+      </template>
       <div
-        v-else
+        v-if="isAdd"
         class="noData"
       >
         暂无面试信息
@@ -110,13 +35,21 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
+import SpecialCard from './specialCard.vue'
+import ShareCard from './shareCard.vue'
 @Component({
-  name: 'InterviewCard'
+  name: 'InterviewCard',
+  components: {
+    SpecialCard,
+    ShareCard
+  }
 })
 export default class extends Vue {
-  @Prop({ default: '专车' }) name!:string
-  @Prop({ default: false }) isAdd!:boolean
+  @Prop({ default: () => {} }) obj!:any
 
+  get isAdd() {
+    return Object.keys(this.obj).length === 0
+  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC

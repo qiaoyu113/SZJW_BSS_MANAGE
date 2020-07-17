@@ -200,27 +200,12 @@ export const HandlePages = (str: any) => {
 }
 
 /**
-   * 表格查看全部选中使用的过滤重复数组对象
-   */
-export const unique = (array:any[], key:string) => {
-  let obj:any = {}
-  let arr = []
-  array.forEach(item => {
-    if (!obj[item[key]]) {
-      obj[item[key]] = []
-    }
-    obj[item[key]].push(item)
-  })
-  for (let i in obj) {
-    arr.push(...[obj[i][0]])
-  }
-  return arr
-}
-
-/**
  * 获取label
  */
-export const getLabel = (formItem:any[], listQuery:any, key:string) => {
+export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
+  label: 'label',
+  value: 'value'
+}) => {
   let label:string = ''
   for (let i = 0; i < formItem.length; i++) {
     let item = formItem[i]
@@ -229,7 +214,7 @@ export const getLabel = (formItem:any[], listQuery:any, key:string) => {
         label = listQuery[key]
         break
       } else if ([2, 4, 5].includes(item.type)) { // 下拉框、 radio、checkbox
-        if (item.key === key && item.options && item.options.length > 0) {
+        if (item.options && item.options.length > 0) {
           for (let j = 0; j < item.options.length; j++) {
             let sub = item.options[j]
             if (sub.value === listQuery[key]) {
@@ -255,3 +240,5 @@ export const getLabel = (formItem:any[], listQuery:any, key:string) => {
 
   return label
 }
+
+export const phoneReg = /^[1][3-9][0-9]{9}$/

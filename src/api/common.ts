@@ -34,3 +34,24 @@ export const GetOpenCityData = () => request({
   url: `${baseURL}/v1/base/area/getOpenCityData`,
   method: 'get'
 })
+
+/**
+   *根据父级code获取子列表
+   *
+   */
+export const GetCityByCode = (data: any) =>
+  request({
+    url: `${baseURL}/v1/base/area/getCityByCode`,
+    method: 'post',
+    data
+  })
+
+/**
+   *
+   *获取加盟经理列表
+   */
+export const GetManagerLists = () =>
+  request({
+    url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
+    method: 'post'
+  })
