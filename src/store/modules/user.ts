@@ -60,7 +60,7 @@ class User extends VuexModule implements IUserState {
     let { username, password } = userInfo
     username = username.trim()
     const { data } = await login({ username, password })
-    if (data.flag) {
+    if (data.success) {
       if (data.data.flag) {
         setToken(data.data.token)
         setUser(data.data)
