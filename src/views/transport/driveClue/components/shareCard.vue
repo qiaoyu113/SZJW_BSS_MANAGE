@@ -65,7 +65,7 @@ export default class extends Vue {
 
     private listQuery = {
       gmName: '',
-      inviteType: '',
+      inviteTypeName: '',
       sourceChannelName: '',
       whereKnow: '',
       heavyAgentName: '',
@@ -113,8 +113,8 @@ export default class extends Vue {
       },
       {
         type: 7,
-        key: 'inviteType',
-        label: '邀约方式:xx'
+        key: 'inviteTypeName',
+        label: '邀约方式'
       },
       {
         type: 7,

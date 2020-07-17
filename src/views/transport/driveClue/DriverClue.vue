@@ -53,18 +53,17 @@
         />
         <span v-if="isPC">创建线索</span>
       </el-button>
-      <!-- <el-button
+      <el-button
         type="primary"
         size="small"
         name="driverclue_interview_btn"
-        :disabled="true"
         @click="handleInterviewClick"
       >
         <i
           class="el-icon-edit"
         />
         <span v-if="isPC">发起面试</span>
-      </el-button> -->
+      </el-button>
 
       <el-dropdown
         :hide-on-click="false"
@@ -665,8 +664,15 @@ export default class extends Vue {
    *发起面试
    */
   handleInterviewClick() {
+    if (this.rows.length === 0) {
+      return this.$message.error('请选选择司机线索')
+    }
     this.$router.push({
-      path: '/transport/interview'
+      path: '/transport/interview',
+      query: {
+        id: this.rows[0].clueId,
+        busiType: this.rows[0].busiType
+      }
     })
   }
   /**
@@ -688,8 +694,7 @@ export default class extends Vue {
       this.$router.push({
         path: '/transport/interview',
         query: {
-          id: row.clueId,
-          busiType: row.busiType
+          id: row.clueId
         }
       })
     } else if (key === 'follow') { // 线索跟进

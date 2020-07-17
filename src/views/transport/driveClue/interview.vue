@@ -152,13 +152,14 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
-import { InterviewBasic, GetInterviewEditDetail } from '@/api/driver'
+import { InterviewBasic, GetInterviewEditDetail, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { GetOpenCityData, GetManagerLists, GetDictionaryList } from '@/api/common'
 import { phoneReg } from '@/utils/index.ts'
 import SpecialInterview from './components/specialInterview.vue'
 import ShareInterview from './components/shareInterview.vue'
+
 interface IState {
   [key: string]: any;
 }
@@ -179,7 +180,8 @@ export default class extends Vue {
     workCity: '',
     carType: '',
     busiType: '',
-    clueId: ''
+    clueId: '',
+    modify: false
   }
   private form:any = {} // 编辑面试表单的时候获取的信息
 
@@ -253,10 +255,33 @@ export default class extends Vue {
 
   mounted() {
     this.listQuery.clueId = (this.$route as any).query.id
-    this.listQuery.busiType = +(this.$route as any).query.busiType
     this.getBaseInfo()
-    this.getEditDetail()
     this.getOpenCitys()
+    this.getClueDetailByClueId()
+  }
+
+  /**
+   *获取司机线索信息
+   */
+  async getClueDetailByClueId() {
+    try {
+      let params = {
+        clueId: this.listQuery.clueId
+      }
+      let { data: res } = await GetClueDetailByClueId(params)
+      if (res.success) {
+        this.listQuery.name = res.data.name
+        this.listQuery.phone = res.data.phone
+        this.listQuery.workCity = res.data.workCity + ''
+        this.listQuery.carType = res.data.carType + ''
+        this.listQuery.busiType = res.data.busiType
+        if (res.data.isExistInterviewData) {
+          this.getEditDetail()
+        }
+      }
+    } catch (err) {
+      console.log(`get clue detail fail:${err}`)
+    }
   }
   /**
    *获取开通城市

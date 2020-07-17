@@ -505,7 +505,7 @@ export default class extends Vue {
         { validator: this.validAge, trigger: 'blur' }
       ],
       interviewAddress: [
-        { required: true, message: '请选择面试地址', trigger: 'blur' }
+        { required: true, message: '请选择居住地址', trigger: 'blur' }
       ],
       interviewDistrict: [
         { required: true, message: '请输入详细居住地址', trigger: 'blur' }
@@ -704,10 +704,10 @@ export default class extends Vue {
           whereKnow: this.listQuery.whereKnow,
           heavyAgentName: this.listQuery.heavyAgentName,
           age: this.listQuery.age,
-          interviewProvince: this.listQuery.interviewAddress[0],
-          interviewCity: this.listQuery.interviewAddress[1],
-          interviewCounty: this.listQuery.interviewAddress[2],
-          interviewDistrict: this.listQuery.interviewDistrict,
+          liveProvince: this.listQuery.interviewAddress[0],
+          liveCity: this.listQuery.interviewAddress[1],
+          liveCounty: this.listQuery.interviewAddress[2],
+          liveDistrict: this.listQuery.interviewDistrict,
           intentWorkProvince: this.listQuery.intentAddress[0],
           intentWorkCity: this.listQuery.intentAddress[1],
           intentWorkCounty: this.listQuery.intentAddress[2],
@@ -741,7 +741,8 @@ export default class extends Vue {
           phone: this.form.phone,
           workCity: this.form.workCity,
           carType: this.form.carType,
-          clueId: this.form.clueId
+          clueId: this.form.clueId,
+          intentDrivingCarType: this.form.carType
         }
         let { data: res } = await SpecialInterview(params)
         if (res.success) {

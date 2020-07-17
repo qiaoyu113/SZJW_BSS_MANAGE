@@ -12,23 +12,25 @@
         <el-button
           type="primary"
           size="small"
-          @click="handleBtnClick(isAdd)"
+          @click="handleBtnClick"
         >
           {{ isAdd ? '填写面试表' :'修改面试表' }}
         </el-button>
       </div>
-      <template v-if="obj.busiType ===0">
-        <special-card :form="obj" />
-      </template>
-      <template v-else>
-        <share-card :form="obj" />
-      </template>
       <div
         v-if="isAdd"
         class="noData"
       >
         暂无面试信息
       </div>
+      <template v-else>
+        <template v-if="obj.busiType ===0">
+          <special-card :form="obj" />
+        </template>
+        <template v-else>
+          <share-card :form="obj" />
+        </template>
+      </template>
     </el-card>
   </div>
 </template>
@@ -46,10 +48,8 @@ import ShareCard from './shareCard.vue'
 })
 export default class extends Vue {
   @Prop({ default: () => {} }) obj!:any
+  @Prop({ default: true }) isAdd!:boolean
 
-  get isAdd() {
-    return Object.keys(this.obj).length === 0
-  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
