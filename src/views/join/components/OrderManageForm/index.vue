@@ -8,8 +8,8 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="订单编号">
                   <el-input
-                    v-model="listQuery.name"
-                    placeholder="请输入货主编号"
+                    v-model="listQuery.orderId"
+                    placeholder="请输入订单编号"
                     clearable
                   />
                 </el-form-item>
@@ -17,7 +17,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="司机姓名">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.diverName"
                     placeholder="请输入联系人"
                     clearable
                   />
@@ -26,14 +26,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="合作模式">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.cooperationModel"
                     placeholder="请选择合作模式"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsCooper"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -41,14 +41,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="商品分类">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.busiType"
                     placeholder="请选择商品分类"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsBusi"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -56,14 +56,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="支付方式">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.payType"
                     placeholder="请选择支付方式"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsPay"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -86,14 +86,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="加盟经理">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.joinManageId"
                     placeholder="请选择加盟经理"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsJoin"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -101,11 +101,11 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="所属小组">
                   <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择加盟经理"
+                    v-model="listQuery.groupId"
+                    placeholder="请选择所属小组"
                   >
                     <el-option
-                      v-for="item in optionsCity"
+                      v-for="item in optionsGroup"
                       :key="item.codeVal"
                       :label="item.code"
                       :value="item.codeVal"
@@ -158,7 +158,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary } from '@/api/common'
+import { GetDictionaryList, GetJoinManageList } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -173,6 +173,24 @@ export default class extends Vue {
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private DateValueChild: any[] = []; // DateValue的赋值项
+  private optionsBusi: any[] = []
+  private optionsPay: any[] = []
+  private optionsJoin: any[] = []
+  private optionsGroup: any[] = []
+  private optionsCooper: any[] = [
+    {
+      dictValue: '1',
+      dictLabel: '购车'
+    },
+    {
+      dictValue: '2',
+      dictLabel: '租车'
+    },
+    {
+      dictValue: '3',
+      dictLabel: '带车'
+    }
+  ]
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
@@ -222,7 +240,12 @@ export default class extends Vue {
   }
 
   created() {
+    this.fetchData()
+  }
+
+  private fetchData() {
     this.getDictionary()
+    this.getJoinManageList()
   }
 
   // 匹配创建tags标签
@@ -232,11 +255,56 @@ export default class extends Vue {
       // 根据listQuery中的key来判断
       case 'city':
         for (let entry of this.optionsCity) {
-          if (entry.codeVal === value) {
-            vodeName = entry.code
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
           }
         }
         break
+      case 'orderId':
+        vodeName = value
+        break
+      case 'diverName':
+        vodeName = value
+        break
+      case 'fileNo':
+        vodeName = value
+        break
+      case 'busiType':
+        for (let entry of this.optionsBusi) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'cooperationModel':
+        for (let entry of this.optionsCooper) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'payType':
+        for (let entry of this.optionsPay) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'joinManageId':
+        for (let entry of this.optionsJoin) {
+          if (entry.id === value) {
+            vodeName = entry.name
+          }
+        }
+        break
+      case 'groupId':
+        for (let entry of this.optionsGroup) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+
       default:
         vodeName = ''
         break
@@ -245,9 +313,21 @@ export default class extends Vue {
   }
 
   private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
+    const { data } = await GetDictionaryList(['online_city', 'busi_type', 'pay_type'])
     if (data.success) {
-      this.optionsCity = data.data
+      this.optionsCity = data.data.online_city
+      this.optionsBusi = data.data.busi_type
+      this.optionsPay = data.data.pay_type
+    } else {
+      this.$message.error(data)
+    }
+  }
+
+  // 获取加盟经理
+  private async getJoinManageList() {
+    const { data } = await GetJoinManageList({})
+    if (data.success) {
+      this.optionsJoin = data.data
     } else {
       this.$message.error(data)
     }

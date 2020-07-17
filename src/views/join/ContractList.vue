@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
+        @handle-query="getList"
       />
     </SuggestContainer>
 
@@ -27,8 +28,8 @@
           name="cluelist_creat_btn"
           @click="showDialog.visible = true"
         >
-          <i class="el-icon-s-operation" />
-          <span v-if="isPC">创建客户</span>
+          <i class="el-icon-download" />
+          <span v-if="isPC">导出</span>
         </el-button>
 
         <el-dropdown
@@ -72,89 +73,91 @@
           highlight-current-row
           style="width: 100%"
           row-key="customerNo"
-          @selection-change="handleSelectionChange"
         >
           <el-table-column
-            reserve-selection
-            type="selection"
-            width="55"
-          />
-          <el-table-column
-            v-if="checkList.indexOf('货主编号') > -1"
-            :key="Math.random()"
+            v-if="checkList.indexOf('合同编号') > -1"
+            :key="checkList.length + 'a'"
             align="left"
-            fixed
-            label="货主编号"
+            :fixed="isPC"
+            label="合同编号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.customerId | DataIsNull }}</span>
+              <span>{{ scope.row.fileNo | DataIsNull }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('线索编号') > -1"
+            v-if="checkList.indexOf('订单编号') > -1"
+            :key="checkList.length + 'b'"
             align="left"
-            label="线索编号"
+            label="订单编号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.clueId | DataIsNull }} </span>
+              <span>{{ scope.row.orderId | DataIsNull }} </span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('销售') > -1"
+            v-if="checkList.indexOf('合同名称') > -1"
+            :key="checkList.length + 'c'"
             class-name="status-col"
-            label="销售"
+            align="left"
+            label="合同名称"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.lineSaleName | DataIsNull }}</span>
+              <span>{{ scope.row.subject | DataIsNull }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('公司简称') > -1"
+            v-if="checkList.indexOf('公司姓名') > -1"
+            :key="checkList.length + 'd'"
             align="left"
-            label="公司简称"
+            label="公司姓名"
           >
             <template slot-scope="{row}">
-              {{ row.company | DataIsNull }}
+              {{ row.driverName | DataIsNull }}
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('分类') > -1"
+            v-if="checkList.indexOf('合同归属') > -1"
+            :key="checkList.length + 'e'"
             align="left"
-            label="分类"
+            label="合同归属"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.primaryClassificationName | DataIsNull }}</p>
+              <p>{{ scope.row.busiTypeName | DataIsNull }}</p>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('城市') > -1"
+            v-if="checkList.indexOf('合同状态') > -1"
+            :key="checkList.length + 'f'"
             align="left"
-            label="城市"
+            label="合同状态"
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.cityName | DataIsNull }}</span>
+                <span>{{ scope.row.statusName | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('联系人') > -1"
+            v-if="checkList.indexOf('生成时间') > -1"
+            :key="checkList.length + 'g'"
             align="left"
-            label="联系人"
+            label="生成时间"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.bussinessName | DataIsNull }}</span>
+              <span>{{ scope.row.createDate | Timestamp }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('联系电话') > -1"
+            :key="checkList.length + 'h'"
             align="left"
             label="联系电话"
           >
@@ -165,6 +168,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('身份证号') > -1"
+            :key="checkList.length + 'i'"
             align="left"
             label="身份证号"
           >
@@ -175,6 +179,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
+            :key="checkList.length + 'j'"
             align="left"
             label="创建日期"
           >
@@ -185,6 +190,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合同止期') > -1"
+            :key="checkList.length + 'k'"
             align="left"
             label="合同止期"
           >
@@ -195,6 +201,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('备注') > -1"
+            :key="checkList.length + 'm'"
             align="left"
             label="备注"
           >
@@ -204,7 +211,7 @@
           </el-table-column>
 
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + 'l'"
             align="left"
             label="操作"
             fixed="right"
@@ -230,9 +237,14 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId)"
+                    @click.native="Down(scope.row.contractId)"
                   >
-                    详情
+                    下载
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="Activate(scope.row.contractId)"
+                  >
+                    激活
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -248,82 +260,9 @@
         :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
         @pagination="getList"
-        @olclick="olClicks"
       />
     </div>
-    <PitchBox
-      :drawer.sync="drawer"
-      :drawer-list="multipleSelection"
-      @deletDrawerList="deletDrawerList"
-      @changeDrawer="changeDrawer"
-    >
-      <template slot-scope="slotProp">
-        <span>{{ slotProp.item.creater }}</span>
-        <span>{{ slotProp.item.clientPhone }}</span>
-        <span>{{ slotProp.item.city }}</span>
-      </template>
-    </PitchBox>
 
-    <!-- 批量分配货主 -->
-    <Dialog
-      :visible.sync="assignShowDialog"
-      :title="`分配货主`"
-      :confirm="confirmAssign"
-    >
-      <el-alert
-        class="mb10"
-        :title="`已选货主${multipleSelectionAssign.length}位，请选择销售！(货主其关联的线索也会分配给该销售)`"
-        type="warning"
-        :closable="false"
-      />
-      <el-table
-        v-loading="dialogLoading"
-        :data="dialogList"
-        size="mini"
-        stripe
-        highlight-current-row
-        height="38vh"
-        style="width: 100%;"
-        align="left"
-        row-key="id"
-        @selection-change="handleSelectionDialog"
-      >
-        <el-table-column
-          type="selection"
-          width="55"
-          reserve-selection
-          align="center"
-        />
-        <el-table-column
-          type="index"
-          width="55"
-          label="序号"
-          :index="indexMethod('dialogListQuery')"
-          align="center"
-        />
-        <el-table-column
-          label="销售姓名"
-          prop="name"
-        />
-        <el-table-column
-          label="联系电话"
-          prop="name"
-        />
-        <el-table-column
-          label="线索数量"
-          prop="name"
-        />
-      </el-table>
-      <pagination
-        v-show="dialogTotal > 0"
-        :small="true"
-        :operation-list="[]"
-        :total="dialogTotal"
-        :page.sync="dialogListQuery.page"
-        :limit.sync="dialogListQuery.limit"
-        @pagination="getDialogList"
-      />
-    </Dialog>
     <!--提示窗口-->
     <Dialog
       :visible.sync="showDialog.visible"
@@ -339,7 +278,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetContractList, ActiveContract, DownloadContract } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -377,56 +316,50 @@ export default class extends Vue {
     };
     private drawer: boolean= false;
     private total = 0;
+    private ActivateId: any = ''
     private list: CargoListData[] = [];
     private page: Object | undefined = '';
     private listLoading = true;
     private tags: any[] = [];
+    private operationList: any[] = [];
+    private deletDrawerList: any[] = []
     private DateValue: any[] = [];
     private multipleSelection: any[] = []
-    private operationList: any[] = [
-      { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: '3' },
-      { icon: 'el-icon-thumb', name: '分配货主', color: '#5E7BBB', key: '1' },
-      { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
-    ];
     private dropdownList: any[] = [
-      '货主编号',
-      '线索编号',
-      '销售',
-      '公司简称',
-      '分类',
-      '城市',
-      '联系人',
-      '联系电话',
-      '身份证号',
-      '是否为合同期内',
-      '创建日期',
-      '合同止期',
-      '备注',
-      '操作'
+      '合同编号',
+      '订单编号',
+      '合同名称',
+      '司机姓名',
+      '合同归属',
+      '合同状态',
+      '生成时间'
     ];
     private checkList: any[] = this.dropdownList;
     private tab: any[] = [
       {
         label: '全部',
-        name: '0',
-        num: 187
+        name: '',
+        num: ''
       },
       {
         label: '未签约',
         name: '1',
-        num: 1
+        num: ''
       },
       {
         label: '已签约',
-        name: '2'
+        name: '2',
+        num: ''
       },
       {
         label: '已过期',
-        name: '3'
+        name: '3',
+        num: ''
       },
       {
         label: '已作废',
-        name: '4'
+        name: '4',
+        num: ''
       }
     ];
     private listQuery: IState = {
@@ -437,7 +370,14 @@ export default class extends Vue {
       endDate: '',
       startDate: '',
       state: '',
-      lineSaleId: ''
+      lineSaleId: '',
+      busiType: '',
+      driverName: '',
+      fileNo: '',
+      joinManageId: '',
+      orderId: '',
+      pageNumber: 0,
+      status: 0
     };
     // 弹窗分配
     private dialogList: any[] = [];
@@ -466,14 +406,13 @@ export default class extends Vue {
     get isPC() {
       return SettingsModule.isPC
     }
-    // 确认清除
-    private confirm(done:any) {
-      if (this.showDialog[name] === '1') {
-        (this.$refs.multipleTable as any).clearSelection()
-        this.multipleSelection = []
+    // 确认激活
+    private async confirm(done:any) {
+      const { data } = await ActiveContract({ contractId: this.ActivateId })
+      if (data.success) {
+        this.$message.success('激活成功')
       } else {
-        this.assignShowDialog = true
-        this.getDialogList(this.dialogListQuery)
+        this.$message.error(data.errorMsg)
       }
       done()
     }
@@ -504,16 +443,21 @@ export default class extends Vue {
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
-      const { data } = await GetCustomerList(this.listQuery)
+      const { data } = await GetContractList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.tab[0].num = data.title.all
+        this.tab[1].num = data.title.notSign
+        this.tab[2].num = data.title.sign
+        this.tab[3].num = data.title.expired
+        this.tab[4].num = data.title.abolished
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
           this.listLoading = false
         }, 0.5 * 1000)
       } else {
-        this.$message.error(data)
+        this.$message.error(data.errorMsg)
         setTimeout(() => {
           this.listLoading = false
         }, 0.5 * 1000)
@@ -525,103 +469,43 @@ export default class extends Vue {
       this.dialogListQuery.page = value.page
       this.dialogListQuery.limit = value.limit
       this.dialogLoading = true
-      const { data } = await GetCustomerList(this.dialogListQuery)
-      console.log(data)
+      const { data } = await GetContractList(this.dialogListQuery)
       if (data.success) {
         this.dialogList = data.data
         this.dialogTotal = data.page.total
       } else {
-        this.$message.error(data)
+        this.$message.error(data.errorMsg)
       }
       setTimeout(() => {
         this.dialogLoading = false
       }, 0.5 * 1000)
     }
 
-    // 按钮操作
-    private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'OwnerDetail', query: { id: id } })
-    }
-
-    // 批量操作
-    private olClicks(item: any) {
-      if (item.key === '2') {
-        if (this.multipleSelection.length) {
-          this.showDialog = {
-            visible: true,
-            title: '清空确认',
-            text: '确认清空所有选择吗？',
-            name: '1'
-          }
-        } else {
-          this.$message({
-            type: 'warning',
-            message: '请先选择货主再进行操作！'
-          })
-        }
-      } else if (item.key === '1') {
-        if (this.multipleSelection.length) {
-          this.showDialog = {
-            visible: true,
-            title: '提示',
-            text: '分配货主后关联的相关线索也会分配给该销售！',
-            name: '2'
-          }
-        } else {
-          this.$message({
-            type: 'warning',
-            message: '请先选择货主再进行操作！'
-          })
-        }
-      } else if (item.key === '3') {
-        this.drawer = true
-      }
-    }
-
-    // table选择框
-    handleSelectionChange(val: any) {
-      this.multipleSelection = val
-    }
-
-    // 关闭查看已选
-    private changeDrawer(val: any) {
-      this.drawer = val
-    }
-
-    // 删除选中项目
-    private deletDrawerList(item:any, i:any) {
-      (this.$refs.multipleTable as any).toggleRowSelection(item)
-    }
-
-    // 弹窗操作
-    private confirmAssign(done: any) {
-      // 提交操作
-      console.log(111333)
-      if (this.multipleSelectionAssign.length) {
-        this.assignShowDialog = false
+    // 下载按钮操作
+    private async Down(id: string | (string | null)[] | null | undefined) {
+      const { data } = await DownloadContract({ contractId: id })
+      if (data.success) {
+        const link = document.createElement('a')
+        link.download = name
+        link.href = data.data
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        this.$message.success('下载成功！')
       } else {
-        this.$message({
-          type: 'warning',
-          message: '请先选择货主再进行操作！'
-        })
+        this.$message.error(data.errorMsg)
       }
-      // done()
     }
-    // 弹窗表格选中
-    private handleSelectionDialog(val: any) {
-      this.multipleSelectionAssign = val
-    }
-    // table index
-    private indexMethod(type: string) {
-      let page: number, limit: number
-      if (type === 'listQuery') {
-        ({ page, limit } = this.listQuery)
-      } else if (type === 'dialogListQuery') {
-        ({ page, limit } = this.listQuery)
+
+    // 激活提示
+    private Activate(id: string | (string | null)[] | null | undefined) {
+      this.showDialog = {
+        visible: true,
+        title: '激活',
+        text: '合同已过期，激活后，将生成新的合同，请尽快让司机在小程序中签约！',
+        name: ''
       }
-      return (index: number) => {
-        return index + 1 + (page - 1) * limit
-      }
+      this.ActivateId = id
     }
 }
 </script>

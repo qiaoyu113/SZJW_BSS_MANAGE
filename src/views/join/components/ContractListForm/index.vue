@@ -8,7 +8,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="订单编号">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.orderId"
                     placeholder="请输入订单编号"
                     clearable
                   />
@@ -17,7 +17,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="司机姓名">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.driverName"
                     placeholder="请输入司机姓名"
                     clearable
                   />
@@ -26,14 +26,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="合同归属">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.busiType"
                     placeholder="请选择合同归属"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsBusi"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -41,7 +41,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="合同编号">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.fileNo"
                     placeholder="请输入合同编号"
                     clearable
                   />
@@ -55,9 +55,9 @@
                   >
                     <el-option
                       v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -65,14 +65,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="加盟经理">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.joinManageId"
                     placeholder="请选择加盟经理"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsJoin"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
                     />
                   </el-select>
                 </el-form-item>
@@ -96,12 +96,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="reset"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="research"
                 >
                   查询
                 </el-button>
@@ -130,6 +132,8 @@ export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
+  private optionsBusi: any[] = []
+  private optionsJoin: any[] = []
   private DateValueChild: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
 
@@ -190,8 +194,31 @@ export default class extends Vue {
       // 根据listQuery中的key来判断
       case 'city':
         for (let entry of this.optionsCity) {
-          if (entry.codeVal === value) {
-            vodeName = entry.code
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'orderId':
+        vodeName = value
+        break
+      case 'driverName':
+        vodeName = value
+        break
+      case 'fileNo':
+        vodeName = value
+        break
+      case 'busiType':
+        for (let entry of this.optionsBusi) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'joinManageId':
+        for (let entry of this.optionsJoin) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
           }
         }
         break
@@ -201,14 +228,29 @@ export default class extends Vue {
     }
     return vodeName
   }
-
-  private async getDictionary() {
+  // 查询城市
+  private async getDictionaryCity() {
     const { data } = await GetDictionary({ dictType: 'online_city' })
     if (data.success) {
       this.optionsCity = data.data
     } else {
       this.$message.error(data)
     }
+  }
+  // 查询合同归属
+  private async getDictionaryContract() {
+    const { data } = await GetDictionary({ dictType: 'busi_type' })
+    if (data.success) {
+      this.optionsBusi = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
+
+  // 字典查询汇总
+  private getDictionary() {
+    this.getDictionaryCity()
+    this.getDictionaryContract()
   }
 
   private changData() {
@@ -218,6 +260,16 @@ export default class extends Vue {
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
+    }
+  }
+
+  private research() {
+    this.$emit('handle-query', this.listQuery)
+  }
+
+  private reset() {
+    for (let key in this.listQuery) {
+      this.listQuery[key] = ''
     }
   }
 }
