@@ -55,12 +55,3 @@ export const GetManagerLists = () =>
     url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
     method: 'post'
   })
-
-/**
-   *获取已开通的城市
-   */
-export const GetOpenCityData = () =>
-  request({
-    url: `${baseURL}/v1/base/area/getOpenCityData`,
-    method: 'get'
-  })
