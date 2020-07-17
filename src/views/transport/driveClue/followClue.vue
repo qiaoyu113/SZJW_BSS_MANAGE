@@ -8,7 +8,7 @@
       >
         <div class="left">
           <span class="text">基本信息</span>
-          <span class="status">{{ baseForm.statusName | DataIsNull }}</span>
+          <span class="status">{{ baseForm.busiType === 1 ? '共享':'专车' }}</span>
         </div>
         <div class="right">
           <el-dropdown
@@ -349,7 +349,8 @@ export default class extends Vue {
     this.$router.push({
       path: '/transport/interview',
       query: {
-        id: this.id + ''
+        id: this.id + '',
+        busiType: this.baseForm.busiType
       }
     })
   }

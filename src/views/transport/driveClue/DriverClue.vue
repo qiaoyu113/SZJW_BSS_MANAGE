@@ -53,7 +53,7 @@
         />
         <span v-if="isPC">创建线索</span>
       </el-button>
-      <el-button
+      <!-- <el-button
         type="primary"
         size="small"
         name="driverclue_interview_btn"
@@ -64,7 +64,7 @@
           class="el-icon-edit"
         />
         <span v-if="isPC">发起面试</span>
-      </el-button>
+      </el-button> -->
 
       <el-dropdown
         :hide-on-click="false"
@@ -688,7 +688,8 @@ export default class extends Vue {
       this.$router.push({
         path: '/transport/interview',
         query: {
-          id: row.clueId
+          id: row.clueId,
+          busiType: row.busiType
         }
       })
     } else if (key === 'follow') { // 线索跟进

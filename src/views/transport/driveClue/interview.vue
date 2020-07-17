@@ -289,11 +289,13 @@ export default class extends Vue {
       }
       let { data: res } = await GetInterviewEditDetail(params)
       if (res.success) {
-        this.listQuery.name = res.data.name
-        this.listQuery.phone = res.data.phone
-        this.listQuery.workCity = res.data.intentWorkCity
-        this.listQuery.busiType = res.data.intentDrivingCarType
-        this.form = res.data
+        if (Object.keys(res.data).length > 0) {
+          this.listQuery.name = res.data.name
+          this.listQuery.phone = res.data.phone
+          this.listQuery.workCity = res.data.intentWorkCity
+          this.listQuery.busiType = res.data.intentDrivingCarType
+          this.form = res.data
+        }
       }
     } catch (err) {
       console.log(`get interview info fail:`, err)
