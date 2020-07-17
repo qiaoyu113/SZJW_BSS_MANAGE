@@ -35,6 +35,13 @@ export const GetOpenCityData = () => request({
   method: 'get'
 })
 
+// 运营经理
+export const getOperManager = () =>
+  request({
+    url: `${baseURL}/v1/base/user/getOperManagerListByUserId`,
+    method: 'post'
+  })
+
 /**
    *根据父级code获取子列表
    *

@@ -1,0 +1,854 @@
+<template>
+  <div :class="isPC ? 'CreatTransport' : 'CreatTransport-m'">
+    <div class="creatBox">
+      <h1 class="pageTitle">
+        创建运力
+      </h1>
+      <p class="pageWord">
+        为签约司机创建运力，运力即为该签约司机下可以承担货运任务的人和车，可以为每个运力撮合标书上岗。
+      </p>
+      <div class="creatInfo">
+        <div class="stepsBox">
+          <el-steps :active="activeCreat">
+            <el-step
+              title="选择签约司机和订单"
+            />
+            <el-step
+              title="确认运力信息"
+            />
+            <el-step
+              title="完成"
+            />
+          </el-steps>
+        </div>
+        <template v-if="activeCreat === 1">
+          <div class="chooseBox">
+            <div class="creatPhone">
+              <span class="phoneLabel">签约司机姓名（手机号）:</span>
+              <el-select
+                v-model="phoneNum"
+                filterable
+                placeholder="请选择司机"
+                @change="getOrderList"
+              >
+                <el-option
+                  v-for="item in driverOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
+            <span
+              v-if="chooseOrderState"
+              class="orderLabel"
+            >请选择签约订单 :</span>
+          </div>
+          <div
+            v-if="chooseOrderState"
+            class="orderBox"
+          >
+            <el-row style="width:100%">
+              <el-col
+                v-for="(item, index) in orderList"
+                :key="index"
+                :span="6"
+              >
+                <div
+                  class="boxItem"
+                >
+                  <i :class="( index ) === activeItem ? 'el-icon-star-on' : 'el-icon-star-off'" />
+                  <div
+                    :class=" item.orderId === 'DD2020071410095' ? 'orderItem' : 'orderItemNo'"
+                    @click="orderGet(index,item)"
+                  >
+                    <span class="orderNum">订单编号：{{ item.orderId }}</span>
+                    <span>商品分类：{{ item.busiTypeName }}</span>
+                    <span v-if="item.cooperationModel === 1">合作模式：购车</span>
+                    <span v-if="item.cooperationModel === 2">合作模式：租车</span>
+                    <span v-if="item.cooperationModel === 3">合作模式：带车</span>
+                    <span>合作车型：{{ item.cooperationCarName }}</span>
+                    <div class="goDetail">
+                      <span>订单金额：￥{{ item.goodsAmount }}</span>
+                      <span
+                        style="margin-left:20px"
+                        @click="goOrderDetail(item.orderId)"
+                      >详情></span>
+                    </div>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+          <el-button
+            type="primary"
+            style="margin-top:40px"
+            @click="nextChoose"
+          >
+            下一步
+          </el-button>
+        </template>
+        <template v-if="activeCreat === 2">
+          <div class="orderForm">
+            <SectionContainer
+              title="基础信息（必填项）"
+              :md="true"
+            >
+              <self-form
+                ref="CreatTransport"
+                :list-query="orderInfo"
+                :form-item="formItem"
+                label-width="100px"
+                :rules="rules"
+                @onPass="handlePassClick"
+              />
+            </SectionContainer>
+            <SectionContainer
+              title="基础信息（非必填项）"
+              :md="true"
+            >
+              <self-form
+                :list-query="orderInfo"
+                :form-item="formItemOther"
+                label-width="140px"
+                :rules="rules"
+              />
+            </SectionContainer>
+          </div>
+          <div class="btnGroup">
+            <el-button
+              v-if="isEditor"
+              @click="backChoose"
+            >
+              上一步
+            </el-button>
+            <el-button
+              type="primary"
+              @click="sureSubmit"
+            >
+              确定
+            </el-button>
+          </div>
+        </template>
+        <template v-if="activeCreat === 3">
+          <div class="creatOver">
+            <i
+              class="el-icon-success icon"
+              color="#52c41a"
+            />
+            <span class="successText">成功创建</span>
+            <div>
+              <el-button
+                type="primary"
+                @click="backAgain"
+              >
+                再次创建
+              </el-button>
+              <el-button
+
+                @click="backRouter"
+              >
+                返回运力列表
+              </el-button>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div
+        v-if="activeCreat === 1"
+        class="textInfo"
+      >
+        <p class="textTitle">
+          说明
+        </p>
+        <div>
+          <p class="textTitle">
+            选择签约司机
+          </p>
+          <p class="textWord">
+            为该签约司机创建可以承担货运任务的运力
+          </p>
+        </div>
+        <div>
+          <p class="textTitle">
+            选择签约订单
+          </p>
+          <p class="textWord">
+            绑定订单和运力，该运力的跑活情况收到订单影响
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { SettingsModule } from '@/store/modules/settings'
+import SectionContainer from '@/components/SectionContainer/index.vue'
+import SelfForm from '@/components/base/SelfForm.vue'
+import { saveCarrierInfo, transportOrderList, transportOrderDetail, driverList } from '@/api/transport'
+import { GetDictionary, GetDictionaryList, GetOpenCityData } from '@/api/common'
+import '@/styles/common.scss'
+
+  interface IState {
+    [key: string]: any;
+  }
+
+  @Component({
+    name: 'TransportList',
+    components: {
+      SectionContainer,
+      SelfForm
+    }
+  })
+
+export default class extends Vue {
+  private canClick:boolean = false
+  private IntentionalCompartment:any[] =[]
+  private dayWork:any[] =[]
+  private expectedMonthlyIncome:any[] =[]
+  private typeGoods:any[] =[]
+  private driverId:string = ''
+  private driverOptions:any[] = []
+  private chooseOrderState:boolean = false
+  private isHasOrder:boolean = false
+  private isEditor:boolean = true
+  private activeCreat:number = 1
+  private activeItem:number | null = null
+  private phoneNum:string = ''
+  private orderType:number = 0
+  private loading:boolean = false
+  private list:any[] = []
+  private orderList:any[] = []
+  private orderInfo:any = {
+    carType: '',
+    // 车型
+    gmId: '',
+    // 运营经理
+    name: '',
+    // 运力姓名
+    phone: '',
+    // 联系方式
+    plateNo: '',
+    // 车牌号
+    workCity: '',
+    // 工作城市
+    orderId: '',
+    // 所选的订单号
+    driverId: '',
+    // 所属司机id
+
+    // -------------
+    status: null,
+    // 运力状态
+    carrierId: null,
+    // 运力id有此字段为修改运力信息
+    age: null,
+    // 司机年龄
+    householdType: null,
+    // 户口类型，1农村2城镇
+    workExperience: null,
+    // 货物运输经验（月）
+    cargoType: null,
+    // 配送货物类型
+    homeCity: null,
+    // 家庭住址-市
+    homeCounty: null,
+    // 家庭住址-区县
+    homeDistrict: null,
+    // 家庭住址-具体区域
+    homeProvince: null,
+    // 家庭住址-省
+    expMonthlyIncome: null,
+    // 期望月收入
+    avgMonthlyIncome: null,
+    // 平均月收入
+    isIndebted: null,
+    // 是否存在贷款，1是2否
+    maxWorkTime: null,
+    // 可接受一天工作时长
+    remarks: null
+    // 备注
+
+  }
+  private formItem:any[] = [
+    {
+      type: 1,
+      label: '姓名',
+      key: 'name',
+      tagAttrs: {
+        showWordLimit: true,
+        placeholder: '请输入姓名',
+        maxlength: '10'
+      }
+    },
+    {
+      type: 1,
+      label: '联系方式',
+      key: 'phone',
+      tagAttrs: {
+        showWordLimit: true,
+        placeholder: '请输入联系方式',
+        maxlength: '11'
+      }
+    },
+    {
+      type: 2,
+      key: 'workCity',
+      label: '工作城市',
+      tagAttrs: {
+        placeholder: '请选择城市'
+      },
+      options: []
+    },
+    {
+      type: 1,
+      label: '车牌号',
+      key: 'plateNo',
+      tagAttrs: {
+        placeholder: '请输入车牌号'
+      }
+    },
+    {
+      type: 2,
+      key: 'carType',
+      label: '车型',
+      tagAttrs: {
+        placeholder: '请选择车型'
+      },
+      options: []
+    },
+    {
+      type: 2,
+      key: 'gmId',
+      label: '运营经理',
+      tagAttrs: {
+        placeholder: '请选择运营经理'
+      },
+      options: []
+    }
+  ]
+  private formItemOther:any[] = [
+    {
+      type: 1,
+      label: '司机年龄',
+      key: 'age',
+      tagAttrs: {
+        placeholder: '请输入司机年龄',
+        type: 'number'
+      }
+    },
+    {
+      type: 2,
+      key: 'householdType',
+      label: '户口类型',
+      tagAttrs: {
+        placeholder: '请选择户口类型'
+      },
+      options: [
+        {
+          label: '农村户口',
+          value: '1'
+        },
+        {
+          label: '城镇户口',
+          value: '2'
+        }
+      ]
+    },
+    {
+      type: 1,
+      label: '货物运输经验（月）',
+      key: 'workExperience',
+      tagAttrs: {
+        placeholder: '请输入货物运输经验',
+        type: 'number'
+      }
+    },
+    {
+      type: 1,
+      label: '家庭住址',
+      key: 'age',
+      tagAttrs: {
+        placeholder: '请输入司机年龄'
+      }
+    },
+    {
+      type: 2,
+      key: 'cargoType',
+      label: '配送货物类型',
+      tagAttrs: {
+        placeholder: '请选择配送货物类型'
+      },
+      options: []
+    },
+    {
+      type: 2,
+      key: 'expMonthlyIncome',
+      label: '期望月收入',
+      tagAttrs: {
+        placeholder: '请选择期望月收入'
+      },
+      options: []
+    },
+    {
+      type: 1,
+      label: '平均月收入',
+      key: 'avgMonthlyIncome',
+      tagAttrs: {
+        placeholder: '请输入平均月收入'
+      }
+    },
+    {
+      type: 2,
+      key: 'isIndebted',
+      label: '是否存在还贷款',
+      tagAttrs: {
+        placeholder: '请选择是否存在还贷款'
+      },
+      options: [
+        {
+          label: '否',
+          value: '2'
+        },
+        {
+          label: '是',
+          value: '1'
+        }
+      ]
+    },
+    {
+      type: 2,
+      key: 'maxWorkTime',
+      label: '可接受一天工作时长',
+      tagAttrs: {
+        placeholder: '请选择可接受一天工作时长'
+      },
+      options: []
+    },
+    {
+      type: 1,
+      label: '备注',
+      key: 'remarks',
+      col: 12,
+      tagAttrs: {
+        placeholder: '请输入备注（最多可填100字）',
+        type: 'textarea',
+        rows: 4
+      }
+    }
+  ]
+  private rules:IState = {
+    name: [
+      { required: true, message: '请输入姓名', trigger: 'blur' }
+    ],
+    phone: [
+      { required: true, message: '请输入电话', trigger: 'blur' },
+      { validator: this.checkPhone, trigger: 'blur' }
+    ],
+    workCity: [
+      { required: true, message: '请选择工作城市', trigger: 'change' }
+    ],
+    plateNo: [
+      { required: true, message: '请输入车牌号', trigger: 'change' }
+    ],
+    carType: [
+      { required: true, message: '请选择车型', trigger: 'change' }
+    ],
+    gmId: [
+      { required: true, message: '请选择运营经理', trigger: 'change' }
+    ]
+  }
+
+  private checkPhone(rule:any, value:any, callback:any) {
+    if (!(/^1[3456789]\d{9}$/.test(value))) {
+      callback(new Error('手机号码不符合规范，请重新输入'))
+    } else {
+      callback()
+    }
+  }
+
+  private nextChoose() {
+    if (this.phoneNum === '') {
+      this.$message.error('请填写手机号码或者司机姓名')
+      return
+    }
+    if (this.activeItem === null) {
+      this.$message.error('请选择订单')
+      return
+    }
+    if (!this.isHasOrder) {
+      return this.$message.error('该司机目前没有创建订单，暂无法创建运力')
+    }
+    // var phone = this.phoneNum
+    // if (!(/^1[3456789]\d{9}$/.test(phone))) {
+    //   this.$message.error('手机号码有误，请重填')
+    //   return false
+    // }
+    this.activeCreat = 2
+  }
+
+  private backChoose() {
+    this.activeCreat = 1
+  }
+  private backAgain() {
+    this.activeCreat = 1
+  }
+  private backRouter() {
+    this.$router.push('transportlist')
+  }
+  private sureSubmit() {
+    ((this.$refs.CreatTransport) as any).submitForm()
+  }
+  private async handlePassClick(val:boolean) {
+    if (val) {
+      for (var k in this.orderInfo) {
+        if (this.orderInfo[k] === null) {
+          delete this.orderInfo[k]
+        }
+      }
+      let { data } = await saveCarrierInfo(this.orderInfo)
+      if (data.success) {
+        if (data.data.flag) {
+          this.activeCreat = 3
+        } else {
+          this.$message.error(data.data.msg)
+        }
+      } else {
+        this.$message.error(data)
+      }
+    }
+  }
+
+  private async getDictionary() {
+    const { data } = await GetDictionary({ dictType: 'online_city' })
+    if (data.success) {
+      this.formItem.map(ele => {
+        if (ele.key === 'workCity') {
+          let list:any[] = data.data
+          ele.options = list.map(item => {
+            return { label: item.code, value: item.codeVal }
+          })
+        }
+      })
+    } else {
+      this.$message.error(data)
+    }
+  }
+
+  private async getDictionaryAll() {
+    let params = ['Intentional_compartment', 'type_of_goods', 'expected_monthly_income', 'accept_one_day_of_work']
+    let { data } = await GetDictionaryList(params)
+    if (data.success) {
+      // eslint-disable-next-line camelcase
+      let { Intentional_compartment, type_of_goods, expected_monthly_income, accept_one_day_of_work } = data.data
+      let cartype = Intentional_compartment.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      let goods = type_of_goods.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      let monthly = expected_monthly_income.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      let daywork = accept_one_day_of_work.map(function(ele:any) {
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
+      })
+      // eslint-disable-next-line camelcase
+      this.IntentionalCompartment = cartype
+      this.dayWork = daywork
+      this.expectedMonthlyIncome = monthly
+      this.typeGoods = goods
+      this.formItem.map(ele => {
+        if (ele.key === 'carType') {
+          ele.options = cartype
+        }
+      })
+      this.formItemOther.map(ele => {
+        if (ele.key === 'cargoType') {
+          ele.options = goods
+        }
+        if (ele.key === 'expMonthlyIncome') {
+          ele.options = monthly
+        }
+        if (ele.key === 'maxWorkTime') {
+          ele.options = daywork
+        }
+      })
+    } else {
+      this.$message.error(data)
+    }
+    let city = await GetOpenCityData()
+    if (city.data.success) {
+      let arr = city.data.data.map(function(ele:any) {
+        return { value: Number(ele.code), label: ele.name }
+      })
+      this.formItem.map(ele => {
+        if (ele.key === 'workCity') {
+          ele.options = arr
+        }
+      })
+    } else {
+      this.$message.error(data)
+    }
+  }
+
+  private orderGet(index:number, ele:any) {
+    if (ele.orderId === 'DD2020071410095') {
+      return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
+    } else {
+      this.isHasOrder = true
+      this.activeItem = index
+    }
+  }
+
+  private async getOrderList(val:any) {
+    let { data } = await transportOrderList({ driverId: val })
+    if (data.success) {
+      this.orderList = data.data
+      if (this.orderList.length === 0) {
+        this.chooseOrderState = false
+      } else {
+        this.chooseOrderState = true
+      }
+    } else {
+      this.$message.error(data)
+    }
+  }
+
+  private goOrderDetail(id:string) {
+    this.$router.push({ path: 'orderdetail', query: { id: id } })
+  }
+
+  private fetchData() {
+    this.getDictionaryAll()
+  }
+
+  private async getCarrierDetail(carrierId:string) {
+    let { data } = await transportOrderDetail({ carrierId: carrierId })
+    if (data.success) {
+      this.activeCreat = 2
+      let orderInfo = data.data
+      // for (let ele in orderInfo) {
+      //   if (orderInfo[ele] === 0) {
+      //     return orderInfo[ele] === ''
+      //   }
+      // }
+      this.orderInfo = orderInfo
+    } else {
+      this.$message.error(data.data.errorMsg)
+    }
+  }
+
+  private async getDriverList() {
+    let { data } = await driverList()
+    if (data.success) {
+      let driverOptions = data.data.map(function(ele:any) {
+        return { value: ele.driverId, label: `${ele.name}(${ele.phone})` }
+      })
+      this.driverOptions = driverOptions
+    } else {
+      this.$message.error(data.data.errorMsg)
+    }
+  }
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+  // activated() {
+  //   this.fetchData()
+  //   let driverId = this.$route.query.driverId
+  //   let orderId = this.$route.query.orderId
+  //   if (driverId && orderId) {
+  //     this.isEditor = false
+  //     this.activeCreat = 2
+  //     // this.phoneNum = driverId as string
+  //   } else {
+  //     this.isEditor = true
+  //     this.activeCreat = 1
+  //   }
+  //   this.list = this.states.map(item => {
+  //     return { value: `value:${item}`, label: `label:${item}` }
+  //   })
+  // }
+
+  mounted() {
+    this.fetchData()
+    let carrierId = this.$route.query.carrierId as string
+    if (carrierId) {
+      this.isEditor = false
+      this.activeCreat = 2
+      this.orderInfo.carrierId = carrierId
+      this.getCarrierDetail(carrierId)
+      // this.phoneNum = driverId as string
+    } else {
+      this.isEditor = true
+      this.activeCreat = 1
+      this.getDriverList()
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.CreatTransport{
+  padding: 15px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  .creatBox{
+    background-color: white;
+    border-radius: 5px;
+    padding: 30px 50px;
+    box-sizing: border-box;
+    .pageTitle{
+      font-size: 18px;
+      color: #4A4A4A;
+      padding: 0;
+      margin: 0;
+    }
+    .pageWord{
+      font-size: 14px;
+      color: #4A4A4A;
+    }
+    .creatInfo{
+      border-bottom: 1px solid #ebebeb;
+      .stepsBox{
+        width: 100%;
+      }
+      padding:  30px 50px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .chooseBox{
+        margin-top: 60px;
+        .creatPhone{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          .phoneLabel{
+              display: block;
+              width: 160px;
+              text-align: right;
+              color: #595959;
+              margin-right: 10px;
+              font-size: 14px;
+            }
+            .el-select{
+              width: 600px;
+            }
+          }
+        }
+        .orderLabel{
+          margin: 30px 0;
+          display: block;
+          width: 160px;
+          text-align: right;
+          color: #595959;
+          margin-right: 10px;
+        }
+      .orderBox{
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        .boxItem{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 20px;
+          .orderItem{
+            cursor: pointer;
+            margin-left: 20px;
+            border: 1px solid #648be7;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            color: #140303;
+            span{
+              margin-bottom: 10px;
+            }
+            .goDetail{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .orderNum{
+              font-weight: bold;
+              color: black;
+            }
+          }
+          .orderItemNo{
+            margin-left: 20px;
+            border: 1px solid #bdcdf1;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            color: #c4c4c4;
+            span{
+              margin-bottom: 10px;
+            }
+            .goDetail{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .orderNum{
+              font-weight: bold;
+              color: black;
+            }
+          }
+          .orderItem:last-child{
+            margin-bottom: 0;
+          }
+          .orderItemNo:last-child{
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+    .textInfo{
+      margin-top: 40px;
+      .textTitle{
+        font-weight: bold;
+        font-size: 14px;
+        color: #8d8d8d;
+      }
+      .textWord{
+        color: #a0a0a0;
+        font-size: 14px;
+      }
+    }
+  }
+  .orderForm{
+    padding: 30px 0;
+  }
+  .btnGroup{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .creatOver{
+    width: 100%;
+    height: calc( 100vh - 400px );
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .successText{
+      font-weight: bold;
+      font-size: 24px;
+      margin: 40px 0;
+    }
+    .icon{
+      font-size: 60px;
+      color: #52c41a;
+    }
+  }
+}
+</style>

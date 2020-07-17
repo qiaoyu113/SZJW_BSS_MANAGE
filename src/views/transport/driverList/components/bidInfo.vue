@@ -45,40 +45,7 @@ interface IState {
 })
 export default class extends Vue {
   @Prop({ default: () => [] }) lists!:IState[]
-
-  private formItem:any[] = [
-    {
-      type: 7,
-      key: 'a',
-      label: '运力姓名:'
-    },
-    {
-      type: 7,
-      key: 'b',
-      label: '标书名称:'
-    },
-    {
-      type: 'c',
-      key: 'c',
-      label: '创建时间:',
-      slot: true
-    },
-    {
-      key: 'd',
-      type: 7,
-      label: '线路编号:'
-    },
-    {
-      key: 'e',
-      type: 7,
-      label: '线路名称:'
-    },
-    {
-      slot: true,
-      w: '10px',
-      type: 'detail'
-    }
-  ]
+  @Prop({ default: () => [] }) formItem!:any[]
 }
 </script>
 <style lang="scss" scoped>
