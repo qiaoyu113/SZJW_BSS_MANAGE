@@ -15,7 +15,7 @@
 import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { SpecialInterview } from '@/api/driver'
-import { GetCityByCode, GetManagerLists } from '@/api/common'
+import { GetCityByCode, GetManagerLists, GetDictionaryList } from '@/api/common'
 @Component({
   name: 'SpecialInterview',
   components: {
@@ -78,7 +78,8 @@ export default class extends Vue {
         key: 'inviteType',
         label: '邀约方式:',
         tagAttrs: {
-          placeholder: '邀约方式'
+          placeholder: '邀约方式',
+          filterable: true
         },
         options: []
       },
@@ -87,7 +88,8 @@ export default class extends Vue {
         key: 'sourceChannel',
         label: '来源渠道:',
         tagAttrs: {
-          placeholder: '来源渠道'
+          placeholder: '来源渠道',
+          filterable: true
         },
         options: []
       },
@@ -124,7 +126,7 @@ export default class extends Vue {
       {
         type: 8,
         key: 'interviewAddress',
-        label: '面试地址:',
+        label: '居住地址:',
         tagAttrs: {
           placeholder: '现居住地址',
           props: {
@@ -177,13 +179,19 @@ export default class extends Vue {
         key: 'intentDeliveryMode',
         label: '意向配送模式',
         w: '130px',
-        options: []
+        options: [],
+        tagAttrs: {
+          filterable: true
+        }
       },
       {
         type: 2,
         key: 'intentCargoType',
         label: '意向货物类型',
         w: '130px',
+        tagAttrs: {
+          filterable: true
+        },
         options: []
       },
       {
@@ -191,7 +199,10 @@ export default class extends Vue {
         key: 'intentWorkDuration',
         label: '意向工作时间段',
         w: '140px',
-        options: []
+        options: [],
+        tagAttrs: {
+          filterable: true
+        }
       },
       {
         type: 1,
@@ -427,6 +438,54 @@ export default class extends Vue {
         }
       }
     ]
+    /**
+   *原收入
+   */
+  private validateOriginIncomeAvg = (rule: any, value: string, callback: Function) => {
+    if (Number(value) < 0 || Number(value) > 25000) {
+      return callback(new Error('请输入0-25000之间的数字'))
+    }
+    callback()
+  }
+  /**
+   * 期望收入
+   */
+  private validateExpIncomeAvg = (rule: any, value: string, callback: Function) => {
+    if (Number(value) < 3000 || Number(value) > 25000) {
+      return callback(new Error('请输入3000-25000之间的数字'))
+    }
+    callback()
+  }
+  /**
+   *货物运输经验（月
+   */
+   private validateExperience = (rule: any, value: string, callback: Function) => {
+     if (Number(value) < 0 || Number(value) > 500) {
+       return callback(new Error('请输入0-500之间的数字'))
+     }
+     callback()
+   }
+   // 实际驾龄
+    private validateDrivingAge = (rule: any, value: string, callback: Function) => {
+      if (Number(value) < 0 || Number(value) > 500) {
+        return callback(new Error('请输入0-500之间的数字'))
+      }
+      callback()
+    }
+    // 本市居住时长
+    private validateLivingAge = (rule: any, value: string, callback: Function) => {
+      if (Number(value) < 0 || Number(value) > 730) {
+        return callback(new Error('请输入0-730之间的数字'))
+      }
+      callback()
+    }
+    // 司机年龄
+    private validAge = (rule: any, value: string, callback: Function) => {
+      if (Number(value) < 0 || Number(value) > 60) {
+        return callback(new Error('请输入0-60之间的数字'))
+      }
+      callback()
+    }
 
     private rules = {
       gmId: [
@@ -441,11 +500,9 @@ export default class extends Vue {
       whereKnow: [
         { required: true, message: '请输入', trigger: 'blur' }
       ],
-      heavyAgentName: [
-        { required: true, message: '请输入重代理姓名', trigger: 'blur' }
-      ],
       age: [
-        { required: true, message: '请输入年龄', trigger: 'blur' }
+        { required: true, message: '请输入年龄', trigger: 'blur' },
+        { validator: this.validAge, trigger: 'blur' }
       ],
       interviewAddress: [
         { required: true, message: '请选择面试地址', trigger: 'blur' }
@@ -469,10 +526,12 @@ export default class extends Vue {
         { required: true, message: '请选择意向工作时间段', trigger: 'blur' }
       ],
       originIncomeAvg: [
-        { required: true, message: '请输入原职业月均收入', trigger: 'blur' }
+        { required: true, message: '请输入原职业月均收入', trigger: 'blur' },
+        { validator: this.validateOriginIncomeAvg, trigger: 'blur' }
       ],
       expIncomeAvg: [
-        { required: true, message: '请输入期望月均净收入，去油去电', trigger: 'blur' }
+        { required: true, message: '请输入期望月均净收入，去油去电', trigger: 'blur' },
+        { validator: this.validateExpIncomeAvg, trigger: 'blur' }
       ],
       householdType: [
         { required: true, message: '请选择户籍类型', trigger: 'blur' }
@@ -487,13 +546,16 @@ export default class extends Vue {
         { required: true, message: '请选择子女数', trigger: 'blur' }
       ],
       experience: [
-        { required: true, message: '请选择子女数', trigger: 'blur' }
+        { required: true, message: '请输入', trigger: 'blur' },
+        { validator: this.validateExperience, trigger: 'blur' }
       ],
       drivingAge: [
-        { required: true, message: '请输入实际货车驾龄', trigger: 'blur' }
+        { required: true, message: '请输入实际货车驾龄', trigger: 'blur' },
+        { validator: this.validateDrivingAge, trigger: 'blur' }
       ],
       livingAge: [
-        { required: true, message: '请输入本城市居住时长', trigger: 'blur' }
+        { required: true, message: '请输入本城市居住时长', trigger: 'blur' },
+        { validator: this.validateLivingAge, trigger: 'blur' }
       ],
       drivingLicenceType: [
         { required: true, message: '请选择驾照类型', trigger: 'blur' }
@@ -531,6 +593,53 @@ export default class extends Vue {
     }
     mounted() {
       this.getManagers()
+      this.getBaseInfo()
+    }
+
+    /**
+   *获取基础信息
+   */
+    async getBaseInfo() {
+      try {
+        let params = ['source_channel', 'accep_payment_range', 'accep_payment_range', 'driving_licence_type', 'invite_type', 'intent_delivery_mode', 'strategy_right', 'cooperate_focus_point', 'cooperate_key_factor', 'intent_work_duration']
+        let { data: res } = await GetDictionaryList(params)
+        if (res.success) {
+          this.formItem[1].options = res.data.invite_type.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[2].options = res.data.source_channel.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[10].options = res.data.intent_delivery_mode.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[11].options = res.data.accep_payment_range.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[12].options = res.data.intent_work_duration.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[22].options = res.data.driving_licence_type.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[25].options = res.data.accep_payment_range.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[28].options = res.data.strategy_right.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[29].options = res.data.cooperate_focus_point.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+          this.formItem[30].options = res.data.cooperate_key_factor.map(function(item:any) {
+            return { label: item.dictLabel, value: item.dictValue }
+          })
+        } else {
+          this.$message.error(res.errorMsg)
+        }
+      } catch (err) {
+        console.log(`get base info fail:${err}`)
+      }
     }
     /**
    *获取加盟经理列表
@@ -556,6 +665,34 @@ export default class extends Vue {
     @Watch('obj', { deep: true })
     handleObjChange(val:any) {
       this.listQuery = { ...this.listQuery, ...this.obj }
+    }
+
+    @Watch('listQuery.hasOwnCar')
+    onOwnCar(val:boolean) {
+      this.listQuery.ownCarNum = ''
+      if (val) {
+        this.formItem[24].options = [
+          {
+            label: 1,
+            value: 1
+          },
+          {
+            label: 2,
+            value: 2
+          },
+          {
+            label: 3,
+            value: 3
+          }
+        ]
+      } else {
+        this.formItem[24].options = [
+          {
+            label: 0,
+            value: 0
+          }
+        ]
+      }
     }
 
     async handlePassClick() {
@@ -621,7 +758,7 @@ export default class extends Vue {
     handleFinish() {
     }
     /**
-     * 面试地址
+     * 现居住地址
      */
     async loadinterviewAddress(node:any, resolve:any) {
       let params:string[] = []
@@ -688,21 +825,23 @@ export default class extends Vue {
     /**
      *意向工作区域
      */
-    async loadintentAddress(params:string[]) {
+    async loadintentAddress(node:any, resolve:any) {
+      let params:string[] = []
+      if (node.level === 0) {
+        params = ['100000']
+      } else if (node.level === 1) {
+        params = ['100000']
+        params.push(node.value)
+      } else if (node.level === 2) {
+        params = ['100000']
+        params.push(node.parent.value)
+        params.push(node.value)
+      }
       try {
-        let { data: res } = await GetCityByCode(params)
-        if (res.success) {
-          const nodes = res.data.map(function(item:any) {
-            return {
-              value: item.code,
-              label: item.name,
-              leaf: params.length > 2
-            }
-          })
-          return nodes
-        }
+        let nodes = await this.loadCityByCode(params)
+        resolve(nodes)
       } catch (err) {
-        console.log(`load city by code fail:${err}`)
+        resolve([])
       }
     }
 }

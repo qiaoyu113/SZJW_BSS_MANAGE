@@ -155,7 +155,7 @@ import SelfForm from '@/components/base/SelfForm.vue'
 import { InterviewBasic, GetInterviewEditDetail } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionary } from '@/api/common'
+import { GetOpenCityData, GetManagerLists, GetDictionaryList } from '@/api/common'
 import { phoneReg } from '@/utils/index.ts'
 import SpecialInterview from './components/specialInterview.vue'
 import ShareInterview from './components/shareInterview.vue'
@@ -172,7 +172,7 @@ interface IState {
   }
 })
 export default class extends Vue {
-  private active:number = 1
+  private active:number = 0
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -235,7 +235,8 @@ export default class extends Vue {
       { required: true, message: '请输入姓名', trigger: 'blur' }
     ],
     phone: [
-      { required: true, message: '请输入电话', trigger: 'blur' }
+      { required: true, message: '请输入电话', trigger: 'blur' },
+      { validator: this.validatePhone, trigger: 'blur' }
     ],
     workCity: [
       { required: true, message: '请选择城市', trigger: 'change' }
@@ -253,8 +254,29 @@ export default class extends Vue {
   mounted() {
     this.listQuery.clueId = (this.$route as any).query.id
     this.listQuery.busiType = +(this.$route as any).query.busiType
-    // this.getBaseInfo()
+    this.getBaseInfo()
     this.getEditDetail()
+    this.getOpenCitys()
+  }
+  /**
+   *获取开通城市
+   */
+  async getOpenCitys() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.formItem[2].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
+    }
   }
 
   /**
@@ -267,36 +289,30 @@ export default class extends Vue {
       }
       let { data: res } = await GetInterviewEditDetail(params)
       if (res.success) {
-        // this.listQuery.name = res.data.name
-        // this.listQuery.phone = res.data.phone
-        // this.listQuery.workCity = res.data.intentWorkCity
-        // this.listQuery.busiType = res.data.intentDrivingCarType
+        this.listQuery.name = res.data.name
+        this.listQuery.phone = res.data.phone
+        this.listQuery.workCity = res.data.intentWorkCity
+        this.listQuery.busiType = res.data.intentDrivingCarType
         this.form = res.data
       }
     } catch (err) {
       console.log(`get interview info fail:`, err)
     }
   }
+
   /**
    *获取基础信息
    */
   async getBaseInfo() {
     try {
-      let requestArrs = [
-        GetDictionary({ dictType: 'online_city' }), // 工作城市
-        GetDictionary({ dictType: 'Intentional_compartment' }), // 车型
-        GetDictionary({ dictType: 'source_channel' }), // 司机(线索)来源渠道
-        GetDictionary({ dictType: 'accep_payment_range' }) // 可接受首付范围"
-      ]
-
-      let res = await Promise.all(requestArrs)
-      if (res && requestArrs.length === res.length) {
-        this.formItem[2].options = res[0].data.data.map(function(item:any) {
+      let params = ['Intentional_compartment']
+      let { data: res } = await GetDictionaryList(params)
+      if (res.success) {
+        this.formItem[3].options = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
-        this.formItem[3].options = res[1].data.data.map(function(item:any) {
-          return { label: item.dictLabel, value: item.dictValue }
-        })
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`get base info fail:${err}`)
@@ -353,7 +369,9 @@ export default class extends Vue {
    *完成按钮
    */
   handleFinishClick() {
-
+    this.$router.push({
+      path: '/transport/driverclue'
+    })
   }
   /**
    *直接创建订单

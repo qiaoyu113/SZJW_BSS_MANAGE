@@ -39,7 +39,7 @@ export const GetCityByCode = (data: any) =>
    */
 export const GetManagerLists = () =>
   request({
-    url: `${baseURL}/v1/base/user/getManagerListByUserId`,
+    url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
     method: 'post'
   })
 

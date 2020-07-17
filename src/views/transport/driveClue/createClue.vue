@@ -33,7 +33,7 @@
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
             name="driverclue_saveInterview_btn"
-            :disabled="true"
+            :disabled="!id"
             @click="handleSaveAndInterviewClick"
           >
             保存并面试
@@ -44,13 +44,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue, Component, Watch, Emit } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { CreateActivity, EditActivity, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { phoneReg } from '@/utils/index.ts'
-import { GetDictionary } from '@/api/common'
+import { GetOpenCityData, GetDictionaryList } from '@/api/common'
+import { delayTime } from '@/settings'
 
 interface IState {
   [key: string]: any;
@@ -193,9 +194,30 @@ export default class extends Vue {
 
   mounted() {
     this.getBaseInfo()
+    this.getOpenCitys()
     this.id = (this.$route.query.id) as number | string
     if (this.id) {
       this.getClueDetail()
+    }
+  }
+  /**
+   *获取开通城市
+   */
+  async getOpenCitys() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.formItem[3].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
     }
   }
   /**
@@ -203,23 +225,17 @@ export default class extends Vue {
    */
   async getBaseInfo() {
     try {
-      let requestArrs = [
-        GetDictionary({ dictType: 'online_city' }), // 工作城市
-        GetDictionary({ dictType: 'Intentional_compartment' }), // 车型
-        GetDictionary({ dictType: 'source_channel' })
-      ]
-
-      let res = await Promise.all(requestArrs)
-      if (res && requestArrs.length === res.length) {
-        this.formItem[3].options = res[0].data.data.map(function(item:any) {
+      let params = ['Intentional_compartment', 'source_channel']
+      let { data: res } = await GetDictionaryList(params)
+      if (res.success) {
+        this.formItem[4].options = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
-        this.formItem[4].options = res[1].data.data.map(function(item:any) {
+        this.formItem[5].options = res.data.source_channel.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
-        this.formItem[5].options = res[2].data.data.map(function(item:any) {
-          return { label: item.dictLabel, value: item.dictValue }
-        })
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`get base info fail:${err}`)
@@ -299,6 +315,8 @@ export default class extends Vue {
       if (res.success) {
         this.$message.success('操作成功')
         this.jump()
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`create activity fail:${err}`)
@@ -314,9 +332,11 @@ export default class extends Vue {
         }
       })
     } else {
-      this.$router.push({
-        path: '/transport/driverclue'
-      })
+      setTimeout(() => {
+        this.$router.push({
+          path: '/transport/driverclue'
+        })
+      }, delayTime)
     }
   }
 
@@ -333,6 +353,8 @@ export default class extends Vue {
       if (res.success) {
         this.$message.success('操作成功')
         this.jump()
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`edit activity fail:${err}`)

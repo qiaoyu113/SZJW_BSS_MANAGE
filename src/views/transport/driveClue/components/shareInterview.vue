@@ -15,7 +15,7 @@
 import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { ShareInterview } from '@/api/driver'
-import { GetCityByCode, GetManagerLists } from '@/api/common'
+import { GetCityByCode, GetManagerLists, GetDictionaryList } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -79,6 +79,15 @@ export default class extends Vue {
       }
     },
     {
+      type: 1,
+      key: 'age',
+      label: '司机年龄:',
+      tagAttrs: {
+        placeholder: '请输入0-60之间的数字',
+        type: 'number'
+      }
+    },
+    {
       type: 2,
       key: 'gmId',
       label: '加盟经理:',
@@ -123,11 +132,12 @@ export default class extends Vue {
       options: []
     },
     {
-      type: 4,
+      type: 2,
       key: 'drivingLicenceType',
       label: '驾照类型:',
       tagAttrs: {
-        placeholder: '驾照类型'
+        placeholder: '驾照类型',
+        filterable: true
       },
       options: []
     },
@@ -209,7 +219,46 @@ export default class extends Vue {
       ]
     }
   ]
+  // 司机年龄
+  private validAge = (rule: any, value: string, callback: Function) => {
+    if (Number(value) < 0 || Number(value) > 60) {
+      return callback(new Error('请输入0-60之间的数字'))
+    }
+    callback()
+  }
+  /**
+   *原收入
+   */
+  private validateOriginIncomeAvg = (rule: any, value: string, callback: Function) => {
+    if (Number(value) < 0 || Number(value) > 25000) {
+      return callback(new Error('请输入0-25000之间的数字'))
+    }
+    callback()
+  }
+  /**
+   * 期望收入
+   */
+  private validateExpIncomeAvg = (rule: any, value: string, callback: Function) => {
+    if (Number(value) < 3000 || Number(value) > 25000) {
+      return callback(new Error('请输入3000-25000之间的数字'))
+    }
+    callback()
+  }
+  // 从业时间
+  private validateWorkDuration = (rule: any, value: string, callback: Function) => {
+    if (Number(value) < 0 || Number(value) > 500) {
+      return callback(new Error('请输入0-500之间的数字'))
+    }
+    callback()
+  }
+  // 零散活占比
 
+  private validateScatteredJobRate = (rule: any, value: string, callback: Function) => {
+    if (Number(value) < 0 || Number(value) > 100) {
+      return callback(new Error('请输入0-100之间的数字'))
+    }
+    callback()
+  }
   private rules = {
     interviewDate: [
       { required: true, message: '请输入活动名称', trigger: 'blur' }
@@ -219,6 +268,10 @@ export default class extends Vue {
     ],
     interviewDistrict: [
       { required: true, message: '请输入详细面试地址', trigger: 'blur' }
+    ],
+    age: [
+      { required: true, message: '请输入年龄', trigger: 'blur' },
+      { validator: this.validAge, trigger: 'blur' }
     ],
     gmId: [
       { required: true, message: '请选择加盟经理', trigger: 'blur' }
@@ -233,22 +286,27 @@ export default class extends Vue {
       { required: true, message: '请选择邀约渠道', trigger: 'blur' }
     ],
     drivingLicenceType: [
-      { required: true, message: '请选择驾照类型', trigger: 'blur' }
+      { required: false, message: '请选择驾照类型', trigger: 'blur' }
     ],
     isLocalPlate: [
       { required: true, message: '请选择是否工作地车牌', trigger: 'blur' }
     ],
     originIncomeAvg: [
-      { required: true, message: '请输入原收入(去油)(元/月)', trigger: 'blur' }
+      { required: true, message: '请输入原收入(去油)(元/月)', trigger: 'blur' },
+      { validator: this.validateOriginIncomeAvg, trigger: 'blur' }
     ],
     expIncomeAvg: [
-      { required: true, message: '请输入期望收入(去油)(元/月)', trigger: 'blur' }
+      { required: true, message: '请输入期望收入(去油)(元/月)', trigger: 'blur' },
+      { validator: this.validateExpIncomeAvg, trigger: 'blur' }
     ],
     workDuration: [
-      { required: true, message: '请输入从业时间(月)', trigger: 'blur' }
+      { required: true, message: '请输入从业时间(月)', trigger: 'blur' },
+      { validator: this.validateWorkDuration, trigger: 'blur' }
     ],
     scatteredJobRate: [
-      { required: true, message: '请输入零散活占比(%)', trigger: 'blur' }
+      { required: true, message: '请输入零散活占比(%)', trigger: 'blur' },
+      { validator: this.validateScatteredJobRate, trigger: 'blur' }
+
     ],
     isNewEnergy: [
       { required: true, message: '请选择是否新能源', trigger: 'blur' }
@@ -257,6 +315,7 @@ export default class extends Vue {
 
   mounted() {
     this.getManagers()
+    this.getBaseInfo()
   }
 
   /**
@@ -279,7 +338,27 @@ export default class extends Vue {
       console.log(`get manager fail:${err}`)
     }
   }
-
+  /**
+   *获取基础信息
+   */
+  async getBaseInfo() {
+    try {
+      let params = ['source_channel', 'driving_licence_type']
+      let { data: res } = await GetDictionaryList(params)
+      if (res.success) {
+        this.formItem[6].options = res.data.source_channel.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+        this.formItem[7].options = res.data.driving_licence_type.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
+  }
   @Watch('obj', { deep: true })
   handleObjChange(val:any) {
     this.listQuery = { ...this.listQuery, ...this.obj }

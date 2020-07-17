@@ -85,7 +85,7 @@
         ref="driverListTable"
         v-loading="listLoading"
         border
-        row-key="a"
+        row-key="driverId"
         :operation-list="operationList"
         :table-data="tableData"
         :columns="columns"
@@ -326,8 +326,7 @@ export default class extends Vue {
     gmTeam: '',
     gmId: '',
     sourceChannel: '',
-    up: true,
-    quit: 1,
+    carrierStatus: '',
     time: []
   }
 
@@ -422,33 +421,21 @@ export default class extends Vue {
     },
     {
       type: 4,
-      key: 'up',
-      label: '是否有待上岗运力',
+      key: 'carrierStatus',
+      label: '是否存在',
       w: '130px',
       options: [
         {
-          label: '是',
-          value: true
+          label: '待上岗运力',
+          value: 0
         },
         {
-          label: '否',
-          value: false
-        }
-      ]
-    },
-    {
-      type: 4,
-      key: 'quit',
-      w: '130px',
-      label: '是否有已退出运力',
-      options: [
-        {
-          label: '是',
+          label: '上岗运力',
           value: 1
         },
         {
-          label: '否',
-          value: 0
+          label: '停用运力',
+          value: 2
         }
       ]
     },
@@ -647,8 +634,9 @@ export default class extends Vue {
       let params:any = {
         limit: this.page.limit,
         page: this.page.page
-        // carrierStatus: ''
       }
+
+      this.listQuery.carrierStatus !== '' && (params.carrierStatus = +this.listQuery.carrierStatus)
       this.listQuery.status && (params.status = +this.listQuery.status)
       this.listQuery.workCity && (params.workCity = this.listQuery.workCity)
       this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
@@ -693,7 +681,7 @@ export default class extends Vue {
    * 查询
    */
   private handleQueryClick() {
-    let blackLists = ['state']
+    let blackLists = ['status']
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
@@ -754,6 +742,7 @@ export default class extends Vue {
   handlePageSize(page:any) {
     this.page.page = page.page
     this.page.limit = page.limit
+    this.getList()
   }
 
   /**

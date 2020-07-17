@@ -1,6 +1,8 @@
 import request from '@/utils/request'
 
 let prefix = '/driver'
+
+let prefixCarrier = '/carrier_center'
 /**
  * 创建司机线索--人工录入
  */
@@ -113,6 +115,17 @@ export const ShareInterview = (data: any) =>
 export const SpecialInterview = (data: any) =>
   request({
     url: `${prefix}/v1/driver/clue/clue/special/interview`,
+    method: 'post',
+    data
+  })
+
+/**
+   *
+   * 获取司机线索列表
+   */
+export const GetSpecialInterviewLists = (data: any) =>
+  request({
+    url: `${prefixCarrier}/v1/driver/clue/list/key-query`,
     method: 'post',
     data
   })
