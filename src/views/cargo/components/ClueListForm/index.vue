@@ -53,6 +53,7 @@
                   <el-select
                     v-model="listQuery.city"
                     placeholder="请选择"
+                    clearable
                   >
                     <el-option
                       v-for="item in dataTypes.optionsCity"

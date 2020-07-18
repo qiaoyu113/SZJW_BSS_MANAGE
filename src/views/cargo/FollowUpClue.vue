@@ -57,7 +57,7 @@
                   clearable
                 >
                   <el-option
-                    v-for="city in optionsCity"
+                    v-for="city in optionsCar"
                     :key="city.dictValue"
                     :label="city.dictLabel"
                     :value="Number(city.dictValue)"
@@ -219,7 +219,7 @@ import '@/styles/common.scss'
 export default class extends Vue {
   private loading: boolean = false;
   private id: any = ''
-  private optionsCity: any = []
+  private optionsCar: any = []
   private ruleForm:any = {
     'clueId': '',
     'isFollowUp': '',
@@ -269,6 +269,7 @@ export default class extends Vue {
         const { data } = await IsFollowClue(this.ruleForm)
         this.loading = false
         if (data.success) {
+          this.$message.success(`保存成功`);
           (TagsViewModule as any).delView(this.$route); // 关闭当前页面
           (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
             name: 'ClueList'
@@ -330,7 +331,7 @@ export default class extends Vue {
   private async getDictionaryList() {
     const { data } = await GetDictionaryList(['Intentional_compartment'])
     if (data.success) {
-      this.optionsCity = data.data.Intentional_compartment
+      this.optionsCar = data.data.Intentional_compartment
     } else {
       this.$message.error(data)
     }
@@ -343,20 +344,6 @@ export default class extends Vue {
     this.id = this.$route.query.id
     this.ruleForm.clueId = this.id
     this.fetchData()
-    // console.log(this.$router)
-    // this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-    //   confirmButtonText: '确定',
-    //   cancelButtonText: '取消',
-    //   type: 'warning'
-    // }).then(() => {
-    //   (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-    //   (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
-    //     name: 'ClueList'
-    //   })
-    //   this.$nextTick(() => {
-    //     this.$router.push({ name: 'ClueList' })
-    //   })
-    // })
   }
 }
 </script>

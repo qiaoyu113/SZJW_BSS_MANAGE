@@ -18,7 +18,7 @@ export const GetDriverList = (data: any) =>
 // 线索列表
 export const GetClueList = (data: any) =>
   request({
-    url: `${ptrfix}/v1/line/clue/queryLineClueList`,
+    url: `/line_center/v1/line/clue/queryLineClueList`,
     method: 'post',
     data
   })
@@ -48,6 +48,20 @@ export const GetLineClueDetail = (params: any) =>
     url: `${ptrfix}/v1/line/clue/lineClueInfo`,
     method: 'get',
     params
+  })
+// 新增货主线索信息
+export const SaveLineClue = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/save`,
+    method: 'post',
+    data
+  })
+// 货主线索进行编辑
+export const EditLineClue = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/lineClueEdit`,
+    method: 'put',
+    data
   })
 // 是否继续跟进
 export const IsFollowClue = (data: any) =>

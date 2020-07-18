@@ -20,12 +20,13 @@
               <el-select
                 v-model="ruleForm.lineSaleId"
                 placeholder="请选择"
+                clearable
               >
                 <el-option
                   v-for="(item, index) in optionsSale"
                   :key="index"
                   :label="item.saleName"
-                  :value="item.saleId"
+                  :value="Number(item.saleId)"
                 />
               </el-select>
             </el-form-item>
@@ -39,16 +40,13 @@
               <el-select
                 v-model="ruleForm.clueSource"
                 placeholder="请选择"
+                clearable
               >
                 <el-option
                   v-for="(item, index) in optionsLineSource"
                   :key="index"
                   :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-                <el-option
-                  label="区域二"
-                  value="beijing"
+                  :value="Number(item.dictValue)"
                 />
               </el-select>
             </el-form-item>
@@ -63,6 +61,7 @@
                 v-model="ruleForm.name"
                 placeholder="请输入"
                 maxlength="10"
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -76,6 +75,7 @@
                 v-model="ruleForm.phone"
                 placeholder="请输入"
                 maxlength="11"
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -83,19 +83,18 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="城市"
-              prop="name"
+              prop="city"
             >
               <el-select
-                v-model="ruleForm.region"
+                v-model="ruleForm.city"
                 placeholder="请选择"
+                clearable
               >
                 <el-option
-                  label="区域一"
-                  value="shanghai"
-                />
-                <el-option
-                  label="区域二"
-                  value="beijing"
+                  v-for="item in optionsCity"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="Number(item.code)"
                 />
               </el-select>
             </el-form-item>
@@ -104,50 +103,54 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="详细地址"
-              prop="region"
+              prop="address"
             >
               <el-input
-                v-model="ruleForm.name3"
+                v-model="ruleForm.address"
                 placeholder="请输入"
                 maxlength="50"
+                clearable
               />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="职务"
-              prop="region"
+              prop="position"
             >
               <el-input
-                v-model="ruleForm.name3"
+                v-model="ruleForm.position"
                 placeholder="请输入"
                 maxlength="20"
+                clearable
               />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="公司"
-              prop="region"
+              prop="company"
             >
               <el-input
-                v-model="ruleForm.name3"
+                v-model="ruleForm.company"
                 placeholder="请输入"
                 maxlength="20"
+                clearable
               />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="备注"
-              prop="region"
+              prop="remark"
             >
               <el-input
-                v-model="ruleForm.name3"
+                v-model="ruleForm.remark"
                 type="textarea"
                 :autosize="{minRows: 2, maxRows: 4}"
                 placeholder="请输入"
                 maxlength="300"
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -217,7 +220,7 @@
                   clearable
                 >
                   <el-option
-                    v-for="city in optionsCity"
+                    v-for="city in optionsCar"
                     :key="city.dictValue"
                     :label="city.dictLabel"
                     :value="Number(city.dictValue)"
@@ -368,7 +371,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 
 import { GetDictionaryList, GetOpenCityData } from '@/api/common'
-import { GetLineClueDetail, IsFollowClue, GetSaleList } from '@/api/cargo'
+import { GetLineClueDetail, SaveLineClue, EditLineClue, GetSaleList } from '@/api/cargo'
 
 import '@/styles/common.scss'
 @Component({
@@ -382,6 +385,7 @@ export default class extends Vue {
   private id: any = ''
   private isEdit: boolean = false; // 是否是编辑页面
   private optionsCity: any = []
+  private optionsCar: any = []
   private optionsSale: any = []
   private optionsLineSource: any = []
   private ruleForm:any = {
@@ -438,9 +442,17 @@ export default class extends Vue {
     (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
         this.loading = true
-        const { data } = await IsFollowClue(this.ruleForm)
+        let subForm = SaveLineClue
+        let successMsg = '新增成功'
+        const postData = { ...this.ruleForm }
+        if (this.isEdit) {
+          subForm = EditLineClue
+          successMsg = '编辑成功'
+        }
+        const { data } = await subForm(postData)
         this.loading = false
         if (data.success) {
+          this.$message.success(successMsg);
           (TagsViewModule as any).delView(this.$route); // 关闭当前页面
           (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
             name: 'ClueList'
@@ -506,13 +518,27 @@ export default class extends Vue {
     this.loading = false
     if (data.success) {
       const detail = data.data
-      if (detail.lineClueFollowVos && detail.lineClueFollowVos.length > 0) {
-        this.ruleForm.lineClueFollowForms = detail.lineClueFollowVos
+      const {
+        address, city, clueId, clueSource, company, lineClueFollowVos, lineClueDemandVos, isTransform, lineSaleId, name, phone, position, remark
+      } = detail
+
+      if (lineClueFollowVos && lineClueFollowVos.length > 0) {
+        this.ruleForm.lineClueFollowForms = lineClueFollowVos
       }
-      if (detail.lineClueDemandVos && detail.lineClueDemandVos.length > 0) {
-        this.ruleForm.lineClueDemandForms = detail.lineClueDemandVos
+      if (lineClueDemandVos && lineClueDemandVos.length > 0) {
+        this.ruleForm.lineClueDemandForms = lineClueDemandVos
       }
-      this.ruleForm.isFollowUp = detail.isTransform
+      this.ruleForm.isFollowUp = isTransform
+      this.ruleForm.address = address
+      this.ruleForm.city = city
+      this.ruleForm.clueId = clueId
+      this.ruleForm.clueSource = clueSource
+      this.ruleForm.company = company
+      this.ruleForm.lineSaleId = lineSaleId
+      this.ruleForm.name = name
+      this.ruleForm.phone = phone
+      this.ruleForm.position = position
+      this.ruleForm.remark = remark
     } else {
       this.$message.error(data)
     }
@@ -520,7 +546,7 @@ export default class extends Vue {
   private async getDictionaryList() {
     const { data } = await GetDictionaryList(['Intentional_compartment', 'line_clue_source'])
     if (data.success) {
-      this.optionsCity = data.data.Intentional_compartment
+      this.optionsCar = data.data.Intentional_compartment
       this.optionsLineSource = data.data.line_clue_source
     } else {
       this.$message.error(data)
@@ -528,6 +554,7 @@ export default class extends Vue {
   }
   private fetchData() {
     this.getDictionaryList()
+    this.getCity()
     this.getSaleList()
     if (this.isEdit) {
       this.getDetail()
@@ -538,20 +565,6 @@ export default class extends Vue {
     this.isEdit = this.$route.name === 'EditClue'
     this.ruleForm.clueId = this.id
     this.fetchData()
-    // console.log(this.$router)
-    // this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-    //   confirmButtonText: '确定',
-    //   cancelButtonText: '取消',
-    //   type: 'warning'
-    // }).then(() => {
-    //   (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-    //   (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
-    //     name: 'ClueList'
-    //   })
-    //   this.$nextTick(() => {
-    //     this.$router.push({ name: 'ClueList' })
-    //   })
-    // })
   }
 }
 </script>

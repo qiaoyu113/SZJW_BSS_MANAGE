@@ -116,7 +116,7 @@
             label="分配状态"
           >
             <template slot-scope="{row}">
-              {{ optionsDistribution[row.distributionState].label }}
+              {{ row.distributionState | findDistribution }}
             </template>
           </el-table-column>
 
@@ -131,7 +131,7 @@
             label="线索状态"
           >
             <template slot-scope="{row}">
-              {{ optionsClue[row.clueState].label }}
+              {{ row.clueState | findClue }}
             </template>
           </el-table-column>
 
@@ -215,7 +215,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    @click.native="goDetail(row.customerNo)"
+                    @click.native="goDetail(row.clueId)"
                   >
                     详情
                   </el-dropdown-item>
@@ -225,17 +225,17 @@
                    -->
                   <el-dropdown-item
                     v-if="row.clueState === 0 || row.clueState === 1"
-                    @click.native="goFollow(row)"
+                    @click.native="(row)"
                   >
                     跟进
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goConversion(row.customerNo)"
+                    @click.native="goConversion(row.clueId)"
                   >
                     转化
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goEdit(row.customerNo)"
+                    @click.native="goEdit(row.clueId)"
                   >
                     编辑
                   </el-dropdown-item>
@@ -406,6 +406,35 @@ import '@/styles/common.scss'
 interface IState {
   [key: string]: any;
 }
+const optionsClue: any = [
+  // （0：待跟进 1：已跟进 2：已转化 3：无效）
+  {
+    value: 0,
+    label: '待跟进'
+  },
+  {
+    value: 1,
+    label: '已跟进'
+  },
+  {
+    value: 2,
+    label: '已转化'
+  },
+  {
+    value: 3,
+    label: '无效'
+  }
+] // 线索状态
+const optionsDistribution: any = [
+  {
+    value: 0,
+    label: '待分配'
+  },
+  {
+    value: 1,
+    label: '已分配'
+  }
+] //
 @Component({
   name: 'ClueList',
   components: {
@@ -416,6 +445,16 @@ interface IState {
     Pagination,
     Dialog,
     PitchBox
+  },
+  filters: {
+    findDistribution(status: string) {
+      const item = optionsDistribution.find(({ value }:any) => value === status)
+      return item ? item['label'] : status
+    },
+    findClue(status: string) {
+      const item = optionsClue.find(({ value }:any) => value === status)
+      return item ? item['label'] : status
+    }
   }
 })
 export default class extends Vue {
@@ -455,35 +494,8 @@ export default class extends Vue {
   ];
   private checkList: any[] = this.dropdownList;
   private optionsCity: any = []; // 下拉
-  private optionsClue: any = [
-    // （0：待跟进 1：已跟进 2：已转化 3：无效）
-    {
-      value: 0,
-      label: '待跟进'
-    },
-    {
-      value: 1,
-      label: '已跟进'
-    },
-    {
-      value: 2,
-      label: '已转化'
-    },
-    {
-      value: 3,
-      label: '无效'
-    }
-  ]; // 线索状态
-  private optionsDistribution: any = [
-    {
-      value: 0,
-      label: '待分配'
-    },
-    {
-      value: 1,
-      label: '已分配'
-    }
-  ]; //
+  private optionsClue: any = optionsClue; // 线索状态
+  private optionsDistribution: any = optionsDistribution; //
   private optionsLineSource: any = []
   private optionsSale: any = []
   // table
@@ -621,8 +633,9 @@ export default class extends Vue {
       // 待跟进显示弹窗
       this.ruleForm.clueId = row.clueId
       this.followDialog = true
+    } else {
+      this.$router.push({ name: 'FollowUpClue', query: { id: row.clueId } })
     }
-    // this.$router.push({ name: 'FollowUpClue', query: { id: id } })
   }
   // 转化
   private goConversion(id: string | (string | null)[] | null | undefined) {
