@@ -15,6 +15,7 @@ export const GetDriverList = (data: any) =>
     data
   })
 
+// 线路详情
 export const GetLineDetail = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/detail`,
@@ -124,6 +125,14 @@ export const GetOwnerDetail = (data: any) =>
 export const SaveOrUpdatePicture = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/saveOrUpdatePicture`,
+    method: 'post',
+    data
+  })
+
+// 模糊查询货主名称
+export const customerCheckNames = (data: any) =>
+  request({
+    url: `/line_center/v1/line/customer/fuzzy/checkNames`,
     method: 'post',
     data
   })

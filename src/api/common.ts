@@ -62,7 +62,18 @@ export const GetManagerLists = () =>
     url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
     method: 'post'
   })
-
+  
+/**
+   *
+   *获取加盟经理列表
+   */
+export const detailCity = (data:any) =>
+  request({
+    url: `${baseURL}/v1/base/area/getTownByCountryCode`,
+    method: 'get',
+    params: data
+  })
+  
 // 上传文件
 export const Upload = (params: any, data: any) =>
   request({
@@ -70,4 +81,3 @@ export const Upload = (params: any, data: any) =>
     method: 'post',
     // headers: { 'Content-Type': 'multipart/form-data' },
     data
-  })
