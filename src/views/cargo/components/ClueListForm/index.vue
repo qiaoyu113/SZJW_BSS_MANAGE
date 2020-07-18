@@ -137,7 +137,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary } from '@/api/common'
+import { GetDictionary, GetOpenCityData } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -235,6 +235,24 @@ export default class extends Vue {
         break
     }
     return vodeName
+  }
+
+  private async getDictionary() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.optionsCity = res.data.map(function(item:any) {
+          return {
+            code: item.name,
+            codeVal: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
+    }
   }
 
   private changData() {

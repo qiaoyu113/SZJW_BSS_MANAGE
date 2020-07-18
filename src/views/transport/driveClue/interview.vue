@@ -180,8 +180,7 @@ export default class extends Vue {
     workCity: '',
     carType: '',
     busiType: '',
-    clueId: '',
-    modify: false
+    clueId: ''
   }
   private form:any = {} // 编辑面试表单的时候获取的信息
 
@@ -275,7 +274,7 @@ export default class extends Vue {
         this.listQuery.workCity = res.data.workCity + ''
         this.listQuery.carType = res.data.carType + ''
         this.listQuery.busiType = res.data.busiType
-        if (res.data.isExistInterviewData) {
+        if (res.data.existInterviewDate) {
           this.getEditDetail()
         }
       }
@@ -315,10 +314,6 @@ export default class extends Vue {
       let { data: res } = await GetInterviewEditDetail(params)
       if (res.success) {
         if (Object.keys(res.data).length > 0) {
-          this.listQuery.name = res.data.name
-          this.listQuery.phone = res.data.phone
-          this.listQuery.workCity = res.data.intentWorkCity
-          this.listQuery.busiType = res.data.intentDrivingCarType
           this.form = res.data
         }
       }

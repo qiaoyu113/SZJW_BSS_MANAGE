@@ -30,7 +30,7 @@
               filterable
               remote
               reserve-keyword
-              placeholder="请输入司机姓名或手机号"
+              placeholder="请输入司机姓名或完整手机号"
               @change="checkDiver"
             >
               <el-option
@@ -526,8 +526,8 @@
               <el-upload
                 class="avatar-uploader"
                 :show-file-list="false"
-                action="/index/upload"
-                :before-upload="beforeUpload"
+                action="/api/base/v1/upload/uploadOSS/img/true/-1"
+                :before-upload="beforeAvatarUpload"
                 :on-change="handleChange"
                 :auto-upload="false"
                 :data="ruleForm"
@@ -623,7 +623,7 @@
 <script lang="ts">
 import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
-import { GetDictionaryList } from '@/api/common'
+import { GetDictionaryList, Upload } from '@/api/common'
 import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceByTypeAndCityAndSupplierAndCarType, GetOrderDetail } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
@@ -659,14 +659,14 @@ export default class CreatLine extends Vue {
   private showMessage:boolean = false
   private showMessageBill:boolean = false
   private ruleForm:any = {
-    'busiType': 1,
-    'buyCarCompany': '1',
+    'busiType': '',
+    'buyCarCompany': '',
     'capacityQuota': '',
     'carPrice': '',
     'city': '100110',
     'confirmId': '',
     'confirmTime': '',
-    'cooperationCar': '1',
+    'cooperationCar': '',
     'cooperationModel': '',
     'cooperationTime': '',
     'createDate': '',
@@ -679,7 +679,7 @@ export default class CreatLine extends Vue {
       'idNo': '',
       'name': '',
       'phone': '',
-      'workCity': '上海'
+      'workCity': ''
     },
     'goodsAmount': '',
     'id': '',
@@ -953,15 +953,31 @@ export default class CreatLine extends Vue {
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
   }
-
-  // 图片预加载
-  private beforeUpload(file: any) {
-    return true
+  private beforeAvatarUpload(file:any) {
+    const isImage = file.type.includes('image')
+    if (!isImage) {
+      this.$message.error('上传图片格式不正确')
+    }
+    return isImage
   }
   // 选择图片
-  private handleChange(file: any, fileList: any) {
-    this.payForm.payImageUrl = URL.createObjectURL(file.raw)
+  private async handleChange(file: any, fileList: any) {
+    let formData = new FormData() // 创建form对象
+    console.log(1, file)
+    formData.append('file', file.raw)
+    let { data } = await Upload({
+      expire: 0,
+      folder: 'img',
+      isEncode: true
+    },
+    formData)
+    if (data.success) {
+      this.payForm.payImageUrl = data.data.url
+    } else {
+      this.$message.error(data.errorMsg)
+    }
   }
+
   // 确认订单
   private confirm() {
     (this.$refs['payForm'] as ElForm).validate(async(valid: boolean) => {
@@ -992,12 +1008,12 @@ export default class CreatLine extends Vue {
           let array = response.data.data
           let newArr: any = []
           array.forEach((i: any) => {
-            newArr.push({ value: i.driverId, label: i.name + i.phone })
+            newArr.push({ value: i.driverId, label: i.name + i.phone, detail: i })
           })
           this.driverList = newArr
           this.loading = false
         } else {
-          this.$message.error(response.data.flag)
+          this.$message.error(response.data.errorMsg)
         }
       })
     } else {
@@ -1006,34 +1022,12 @@ export default class CreatLine extends Vue {
   }
   // 选择司机
   private checkDiver(driverId: any) {
-    // 获取司机详情
-    GetDriverDetail({
-      driverId: driverId
-    }).then((res: any) => {
-      if (res.data.success) {
-        let data = res.data.data
-        Object.keys(data).forEach((key) => {
-          if (data[key] !== null) {
-            data[key] = String(data[key])
-          } else {
-            data[key] = ''
-          }
-        })
-        //   data.driverName = data.name;
-        //   data.driverPhone = data.phone;
-        //   data.busiType = this.postForm.busiType;
-        this.ruleForm.driverInfoFORM = data
-        //   this.fetchData()
-        //   GetProduct({
-        //     city: data.workCity
-        //   }).then(res => {
-        //     if (res.data.success) {
-        //       this.productSolution = res.data.data
-        //     }
-        //   })
+    this.driverList.forEach(i => {
+      if (i.value === driverId) {
+        this.ruleForm.driverInfoFORM.name = i.detail.name
+        this.ruleForm.driverInfoFORM.phone = i.detail.phone
+        this.ruleForm.driverInfoFORM.workCity = i.detail.workCity
       }
-    }).catch(err => {
-      this.$message.error(err)
     })
   }
   // 提交

@@ -130,9 +130,9 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="车牌号"
-              prop="carNo"
+              prop="plateNo"
             >
-              <el-input v-model="ContractDetail.plateNo" />
+              <el-input v-model="ruleForm.plateNo" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -146,9 +146,25 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="运营经理"
-              prop="carNo"
+              prop="operationId"
             >
-              <el-input v-model="ContractDetail.operationId" />
+              <el-select
+                v-model="ruleForm.operationId"
+                :remote-method="remoteMethod"
+                :loading="loading"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入司机姓名或手机号"
+                @change="checkManage"
+              >
+                <el-option
+                  v-for="item in managerList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -162,32 +178,30 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="发动机号"
-              prop="carNo"
+              prop="engineNo"
             >
-              <el-input v-model="ContractDetail.engineNo" />
+              <el-input v-model="ruleForm.engineNo" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="发动机发票号"
-              prop="carNo"
+              prop="engineInvoiceNo"
             >
-              <el-input v-model="ContractDetail.engineInvoiceNo" />
+              <el-input v-model="ruleForm.engineInvoiceNo" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="交车日期"
-              prop="carNo"
+              prop="deliveryTime"
             >
               <el-date-picker
-                v-model="ContractDetail.deliveryTime"
+                v-model="ruleForm.deliveryTime"
                 :class="isPC ? '' : 'el-date-m'"
-                type="daterange"
+                type="date"
                 value-format="timestamp"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                @change="changData()"
+                placeholder="选择日期"
               />
             </el-form-item>
           </el-col>
@@ -202,8 +216,8 @@
           <el-col :span="isPC ? 24 : 24">
             <div class="table_box">
               <el-table
-                ref="multipleTable"
-                :data="list"
+                ref="ruleForm"
+                :data="ruleForm.orderDeliverRebateFORMs"
                 :row-style="{height: '20px'}"
                 :cell-style="{padding: '5px 0'}"
                 size="mini"
@@ -221,7 +235,9 @@
                   label="价格/项目"
                 >
                   <template slot-scope="scope">
-                    <span>{{ scope.row.name | DataIsNull }}</span>
+                    <span v-if="scope.$index === 0">采购价</span>
+                    <span v-if="scope.$index === 1">销售价</span>
+                    <span v-if="scope.$index === 2">返利</span>
                   </template>
                 </el-table-column>
 
@@ -231,10 +247,11 @@
                 >
                   <template slot-scope="scope">
                     <el-form-item
-                      prop="carNo"
+                      :prop="'orderDeliverRebateFORMs.' + scope.$index + '.chassis'"
+                      :rules="rules.chassis"
                     >
                       <el-input
-                        v-model="scope.row.a"
+                        v-model="scope.row.chassis"
                         size="mini"
                         class="edit-cell"
                       />
@@ -248,10 +265,11 @@
                 >
                   <template slot-scope="scope">
                     <el-form-item
-                      prop="carNo"
+                      :prop="'orderDeliverRebateFORMs.' + scope.$index + '.vehicle'"
+                      :rules="rules.vehicle"
                     >
                       <el-input
-                        v-model="scope.row.a1"
+                        v-model="scope.row.vehicle"
                         size="mini"
                         class="edit-cell"
                       />
@@ -265,10 +283,11 @@
                 >
                   <template slot-scope="scope">
                     <el-form-item
-                      prop="carNo"
+                      :prop="'orderDeliverRebateFORMs.' + scope.$index + '.gps'"
+                      :rules="rules.gps"
                     >
                       <el-input
-                        v-model="scope.row.a2"
+                        v-model="scope.row.gps"
                         size="mini"
                         class="edit-cell"
                       />
@@ -282,10 +301,11 @@
                 >
                   <template slot-scope="scope">
                     <el-form-item
-                      prop="carNo"
+                      :prop="'orderDeliverRebateFORMs.' + scope.$index + '.tailgate'"
+                      :rules="rules.tailgate"
                     >
                       <el-input
-                        v-model="scope.row.a3"
+                        v-model="scope.row.tailgate"
                         size="mini"
                         class="edit-cell"
                       />
@@ -303,33 +323,33 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="金融返利"
-              prop="carNo"
+              prop="financialRebate"
             >
-              <el-input v-model="ContractDetail.financialRebate" />
+              <el-input v-model="ruleForm.financialRebate" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="保险返利"
-              prop="carNo"
+              prop="insuranceRebate"
             >
-              <el-input v-model="ContractDetail.insuranceRebate" />
+              <el-input v-model="ruleForm.insuranceRebate" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="上牌返利"
-              prop="carNo"
+              prop="plateNoRebate"
             >
-              <el-input v-model="ContractDetail.plateNoRebate" />
+              <el-input v-model="ruleForm.plateNoRebate" />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="其他返利"
-              prop="carNo"
+              prop="otherRebate"
             >
-              <el-input v-model="ContractDetail.otherRebate" />
+              <el-input v-model="ruleForm.otherRebate" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -343,72 +363,32 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="供应商"
-              prop="carNo"
+              prop="gpsSupplier"
             >
-              <el-input v-model="ContractDetail.gpsSupplier" />
+              <el-input v-model="ruleForm.gpsSupplier" />
             </el-form-item>
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="设备ID号"
-              prop="carNo"
+              prop="gpsDeviceNo"
             >
-              <el-input v-model="ContractDetail.gpsDeviceNo" />
+              <el-input v-model="ruleForm.gpsDeviceNo" />
             </el-form-item>
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="SIM号"
-              prop="carNo"
+              prop="gpsSimNo"
             >
-              <el-input v-model="ContractDetail.gpsSimNo" />
+              <el-input v-model="ruleForm.gpsSimNo" />
             </el-form-item>
           </el-col>
         </el-row>
       </SectionContainer>
 
-      <SectionContainer
-        title="操作记录"
-        :md="true"
-      >
-        <el-row>
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="订单成交时间"
-              prop="carNo"
-            >
-              <el-date-picker
-                v-model="ContractDetail.dealTime"
-                :class="isPC ? '' : 'el-date-m'"
-                type="daterange"
-                value-format="timestamp"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                @change="changData()"
-              />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="交付完成时间"
-              prop="carNo"
-            >
-              <el-date-picker
-                v-model="ContractDetail.deliverDate"
-                :class="isPC ? '' : 'el-date-m'"
-                type="daterange"
-                value-format="timestamp"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                @change="changData()"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </SectionContainer>
       <div class="btn_box">
         <el-button
           type="primary"
@@ -427,7 +407,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { SubmitOrderDeliver, SelectOrderInfo } from '@/api/join'
+import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -444,6 +424,8 @@ import '@/styles/common.scss'
 export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
+    private loading: any = false
+    private managerList: any[] = []
     private ContractDetail: any = {
       'busiType': '',
       'busiTypeName': '',
@@ -536,32 +518,96 @@ export default class extends Vue {
       'remarks': '',
       'status': '',
       'updateDate': '',
-      'updateId': ''
+      'updateId': '',
+      'updateName': ''
     }
-    private list: any = [
-      { name: '采购价', a: '2', a1: '3', a2: '4' },
-      { name: '销售价', a: '2', a1: '3', a2: '4' },
-      { name: '返利', a: '2', a1: '3', a2: '4' }
-    ];
     private ruleForm:any = {
-      carNo: '',
-      yunying: ''
+      'plateNo': '',
+      'cooperationModel': '',
+      'dealId': '',
+      'engineInvoiceNo': '',
+      'engineNo': '',
+      'financialRebate': '',
+      'gpsDeviceNo': '',
+      'gpsSimNo': '',
+      'gpsSupplier': '',
+      'insuranceRebate': '',
+      'operationId': '1',
+      'orderDeliverRebateFORMs': [
+        {
+          'chassis': '',
+          'gps': '',
+          'priceType': '',
+          'tailgate': '',
+          'vehicle': ''
+        },
+        {
+          'chassis': '',
+          'gps': '',
+          'priceType': '',
+          'tailgate': '',
+          'vehicle': ''
+        },
+        {
+          'chassis': '',
+          'gps': '',
+          'priceType': '',
+          'tailgate': '',
+          'vehicle': ''
+        }
+      ],
+      'orderId': '',
+      'otherRebate': '',
+      'plateNoRebate': ''
     }
     private rules:any = {
-      name: [
-        { required: true, message: '请输入活动名称', trigger: 'blur' },
-        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+      plateNo: [
+        { required: true, message: '请输入车牌号', trigger: 'change' }
       ],
-      carNo: [
-        { required: true, message: '请输入车牌号', trigger: 'blur' }
+      operationId: [
+        { required: true, message: '请输入运营经理', trigger: 'change' }
       ],
-      yunying: [
-        { required: true, message: '请输入运营经理', trigger: 'blur' }
-      ]
-    }
-    private multipleTableRules:any = {
-      carNo: [
-        { required: true, message: '请输入车牌号', trigger: 'blur' }
+      engineNo: [
+        { required: true, message: '请输入发动机号', trigger: 'change' }
+      ],
+      engineInvoiceNo: [
+        { required: true, message: '请输入发动机号', trigger: 'change' }
+      ],
+      deliveryTime: [
+        { required: true, message: '请选择交车日期', trigger: 'change' }
+      ],
+      chassis: [
+        { required: true, message: '请输入底盘价', trigger: 'change' }
+      ],
+      vehicle: [
+        { required: true, message: '请输入车厢价', trigger: 'change' }
+      ],
+      gps: [
+        { required: true, message: '请输入GPS价', trigger: 'change' }
+      ],
+      tailgate: [
+        { required: true, message: '请输入尾板价', trigger: 'change' }
+      ],
+      financialRebate: [
+        { required: true, message: '请输入金融返利', trigger: 'change' }
+      ],
+      insuranceRebate: [
+        { required: true, message: '请输入保险返利', trigger: 'change' }
+      ],
+      plateNoRebate: [
+        { required: true, message: '请输入上牌返利', trigger: 'change' }
+      ],
+      otherRebate: [
+        { required: true, message: '请输入其他返利', trigger: 'change' }
+      ],
+      gpsSupplier: [
+        { required: true, message: '请输入供应商', trigger: 'change' }
+      ],
+      gpsDeviceNo: [
+        { required: true, message: '请输入设备ID号', trigger: 'change' }
+      ],
+      gpsSimNo: [
+        { required: true, message: '请输入gps', trigger: 'change' }
       ]
     }
 
@@ -591,12 +637,50 @@ export default class extends Vue {
       }
     }
 
-    private submitForm(formName:any) {
+    // 搜索加盟经理列表
+    private remoteMethod(query: any) {
+      if (query !== '') {
+        this.loading = true
+        GetOperManagerListByUserId({
+          key: query
+        }).then((response:any) => {
+          if (response.data.success) {
+            let array = response.data.data
+            let newArr: any = []
+            array.forEach((i: any) => {
+              newArr.push({ value: i.driverId, label: i.name + i.phone })
+            })
+            this.managerList = newArr
+            this.loading = false
+          } else {
+            this.$message.error(response.data.flag)
+          }
+        })
+      } else {
+        this.managerList = []
+      }
+    }
+
+    // 选择运营经理
+    private checkManage(id: any) {
+      this.ruleForm.operationId = id
+    }
+
+    private async submitForm(formName:any) {
       (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
         if (valid) {
-          alert('submit!')
-          this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
-          this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
+          // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
+          // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
+          const { data } = await SubmitOrderDeliver({
+            OrderDeliverFORM: this.ruleForm,
+            plateNo: this.ruleForm.plateNo,
+            driverId: this.ContractDetail.driverId
+          })
+          if (data.success) {
+            this.ContractDetail = data.data
+          } else {
+            this.$message.error(data)
+          }
         } else {
           console.log('error submit!!')
           return false

@@ -138,12 +138,14 @@
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="reset"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="research"
                 >
                   查询
                 </el-button>
@@ -158,7 +160,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionaryList, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetJoinManageList, GetOpenCityData } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -246,6 +248,7 @@ export default class extends Vue {
   private fetchData() {
     this.getDictionary()
     this.getJoinManageList()
+    this.getCity()
   }
 
   // 匹配创建tags标签
@@ -255,8 +258,8 @@ export default class extends Vue {
       // 根据listQuery中的key来判断
       case 'city':
         for (let entry of this.optionsCity) {
-          if (entry.dictValue === value) {
-            vodeName = entry.dictLabel
+          if (entry.codeVal === value) {
+            vodeName = entry.code
           }
         }
         break
@@ -313,13 +316,29 @@ export default class extends Vue {
   }
 
   private async getDictionary() {
-    const { data } = await GetDictionaryList(['online_city', 'busi_type', 'pay_type'])
+    const { data } = await GetDictionaryList(['busi_type', 'pay_type'])
     if (data.success) {
-      this.optionsCity = data.data.online_city
       this.optionsBusi = data.data.busi_type
       this.optionsPay = data.data.pay_type
     } else {
       this.$message.error(data)
+    }
+  }
+  async getCity() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.optionsCity = res.data.map(function(item:any) {
+          return {
+            code: item.name,
+            codeVal: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
     }
   }
 
@@ -341,6 +360,17 @@ export default class extends Vue {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
+  }
+
+  private research() {
+    this.$emit('handle-query', this.listQuery)
+  }
+
+  private reset() {
+    for (let key in this.listQuery) {
+      this.listQuery[key] = ''
+    }
+    this.DateValueChild = []
   }
 }
 </script>

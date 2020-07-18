@@ -55,9 +55,9 @@
                   >
                     <el-option
                       v-for="item in optionsCity"
-                      :key="item.dictValue"
-                      :label="item.dictLabel"
-                      :value="item.dictValue"
+                      :key="item.codeVal"
+                      :label="item.code"
+                      :value="item.codeVal"
                     />
                   </el-select>
                 </el-form-item>
@@ -70,9 +70,9 @@
                   >
                     <el-option
                       v-for="item in optionsJoin"
-                      :key="item.dictValue"
-                      :label="item.dictLabel"
-                      :value="item.dictValue"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -118,7 +118,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetJoinManageList } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -185,6 +185,7 @@ export default class extends Vue {
 
   created() {
     this.getDictionary()
+    this.getJoinManageList()
   }
 
   // 匹配创建tags标签
@@ -194,8 +195,8 @@ export default class extends Vue {
       // 根据listQuery中的key来判断
       case 'city':
         for (let entry of this.optionsCity) {
-          if (entry.dictValue === value) {
-            vodeName = entry.dictLabel
+          if (entry.codeVal === value) {
+            vodeName = entry.code
           }
         }
         break
@@ -217,8 +218,8 @@ export default class extends Vue {
         break
       case 'joinManageId':
         for (let entry of this.optionsJoin) {
-          if (entry.dictValue === value) {
-            vodeName = entry.dictLabel
+          if (entry.id === value) {
+            vodeName = entry.name
           }
         }
         break
@@ -228,13 +229,31 @@ export default class extends Vue {
     }
     return vodeName
   }
-  // 查询城市
-  private async getDictionaryCity() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
+  // 获取加盟经理
+  private async getJoinManageList() {
+    const { data } = await GetJoinManageList({})
     if (data.success) {
-      this.optionsCity = data.data
+      this.optionsJoin = data.data
     } else {
       this.$message.error(data)
+    }
+  }
+  // 查询城市
+  private async getDictionaryCity() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.optionsCity = res.data.map(function(item:any) {
+          return {
+            code: item.name,
+            codeVal: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
     }
   }
   // 查询合同归属
@@ -271,6 +290,7 @@ export default class extends Vue {
     for (let key in this.listQuery) {
       this.listQuery[key] = ''
     }
+    this.DateValueChild = []
   }
 }
 </script>

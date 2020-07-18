@@ -1,5 +1,8 @@
 <template>
-  <div :class="isPC ? 'CreatLine' : 'CreatLine-m'">
+  <div
+    :class="isPC ? 'CreatLine' : 'CreatLine-m'"
+    :offer="offer"
+  >
     <el-form
       ref="ruleForm"
       :model="ruleForm"
@@ -14,7 +17,9 @@
         <el-row class="detail">
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'customerId',type: 5,label: '货主名称',tagAttrs: {placeholder: '请输入选择货主',filterable: true,disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},options: customerOptions}"
+            :params="{prop: 'customerId',type: 5,label: '货主名称',tagAttrs: {
+              filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
+              placeholder: '请输入选择货主',filterable: true,disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},options: customerOptions}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -39,14 +44,21 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :pccol="24"
+            :pccol="16"
             :params="{prop: 'stabilityRate',type: 3,label: '线路稳定性',radio: linetask}"
           />
-          <!-- <SelfItem
+          <SelfItem
             :rule-form="ruleForm"
-            :pccol="12"
-            :params="{prop: 'cangweizhi',type: 4,label: '仓位置',kind: '2',iswrite: true}"
-          /> -->
+            :pccol="8"
+            :params="{prop: 'address',type: 8,label: '仓位置',tagAttrs: {props: {
+              lazy: true,
+              lazyLoad: loadAddress
+            }}}"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{prop: 'warehouseDistrict',type: 1,label: '仓位置详细地址',tagAttrs: {placeholder: '请输入仓位置详细地址'}}"
+          />
         </el-row>
       </SectionContainer>
       <SectionContainer
@@ -78,11 +90,19 @@
             :pccol="8"
             :width="240"
           />
-          <!-- <SelfItem
+          <SelfItem
             :rule-form="ruleForm"
-            :pccol="12"
-            :params="{prop: 'peisong',type: 4,label: '配送区域',kind: '2',iswrite: true}"
-          /> -->
+            :pccol="8"
+            :params="{prop: 'delivery',type: 8,label: '配送区域',
+                      tagAttrs: {props: {
+                        lazy: true,
+                        lazyLoad: loadAddress
+                      }}}"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{prop: 'districtArea',type: 1,label: '配送区域详细地址',tagAttrs: {placeholder: '请输入配送区域详细地址'}}"
+          />
         </el-row>
       </SectionContainer>
       <SectionContainer
@@ -95,12 +115,13 @@
             :params="{prop: 'dayNo',type: 1,label: '每日配送趟数',tagAttrs: {placeholder: '请输入配送趟数'},kind: 'number'}"
           />
           <div
-            v-for="item in ruleForm['dayNo']"
-            :key="item"
+            v-if="ruleForm['dayNo'] > 0"
           >
             <SelfItem
+              v-for="(item,idx) in Number(ruleForm['dayNo'])"
+              :key="item"
               :rule-form="ruleForm"
-              :params="{prop: 'lineDeliveryInfoFORMS',type: 2,label: '预计工作时间',placeholder: '请选择时间',kind: 'daterange'}"
+              :params="{prop: `lineDeliveryInfoFORMS${idx}`,type: 7,label: '预计工作时间',placeholder: '请选择时间',required: true}"
             />
           </div>
 
@@ -118,24 +139,25 @@
           />
 
           <SelfItem
+            v-if="ruleForm['incomeSettlementMethod']"
             :rule-form="ruleForm"
-            :params="{prop: 'shipperOffer',type: 1,label: '预计货主月报价',kind: 'number',tagAttrs: {placeholder: '请输入货主月报价'}}"
+            :params="{prop: 'shipperOffer',type: 1,label: '预计货主月报价',kind: 'number',tagAttrs: {placeholder: '请输入货主月报价',disabled: NoshipperOffer}}"
           />
 
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 1"
             :rule-form="ruleForm"
-            :params="{prop: 'everyTripGuaranteed',type: 1,label: '货主单趟报价',placeholder: '请输入单趟报价',kind: 'number'}"
+            :params="{prop: 'everyTripGuaranteed',type: 1,label: '货主单趟报价',kind: 'number',tagAttrs: {placeholder: '请输入单趟报价'}}"
           />
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 2"
             :rule-form="ruleForm"
-            :params="{prop: 'everyTripGuaranteed',type: 1,label: '每趟保底（元）',placeholder: '请输入每趟保底',kind: 'number'}"
+            :params="{prop: 'everyTripGuaranteed',type: 1,label: '每趟保底（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟保底'}}"
           />
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 2"
             :rule-form="ruleForm"
-            :params="{prop: 'everyUnitPrice',type: 1,label: '每趟提成单价（元）',placeholder: '请输入每趟提成',kind: 'number'}"
+            :params="{prop: 'everyUnitPrice',type: 1,label: '每趟提成单价（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟提成'}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -178,31 +200,32 @@
         <el-row>
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'lineSaleId',type: 5,label: '所属销售',placeholder: '请选择所属销售',options: [{
-              value: '选项1',
-              label: '黄金糕'
-            }, {
-              value: '选项2',
-              label: '双皮奶'
-            }, {
-              value: '选项3',
-              label: '蚵仔煎'
-            }, {
-              value: '选项4',
-              label: '龙须面'
-            }, {
-              value: '选项5',
-              label: '北京烤鸭'
-            }]}"
+            :params="{prop: 'lineSaleId',type: 5,label: '所属销售',
+                      tagAttrs: {placeholder: '请选择所属销售',disabled: lineSaleIdState},options: [{
+                        value: '1',
+                        label: '黄金糕'
+                      }, {
+                        value: '选项2',
+                        label: '双皮奶'
+                      }, {
+                        value: '选项3',
+                        label: '蚵仔煎'
+                      }, {
+                        value: '选项4',
+                        label: '龙须面'
+                      }, {
+                        value: '选项5',
+                        label: '北京烤鸭'
+                      }]}"
           />
-          <SelfItem
+          <!-- <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'lineSaleId',type: 1,label: '线路打分',placeholder: '请输入'}"
           />
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'lineSaleId',type: 1,label: '线路角色',placeholder: '请输入'}"
-          />
+          /> -->
         </el-row>
       </SectionContainer>
 
@@ -246,13 +269,13 @@
         >
           重置
         </el-button>
-        <el-button
+        <!-- <el-button
           v-if="pageStatus === 1"
           name="CreatLine-btn-xcxshow"
           @click="resetForm('ruleForm')"
         >
           小程序预览
-        </el-button>
+        </el-button> -->
       </div>
 
       <Dialog
@@ -276,8 +299,9 @@ import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList } from '@/api/common'
-import { createLine, editLine } from '@/api/cargo'
+import { GetDictionaryList, GetCityByCode, detailCity } from '@/api/common'
+import { createLine, editLine, customerCheckNames, GetLineDetail } from '@/api/cargo'
+import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/base/SelfItem.vue'
@@ -291,6 +315,9 @@ import '@/styles/common.scss'
   }
 })
 export default class CreatLine extends Vue {
+  private lineSaleIdState:boolean = false
+  private lineSaleId:string = ''
+  private loading:boolean = false
   private lineType:any[] = []
   private carType:any[] = []
   private linetask:any[] =[]
@@ -303,73 +330,8 @@ export default class CreatLine extends Vue {
   private pccol:number=6
   private lineId:string = ''
   private showDio:boolean = false
-  private customerOptions:any[] = [
-    {
-      label: 'liweishan',
-      value: 'HX202007080001'
-    },
-    {
-      label: 'zed',
-      value: 'HX202007080002'
-    }
-  ]
-  // private ruleForm:any = {
-  //   'cityArea': 110100,
-  //   'countyArea': 110105,
-  //   'districtArea': '北京八城666',
-  //   'provinceArea': 110000,
-  //   'auditState': 1,
-  //   'busiType': 0,
-  //   'carType': 1,
-  //   'cargoType': 1,
-  //   'carry': 2,
-  //   'city': 110100,
-  //   'customerId': 'HX202007080001',
-  //   'dayNo': 5,
-  //   'deliveryNo': 6,
-  //   'deliveryWeekCycle': '1,2,3',
-  //   'deployNo': 20,
-  //   'deployNoChangeReason': 0,
-  //   'distance': 20,
-  //   'everyTripGuaranteed': 100,
-  //   'everyUnitPrice': 80,
-  //   'goodsWeight': 2,
-  //   'handlingDifficultyDegree': 3,
-  //   'incomeSettlementMethod': 1,
-  //   'lineName': '自行车配送666',
-  //   'lineRank': 86,
-  //   'lineSaleId': 48,
-  //   'lineType': 1,
-  //   'monthNo': 10,
-  //   'remark': '线路备注6666',
-  //   'returnBill': 1,
-  //   'returnWarehouse': 1,
-  //   'settlementCycle': 2,
-  //   'settlementDays': 3,
-  //   'shelvesState': 1,
-  //   'shipperOffer': 1000,
-  //   'stabilityRate': 1,
-  //   'volume': 10,
-  //   'waitDirveValidity': '1595692800000',
-  //   'warehouseCity': 110000,
-  //   'warehouseCounty': 110105,
-  //   'warehouseDistrict': '仓库详细位置666',
-  //   'warehouseProvince': 110100,
-  //   'lineDeliveryInfoFORMS': [{
-  //     'workingTimeStart': '00:00',
-  //     'workingTimeEnd': '00:30'
-  //   }, {
-  //     'workingTimeStart': '01:45',
-  //     'workingTimeEnd': '03:15'
-  //   }, {
-  //     'workingTimeStart': '02:45',
-  //     'workingTimeEnd': '03:30'
-  //   }, {
-  //     'workingTimeStart': '03:45',
-  //     'workingTimeEnd': '04:45'
-  //   }],
-  //   'warehouseTown': '110105110000'
-  // }
+  private NoshipperOffer:boolean = false
+  private customerOptions:any[] = []
   private ruleForm:any = {
     carType: '',
     // 选择车型
@@ -385,6 +347,10 @@ export default class CreatLine extends Vue {
     // 配送区域-区、县
     customerId: '',
     // 货主编号id
+    // 配送位置
+    delivery: [],
+    // 仓位置
+    address: [],
     dayNo: '',
     // 每日配送趟数
     deliveryNo: '',
@@ -401,11 +367,11 @@ export default class CreatLine extends Vue {
     // 具体配送区域范围
     everyTripGuaranteed: '',
     // 每趟保底、货主单趟报价(元)
-    everyUnitPrice: '0',
+    everyUnitPrice: '',
     // 每趟提成(元)
     goodsWeight: '',
     // 总货物重量(: T以下 2: -3T 3: 3-5T 4: 5T以上)
-    handlingDifficultyDegree: '0',
+    handlingDifficultyDegree: 0,
     // 装卸难度
     incomeSettlementMethod: '',
     // 收入结算方式：:传站 2:多点配
@@ -466,7 +432,7 @@ export default class CreatLine extends Vue {
     deployNo: [
       { required: true, message: '可上车数不能为空', trigger: 'change' }
     ],
-    cangweizhi: [
+    address: [
       { required: true, message: '仓位置不能为空', trigger: 'change' }
     ],
     waitDirveValidity: [
@@ -478,7 +444,7 @@ export default class CreatLine extends Vue {
     carType: [
       { required: true, message: '车型不能为空', trigger: 'change' }
     ],
-    peisong: [
+    delivery: [
       { required: true, message: '请选择活动资源', trigger: 'change' }
     ],
     returnWarehouse: [
@@ -528,12 +494,139 @@ export default class CreatLine extends Vue {
     ],
     carry: [
       { required: true, message: '是否搬运不能为空', trigger: 'change' }
+    ],
+    lineSaleId: [
+      { required: true, message: '所属销售不能为空', trigger: 'change' }
+    ],
+    warehouseDistrict: [ // 详细仓位置
+      { required: true, message: '详细地址不能为空', trigger: 'change' }
     ]
   }
 
-  @Watch('ruleForm', { deep: true })
+  private async loadAddress(node:any, resolve:any) {
+    let params:string[] = []
+    let query:any = {
+      countryCode: ''
+    }
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    } else if (node.level === 3) {
+      query.countryCode = node.value
+    }
+    try {
+      if (node.level < 3) {
+        let nodes = await this.loadCityByCode(params)
+        resolve(nodes)
+      } else if (node.level === 3) {
+        let nodes = await this.cityDeyail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  async loadCityByCode(params:any) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+
+  async cityDeyail(params:string[]) {
+    let { data: city } = await detailCity(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item:any) {
+        return {
+          value: item.code,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
+
+  get offer() {
+    if (this.ruleForm.incomeSettlementMethod === 1) {
+      this.ruleForm.shipperOffer = Number(this.ruleForm.dayNo) * Number(this.ruleForm.monthNo) * Number(this.ruleForm.everyTripGuaranteed)
+      return true
+    } else {
+      this.ruleForm.shipperOffer = ''
+      return true
+    }
+  }
+
+  @Watch('ruleForm.dayNo')
+  private dayNoChange(val:any) {
+    console.log(val)
+    for (let i = 0; i < val; i++) {
+      this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
+        workingTimeStart: '', workingTimeEnd: ''
+      })
+      this.rules['lineDeliveryInfoFORMS' + i] = [
+        { required: true, message: '工作时间不能为空', trigger: 'blur' }
+      ]
+    }
+  }
+
+  @Watch('ruleForm.customerId')
+  private customerIdChange(val:any) {
+    if (this.pageStatus === 1) {
+      let lineSaleId = JSON.parse(this.ruleForm.customerId).lineSaleId
+      if (lineSaleId) {
+        this.lineSaleId = lineSaleId
+      }
+    }
+  }
+
+  @Watch('ruleForm.incomeSettlementMethod')
   private changeRuleForm(value:any) {
-    console.log(value.songnum)
+    if (value === 1) {
+      this.ruleForm.everyUnitPrice = ''
+      this.NoshipperOffer = true
+      this.ruleForm.shipperOffer = ''
+    } else {
+      this.ruleForm.everyUnitPrice = ''
+      this.NoshipperOffer = false
+      this.ruleForm.shipperOffer = ''
+    }
+  }
+
+  private async remoteMethod(query: any) {
+    if (query !== '') {
+      this.loading = true
+      let { data } = await customerCheckNames({ customerCompanyName: query })
+      if (data.success) {
+        let customerOptions = data.data.map(function(ele:any) {
+          return { value: JSON.stringify(ele), label: ele.customerCompanyName }
+        })
+        this.customerOptions = customerOptions
+        this.loading = false
+      } else {
+        this.$message.error(data.data.errorMsg)
+      }
+    } else {
+      this.customerOptions = []
+    }
   }
 
   // 再次提交编辑
@@ -573,8 +666,25 @@ export default class CreatLine extends Vue {
   private submitForm(formName:any) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        console.log(this.ruleForm)
-        this.createdLine(this.ruleForm)
+        let ruleForm = { ...this.ruleForm }
+        ruleForm.customerId = JSON.parse(ruleForm.customerId).customerId
+        if (ruleForm.everyUnitPrice === '') {
+          ruleForm.everyUnitPrice = 0
+        }
+        for (let i = 0; i < ruleForm.dayNo; i++) {
+          ruleForm.lineDeliveryInfoFORMS.push(ruleForm['lineDeliveryInfoFORMS' + i])
+        }
+        if (ruleForm.address.length !== 0) {
+          ruleForm.homeProvince = ruleForm.address[0]
+          ruleForm.homeCity = ruleForm.address[1]
+          ruleForm.homeCounty = ruleForm.address[2]
+        }
+        if (ruleForm.address.length !== 0) {
+          ruleForm.homeProvince = ruleForm.address[0]
+          ruleForm.homeCity = ruleForm.address[1]
+          ruleForm.homeCounty = ruleForm.address[2]
+        }
+        this.createdLine(ruleForm)
       } else {
         console.log('error submit!!')
         return false
@@ -602,6 +712,9 @@ export default class CreatLine extends Vue {
   }
   private picConfirm(done: any) {
     done(this.$router.go(-1))
+  }
+  private async lineInfo() {
+    // let { data } = await
   }
   // 判断是否是PC
   get isPC() {
@@ -633,7 +746,7 @@ export default class CreatLine extends Vue {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
       let goodsType = type_of_goods.map(function(ele:any) {
-        return { type: Number(ele.dictValue), label: ele.dictLabel }
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
       let difficulty = handling_difficulty_degree.map(function(ele:any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
@@ -664,7 +777,29 @@ export default class CreatLine extends Vue {
   private fetchData() {
     this.GetDictionaryAll()
   }
-  created() {
+  private async getDetail(id:string) {
+    let { data } = await GetLineDetail({ lineId: id })
+    if (data.success) {
+      let allParams = data.data
+      this.customerOptions = [{ value: allParams.customerId, label: allParams.bussinessName }]
+      this.ruleForm = { ...this.ruleForm, ...allParams }
+      // this.ruleForm.address.push(...[allParams.warehouseProvince + '', allParams.warehouseCity + '', allParams.warehouseCounty + '', allParams.warehouseTown + ''])
+      // this.ruleForm.delivery.push(...[allParams.warehouseProvince + '', allParams.warehouseCity + '', allParams.warehouseCounty + ''])
+      this.ruleForm.warehouseDistrict = allParams.warehouse
+      this.ruleForm.districtArea = allParams.districtArea
+      this.ruleForm.address = ['340000', '340200', '340207', '350203003000']
+      setTimeout(() => {
+        for (let i = 0; i < Number(allParams.dayNo); i++) {
+          this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
+            workingTimeStart: allParams.lineDeliveryInfoFORMS[i].workingTimeStart, workingTimeEnd: allParams.lineDeliveryInfoFORMS[i].workingTimeEnd
+          })
+        }
+      }, 20)
+    } else {
+      this.$message.error(data)
+    }
+  }
+  mounted() {
     this.fetchData()
     let routeArr = this.$route.path.split('/')
     if (routeArr[2] === 'creatline') {
@@ -672,9 +807,11 @@ export default class CreatLine extends Vue {
     } else if (routeArr[2] === 'lineedit') {
       this.lineId = (this.$route.query.id) as string
       this.pageStatus = 2
+      this.getDetail(this.lineId)
     } else if (routeArr[2] === 'linecopy') {
       this.lineId = (this.$route.query.id) as string
       this.pageStatus = 3
+      this.getDetail(this.lineId)
     }
   }
 }
@@ -722,7 +859,7 @@ export default class CreatLine extends Vue {
   }
 }
 </style>
-<style lang="scss" scoped>
+<style scoped>
 @media screen and (min-width: 701px) {
   .SelfItem .el-select {
     width: 100%;
@@ -730,9 +867,9 @@ export default class CreatLine extends Vue {
   .SelfItem  .el-input, .el-date-editor, .el-textarea {
     width: 75%;
   }
-  // .el-cascader{
-  //   width: 100%;
-  // }
+  .el-cascader{
+   width: 100%;
+  }
 }
 
 @media screen and (max-width: 700px) {

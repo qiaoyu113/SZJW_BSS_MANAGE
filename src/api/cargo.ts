@@ -151,7 +151,7 @@ export const shelveLine = (data: any) =>
 // 线路列表
 export const lineListAll = (data: any) =>
   request({
-    url: `/line-center/v1/line/lineInfo/queryLineListByConditionsQuery`,
+    url: `/line_center/v1/line/lineInfo/queryLineListByConditionsQuery`,
     method: 'post',
     data
   })
@@ -169,5 +169,24 @@ export const GetOwnerDetail = (data: any) =>
   request({
     url: '/line/v1/customer/customerInfo',
     method: 'get',
+    data
+  })
+
+/**
+   *保存修改线路照片
+   *
+   */
+export const SaveOrUpdatePicture = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/saveOrUpdatePicture`,
+    method: 'post',
+    data
+  })
+
+// 模糊查询货主名称
+export const customerCheckNames = (data: any) =>
+  request({
+    url: `/line_center/v1/line/customer/fuzzy/checkNames`,
+    method: 'post',
     data
   })
