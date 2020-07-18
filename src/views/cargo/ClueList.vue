@@ -225,7 +225,7 @@
                    -->
                   <el-dropdown-item
                     v-if="row.clueState === 0 || row.clueState === 1"
-                    @click.native="(row)"
+                    @click.native="goFollow(row)"
                   >
                     跟进
                   </el-dropdown-item>
