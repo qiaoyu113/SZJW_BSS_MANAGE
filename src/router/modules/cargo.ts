@@ -181,7 +181,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "tender" */ '@/views/cargo/TenderDetail.vue'),
       name: 'TenderDetail',
       meta: {
-        title: 'tenderManage',
+        title: 'tenderDetail',
         activeMenu: '/cargo/tendermanage',
         noCache: false,
         hidden: true,
@@ -194,7 +194,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "tender" */ '@/views/cargo/TenderDetail.vue'),
       name: 'tenderEdit',
       meta: {
-        title: 'tenderManage',
+        title: 'tenderEdit',
         hidden: true,
         activeMenu: '/cargo/tendermanage',
         noCache: false,
@@ -207,7 +207,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "tender" */ '@/views/cargo/TenderLog.vue'),
       name: 'tenderLog',
       meta: {
-        title: 'tenderManage',
+        title: 'tenderLog',
         hidden: true,
         activeMenu: '/cargo/tendermanage',
         noCache: false,
@@ -269,7 +269,7 @@ const cargoRouter: RouteConfig = {
     },
     {
       path: 'lineaudit', /* 审核线路 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/CreatLine.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/LineDetail.vue'),
       name: 'LineAudit',
       meta: {
         title: 'lineAudit',

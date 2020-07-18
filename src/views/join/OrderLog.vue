@@ -20,7 +20,7 @@
           label="时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.customerId }}</span>
+            <span>{{ scope.row.dealTime | Timestamp }}</span>
           </template>
         </el-table-column>
 
@@ -29,7 +29,7 @@
           label="用户"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
+            <span>{{ scope.row.dealName }})</span>
           </template>
         </el-table-column>
 
@@ -37,13 +37,8 @@
           align="left"
           label="平台"
         >
-          <template slot-scope="{row}">
-            <el-tag :type="row.status | articleStatusFilter">
-              {{ row.primaryClassificationName
-              }}<span
-                v-if="row.secondaryClassificationName"
-              >/{{ row.secondaryClassificationName }}</span>
-            </el-tag>
+          <template slot-scope="scope">
+            <span>{{ scope.row.operationSourceName }})</span>
           </template>
         </el-table-column>
 
@@ -52,7 +47,7 @@
           label="操作前"
         >
           <template slot-scope="{row}">
-            {{ row.contractEffectiveness }}
+            {{ row.beforeStateName }}
           </template>
         </el-table-column>
 
@@ -60,8 +55,8 @@
           align="left"
           label="操作后"
         >
-          <template slot-scope="scope">
-            <p>{{ scope.row.createDate | Timestamp }}</p>
+          <template slot-scope="{row}">
+            {{ row.stateName }}
           </template>
         </el-table-column>
       </el-table>

@@ -7,6 +7,7 @@
       @handle-query="handleQuery"
     >
       <self-form
+        ref="tenderForm"
         :list-query="listQuery"
         :form-item="formItem"
         label-width="80px"
@@ -221,6 +222,7 @@ interface Tab {
   }
 })
 export default class extends Vue {
+  private cascaderLables:string[] = []
   private listLoading:boolean = false
   private tab:Tab[] = [
     {
@@ -331,7 +333,8 @@ export default class extends Vue {
       key: 'area',
       label: '配送区域',
       tagAttrs: {
-        placeholder: '请选择'
+        placeholder: '请选择',
+        ref: 'tenderCascader'
       },
       listeners: {
         'change': this.handleCascaderChange
@@ -783,8 +786,9 @@ export default class extends Vue {
    * 删除顶部表单的选项
    */
   handleQuery(value:any, key:any) {
-    if (key === 'createTime' || key === 'startTime') {
+    if (['createTime', 'startTime', 'area'].includes(key)) {
       this.listQuery[key] = []
+      this.cascaderLables = []
     } else {
       this.listQuery[key] = value
     }
@@ -796,13 +800,21 @@ export default class extends Vue {
     let blackLists = ['state']
     for (let key in this.listQuery) {
       if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
-        let name = getLabel(this.formItem, this.listQuery, key)
-        if (name) {
+        if (key === 'area') {
           this.tags.push({
             type: 'info',
-            name,
+            name: this.cascaderLables.join(','),
             key: key
           })
+        } else {
+          let name = getLabel(this.formItem, this.listQuery, key)
+          if (name) {
+            this.tags.push({
+              type: 'info',
+              name,
+              key: key
+            })
+          }
         }
       }
     }
@@ -823,6 +835,7 @@ export default class extends Vue {
       startTime: [],
       role: 'all'
     }
+    this.tags = []
   }
   /**
    * 分页
@@ -902,8 +915,8 @@ export default class extends Vue {
   /**
    *配送区域阶联框
    */
-  handleCascaderChange(val:any) {
-    console.log('xxx:', val)
+  handleCascaderChange(val:any, form:any, thsAreaCode:any) {
+    this.cascaderLables = (this.$refs.tenderForm as any).$refs.tenderCascader.getCheckedNodes()[0].pathLabels
   }
 }
 </script>

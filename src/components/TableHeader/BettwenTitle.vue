@@ -75,7 +75,7 @@ export default class extends Vue {
         line-height: 20px;
         .tabName{
           margin-right:10px;
-          width:40px;
+          width:60px;
         }
       }
       .BettwenTitle_right{
@@ -116,7 +116,7 @@ export default class extends Vue {
     align-items: center;
     .tabName{
           margin-right:10px;
-          width:40px;
+          width:60px;
         }
       .BettwenTitle_left{
           // float:left;

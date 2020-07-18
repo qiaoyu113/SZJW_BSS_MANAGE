@@ -4,7 +4,7 @@ import Layout from '@/layout/index.vue'
 const orderRouter: RouteConfig = {
   path: '/join', /* 加盟中心 */
   component: Layout,
-  redirect: '/join/list',
+  redirect: '/join/contractlist',
   name: 'Join',
   meta: {
     title: 'joinTitle',
@@ -67,6 +67,17 @@ const orderRouter: RouteConfig = {
       meta: {
         apiUrl: 'root',
         title: 'orderManage',
+        noCache: false
+      }
+    },
+    {
+      path: 'ordercheck', /* 订单确认 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/join/OrderCheck.vue'),
+      name: 'OrderCheck',
+      meta: {
+        hidden: true,
+        apiUrl: 'root',
+        title: 'orderCheck',
         noCache: false
       }
     },

@@ -3,6 +3,7 @@ FROM registry-vpc.cn-beijing.aliyuncs.com/wutong-library/node:10.21.0-stretch as
 RUN yarn config set registry https://registry.npm.taobao.org/ 
 ADD yarn.lock /code/
 ADD package.json /code/
+ADD .yarnrc /code/
 
 RUN cd /code && yarn config get registry && yarn install 
 ADD . /code 

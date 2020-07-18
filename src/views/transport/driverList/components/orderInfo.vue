@@ -1,42 +1,52 @@
 <template>
   <div class="orderInfo">
-    <dl
-      v-for="item in lists"
-      :key="item.code"
-    >
-      <dt class="title">
-        订单编号:{{ item.code }}
-      </dt>
-      <dd>
-        <self-form
-          class="base"
-          :list-query="item"
-          :form-item="formItem"
-          label-width="80px"
-        >
-          <template v-slot:d="{row}">
-            {{ row.d }}个月
-          </template>
-          <template v-slot:e="{row}">
-            ￥{{ row.e }}
-          </template>
-          <template v-slot:f="{row}">
-            {{ row.f }}%
-          </template>
-          <template v-slot:g="{row}">
-            {{ row.g | Timestamp }}
-          </template>
-          <template slot="detail">
-            <router-link
-              :to="{path: '/'}"
-              class="link"
-            >
-              详情>>
-            </router-link>
-          </template>
-        </self-form>
-      </dd>
-    </dl>
+    <template v-if="lists.length">
+      <dl
+        v-for="item in lists"
+        :key="item.orderId"
+      >
+        <dt class="title">
+          订单编号:{{ item.orderId | DataIsNull }}
+        </dt>
+        <dd>
+          <self-form
+            class="base"
+            :list-query="item"
+            :form-item="formItem"
+            label-width="80px"
+          >
+            <template v-slot:cooperationModel="{row}">
+              <span v-if="row.cooperationModel ===1">购车</span>
+              <span v-else-if="row.cooperationModel ===2">租车</span>
+              <span v-else-if="row.cooperationModel ===3">带车</span>
+            </template>
+            <template v-slot:d="{row}">
+              {{ row.cooperationTime }}个月
+            </template>
+            <template v-slot:e="{row}">
+              ￥{{ row.goodsAmount }}
+            </template>
+            <template v-slot:f="{row}">
+              {{ row.rake }}%
+            </template>
+            <template v-slot:g="{row}">
+              {{ row.payCompleteTime | Timestamp }}
+            </template>
+            <template slot="detail">
+              <router-link
+                :to="{path: '/'}"
+                class="link"
+              >
+                详情>>
+              </router-link>
+            </template>
+          </self-form>
+        </dd>
+      </dl>
+    </template>
+    <div v-else>
+      <span class="noData">暂无数据</span>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -58,40 +68,40 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 7,
-      key: 'a',
+      key: 'busiTypeName',
       label: '商品分类:'
     },
     {
-      type: 7,
-      key: 'b',
+      type: 'cooperationModel',
+      slot: true,
       label: '合作模式:'
     },
     {
       type: 7,
-      key: 'c',
+      key: 'cooperationCarName',
       label: '合作车型:'
     },
     {
-      key: 'd',
-      type: 'd',
+      key: 'cooperationTime',
+      type: 'cooperationTime',
       label: '合作期限:',
       slot: true
     },
     {
-      key: 'e',
-      type: 'e',
+      key: 'goodsAmount',
+      type: 'goodsAmount',
       label: '订单金额:',
       slot: true
     },
     {
-      key: 'f',
-      type: 'f',
+      key: 'rake',
+      type: 'rake',
       label: '抽佣比列:',
       slot: true
     },
     {
-      key: 'g',
-      type: 'g',
+      key: 'payCompleteTime',
+      type: 'payCompleteTime',
       slot: true,
       label: '支付时间:'
     },
@@ -117,6 +127,12 @@ export default class extends Vue {
         color: #649CEE;
         font-weight:bold;
       }
+    }
+    .noData {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height:100px;
     }
   }
 </style>

@@ -13,6 +13,13 @@ export const GetDictionaryList = (data: any) =>
     method: 'post',
     data
   })
+// 获取加盟经理列表
+export const GetJoinManageList = (data: any) =>
+  request({
+    url: `${baseURL}/v1/base/user/getManagerListByUserId`,
+    method: 'post',
+    data
+  })
 
 // 地区
 export const GetArea = (data: any) =>
@@ -27,3 +34,31 @@ export const GetOpenCityData = () => request({
   url: `${baseURL}/v1/base/area/getOpenCityData`,
   method: 'get'
 })
+
+// 运营经理
+export const getOperManager = () =>
+  request({
+    url: `${baseURL}/v1/base/user/getOperManagerListByUserId`,
+    method: 'post'
+  })
+
+/**
+   *根据父级code获取子列表
+   *
+   */
+export const GetCityByCode = (data: any) =>
+  request({
+    url: `${baseURL}/v1/base/area/getCityByCode`,
+    method: 'post',
+    data
+  })
+
+/**
+   *
+   *获取加盟经理列表
+   */
+export const GetManagerLists = () =>
+  request({
+    url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
+    method: 'post'
+  })

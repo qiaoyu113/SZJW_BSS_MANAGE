@@ -149,9 +149,9 @@ export default class SelfItem extends Vue {
     display: flex;
     flex: 1;
   }
-
   .SelfItem >>> .el-radio {
     height:36px;
     line-height: 36px;
   }
+
   </style>
