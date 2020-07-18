@@ -45,6 +45,9 @@
         <span v-if="row.householdType === 1">农村</span>
         <span v-else-if="row.householdType === 2">城镇</span>
       </template>
+      <template v-slot:ownCarNum="{row}">
+        <span>{{ row.ownCarNum }}辆</span>
+      </template>
     </self-form>
   </div>
 </template>
@@ -62,7 +65,7 @@ export default class extends Vue {
 
     private listQuery = {
       gmName: '',
-      inviteType: '',
+      inviteTypeName: '',
       sourceChannelName: '',
       whereKnow: '',
       heavyAgentName: '',
@@ -110,8 +113,8 @@ export default class extends Vue {
       },
       {
         type: 7,
-        key: 'inviteType',
-        label: '邀约方式:xx'
+        key: 'inviteTypeName',
+        label: '邀约方式'
       },
       {
         type: 7,
@@ -121,7 +124,7 @@ export default class extends Vue {
       {
         type: 7,
         key: 'whereKnow',
-        label: '您是从哪里了解我们的加盟信息?',
+        label: '您是从哪里了解我们的加盟信息:',
         w: '230px'
       },
       {
@@ -160,36 +163,36 @@ export default class extends Vue {
       {
         type: 7,
         key: 'intentDeliveryModeName',
-        label: '意向配送模式',
+        label: '意向配送模式:',
         w: '130px'
       },
       {
         type: 7,
         key: 'intentCargoTypeName',
-        label: '意向货物类型',
+        label: '意向货物类型:',
         w: '130px'
       },
       {
         type: 7,
         key: 'intentWorkDurationName',
-        label: '意向工作时间段',
+        label: '意向工作时间段:',
         w: '140px'
       },
       {
         type: 7,
         key: 'originIncomeAvg',
-        label: '原职业月均收入（元/月）',
+        label: '原职业月均收入(元/月):',
         w: '200px'
       },
       {
         type: 7,
         key: 'expIncomeAvg',
-        label: '期望月均净收入，去油去电（元/月）',
+        label: '期望月均净收入,去油去电(元/月):',
         w: '260px'
       },
       {
         type: 'householdType',
-        label: '户籍类型',
+        label: '户籍类型:',
         slot: true
       },
       {
@@ -210,85 +213,85 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '货物运输经验（月)',
+        label: '货物运输经验(月):',
         key: 'experience',
         w: '150px'
       },
       {
         type: 7,
         key: 'drivingAge',
-        label: '实际货车驾龄（月)',
+        label: '实际货车驾龄(月):',
         w: '150px'
       },
       {
         type: 7,
         key: 'livingAge',
-        label: '本城市居住时长（月)',
+        label: '本城市居住时长(月):',
         w: '160px'
       },
       {
         type: 7,
         key: 'drivingLicenceTypeName',
-        label: '驾照类型'
+        label: '驾照类型:'
       },
       {
         slot: true,
         type: 'hasOwnCar',
-        label: '是否有自己的货车',
+        label: '是否有自己的货车:',
         w: '150px',
         col: 8
       },
       {
-        type: 7, // 有几辆
-        key: 'ownCarNum',
+        type: 'ownCarNum', // 有几辆
         w: '0px',
-        col: 4
+        col: 4,
+        slot: true
       },
       {
         type: 7,
         key: 'maxAdvancePaymentName',
-        label: '最大可支付首付款',
+        label: '最大可支付首付款:',
         w: '150px'
       },
       {
         slot: true,
         type: 'heavyLifting',
-        label: '是否能承担较重搬运',
+        label: '是否能承担较重搬运:',
         w: '150px'
       },
       {
         slot: true,
         type: 'providePersonalCredit',
-        label: '能否提供个人征信',
+        label: '能否提供个人征信:',
         w: '150px'
       },
       {
         type: 7,
         key: 'strategyRightName',
-        label: '投资决策权'
+        label: '投资决策权:'
       },
       {
-        type: 2,
+        type: 7,
         key: 'cooperateFocusPointName',
-        label: '如果有机会跟云鸟合作，你看中的是什么',
+        label: '如果有机会跟云鸟合作,你看中的是什么:',
         w: '280px'
       },
       {
         type: 7,
-        label: '最终决定你是否与云鸟合作的关键因素是什么?',
+        label: '最终决定你是否与云鸟合作的关键因素是什么:',
         key: 'cooperateKeyFactorName',
         w: '330px'
       },
       {
         slot: true,
         type: 'isAdvancedIntention',
-        label: '是否是高意向司机',
+        label: '是否是高意向司机:',
         w: '150px'
       },
       {
         type: 7,
         key: 'remarks',
-        label: '备注 '
+        label: '备注:'
       }
     ]
 
@@ -301,5 +304,11 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .specialCard {
 
+  }
+</style>
+
+<style scoped>
+  .specialCard >>> .el-form-item {
+    margin-bottom:0px;
   }
 </style>

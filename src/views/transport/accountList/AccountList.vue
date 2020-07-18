@@ -140,7 +140,7 @@ import SelfTable from '@/components/base/SelfTable.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
-import { unique, getLabel } from '@/utils/index.ts'
+import { getLabel } from '@/utils/index.ts'
 interface IState {
     [key: string]: any;
 }

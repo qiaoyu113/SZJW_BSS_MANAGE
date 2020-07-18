@@ -251,7 +251,7 @@ export const driverDetailToOrderInfo = (params: any) =>
    */
 export const GetDriverList = (data: any) =>
   request({
-    url: `${prefix}/v1/driver/getDriverList`,
+    url: `${prefixCarrier}/v1/driver/getDriverList`,
     method: 'post',
     data
   })

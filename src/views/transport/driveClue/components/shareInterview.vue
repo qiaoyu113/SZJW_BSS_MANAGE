@@ -42,7 +42,8 @@ export default class extends Vue {
     expIncomeAvg: '',
     workDuration: '',
     scatteredJobRate: '',
-    isNewEnergy: ''
+    isNewEnergy: '',
+    age: ''
   }
   private formItem:any[] = [
     {
@@ -325,7 +326,7 @@ export default class extends Vue {
     try {
       let { data: res } = await GetManagerLists()
       if (res.success) {
-        this.formItem[3].options = res.data.map(function(item:any) {
+        this.formItem[4].options = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
@@ -346,10 +347,10 @@ export default class extends Vue {
       let params = ['source_channel', 'driving_licence_type']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[6].options = res.data.source_channel.map(function(item:any) {
+        this.formItem[7].options = res.data.source_channel.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
-        this.formItem[7].options = res.data.driving_licence_type.map(function(item:any) {
+        this.formItem[8].options = res.data.driving_licence_type.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
       } else {
@@ -431,6 +432,7 @@ export default class extends Vue {
   async handlePassClick() {
     try {
       let params = {
+        age: this.listQuery.age,
         interviewDate: this.listQuery.interviewDate,
         gmId: this.listQuery.gmId,
         sourceChannel: this.listQuery.sourceChannel,
@@ -453,7 +455,9 @@ export default class extends Vue {
         phone: this.form.phone,
         workCity: this.form.workCity,
         carType: this.form.carType,
-        clueId: this.form.clueId
+        clueId: this.form.clueId,
+        intentDrivingCarType: this.form.carType,
+        busiType: this.form.busiType
       }
       let { data: res } = await ShareInterview(params)
       if (res.success) {

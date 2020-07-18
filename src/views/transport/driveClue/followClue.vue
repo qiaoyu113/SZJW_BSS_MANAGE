@@ -8,7 +8,7 @@
       >
         <div class="left">
           <span class="text">基本信息</span>
-          <span class="status">{{ baseForm.statusName | DataIsNull }}</span>
+          <span class="status">{{ baseForm.busiType === 1 ? '共享':'专车' }}</span>
         </div>
         <div class="right">
           <el-dropdown
@@ -206,7 +206,7 @@
     </el-card>
     <!-- 面试表 -->
     <interview-card
-      :is-add="true"
+      :is-add="!baseForm.isExistInterviewData"
       :obj="interviewObj"
       @onBtn="handleBtnClick"
     />
@@ -255,7 +255,8 @@ export default class extends Vue {
     wechatNo: '',
     busiType: '',
     gmInfo: '',
-    statusName: ''
+    statusName: '',
+    isExistInterviewData: false
   }
   private interviewObj:any = {}
   // 判断是否是PC
@@ -268,7 +269,6 @@ export default class extends Vue {
     if (this.id) {
       this.getClueRecords()
       this.getClueDetailByClueId()
-      this.getInterviewInfo()
     }
   }
 
@@ -301,6 +301,9 @@ export default class extends Vue {
       let { data: res } = await GetClueDetailByClueId(params)
       if (res.success) {
         this.baseForm = { ...this.baseForm, ...res.data }
+        if (this.baseForm.isExistInterviewData) {
+          this.getInterviewInfo()
+        }
       }
     } catch (err) {
       console.log(`get clue detail fail:${err}`)
@@ -345,7 +348,7 @@ export default class extends Vue {
   /**
    * 填写面试表或修改面试表
    */
-  handleBtnClick(flag:boolean) {
+  handleBtnClick() {
     this.$router.push({
       path: '/transport/interview',
       query: {
