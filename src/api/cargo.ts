@@ -118,6 +118,17 @@ export const GetOwnerDetail = (data: any) =>
     data
   })
 
+/**
+   *保存修改线路照片
+   *
+   */
+export const SaveOrUpdatePicture = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/saveOrUpdatePicture`,
+    method: 'post',
+    data
+  })
+
 // 模糊查询货主名称
 export const customerCheckNames = (data: any) =>
   request({

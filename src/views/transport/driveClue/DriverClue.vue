@@ -57,7 +57,6 @@
         type="primary"
         size="small"
         name="driverclue_interview_btn"
-        :disabled="true"
         @click="handleInterviewClick"
       >
         <i
@@ -574,11 +573,11 @@ export default class extends Vue {
         res.page = await HandlePages(res.page)
         this.page.total = res.page.total
         for (let i = 0; i < this.tab.length; i++) {
-          let item = this.tab[i]
-          if (item.name === this.listQuery.status) {
+          let item:Tab = this.tab[i]
+          if (item.name === '') {
             item.num = res.title.all
           } else {
-            item.num = 0
+            item.num = res.title[item.name as string]
           }
         }
       } else {
@@ -665,8 +664,14 @@ export default class extends Vue {
    *发起面试
    */
   handleInterviewClick() {
+    if (this.rows.length === 0) {
+      return this.$message.error('请选选择司机线索')
+    }
     this.$router.push({
-      path: '/transport/interview'
+      path: '/transport/interview',
+      query: {
+        id: this.rows[0].clueId
+      }
     })
   }
   /**

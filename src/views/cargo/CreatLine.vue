@@ -838,7 +838,6 @@ export default class CreatLine extends Vue {
         width: 200px!important;
       }
   }
-
 }
 </style>
 <style lang="scss" scoped>

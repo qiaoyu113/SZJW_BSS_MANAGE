@@ -3,7 +3,7 @@
     <SuggestContainer
       :tab="tab"
       :tags="tags"
-      :active-name="listQuery.state"
+      :active-name="listQuery.shelvesState"
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
@@ -45,25 +45,25 @@
         <template v-slot:left>
           <div>
             <span>统计：已查询到
-              <!-- <span
+              <span
                 class="numCol"
                 v-text="title.all"
               />
               条线路，总计可上岗
               <span
                 class="numCol"
-                v-text="title."
+                v-text="title.mountGuardNo"
               />
               个，已上岗
               <span
                 class="numCol"
-                v-text="title."
+                v-text="title.canMountGuardNo"
               />
               个，已下线
               <span
                 class="numCol"
-                v-text="title."
-              /> -->
+                v-text="0"
+              />
               个
             </span>
           </div>
@@ -124,6 +124,15 @@
           @onPageSize="handlePageSize"
           @selection-change="handleChange"
         >
+          <template v-slot:createDate="scope">
+            {{ scope.row.createDate |parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+          </template>
+          <template v-slot:busiType="scope">
+            {{ scope.row.busiType === 0 ? '专车':'共享' }}
+          </template>
+          <template v-slot:carNum="scope">
+            {{ scope.row.mountGuardNo }}/{{ scope.row.deployNo }}
+          </template>
           <template v-slot:operate="scope">
             <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
               <span class="el-dropdown-link">
@@ -269,7 +278,7 @@
                     class="el-icon-delete"
                   />
                 </el-dropdown-item>
-                <!-- <el-dropdown-item
+                <el-dropdown-item
                   command="showtender"
                 >
                   <template v-if="isPC">
@@ -279,7 +288,7 @@
                     v-else
                     class="el-icon-edit"
                   />
-                </el-dropdown-item> -->
+                </el-dropdown-item>
                 <el-dropdown-item
                   command="showlog"
                 >
@@ -424,40 +433,39 @@ export default class LineManage extends Vue {
   private tab: any[] = [
     {
       label: '全部',
-      name: '0',
-      num: '0'
+      name: '',
+      num: 0
     },
     {
       label: '待上架',
       name: '1',
-      num: '0'
+      num: 0
     },
     {
       label: '已上架',
       name: '2',
-      num: '0'
+      num: 0
     },
     {
       label: '已售罄',
-      name: '0',
-      num: '0'
+      name: '4',
+      num: 0
     },
     {
       label: '已下架',
-      name: ' 0',
-      num: '0'
+      name: '3',
+      num: 0
     },
     {
       label: '已停用',
-      name: '0',
-      num: '0'
+      name: '5',
+      num: 0
     }
   ];
   private title:any = { all: 0, waitShelvesNum: 0, isShelvesNum: 0, noShelvesNum: 0, soldNum: 0, disableNum: 0 }
   private total = 0;
   private list: any[] = [];
   private limit: number = 20;
-  // private page: Object | undefined = '';
   private listLoading = false;
   private tags: any[] = [];
   private DateValue: any[] = [];
@@ -469,81 +477,9 @@ export default class LineManage extends Vue {
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
   private formItem:any[] = [
-    // {
-    //   type: 2,
-    //   key: 'regional',
-    //   label: '所属大区',
-    //   tagAttrs: {
-    //     placeholder: '请选择城市'
-    //   },
-    //   options: [
-    //     {
-    //       label: '58同城',
-    //       value: '58'
-    //     },
-    //     {
-    //       label: '朋友圈',
-    //       value: 'wechat'
-    //     }
-    //   ]
-    // },
-    // {
-    //   type: 2,
-    //   key: 'management',
-    //   label: '所属管理区',
-    //   tagAttrs: {
-    //     placeholder: '请选择城市'
-    //   },
-    //   options: [
-    //     {
-    //       label: '58同城',
-    //       value: '58'
-    //     },
-    //     {
-    //       label: '朋友圈',
-    //       value: 'wechat'
-    //     }
-    //   ]
-    // },
-    // {
-    //   type: 2,
-    //   key: 'city',
-    //   label: '所属卫星城',
-    //   tagAttrs: {
-    //     placeholder: '请选择城市'
-    //   },
-    //   options: [
-    //     {
-    //       label: '58同城',
-    //       value: '58'
-    //     },
-    //     {
-    //       label: '朋友圈',
-    //       value: 'wechat'
-    //     }
-    //   ]
-    // },
-    // {
-    //   type: 2,
-    //   key: 'group',
-    //   label: '所属小组',
-    //   tagAttrs: {
-    //     placeholder: '请选择城市'
-    //   },
-    //   options: [
-    //     {
-    //       label: '58同城',
-    //       value: '58'
-    //     },
-    //     {
-    //       label: '朋友圈',
-    //       value: 'wechat'
-    //     }
-    //   ]
-    // },
     {
       type: 2,
-      key: 'name',
+      key: 'lineSaleId',
       label: '线路销售',
       tagAttrs: {
         placeholder: '请选择线路销售'
@@ -555,9 +491,6 @@ export default class LineManage extends Vue {
       key: 'auditState',
       label: '审核状态',
       tagAttrs: {
-        // disabled: true,
-      // clearable: true,
-      // multiple: true,
         placeholder: '请选择审核状态'
       },
       options: []
@@ -567,20 +500,26 @@ export default class LineManage extends Vue {
       label: '选择车型',
       key: 'cartype',
       tagAttrs: {
-        // disabled: true,
-      // clearable: true,
-      // multiple: true,
         placeholder: '请选择车型'
       },
       options: []
     },
     {
       type: 1,
-      label: '线路名称/线路编号',
+      label: '线路名称',
+      w: '140px',
+      key: 'lineName',
+      tagAttrs: {
+        placeholder: '请输入线路名称'
+      }
+    },
+    {
+      type: 1,
+      label: '线路编号',
       w: '140px',
       key: 'lineId',
       tagAttrs: {
-        placeholder: '请输入线路名称/线路编号'
+        placeholder: '请输入线路编号'
       }
     },
     {
@@ -591,27 +530,15 @@ export default class LineManage extends Vue {
         placeholder: '请输入货主名称'
       }
     },
-    // {
-    //   type: 2,
-    //   label: '线路区域',
-    //   key: 'linearea',
-    //   tagAttrs: {
-    //     // disabled: true,
-    //   // clearable: true,
-    //   // multiple: true,
-    //     placeholder: '请选择线路区域'
-    //   },
-    //   options: []
-    // },
     {
       type: 8,
-      label: '线路区域',
-      key: 'address',
+      key: 'houseAddress',
+      label: '线路区域:',
       tagAttrs: {
-        placeholder: '请选择线路区域',
+        placeholder: '线路区域',
         props: {
           lazy: true,
-          lazyLoad: this.loadhouseAddress
+          lazyLoad: this.getLineArea
         }
       }
     },
@@ -620,19 +547,16 @@ export default class LineManage extends Vue {
       key: 'returnWarehouse',
       label: '是否需要返仓',
       tagAttrs: {
-        // disabled: true,
-      // clearable: true,
-      // multiple: true,
         placeholder: '请选择是否需要返仓'
       },
       options: [
         {
           label: '是',
-          value: '1'
+          value: 1
         },
         {
           label: '否',
-          value: '0'
+          value: 2
         }
       ]
     },
@@ -640,146 +564,37 @@ export default class LineManage extends Vue {
       col: 12,
       label: '创建时间',
       type: 3,
-      key: 'creattime'
+      key: 'time'
     },
     {
       col: 12,
       label: '工作开始时间段',
       w: '130px',
       type: 3,
-      key: 'jobStartDate'
+      key: 'jobTime'
     }
   ]
   private listQuery: IState = {
-    // 'auditState': '',
-    // 'city': '',
-    // 'cityArea': '',
-    // 'countyArea': '',
-    // 'customerName': '',
-    // 'endDate': '',
-    // 'group': '',
-    // 'jobEndDate': '',
-    // 'jobStartDate': '',
-    // 'limit': 0,
-    // 'lineId': '',
-    // 'lineName': '',
-    // 'lineSaleId': '',
-    // 'management': '',
-    // 'page': 0,
-    // 'pageNumber': 0,
-    // 'provinceArea': 0,
-    // 'regional': '',
-    // 'returnWarehouse': 0,
-    // 'shelvesState': 0,
-    // 'startDate': ''
+    shelvesState: '',
+    lineSaleId: '',
+    auditState: '',
+    cartype: '',
+    lineName: '',
+    lineId: '',
+    customerName: '',
+    houseAddress: [],
+    returnWarehouse: '',
+    time: [],
+    jobTime: []
   };
   private showPutDio:boolean = false
   private showGetDio:boolean = false
   page:PageObj ={
     page: 1,
     limit: 10,
-    total: 20
+    total: 0
   }
-  private tableData:any[] = [
-    {
-      'distance': 20,
-      'city': 110100,
-      'canSell': false,
-      'deployNo': 20,
-      'provinceArea': 110000,
-      'stabilityRate': 1,
-      'remark': '线路备注6666',
-      'everyUnitPrice': 80,
-      'shipperOffer': 1000,
-      'auditState': 1,
-      'goodsWeight': 2,
-      'warehouseCounty': 110105,
-      'canSellLineNum': 0,
-      'warehouseCity': 110000,
-      'warehouseTown': '110105110000',
-      'dayNo': 5,
-      'carType': 1,
-      'countyArea': 110105,
-      'monthNo': 10,
-      'lineType': 1,
-      'customerId': 'HX202007080001',
-      'lineRank': 28,
-      'lineSaleId': 48,
-      'busiType': 1,
-      'id': 25,
-      'settlementCycle': 2,
-      'createDate': 1594892503000,
-      'waitDirveValidity': 1595779199000,
-      'districtArea': '北京八城666',
-      'cityArea': 110100,
-      'incomeSettlementMethod': 1,
-      'warehouseProvince': 110100,
-      'deliveryNo': 6,
-      'handlingDifficultyDegree': 3,
-      'lineId': 'XL202007161005',
-      'everyTripGuaranteed': 100,
-      'incomeSettlementMethodName': '传站',
-      'warehouse': '仓为止',
-      'customerName': '小白1',
-      'createId': 88,
-      'warehouseDistrict': '仓库详细位置666',
-      'shelvesState': 1,
-      'carry': 2,
-      'workingTimeStart': '00:00,01:45,03:45,02:45',
-      'returnBill': 1,
-      'settlementDays': 3,
-      'returnWarehouse': 1
-    },
-    {
-      'distance': 20,
-      'city': 110100,
-      'canSell': false,
-      'deployNo': 20,
-      'provinceArea': 110000,
-      'stabilityRate': 1,
-      'remark': '线路备注6666',
-      'everyUnitPrice': 80,
-      'shipperOffer': 1000,
-      'auditState': 1,
-      'goodsWeight': 2,
-      'warehouseCounty': 110105,
-      'canSellLineNum': 0,
-      'warehouseCity': 110000,
-      'warehouseTown': '110105110000',
-      'dayNo': 5,
-      'carType': 1,
-      'countyArea': 110105,
-      'monthNo': 10,
-      'lineType': 1,
-      'customerId': 'HX202007080001',
-      'lineRank': 67,
-      'lineSaleId': 48,
-      'busiType': 1,
-      'id': 24,
-      'settlementCycle': 2,
-      'createDate': 1594892429000,
-      'waitDirveValidity': 1595779199000,
-      'districtArea': '北京八城666',
-      'cityArea': 110100,
-      'incomeSettlementMethod': 1,
-      'warehouseProvince': 110100,
-      'deliveryNo': 6,
-      'handlingDifficultyDegree': 3,
-      'lineId': 'XL202007161004',
-      'everyTripGuaranteed': 100,
-      'incomeSettlementMethodName': '传站',
-      'warehouse': '仓为止',
-      'customerName': '小白1',
-      'createId': 88,
-      'warehouseDistrict': '仓库详细位置666',
-      'shelvesState': 1,
-      'carry': 2,
-      'workingTimeStart': '00:00,01:45,03:45,02:45',
-      'returnBill': 1,
-      'settlementDays': 3,
-      'returnWarehouse': 1
-    }
-  ]
+  private tableData:any[] = []
 
   private columns:any[] = [
     {
@@ -787,76 +602,78 @@ export default class LineManage extends Vue {
       label: '线路名称'
     },
     {
-      key: 'customerNo',
+      key: 'dayNo',
       label: '每日配送数'
     },
     {
-      key: 'customerNo',
+      key: 'lineSaleName',
       label: '所属销售'
     },
     {
-      key: 'customerNo',
-      label: '上车数（已上车）/可上车'
-    },
-    {
-      key: 'customerNo',
-      label: '货主预计月报价'
-    },
-    {
-      key: 'customerNo',
-      label: '货主单趟报价'
-    },
-    {
-      key: 'customerNo',
-      label: '总计用时'
-    },
-    {
-      key: 'customerNo',
-      label: '预计每日平均总公里数'
-    },
-    {
-      key: 'customerNo',
-      label: '选择车型'
-    },
-    {
-      key: 'customerNo',
-      label: '货物类型'
-    },
-    {
-      key: 'customerNo',
-      label: '每日配送数'
-    },
-    {
-      key: 'customerNo',
-      label: '线路角色'
-    },
-    {
-      key: 'customerName',
-      label: '仓库位置',
+      key: 'carNum',
+      label: '上车数（已上车）/可上车',
       slot: true
     },
     {
-      key: 'distributionType',
+      key: 'shipperOffer',
+      label: '货主预计月报价'
+    },
+    {
+      key: 'everyTripGuaranteed',
+      label: '货主单趟报价'
+    },
+    {
+      key: 'timeDiff',
+      label: '总计用时'
+    },
+    {
+      key: 'distance',
+      label: '预计每日平均总公里数'
+    },
+    {
+      key: 'carTypeName',
+      label: '选择车型'
+    },
+    {
+      key: 'cargoTypeName',
+      label: '货物类型'
+    },
+    {
+      key: 'deliveryNo',
+      label: '每日配送点位数'
+    },
+    {
+      key: 'busiType',
+      label: '线路角色',
+      slot: true
+    },
+    {
+      key: 'warehouse',
+      label: '仓库位置'
+    },
+    {
+      key: 'stabilityRateName',
       label: '线路稳定性'
     },
     {
-      key: 'shelvesState ',
+      key: 'shelvesStateName',
       label: '上架状态'
     },
     {
-      key: 'createDate',
+      key: 'lineSource',
       label: '线路来源'
     },
     {
-      key: 'creater',
-      label: '创建时间'
+      key: 'createDate',
+      label: '创建时间',
+      slot: true
     },
     {
       key: 'customerName',
       label: '货主'
     },
     {
-      key: 'city',
+      key: 'cityName',
       label: '城市'
     },
     {
@@ -878,54 +695,16 @@ export default class LineManage extends Vue {
       return time.getTime() <= Date.now()
     }
   }
-
-  /**
-   *重置按钮
-   */
-  handleResetClick() {
-    this.listQuery = {
-      key: '',
-      city: '',
-      page: 1,
-      limit: 30,
-      endDate: '',
-      startDate: '',
-      state: '',
-      lineSaleId: '',
-      name: '',
-      soldName: '',
-      soldnum: '',
-      huozhuName: '',
-      upstatus: '',
-      linearea: '',
-      fancang: '',
-      stopstatus: '',
-      creattime: [],
-      starttime: []
-    }
+  mounted() {
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+    this.dicList()
+    this.getList()
   }
   /**
-   *筛选按钮
+   * 省市县3级联动
    */
-  handleFilterClick() {
-    let blackLists = ['state']
-    for (let key in this.listQuery) {
-      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
-        let name = getLabel(this.formItem, this.listQuery, key)
-        if (name) {
-          this.tags.push({
-            type: 'info',
-            name,
-            key: key
-          })
-        }
-      }
-    }
-
-    console.log('filter:', this.listQuery)
-  }
-
-  private async loadhouseAddress(node:any, resolve:any) {
+  async getLineArea(node:any, resolve:any) {
     let params:string[] = []
     if (node.level === 0) {
       params = ['100000']
@@ -944,7 +723,9 @@ export default class LineManage extends Vue {
       resolve([])
     }
   }
-
+  /**
+     * 加载城市
+     */
   async loadCityByCode(params:string[]) {
     try {
       let { data: res } = await GetCityByCode(params)
@@ -962,6 +743,44 @@ export default class LineManage extends Vue {
       console.log(`load city by code fail:${err}`)
     }
   }
+  /**
+   *重置按钮
+   */
+  handleResetClick() {
+    this.listQuery = {
+      shelvesState: '',
+      lineSaleId: '',
+      auditState: '',
+      cartype: '',
+      lineName: '',
+      lineId: '',
+      customerName: '',
+      houseAddress: [],
+      returnWarehouse: '',
+      time: [],
+      jobTime: []
+    }
+  }
+  /**
+   *筛选按钮
+   */
+  handleFilterClick() {
+    let blackLists = ['state']
+    for (let key in this.listQuery) {
+      if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+        let name = getLabel(this.formItem, this.listQuery, key)
+        if (name) {
+          this.tags.push({
+            type: 'info',
+            name,
+            key: key
+          })
+        }
+      }
+    }
+
+    this.getList()
+  }
 
   /**
      * 分页
@@ -969,15 +788,15 @@ export default class LineManage extends Vue {
   handlePageSize(page:any) {
     this.page.page = page.page
     this.page.limit = page.limit
-    this.getList(this.listQuery)
+    this.getList()
   }
 
   private async dicList() {
     let params = ['Intentional_compartment', 'line_audit_state']
-    let { data } = await GetDictionaryList(params)
-    if (data.success) {
+    let { data: res } = await GetDictionaryList(params)
+    if (res.success) {
       // eslint-disable-next-line camelcase
-      let { Intentional_compartment, line_audit_state } = data.data
+      let { Intentional_compartment, line_audit_state } = res.data
       let cartype = Intentional_compartment.map(function(ele:any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
@@ -993,7 +812,7 @@ export default class LineManage extends Vue {
         }
       })
     } else {
-      this.$message.error(data)
+      this.$message.error(res.errorMsg)
     }
     // let city = await GetOpenCityData()
     // console.log(city.data.success)
@@ -1009,6 +828,72 @@ export default class LineManage extends Vue {
     // } else {
     //   this.$message.error(data)
     // }
+  }
+  // 请求列表
+  private async getList() {
+    try {
+      this.listLoading = true
+      let params:any = {
+        lineSaleId: this.listQuery.lineSaleId,
+        auditState: this.listQuery.auditState,
+        cartype: this.listQuery.cartype,
+        lineName: this.listQuery.lineName,
+        lineId: this.listQuery.lineId,
+        customerName: this.listQuery.customerName,
+        returnWarehouse: this.listQuery.returnWarehouse,
+        provinceArea: this.listQuery.houseAddress[0],
+        cityArea: this.listQuery.houseAddress[1],
+        countyArea: this.listQuery.houseAddress[2],
+        page: this.page.page,
+        limit: this.page.limit
+      }
+      this.listQuery.shelvesState && (params.shelvesState = this.listQuery.shelvesState)
+      if (this.listQuery.time.length > 0) {
+        params.startDate = this.listQuery.time[0]
+        params.endDate = this.listQuery.time[1]
+      }
+      if (this.listQuery.jobTime.length > 0) {
+        params.jobStartDate = this.listQuery.time[0]
+        params.jobEndDate = this.listQuery.time[1]
+      }
+      const { data: res } = await lineListAll(params)
+      this.listLoading = false
+      if (res.success) {
+        this.tableData = res.data
+        this.title = res.title
+        res.page = await HandlePages(res.page)
+        this.page.total = res.page.total
+        this.tab.map(ele => {
+          switch (ele.label) {
+            case '全部':
+              ele.num = this.title.all
+              break
+            case '待上架':
+              ele.num = this.title.waitShelvesNum
+              break
+            case '已上架':
+              ele.num = this.title.isShelvesNum
+              break
+            case '已售罄':
+              ele.num = this.title.soldNum
+              break
+            case '已下架':
+              ele.num = this.title.noShelvesNum
+              break
+            case '已停用':
+              ele.num = this.title.disableNum
+              break
+            default:
+              break
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      this.listLoading = false
+      console.log(`get list fail:${err}`)
+    }
   }
 
   /**
@@ -1108,101 +993,40 @@ export default class LineManage extends Vue {
     done()
   }
 
-  private olClicks(item: any) {
-    console.log(item)
-  }
-
-  mounted() {
-    this.fetchData()
-    this.dropdownList = [...this.columns]
-    this.checkList = this.dropdownList.map(item => item.label)
-  }
-
-    @Watch('checkList', { deep: true })
+  @Watch('checkList', { deep: true })
   private checkListChange(val:any) {
     this.columns = this.dropdownList.filter(item => val.includes(item.label))
   }
-    // 所有请求方法
-    private fetchData() {
-      this.dicList()
-      this.getList(this.listQuery)
-    }
 
-    // 处理tags方法
-    private handleTags(value: any) {
-      this.tags = value
-    }
+  // 处理tags方法
+  private handleTags(value: any) {
+    this.tags = value
+  }
 
-    // 处理query方法
-    private handleQuery(value: any, key: any) {
-      if (key === 'creattime' || key === 'starttime') {
-        this.listQuery[key] = []
-      } else {
-        this.listQuery[key] = value
-      }
-      this.getList(this.listQuery)
+  // 处理query方法
+  private handleQuery(value: any, key: any) {
+    if (key === 'time' || key === 'jobTime') {
+      this.listQuery[key] = []
+    } else {
+      this.listQuery[key] = value
     }
+    this.getList()
+  }
 
-    // 处理选择日期方法
-    private handleDate(value: any) {
-      this.DateValue = value
-    }
+  // 处理选择日期方法
+  private handleDate(value: any) {
+    this.DateValue = value
+  }
 
-    // 请求列表
-    private async getList(value: any) {
-      // this.listQuery.shelvesState = this.listQuery.state
-      // this.listQuery.page = this.page.page
-      // this.listQuery.limit = this.page.limit
-      // this.listLoading = true
-      const { data } = await lineListAll(this.listQuery)
-      if (data.success) {
-        this.tableData = data.data
-        this.title = data.title
-        this.page.total = data.page.total
-        this.tab.map(ele => {
-          switch (ele.label) {
-            case '全部':
-              ele.num = this.title.all
-              break
-            case '待上架':
-              ele.num = this.title.waitShelvesNum
-              break
-            case '已上架':
-              ele.num = this.title.isShelvesNum
-              break
-            case '已售罄':
-              ele.num = this.title.soldNum
-              break
-            case '已下架':
-              ele.num = this.title.noShelvesNum
-              break
-            case '已停用':
-              ele.num = this.title.disableNum
-              break
-            default:
-              break
-          }
-        })
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
-      } else {
-        this.$message.error(data)
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
-      }
-    }
+  private goCreat() {
+    this.$router.push('creatline')
+  }
 
-    private goCreat() {
-      this.$router.push('creatline')
-    }
+  get isPC() {
+    return SettingsModule.isPC
+  }
 
-    get isPC() {
-      return SettingsModule.isPC
-    }
-
-    // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
+  // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
    private drawer:boolean = false
   /**
    *当前页勾选中的数组集合

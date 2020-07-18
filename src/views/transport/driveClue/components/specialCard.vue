@@ -148,3 +148,9 @@ export default class extends Vue {
 
   }
 </style>
+
+<style scoped>
+  .shareCard >>> .el-form-item {
+    margin-bottom:0px;
+  }
+</style>

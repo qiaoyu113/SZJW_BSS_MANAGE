@@ -59,7 +59,8 @@ export default class extends Vue {
       cooperateFocusPoint: '',
       cooperateKeyFactor: '',
       isAdvancedIntention: '',
-      remarks: ''
+      remarks: '',
+      isLocalPlate: true
     }
 
     private formItem = [
@@ -436,6 +437,25 @@ export default class extends Vue {
           maxlength: 100,
           'show-word-limit': true
         }
+      },
+      {
+        type: 4,
+        key: 'isLocalPlate',
+        label: '是否本地车牌:',
+        w: '130px',
+        tagAttrs: {
+          placeholder: '是否本地车牌'
+        },
+        options: [
+          {
+            value: true,
+            label: '是'
+          },
+          {
+            value: false,
+            label: '否'
+          }
+        ]
       }
     ]
     /**
@@ -505,7 +525,7 @@ export default class extends Vue {
         { validator: this.validAge, trigger: 'blur' }
       ],
       interviewAddress: [
-        { required: true, message: '请选择面试地址', trigger: 'blur' }
+        { required: true, message: '请选择居住地址', trigger: 'blur' }
       ],
       interviewDistrict: [
         { required: true, message: '请输入详细居住地址', trigger: 'blur' }
@@ -704,10 +724,10 @@ export default class extends Vue {
           whereKnow: this.listQuery.whereKnow,
           heavyAgentName: this.listQuery.heavyAgentName,
           age: this.listQuery.age,
-          interviewProvince: this.listQuery.interviewAddress[0],
-          interviewCity: this.listQuery.interviewAddress[1],
-          interviewCounty: this.listQuery.interviewAddress[2],
-          interviewDistrict: this.listQuery.interviewDistrict,
+          liveProvince: this.listQuery.interviewAddress[0],
+          liveCity: this.listQuery.interviewAddress[1],
+          liveCounty: this.listQuery.interviewAddress[2],
+          liveDistrict: this.listQuery.interviewDistrict,
           intentWorkProvince: this.listQuery.intentAddress[0],
           intentWorkCity: this.listQuery.intentAddress[1],
           intentWorkCounty: this.listQuery.intentAddress[2],
@@ -741,7 +761,10 @@ export default class extends Vue {
           phone: this.form.phone,
           workCity: this.form.workCity,
           carType: this.form.carType,
-          clueId: this.form.clueId
+          clueId: this.form.clueId,
+          busiType: this.form.busiType,
+          intentDrivingCarType: this.form.carType,
+          isLocalPlate: this.listQuery.isLocalPlate
         }
         let { data: res } = await SpecialInterview(params)
         if (res.success) {
