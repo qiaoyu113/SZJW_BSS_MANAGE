@@ -62,3 +62,14 @@ export const GetManagerLists = () =>
     url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
     method: 'post'
   })
+
+/**
+   *
+   *获取加盟经理列表
+   */
+export const detailCity = (data:any) =>
+  request({
+    url: `${baseURL}/v1/base/area/getTownByCountryCode`,
+    method: 'get',
+    params: data
+  })

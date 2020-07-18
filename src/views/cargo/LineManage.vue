@@ -269,7 +269,7 @@
                     class="el-icon-delete"
                   />
                 </el-dropdown-item>
-                <el-dropdown-item
+                <!-- <el-dropdown-item
                   command="showtender"
                 >
                   <template v-if="isPC">
@@ -279,7 +279,7 @@
                     v-else
                     class="el-icon-edit"
                   />
-                </el-dropdown-item>
+                </el-dropdown-item> -->
                 <el-dropdown-item
                   command="showlog"
                 >
@@ -389,7 +389,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetOpenCityData } from '@/api/common'
+import { GetDictionaryList, GetOpenCityData, GetCityByCode } from '@/api/common'
 import SelfTable from '@/components/base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import '@/styles/common.scss'
@@ -439,15 +439,18 @@ export default class LineManage extends Vue {
     },
     {
       label: '已售罄',
-      name: '0'
+      name: '0',
+      num: '0'
     },
     {
       label: '已下架',
-      name: ' 0'
+      name: ' 0',
+      num: '0'
     },
     {
       label: '已停用',
-      name: '0'
+      name: '0',
+      num: '0'
     }
   ];
   private title:any = { all: 0, waitShelvesNum: 0, isShelvesNum: 0, noShelvesNum: 0, soldNum: 0, disableNum: 0 }
@@ -588,17 +591,29 @@ export default class LineManage extends Vue {
         placeholder: '请输入货主名称'
       }
     },
+    // {
+    //   type: 2,
+    //   label: '线路区域',
+    //   key: 'linearea',
+    //   tagAttrs: {
+    //     // disabled: true,
+    //   // clearable: true,
+    //   // multiple: true,
+    //     placeholder: '请选择线路区域'
+    //   },
+    //   options: []
+    // },
     {
-      type: 2,
+      type: 8,
       label: '线路区域',
-      key: 'linearea',
+      key: 'address',
       tagAttrs: {
-        // disabled: true,
-      // clearable: true,
-      // multiple: true,
-        placeholder: '请选择线路区域'
-      },
-      options: []
+        placeholder: '请选择线路区域',
+        props: {
+          lazy: true,
+          lazyLoad: this.loadhouseAddress
+        }
+      }
     },
     {
       type: 2,
@@ -636,23 +651,27 @@ export default class LineManage extends Vue {
     }
   ]
   private listQuery: IState = {
-    key: '',
-    city: '',
-    page: 1,
-    limit: 30,
-    endDate: '',
-    startDate: '',
-    state: '',
-    lineSaleId: '',
-    name: '',
-    soldName: '',
-    soldnum: '',
-    huozhuName: '',
-    upstatus: '',
-    linearea: '',
-    stopstatus: '',
-    creattime: [],
-    starttime: []
+    // 'auditState': '',
+    // 'city': '',
+    // 'cityArea': '',
+    // 'countyArea': '',
+    // 'customerName': '',
+    // 'endDate': '',
+    // 'group': '',
+    // 'jobEndDate': '',
+    // 'jobStartDate': '',
+    // 'limit': 0,
+    // 'lineId': '',
+    // 'lineName': '',
+    // 'lineSaleId': '',
+    // 'management': '',
+    // 'page': 0,
+    // 'pageNumber': 0,
+    // 'provinceArea': 0,
+    // 'regional': '',
+    // 'returnWarehouse': 0,
+    // 'shelvesState': 0,
+    // 'startDate': ''
   };
   private showPutDio:boolean = false
   private showGetDio:boolean = false
@@ -906,6 +925,44 @@ export default class LineManage extends Vue {
     console.log('filter:', this.listQuery)
   }
 
+  private async loadhouseAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.loadCityByCode(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  async loadCityByCode(params:string[]) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: params.length > 2
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+
   /**
      * 分页
      */
@@ -1093,10 +1150,10 @@ export default class LineManage extends Vue {
 
     // 请求列表
     private async getList(value: any) {
-      this.listQuery.shelvesState = this.listQuery.state
-      this.listQuery.page = this.page.page
-      this.listQuery.limit = this.page.limit
-      this.listLoading = true
+      // this.listQuery.shelvesState = this.listQuery.state
+      // this.listQuery.page = this.page.page
+      // this.listQuery.limit = this.page.limit
+      // this.listLoading = true
       const { data } = await lineListAll(this.listQuery)
       if (data.success) {
         this.tableData = data.data

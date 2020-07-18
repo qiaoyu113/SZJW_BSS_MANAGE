@@ -15,6 +15,7 @@ export const GetDriverList = (data: any) =>
     data
   })
 
+// 线路详情
 export const GetLineDetail = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/detail`,
@@ -96,7 +97,7 @@ export const shelveLine = (data: any) =>
 // 线路列表
 export const lineListAll = (data: any) =>
   request({
-    url: `/line-center/v1/line/lineInfo/queryLineListByConditionsQuery`,
+    url: `/line_center/v1/line/lineInfo/queryLineListByConditionsQuery`,
     method: 'post',
     data
   })
@@ -114,5 +115,13 @@ export const GetOwnerDetail = (data: any) =>
   request({
     url: '/line/v1/customer/customerInfo',
     method: 'get',
+    data
+  })
+
+// 模糊查询货主名称
+export const customerCheckNames = (data: any) =>
+  request({
+    url: `/line_center/v1/line/customer/fuzzy/checkNames`,
+    method: 'post',
     data
   })
