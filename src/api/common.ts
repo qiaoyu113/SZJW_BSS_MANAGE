@@ -16,8 +16,8 @@ export const GetDictionaryList = (data: any) =>
 // 获取加盟经理列表
 export const GetJoinManageList = (data: any) =>
   request({
-    url: `${baseURL}/v1/base/user/getManagerListByUserId`,
-    method: 'get',
+    url: `${baseURL}/v1/base/user/getLowerStaffInfo`,
+    method: 'post',
     data
   })
 

@@ -206,7 +206,7 @@
     </el-card>
     <!-- 面试表 -->
     <interview-card
-      :is-add="!baseForm.isExistInterviewData"
+      :is-add="!baseForm.existInterviewDate"
       :obj="interviewObj"
       @onBtn="handleBtnClick"
     />
@@ -256,7 +256,7 @@ export default class extends Vue {
     busiType: '',
     gmInfo: '',
     statusName: '',
-    isExistInterviewData: false
+    existInterviewDate: false
   }
   private interviewObj:any = {}
   // 判断是否是PC
@@ -301,7 +301,7 @@ export default class extends Vue {
       let { data: res } = await GetClueDetailByClueId(params)
       if (res.success) {
         this.baseForm = { ...this.baseForm, ...res.data }
-        if (this.baseForm.isExistInterviewData) {
+        if (this.baseForm.existInterviewDate) {
           this.getInterviewInfo()
         }
       }

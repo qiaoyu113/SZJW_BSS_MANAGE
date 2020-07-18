@@ -313,145 +313,145 @@ export default class CreatLine extends Vue {
       value: 'HX202007080002'
     }
   ]
-  // private ruleForm:any = {
-  //   'cityArea': 110100,
-  //   'countyArea': 110105,
-  //   'districtArea': '北京八城666',
-  //   'provinceArea': 110000,
-  //   'auditState': 1,
-  //   'busiType': 0,
-  //   'carType': 1,
-  //   'cargoType': 1,
-  //   'carry': 2,
-  //   'city': 110100,
-  //   'customerId': 'HX202007080001',
-  //   'dayNo': 5,
-  //   'deliveryNo': 6,
-  //   'deliveryWeekCycle': '1,2,3',
-  //   'deployNo': 20,
-  //   'deployNoChangeReason': 0,
-  //   'distance': 20,
-  //   'everyTripGuaranteed': 100,
-  //   'everyUnitPrice': 80,
-  //   'goodsWeight': 2,
-  //   'handlingDifficultyDegree': 3,
-  //   'incomeSettlementMethod': 1,
-  //   'lineName': '自行车配送666',
-  //   'lineRank': 86,
-  //   'lineSaleId': 48,
-  //   'lineType': 1,
-  //   'monthNo': 10,
-  //   'remark': '线路备注6666',
-  //   'returnBill': 1,
-  //   'returnWarehouse': 1,
-  //   'settlementCycle': 2,
-  //   'settlementDays': 3,
-  //   'shelvesState': 1,
-  //   'shipperOffer': 1000,
-  //   'stabilityRate': 1,
-  //   'volume': 10,
-  //   'waitDirveValidity': '1595692800000',
-  //   'warehouseCity': 110000,
-  //   'warehouseCounty': 110105,
-  //   'warehouseDistrict': '仓库详细位置666',
-  //   'warehouseProvince': 110100,
-  //   'lineDeliveryInfoFORMS': [{
-  //     'workingTimeStart': '00:00',
-  //     'workingTimeEnd': '00:30'
-  //   }, {
-  //     'workingTimeStart': '01:45',
-  //     'workingTimeEnd': '03:15'
-  //   }, {
-  //     'workingTimeStart': '02:45',
-  //     'workingTimeEnd': '03:30'
-  //   }, {
-  //     'workingTimeStart': '03:45',
-  //     'workingTimeEnd': '04:45'
-  //   }],
-  //   'warehouseTown': '110105110000'
-  // }
   private ruleForm:any = {
-    carType: '',
-    // 选择车型
-    cargoType: '',
-    // 货物类型
-    carry: '',
-    // 是否搬运（是 2否）
-    city: '',
-    // 城市（已开通业务的）
-    cityArea: '',
-    // 配送区域-市
-    countyArea: '',
-    // 配送区域-区、县
-    customerId: '',
-    // 货主编号id
-    dayNo: '',
-    // 每日配送趟数
-    deliveryNo: '',
-    // 预计每日平均配送点位数
-    deliveryWeekCycle: '',
-    // 配送周期(周一至周日对应数字拼接)
-    deployNo: '',
-    // 可上车数量
-    deployNoChangeReason: '',
-    // 可上车数变化原因
-    distance: '',
-    // 预计每日平均总里程（公里）
-    districtArea: '',
-    // 具体配送区域范围
-    everyTripGuaranteed: '',
-    // 每趟保底、货主单趟报价(元)
-    everyUnitPrice: '0',
-    // 每趟提成(元)
-    goodsWeight: '',
-    // 总货物重量(: T以下 2: -3T 3: 3-5T 4: 5T以上)
-    handlingDifficultyDegree: '0',
-    // 装卸难度
-    incomeSettlementMethod: '',
-    // 收入结算方式：:传站 2:多点配
-    lineDeliveryInfoFORMS: [],
-    // 配送时间
-    lineId: '',
-    // 线路id
-    lineName: '',
-    // 内部使用线路名称
-    lineSaleId: '',
-    // 线路销售id
-    lineType: '',
-    // 线路类型(:供给性线路 2：替换型线路)、
-    monthNo: '',
-    // 预计月出车天数、
-    provinceArea: '',
-    // 配送区域-省
-    remark: '',
-    // 备注信息/线路描述
-    returnBill: '',
-    // 是否需要回单（是 2否）
-    returnWarehouse: '',
-    // 是否需要返仓（是 2否）
-    settlementCycle: '',
-    // 结算周期（：现结 2：周结 3：半月结 4：月结 5：季度结）
-    settlementDays: '',
-    // 结算天数（：7天 2：0天 3：5天 4：30天 5：45天 6：60天 7：90天）
-    shipperOffer: '',
-    // 预计货主月报价(元)
-    stabilityRate: '',
-    // 线路稳定性（：一个月内（不稳定） 2：两个月内（不稳定） 3：2-4个月（一般稳定） 4：4个月以上（很稳定））
-    volume: '',
-    // 预计每件货物总体积
-    waitDirveValidity: '',
-    // 等待上车有效期
-    warehouseCity: '',
-    // 仓位置-市
-    warehouseCounty: '',
-    // 仓位置-区、县
-    warehouseDistrict: '',
-    // 仓位置-详细地址
-    warehouseProvince: '',
-    // 仓位置-省
-    warehouseTown: ''
-    // 仓位置-乡镇、街道
+    'cityArea': 110100,
+    'countyArea': 110105,
+    'districtArea': '北京八城666',
+    'provinceArea': 110000,
+    'auditState': 1,
+    'busiType': 0,
+    'carType': 1,
+    'cargoType': 1,
+    'carry': 2,
+    'city': 110100,
+    'customerId': 'HX202007080001',
+    'dayNo': 5,
+    'deliveryNo': 6,
+    'deliveryWeekCycle': '1,2,3',
+    'deployNo': 20,
+    'deployNoChangeReason': 0,
+    'distance': 20,
+    'everyTripGuaranteed': 100,
+    'everyUnitPrice': 80,
+    'goodsWeight': 2,
+    'handlingDifficultyDegree': 3,
+    'incomeSettlementMethod': 1,
+    'lineName': '自行车配送666',
+    'lineRank': 86,
+    'lineSaleId': 48,
+    'lineType': 1,
+    'monthNo': 10,
+    'remark': '线路备注6666',
+    'returnBill': 1,
+    'returnWarehouse': 1,
+    'settlementCycle': 2,
+    'settlementDays': 3,
+    'shelvesState': 1,
+    'shipperOffer': 1000,
+    'stabilityRate': 1,
+    'volume': 10,
+    'waitDirveValidity': '1595692800000',
+    'warehouseCity': 110000,
+    'warehouseCounty': 110105,
+    'warehouseDistrict': '仓库详细位置666',
+    'warehouseProvince': 110100,
+    'lineDeliveryInfoFORMS': [{
+      'workingTimeStart': '00:00',
+      'workingTimeEnd': '00:30'
+    }, {
+      'workingTimeStart': '01:45',
+      'workingTimeEnd': '03:15'
+    }, {
+      'workingTimeStart': '02:45',
+      'workingTimeEnd': '03:30'
+    }, {
+      'workingTimeStart': '03:45',
+      'workingTimeEnd': '04:45'
+    }],
+    'warehouseTown': '110105110000'
   }
+  // private ruleForm:any = {
+  //   carType: '',
+  //   // 选择车型
+  //   cargoType: '',
+  //   // 货物类型
+  //   carry: '',
+  //   // 是否搬运（是 2否）
+  //   city: '',
+  //   // 城市（已开通业务的）
+  //   cityArea: '',
+  //   // 配送区域-市
+  //   countyArea: '',
+  //   // 配送区域-区、县
+  //   customerId: '',
+  //   // 货主编号id
+  //   dayNo: '',
+  //   // 每日配送趟数
+  //   deliveryNo: '',
+  //   // 预计每日平均配送点位数
+  //   deliveryWeekCycle: '',
+  //   // 配送周期(周一至周日对应数字拼接)
+  //   deployNo: '',
+  //   // 可上车数量
+  //   deployNoChangeReason: '',
+  //   // 可上车数变化原因
+  //   distance: '',
+  //   // 预计每日平均总里程（公里）
+  //   districtArea: '',
+  //   // 具体配送区域范围
+  //   everyTripGuaranteed: '',
+  //   // 每趟保底、货主单趟报价(元)
+  //   everyUnitPrice: '0',
+  //   // 每趟提成(元)
+  //   goodsWeight: '',
+  //   // 总货物重量(: T以下 2: -3T 3: 3-5T 4: 5T以上)
+  //   handlingDifficultyDegree: '0',
+  //   // 装卸难度
+  //   incomeSettlementMethod: '',
+  //   // 收入结算方式：:传站 2:多点配
+  //   lineDeliveryInfoFORMS: [],
+  //   // 配送时间
+  //   lineId: '',
+  //   // 线路id
+  //   lineName: '',
+  //   // 内部使用线路名称
+  //   lineSaleId: '',
+  //   // 线路销售id
+  //   lineType: '',
+  //   // 线路类型(:供给性线路 2：替换型线路)、
+  //   monthNo: '',
+  //   // 预计月出车天数、
+  //   provinceArea: '',
+  //   // 配送区域-省
+  //   remark: '',
+  //   // 备注信息/线路描述
+  //   returnBill: '',
+  //   // 是否需要回单（是 2否）
+  //   returnWarehouse: '',
+  //   // 是否需要返仓（是 2否）
+  //   settlementCycle: '',
+  //   // 结算周期（：现结 2：周结 3：半月结 4：月结 5：季度结）
+  //   settlementDays: '',
+  //   // 结算天数（：7天 2：0天 3：5天 4：30天 5：45天 6：60天 7：90天）
+  //   shipperOffer: '',
+  //   // 预计货主月报价(元)
+  //   stabilityRate: '',
+  //   // 线路稳定性（：一个月内（不稳定） 2：两个月内（不稳定） 3：2-4个月（一般稳定） 4：4个月以上（很稳定））
+  //   volume: '',
+  //   // 预计每件货物总体积
+  //   waitDirveValidity: '',
+  //   // 等待上车有效期
+  //   warehouseCity: '',
+  //   // 仓位置-市
+  //   warehouseCounty: '',
+  //   // 仓位置-区、县
+  //   warehouseDistrict: '',
+  //   // 仓位置-详细地址
+  //   warehouseProvince: '',
+  //   // 仓位置-省
+  //   warehouseTown: ''
+  //   // 仓位置-乡镇、街道
+  // }
   private rules:any = {
     customerId: [
       { required: true, message: '货主不能为空', trigger: 'blur' }
@@ -633,7 +633,7 @@ export default class CreatLine extends Vue {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
       let goodsType = type_of_goods.map(function(ele:any) {
-        return { type: Number(ele.dictValue), label: ele.dictLabel }
+        return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
       let difficulty = handling_difficulty_degree.map(function(ele:any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }

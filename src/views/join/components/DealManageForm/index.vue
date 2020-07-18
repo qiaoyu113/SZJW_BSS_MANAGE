@@ -8,7 +8,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="订单编号">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.orderId"
                     placeholder="请输入货主编号"
                     clearable
                   />
@@ -17,7 +17,7 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="司机姓名">
                   <el-input
-                    v-model="listQuery.name"
+                    v-model="listQuery.diverName"
                     placeholder="请输入联系人"
                     clearable
                   />
@@ -25,24 +25,30 @@
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="城市">
-                  <el-input
-                    v-model="listQuery.name"
-                    placeholder="请输入联系电话"
-                    clearable
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="加盟经理">
                   <el-select
                     v-model="listQuery.city"
-                    placeholder="请选择"
+                    placeholder="请选择城市"
                   >
                     <el-option
                       v-for="item in optionsCity"
                       :key="item.codeVal"
                       :label="item.code"
                       :value="item.codeVal"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="加盟经理">
+                  <el-select
+                    v-model="listQuery.joinManageId"
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in optionsJoin"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -88,7 +94,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetJoinManageList } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -103,6 +109,7 @@ export default class extends Vue {
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private DateValueChild: any[] = []; // DateValue的赋值项
+  private optionsJoin: any[] = []
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
@@ -153,6 +160,7 @@ export default class extends Vue {
 
   created() {
     this.getDictionary()
+    this.getJoinManageList()
   }
 
   // 匹配创建tags标签
@@ -167,6 +175,19 @@ export default class extends Vue {
           }
         }
         break
+      case 'orderId':
+        vodeName = value
+        break
+      case 'diverName':
+        vodeName = value
+        break
+      case 'joinManageId':
+        for (let entry of this.optionsJoin) {
+          if (entry.id === value) {
+            vodeName = entry.name
+          }
+        }
+        break
       default:
         vodeName = ''
         break
@@ -175,11 +196,20 @@ export default class extends Vue {
   }
 
   private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
-    if (data.success) {
-      this.optionsCity = data.data
-    } else {
-      this.$message.error(data)
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.optionsCity = res.data.map(function(item:any) {
+          return {
+            code: item.name,
+            codeVal: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
     }
   }
 
@@ -200,6 +230,16 @@ export default class extends Vue {
   private reset() {
     for (let key in this.listQuery) {
       this.listQuery[key] = ''
+    }
+  }
+
+  // 获取加盟经理
+  private async getJoinManageList() {
+    const { data } = await GetJoinManageList({})
+    if (data.success) {
+      this.optionsJoin = data.data
+    } else {
+      this.$message.error(data)
     }
   }
 }

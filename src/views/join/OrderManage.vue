@@ -266,7 +266,7 @@
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId, 1)"
+                    @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     日志
                   </el-dropdown-item>
