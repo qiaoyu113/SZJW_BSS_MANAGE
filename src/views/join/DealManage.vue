@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
+        @handle-query="getList"
       />
     </SuggestContainer>
 
@@ -20,16 +21,16 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <el-button
+        <!-- <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
           name="cluelist_creat_btn"
           @click="showDialog.visible = true"
         >
-          <i class="el-icon-s-operation" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">创建客户</span>
-        </el-button>
+        </el-button> -->
 
         <el-dropdown
           :hide-on-click="false"
@@ -252,16 +253,17 @@ export default class extends Vue {
       {
         label: '全部',
         name: '0',
-        num: 187
+        num: ''
       },
       {
         label: '待交付',
         name: '1',
-        num: 1
+        num: ''
       },
       {
         label: '已交付',
-        name: '2'
+        name: '2',
+        num: ''
       }
     ];
     private listQuery: IState = {

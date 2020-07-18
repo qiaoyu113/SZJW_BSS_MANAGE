@@ -51,10 +51,10 @@
                 <el-form-item label="分类">
                   <el-select
                     v-model="listQuery.classification"
-                    placeholder="请选择"
+                    placeholder="请选择分类"
                   >
                     <el-option
-                      v-for="item in optionsCity"
+                      v-for="item in optionsClassification"
                       :key="item.dictValue"
                       :label="item.dictLabel"
                       :value="item.dictValue"
@@ -70,9 +70,9 @@
                   >
                     <el-option
                       v-for="item in optionsCity"
-                      :key="item.dictValue"
-                      :label="item.dictLabel"
-                      :value="item.dictValue"
+                      :key="item.codeVal"
+                      :label="item.code"
+                      :value="item.codeVal"
                     />
                   </el-select>
                 </el-form-item>
@@ -80,11 +80,11 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="销售">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.lineSaleId"
                     placeholder="请选择"
                   >
                     <el-option
-                      v-for="item in optionsCity"
+                      v-for="item in optionsSale"
                       :key="item.codeVal"
                       :label="item.code"
                       :value="item.codeVal"
@@ -161,6 +161,8 @@ export default class extends Vue {
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private optionsCompany: any[] = []
+  private optionsSale: any[] = []
+  private optionsClassification: any[] = []
   private DateValueChild: any[] = []; // DateValue的赋值项
   private DateValueChild2: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
@@ -231,8 +233,8 @@ export default class extends Vue {
       // 根据listQuery中的key来判断
       case 'city':
         for (let entry of this.optionsCity) {
-          if (entry.dictValue === value) {
-            vodeName = entry.dictLabel
+          if (entry.codeVal === value) {
+            vodeName = entry.code
           }
         }
         break
@@ -247,6 +249,20 @@ export default class extends Vue {
         break
       case 'customerCompanyName':
         for (let entry of this.optionsCompany) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'lineSaleId':
+        for (let entry of this.optionsSale) {
+          if (entry.dictValue === value) {
+            vodeName = entry.dictLabel
+          }
+        }
+        break
+      case 'classification':
+        for (let entry of this.optionsClassification) {
           if (entry.dictValue === value) {
             vodeName = entry.dictLabel
           }
