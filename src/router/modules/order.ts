@@ -120,7 +120,7 @@ const orderRouter: RouteConfig = {
       name: 'DealForm',
       meta: {
         apiUrl: 'root',
-        activeMenu: '/join/contractlist',
+        activeMenu: '/join/dealmanage',
         title: 'dealForm',
         noCache: false,
         hidden: true
@@ -133,6 +133,7 @@ const orderRouter: RouteConfig = {
       meta: {
         apiUrl: 'root',
         title: 'dealManageDetail',
+        activeMenu: '/join/dealmanage',
         noCache: false,
         hidden: true
       }

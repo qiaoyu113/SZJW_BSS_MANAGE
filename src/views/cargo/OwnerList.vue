@@ -422,7 +422,7 @@ export default class extends Vue {
       {
         label: '全部',
         name: '0',
-        num: 187
+        num: ''
       }
     ];
     private listQuery: IState = {
@@ -514,6 +514,9 @@ export default class extends Vue {
       const { data } = await GetCustomerList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        if (data.title) {
+          this.tab[0].num = data.title.all
+        }
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {

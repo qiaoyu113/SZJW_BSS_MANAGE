@@ -13,6 +13,7 @@
           v-model="ruleForm[params.prop]"
           :type="params.kind"
           v-bind="params.tagAttrs || {}"
+          v-on="params.listeners"
         />
       </el-form-item>
       <el-form-item
@@ -20,6 +21,7 @@
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
+        :required="params.required"
       >
         <el-date-picker
           v-model="ruleForm[params.prop]"
@@ -30,6 +32,7 @@
           end-placeholder="结束日期"
           :placeholder="params.placeholder"
           v-bind="params.tagAttrs || {}"
+          v-on="params.listeners"
         />
       </el-form-item>
 
@@ -81,6 +84,48 @@
             :value="sub.value"
           />
         </el-select>
+      </el-form-item>
+
+      <el-form-item
+        v-if="params.type === 7"
+        :label-width="width+'px'"
+        :label="params.label+'：'"
+        :prop="params.prop"
+        :required="params.required"
+      >
+        <el-time-select
+          v-model="ruleForm[params.prop].workingTimeStart"
+          style="margin-right:10px"
+          :picker-options="{
+            step: '00:15'
+          }"
+          v-bind="params.tagAttrs || {}"
+          placeholder="开始日期"
+          v-on="params.listeners"
+        />
+        <el-time-select
+          v-model="ruleForm[params.prop].workingTimeEnd"
+          :picker-options="{
+            step: '00:15'
+          }"
+          v-bind="params.tagAttrs || {}"
+          placeholder="结束日期"
+          v-on="params.listeners"
+        />
+      </el-form-item>
+
+      <el-form-item
+        v-if="params.type === 8"
+        :label-width="width+'px'"
+        :label="params.label+'：'"
+        :prop="params.prop"
+      >
+        <el-cascader
+          v-model="ruleForm[params.prop]"
+          v-bind="params.tagAttrs || {}"
+          :options="params.options"
+          v-on="params.listeners"
+        />
       </el-form-item>
     </el-col>
   </div>
