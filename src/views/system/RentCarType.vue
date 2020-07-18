@@ -272,6 +272,8 @@ import { RentCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
+import { HandlePages } from '@/utils/index'
+
 import { GetOpenCityData } from '@/api/common'
 import { getProductList, shelvesOrTheshelves, createProduct, updateProduct } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
@@ -419,6 +421,7 @@ export default class extends Vue {
     const { data } = await getProductList(postData)
     if (data.success) {
       this.list = data.data
+      data.page = await HandlePages(data.page)
       this.total = data.page.total
     } else {
       this.$message.error(data)
