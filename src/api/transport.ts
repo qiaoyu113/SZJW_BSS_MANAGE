@@ -76,10 +76,11 @@ export const getCarrierInfoList = (data: any) =>
   })
 
 // 查询司机列表
-export const driverList = () =>
+export const driverList = (params:any) =>
   request({
-    url: `${ptrfix}/v1/driver/getDriverAll`,
-    method: 'get'
+    url: `/driver/v1/driver/getDriverAll`,
+    method: 'get',
+    params
   })
 
 /* 获取司机索引列表 */

@@ -96,7 +96,7 @@ export const shelveLine = (data: any) =>
 // 线路列表
 export const lineListAll = (data: any) =>
   request({
-    url: `${ptrfix}/v1/line/lineInfo/queryLineListByConditionsQuery`,
+    url: `/line-center/v1/line/lineInfo/queryLineListByConditionsQuery`,
     method: 'post',
     data
   })

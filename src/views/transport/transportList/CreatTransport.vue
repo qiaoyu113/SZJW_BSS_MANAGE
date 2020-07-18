@@ -27,8 +27,12 @@
               <span class="phoneLabel">签约司机姓名（手机号）:</span>
               <el-select
                 v-model="phoneNum"
+                :remote-method="remoteMethod"
+                :loading="loading"
                 filterable
-                placeholder="请选择司机"
+                remote
+                reserve-keyword
+                placeholder="请输入司机姓名或完整手机号"
                 @change="getOrderList"
               >
                 <el-option
@@ -59,7 +63,7 @@
                 >
                   <i :class="( index ) === activeItem ? 'el-icon-star-on' : 'el-icon-star-off'" />
                   <div
-                    :class=" item.orderId === 'DD2020071410095' ? 'orderItem' : 'orderItemNo'"
+                    :class=" item.flag ? 'orderItem' : 'orderItemNo'"
                     @click="orderGet(index,item)"
                   >
                     <span class="orderNum">订单编号：{{ item.orderId }}</span>
@@ -187,7 +191,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { saveCarrierInfo, transportOrderList, transportOrderDetail, driverList } from '@/api/transport'
-import { GetDictionary, GetDictionaryList, GetOpenCityData } from '@/api/common'
+import { GetDictionary, GetDictionaryList, GetOpenCityData, getOperManager, GetCityByCode } from '@/api/common'
 import '@/styles/common.scss'
 
   interface IState {
@@ -203,12 +207,15 @@ import '@/styles/common.scss'
   })
 
 export default class extends Vue {
+  private pagestate:boolean = false
+  private carrierId:string = ''
   private canClick:boolean = false
   private IntentionalCompartment:any[] =[]
   private dayWork:any[] =[]
   private expectedMonthlyIncome:any[] =[]
   private typeGoods:any[] =[]
   private driverId:string = ''
+  private orderId:string = ''
   private driverOptions:any[] = []
   private chooseOrderState:boolean = false
   private isHasOrder:boolean = false
@@ -258,6 +265,7 @@ export default class extends Vue {
     homeDistrict: null,
     // 家庭住址-具体区域
     homeProvince: null,
+    address: [],
     // 家庭住址-省
     expMonthlyIncome: null,
     // 期望月收入
@@ -328,6 +336,43 @@ export default class extends Vue {
       options: []
     }
   ]
+  private async loadhouseAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.loadCityByCode(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  async loadCityByCode(params:string[]) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: params.length > 2
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
   private formItemOther:any[] = [
     {
       type: 1,
@@ -366,11 +411,15 @@ export default class extends Vue {
       }
     },
     {
-      type: 1,
+      type: 8,
       label: '家庭住址',
-      key: 'age',
+      key: 'address',
       tagAttrs: {
-        placeholder: '请输入司机年龄'
+        placeholder: '请输入家庭住址',
+        props: {
+          lazy: true,
+          lazyLoad: this.loadhouseAddress
+        }
       }
     },
     {
@@ -409,11 +458,11 @@ export default class extends Vue {
       options: [
         {
           label: '否',
-          value: '2'
+          value: 2
         },
         {
           label: '是',
-          value: '1'
+          value: 1
         }
       ]
     },
@@ -502,10 +551,14 @@ export default class extends Vue {
   }
   private async handlePassClick(val:boolean) {
     if (val) {
-      for (var k in this.orderInfo) {
-        if (this.orderInfo[k] === null) {
-          delete this.orderInfo[k]
-        }
+      if (!this.pagestate) {
+        this.orderInfo.orderId = this.orderId
+        this.orderInfo.driverId = this.driverId
+      }
+      if (this.orderInfo.address.length !== 0) {
+        this.orderInfo.homeProvince = this.orderInfo.address[0]
+        this.orderInfo.homeCity = this.orderInfo.address[1]
+        this.orderInfo.homeCounty = this.orderInfo.address[2]
       }
       let { data } = await saveCarrierInfo(this.orderInfo)
       if (data.success) {
@@ -520,19 +573,22 @@ export default class extends Vue {
     }
   }
 
-  private async getDictionary() {
-    const { data } = await GetDictionary({ dictType: 'online_city' })
-    if (data.success) {
-      this.formItem.map(ele => {
-        if (ele.key === 'workCity') {
-          let list:any[] = data.data
-          ele.options = list.map(item => {
-            return { label: item.code, value: item.codeVal }
-          })
-        }
-      })
+  // 搜索司机列表
+  private async remoteMethod(query: any) {
+    if (query !== '') {
+      this.loading = true
+      let { data } = await driverList({ key: query })
+      if (data.success) {
+        let driverOptions = data.data.map(function(ele:any) {
+          return { value: ele.driverId, label: `${ele.name}(${ele.phone})` }
+        })
+        this.driverOptions = driverOptions
+        this.loading = false
+      } else {
+        this.$message.error(data.data.errorMsg)
+      }
     } else {
-      this.$message.error(data)
+      this.driverOptions = []
     }
   }
 
@@ -591,10 +647,24 @@ export default class extends Vue {
     } else {
       this.$message.error(data)
     }
+    let manager = await getOperManager()
+    if (manager.data.success) {
+      let arr = manager.data.data.map(function(ele:any) {
+        return { value: Number(ele.id), label: ele.name }
+      })
+      this.formItem.map(ele => {
+        if (ele.key === 'gmId') {
+          ele.options = arr
+        }
+      })
+    } else {
+      this.$message.error(data)
+    }
   }
 
   private orderGet(index:number, ele:any) {
-    if (ele.orderId === 'DD2020071410095') {
+    this.orderId = ele.orderId
+    if (!ele.flag) {
       return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
     } else {
       this.isHasOrder = true
@@ -603,6 +673,7 @@ export default class extends Vue {
   }
 
   private async getOrderList(val:any) {
+    this.driverId = val
     let { data } = await transportOrderList({ driverId: val })
     if (data.success) {
       this.orderList = data.data
@@ -629,24 +700,12 @@ export default class extends Vue {
     if (data.success) {
       this.activeCreat = 2
       let orderInfo = data.data
-      // for (let ele in orderInfo) {
-      //   if (orderInfo[ele] === 0) {
-      //     return orderInfo[ele] === ''
-      //   }
-      // }
-      this.orderInfo = orderInfo
-    } else {
-      this.$message.error(data.data.errorMsg)
-    }
-  }
-
-  private async getDriverList() {
-    let { data } = await driverList()
-    if (data.success) {
-      let driverOptions = data.data.map(function(ele:any) {
-        return { value: ele.driverId, label: `${ele.name}(${ele.phone})` }
-      })
-      this.driverOptions = driverOptions
+      for (let ele in orderInfo) {
+        if (orderInfo[ele] === 0) {
+          orderInfo[ele] = ''
+        }
+      }
+      this.orderInfo = { ...this.orderInfo, ...orderInfo }
     } else {
       this.$message.error(data.data.errorMsg)
     }
@@ -656,36 +715,21 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
-  // activated() {
-  //   this.fetchData()
-  //   let driverId = this.$route.query.driverId
-  //   let orderId = this.$route.query.orderId
-  //   if (driverId && orderId) {
-  //     this.isEditor = false
-  //     this.activeCreat = 2
-  //     // this.phoneNum = driverId as string
-  //   } else {
-  //     this.isEditor = true
-  //     this.activeCreat = 1
-  //   }
-  //   this.list = this.states.map(item => {
-  //     return { value: `value:${item}`, label: `label:${item}` }
-  //   })
-  // }
 
   mounted() {
     this.fetchData()
     let carrierId = this.$route.query.carrierId as string
+    this.carrierId = carrierId
     if (carrierId) {
+      this.pagestate = true
       this.isEditor = false
       this.activeCreat = 2
       this.orderInfo.carrierId = carrierId
       this.getCarrierDetail(carrierId)
-      // this.phoneNum = driverId as string
     } else {
+      this.pagestate = false
       this.isEditor = true
       this.activeCreat = 1
-      this.getDriverList()
     }
   }
 }
