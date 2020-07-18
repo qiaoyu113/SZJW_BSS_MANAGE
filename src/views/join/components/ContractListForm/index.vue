@@ -188,16 +188,6 @@ export default class extends Vue {
     this.getJoinManageList()
   }
 
-  // 获取加盟经理
-  private async getJoinManageList() {
-    const { data } = await GetJoinManageList({})
-    if (data.success) {
-      this.optionsJoin = data.data
-    } else {
-      this.$message.error(data)
-    }
-  }
-
   // 匹配创建tags标签
   private matchName(key: any, value: any) {
     let vodeName = ''
@@ -238,6 +228,15 @@ export default class extends Vue {
         break
     }
     return vodeName
+  }
+  // 获取加盟经理
+  private async getJoinManageList() {
+    const { data } = await GetJoinManageList({})
+    if (data.success) {
+      this.optionsJoin = data.data
+    } else {
+      this.$message.error(data)
+    }
   }
   // 查询城市
   private async getDictionaryCity() {
@@ -291,6 +290,7 @@ export default class extends Vue {
     for (let key in this.listQuery) {
       this.listQuery[key] = ''
     }
+    this.DateValueChild = []
   }
 }
 </script>

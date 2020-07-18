@@ -370,6 +370,7 @@ export default class extends Vue {
     for (let key in this.listQuery) {
       this.listQuery[key] = ''
     }
+    this.DateValueChild = []
   }
 }
 </script>

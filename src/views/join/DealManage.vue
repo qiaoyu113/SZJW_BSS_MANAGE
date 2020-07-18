@@ -196,7 +196,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetDelieverList } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -274,7 +274,21 @@ export default class extends Vue {
       endDate: '',
       startDate: '',
       state: '',
-      lineSaleId: ''
+      lineSaleId: '',
+      'busiType': '',
+      'cooperationModel': '',
+      'createDate': '',
+      'createId': '',
+      'createSource': '',
+      'deliverDate': '',
+      'diverName': '',
+      'driverId': '',
+      'isDeliver': '',
+      'joinManageId': '',
+      'orderId': '',
+      'pageNumber': '',
+      'payType': '',
+      'status': ''
     };
 
     created() {
@@ -320,7 +334,7 @@ export default class extends Vue {
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
-      const { data } = await GetCustomerList(this.listQuery)
+      const { data } = await GetDelieverList(this.listQuery)
       if (data.success) {
         this.list = data.data
         data.page = await HandlePages(data.page)

@@ -21,17 +21,6 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <el-button
-          :class="isPC ? 'btn-item' : 'btn-item-m'"
-          type="primary"
-          size="small"
-          name="cluelist_creat_btn"
-          @click="showDialog.visible = true"
-        >
-          <i class="el-icon-s-operation" />
-          <span v-if="isPC">创建客户</span>
-        </el-button>
-
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
@@ -554,7 +543,7 @@ export default class extends Vue {
 
     // 跳转线索
     private goClue(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'EditClue', query: { id: id } })
+      this.$router.push({ name: 'ConversionClue', query: { id: id } })
     }
 
     // 批量操作

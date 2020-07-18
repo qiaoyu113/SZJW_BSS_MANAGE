@@ -43,20 +43,20 @@ export const GetContractDetail = (params: any) =>
     params
   })
 
-// 交付提交
-export const SubmitOrderDeliver = (params: any) =>
-  request({
-    url: '/order/vl/orderDeliver/submitOrderDeliver',
-    method: 'post',
-    params
-  })
-
 // 交付详情
 export const GetOrderDeliverDetail = (params: any) =>
   request({
-    url: '/order/vl/orderDeliver/orderDeliverDetail',
+    url: '/order/vl/order/orderDeliver/orderDeliverDetail',
     method: 'get',
     params
+  })
+
+// 提交交付信息
+export const SubmitOrderDeliver = (params: any) =>
+  request({
+    url: '/order/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
+    method: 'post',
+    data: params
   })
 
 // 交付详情
@@ -142,6 +142,21 @@ export const PostAuditOrder = (params: any) =>
 export const PostConfirmOrder = (params: any) =>
   request({
     url: '/order/v1/order/confirmOrder',
+    method: 'post',
+    data: params
+  })
+
+// 订单确认
+export const GetDelieverList = (params: any) =>
+  request({
+    url: 'line_center/v1/line/customer/queryLineCustomerList',
+    method: 'post',
+    data: params
+  })
+  // 订单确认
+export const GetOperManagerListByUserId = (params: any) =>
+  request({
+    url: '/order/v1/order/deliever/getDelieverList',
     method: 'post',
     data: params
   })
