@@ -21,11 +21,11 @@ export const GetOrderLog = (params: any) =>
     params
   })
 
-export const GetDriverList = (data: any) =>
+export const GetDriverList = (params: any) =>
   request({
-    url: '/bss/v1/bss/driver/selectListByKey',
-    method: 'post',
-    data
+    url: '/driver/v1/driver/getDriverAll',
+    method: 'get',
+    params
   })
 
 export const GetDriverDetail = (params: any) =>
@@ -122,7 +122,7 @@ export const GetOrderInfoList = (params: any) =>
     data: params
   })
 
-// 订单列表
+// 取消订单
 export const CancelOrder = (params: any) =>
   request({
     url: '/order/v1/order/cancelOrder',

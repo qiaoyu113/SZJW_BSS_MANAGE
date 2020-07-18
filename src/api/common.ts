@@ -17,7 +17,7 @@ export const GetDictionaryList = (data: any) =>
 export const GetJoinManageList = (data: any) =>
   request({
     url: `${baseURL}/v1/base/user/getManagerListByUserId`,
-    method: 'post',
+    method: 'get',
     data
   })
 
@@ -61,4 +61,13 @@ export const GetManagerLists = () =>
   request({
     url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
     method: 'post'
+  })
+
+// 上传文件
+export const Upload = (params: any, data: any) =>
+  request({
+    url: `${baseURL}/v1/base/upload/uploadOSS/${params.folder}/${params.isEncode}/${params.expire}`,
+    method: 'post',
+    // headers: { 'Content-Type': 'multipart/form-data' },
+    data
   })
