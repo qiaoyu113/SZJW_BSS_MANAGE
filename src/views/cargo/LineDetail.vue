@@ -8,52 +8,52 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="货主姓名"
-            value="北京京东"
+            :value="ruleForm.bussinessName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="内部使用线路名称"
-            value="北京京东传站618"
+            :value="ruleForm.lineName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="备注信息/线路描述"
-            value="北京京东传站618"
+            :value="ruleForm.remark"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路类型"
-            value="替换型"
+            :value="ruleForm.lineTypeName"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="可上车数"
-            value="1辆"
+            :value="ruleForm.deployNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="仓位置"
-            value="四川省成都市青白江区祥福镇宇培分拨中心"
+            :value="ruleForm.warehouse"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="上架有效期（天）"
-            value="1998年7月1日"
+            :value="ruleForm.waitDirveValidity"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路稳定性"
-            value="2-4个月（一般稳定）"
+            :value="ruleForm.stabilityRateName"
           />
         </el-col>
       </el-row>
@@ -66,46 +66,58 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="选择车型"
-            value="4.2米厢货"
+            :value="ruleForm.carTypeName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="配送区域"
-            value="北京市朝阳区全区域"
+            value="字段待定"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="具体区域范围"
-            value="全区域"
+            :value="ruleForm.districtArea"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
+            v-if="ruleForm.returnWarehouse === 1"
             name="是否需要返仓"
             value="是"
+          />
+          <DetailItem
+            v-if="ruleForm.returnWarehouse === 2"
+            name="是否需要返仓"
+            value="否"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
+            v-if="ruleForm.returnBill === 1"
             name="是否需要回单"
             value="是"
+          />
+          <DetailItem
+            v-if="ruleForm.returnBill === 2"
+            name="是否需要回单"
+            value="否"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计每日平均配送点位数"
-            value="2"
+            :value="ruleForm.deliveryNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计每日平均总公里数（公里）"
-            value="60"
+            :value="ruleForm.distance"
           />
         </el-col>
       </el-row>
@@ -119,59 +131,78 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="每日配送趟数"
-            value="4"
+            :value="ruleForm.dayNo"
           />
         </el-col>
-        <el-col
-          v-for="index in 4"
-          :key="index"
-          :span="isPC ? 6 : 24"
-        >
-          <DetailItem
-            name="预计工作时间"
-            value="09:00-10:22"
-          />
-        </el-col>
-        <el-col :span="isPC ? 6 : 24">
-          <DetailItem
-            name="预计每日平均总公里数（公里）"
-            value="60"
-          />
-        </el-col>
+        <template v-if="ruleForm.dayNo">
+          <el-col
+            v-for="index in ruleForm.dayNo"
+            :key="index"
+            :span="isPC ? 6 : 24"
+          >
+            <DetailItem
+              name="预计工作时间"
+              :value="time(index)"
+            />
+          </el-col>
+        </template>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计月出车天数"
-            value="30"
+            :value="ruleForm.monthNo"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="结算方式"
-            value="整车"
+            :value="ruleForm.incomeSettlementMethodName"
           />
         </el-col>
-        <el-col :span="isPC ? 6 : 24">
+
+        <el-col
+          v-if="ruleForm.incomeSettlementMethodName === 2"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
-            name="货主单趟报价"
-            value="300"
+            name="每趟保底（元）"
+            :value="ruleForm.everyTripGuaranteed"
+          />
+        </el-col>
+        <el-col
+          v-if="ruleForm.incomeSettlementMethodName === 2"
+          :span="isPC ? 6 : 24"
+        >
+          <DetailItem
+            name="每趟提成订单"
+            :value="ruleForm.bussinessName"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计货主月报价"
-            value="24000"
+            :value="ruleForm.shipperOffer"
           />
         </el-col>
-        <el-col :span="isPC ? 6 : 24">
+
+        <el-col
+          v-if="ruleForm.incomeSettlementMethodName === 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
-            name="结算周期"
-            value="月结"
+            name="货主单趟报价"
+            :value="ruleForm.everyTripGuaranteed"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="结算天数"
-            value="30天"
+            :value="ruleForm.settlementDaysName"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="结算周期"
+            :value="ruleForm.settlementCycleName"
           />
         </el-col>
         <el-col
@@ -179,40 +210,56 @@
           class="detail-group"
         >
           <template>
-            <span class="detail-title">配送周期:</span>
+            <span class="detail-title">配送周期</span>
             <el-checkbox-group v-model="checkList">
               <el-checkbox
-                label="全选"
+                label=""
                 disabled
-              />
+              >
+                全选
+              </el-checkbox>
               <el-checkbox
-                label="周一"
+                :label="1"
                 disabled
-              />
+              >
+                周一
+              </el-checkbox>
               <el-checkbox
-                label="周二"
+                :label="2"
                 disabled
-              />
+              >
+                周二
+              </el-checkbox>
               <el-checkbox
-                label="周三"
+                :label=" 3"
                 disabled
-              />
+              >
+                周三
+              </el-checkbox>
               <el-checkbox
-                label="周四"
+                :label="4"
                 disabled
-              />
+              >
+                周四
+              </el-checkbox>
               <el-checkbox
-                label="周五"
+                :label="5"
                 disabled
-              />
+              >
+                周五
+              </el-checkbox>
               <el-checkbox
-                label="周六"
+                :label="6"
                 disabled
-              />
+              >
+                周六
+              </el-checkbox>
               <el-checkbox
-                label="周日"
+                :label="7"
                 disabled
-              />
+              >
+                周日
+              </el-checkbox>
             </el-checkbox-group>
           </template>
         </el-col>
@@ -226,18 +273,21 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路打分"
-            value="90"
+            :value="ruleForm.lineRank"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路角色"
-            value="梧桐专车"
+            :value="ruleForm.busiTypeName"
           />
         </el-col>
       </el-row>
     </SectionContainer>
-    <div class="steps">
+    <div
+      v-if="pageStatus === 1"
+      class="steps"
+    >
       <el-steps
         :active="2"
         align-center
@@ -259,72 +309,213 @@
         />
       </el-steps>
     </div>
+    <div
+      v-if="pageStatus === 2"
+      class="btnBox"
+    >
+      <el-button
+        type="primary"
+        name="lineaudit-btn-creat"
+        @click="pass"
+      >
+        审核通过
+      </el-button>
+      <el-button
+        type="primary"
+        name="lineaudit-btn-creat"
+        @click="auditBack = true"
+      >
+        审核拒绝
+      </el-button>
+    </div>
+
+    <Dialog
+      :visible.sync="auditBack"
+      :title="`驳回原因`"
+      :center="true"
+      :cancel="auditCancel"
+      :confirm="auditConfirm"
+    >
+      <div>
+        <div class="dioBox">
+          <span>原因：</span>
+          <el-input
+            v-model="auditBackText"
+            type="textarea"
+            placeholder="请至少输入5个字符"
+            minlength="5"
+            maxlength="100"
+            rows="5"
+            show-word-limit
+          />
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script lang="ts">
+import Dialog from '@/components/Dialog/index.vue'
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetLineDetail, approvedLine, notApprovedLine } from '@/api/cargo'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
-    @Component({
-      name: 'LineDetail',
-      components: {
-        DetailItem,
-        SectionContainer
-      }
-    })
+  @Component({
+    name: 'LineDetail',
+    components: {
+      DetailItem,
+      SectionContainer,
+      Dialog
+    }
+  })
 
 export default class extends Vue {
+  private auditBack:boolean = false
+  private auditBackText:string = ''
   private ruleForm:any = {
-    name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: ''
+    bussinessName: '',
+    carType: '',
+    carTypeName: '',
+    cargoType: '',
+    carry: '',
+    city: '',
+    cityArea: '',
+    cityAreaName: '',
+    countyArea: '',
+    countyAreaName: '',
+    createDate: '',
+    createId: '',
+    customerId: '',
+    dayNo: 0,
+    deadlineVO: '',
+    deliveryNo: '',
+    deliveryWeekCycle: '',
+    deployNo: '',
+    distance: '',
+    districtArea: '',
+    everyTripGuaranteed: '',
+    everyUnitPrice: '',
+    goodsWeight: '',
+    goodsWeightName: '',
+    handlingDifficultyDegree: '',
+    handlingDifficultyDegreeName: '',
+    id: '',
+    incomeSettlementMethod: '',
+    incomeSettlementMethodName: '',
+    lineDeliveryInfoFORMS: [],
+    lineId: '',
+    lineName: '',
+    lineRank: '',
+    lineSaleId: '',
+    lineSaleName: '',
+    lineType: '',
+    lineTypeName: '',
+    monthNo: '',
+    provinceArea: '',
+    provinceAreaName: '',
+    remark: '',
+    returnBill: '',
+    returnWarehouse: '',
+    settlementCycle: '',
+    settlementCycleName: '',
+    settlementDays: '',
+    settlementDaysName: '',
+    shelvesState: '',
+    shelvesStateName: '',
+    shipperOffer: '',
+    stabilityRate: '',
+    stabilityRateName: '',
+    timeDiff: '',
+    updateDate: '',
+    updateId: '',
+    waitDirveValidity: '',
+    warehouse: '',
+    warehouseCity: '',
+    warehouseCityName: '',
+    warehouseCounty: '',
+    warehouseCountyName: '',
+    warehouseDistrict: '',
+    warehouseProvince: '',
+    warehouseProvinceName: '',
+    warehouseTown: '',
+    warehouseTownName: ''
   }
+  private pageStatus = 0
+  private lineId:string = ''
 
-  private checkList:any[] = ['周一', '周末']
-
-  private rules:any = {
-    name: [
-      { required: true, message: '请输入活动名称', trigger: 'blur' },
-      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-    ],
-    region: [
-      { required: true, message: '请选择活动区域', trigger: 'change' }
-    ],
-    date1: [
-      { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-    ],
-    date2: [
-      { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-    ],
-    type: [
-      { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-    ],
-    resource: [
-      { required: true, message: '请选择活动资源', trigger: 'change' }
-    ],
-    desc: [
-      { required: true, message: '请填写活动形式', trigger: 'blur' }
-    ]
-  }
-
-  created() {
-  }
+  private checkList:any[] = []
 
   mounted() {
+    let lineId = this.$route.query.id
+    this.lineId = lineId as string
+    if (lineId) {
+      this.GetDetail()
+    }
+    let routeArr = this.$route.path.split('/')
+    if (routeArr[2] === 'linedetail') {
+      this.pageStatus = 1
+    } else {
+      this.pageStatus = 2
+    }
   }
 
-  activated() {
+  time(num:number) {
+    let obj = this.ruleForm['lineDeliveryInfoFORMS'][0]
+    return obj.workingTimeStart + '-' + obj.workingTimeEnd
+  }
+  /**
+   *详情
+   */
+  private async GetDetail() {
+    let { data: res } = await GetLineDetail({ lineId: this.lineId })
+    if (res.success) {
+      this.ruleForm = { ...this.ruleForm, ...res.data }
+      if (this.ruleForm.deliveryWeekCycle) {
+        this.checkList = this.ruleForm.deliveryWeekCycle.split(',')
+      } else {
+        this.checkList = []
+      }
+    } else {
+      this.$message.error(res.errorMsg)
+    }
+  }
+  private async auditConfirm(done: any) {
+    if ((this.auditBackText as string).length < 5 && !(this.auditBackText === '')) {
+      return this.$message.error('备注不得小于5个字符')
+    } else {
+      let params = {
+        lineId: this.lineId,
+        reason: this.auditBackText
+      }
+      let { data } = await notApprovedLine(params)
+      if (data.success) {
+        this.$message.success('审核拒绝完成')
+        done(this.$router.go(-1))
+      } else {
+        this.$message.error(data.errorMsg || data)
+      }
+    }
+  }
+  private auditCancel(done:any) {
+    this.auditBack = false
+  }
+
+  private async pass() {
+    let params = {
+      'lineId': this.lineId,
+      'reason': ''
+    }
+    let { data } = await approvedLine(params)
+    if (data.success) {
+      this.$message.success('审核通过完成')
+      this.$router.go(-1)
+    } else {
+      this.$message.error(data.errorMsg || data)
+    }
   }
 
   // 判断是否是PC
@@ -359,22 +550,43 @@ export default class extends Vue {
     font-weight: 400;
   }
   .detail-group{
-    padding: 10px;
-    display: flex;
-    align-items: center;
+    padding: 15px;
   }
-  .detail-title{
+  // .detail-title{
 
-    font-size: 14px;
-    color: #666;
-    font-weight: 400;
-    text-align: right;
-    padding-right: 16px;
-    box-sizing: border-box;
-  }
+  //   font-size: 14px;
+  //   color: #666;
+  //   font-weight: 400;
+  //   text-align: right;
+  //   padding-right: 16px;
+  //   box-sizing: border-box;
+  // }
     .steps{
       margin: 60px 0 30px 0;
       }
+       .detail-title {
+    font-size: 13px;
+    color: #9e9e9e;
+    font-weight: 400;
+    padding-right: 16px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-bottom: 6px;
+  }
+  .btnBox{
+    text-align: right;
+    padding-top: 20px;
+  }
+  .dioBox{
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      margin-bottom: 20px;
+      padding: 0 20px;
+      .el-textarea{
+        width: 60%!important;
+      }
+  }
 }
 </style>
 
@@ -387,22 +599,17 @@ export default class extends Vue {
   }
   .detail-group{
     padding: 10px 14px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    border-bottom: 1px solid #F8F9FA
   }
 
-   .detail-title{
-      width: 100%;
-      display: block;
-      font-size: 12px;
-      color: #666;
-      font-weight: 400;
-      text-align: left;
-      padding-right: 15px;
-      padding-bottom: 10px;
-      box-sizing: border-box;
-    }
+ .detail-title {
+    font-size: 13px;
+    color: #9e9e9e;
+    font-weight: 400;
+    padding-right: 16px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-bottom: 6px;
+}
     .steps{
       margin: 30px 0 20px 0;
     }
@@ -415,7 +622,7 @@ export default class extends Vue {
   }
 </style>
 <style scope>
-@media screen and (min-width: 701px) {
+/* @media screen and (min-width: 701px) {
   .el-select {
     width: 100%;
   }
@@ -431,5 +638,5 @@ export default class extends Vue {
   .el-input{
     width: 90%;
   }
-}
+} */
 </style>

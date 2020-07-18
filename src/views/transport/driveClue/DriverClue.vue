@@ -3,7 +3,7 @@
     <suggest-container
       :tab="tab"
       :tags="tags"
-      :active-name="listQuery.state"
+      :active-name="listQuery.status"
       @handle-query="handleQuery"
     >
       <!-- 查询表单 -->
@@ -102,16 +102,12 @@
       :operation-list="operationList"
       :table-data="tableData"
       :columns="columns"
-      row-key="a"
+      row-key="clueId"
       :page="page"
       @onPageSize="handlePageSize"
       @olclick="handleOlClick"
       @selection-change="handleChange"
     >
-      <template v-slot:phone="scope">
-        <span v-if="scope.row.isShow">{{ scope.row.phone | hidePhone }}</span>
-        <span v-else>{{ scope.row.phone }}</span>
-      </template>
       <template v-slot:status="scope">
         <span
           v-if="scope.row.status === 1"
@@ -125,9 +121,24 @@
           v-else-if="scope.row.status === 3"
           class="round giveup"
         >已放弃</span>
+        <span
+          v-else-if="scope.row.status === 4"
+          class="round giveup"
+        >已面试</span>
+        <span
+          v-else-if="scope.row.status === 5"
+          class="round giveup"
+        >已成交</span>
+        <span
+          v-else-if="scope.row.status === 6"
+          class="round giveup"
+        >已放弃</span>
       </template>
-      <template v-slot:lastTime="scope">
-        <span>{{ scope.row.lastTime | Timestamp }}</span>
+      <template v-slot:createDate="scope">
+        <span>{{ scope.row.createDate | Timestamp }}</span>
+      </template>
+      <template v-slot:followPerson="scope">
+        {{ scope.row.lastfollowRecordInfo && scope.row.lastfollowRecordInfo.followerName }}
       </template>
       <template v-slot:op="scope">
         <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
@@ -193,8 +204,8 @@
     </self-table>
     <!-- 线索分配 -->
     <clue-distribution
-      id="1"
       ref="clueDistribution"
+      :rows="muls"
     />
 
     <PitchBox
@@ -217,12 +228,14 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import SelfTable from '@/components/base/SelfTable.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
-import { GetDriverIndexesList } from '@/api/driver'
+import { GetSpecialInterviewLists } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import ClueDistribution from './components/clueDistribution.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { getLabel } from '@/utils/index.ts'
+import { delayTime } from '@/settings'
+import { GetOpenCityData, GetDictionaryList } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -253,49 +266,51 @@ interface PageObj {
 })
 
 export default class extends Vue {
+  private clueId:string =''
   private listLoading = false
+  private muls:any = []
   private tab:Tab[] = [
     {
       label: '全部',
-      name: 'all',
+      name: '',
       id: 0,
-      num: 187
+      num: 0
     },
     {
       label: '待分配',
-      name: 'tab1',
+      name: '1',
       id: 1,
-      num: 5
+      num: 0
     },
     {
       label: '待跟进',
-      name: 'tab2',
+      name: '2',
       id: 2,
-      num: 1
+      num: 0
     },
     {
       label: '跟进中',
-      name: 'tab3',
+      name: '3',
       id: 3,
-      num: 3
+      num: 0
     },
     {
       label: '已面试',
-      name: 'tab4',
+      name: '4',
       id: 4,
-      num: 8
+      num: 0
     },
     {
       label: '已成交',
-      name: 'tab5',
+      name: '5',
       id: 5,
-      num: 6
+      num: 0
     },
     {
       label: '已放弃',
-      name: 'tab6',
+      name: '6',
       id: 6,
-      num: 5
+      num: 0
     }
   ]
   private tags:any[] = []
@@ -322,14 +337,14 @@ export default class extends Vue {
    *表单对象
    */
   private listQuery:IState = {
-    state: 'all',
+    status: '',
     name: '',
     phone: '',
     carType: '',
-    channel: '',
-    city: '',
-    followPerson: '',
-    onlyCan: ''
+    sourceChannel: '',
+    workCity: '',
+    gmId: '',
+    onlyMe: ''
   }
   /**
    *表单数组
@@ -355,61 +370,41 @@ export default class extends Vue {
       type: 2,
       key: 'carType',
       tagAttrs: {
-        placeholder: '请选择车型'
+        placeholder: '请选择车型',
+        filterable: true
       },
       label: '车型',
-      options: [
-        {
-          label: '依维柯',
-          value: 'yiweike'
-        },
-        {
-          label: '金杯',
-          value: 'jinbei'
-        }
-      ]
+      options: []
     },
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择来源渠道'
+        placeholder: '请选择来源渠道',
+        filterable: true
       },
       label: '来源渠道',
-      key: 'channel',
-      options: [
-        {
-          label: '58同城',
-          value: '58'
-        }
-      ]
+      key: 'sourceChannel',
+      options: []
     },
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择工作城市'
+        placeholder: '请选择工作城市',
+        filterable: true
       },
       label: '工作城市',
-      key: 'city',
-      options: [
-        {
-          label: '华北大区',
-          value: 'huabei'
-        }
-      ]
+      key: 'workCity',
+      options: []
     },
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择跟进人'
+        placeholder: '请选择跟进人',
+        filterable: true
       },
       label: '跟进人',
-      key: 'followPerson',
-      options: [
-        {
-          label: 'tom',
-          value: 'tom'
-        }
-      ]
+      key: 'gmId',
+      options: []
     },
     {
       type: 2,
@@ -417,15 +412,15 @@ export default class extends Vue {
         placeholder: '请选择'
       },
       label: '只看我的',
-      key: 'onlyCan',
+      key: 'onlyMe',
       options: [
         {
           label: '是',
-          value: 1
+          value: true
         },
         {
           label: '否',
-          value: 2
+          value: false
         }
       ]
     }
@@ -434,19 +429,7 @@ export default class extends Vue {
   /**
    *表格数据
    */
-  private tableData:any[] = [
-    {
-      name: '段秀英',
-      code: 'SX-BJ-',
-      phone: '14798446913',
-      city: '秦皇岛市',
-      carType: '金杯',
-      channel: '58同城',
-      status: 1,
-      followPerson: 'tom',
-      lastTime: Date.now()
-    }
-  ]
+  private tableData:any[] = []
 
   /**
    *表格列的数组
@@ -458,24 +441,25 @@ export default class extends Vue {
       disabled: true
     },
     {
-      key: 'code',
-      label: '编号'
+      key: 'clueId',
+      label: '编号',
+      width: '160px'
     },
     {
       key: 'phone',
       label: '电话',
-      slot: true
+      width: '120px'
     },
     {
-      key: 'city',
+      key: 'workCityName',
       label: '城市'
     },
     {
-      key: 'carType',
+      key: 'carTypeName',
       label: '车型'
     },
     {
-      key: 'channel',
+      key: 'sourceChannelName',
       label: '来源'
     },
     {
@@ -485,12 +469,14 @@ export default class extends Vue {
     },
     {
       key: 'followPerson',
+      slot: true,
       label: '跟进人'
     },
     {
       slot: true,
-      key: 'lastTime',
-      label: '最后时间'
+      key: 'createDate',
+      label: '最后时间',
+      width: '170px'
     },
     {
       slot: true,
@@ -500,46 +486,105 @@ export default class extends Vue {
     }
   ]
 
-  arry:any[] = []
-
   /**
    *分页对象
    */
   private page:PageObj = {
     page: 1,
     limit: 20,
-    total: 100
+    total: 0
   }
 
   mounted() {
     this.dropdownList = [...this.columns]
     this.checkList = this.dropdownList.map(item => item.label)
-    for (let i = 0; i < 10; i++) {
-      let num = Math.random().toString(16).slice(2)
-      this.arry.push({ ...this.tableData[0], ...{ lastTime: Date.now(), isShow: i % 2 === 0, status: i % 3 + 1, code: this.tableData[0].code + num } })
-    }
-    this.tableData = this.arry.slice(0, 10)
+    this.getBaseInfo()
+    this.getOpenCitys()
+    this.getList()
   }
 
   @Watch('checkList', { deep: true })
   private checkListChange(val:any) {
     this.columns = this.dropdownList.filter(item => val.includes(item.label))
   }
+
+  /**
+   *获取基础信息
+   */
+  async getBaseInfo() {
+    try {
+      let params = ['Intentional_compartment', 'source_channel']
+      let { data: res } = await GetDictionaryList(params)
+      if (res.success) {
+        this.formItem[2].options = res.data.Intentional_compartment.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+        this.formItem[3].options = res.data.source_channel.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
+  }
+  /**
+   *获取开通城市
+   */
+  async getOpenCitys() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        this.formItem[4].options = res.data.map(function(item:any) {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get `)
+    }
+  }
+
   /**
    * 获取列表
    */
   async getList() {
     try {
-      let { data: res } = await GetDriverIndexesList({ ...this.listQuery, ...this.page })
+      this.listLoading = true
+      let params:any = {
+        limit: this.page.limit,
+        page: this.page.page,
+        ...this.listQuery,
+        status: Number(this.listQuery.status)
+      }
+      if (!this.listQuery.status) {
+        delete params.status
+      }
+
+      let { data: res } = await GetSpecialInterviewLists(params)
       if (res.success) {
+        this.listLoading = false
         this.tableData = res.data
         res.page = await HandlePages(res.page)
         this.page.total = res.page.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
+        for (let i = 0; i < this.tab.length; i++) {
+          let item:Tab = this.tab[i]
+          if (item.name === '') {
+            item.num = res.title.all
+          } else {
+            item.num = res.title[item.name as string]
+          }
+        }
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
+      this.listLoading = false
       console.log(`get list fail:`, err)
     }
   }
@@ -547,11 +592,14 @@ export default class extends Vue {
    * 删除顶部表单的选项
    */
   handleQuery(value:any, key:any) {
-    if (key === 'time') {
+    if (key === 'state') {
+      this.listQuery.status = value
+    } else if (key === 'time') {
       this.listQuery[key] = []
     } else {
       this.listQuery[key] = value
     }
+    this.getList()
   }
 
   /**
@@ -560,7 +608,7 @@ export default class extends Vue {
   handlePageSize(page:any) {
     this.page.page = page.page
     this.page.limit = page.limit
-    this.tableData = this.arry.slice(page.page, 4)
+    this.getList()
   }
 
   /**
@@ -568,23 +616,25 @@ export default class extends Vue {
    */
   handleResetClick() {
     this.listQuery = {
+      status: '',
       name: '',
       phone: '',
       carType: '',
-      channel: '',
-      city: '',
-      followPerson: '',
-      onlyCan: ''
+      sourceChannel: '',
+      workCity: '',
+      gmId: '',
+      onlyMe: ''
     }
+    this.tags = []
   }
 
   /**
    *筛选按钮
    */
   handleFilterClick() {
-    let blackLists = ['state']
+    let blackLists = ['status']
     for (let key in this.listQuery) {
-      if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+      if (this.listQuery[key] !== '' && this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
         if (name) {
           this.tags.push({
@@ -595,6 +645,7 @@ export default class extends Vue {
         }
       }
     }
+    this.getList()
   }
 
   // 判断是否是PC
@@ -613,36 +664,43 @@ export default class extends Vue {
    *发起面试
    */
   handleInterviewClick() {
+    if (this.rows.length === 0) {
+      return this.$message.error('请选选择司机线索')
+    }
     this.$router.push({
-      path: '/transport/interview'
+      path: '/transport/interview',
+      query: {
+        id: this.rows[0].clueId
+      }
     })
   }
   /**
    * 更多操作
    */
   handleCommandChange(key:string|number, row:any) {
-    console.log('xxx:', key, row)
     if (key === 'edit') { // 修改线索
       this.$router.push({
         path: '/transport/createClue',
         query: {
-          id: row.id
+          id: row.clueId
         }
       })
     } else if (key === 'distribution') { // 分配线索
+      this.clueId = row.clueId
+      this.muls = [row];
       (this.$refs.clueDistribution as any).openDialog()
     } else if (key === 'interview') { // 发起面试
       this.$router.push({
         path: '/transport/interview',
         query: {
-          id: row.id
+          id: row.clueId
         }
       })
     } else if (key === 'follow') { // 线索跟进
       this.$router.push({
         path: '/transport/followClue',
         query: {
-          id: row.id
+          id: row.clueId
         }
       })
     }
@@ -678,6 +736,13 @@ export default class extends Vue {
       }
     } else if (val.name === '清空选择') {
       (this.$refs.driverClueTable as any).toggleRowSelection()
+    } else if (val.name === '分配线索') {
+      if (this.rows.length > 0) {
+        this.muls = this.rows;
+        (this.$refs.clueDistribution as any).openDialog()
+      } else {
+        this.$message.error('请先选择')
+      }
     }
   }
   /**

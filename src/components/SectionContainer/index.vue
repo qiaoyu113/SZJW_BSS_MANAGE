@@ -50,6 +50,9 @@ export default class extends Vue {
         position: relative;
         padding:0 30px;
         box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         .border{
             width:5px;
             height: 17px;

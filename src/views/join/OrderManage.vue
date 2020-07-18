@@ -611,12 +611,14 @@ export default class extends Vue {
       const { data } = await GetOrderInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
-        this.tab[0].num = data.title.all
-        this.tab[1].num = data.title.toBePay
-        this.tab[2].num = data.title.toConfire
-        this.tab[3].num = data.title.toAudit
-        this.tab[4].num = data.title.auditNotPass
-        this.tab[5].num = data.title.haveDeal
+        if (data.title) {
+          this.tab[0].num = data.title.all
+          this.tab[1].num = data.title.toBePay
+          this.tab[2].num = data.title.toConfire
+          this.tab[3].num = data.title.toAudit
+          this.tab[4].num = data.title.auditNotPass
+          this.tab[5].num = data.title.haveDeal
+        }
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {

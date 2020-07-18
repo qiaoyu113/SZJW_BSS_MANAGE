@@ -19,10 +19,10 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
-
+import { ClueFollow } from '@/api/driver'
 interface IState {
   [key: string]: any;
 }
@@ -34,17 +34,18 @@ interface IState {
   }
 })
 export default class extends Vue {
-  @Prop({ default: '' }) type!:string
+  @Prop({ default: 0 }) type!:number
+  @Prop({ default: '' }) clueId!:string|number
   private showAlert = false
   private dialogForm:IState = {
-    desc: ''
+    remarks: ''
   }
   private title:string = ''
 
   private dialogItems:any[] = [
     {
       type: 1,
-      key: 'desc',
+      key: 'remarks',
       tagAttrs: {
         placeholder: '跟进情况描述',
         type: 'textarea',
@@ -54,14 +55,14 @@ export default class extends Vue {
   ]
 
   @Watch('type')
-  onTypeChange(val:string) {
-    if (val === 'phone') {
+  onTypeChange(val:number) {
+    if (val === 1) {
       this.title = '电话跟进'
-    } else if (val === 'wechat') {
+    } else if (val === 2) {
       this.title = '微信跟进'
-    } else if (val === 'noValid') {
+    } else if (val === 4) {
       this.title = '无效线索'
-    } else if (val === 'noFollow') {
+    } else if (val === 5) {
       this.title = '无法跟进'
     }
   }
@@ -78,16 +79,33 @@ export default class extends Vue {
     this.showAlert = false
   }
   handleClosed() {
-    this.dialogForm.desc = ''
+    this.dialogForm.remarks = ''
   }
   cancel() {
     this.showAlert = false
   }
-  confirm() {
-    if (!this.dialogForm.desc) {
-      return this.$message.error('请输入跟进情况描述')
+  async confirm() {
+    try {
+      if (!this.dialogForm.remarks) {
+        return this.$message.error('请输入跟进情况描述')
+      }
+      let params = {
+        clueId: this.clueId,
+        remarks: this.dialogForm.remarks,
+        type: this.type
+      }
+      let { data: res } = await ClueFollow(params)
+      if (res.success) {
+        this.showAlert = false
+        this.$message.success(`操作成功`)
+        this.getRecord()
+      }
+    } catch (err) {
+      console.log(`confirm fail:${err}`)
     }
-    this.showAlert = false
+  }
+  @Emit('getRecord')
+  getRecord() {
   }
 }
 </script>

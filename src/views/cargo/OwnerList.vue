@@ -503,7 +503,9 @@ export default class extends Vue {
       const { data } = await GetCustomerList(this.listQuery)
       if (data.success) {
         this.list = data.data
-        this.tab[0].num = data.page.total
+        if (data.title) {
+          this.tab[0].num = data.title.all
+        }
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {

@@ -1,33 +1,38 @@
 <template>
   <div class="transportInfo">
-    <dl
-      v-for="item in lists"
-      :key="item.code"
-    >
-      <dt class="title">
-        运力编号:{{ item.code }}
-      </dt>
-      <dd>
-        <self-form
-          class="base"
-          :list-query="item"
-          :form-item="formItem"
-          label-width="80px"
-        >
-          <template v-slot:g="{row}">
-            {{ row.g | Timestamp }}
-          </template>
-          <template slot="detail">
-            <router-link
-              :to="{path: '/'}"
-              class="link"
-            >
-              详情>>
-            </router-link>
-          </template>
-        </self-form>
-      </dd>
-    </dl>
+    <template v-if="lists.length > 0">
+      <dl
+        v-for="item in lists"
+        :key="item.carrierId"
+      >
+        <dt class="title">
+          运力编号:{{ item.carrierId | DataIsNull }}
+        </dt>
+        <dd>
+          <self-form
+            class="base"
+            :list-query="item"
+            :form-item="formItem"
+            label-width="80px"
+          >
+            <template v-slot:createDate="{row}">
+              {{ row.createDate | Timestamp }}
+            </template>
+            <template slot="detail">
+              <router-link
+                :to="{path: '/'}"
+                class="link"
+              >
+                详情>>
+              </router-link>
+            </template>
+          </self-form>
+        </dd>
+      </dl>
+    </template>
+    <div v-else>
+      <span class="noData">暂无数据</span>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -49,37 +54,37 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 7,
-      key: 'a',
-      label: '姓名编号:'
+      key: 'name',
+      label: '姓名:'
     },
     {
       type: 7,
-      key: 'b',
+      key: 'phone',
       label: '联系电话:'
     },
     {
       type: 7,
-      key: 'c',
+      key: 'workCityName',
       label: '工作城市:'
     },
     {
-      key: 'd',
+      key: 'plateNo',
       type: 7,
       label: '车牌号:'
     },
     {
-      key: 'e',
+      key: 'carTypeName',
       type: 7,
       label: '车型:'
     },
     {
-      key: 'f',
+      key: 'statusName',
       type: 7,
       label: '状态:'
     },
     {
-      key: 'g',
-      type: 'g',
+      key: 'createDate',
+      type: 'createDate',
       slot: true,
       label: '创建时间:'
     },
@@ -107,6 +112,12 @@ export default class extends Vue {
         color: #649CEE;
         font-weight:bold;
       }
+    }
+    .noData {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height:100px;
     }
   }
 </style>

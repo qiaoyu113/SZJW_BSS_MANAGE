@@ -1,12 +1,10 @@
-/* eslint-disable vue/no-parsing-error */
-/* eslint-disable vue/no-parsing-error */
 <template>
   <div :class="isPC ? 'TakePicture' : 'TakePicture-m'">
     <el-row class="infoLine">
       <el-col :span="24">
         <p>
           <span class="picName">线路名称：</span>
-          <span class="picName_value">李威山的线路</span>
+          <span class="picName_value">{{ postForm.lineName | DataIsNull }}</span>
         </p>
       </el-col>
       <el-col :span="24">
@@ -14,22 +12,22 @@
           v-if="isPC"
           class="picInfo"
         >
-          <span>线路编号：</span>
-          <span>XL2020031401</span>
-          <span>所属销售：李威山</span>
-          <span>创建时间：2016-12-12</span>
+          <span>线路编号:</span>
+          <span>{{ postForm.lineId | DataIsNull }}</span>
+          <span>所属销售:{{ postForm.lineSaleName | DataIsNull }}</span>
+          <span>创建时间:{{ postForm.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </p>
         <div v-else>
           <el-col>
             <p class="picInfo">
-              <span>线路编号：</span>
-              <span>XL2020031401</span>
+              <span>线路编号:</span>
+              <span>{{ postForm.lineId | DataIsNull }}</span>
             </p>
           </el-col>
           <el-col>
             <p class="picInfo">
-              <span>所属销售：李威山</span>
-              <span>创建时间：2016-12-12</span>
+              <span>所属销售:{{ postForm.lineSaleName | DataIsNull }}</span>
+              <span>创建时间:{{ postForm.createDate | DataIsNull }}</span>
             </p>
           </el-col>
         </div>
@@ -61,8 +59,8 @@
                       :action="getImgUrls"
                       :headers="myHeaders"
                       :on-preview="handlePictureCardPreview"
-                      :on-remove="handleRemove(item.key)"
-                      :on-success="handleUpSuccess(item.key)"
+                      :on-remove="handleRemove(item)"
+                      :on-success="handleUpSuccess(item)"
                       :limit="1"
                       :file-list="item.imageList"
                       :before-upload="beforeAvatarUpload"
@@ -151,7 +149,8 @@ import Dialog from '@/components/Dialog/index.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
-var token = localStorage.getItem('token')
+import { pictureDetail, SaveOrUpdatePicture } from '@/api/cargo'
+import { UserModule } from '@/store/modules/user'
 @Component({
   name: 'TakePicture',
   components: {
@@ -163,32 +162,34 @@ export default class TakePicture extends Vue {
   private isdetail:boolean = false
   private postForm:any = {
     id: '',
-    warehouseLoadingLocation: '',
-    cargoPlacement: '',
-    loadingSituation: '',
-    distributionSite: '',
     lineId: '',
-    lineName: ''
+    lineName: '',
+    lineSaleName: '',
+    createDate: '',
+    warehouseLoadingLocationUrl: '',
+    cargoPlacementUrl: '',
+    loadingSituationUrl: '',
+    distributionSiteUrl: ''
   }
   private formList:any = [
     {
       label: '库房装货位置:',
-      key: 'warehouseLoadingLocation',
+      key: 'warehouseLoadingLocationUrl',
       imageList: []
     },
     {
       label: '货物库摆放:',
-      key: 'cargoPlacement',
+      key: 'cargoPlacementUrl',
       imageList: []
     },
     {
       label: '装车情况:',
-      key: 'loadingSituation',
+      key: 'loadingSituationUrl',
       imageList: []
     },
     {
       label: '配送地点实景:',
-      key: 'distributionSite',
+      key: 'distributionSiteUrl',
       imageList: []
     }
   ]
@@ -197,46 +198,72 @@ export default class TakePicture extends Vue {
   private getImgUrls:string = this.getImgUrl()
   private imageList:any[] = []
   private showViewer:boolean = false
-  private myHeaders:any = { Authorization: token }
+  private myHeaders:any = { Authorization: UserModule.token }
+
+  mounted() {
+    this.postForm.lineId = this.$route.query.id
+    let routeArr = this.$route.path.split('/')
+    if (routeArr[2] === 'showpicture') {
+      this.isdetail = true
+    } else {
+      this.isdetail = false
+    }
+    this.getDetails()
+  }
+  /**
+   *获取上传路径
+   */
   private getImgUrl() {
     let url
-    if (window.location.host === 'localhost:9529') {
-      url = 'http://firmiana-bss.m1.yunniao.cn/api/base/v1/upload/uploadOSS/img/true/-1'
+    if (window.location.host === 'http://192.168.0.134/:9528') {
+      url = 'http://szjw-bss-web.m1.yunniao.cn/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
     } else {
-      url = '/api/base/v1/upload/uploadOSS/img/true/-1'
+      url = '/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
     }
     return url
   }
+  /**
+   *上传前的校验
+   */
   private beforeAvatarUpload(file:any) {
-    const isImage = file.type.includes('image')
-    if (!isImage) {
-      this.$message.error('上传图片格式不正确')
-    }
-    return isImage
+    return true
   }
+  /**
+   * 预览
+   */
   private handlePictureCardPreview(file:any) {
     this.imageList = [file.url]
     if (this.imageList.length > 0) {
       this.showViewer = true
     }
   }
-  private handleRemove(key:any) {
-    console.log('tag', '')
+  /**
+   * 删除
+   */
+  private handleRemove(item:any) {
     let that = this
     return (file:any, fileList:any[]) => {
-      that.postForm[key] = ''
+      that.postForm[item.key] = ''
+      item.imageList = []
     }
   }
-  private handleUpSuccess(key:any) {
+  /**
+   * 上传成功
+   */
+  private handleUpSuccess(item:any) {
     let that = this
     return (res:any) => {
       if (res.success) {
-        that.postForm[key] = res.data.url
+        that.postForm[item.key] = res.data.url
+        item.imageList.push({ url: res.data.url, name: res.data.name })
       } else {
         this.$message.error('上传图片错误：' + res)
       }
     }
   }
+  /**
+   *关闭预览框
+   */
   private closeViewer() {
     this.showViewer = false
   }
@@ -247,81 +274,62 @@ export default class TakePicture extends Vue {
     this.showDio = false
     this.$router.go(-1)
   }
-  private onSubmit() {
-    let data = { ...this.postForm }
-    if (!data.id) {
-      delete data.id
-    }
+  /**
+   *提交
+   */
+  private async onSubmit() {
     this.isloading = true
-    console.log(data)
-    // savePhoto(data)
-    //   .then((res) => {
-    //     if (res.data.success) {
-    //       this.$message.success('保存成功')
-    //     } else {
-    //       this.$message.error(res.data.errorMsg)
-    //     }
-    //   })
-    //   .catch(() => {})
-    //   .finally(() => {
-    //     this.isloading = false
-    //   })
-  }
-  private getDetails(id:string) {
-    // this.isloading = true;
-    // getLineDetail({ lineId: id }).then(res:any => {
-    //   if (res.data.success) {
-    //     const data = res.data.data;
-    //     this.postForm.lineName = data.lineName;
-    this.getLinePhoto()
-    //   } else {
-    //     this.$message.error(res.data.errorMsg)
-    //   }
-    // }).catch(err => {
-    //   console.log(err)
-    // }).finally(() => {
-    //   this.isloading = false;
-    // })
-  }
-  private getLinePhoto() {
-    // getLinePhoto({ lineId: this.postForm.lineId })
-    //   .then((res) => {
-    //     if (res.data.success) {
-    //       const data = res.data.data;
-    //       this.postForm.id = data.id || '';
-    //       this.formList.map(item => {
-    //         if (data && data[item.key]) {
-    //           item.imageList = [{
-    //             name: item.key,
-    //             url: data[item.key]
-    //           }];
-    //           this.postForm[item.key] = data[item.key];
-    //         }
-    //         return item;
-    //       });
-    //     } else {
-    //       this.$message.error(res.data.errorMsg)
-    //     }
-    //   }).catch(() => {
-
-    //   });
-  }
-
-  created() {
-    this.postForm.lineId = this.$route.query.id
-    let routeArr = this.$route.path.split('/')
-    if (routeArr[2] === 'takepicture') {
-      console.log('上传图片')
-    } else {
-      this.isdetail = true
-      this.getDetails(this.postForm.lineId)
-      console.log('查看图片')
-      this.postForm.cargoPlacement = 'cargoPlacement'
-      this.formList[1].imageList.push({
-        url: 'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
-      })
+    try {
+      let params = {
+        id: this.postForm.id,
+        cargoPlacementUrl: this.postForm.cargoPlacementUrl,
+        distributionSiteUrl: this.postForm.distributionSiteUrl,
+        loadingSituationUrl: this.postForm.loadingSituationUrl,
+        warehouseLoadingLocationUrl: this.postForm.warehouseLoadingLocationUrl
+      }
+      let { data: res } = await SaveOrUpdatePicture(params)
+      this.isloading = false
+      if (res.success) {
+        this.$message.success('保存成功')
+        this.$router.go(-1)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      this.isloading = false
+      console.log(`save fail:${err}`)
     }
   }
+  /**
+   * 获取详情
+   */
+  private async getDetails() {
+    try {
+      this.isloading = true
+      let params = {
+        lineId: this.postForm.lineId
+      }
+      let { data: res } = await pictureDetail(params)
+      this.isloading = false
+      if (res.success) {
+        this.postForm = { ...this.postForm, ...res.data }
+        this.formList.forEach((item:any) => {
+          if (res.data[item.key]) {
+            item.imageList = [{
+              name: item.key,
+              url: res.data[item.key]
+            }]
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      this.isloading = false
+      console.log(`get detail fail:${err}`)
+    }
+  }
+
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC

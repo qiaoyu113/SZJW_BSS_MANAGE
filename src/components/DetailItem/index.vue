@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 
 @Component({
@@ -28,10 +28,18 @@ export default class extends Vue {
   @Prop({ default: '' }) private name: any; // 默认无法识别显示空
   @Prop({ default: '暂无数据' }) private value!: string | number; // 默认无法识别显示空type
   @Prop({ default: '' }) private type: any; // 默认无法识别显示空
-  private valueName: any
+  private valueName: any = ''
 
-  created() {
-    let val = this.value.toString()
+  // created() {
+  //   let val = this.value.toString()
+  //   if (!val) {
+  //     this.valueName = '暂无数据'
+  //   } else {
+  //     this.valueName = val
+  //   }
+  // }
+  @Watch('value', { deep: true, immediate: true })
+  changeVal(val:any) {
     if (!val) {
       this.valueName = '暂无数据'
     } else {

@@ -122,7 +122,7 @@ export const GetOrderInfoList = (params: any) =>
     data: params
   })
 
-// 订单列表
+// 取消订单
 export const CancelOrder = (params: any) =>
   request({
     url: '/order/v1/order/cancelOrder',
@@ -149,7 +149,7 @@ export const PostConfirmOrder = (params: any) =>
 // 订单确认
 export const GetDelieverList = (params: any) =>
   request({
-    url: '/order/v1/order/deliever/getDelieverList',
+    url: 'line_center/v1/line/customer/queryLineCustomerList',
     method: 'post',
     data: params
   })

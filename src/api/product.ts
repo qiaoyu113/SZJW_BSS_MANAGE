@@ -43,10 +43,7 @@ export const settingSystem = (data: any) =>
   request({
     url: `${baseURL}/v1/product/product/system/setting`,
     method: 'post',
-    data,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-    }
+    data
   })
 
 // 获取系统设置

@@ -8,7 +8,7 @@
       >
         <div class="left">
           <span class="text">基本信息</span>
-          <span class="status">跟进中</span>
+          <span class="status">{{ baseForm.busiType === 1 ? '共享':'专车' }}</span>
         </div>
         <div class="right">
           <el-dropdown
@@ -37,7 +37,7 @@
             姓名
           </p>
           <p class="text">
-            tom
+            {{ baseForm.name | DataIsNull }}
           </p>
         </el-col>
         <el-col
@@ -48,7 +48,7 @@
             电话
           </p>
           <p class="text">
-            15021578502
+            {{ baseForm.phone | DataIsNull }}
           </p>
         </el-col>
         <el-col
@@ -59,7 +59,7 @@
             城市
           </p>
           <p class="text">
-            北京市
+            {{ baseForm.workCityName | DataIsNull }}
           </p>
         </el-col>
         <el-col
@@ -70,7 +70,7 @@
             车型
           </p>
           <p class="text">
-            金杯
+            {{ baseForm.carTypeName | DataIsNull }}
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -78,7 +78,7 @@
             来源
           </p>
           <p class="text">
-            微信
+            {{ baseForm.sourceChannelName | DataIsNull }}
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -86,7 +86,7 @@
             微信号
           </p>
           <p class="text">
-            123131312
+            {{ baseForm.wechatNo | DataIsNull }}
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -94,7 +94,7 @@
             业务线
           </p>
           <p class="text">
-            共享
+            {{ baseForm.busiType === 0 ? '专车' : baseForm.busiType === 1? '共享':'暂无数据' }}
           </p>
         </el-col>
         <el-col :span="isPC ? 6 :24">
@@ -102,15 +102,15 @@
             当前跟进人
           </p>
           <p class="text">
-            tom
+            {{ baseForm.gmInfo | DataIsNull }}
           </p>
         </el-col>
       </el-row>
     </el-card>
     <!-- 线索分配 -->
     <clue-distribution
-      :id="1"
       ref="clueDistribution"
+      :rows="[{clueId: id}]"
     />
     <!-- 跟进记录 -->
     <el-card style="margin-top:20px;">
@@ -132,7 +132,7 @@
               线索跟进
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="phone">
+              <el-dropdown-item :command="1">
                 <el-link
                   :underline="false"
                   type="info"
@@ -140,7 +140,7 @@
                   电话跟进
                 </el-link>
               </el-dropdown-item>
-              <el-dropdown-item command="wechat">
+              <el-dropdown-item :command="2">
                 <el-link
                   :underline="false"
                   type="info"
@@ -149,7 +149,7 @@
                 </el-link>
               </el-dropdown-item>
               <el-dropdown-item
-                command="interview"
+                :command="3"
                 divided
               >
                 <el-link
@@ -160,7 +160,7 @@
                 </el-link>
               </el-dropdown-item>
               <el-dropdown-item
-                command="noValid"
+                :command="4"
                 divided
               >
                 <el-link
@@ -170,7 +170,7 @@
                   无效线索
                 </el-link>
               </el-dropdown-item>
-              <el-dropdown-item command="noFollow">
+              <el-dropdown-item :command="5">
                 <el-link
                   :underline="false"
                   type="danger"
@@ -191,38 +191,38 @@
         >
           <div class="left">
             <h4 class="title">
-              <span class="tag">{{ item.tag }}</span>
-              <span class="time">{{ item.time | Timestamp }}</span>
+              <span class="tag">{{ item.typeName }}</span>
+              <span class="time">{{ item.createDate | Timestamp }}</span>
             </h4>
             <p class="content">
-              {{ item.content }}
+              {{ item.remarks | DataIsNull }}
             </p>
           </div>
           <div class="right">
-            <span class="name">跟进人:{{ item.name }}</span>
+            <span class="name">跟进人:{{ item.createrName }}</span>
           </div>
         </li>
       </ul>
     </el-card>
-    <!-- 专车 -->
+    <!-- 面试表 -->
     <interview-card
-      name="专车"
-      :is-add="true"
-      @onBtn="handleBtnClick"
-    />
-    <!-- 共享 -->
-    <interview-card
-      name="共享"
-      :is-add="false"
+      :is-add="!baseForm.existInterviewDate"
+      :obj="interviewObj"
       @onBtn="handleBtnClick"
     />
 
     <followByPhoneOrWechat
       ref="follow"
       :type="type"
+      :clue-id="id"
+      @getRecord="getClueRecords"
     />
 
-    <InviteInterview ref="inviteInterview" />
+    <InviteInterview
+      ref="inviteInterview"
+      :clue-id="id"
+      @getRecord="getClueRecords"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -232,6 +232,7 @@ import ClueDistribution from './components/clueDistribution.vue'
 import InterviewCard from './components/interviewCard.vue'
 import FollowByPhoneOrWechat from './components/followByPhoneOrWechat.vue'
 import InviteInterview from './components/inviteInterview.vue'
+import { ClueFollowList, GetClueDetailByClueId, GetInterviewDetail } from '@/api/driver'
 @Component({
   name: 'FollowClue',
   components: {
@@ -242,24 +243,87 @@ import InviteInterview from './components/inviteInterview.vue'
   }
 })
 export default class extends Vue {
-  private type:string = ''
-  private followLists:any[] = [
-    {
-      tag: '微信跟进',
-      time: Date.now(),
-      content: '啊大大辽阔的马上看代码阿达',
-      name: 'jack'
-    },
-    {
-      tag: '无效线索',
-      time: Date.now(),
-      content: '啊大大辽阔的马上看代码阿达',
-      name: 'jack'
-    }
-  ]
+  private id:string|number = ''
+  private type:number = 0
+  private followLists:any[] = []
+  private baseForm:any = {
+    name: '',
+    phone: '',
+    workCityName: '',
+    carTypeName: '',
+    sourceChannelName: '',
+    wechatNo: '',
+    busiType: '',
+    gmInfo: '',
+    statusName: '',
+    existInterviewDate: false
+  }
+  private interviewObj:any = {}
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+
+  mounted() {
+    this.id = (this.$route.query.id) as string | number
+    if (this.id) {
+      this.getClueRecords()
+      this.getClueDetailByClueId()
+    }
+  }
+
+  /**
+ *获取司机面试信息
+ */
+  async getInterviewInfo() {
+    try {
+      let params = {
+        clueId: this.id
+      }
+      let { data: res } = await GetInterviewDetail(params)
+      if (res.success) {
+        this.interviewObj = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get interview fail:${err}`)
+    }
+  }
+  /**
+   *获取司机线索信息
+   */
+  async getClueDetailByClueId() {
+    try {
+      let params = {
+        clueId: this.id
+      }
+      let { data: res } = await GetClueDetailByClueId(params)
+      if (res.success) {
+        this.baseForm = { ...this.baseForm, ...res.data }
+        if (this.baseForm.existInterviewDate) {
+          this.getInterviewInfo()
+        }
+      }
+    } catch (err) {
+      console.log(`get clue detail fail:${err}`)
+    }
+  }
+  /**
+   *获取司机线索跟进记录
+   */
+  async getClueRecords() {
+    try {
+      let params = {
+        clueId: this.id
+      }
+      let { data: res } = await ClueFollowList(params)
+      if (res.success) {
+        this.followLists = res.data
+      }
+    } catch (err) {
+      console.log(`get clue record fail:${err}`)
+    }
   }
   /**
    * 线索操作
@@ -273,21 +337,12 @@ export default class extends Vue {
   /**
    * 线索跟进
    */
-  handleCommand(val:string) {
-    if (val === 'phone') { // 电话跟进
-      this.type = 'phone';
+  handleCommand(val:number) {
+    if (val !== 3) {
+      this.type = val;
       (this.$refs.follow as any).openDialog()
-    } else if (val === 'wechat') { // 微信跟进
-      this.type = 'wechat';
-      (this.$refs.follow as any).openDialog()
-    } else if (val === 'interview') { // 邀请面试
+    } else {
       (this.$refs.inviteInterview as any).openDialog()
-    } else if (val === 'noValid') { // 无效线索
-      this.type = 'noValid';
-      (this.$refs.follow as any).openDialog()
-    } else if (val === 'noFollow') { // 无法跟进
-      this.type = 'noFollow';
-      (this.$refs.follow as any).openDialog()
     }
   }
   /**
@@ -295,7 +350,10 @@ export default class extends Vue {
    */
   handleBtnClick() {
     this.$router.push({
-      path: '/transport/interview'
+      path: '/transport/interview',
+      query: {
+        id: this.id + ''
+      }
     })
   }
 }

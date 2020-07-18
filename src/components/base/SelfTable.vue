@@ -65,7 +65,7 @@
               :row="scope.row"
             />
             <template v-else>
-              {{ scope.row[item.key] }}
+              {{ scope.row[item.key] | DataIsNull }}
             </template>
           </template>
         </template>
