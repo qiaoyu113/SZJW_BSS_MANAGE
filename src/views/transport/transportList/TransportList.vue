@@ -266,7 +266,7 @@ interface PageObj {
 export default class extends Vue {
     private IntentionalCompartment:any[] = []
     private type:string = ''
-    private total = 0
+    // private total = 0
     private list: CargoListData[] = []
     private dropdownList:any[] = []
     private checkList:any[] =[]
@@ -367,7 +367,7 @@ export default class extends Vue {
     private page:PageObj = {
       page: 1,
       limit: 20,
-      total: 100
+      total: 20
     }
     private listQuery:IState = {
       // 'busiType': '',
@@ -675,7 +675,6 @@ export default class extends Vue {
         })
         // eslint-disable-next-line camelcase
         this.IntentionalCompartment = cartype
-        console.log(cartype)
         this.formItem.map(ele => {
           if (ele.key === 'carType') {
             ele.options = cartype
@@ -699,14 +698,14 @@ export default class extends Vue {
       }
       let manager = await getOperManager()
       if (manager.data.success) {
-        // let arr = city.data.data.map(function(ele:any) {
-        //   return { value: ele.code, label: ele.name }
-        // })
-        // this.formItem.map(ele => {
-        //   if (ele.key === 'workCoty') {
-        //     ele.options = arr
-        //   }
-        // })
+        let arr = manager.data.data.map(function(ele:any) {
+          return { value: Number(ele.id), label: ele.name }
+        })
+        this.formItem.map(ele => {
+          if (ele.key === 'gmId') {
+            ele.options = arr
+          }
+        })
       } else {
         this.$message.error(data)
       }
@@ -746,10 +745,10 @@ export default class extends Vue {
         type: 'warning'
       }).then(() => {
         let params = {
-          // 'carrierId': row.carrierId,
-          carrierId: 'YL202007150003',
-          carrierStatus: 2
-          // carrierStatus: row.status
+          'carrierId': row.carrierId,
+          // carrierId: 'YL202007150003',
+          // carrierStatus: 2
+          carrierStatus: row.status
         }
         this.updateCarrier(params, '停用')
       }).catch(() => {
@@ -784,7 +783,7 @@ export default class extends Vue {
    */
     handleCommandChange(key:string|number, row:any) {
       console.log(key)
-      // this.id = row.clientPhone
+      let id = row.carrierId
       switch (key) {
         case 'gowork':
           this.rowItem = row;
@@ -797,10 +796,10 @@ export default class extends Vue {
           this.stopTransport(row)
           break
         case 'editor':
-          this.$router.push({ path: 'editortransport', query: { carrierId: 'YL202007131001' } })
+          this.$router.push({ path: 'editortransport', query: { carrierId: id } })
           break
         case 'detail':
-          this.$router.push({ path: 'transportdetail', query: { id: row.clientPhone } })
+          this.$router.push({ path: 'transportdetail', query: { carrierId: id } })
           break
         default:
           break
@@ -882,7 +881,28 @@ export default class extends Vue {
     if (data.success) {
       this.tableData = data.data
       data.page = await HandlePages(data.page)
-      this.total = data.page.total
+      this.page.total = data.page.total
+      this.tab.map(ele => {
+        // switch (ele.label) {
+        //   case '全部':
+        //     ele.num = this.title.all
+        //     break
+        //   case '上岗':
+        //     ele.num = this.title.waitShelvesNum
+        //     break
+        //   case '待上岗':
+        //     ele.num = this.title.isShelvesNum
+        //     break
+        //   case '已售罄':
+        //     ele.num = this.title.soldNum
+        //     break
+        //   case '停用':
+        //     ele.num = this.title.noShelvesNum
+        //     break
+        //   default:
+        //     break
+        // }
+      })
       setTimeout(() => {
         this.listLoading = false
       }, 0.5 * 1000)
