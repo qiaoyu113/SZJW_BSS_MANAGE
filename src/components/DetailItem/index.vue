@@ -38,7 +38,7 @@ export default class extends Vue {
   //     this.valueName = val
   //   }
   // }
-  @Watch('value', { deep: true })
+  @Watch('value', { deep: true, immediate: true })
   changeVal(val:any) {
     if (!val) {
       this.valueName = '暂无数据'

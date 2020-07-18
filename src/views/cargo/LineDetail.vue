@@ -41,7 +41,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="仓位置"
-            :value="ruleForm.warehouseDistrict"
+            :value="ruleForm.warehouse"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
@@ -134,16 +134,18 @@
             :value="ruleForm.dayNo"
           />
         </el-col>
-        <el-col
-          v-for="index in ruleForm.dayNo"
-          :key="index"
-          :span="isPC ? 6 : 24"
-        >
-          <DetailItem
-            name="预计工作时间"
-            :value="index.workingTimeStart +'-'+ index.workingTimeEnd"
-          />
-        </el-col>
+        <template v-if="ruleForm.dayNo">
+          <el-col
+            v-for="index in ruleForm.dayNo"
+            :key="index"
+            :span="isPC ? 6 : 24"
+          >
+            <DetailItem
+              name="预计工作时间"
+              :value="time(index)"
+            />
+          </el-col>
+        </template>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="预计月出车天数"
@@ -211,37 +213,53 @@
             <span class="detail-title">配送周期</span>
             <el-checkbox-group v-model="checkList">
               <el-checkbox
-                label="全选"
+                label=""
                 disabled
-              />
+              >
+                全选
+              </el-checkbox>
               <el-checkbox
-                label="周一"
+                :label="1"
                 disabled
-              />
+              >
+                周一
+              </el-checkbox>
               <el-checkbox
-                label="周二"
+                :label="2"
                 disabled
-              />
+              >
+                周二
+              </el-checkbox>
               <el-checkbox
-                label="周三"
+                :label=" 3"
                 disabled
-              />
+              >
+                周三
+              </el-checkbox>
               <el-checkbox
-                label="周四"
+                :label="4"
                 disabled
-              />
+              >
+                周四
+              </el-checkbox>
               <el-checkbox
-                label="周五"
+                :label="5"
                 disabled
-              />
+              >
+                周五
+              </el-checkbox>
               <el-checkbox
-                label="周六"
+                :label="6"
                 disabled
-              />
+              >
+                周六
+              </el-checkbox>
               <el-checkbox
-                label="周日"
+                :label="7"
                 disabled
-              />
+              >
+                周日
+              </el-checkbox>
             </el-checkbox-group>
           </template>
         </el-col>
@@ -346,101 +364,123 @@ import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
-    @Component({
-      name: 'LineDetail',
-      components: {
-        DetailItem,
-        SectionContainer,
-        Dialog
-      }
-    })
+  @Component({
+    name: 'LineDetail',
+    components: {
+      DetailItem,
+      SectionContainer,
+      Dialog
+    }
+  })
 
 export default class extends Vue {
   private auditBack:boolean = false
   private auditBackText:string = ''
   private ruleForm:any = {
-    bussinessName: undefined,
-    carType: undefined,
-    carTypeName: undefined,
-    cargoType: undefined,
-    carry: undefined,
-    city: undefined,
-    cityArea: undefined,
-    cityAreaName: undefined,
-    countyArea: undefined,
-    countyAreaName: undefined,
-    createDate: undefined,
-    createId: undefined,
-    customerId: undefined,
+    bussinessName: '',
+    carType: '',
+    carTypeName: '',
+    cargoType: '',
+    carry: '',
+    city: '',
+    cityArea: '',
+    cityAreaName: '',
+    countyArea: '',
+    countyAreaName: '',
+    createDate: '',
+    createId: '',
+    customerId: '',
     dayNo: 0,
-    deadlineVO: undefined,
-    deliveryNo: undefined,
-    deliveryWeekCycle: undefined,
-    deployNo: undefined,
-    distance: undefined,
-    districtArea: undefined,
-    everyTripGuaranteed: undefined,
-    everyUnitPrice: undefined,
-    goodsWeight: undefined,
-    goodsWeightName: undefined,
-    handlingDifficultyDegree: undefined,
-    handlingDifficultyDegreeName: undefined,
-    id: undefined,
-    incomeSettlementMethod: undefined,
-    incomeSettlementMethodName: undefined,
+    deadlineVO: '',
+    deliveryNo: '',
+    deliveryWeekCycle: '',
+    deployNo: '',
+    distance: '',
+    districtArea: '',
+    everyTripGuaranteed: '',
+    everyUnitPrice: '',
+    goodsWeight: '',
+    goodsWeightName: '',
+    handlingDifficultyDegree: '',
+    handlingDifficultyDegreeName: '',
+    id: '',
+    incomeSettlementMethod: '',
+    incomeSettlementMethodName: '',
     lineDeliveryInfoFORMS: [],
-    lineId: undefined,
-    lineName: undefined,
-    lineRank: undefined,
-    lineSaleId: undefined,
-    lineSaleName: undefined,
-    lineType: undefined,
-    lineTypeName: undefined,
-    monthNo: undefined,
-    provinceArea: undefined,
-    provinceAreaName: undefined,
-    remark: undefined,
-    returnBill: undefined,
-    returnWarehouse: undefined,
-    settlementCycle: undefined,
-    settlementCycleName: undefined,
-    settlementDays: undefined,
-    settlementDaysName: undefined,
-    shelvesState: undefined,
-    shelvesStateName: undefined,
-    shipperOffer: undefined,
-    stabilityRate: undefined,
-    stabilityRateName: undefined,
-    timeDiff: undefined,
-    updateDate: undefined,
-    updateId: undefined,
-    waitDirveValidity: undefined,
-    warehouse: undefined,
-    warehouseCity: undefined,
-    warehouseCityName: undefined,
-    warehouseCounty: undefined,
-    warehouseCountyName: undefined,
-    warehouseDistrict: undefined,
-    warehouseProvince: undefined,
-    warehouseProvinceName: undefined,
-    warehouseTown: undefined,
-    warehouseTownName: undefined
+    lineId: '',
+    lineName: '',
+    lineRank: '',
+    lineSaleId: '',
+    lineSaleName: '',
+    lineType: '',
+    lineTypeName: '',
+    monthNo: '',
+    provinceArea: '',
+    provinceAreaName: '',
+    remark: '',
+    returnBill: '',
+    returnWarehouse: '',
+    settlementCycle: '',
+    settlementCycleName: '',
+    settlementDays: '',
+    settlementDaysName: '',
+    shelvesState: '',
+    shelvesStateName: '',
+    shipperOffer: '',
+    stabilityRate: '',
+    stabilityRateName: '',
+    timeDiff: '',
+    updateDate: '',
+    updateId: '',
+    waitDirveValidity: '',
+    warehouse: '',
+    warehouseCity: '',
+    warehouseCityName: '',
+    warehouseCounty: '',
+    warehouseCountyName: '',
+    warehouseDistrict: '',
+    warehouseProvince: '',
+    warehouseProvinceName: '',
+    warehouseTown: '',
+    warehouseTownName: ''
   }
   private pageStatus = 0
   private lineId:string = ''
 
-  private checkList:any[] = ['周一', '周末']
+  private checkList:any[] = []
 
-  private fetchData() {
-    this.GetDetail()
+  mounted() {
+    let lineId = this.$route.query.id
+    this.lineId = lineId as string
+    if (lineId) {
+      this.GetDetail()
+    }
+    let routeArr = this.$route.path.split('/')
+    if (routeArr[2] === 'linedetail') {
+      this.pageStatus = 1
+    } else {
+      this.pageStatus = 2
+    }
   }
 
+  time(num:number) {
+    let obj = this.ruleForm['lineDeliveryInfoFORMS'][0]
+    return obj.workingTimeStart + '-' + obj.workingTimeEnd
+  }
+  /**
+   *详情
+   */
   private async GetDetail() {
-    let { data } = await GetLineDetail({ lineId: 'XL202007100021' })
-    if (data.success) {
-      this.ruleForm = { ...this.ruleForm, ...data.data }
+    let { data: res } = await GetLineDetail({ lineId: this.lineId })
+    if (res.success) {
+      this.ruleForm = { ...this.ruleForm, ...res.data }
+      if (this.ruleForm.deliveryWeekCycle) {
+        this.checkList = this.ruleForm.deliveryWeekCycle.split(',')
+      } else {
+        this.checkList = []
+      }
     } else {
-      this.$message.error(data)
+      this.$message.error(res.errorMsg)
     }
   }
   private async auditConfirm(done: any) {
@@ -448,8 +488,8 @@ export default class extends Vue {
       return this.$message.error('备注不得小于5个字符')
     } else {
       let params = {
-        'lineId': this.lineId,
-        'reason': this.auditBackText
+        lineId: this.lineId,
+        reason: this.auditBackText
       }
       let { data } = await notApprovedLine(params)
       if (data.success) {
@@ -477,27 +517,6 @@ export default class extends Vue {
       this.$message.error(data.errorMsg || data)
     }
   }
-
-  mounted() {
-    let lineId = this.$route.query.id
-    this.lineId = lineId as string
-    if (lineId) {
-      this.fetchData()
-    }
-    let routeArr = this.$route.path.split('/')
-    if (routeArr[2] === 'linedetail') {
-      this.pageStatus = 1
-    } else {
-      this.pageStatus = 2
-    }
-  }
-
-  // activated() {
-  //   let lineId = this.$route.query.lineId
-  //   if (lineId) {
-  //     this.fetchData()
-  //   }
-  // }
 
   // 判断是否是PC
   get isPC() {
