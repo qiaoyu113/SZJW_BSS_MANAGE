@@ -122,7 +122,7 @@
             label="交付状态"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.isDelieveName | DataIsNull }}</p>
+              <p>{{ scope.row.statusName | DataIsNull }}</p>
             </template>
           </el-table-column>
 
@@ -145,7 +145,7 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.updateName | DataIsNull }}</span>
+                <span>{{ scope.row.dealName | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -157,7 +157,7 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.plateNo | DataIsNull }}</span>
+                <span>{{ scope.row.dealTime | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>

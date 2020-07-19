@@ -70,7 +70,7 @@
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="订单金额"
+            name="订单金额(元)"
             :value="ContractDetail.orderInfoVO.goodsAmount"
           />
         </el-col>
@@ -78,7 +78,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.orderInfoVO.deliverDate"
+            :value="ContractDetail.orderInfoVO.deliverDate | Timestamp"
           />
         </el-col>
 
@@ -92,7 +92,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="购买车型"
-            :value="ContractDetail.orderInfoVO.cooperationCar"
+            :value="ContractDetail.orderInfoVO.cooperationCarName"
           />
         </el-col>
 
@@ -141,7 +141,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交车日期"
-            :value="ContractDetail.deliveryTime"
+            :value="ContractDetail.deliveryTime | Timestamp"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
@@ -237,25 +237,25 @@
         </div>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="金融返利"
+            name="金融返利(元)"
             :value="ContractDetail.financialRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="保险返利"
+            name="保险返利(元)"
             :value="ContractDetail.insuranceRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="上牌返利"
+            name="上牌返利(元)"
             :value="ContractDetail.plateNoRebate"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="其他返利"
+            name="其他返利(元)"
             :value="ContractDetail.otherRebate"
           />
         </el-col>
@@ -270,7 +270,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="供应商"
-            :value="ContractDetail.gpsSupplier"
+            :value="ContractDetail.gpsSupplierName"
           />
         </el-col>
 
@@ -298,14 +298,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.dealTime"
+            :value="ContractDetail.dealTime | Timestamp"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交付完成时间"
-            :value="ContractDetail.deliverDate"
+            :value="ContractDetail.deliverDate | Timestamp"
           />
         </el-col>
       </el-row>

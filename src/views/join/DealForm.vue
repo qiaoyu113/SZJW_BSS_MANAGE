@@ -69,7 +69,6 @@
               :value="ContractDetail.busiTypeName"
             />
           </el-col>
-          {{ ContractDetail.cooperationModel }}
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="合租模式"
@@ -94,7 +93,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="订单成交时间"
-              :value="ContractDetail.deliverDate"
+              :value="ContractDetail.deliverDate | Timestamp"
             />
           </el-col>
 
@@ -108,14 +107,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="购买车型"
-              :value="ContractDetail.cooperationCar"
+              :value="ContractDetail.cooperationCarName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="车辆信息"
-              value="xxx"
+              :value="ContractDetail.orderInfoVO.carMessage"
             />
           </el-col>
 
@@ -322,7 +321,7 @@
           </div>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="金融返利"
+              label="金融返利(元)"
               prop="financialRebate"
             >
               <el-input v-model="ruleForm.financialRebate" />
@@ -330,7 +329,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="保险返利"
+              label="保险返利(元)"
               prop="insuranceRebate"
             >
               <el-input v-model="ruleForm.insuranceRebate" />
@@ -338,7 +337,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="上牌返利"
+              label="上牌返利(元)"
               prop="plateNoRebate"
             >
               <el-input v-model="ruleForm.plateNoRebate" />
@@ -346,7 +345,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="其他返利"
+              label="其他返利(元)"
               prop="otherRebate"
             >
               <el-input v-model="ruleForm.otherRebate" />
@@ -445,6 +444,9 @@ export default class extends Vue {
       'createSource': '',
       'deliverDate': '',
       'driverId': '',
+      'orderInfoVO': {
+        'carMessage': ''
+      },
       'driverInfoVO': {
         'address': '',
         'bankCardNo': '',
