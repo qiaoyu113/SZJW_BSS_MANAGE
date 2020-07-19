@@ -220,7 +220,7 @@
                 placeholder="请选择租赁公司"
               >
                 <el-option
-                  v-for="item in optionsRentCompany"
+                  v-for="item in optionsCompany"
                   :key="item.codeVal"
                   :label="item.code"
                   :value="item.codeVal"
@@ -240,9 +240,9 @@
               >
                 <el-option
                   v-for="item in optionsCompany"
-                  :key="item.codeVal"
-                  :label="item.code"
-                  :value="item.codeVal"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
@@ -260,9 +260,9 @@
               >
                 <el-option
                   v-for="item in optionsCar"
-                  :key="item.codeVal"
-                  :label="item.code"
-                  :value="item.codeVal"
+                  :key="item.carType"
+                  :label="item.carTypeName"
+                  :value="item.carType"
                 />
               </el-select>
             </el-form-item>
@@ -300,16 +300,16 @@
               >
                 <el-option
                   v-for="item in optionsCarType"
-                  :key="item.codeVal"
-                  :label="item.code"
-                  :value="item.codeVal"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              v-if="ruleForm.cooperationModel === '2' && ruleForm.cooperationModel === '3'"
+              v-if="ruleForm.cooperationModel !== '3'"
               label="车牌号"
               prop="plateNo"
             >
@@ -334,7 +334,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div v-if="(ruleForm.cooperationModel === '1' && ruleForm.cooperationCar && ruleForm.carModel) || (ruleForm.cooperationModel === '2' && ruleForm.cooperationCar)">
+        <div v-if="ruleForm.cooperationModel !== '3' && ruleForm.cooperationCar">
           <div class="follow">
             <p>
               <span class="follow_title">
@@ -346,7 +346,7 @@
             <el-col :span="isPC ? 6 : 24">
               <DetailItem
                 name="车辆信息"
-                :value="ruleForm.carPrice"
+                :value="ruleForm.describe"
               />
             </el-col>
             <el-col :span="isPC ? 6 : 24">
@@ -650,7 +650,7 @@
 import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
 import { GetDictionaryList, Upload } from '@/api/common'
-import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceByTypeAndCityAndSupplierAndCarType, GetOrderDetail } from '@/api/join'
+import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -685,7 +685,7 @@ export default class CreatLine extends Vue {
   private showMessage:boolean = false
   private showMessageBill:boolean = false
   private ruleForm:any = {
-    'operateFlag': '',
+    'operateFlag': 'creat',
     'busiType': '',
     'buyCarCompany': '',
     'capacityQuota': '',
@@ -693,7 +693,7 @@ export default class CreatLine extends Vue {
     'city': '',
     'confirmId': '',
     'confirmTime': '',
-    'cooperationCar': '2',
+    'cooperationCar': '',
     'cooperationModel': '',
     'cooperationTime': '',
     'createDate': '',
@@ -725,14 +725,14 @@ export default class CreatLine extends Vue {
     'passTime': '',
     'payCompleteTime': '',
     'payType': '',
-    'plateNo': '京A88888',
+    'plateNo': '',
     'rake': '',
     'refundTime': '',
     'remarks': '',
     'status': '',
     'updateDate': '',
-    'supplier': '1',
-    'carModel': '1',
+    'supplier': '',
+    'carModel': '',
     'updateId': ''
   }
   private rules:any = {
@@ -864,7 +864,7 @@ export default class CreatLine extends Vue {
     this.getCar()
   }
 
-  @Watch('ruleForm.leaseCarCompany', { deep: true })
+  @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any) {
     this.ruleForm.cooperationCar = ''
     this.getCar()
@@ -872,6 +872,9 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationCar', { deep: true })
   private changeCooperationCar(value:any) {
+    if (this.ruleForm.cooperationModel === '1') {
+      this.getModelByTypeAndCityAndSupplierAndCarType()
+    }
     this.getPrice()
   }
 
@@ -902,7 +905,7 @@ export default class CreatLine extends Vue {
   // 查看车型
   private async getCar() {
     let { data } = await GetCarTypeByTypeAndCityAndSupplier(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.buyCarCompany }
+      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier }
     )
     if (data.success) {
       this.optionsCar = data.data
@@ -912,11 +915,24 @@ export default class CreatLine extends Vue {
   }
   // 查看无税车价
   private async getPrice() {
-    let { data } = await GetPriceByTypeAndCityAndSupplierAndCarType(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.buyCarCompany, carType: this.ruleForm.cooperationCar }
+    let { data } = await GetPriceAndByTypeAndCityAndSupplierAndCarType(
+      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier, carType: this.ruleForm.cooperationCar }
     )
     if (data.success) {
-      this.ruleForm.carPrice = data.data
+      this.ruleForm.carPrice = data.data.price
+      this.ruleForm.describe = data.data.describe
+    } else {
+      this.$message.error(data)
+    }
+  }
+
+  // 查看车型
+  private async getModelByTypeAndCityAndSupplierAndCarType() {
+    let { data } = await GetModelByTypeAndCityAndSupplierAndCarType(
+      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier, carType: this.ruleForm.cooperationCar }
+    )
+    if (data.success) {
+      this.optionsCarType = data.data
     } else {
       this.$message.error(data)
     }
@@ -1058,6 +1074,7 @@ export default class CreatLine extends Vue {
         this.ruleForm.driverInfoFORM.name = i.detail.name
         this.ruleForm.driverInfoFORM.phone = i.detail.phone
         this.ruleForm.driverInfoFORM.workCity = i.detail.workCity
+        this.ruleForm.driverInfoFORM.driverId = driverId
       }
     })
   }
@@ -1065,14 +1082,13 @@ export default class CreatLine extends Vue {
   private submitForm(formName:any) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        CreateNewOrder({
-          orderInfoFORM: this.ruleForm
-        }).then((data: any) => {
-          if (data.success) {
-            let datas = data.data
-            console.log(datas)
+        CreateNewOrder(this.ruleForm
+        ).then((data: any) => {
+          if (data.data.success) {
+            this.$message.success('创建订单成功！')
+            this.$router.push({ name: 'OrderManage' })
           } else {
-            this.$message.error(data.errMessage)
+            this.$message.error(data.data.errorMsg)
           }
         }).catch(err => {
           this.$message.error(err)

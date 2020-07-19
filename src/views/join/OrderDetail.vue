@@ -22,7 +22,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="工作城市"
-            :value="orderDetail.city"
+            :value="orderDetail.driverInfoVO.workCityName"
           />
         </el-col>
 
@@ -42,7 +42,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="商品分类"
-            :value="orderDetail.busiType"
+            :value="orderDetail.busiTypeName"
           />
         </el-col>
 

@@ -16,7 +16,7 @@ export const GetOrderDetail = (params: any) =>
 
 export const GetOrderLog = (params: any) =>
   request({
-    url: '/order/vl/order/getOrderStatusLogById',
+    url: '/order/v1/order/getOrderStatusLogById',
     method: 'get',
     params
   })
@@ -97,6 +97,15 @@ export const GetPriceByTypeAndCityAndSupplierAndCarType = (params: any) =>
     method: 'post',
     data: params
   })
+
+// 车价
+export const GetPriceAndByTypeAndCityAndSupplierAndCarType = (params: any) =>
+  request({
+    url: '/product/v1/product/product/getPriceAndByTypeAndCityAndSupplierAndCarType',
+    method: 'post',
+    data: params
+  })
+
 // 激活
 
 export const ActiveContract = (params: any) =>
@@ -161,4 +170,12 @@ export const GetOperManagerListByUserId = (params: any) =>
     url: '/order/v1/order/deliever/getDelieverList',
     method: 'post',
     data: params
+  })
+
+// 获取车型
+export const GetModelByTypeAndCityAndSupplierAndCarType = (data: any) =>
+  request({
+    url: '/product/v1/product/product/getModelByTypeAndCityAndSupplierAndCarType',
+    method: 'post',
+    data
   })
