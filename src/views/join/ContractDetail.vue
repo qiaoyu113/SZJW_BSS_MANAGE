@@ -22,7 +22,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            :value="ContractDetail.driverInfoBusiVO.workCity"
+            :value="ContractDetail.driverInfoBusiVO.workCityName"
           />
         </el-col>
       </el-row>
