@@ -18,7 +18,8 @@ export const GetCustomerDetail = (data: any) =>
 // 获取分配货主列表
 export const GetCustomerSaleList = (data: any) =>
   request({
-    url: '/product/v1/product/product/getCarTypeByTypeAndCityAndSupplier',
+    // url: '/product/v1/product/product/getCarTypeByTypeAndCityAndSupplier',
+    url: '/line/v1/customer/saleList',
     method: 'post',
     data
   })

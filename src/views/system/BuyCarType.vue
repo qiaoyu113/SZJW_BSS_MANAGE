@@ -275,6 +275,7 @@ import Dialog from '@/components/Dialog/index.vue'
 import { GetOpenCityData } from '@/api/common'
 import { getProductList, shelvesOrTheshelves, createProduct, updateProduct } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
+import { HandlePages } from '@/utils/index'
 import '@/styles/common.scss'
 
 interface IState {
@@ -419,6 +420,7 @@ export default class extends Vue {
     const { data } = await getProductList(postData)
     if (data.success) {
       this.list = data.data
+      data.page = await HandlePages(data.page)
       this.total = data.page.total
     } else {
       this.$message.error(data)

@@ -44,14 +44,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="加盟经理">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.joinManageId"
                     placeholder="请选择"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsJoin"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -90,12 +90,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="reset"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="research"
                 >
                   查询
                 </el-button>
@@ -110,7 +112,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetJoinManageList } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -126,6 +128,7 @@ export default class extends Vue {
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private DateValueChild: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
+  private optionsJoin: any[] = []
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
@@ -189,11 +192,34 @@ export default class extends Vue {
           }
         }
         break
+      case 'orderId':
+        vodeName = value
+        break
+      case 'diverName':
+        vodeName = value
+        break
+      case 'joinManageId':
+        for (let entry of this.optionsJoin) {
+          if (entry.id === value) {
+            vodeName = entry.name
+          }
+        }
+        break
       default:
         vodeName = ''
         break
     }
     return vodeName
+  }
+
+  // 获取加盟经理
+  private async getJoinManageList() {
+    const { data } = await GetJoinManageList({})
+    if (data.success) {
+      this.optionsJoin = data.data
+    } else {
+      this.$message.error(data)
+    }
   }
 
   private async getDictionary() {
@@ -222,6 +248,17 @@ export default class extends Vue {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
+  }
+
+  private research() {
+    this.$emit('handle-query', this.listQuery)
+  }
+
+  private reset() {
+    for (let key in this.listQuery) {
+      this.listQuery[key] = ''
+    }
+    this.DateValueChild = []
   }
 }
 </script>

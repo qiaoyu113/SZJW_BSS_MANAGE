@@ -21,17 +21,6 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <el-button
-          :class="isPC ? 'btn-item' : 'btn-item-m'"
-          type="primary"
-          size="small"
-          name="cluelist_creat_btn"
-          @click="showDialog.visible = true"
-        >
-          <i class="el-icon-s-operation" />
-          <span v-if="isPC">创建客户</span>
-        </el-button>
-
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
@@ -303,7 +292,7 @@
             <el-radio
               v-model="templateRadio"
               :label="scope.row.messageTemplateId"
-              @change.native="handleSelectionDialog(scope.$index,scope.row)"
+              @change.native="handleSelectionDialog(scope.row.saleId)"
             />
           </template>
         </el-table-column>
@@ -394,6 +383,7 @@ export default class extends Vue {
     private page: Object | undefined = '';
     private listLoading = true;
     private tags: any[] = [];
+    private templateRadio: any[] = []
     private DateValue: any[] = [];
     private multipleSelection: any[] = []
     private operationList: any[] = [
@@ -422,7 +412,7 @@ export default class extends Vue {
       {
         label: '全部',
         name: '0',
-        num: 187
+        num: ''
       }
     ];
     private listQuery: IState = {
@@ -446,6 +436,7 @@ export default class extends Vue {
       customerId: '',
       pageNumber: ''
     };
+    private saleId: any = '';
     // 弹窗分配
     private dialogList: any[] = [];
     private dialogLoading: boolean= false;
@@ -514,6 +505,9 @@ export default class extends Vue {
       const { data } = await GetCustomerList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        if (data.title) {
+          this.tab[0].num = data.title.all
+        }
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
@@ -533,9 +527,10 @@ export default class extends Vue {
       this.dialogListQuery.limit = value.limit
       this.dialogLoading = true
       const { data } = await GetCustomerSaleList(this.dialogListQuery)
+      console.log(data)
       if (data.success) {
         this.dialogList = data.data
-        this.dialogTotal = data.page.total
+        this.dialogTotal = data.page ? data.page.total : data.data.length
       } else {
         this.$message.error(data)
       }
@@ -551,7 +546,7 @@ export default class extends Vue {
 
     // 跳转线索
     private goClue(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'EditClue', query: { id: id } })
+      this.$router.push({ name: 'ConversionClue', query: { id: id } })
     }
 
     // 批量操作
@@ -606,24 +601,22 @@ export default class extends Vue {
 
     // 弹窗操作
     private async confirmAssign(done: any) {
-      console.log(this.multipleSelection)
       let linesIds: any = []
       this.multipleSelection.forEach(i => {
         linesIds.push(i.lineSaleId)
       })
       // 提交操作
-      if (this.multipleSelectionAssign.length) {
+      if (this.saleId) {
         const { data } = await Distribution({
           linesIds: linesIds,
-          saleId: ''
+          saleId: this.saleId
         })
         if (data.success) {
-          this.dialogList = data.data
-          this.dialogTotal = data.page.total
+          this.$message.success('分配成功')
+          this.assignShowDialog = false
         } else {
-          this.$message.error(data)
+          this.$message.error(data.errorMsg)
         }
-        this.assignShowDialog = false
       } else {
         this.$message({
           type: 'warning',
@@ -634,7 +627,7 @@ export default class extends Vue {
     }
     // 弹窗表格选中
     private handleSelectionDialog(val: any) {
-      this.multipleSelectionAssign = val
+      this.saleId = val
     }
     // table index
     private indexMethod(type: string) {

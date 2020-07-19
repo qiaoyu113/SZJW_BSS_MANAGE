@@ -21,11 +21,11 @@ export const GetOrderLog = (params: any) =>
     params
   })
 
-export const GetDriverList = (data: any) =>
+export const GetDriverList = (params: any) =>
   request({
-    url: '/bss/v1/bss/driver/selectListByKey',
-    method: 'post',
-    data
+    url: '/driver/v1/driver/getDriverAll',
+    method: 'get',
+    params
   })
 
 export const GetDriverDetail = (params: any) =>
@@ -43,20 +43,20 @@ export const GetContractDetail = (params: any) =>
     params
   })
 
-// 交付提交
-export const SubmitOrderDeliver = (params: any) =>
-  request({
-    url: '/order/vl/orderDeliver/submitOrderDeliver',
-    method: 'post',
-    params
-  })
-
 // 交付详情
 export const GetOrderDeliverDetail = (params: any) =>
   request({
-    url: '/order/vl/orderDeliver/orderDeliverDetail',
+    url: '/order/v1/order/orderDeliver/orderDeliverDetail',
     method: 'get',
     params
+  })
+
+// 提交交付信息
+export const SubmitOrderDeliver = (params: any) =>
+  request({
+    url: '/order/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
+    method: 'post',
+    data: params
   })
 
 // 交付详情
@@ -122,7 +122,7 @@ export const GetOrderInfoList = (params: any) =>
     data: params
   })
 
-// 订单列表
+// 取消订单
 export const CancelOrder = (params: any) =>
   request({
     url: '/order/v1/order/cancelOrder',
@@ -142,6 +142,23 @@ export const PostAuditOrder = (params: any) =>
 export const PostConfirmOrder = (params: any) =>
   request({
     url: '/order/v1/order/confirmOrder',
+    method: 'post',
+    data: params
+  })
+
+// 交付列表
+export const GetDelieverList = (params: any) =>
+  request({
+    // url: 'line_center/v1/line/customer/queryLineCustomerList',
+    url: '/business_center/v1/order/deliever/getDelieverList',
+    method: 'post',
+    data: params
+  })
+
+// 交付列表
+export const GetOperManagerListByUserId = (params: any) =>
+  request({
+    url: '/order/v1/order/deliever/getDelieverList',
     method: 'post',
     data: params
   })

@@ -34,27 +34,21 @@
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="公司简称">
-                  <el-select
+                  <el-input
                     v-model="listQuery.customerCompanyName"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCompany"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
+                    placeholder="请输入公司简称"
+                    clearable
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="分类">
                   <el-select
                     v-model="listQuery.classification"
-                    placeholder="请选择"
+                    placeholder="请选择分类"
                   >
                     <el-option
-                      v-for="item in optionsCity"
+                      v-for="item in optionsClassification"
                       :key="item.dictValue"
                       :label="item.dictLabel"
                       :value="item.dictValue"
@@ -70,9 +64,9 @@
                   >
                     <el-option
                       v-for="item in optionsCity"
-                      :key="item.dictValue"
-                      :label="item.dictLabel"
-                      :value="item.dictValue"
+                      :key="item.codeVal"
+                      :label="item.code"
+                      :value="item.codeVal"
                     />
                   </el-select>
                 </el-form-item>
@@ -80,14 +74,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="销售">
                   <el-select
-                    v-model="listQuery.city"
+                    v-model="listQuery.lineSaleId"
                     placeholder="请选择"
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
+                      v-for="item in optionsSale"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -146,7 +140,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetDictionaryList, GetJoinManageList } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -161,6 +155,8 @@ export default class extends Vue {
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private optionsCompany: any[] = []
+  private optionsSale: any[] = []
+  private optionsClassification: any[] = []
   private DateValueChild: any[] = []; // DateValue的赋值项
   private DateValueChild2: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
@@ -222,6 +218,8 @@ export default class extends Vue {
 
   created() {
     this.getDictionary()
+    this.getOpenCityData()
+    this.getLowerStaffInfo()
   }
 
   // 匹配创建tags标签
@@ -231,8 +229,8 @@ export default class extends Vue {
       // 根据listQuery中的key来判断
       case 'city':
         for (let entry of this.optionsCity) {
-          if (entry.dictValue === value) {
-            vodeName = entry.dictLabel
+          if (entry.codeVal === value) {
+            vodeName = entry.code
           }
         }
         break
@@ -246,7 +244,17 @@ export default class extends Vue {
         vodeName = value
         break
       case 'customerCompanyName':
-        for (let entry of this.optionsCompany) {
+        vodeName = value
+        break
+      case 'lineSaleId':
+        for (let entry of this.optionsSale) {
+          if (entry.id === value) {
+            vodeName = entry.name
+          }
+        }
+        break
+      case 'classification':
+        for (let entry of this.optionsClassification) {
           if (entry.dictValue === value) {
             vodeName = entry.dictLabel
           }
@@ -259,7 +267,7 @@ export default class extends Vue {
     return vodeName
   }
 
-  private async getDictionary() {
+  private async getOpenCityData() {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
@@ -274,6 +282,33 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`get `)
+    }
+  }
+
+  private async getDictionary() {
+    try {
+      let params = ['customer_category']
+      let { data: res } = await GetDictionaryList(params)
+      if (res.success) {
+        this.optionsClassification = res.data.customer_category
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
+  }
+
+  private async getLowerStaffInfo() {
+    try {
+      let { data: res } = await GetJoinManageList({})
+      if (res.success) {
+        this.optionsSale = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
     }
   }
 

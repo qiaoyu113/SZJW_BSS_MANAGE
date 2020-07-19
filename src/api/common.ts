@@ -16,7 +16,7 @@ export const GetDictionaryList = (data: any) =>
 // 获取加盟经理列表
 export const GetJoinManageList = (data: any) =>
   request({
-    url: `${baseURL}/v1/base/user/getManagerListByUserId`,
+    url: `${baseURL}/v1/base/user/getLowerStaffInfo`,
     method: 'post',
     data
   })
@@ -72,4 +72,20 @@ export const detailCity = (data:any) =>
     url: `${baseURL}/v1/base/area/getTownByCountryCode`,
     method: 'get',
     params: data
+  })
+
+// 上传文件
+export const Upload = (params: any, data: any) =>
+  request({
+    url: `${baseURL}/v1/base/upload/uploadOSS/${params.folder}/${params.isEncode}/${params.expire}`,
+    method: 'post',
+    data
+  })
+
+// 获取支付方式
+export const GetPayList = (data:any) =>
+  request({
+    url: `${baseURL}/v1/order/getPayTypeList`,
+    method: 'get',
+    data
   })

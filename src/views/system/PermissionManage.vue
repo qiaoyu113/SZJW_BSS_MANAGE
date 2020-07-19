@@ -135,6 +135,17 @@
                 </el-radio>
               </el-radio-group>
             </el-form-item>
+            <el-form-item
+              v-if="dialogForm.controlType"
+              label="页面地址"
+              prop="url"
+            >
+              <el-input
+                v-model="dialogForm.url"
+                maxlength="100"
+                placeholder="请输入页面地址"
+              />
+            </el-form-item>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -143,7 +154,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
@@ -195,6 +206,13 @@ export default class extends Vue {
   }
   private isAdd: boolean = false;
   private disabled: boolean = false;
+
+  @Watch('dialogForm.controlType')
+  private onval(value:any) {
+    if (!value) {
+      this.dialogForm.url = ''
+    }
+  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC

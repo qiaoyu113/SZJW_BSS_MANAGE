@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
+        @handle-query="getList"
       />
     </SuggestContainer>
 
@@ -20,16 +21,16 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <el-button
+        <!-- <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
           name="cluelist_creat_btn"
           @click="showDialog.visible = true"
         >
-          <i class="el-icon-s-operation" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">创建客户</span>
-        </el-button>
+        </el-button> -->
 
         <el-dropdown
           :hide-on-click="false"
@@ -81,7 +82,7 @@
             label="订单编号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.customerId | DataIsNull }}</span>
+              <span>{{ scope.row.orderId | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -91,17 +92,17 @@
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.clueId | DataIsNull }} </span>
+              <span>{{ scope.row.driverName | DataIsNull }} </span>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('城市') > -1"
-            class-name="status-col"
+            align="left"
             label="城市"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.lineSaleName | DataIsNull }}</span>
+              <span>{{ scope.row.cityName | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -111,7 +112,7 @@
             label="加盟经理"
           >
             <template slot-scope="{row}">
-              {{ row.company | DataIsNull }}
+              {{ row.joinManageName | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -121,7 +122,7 @@
             label="交付状态"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.primaryClassificationName | DataIsNull }}</p>
+              <p>{{ scope.row.isDelieveName | DataIsNull }}</p>
             </template>
           </el-table-column>
 
@@ -132,7 +133,7 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.cityName | DataIsNull }}</span>
+                <span>{{ scope.row.plateNo | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -195,7 +196,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetCustomerList } from '@/api/customer'
+import { GetDelieverList } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -252,16 +253,17 @@ export default class extends Vue {
       {
         label: '全部',
         name: '0',
-        num: 187
+        num: ''
       },
       {
         label: '待交付',
         name: '1',
-        num: 1
+        num: ''
       },
       {
         label: '已交付',
-        name: '2'
+        name: '2',
+        num: ''
       }
     ];
     private listQuery: IState = {
@@ -272,7 +274,21 @@ export default class extends Vue {
       endDate: '',
       startDate: '',
       state: '',
-      lineSaleId: ''
+      lineSaleId: '',
+      'busiType': '',
+      'cooperationModel': '',
+      'createDate': '',
+      'createId': '',
+      'createSource': '',
+      'deliverDate': '',
+      'diverName': '',
+      'driverId': '',
+      'isDeliver': '',
+      'joinManageId': '',
+      'orderId': '',
+      'pageNumber': '',
+      'payType': '',
+      'status': ''
     };
 
     created() {
@@ -298,7 +314,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 
@@ -318,9 +333,12 @@ export default class extends Vue {
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
-      const { data } = await GetCustomerList(this.listQuery)
+      const { data } = await GetDelieverList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.tab[0].num = data.title.all
+        this.tab[1].num = data.title.delivered
+        this.tab[2].num = data.title.notDelivered
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {

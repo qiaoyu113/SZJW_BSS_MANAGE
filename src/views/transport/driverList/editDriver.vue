@@ -128,7 +128,7 @@ export default class extends Vue {
    * 校验手机号
    */
   private validatePhone = (rule: any, value: string, callback: Function) => {
-    if (!phoneReg.test(this.listQuery.phone)) {
+    if (!phoneReg.test(value)) {
       return callback(new Error('请输入正确的手机号'))
     }
     callback()

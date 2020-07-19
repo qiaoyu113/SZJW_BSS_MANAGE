@@ -1,5 +1,8 @@
 <template>
-  <div :class="isPC ? 'ClueDetail' : 'ClueDetail-m'">
+  <div
+    v-loading="loading"
+    :class="isPC ? 'ClueDetail' : 'ClueDetail-m'"
+  >
     <SectionContainer
       title="基本信息"
       :md="true"
@@ -8,100 +11,101 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="姓名"
-            value="刘德华123123"
+            :value="details.name"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="手机号"
-            value="15071362991"
+            :value="details.phone"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线索编号"
-            value="HXS000001"
+            :value="details.clueId"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="分配状态"
-            value="已分配"
+            :value="details.distributionState | findDistribution"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线索状态"
-            value="待跟进"
+            :value="details.clueState | findClue"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线索来源"
-            value="企查查"
+            :value="details.clueSourceName"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            value="北京"
+            :value="details.cityName"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="公司"
-            value="云鸟"
+            :value="details.company"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="职务"
-            value="前端开发"
+            :value="details.position"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="销售"
-            value="测试1"
+            :value="details.lineSaleName"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="销售电话"
-            value="12345678911"
+            :value="details.lineSalePhone"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="创建日期"
-            value="2020/06/06 11:56:08"
+            :value="details.createDate | Timestamp"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="更新日期"
-            value="2020/06/06 11:56:08"
+            :value="details.updateDate | Timestamp"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="详细地址"
-            value="公司的详细地址，字数展示不下自动拓展至下一行展示"
+            :value="details.address"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="备注"
-            value="公司的详细地址，字数展示不下自动拓展至下一行展示"
+            :value="details.remark"
           />
         </el-col>
       </el-row>
     </SectionContainer>
     <SectionContainer
+      v-if="details.clueState===3"
       title="无效信息"
       :md="true"
     >
@@ -115,6 +119,7 @@
       </el-row>
     </SectionContainer>
     <SectionContainer
+      v-else
       title="跟进信息"
       :md="true"
     >
@@ -122,19 +127,18 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="是否继续跟进"
-            value="是"
+            :value="details.isTransform ? '是' : '否'"
           />
         </el-col>
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-for="(item, index) in details.lineClueDemandVos"
+          :key="index"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
-            name="需求车型1"
-            value="面包/20辆"
-          />
-        </el-col>
-        <el-col :span="isPC ? 6 : 24">
-          <DetailItem
-            name="需求车型2"
-            value="面包/20辆"
+            v-if="item"
+            :name="`需求车型${index+1}`"
+            :value="`${item.demandCarTypeName}/${item.demandNo}辆`"
           />
         </el-col>
       </el-row>
@@ -144,91 +148,34 @@
         class="wrap"
       >
         <el-col
+          v-for="(item, index) in details.lineClueFollowVos"
+          :key="index"
           class="follow-card"
           :span="isPC ? 10 : 24"
         >
           <div class="card-tit">
             <div class="card-t">
-              跟进记录1
+              跟进记录{{ index+1 }}
             </div>
           </div>
           <div class="card-box clearfix">
             <el-col :span="24">
               <DetailItem
+                v-if="item"
                 name="拜访时间"
-                value="这个信息是中介"
+                :value="item.visitDate | Timestamp"
               />
             </el-col>
             <el-col :span="24">
               <DetailItem
                 name="拜访地址"
-                value="这个信息是中介"
+                :value="item.visitAddress"
               />
             </el-col>
             <el-col :span="24">
               <DetailItem
                 name="拜访记录"
-                value="这个信息是中介"
-              />
-            </el-col>
-          </div>
-        </el-col>
-        <el-col
-          class="follow-card"
-          :span="isPC ? 10 : 24"
-        >
-          <div class="card-tit">
-            <div class="card-t">
-              跟进记录1
-            </div>
-          </div>
-          <div class="card-box clearfix">
-            <el-col :span="24">
-              <DetailItem
-                name="拜访时间"
-                value="这个信息是中介"
-              />
-            </el-col>
-            <el-col :span="24">
-              <DetailItem
-                name="拜访地址"
-                value="这个信息是中介"
-              />
-            </el-col>
-            <el-col :span="24">
-              <DetailItem
-                name="拜访记录"
-                value="这个信息是中介"
-              />
-            </el-col>
-          </div>
-        </el-col>
-        <el-col
-          class="follow-card"
-          :span="isPC ? 10 : 24"
-        >
-          <div class="card-tit">
-            <div class="card-t">
-              跟进记录1
-            </div>
-          </div>
-          <div class="card-box clearfix">
-            <el-col :span="24">
-              <DetailItem
-                name="拜访时间"
-                value="这个信息是中介"
-              />
-            </el-col>
-            <el-col :span="24">
-              <DetailItem
-                name="拜访地址"
-                value="这个信息是中介"
-              />
-            </el-col>
-            <el-col :span="24">
-              <DetailItem
-                name="拜访记录"
-                value="这个信息是中介"
+                :value="item.visitRecord"
               />
             </el-col>
           </div>
@@ -245,54 +192,81 @@ import { GetCustomerList } from '@/api/customer'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
+import { GetLineClueDetail } from '@/api/cargo'
 import '@/styles/common.scss'
+const optionsClue: any = [
+  // （0：待跟进 1：已跟进 2：已转化 3：无效）
+  {
+    value: 0,
+    label: '待跟进'
+  },
+  {
+    value: 1,
+    label: '已跟进'
+  },
+  {
+    value: 2,
+    label: '已转化'
+  },
+  {
+    value: 3,
+    label: '无效'
+  }
+] // 线索状态
+const optionsDistribution: any = [
+  {
+    value: 0,
+    label: '待分配'
+  },
+  {
+    value: 1,
+    label: '已分配'
+  }
+] //
 @Component({
   name: 'ClueDetail',
   components: {
     DetailItem,
     SectionContainer
+  },
+  filters: {
+    findDistribution(status: string) {
+      const item = optionsDistribution.find(({ value }:any) => value === status)
+      return item ? item['label'] : status
+    },
+    findClue(status: string) {
+      const item = optionsClue.find(({ value }:any) => value === status)
+      return item ? item['label'] : status
+    }
   }
 })
 export default class extends Vue {
-  private ruleForm: any = {
-    name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: ''
-  };
-  private rules: any = {
-    name: [
-      { required: true, message: '请输入活动名称', trigger: 'blur' },
-      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-    ],
-    region: [{ required: true, message: '请选择活动区域', trigger: 'change' }],
-    date1: [
-      { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-    ],
-    date2: [
-      { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-    ],
-    type: [
-      {
-        type: 'array',
-        required: true,
-        message: '请至少选择一个活动性质',
-        trigger: 'change'
-      }
-    ],
-    resource: [
-      { required: true, message: '请选择活动资源', trigger: 'change' }
-    ],
-    desc: [{ required: true, message: '请填写活动形式', trigger: 'blur' }]
-  };
+  private details: any = {};
+  private loading: boolean = false;
+  private id: any = ''
+  private optionsClue: any = optionsClue; // 线索状态
+  private optionsDistribution: any = optionsDistribution; //
+  private async getDetail() {
+    this.loading = true
+    const { data } = await GetLineClueDetail({
+      clueId: this.id
+    })
+    this.loading = false
+    if (data.success) {
+      this.details = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
 
-  created() {}
+  private fetchData() {
+    this.getDetail()
+  }
 
-  mounted() {}
+  mounted() {
+    this.id = this.$route.query.id
+    this.fetchData()
+  }
 
   activated() {}
 
