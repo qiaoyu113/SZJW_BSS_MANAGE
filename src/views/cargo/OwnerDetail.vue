@@ -102,21 +102,21 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="城市"
-              :value="OwnerDetail.cityNames"
+              :value="OwnerDetail.cityName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="合同止期"
-              :value="OwnerDetail.contractEnd"
+              :value="OwnerDetail.contractEnd | Timestamp"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="创建日期"
-              :value="OwnerDetail.createDate"
+              :value="OwnerDetail.createDate | Timestamp"
             />
           </el-col>
 
@@ -238,14 +238,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="创建日期"
-              :value="OwnerDetail.clueInfoVO.createDate"
+              :value="OwnerDetail.clueInfoVO.createDate | Timestamp"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="更新日期"
-              :value="OwnerDetail.clueInfoVO.createDate"
+              :value="OwnerDetail.clueInfoVO.createDate | Timestamp"
             />
           </el-col>
 
@@ -282,7 +282,7 @@
           >
             <DetailItem
               name="需求车型"
-              :value="item.demandCarType + '/' + item.demandNo"
+              :value="item.demandCarTypeName + '/' + item.demandNo + '(辆)'"
             />
           </el-col>
         </el-row>
@@ -301,7 +301,7 @@
             <el-col :span="isPC ? 8 : 24">
               <DetailItem
                 name="拜访时间"
-                :value="item.visitDate"
+                :value="item.visitDate | Timestamp"
               />
             </el-col>
             <el-col :span="isPC ? 8 : 24">

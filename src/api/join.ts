@@ -46,7 +46,7 @@ export const GetContractDetail = (params: any) =>
 // 交付详情
 export const GetOrderDeliverDetail = (params: any) =>
   request({
-    url: '/order/vl/order/orderDeliver/orderDeliverDetail',
+    url: '/order/v1/order/orderDeliver/orderDeliverDetail',
     method: 'get',
     params
   })
@@ -146,14 +146,16 @@ export const PostConfirmOrder = (params: any) =>
     data: params
   })
 
-// 订单确认
+// 交付列表
 export const GetDelieverList = (params: any) =>
   request({
-    url: 'line_center/v1/line/customer/queryLineCustomerList',
+    // url: 'line_center/v1/line/customer/queryLineCustomerList',
+    url: '/business_center/v1/order/deliever/getDelieverList',
     method: 'post',
     data: params
   })
-  // 订单确认
+
+// 交付列表
 export const GetOperManagerListByUserId = (params: any) =>
   request({
     url: '/order/v1/order/deliever/getDelieverList',
