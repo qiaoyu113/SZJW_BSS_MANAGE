@@ -860,18 +860,19 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.buyCarCompany', { deep: true })
   private changeCarCompany(value:any) {
-    this.ruleForm.cooperationCar = ''
+    // this.ruleForm.cooperationCar = ''
     this.getCar()
   }
 
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any) {
-    this.ruleForm.cooperationCar = ''
+    // this.ruleForm.cooperationCar = ''
     this.getCar()
   }
 
   @Watch('ruleForm.cooperationCar', { deep: true })
   private changeCooperationCar(value:any) {
+    console.log(value)
     if (this.ruleForm.cooperationModel === '1') {
       this.getModelByTypeAndCityAndSupplierAndCarType()
     }
@@ -944,11 +945,11 @@ export default class CreatLine extends Vue {
   }
 
   created() {
+    this.fetchData()
     let id = this.$route.query.id
     if (id) {
       this.getDetail(id)
     }
-    this.fetchData()
   }
 
   // 获取订单详情
@@ -957,7 +958,9 @@ export default class CreatLine extends Vue {
     if (data.success) {
       let datas = data.data
       this.ruleForm = Object.assign(this.ruleForm, datas)
-      console.log(this.ruleForm)
+      this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
+      this.ruleForm.busiType = this.ruleForm.busiType.toString()
+      this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
     } else {
       this.$message.error(data)
     }
@@ -1075,6 +1078,7 @@ export default class CreatLine extends Vue {
         this.ruleForm.driverInfoFORM.name = i.detail.name
         this.ruleForm.driverInfoFORM.phone = i.detail.phone
         this.ruleForm.driverInfoFORM.workCity = i.detail.workCity
+        this.ruleForm.driverInfoFORM.workCityName = i.detail.workCityName
         this.ruleForm.driverInfoFORM.driverId = driverId
       }
     })

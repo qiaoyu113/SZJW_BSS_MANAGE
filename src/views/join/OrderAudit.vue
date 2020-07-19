@@ -244,6 +244,7 @@ import { GetOrderDetail, PostAuditOrder } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
+import { TagsViewModule } from '@/store/modules/tags-view'
 import '@/styles/common.scss'
 @Component({
   name: 'OrderAudit',
@@ -369,7 +370,6 @@ export default class extends Vue {
 
     mounted() {
       this.id = this.$route.query.id
-      console.log(this.id)
       this.getDetail(this.id)
     }
 
@@ -382,7 +382,7 @@ export default class extends Vue {
 
     // 请求列表
     private async getDetail(value: any) {
-      const { data } = await GetOrderDetail({ id: value })
+      const { data } = await GetOrderDetail({ orderId: value })
       if (data.success) {
         let datas = data.data
         this.orderDetail = datas
@@ -396,9 +396,18 @@ export default class extends Vue {
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditPass',
-        cooperationModel: this.orderDetail.cooperationModel
+        cooperationModel: this.orderDetail.cooperationModel,
+        driverId: this.orderDetail.driverId,
+        createSource: this.orderDetail.createSource
       })
       if (data.success) {
+        (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+        (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+          name: 'OrderManage'
+        })
+        this.$nextTick(() => {
+          this.$router.push({ name: 'OrderManage' })
+        })
         this.$message.success('操作成功，审核通过')
       } else {
         this.$message.error(data.errorMsg)
@@ -410,9 +419,18 @@ export default class extends Vue {
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditNotPass',
-        cooperationModel: this.orderDetail.cooperationModel
+        cooperationModel: this.orderDetail.cooperationModel,
+        driverId: this.orderDetail.driverId,
+        createSource: this.orderDetail.createSource
       })
       if (data.success) {
+        (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+        (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+          name: 'OrderManage'
+        })
+        this.$nextTick(() => {
+          this.$router.push({ name: 'OrderManage' })
+        })
         this.$message.success('操作成功，审核不通过')
       } else {
         this.$message.error(data.errorMsg)

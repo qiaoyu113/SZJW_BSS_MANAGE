@@ -142,7 +142,7 @@ export const CancelOrder = (params: any) =>
 // 订单审核
 export const PostAuditOrder = (params: any) =>
   request({
-    url: '/order/v1/order/cancelOrder',
+    url: '/order/v1/order/auditOrder',
     method: 'post',
     data: params
   })
