@@ -374,7 +374,7 @@
             <el-form-item :label="`剩余添加金额： ¥` + remain + ``">
               <el-input
                 v-model="payNumber"
-                v-only-number="{min: 0, max: remain, precision: 2}"
+                v-only-number="{min: 0, max: '', precision: 2}"
                 placeholder="请输入支付金额"
                 maxlength="10"
               />
@@ -872,11 +872,16 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationCar', { deep: true })
   private changeCooperationCar(value:any) {
-    console.log(value)
     if (this.ruleForm.cooperationModel === '1') {
       this.getModelByTypeAndCityAndSupplierAndCarType()
     }
     this.getPrice()
+  }
+
+  @Watch('ruleForm.goodsAmount', { deep: true })
+  private changeGoodsAmount(value:any) {
+    this.orderPrice = value
+    this.remain = this.orderPrice - this.readyPay
   }
 
   // 判断是否是PC
@@ -969,10 +974,10 @@ export default class CreatLine extends Vue {
   // 添加金额
   private addPayList() {
     if (this.payNumber) {
-      if (Number(this.payNumber) > Number(this.orderPrice)) {
+      if (Number(this.payNumber) > Number(this.remain)) {
         this.$message.error('添加的支付金额，不能超过剩余添加金额')
       } else {
-        this.remain = Number(this.orderPrice) - Number(this.payNumber)
+        this.remain = Number(this.remain) - Number(this.payNumber)
         this.ruleForm.orderPayRecordInfoFORMList.push(
           {
             money: Number(this.payNumber).toFixed(2).toString(),
