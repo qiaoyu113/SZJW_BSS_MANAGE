@@ -139,6 +139,30 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('操作人') > -1"
+            align="left"
+            label="操作人"
+          >
+            <template slot-scope="scope">
+              <p>
+                <span>{{ scope.row.updateName | DataIsNull }}</span>
+              </p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('交付完成时间') > -1"
+            align="left"
+            label="交付完成时间"
+          >
+            <template slot-scope="scope">
+              <p>
+                <span>{{ scope.row.plateNo | DataIsNull }}</span>
+              </p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
             :key="Math.random()"
             align="left"
             label="操作"
@@ -165,12 +189,12 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId, 1)"
+                    @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     交付
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerId, 2)"
+                    @click.native="goDetail(scope.row.orderId, 2)"
                   >
                     详情
                   </el-dropdown-item>

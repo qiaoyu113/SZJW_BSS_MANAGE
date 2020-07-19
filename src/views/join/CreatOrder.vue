@@ -24,7 +24,7 @@
         <el-row class="driver">
           <el-col :span="isPC ? 6 : 24">
             <el-select
-              v-model="driverId"
+              v-model="ruleForm.driverId"
               :remote-method="remoteMethod"
               :loading="loading"
               filterable
@@ -44,7 +44,7 @@
         </el-row>
       </SectionContainer>
       <SectionContainer
-        v-if="driverId"
+        v-if="ruleForm.driverId"
         title="司机信息"
         :md="true"
       >
@@ -82,7 +82,7 @@
         </el-row>
       </SectionContainer>
       <SectionContainer
-        v-if="driverId"
+        v-if="ruleForm.driverId"
         title="商品信息"
         :md="true"
       >
@@ -178,7 +178,7 @@
       </SectionContainer>
 
       <SectionContainer
-        v-if="ruleForm.cooperationModel && driverId"
+        v-if="ruleForm.cooperationModel && ruleForm.driverId"
         title="商品附加信息"
         :md="true"
       >
@@ -213,10 +213,10 @@
             <el-form-item
               v-if="ruleForm.cooperationModel === '2'"
               label="租赁公司"
-              prop="leaseCarCompany"
+              prop="supplier"
             >
               <el-select
-                v-model="ruleForm.leaseCarCompany"
+                v-model="ruleForm.supplier"
                 placeholder="请选择租赁公司"
               >
                 <el-option
@@ -232,10 +232,10 @@
             <el-form-item
               v-if="ruleForm.cooperationModel === '1'"
               label="购车公司"
-              prop="buyCarCompany"
+              prop="supplier"
             >
               <el-select
-                v-model="ruleForm.buyCarCompany"
+                v-model="ruleForm.supplier"
                 placeholder="请选择购车公司"
               >
                 <el-option
@@ -250,7 +250,7 @@
           <!--购车和租车-->
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              v-if="(ruleForm.leaseCarCompany || ruleForm.buyCarCompany) && ruleForm.cooperationModel !== '3'"
+              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
               label="合作车型"
               prop="cooperationCar"
             >
@@ -287,6 +287,26 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <!--车辆型号-->
+          <el-col :span="isPC ? 6 : 24">
+            <el-form-item
+              v-if="ruleForm.supplier && ruleForm.cooperationCar && ruleForm.cooperationModel !== '3'"
+              label="车辆型号"
+              prop="cooperationCar"
+            >
+              <el-select
+                v-model="ruleForm.carModel"
+                placeholder="请选择车辆型号"
+              >
+                <el-option
+                  v-for="item in optionsCarType"
+                  :key="item.codeVal"
+                  :label="item.code"
+                  :value="item.codeVal"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               v-if="ruleForm.cooperationModel === '2' && ruleForm.cooperationModel === '3'"
@@ -314,7 +334,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div v-if="ruleForm.cooperationModel !== '3' && ruleForm.cooperationCar">
+        <div v-if="(ruleForm.cooperationModel === '1' && ruleForm.cooperationCar && ruleForm.carModel) || (ruleForm.cooperationModel === '2' && ruleForm.cooperationCar)">
           <div class="follow">
             <p>
               <span class="follow_title">
@@ -331,7 +351,7 @@
             </el-col>
             <el-col :span="isPC ? 6 : 24">
               <DetailItem
-                v-if="(ruleForm.leaseCarCompany || ruleForm.buyCarCompany) && ruleForm.cooperationModel !== '3'"
+                v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
                 name="无税车价"
                 :value="ruleForm.carPrice"
               />
@@ -340,7 +360,7 @@
         </div>
       </SectionContainer>
       <SectionContainer
-        v-if="driverId"
+        v-if="ruleForm.driverId"
         :title="`支付信息` + `( 订单金额：¥` + orderPrice + ` )`"
         :md="true"
       >
@@ -442,7 +462,7 @@
     </el-form>
     <!--按钮-->
     <div
-      v-if="driverId"
+      v-if="ruleForm.driverId"
       class="btn_box"
     >
       <el-button
@@ -658,21 +678,22 @@ export default class CreatLine extends Vue {
   private optionsCompany: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
   private optionsRentCompany: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
   private driverList: any[] = []
+  private optionsCarType: any[] = []
   private payNumber: any = ''
   private billDetail: any = {}
-  private driverId: any = ''
   private loading:boolean = false
   private showMessage:boolean = false
   private showMessageBill:boolean = false
   private ruleForm:any = {
+    'operateFlag': '',
     'busiType': '',
     'buyCarCompany': '',
     'capacityQuota': '',
     'carPrice': '',
-    'city': '100110',
+    'city': '',
     'confirmId': '',
     'confirmTime': '',
-    'cooperationCar': '',
+    'cooperationCar': '2',
     'cooperationModel': '',
     'cooperationTime': '',
     'createDate': '',
@@ -698,19 +719,20 @@ export default class CreatLine extends Vue {
     'leaseCarCompany': '',
     'notPassId': '',
     'notPassTime': '',
-    'operateFlag': '',
     'orderId': '',
     'orderPayRecordInfoFORMList': [],
     'passId': '',
     'passTime': '',
     'payCompleteTime': '',
     'payType': '',
-    'plateNo': '',
+    'plateNo': '京A88888',
     'rake': '',
     'refundTime': '',
     'remarks': '',
     'status': '',
     'updateDate': '',
+    'supplier': '1',
+    'carModel': '1',
     'updateId': ''
   }
   private rules:any = {
@@ -751,6 +773,9 @@ export default class CreatLine extends Vue {
     ],
     buyCarCompany: [
       { required: true, message: '请选择购车公司', trigger: 'change' }
+    ],
+    supplier: [
+      { required: true, message: '请选择供应商', trigger: 'change' }
     ],
     cooperationCar: [
       { required: true, message: '请选择合作车型', trigger: 'change' }
@@ -1041,8 +1066,7 @@ export default class CreatLine extends Vue {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         CreateNewOrder({
-          orderInfoFORM: this.ruleForm,
-          operateFlag: 'creat'
+          orderInfoFORM: this.ruleForm
         }).then((data: any) => {
           if (data.success) {
             let datas = data.data
