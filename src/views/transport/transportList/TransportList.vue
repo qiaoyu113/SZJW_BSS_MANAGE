@@ -104,6 +104,9 @@
         @onPageSize="handlePageSize"
         @selection-change="handleChange"
       >
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        </template>
         <template v-slot:op="scope">
           <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
             <span class="el-dropdown-link">
@@ -120,7 +123,7 @@
               />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
+              <!-- <el-dropdown-item
                 v-if="[4].includes(scope.row.status)"
                 command="distribution"
               >
@@ -131,7 +134,7 @@
                   v-else
                   class="el-icon-edit"
                 />
-              </el-dropdown-item>
+              </el-dropdown-item> -->
               <el-dropdown-item
                 command="editor"
               >
@@ -155,6 +158,7 @@
                 />
               </el-dropdown-item>
               <el-dropdown-item
+                v-if="[0,1].includes(scope.row.status)"
                 command="stop"
               >
                 <template v-if="isPC">
@@ -165,7 +169,7 @@
                   class="el-icon-chat-dot-square"
                 />
               </el-dropdown-item>
-              <el-dropdown-item
+              <!-- <el-dropdown-item
                 command="gowork"
               >
                 <template v-if="isPC">
@@ -175,8 +179,9 @@
                   v-else
                   class="el-icon-edit"
                 />
-              </el-dropdown-item>
+              </el-dropdown-item> -->
               <el-dropdown-item
+                v-if="[2].includes(scope.row.status) && scope.row.isRefund === 0"
                 command="alive"
               >
                 <template v-if="isPC">
@@ -209,6 +214,7 @@
       ref="transportDia"
       :rows="rows"
       :type="type"
+      :options="managerArr"
       @onRows="rows = []"
     />
 
@@ -238,6 +244,7 @@ import { getLabel } from '@/utils/index.ts'
 import SelfForm from '@/components/base/SelfForm.vue'
 import ManagerDialog from './components/managerDialog.vue'
 import workDialog from './components/workDialog.vue'
+import { delayTime } from '@/settings'
 
 interface IState {
   [key: string]: any;
@@ -267,6 +274,7 @@ export default class extends Vue {
     private IntentionalCompartment:any[] = []
     private type:string = ''
     // private total = 0
+    private managerArr:any[] = []
     private list: CargoListData[] = []
     private dropdownList:any[] = []
     private checkList:any[] =[]
@@ -329,7 +337,7 @@ export default class extends Vue {
         label: '运力状态'
       },
       {
-        key: 'driverId',
+        key: 'driverName',
         label: '所属司机'
       },
       {
@@ -349,8 +357,10 @@ export default class extends Vue {
         label: '创建人'
       },
       {
+        type: 'createDate',
         key: 'createDate',
-        label: '创建时间'
+        label: '创建时间',
+        slot: true
       },
       {
         key: 'op',
@@ -386,6 +396,17 @@ export default class extends Vue {
       // 'startTime': '',
       // 'status': '',
       // 'workCoty': ''
+      // workCity: '',
+      // carrierId: '',
+      // name: '',
+      // phone: '',
+      // carType: '',
+      // busiType: '',
+      // gmGroup: '',
+      // gmId: '',
+      // dirverName: '',
+      // driverPhone: '',
+      // createDate: []
     }
 
     private formItem:any[] = [
@@ -561,14 +582,14 @@ export default class extends Vue {
     private handleResetClick() {
       this.tags = []
       this.listQuery = {
-        workCityName: '',
+        workCity: '',
         carrierId: '',
         name: '',
         phone: '',
-        carTypeName: '',
-        busiTypeName: '',
+        carType: '',
+        busiType: '',
         gmGroup: '',
-        gmIdName: '',
+        gmId: '',
         dirverName: '',
         driverPhone: '',
         createDate: []
@@ -701,6 +722,7 @@ export default class extends Vue {
         let arr = manager.data.data.map(function(ele:any) {
           return { value: Number(ele.id), label: ele.name }
         })
+        this.managerArr = arr
         this.formItem.map(ele => {
           if (ele.key === 'gmId') {
             ele.options = arr
@@ -720,6 +742,9 @@ export default class extends Vue {
               type: 'success',
               message: '运力停用成功!'
             })
+            setTimeout(() => {
+              this.getList(this.listQuery)
+            }, delayTime)
           } else {
             this.$message.error(data.data.msg)
           }
@@ -729,6 +754,9 @@ export default class extends Vue {
               type: 'success',
               message: '激活成功!'
             })
+            setTimeout(() => {
+              this.getList(this.listQuery)
+            }, delayTime)
           } else {
             this.$message.error(data.data.msg)
           }
@@ -746,9 +774,7 @@ export default class extends Vue {
       }).then(() => {
         let params = {
           'carrierId': row.carrierId,
-          // carrierId: 'YL202007150003',
-          // carrierStatus: 2
-          carrierStatus: row.status
+          'carrierStatus': 2
         }
         this.updateCarrier(params, '停用')
       }).catch(() => {
@@ -767,7 +793,7 @@ export default class extends Vue {
       }).then(() => {
         let params = {
           'carrierId': row.carrierId,
-          'carrierStatus': row.status
+          'carrierStatus': 0
         }
         this.updateCarrier(params, '激活')
       }).catch(() => {
@@ -786,8 +812,8 @@ export default class extends Vue {
       let id = row.carrierId
       switch (key) {
         case 'gowork':
-          this.rowItem = row;
-          (this.$refs.workDia as any).openDialog()
+          this.rowItem = row
+          // (this.$refs.workDia as any).openDialog()
           break
         case 'alive':
           this.aliveTransport(row)

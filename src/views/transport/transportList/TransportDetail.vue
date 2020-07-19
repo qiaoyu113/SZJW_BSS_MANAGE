@@ -19,11 +19,14 @@
               >
                 <template slot="detail">
                   <router-link
-                    :to="{path: '/',query: {}}"
+                    :to="{path: '/transport//orderdetail',query: {id: detailQuery.orderId}}"
                     class="link"
                   >
-                    详情>>{{ detailQuery.orderId }}
+                    详情>>
                   </router-link>
+                </template>
+                <template v-slot:payCompleteTime="{row}">
+                  {{ row.payCompleteTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
                 </template>
               </self-form>
 
@@ -79,72 +82,6 @@ interface IState {
 export default class extends Vue {
   private activeName:string = 'first'
   private carrierId:string = ''
-  private detailQuery:IState = {
-    orderId: '',
-    busiTypeName: '',
-    cooperationModel: '',
-    cooperationCarName: '',
-    cooperationTime: '',
-    goodsAmount: '',
-    payType: '',
-    deliverDate: ''
-  }
-
-  private formItem:any[] = [
-    {
-      type: 7,
-      key: 'orderId',
-      label: '订单编号:',
-      col: 24,
-      tagAttrs: {
-        style: {
-          fontWeight: 'bold',
-          fontSize: '16px'
-        }
-      }
-    },
-    {
-      type: 7,
-      key: 'busiTypeName',
-      label: '商品分类:'
-    },
-    {
-      type: 7,
-      key: 'cooperationModel',
-      label: '合作模式:'
-    },
-    {
-      type: 7,
-      key: 'cooperationCarName',
-      label: '合作车型:'
-    },
-    {
-      type: 7,
-      key: 'cooperationTime',
-      label: '合作期限:'
-    },
-    {
-      type: 7,
-      key: 'goodsAmount',
-      label: '订单金额:'
-    },
-    {
-      type: 7,
-      key: 'payType',
-      label: '支付方式:'
-    },
-    {
-      type: 7,
-      key: 'deliverDate',
-      label: '支付时间:'
-    },
-    {
-      slot: true,
-      key: 'driverId',
-      w: '10px',
-      type: 'detail'
-    }
-  ]
 
   private bidLists = [
     {
@@ -191,13 +128,81 @@ export default class extends Vue {
     }
   ]
 
+  private detailQuery:IState = {
+    orderId: '',
+    busiTypeName: '',
+    cooperationModelName: '',
+    cooperationCarName: '',
+    cooperationTime: '',
+    goodsAmount: '',
+    payType: '',
+    payCompleteTime: ''
+  }
+
+  private formItem:any[] = [
+    {
+      type: 7,
+      key: 'orderId',
+      label: '订单编号:',
+      col: 24,
+      tagAttrs: {
+        style: {
+          fontWeight: 'bold',
+          fontSize: '16px'
+        }
+      }
+    },
+    {
+      type: 7,
+      key: 'busiTypeName',
+      label: '商品分类:'
+    },
+    {
+      type: 7,
+      key: 'cooperationModelName',
+      label: '合作模式:'
+    },
+    {
+      type: 7,
+      key: 'cooperationCarName',
+      label: '合作车型:'
+    },
+    {
+      type: 7,
+      key: 'cooperationTime',
+      label: '合作期限:'
+    },
+    {
+      type: 7,
+      key: 'goodsAmount',
+      label: '订单金额:'
+    },
+    {
+      type: 7,
+      key: 'payTypeName',
+      label: '支付方式:'
+    },
+    {
+      type: 'payCompleteTime',
+      key: 'payCompleteTime',
+      label: '支付时间:',
+      solt: true
+    },
+    {
+      slot: true,
+      key: 'driverId',
+      w: '10px',
+      type: 'detail'
+    }
+  ]
+
   private baseObj:any = {
     title: '基本信息',
     carrierId: '',
     name: '',
     phone: '',
-    busiType: '',
-    workCity: '',
+    busiTypeName: '',
+    workCityName: '',
     carTypeName: '',
     plateNo: '',
     statusName: '',
@@ -232,8 +237,9 @@ export default class extends Vue {
   private async carrierDetail() {
     let { data } = await carrierDetail({ carrierId: this.carrierId })
     if (data.success) {
-      this.detailQuery = { ...this.detailQuery, ...data.data }
+      this.detailQuery = { ...this.detailQuery, ...data.data.orderInfoVO }
       this.baseObj = { ...this.baseObj, ...data.data }
+      this.baseObj.driverName = data.data.orderInfoVO.driverName
       this.otherObj = { ...this.otherObj, ...data.data }
     } else {
       this.$message.error(data)
@@ -248,7 +254,6 @@ export default class extends Vue {
     if (carrierId) {
       this.carrierId = carrierId
     }
-    this.carrierId = 'YL202007131001'
   }
 
   mounted() {

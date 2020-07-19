@@ -186,7 +186,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
@@ -227,6 +227,7 @@ export default class extends Vue {
   private loading:boolean = false
   private list:any[] = []
   private orderList:any[] = []
+  private phoneList:any[] =[]
   private orderInfo:any = {
     carType: '',
     // 车型
@@ -416,6 +417,9 @@ export default class extends Vue {
       key: 'address',
       tagAttrs: {
         placeholder: '请输入家庭住址',
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'homeProvince',
         props: {
           lazy: true,
           lazyLoad: this.loadhouseAddress
@@ -517,9 +521,24 @@ export default class extends Vue {
     }
   }
 
+  @Watch('orderInfo.phone')
+  changePhone(val:string) {
+    this.phoneList.map(ele => {
+      if (ele.driverId === this.driverId) {
+        if (String(val) === String(ele.phone)) {
+          this.orderInfo = { ...this.orderInfo, ...ele }
+        }
+      }
+    })
+  }
+
   private nextChoose() {
     if (this.phoneNum === '') {
       this.$message.error('请填写手机号码或者司机姓名')
+      return
+    }
+    if (this.orderList.length === 0) {
+      this.$message.error('暂无订单')
       return
     }
     if (this.activeItem === null) {
@@ -529,11 +548,6 @@ export default class extends Vue {
     if (!this.isHasOrder) {
       return this.$message.error('该司机目前没有创建订单，暂无法创建运力')
     }
-    // var phone = this.phoneNum
-    // if (!(/^1[3456789]\d{9}$/.test(phone))) {
-    //   this.$message.error('手机号码有误，请重填')
-    //   return false
-    // }
     this.activeCreat = 2
   }
 
@@ -541,7 +555,64 @@ export default class extends Vue {
     this.activeCreat = 1
   }
   private backAgain() {
+    this.isEditor = true
     this.activeCreat = 1
+    this.pagestate = false
+    this.phoneNum = ''
+    this.activeItem = null
+    this.chooseOrderState = false
+    this.driverOptions = []
+    this.orderInfo = {
+      carType: '',
+      // 车型
+      gmId: '',
+      // 运营经理
+      name: '',
+      // 运力姓名
+      phone: '',
+      // 联系方式
+      plateNo: '',
+      // 车牌号
+      workCity: '',
+      // 工作城市
+      orderId: '',
+      // 所选的订单号
+      driverId: '',
+      // 所属司机id
+
+      // -------------
+      status: null,
+      // 运力状态
+      carrierId: null,
+      // 运力id有此字段为修改运力信息
+      age: null,
+      // 司机年龄
+      householdType: null,
+      // 户口类型，1农村2城镇
+      workExperience: null,
+      // 货物运输经验（月）
+      cargoType: null,
+      // 配送货物类型
+      homeCity: null,
+      // 家庭住址-市
+      homeCounty: null,
+      // 家庭住址-区县
+      homeDistrict: null,
+      // 家庭住址-具体区域
+      homeProvince: null,
+      address: [],
+      // 家庭住址-省
+      expMonthlyIncome: null,
+      // 期望月收入
+      avgMonthlyIncome: null,
+      // 平均月收入
+      isIndebted: null,
+      // 是否存在贷款，1是2否
+      maxWorkTime: null,
+      // 可接受一天工作时长
+      remarks: null
+    // 备注
+    }
   }
   private backRouter() {
     this.$router.push('transportlist')
@@ -579,6 +650,7 @@ export default class extends Vue {
       this.loading = true
       let { data } = await driverList({ key: query })
       if (data.success) {
+        this.phoneList = data.data
         let driverOptions = data.data.map(function(ele:any) {
           return { value: ele.driverId, label: `${ele.name}(${ele.phone})` }
         })
@@ -700,12 +772,16 @@ export default class extends Vue {
     if (data.success) {
       this.activeCreat = 2
       let orderInfo = data.data
+
       for (let ele in orderInfo) {
         if (orderInfo[ele] === 0) {
           orderInfo[ele] = ''
         }
       }
       this.orderInfo = { ...this.orderInfo, ...orderInfo }
+      this.orderInfo.address.push(this.orderInfo.homeProvince + '')
+      this.orderInfo.address.push(this.orderInfo.homeCity + '')
+      this.orderInfo.address.push(this.orderInfo.homeCounty + '')
     } else {
       this.$message.error(data.data.errorMsg)
     }
