@@ -122,7 +122,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-turn-off"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -134,7 +134,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-right"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -146,7 +146,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-release"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -170,7 +170,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-chat-dot-square"
+                  class="el-icon-view"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -182,7 +182,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-user"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -194,7 +194,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-order"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -206,7 +206,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-custom"
                 />
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -496,7 +496,8 @@ export default class extends Vue {
   private columns:any[] = [
     {
       key: 'driverId',
-      label: '司机编号'
+      label: '司机编号',
+      width: '140px'
     },
     {
       key: 'name',

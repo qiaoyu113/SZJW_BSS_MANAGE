@@ -101,7 +101,7 @@ export default class extends Vue {
       label: '电子邮箱:',
       tagAttrs: {
         placeholder: '请输入电子邮箱',
-        maxlength: 10
+        maxlength: 20
       }
     },
     {

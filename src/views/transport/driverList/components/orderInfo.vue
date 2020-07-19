@@ -34,7 +34,7 @@
             </template>
             <template slot="detail">
               <router-link
-                :to="{path: '/'}"
+                :to="{path: '/join/orderdetail',query: {id: item.orderId}}"
                 class="link"
               >
                 详情>>

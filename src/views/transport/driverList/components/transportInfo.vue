@@ -20,7 +20,7 @@
             </template>
             <template slot="detail">
               <router-link
-                :to="{path: '/'}"
+                :to="{path: '/transport/transportdetail',query: {carrierId: item.carrierId}}"
                 class="link"
               >
                 详情>>
