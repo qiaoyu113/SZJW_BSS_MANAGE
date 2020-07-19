@@ -217,20 +217,20 @@
         </el-form-item>
         <el-form-item
           label="车型"
-          prop="carType"
+          prop="Intentional_compartment"
         >
           <el-input
-            v-model="dialogForm.carType"
+            v-model="dialogForm.Intentional_compartment"
             placeholder="请输入车型"
             maxlength="15"
           />
         </el-form-item>
         <el-form-item
           label="车辆型号"
-          prop="Intentional_compartment"
+          prop="carType"
         >
           <el-select
-            v-model="dialogForm.Intentional_compartment"
+            v-model="dialogForm.carType"
             placeholder="请选择"
             clearable
           >
@@ -238,7 +238,7 @@
               v-for="(item, index) in optionsCar"
               :key="index"
               :label="item.dictLabel"
-              :value="item.dictValue"
+              :value="Number(item.dictValue)"
             />
           </el-select>
         </el-form-item>
@@ -387,10 +387,10 @@ export default class extends Vue {
       { required: true, message: '请输入车辆信息', trigger: 'blur' }
     ],
     'carType': [
-      { required: true, message: '请输入车型', trigger: 'blur' }
+      { required: true, message: '请选择车辆型号', trigger: 'blur' }
     ],
     'Intentional_compartment': [
-      { required: true, message: '请选择车辆型号', trigger: 'change' }
+      { required: true, message: '请输入车型', trigger: 'change' }
     ],
     'city': [
       { required: true, message: '请选择城市', trigger: 'change' }

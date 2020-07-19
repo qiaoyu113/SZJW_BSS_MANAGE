@@ -113,7 +113,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="无效描述"
-            value="这个信息是中介"
+            :value="details.invalidDescription"
           />
         </el-col>
       </el-row>
