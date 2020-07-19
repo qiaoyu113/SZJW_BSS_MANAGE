@@ -82,7 +82,7 @@
             label="订单编号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.customerId | DataIsNull }}</span>
+              <span>{{ scope.row.orderId | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -92,17 +92,17 @@
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.clueId | DataIsNull }} </span>
+              <span>{{ scope.row.driverName | DataIsNull }} </span>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('城市') > -1"
-            class-name="status-col"
+            align="left"
             label="城市"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.lineSaleName | DataIsNull }}</span>
+              <span>{{ scope.row.cityName | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -112,7 +112,7 @@
             label="加盟经理"
           >
             <template slot-scope="{row}">
-              {{ row.company | DataIsNull }}
+              {{ row.joinManageName | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -122,7 +122,7 @@
             label="交付状态"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.primaryClassificationName | DataIsNull }}</p>
+              <p>{{ scope.row.isDelieveName | DataIsNull }}</p>
             </template>
           </el-table-column>
 
@@ -133,7 +133,7 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.cityName | DataIsNull }}</span>
+                <span>{{ scope.row.plateNo | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -314,7 +314,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 
@@ -337,6 +336,9 @@ export default class extends Vue {
       const { data } = await GetDelieverList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.tab[0].num = data.title.all
+        this.tab[1].num = data.title.delivered
+        this.tab[2].num = data.title.notDelivered
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
