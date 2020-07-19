@@ -98,7 +98,6 @@
 
           <el-table-column
             v-if="checkList.indexOf('订单状态') > -1"
-            class-name="status-col"
             align="left"
             label="订单状态"
           >
@@ -721,7 +720,7 @@ export default class extends Vue {
 
     // 取消请求
     private async cancelPost() {
-      const { data } = await CancelOrder({ orderId: this.cancelId })
+      const { data } = await CancelOrder({ orderId: this.cancelId, operateFlag: 'cancel' })
       if (data.success) {
         if (data.data.flag) {
           this.$message.success('订单取消成功')

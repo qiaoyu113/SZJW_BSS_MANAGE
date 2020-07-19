@@ -29,7 +29,7 @@
           label="用户"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.dealName }})</span>
+            <span>{{ scope.row.dealName | DataIsNull }}</span>
           </template>
         </el-table-column>
 
@@ -38,7 +38,7 @@
           label="平台"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.operationSourceName }})</span>
+            <span>{{ scope.row.operationSourceName }}</span>
           </template>
         </el-table-column>
 
@@ -47,7 +47,7 @@
           label="操作前"
         >
           <template slot-scope="{row}">
-            {{ row.beforeStateName }}
+            {{ row.beforeStateName | DataIsNull }}
           </template>
         </el-table-column>
 
@@ -56,7 +56,7 @@
           label="操作后"
         >
           <template slot-scope="{row}">
-            {{ row.stateName }}
+            {{ row.stateName | DataIsNull }}
           </template>
         </el-table-column>
       </el-table>
@@ -102,9 +102,10 @@ export default class ShowLog extends Vue {
     endDate: '',
     startDate: '',
     state: '',
-    lineSaleId: ''
+    orderId: ''
   }
   created() {
+    this.listQuery.orderId = this.$route.query.id
     this.fetchData()
   }
 
