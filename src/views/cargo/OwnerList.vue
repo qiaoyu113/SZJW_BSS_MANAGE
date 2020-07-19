@@ -546,7 +546,7 @@ export default class extends Vue {
 
     // 跳转线索
     private goClue(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'EditCustomer', query: { id: id } })
+      this.$router.push({ name: 'EditCustomer', query: { id: id, info: 'edit' } })
     }
 
     // 批量操作
