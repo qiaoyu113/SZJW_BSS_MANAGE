@@ -52,7 +52,7 @@ const cargoRouter: RouteConfig = {
     },
     {
       path: 'followupclue', /* 跟进线索 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/FollowUpClue.vue'),
       name: 'FollowUpClue',
       meta: {
         apiUrl: 'root',

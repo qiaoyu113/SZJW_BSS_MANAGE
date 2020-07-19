@@ -30,7 +30,7 @@
               filterable
               remote
               reserve-keyword
-              placeholder="请输入司机姓名或手机号"
+              placeholder="请输入司机姓名或完整手机号"
               @change="checkDiver"
             >
               <el-option
@@ -659,14 +659,14 @@ export default class CreatLine extends Vue {
   private showMessage:boolean = false
   private showMessageBill:boolean = false
   private ruleForm:any = {
-    'busiType': 1,
-    'buyCarCompany': '1',
+    'busiType': '',
+    'buyCarCompany': '',
     'capacityQuota': '',
     'carPrice': '',
     'city': '100110',
     'confirmId': '',
     'confirmTime': '',
-    'cooperationCar': '1',
+    'cooperationCar': '',
     'cooperationModel': '',
     'cooperationTime': '',
     'createDate': '',
@@ -679,7 +679,7 @@ export default class CreatLine extends Vue {
       'idNo': '',
       'name': '',
       'phone': '',
-      'workCity': '上海'
+      'workCity': ''
     },
     'goodsAmount': '',
     'id': '',

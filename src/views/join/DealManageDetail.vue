@@ -168,7 +168,7 @@
           <div class="table_box">
             <el-table
               ref="multipleTable"
-              :data="list"
+              :data="ContractDetail.orderDeliverRebateFORMs"
               :row-style="{height: '20px'}"
               :cell-style="{padding: '5px 0'}"
               size="mini"
@@ -183,10 +183,12 @@
               <el-table-column
                 align="left"
                 fixed
-                label="价格/项目"
+                label="项目/价格"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.name | DataIsNull }}</span>
+                  <span v-if="scope.$index === 0">采购价</span>
+                  <span v-if="scope.$index === 1">销售价</span>
+                  <span v-if="scope.$index === 2">返利</span>
                 </template>
               </el-table-column>
 
@@ -195,7 +197,7 @@
                 label="底盘(元)"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.a | DataIsNull }} </span>
+                  <span>{{ scope.row.chassis | DataIsNull }} </span>
                 </template>
               </el-table-column>
 
@@ -204,7 +206,7 @@
                 label="车厢(元)"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.a1 | DataIsNull }}</span>
+                  <span>{{ scope.row.vehicle | DataIsNull }}</span>
                 </template>
               </el-table-column>
 
@@ -213,7 +215,7 @@
                 label="GPS(元)"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.a2 | DataIsNull }}</span>
+                  <span>{{ scope.row.gps | DataIsNull }}</span>
                 </template>
               </el-table-column>
 
@@ -222,7 +224,7 @@
                 label="尾板(元)"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.a3 | DataIsNull }}</span>
+                  <span>{{ scope.row.tailgate | DataIsNull }}</span>
                 </template>
               </el-table-column>
             </el-table>

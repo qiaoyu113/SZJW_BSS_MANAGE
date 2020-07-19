@@ -156,6 +156,7 @@ import { UserListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import { getUserList, enableOrDisable, resetPassword } from '@/api/system'
+import { HandlePages } from '@/utils/index'
 
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -227,6 +228,7 @@ export default class extends Vue {
     const { data } = await getUserList(this.listQuery)
     if (data.success) {
       this.list = data.data
+      data.page = await HandlePages(data.page)
       this.total = data.page.total
     } else {
       this.$message.error(data)

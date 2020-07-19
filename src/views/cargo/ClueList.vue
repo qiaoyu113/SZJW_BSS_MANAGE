@@ -10,7 +10,15 @@
       <ClueListForm
         :list-query="listQuery"
         :date-value="DateValue"
+        :data-types="{
+          optionsCity,
+          optionsClue,
+          optionsDistribution,
+          optionsLineSource,
+          optionsSale
+        }"
         @handle-tags="handleTags"
+        @handle-query="handleSearch"
       />
     </SuggestContainer>
     <div class="table_box">
@@ -78,7 +86,7 @@
           highlight-current-row
           style="width: 100%"
           align="left"
-          row-key="id"
+          row-key="clueId"
           @cell-click="tableClick"
           @selection-change="handleSelectionChange"
         >
@@ -89,7 +97,7 @@
             align="center"
           />
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + 'index'"
             type="index"
             width="55"
             label="序号"
@@ -100,106 +108,72 @@
           <el-table-column
             v-if="checkList.indexOf('线索编号') > -1"
             label="线索编号"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.customerId }}</span>
-            </template>
-          </el-table-column>
+            prop="clueId"
+          />
 
           <el-table-column
             v-if="checkList.indexOf('分配状态') > -1"
             label="分配状态"
           >
-            <template slot-scope="scope">
-              <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
+            <template slot-scope="{row}">
+              {{ row.distributionState | findDistribution }}
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('销售') > -1"
-            class-name="status-col"
             label="销售"
-          >
-            <template slot-scope="{row}">
-              <el-tag :type="row.status | articleStatusFilter">
-                {{ row.primaryClassificationName
-                }}<span
-                  v-if="row.secondaryClassificationName"
-                >/{{ row.secondaryClassificationName }}</span>
-              </el-tag>
-            </template>
-          </el-table-column>
+            prop="lineSaleName"
+          />
 
           <el-table-column
             v-if="checkList.indexOf('线索状态') > -1"
             label="线索状态"
           >
             <template slot-scope="{row}">
-              {{ row.contractEffectiveness }}
+              {{ row.clueState | findClue }}
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('线索来源') > -1"
             label="线索来源"
-          >
-            <template slot-scope="scope">
-              <p>{{ scope.row.createDate | Timestamp }}</p>
-            </template>
-          </el-table-column>
+            prop="clueSourceName"
+          />
 
           <el-table-column
             v-if="checkList.indexOf('城市') > -1"
             label="城市"
-          >
-            <template slot-scope="scope">
-              <p>
-                <span
-                  v-if="scope.row.creatorName"
-                >({{ scope.row.creatorName }})</span>
-              </p>
-            </template>
-          </el-table-column>
+            prop="cityName"
+          />
 
           <el-table-column
             v-if="checkList.indexOf('公司') > -1"
             label="公司"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.contractEnd | Timestamp }}</span>
-            </template>
-          </el-table-column>
+            prop="company"
+          />
 
           <el-table-column
             v-if="checkList.indexOf('姓名') > -1"
             label="姓名"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
+            prop="name"
+          />
           <el-table-column
             v-if="checkList.indexOf('手机号') > -1"
             label="手机号"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
+            prop="phone"
+          />
           <el-table-column
             v-if="checkList.indexOf('职务') > -1"
             label="职务"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
+            prop="position"
+          />
           <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
             label="创建日期"
           >
             <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
+              {{ row.createDate | Timestamp }}
             </template>
           </el-table-column>
           <el-table-column
@@ -207,32 +181,21 @@
             label="更新日期"
           >
             <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
+              {{ row.createDate | Timestamp }}
             </template>
           </el-table-column>
           <el-table-column
             v-if="checkList.indexOf('备注') > -1"
             label="备注"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
+            prop="remark"
+          />
           <el-table-column
-            v-if="checkList.indexOf('姓名') > -1"
-            label="姓名"
-          >
-            <template slot-scope="{row}">
-              {{ row.lineSaleName | DataIsNull }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :key="Math.random()"
+            :key="checkList.length"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
           >
-            <template slot-scope="scope">
+            <template slot-scope="{row}">
               <el-dropdown>
                 <span
                   v-if="isPC"
@@ -252,22 +215,27 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.customerNo)"
+                    @click.native="goDetail(row.clueId)"
                   >
                     详情
                   </el-dropdown-item>
+                  <!--
+                    0：待跟进 1：已跟进 2：已转化 3：无效
+                    待跟进，已跟进显示跟进按钮
+                   -->
                   <el-dropdown-item
-                    @click.native="goFollow(scope.row.customerNo)"
+                    v-if="row.clueState === 0 || row.clueState === 1"
+                    @click.native="goFollow(row)"
                   >
                     跟进
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goConversion(scope.row.customerNo)"
+                    @click.native="goConversion(row.clueId)"
                   >
                     转化
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goEdit(scope.row.customerNo)"
+                    @click.native="goEdit(row.clueId)"
                   >
                     编辑
                   </el-dropdown-item>
@@ -287,18 +255,14 @@
         @olclick="olClicks"
       />
     </div>
-    <!-- 提示信息 -->
-    <Dialog
-      :visible.sync="showMessage"
-      :title="messageBox.title"
-    >
-      <p>{{ messageBox.message }}</p>
-    </Dialog>
     <!-- 批量分配线索 -->
     <Dialog
+      :class="'distributionDialog'"
       :visible.sync="showDialog"
       :title="`批量分配线索`"
       :confirm="confirm"
+      :destroy-on-close="true"
+      @closed="handleClosed"
     >
       <el-alert
         class="mb10"
@@ -307,23 +271,30 @@
         :closable="false"
       />
       <el-table
-        v-loading="dialogLoading"
-        :data="dialogList"
+        :data="optionsSale"
         size="mini"
         stripe
         highlight-current-row
         height="38vh"
         style="width: 100%;"
         align="left"
-        row-key="id"
-        @selection-change="handleSelectionDialog"
+        row-key="saleId"
       >
         <el-table-column
-          type="selection"
-          width="55"
-          reserve-selection
+          label="选择"
           align="center"
-        />
+          width="55"
+        >
+          <template slot-scope="{row}">
+            <el-radio
+              v-model="dialogValue"
+              :label="row.saleId"
+            >
+              &nbsp;
+            </el-radio>
+          </template>
+        </el-table-column>
+
         <el-table-column
           type="index"
           width="55"
@@ -333,18 +304,18 @@
         />
         <el-table-column
           label="销售姓名"
-          prop="name"
+          prop="saleName"
         />
         <el-table-column
           label="联系电话"
-          prop="name"
+          prop="phone"
         />
         <el-table-column
           label="线索数量"
-          prop="name"
+          prop="nums"
         />
       </el-table>
-      <pagination
+      <!-- <pagination
         v-show="dialogTotal > 0"
         :small="true"
         :operation-list="[]"
@@ -352,7 +323,7 @@
         :page.sync="dialogListQuery.page"
         :limit.sync="dialogListQuery.limit"
         @pagination="getDialogList"
-      />
+      /> -->
     </Dialog>
     <!-- 右侧侧边栏 -->
     <PitchBox
@@ -362,11 +333,54 @@
       @changeDrawer="changeDrawer"
     >
       <template slot-scope="{item}">
-        <span>{{ item.customerName }}</span>
-        <span>{{ item.customerName }}</span>
-        <span>{{ item.customerName }}</span>
+        <span>{{ item.name }}</span>
+        <span>{{ item.phone }}</span>
+        <span>{{ item.clueSourceName }}</span>
       </template>
     </PitchBox>
+    <!-- 跟进弹窗 -->
+    <Dialog
+      :class="'invalidDialog'"
+      :visible.sync="followDialog"
+      :title="`跟进状态判定`"
+      :confirm="confirmFollow"
+      :destroy-on-close="true"
+      @closed="handleClosedFollow"
+    >
+      <el-form
+        ref="ruleForm"
+        :model="ruleForm"
+        :rules="rules"
+        :label-width="isPC ? '120px' : '80px'"
+      >
+        <el-form-item
+          label="线索是否有效"
+          prop="value"
+        >
+          <el-radio-group v-model="ruleForm.value">
+            <el-radio :label="1">
+              无效
+            </el-radio>
+            <el-radio :label="2">
+              有效
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          v-if="ruleForm.value === 1"
+          label="无效描述"
+          prop="invalidDescription"
+        >
+          <el-input
+            v-model="ruleForm.invalidDescription"
+            type="textarea"
+            :rows="2"
+            placeholder="请输入内容"
+            maxlength="200"
+          />
+        </el-form-item>
+      </el-form>
+    </Dialog>
   </div>
 </template>
 
@@ -382,8 +396,8 @@ import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 
-import { GetCustomerList } from '@/api/customer'
-import { CargoListData } from '@/api/types'
+import { GetDictionaryList, GetOpenCityData } from '@/api/common'
+import { GetClueList, GetSaleList, Distribution, ExpiredClue } from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
 
 import { SettingsModule } from '@/store/modules/settings'
@@ -392,6 +406,35 @@ import '@/styles/common.scss'
 interface IState {
   [key: string]: any;
 }
+const optionsClue: any = [
+  // （0：待跟进 1：已跟进 2：已转化 3：无效）
+  {
+    value: 0,
+    label: '待跟进'
+  },
+  {
+    value: 1,
+    label: '已跟进'
+  },
+  {
+    value: 2,
+    label: '已转化'
+  },
+  {
+    value: 3,
+    label: '无效'
+  }
+] // 线索状态
+const optionsDistribution: any = [
+  {
+    value: 0,
+    label: '待分配'
+  },
+  {
+    value: 1,
+    label: '已分配'
+  }
+] //
 @Component({
   name: 'ClueList',
   components: {
@@ -402,45 +445,36 @@ interface IState {
     Pagination,
     Dialog,
     PitchBox
+  },
+  filters: {
+    findDistribution(status: string) {
+      const item = optionsDistribution.find(({ value }:any) => value === status)
+      return item ? item['label'] : status
+    },
+    findClue(status: string) {
+      const item = optionsClue.find(({ value }:any) => value === status)
+      return item ? item['label'] : status
+    }
   }
 })
 export default class extends Vue {
   private tags: any[] = [];
-  private tab: any[] = [
-    {
-      label: '待跟进',
-      name: '0',
-      num: 0
-    },
-    {
-      label: '已跟进',
-      name: '1',
-      num: 0
-    },
-    {
-      label: '已转化',
-      name: '2'
-    },
-    {
-      label: '无效',
-      name: '3'
-    }
-  ];
+  private tab: any[] = [];
 
   private DateValue: any[] = [];
   private listQuery: IState = {
-    city: '', // 城市
-    clueState: '0', // 线索状态
-    clueId: '', // 线索编号Id
-    clueSource: '', // 线索来源
-    distributionState: '', // 分配状态
-    phone: '', // 手机号
-    name: '', // 姓名
-    lineSaleId: '', // 销售
-    endDate: '', // 结束时间
-    startDate: '', // 开始时间
-    page: 1,
-    limit: 20
+    'city': '', // 城市编码
+    'clueId': '', // 线索编号id
+    'clueSource': '', // 线索来源编码
+    'clueState': '', // 线索状态（0：待跟进 1：已跟进 2：已转化 3：无效）
+    'distributionState': '', // 分配状态（0：待分配 1：已分配）
+    'lineSaleId': '', // 销售id
+    'name': '', // 姓名
+    'phone': '', // 手机号
+    'startDate': '',
+    'endDate': '',
+    'page': 1,
+    'limit': 20
   }
 
   private dropdownList: any[] = [
@@ -459,10 +493,14 @@ export default class extends Vue {
     '备注'
   ];
   private checkList: any[] = this.dropdownList;
-
+  private optionsCity: any = []; // 下拉
+  private optionsClue: any = optionsClue; // 线索状态
+  private optionsDistribution: any = optionsDistribution; //
+  private optionsLineSource: any = []
+  private optionsSale: any = []
   // table
   private total = 0;
-  private list: CargoListData[] = [];
+  private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = true;
   private multipleSelection: any[] = [];
@@ -472,23 +510,26 @@ export default class extends Vue {
     { icon: 'el-icon-thumb', name: '分配线索', color: '#5E7BBB', key: 2 },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: 3 }
   ];
-  // message 提示
-  private showMessage: boolean = false;
-  private messageBox: IState = {
-    title: '',
-    message: ''
-  };
   // 弹窗
   private dialogLoading: boolean = false;
   private showDialog: boolean = false;
-  private multipleSelectionDialog: any[] = [];
   private dialogList: any[] = [];
-  // 弹窗分页
-  private dialogTotal: number = 0;
-  private dialogListQuery: IState = {
-    page: 1,
-    limit: 10
-  };
+  private dialogValue: any = ''
+  // 跟进弹窗
+  private followDialog: boolean = false;
+  private ruleForm: any ={
+    clueId: '',
+    value: '',
+    invalidDescription: ''
+  }
+  private rules:any = {
+    value: [
+      { required: true, message: '请选择线索是否有效', trigger: 'change' }
+    ],
+    invalidDescription: [
+      { required: true, message: '请输入无效描述', trigger: 'change' }
+    ]
+  }
   // 侧边栏
   private drawer: boolean = false;
 
@@ -503,36 +544,27 @@ export default class extends Vue {
   }
   // 所有请求方法
   private fetchData() {
+    this.getCity()
+    this.getDictionary()
+    this.getSaleList()
     this.getList(this.listQuery)
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
     this.listQuery[key] = value
-    this.fetchData()
+    this.getList(this.listQuery)
+  }
+  // 处理query方法
+  private handleSearch() {
+    this.getList(this.listQuery)
   }
   // 处理选择日期方法
   private handleDate(value: any) {
-    // this.DateValue = value
+    this.DateValue = value
   }
   // button
   // 添加明细原因 row 当前行 column 当前列
   private tableClick(row: any, column: any, cell: any, event: any) {
-    // switch (column.label) {
-    //   case '原因说明':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   case '判责金额(元)':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   case '备注':
-    //     this.tabClickIndex = row.index
-    //     this.tabClickLabel = column.label
-    //     break
-    //   default: return
-    // }
-    // console.log('添加明细原因', row, column, cell, event)
   }
   // 选中
   private handleSelectionChange(val: any) {
@@ -543,7 +575,7 @@ export default class extends Vue {
     this.listQuery.page = value.page
     this.listQuery.limit = value.limit
     this.listLoading = true
-    const { data } = await GetCustomerList(this.listQuery)
+    const { data } = await GetClueList(this.listQuery)
     if (data.success) {
       this.list = data.data
       data.page = await HandlePages(data.page)
@@ -559,7 +591,33 @@ export default class extends Vue {
       this.listLoading = false
     }, 0.5 * 1000)
   }
-
+  // 获取字典
+  private async getDictionary() {
+    const { data } = await GetDictionaryList(['line_clue_source'])
+    if (data.success) {
+      this.optionsLineSource = data.data.line_clue_source
+    } else {
+      this.$message.error(data)
+    }
+  }
+  // 获取城市
+  private async getCity() {
+    const { data } = await GetOpenCityData()
+    if (data.success) {
+      this.optionsCity = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
+  // 获取销售
+  private async getSaleList() {
+    const { data } = await GetSaleList()
+    if (data.success) {
+      this.optionsSale = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
   // 按钮操作
   // 详情
   private goDetail(id: string | (string | null)[] | null | undefined) {
@@ -570,8 +628,14 @@ export default class extends Vue {
     this.$router.push({ name: 'EditClue', query: { id: id } })
   }
   // 跟进
-  private goFollow(id: string | (string | null)[] | null | undefined) {
-    this.$router.push({ name: 'FollowUpClue', query: { id: id } })
+  private goFollow(row: any) {
+    if (row.clueState === 0) {
+      // 待跟进显示弹窗
+      this.ruleForm.clueId = row.clueId
+      this.followDialog = true
+    } else {
+      this.$router.push({ name: 'FollowUpClue', query: { id: row.clueId } })
+    }
   }
   // 转化
   private goConversion(id: string | (string | null)[] | null | undefined) {
@@ -593,20 +657,21 @@ export default class extends Vue {
       this.$message.warning(`请先选择线索`)
       return
     }
+    const len = this.multipleSelection.filter((item: any) => !!item.distributionState)
     switch (key) {
       case 1: // 查看选中
         this.drawer = true
         break
       case 2: // 批量分配线索
-        if (key === 2) {
-          this.messageBox.title = '提示'
-          this.messageBox.message = '已选线索中包含已分配状态线索3条，请确认要对这些线索重新分配！'
-          this.showMessage = true
+        if (len.length > 0) {
+          this.$confirm(`已选线索中包含已分配状态线索${len.length}条，请确认要对这些线索重新分配！`, '提示', {
+            type: 'warning'
+          }).then(() => {
+            this.showDialog = true
+          }).catch(() => {})
+        } else {
+          this.showDialog = true
         }
-        this.showDialog = true
-        this.$nextTick(() => {
-          this.getDialogList(this.dialogListQuery)
-        })
         break
       case 3: // 取消选中
         this.$confirm('确认清空所有选择吗？', '确认清空', {
@@ -634,35 +699,64 @@ export default class extends Vue {
     }
   }
   // 弹窗操作
-  private confirm(done: any) {
-    // 提交操作
-    console.log(111)
-  }
-  // 弹窗表格选中
-  private handleSelectionDialog(val: any) {
-    this.multipleSelectionDialog = val
-  }
-  // 确认清除
-  // private confirm(done:any) {
-  //   (this.$refs.multipleTable as any).clearSelection()
-  //   this.multipleSelection = []
-  //   done()
-  // }
-  // 获取弹窗list
-  async getDialogList(value: any) {
-    this.dialogListQuery.page = value.page
-    this.dialogListQuery.limit = value.limit
-    this.dialogLoading = true
-    const { data } = await GetCustomerList(this.dialogListQuery)
+  private async confirm(done: any) {
+    if (!this.dialogValue) {
+      this.$message.warning(`请选择销售`)
+      return
+    }
+    const postData = {
+      'linesIds': this.multipleSelection.map(item => item.clueId),
+      'saleId': this.dialogValue
+    }
+    const loading = this.$loading({
+      target: (document.querySelector('.distributionDialog .el-dialog') as any)
+    })
+    const { data } = await Distribution(postData)
+    loading.close()
     if (data.success) {
-      this.dialogList = data.data
-      this.dialogTotal = data.page.total
+      this.$message.success(`分配成功`)
+      done()
+      this.handleSearch()
     } else {
       this.$message.error(data)
     }
-    setTimeout(() => {
-      this.dialogLoading = false
-    }, 0.5 * 1000)
+  }
+  private async confirmFollow(done: any) {
+    (this.$refs.ruleForm as any).validate(async(valid: boolean) => {
+      if (valid) {
+        // const {data} =
+        const { value, clueId, invalidDescription } = this.ruleForm
+        if (value === 1) {
+          const { data } = await ExpiredClue({ clueId, invalidDescription })
+          if (data.success) {
+            // console.log(data)
+            this.$message.success(`判定线索成功`)
+            done()
+            this.$nextTick(() => {
+              this.handleSearch()
+            })
+          } else {
+            this.$message.error(data)
+          }
+        } else {
+          done()
+          this.$nextTick(() => {
+            this.$router.push({ name: 'FollowUpClue', query: { id: clueId } })
+          })
+        }
+      }
+    })
+  }
+  private handleClosedFollow() {
+    this.ruleForm.value = ''
+    this.ruleForm.clueId = ''
+    this.ruleForm.invalidDescription = ''
+    this.$nextTick(() => {
+      (this.$refs.ruleForm as any).clearValidate()
+    })
+  }
+  private handleClosed() {
+    this.dialogValue = ''
   }
   // 侧边栏
   // 删除选中项目

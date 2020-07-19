@@ -261,12 +261,12 @@
                     重新提交审核
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.orderId, 0)"
+                    @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goDetail(scope.row.orderId, 1)"
+                    @click.native="goDetail(scope.row.orderId, 0)"
                   >
                     日志
                   </el-dropdown-item>
