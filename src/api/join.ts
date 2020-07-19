@@ -38,7 +38,7 @@ export const GetDriverDetail = (params: any) =>
 // 合同详情
 export const GetContractDetail = (params: any) =>
   request({
-    url: '/order/contract/contractDetail',
+    url: '/order/v1/order/contract/contractDetail',
     method: 'get',
     params
   })

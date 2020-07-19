@@ -246,6 +246,11 @@
                   >
                     激活
                   </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="goDetail(scope.row.contractId)"
+                  >
+                    详情
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -376,8 +381,7 @@ export default class extends Vue {
       fileNo: '',
       joinManageId: '',
       orderId: '',
-      pageNumber: 0,
-      status: 0
+      pageNumber: ''
     };
     // 弹窗分配
     private dialogList: any[] = [];
@@ -508,6 +512,11 @@ export default class extends Vue {
         name: ''
       }
       this.ActivateId = id
+    }
+
+    // 合同详情
+    private goDetail(id: string | (string | null)[] | null | undefined) {
+      this.$router.push({ name: 'ContractDetail', query: { id: id } })
     }
 }
 </script>
