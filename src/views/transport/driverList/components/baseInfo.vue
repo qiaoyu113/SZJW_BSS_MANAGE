@@ -11,6 +11,17 @@
           :form-item="formItem"
           label-width="80px"
         >
+          <template v-slot:intentCargoType="{row}">
+            <span v-if="row.intentCargoType ===1">快递</span>
+            <span v-else-if="row.intentCargoType ===2">商超</span>
+            <span v-else-if="row.intentCargoType ===3">生鲜</span>
+            <span v-else-if="row.intentCargoType ===4">家电服饰</span>
+            <span v-else-if="row.intentCargoType ===5">其他</span>
+          </template>
+          <template v-slot:householdType="{row}">
+            <span v-if="row.householdType ===1">农村</span>
+            <span v-else>城镇</span>
+          </template>
           <template v-slot:isLocalPlate="{row}">
             <span v-if="row.isLocalPlate ===1">是</span>
             <span v-else>否</span>
@@ -104,11 +115,11 @@ export default class extends Vue {
     liveCityName: '',
     liveCountyName: '',
     intentDeliveryModeName: '',
-    intentCargoTypeName: '',
+    intentCargoType: '',
     intentWorkDurationName: '',
     originIncomeAvg: '',
     expIncomeAvg: '',
-    householdTypeName: '',
+    householdType: '',
     householdProvinceName: '',
     householdCityName: '',
     householdCountyName: '',
@@ -199,10 +210,10 @@ export default class extends Vue {
       key: 'intentDeliveryModeName'
     },
     {
-      type: 7,
       label: '意向货物类型:',
       w: '130px',
-      key: 'intentCargoTypeName'
+      type: 'intentCargoType',
+      slot: true
     },
     {
       type: 7,
@@ -223,9 +234,9 @@ export default class extends Vue {
       key: 'expIncomeAvg'
     },
     {
-      type: 7,
+      type: 'householdType',
       label: '户口性质:',
-      key: 'householdTypeName'
+      slot: true
     },
     {
       type: 'household',
@@ -353,7 +364,7 @@ export default class extends Vue {
     isLocalPlate: '',
     originIncomeAvg: '',
     expIncomeAvg: '',
-    drivingAge: '',
+    workDuration: '',
     scatteredJobRate: '',
     isNewEnergy: ''
   }
@@ -419,7 +430,7 @@ export default class extends Vue {
     {
       type: 7,
       label: '从业时间:',
-      key: 'drivingAge'
+      key: 'workDuration'
     },
     {
       type: 'scatteredJobRate',

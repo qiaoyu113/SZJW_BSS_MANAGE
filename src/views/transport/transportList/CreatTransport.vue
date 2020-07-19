@@ -64,19 +64,19 @@
                   <i :class="( index ) === activeItem ? 'el-icon-star-on' : 'el-icon-star-off'" />
                   <div
                     :class=" item.flag ? 'orderItem' : 'orderItemNo'"
-                    @click="orderGet(index,item)"
+                    @click="orderGet(index,item.orderInfo)"
                   >
-                    <span class="orderNum">订单编号：{{ item.orderId }}</span>
-                    <span>商品分类：{{ item.busiTypeName }}</span>
-                    <span v-if="item.cooperationModel === 1">合作模式：购车</span>
-                    <span v-if="item.cooperationModel === 2">合作模式：租车</span>
-                    <span v-if="item.cooperationModel === 3">合作模式：带车</span>
-                    <span>合作车型：{{ item.cooperationCarName }}</span>
+                    <span class="orderNum">订单编号：{{ item.orderInfo.orderId }}</span>
+                    <span>商品分类：{{ item.orderInfo.busiTypeName }}</span>
+                    <span v-if="item.orderInfo.cooperationModel === 1">合作模式：购车</span>
+                    <span v-else-if="item.orderInfo.cooperationModel === 2">合作模式：租车</span>
+                    <span v-else-if="item.orderInfo.cooperationModel === 3">合作模式：带车</span>
+                    <span>合作车型：{{ item.orderInfo.cooperationCarName }}</span>
                     <div class="goDetail">
-                      <span>订单金额：￥{{ item.goodsAmount }}</span>
+                      <span>订单金额：￥{{ item.orderInfo.goodsAmount }}</span>
                       <span
                         style="margin-left:20px"
-                        @click="goOrderDetail(item.orderId)"
+                        @click="goOrderDetail(item.orderInfo.orderId)"
                       >详情></span>
                     </div>
                   </div>
@@ -746,16 +746,17 @@ export default class extends Vue {
 
   private async getOrderList(val:any) {
     this.driverId = val
-    let { data } = await transportOrderList({ driverId: val })
-    if (data.success) {
-      this.orderList = data.data
+    let { data: res } = await transportOrderList({ driverId: val })
+    if (res.success) {
+      this.orderList = res.data
+
       if (this.orderList.length === 0) {
         this.chooseOrderState = false
       } else {
         this.chooseOrderState = true
       }
     } else {
-      this.$message.error(data)
+      this.$message.error(res.errorMsg)
     }
   }
 
