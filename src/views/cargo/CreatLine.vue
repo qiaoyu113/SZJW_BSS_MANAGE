@@ -762,9 +762,6 @@ export default class CreatLine extends Vue {
   private picConfirm(done: any) {
     done(this.$router.go(-1))
   }
-  private async lineInfo() {
-    // let { data } = await
-  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
