@@ -375,6 +375,7 @@ export default class extends Vue {
     this.listQuery.home.push(val.liveProvince + '')
     this.listQuery.home.push(val.liveCity + '')
     this.listQuery.home.push(val.liveCounty + '')
+    this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
   }
 
   /**

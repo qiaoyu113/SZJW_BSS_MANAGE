@@ -122,7 +122,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-turn-off"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -134,7 +134,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-right"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -146,7 +146,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-release"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -170,7 +170,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-chat-dot-square"
+                  class="el-icon-view"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -182,7 +182,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-user"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -194,7 +194,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-order"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -206,7 +206,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-custom"
                 />
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -323,7 +323,6 @@ export default class extends Vue {
     name: '',
     phone: '',
     busiType: '',
-    gmTeam: '',
     gmId: '',
     sourceChannel: '',
     carrierStatus: '',
@@ -382,15 +381,6 @@ export default class extends Vue {
           value: 1
         }
       ]
-    },
-    {
-      type: 2,
-      key: 'gmTeam',
-      label: '加盟小组',
-      tagAttrs: {
-        placeholder: '请选择加盟小组'
-      },
-      options: []
     },
     {
       type: 2,
@@ -496,7 +486,8 @@ export default class extends Vue {
   private columns:any[] = [
     {
       key: 'driverId',
-      label: '司机编号'
+      label: '司机编号',
+      width: '140px'
     },
     {
       key: 'name',
@@ -592,7 +583,7 @@ export default class extends Vue {
     try {
       let { data: res } = await GetManagerLists()
       if (res.success) {
-        this.formItem[6].options = res.data.map(function(item:any) {
+        this.formItem[5].options = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
@@ -644,7 +635,6 @@ export default class extends Vue {
       this.listQuery.name && (params.name = this.listQuery.name)
       this.listQuery.phone && (params.phone = this.listQuery.phone)
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
-      this.listQuery.gmTeam !== '' && (params.gmTeam = this.listQuery.gmTeam)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.sourceChannel && (params.sourceChannel = this.listQuery.sourceChannel)
 
@@ -709,7 +699,6 @@ export default class extends Vue {
       name: '',
       phone: '',
       busiType: '',
-      gmTeam: '',
       gmId: '',
       sourceChannel: '',
       up: true,

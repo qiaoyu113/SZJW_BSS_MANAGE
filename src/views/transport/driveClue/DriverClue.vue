@@ -49,7 +49,7 @@
         @click.stop="handleCreateClue"
       >
         <i
-          class="el-icon-edit"
+          class="el-icon-plus"
         />
         <span v-if="isPC">创建线索</span>
       </el-button>
@@ -60,7 +60,7 @@
         @click="handleInterviewClick"
       >
         <i
-          class="el-icon-edit"
+          class="el-icon-phone-outline"
         />
         <span v-if="isPC">发起面试</span>
       </el-button>
@@ -192,7 +192,7 @@
               </template>
               <i
                 v-else
-                class="el-icon-chat-dot-square"
+                class="el-icon-right"
               />
             </el-dropdown-item>
           </el-dropdown-menu>

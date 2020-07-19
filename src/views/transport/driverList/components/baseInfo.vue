@@ -11,6 +11,14 @@
           :form-item="formItem"
           label-width="80px"
         >
+          <template v-slot:isLocalPlate="{row}">
+            <span v-if="row.isLocalPlate ===1">是</span>
+            <span v-else>否</span>
+          </template>
+          <template v-slot:isAdvancedIntention="{row}">
+            <span v-if="row.isAdvancedIntention">是</span>
+            <span v-else>否</span>
+          </template>
           <template v-slot:interviewDate="{row}">
             {{ row.interviewDate | parseTime('{y}-{m}-{d}') }}
           </template>
@@ -104,6 +112,7 @@ export default class extends Vue {
     householdProvinceName: '',
     householdCityName: '',
     householdCountyName: '',
+    householdDistrict: '',
     intentWorkProvinceName: '',
     intentWorkCityName: '',
     intentWorkCountyName: '',
@@ -121,7 +130,7 @@ export default class extends Vue {
     strategyRightName: '',
     cooperateFocusPointName: '',
     cooperateKeyFactorName: '',
-    isAdvancedIntentionName: '',
+    isAdvancedIntention: '',
     remarks: ''
   }
 
@@ -151,7 +160,7 @@ export default class extends Vue {
       type: 7,
       label: '您是从哪里了解我们的加盟信息:',
       col: 24,
-      w: '240px',
+      w: '220px',
       key: 'whereKnow'
     },
     {
@@ -179,7 +188,8 @@ export default class extends Vue {
     {
       type: 'intentWork',
       label: '意向工作区域:',
-      w: '150px',
+      w: '120px',
+      col: 12,
       slot: true
     },
     {
@@ -220,6 +230,7 @@ export default class extends Vue {
     {
       type: 'household',
       label: '户籍地址:',
+      col: 12,
       slot: true
     },
     {
@@ -300,22 +311,22 @@ export default class extends Vue {
     },
     {
       type: 7,
-      label: '如果有机会跟云鸟合作，你看中的是什么？:',
+      label: '如果有机会跟云鸟合作，你看中的是什么:',
       col: 24,
       key: 'cooperateFocusPointName',
       w: '290px'
     },
     {
       type: 7,
-      label: '最终决定你是否与云鸟合作的关键因素是什么？:',
+      label: '最终决定你是否与云鸟合作的关键因素是什么:',
       col: 24,
       key: 'cooperateKeyFactorName',
       w: '320px'
     },
     {
-      type: 7,
       label: '是否是高意向司机:',
-      key: 'isAdvancedIntentionName',
+      type: 'isAdvancedIntention',
+      slot: true,
       w: '150px'
     },
     {
@@ -339,7 +350,7 @@ export default class extends Vue {
     liveCountyName: '',
     sourceChannelName: '',
     drivingLicenceTypeName: '',
-    isLocalPlateName: '',
+    isLocalPlate: '',
     originIncomeAvg: '',
     expIncomeAvg: '',
     drivingAge: '',
@@ -360,34 +371,13 @@ export default class extends Vue {
     },
     {
       type: 7,
-      label: '工作城市:',
-      key: 'workCityName'
+      label: '司机年龄:',
+      key: 'age'
     },
     {
       type: 7,
       label: '加盟经理:',
       key: 'gmName'
-    },
-    {
-      type: 7,
-      label: '司机姓名:',
-      key: 'name'
-    },
-    {
-      type: 7,
-      label: '司机手机号:',
-      w: '100px',
-      key: 'phone'
-    },
-    {
-      type: 7,
-      label: '年龄:',
-      key: 'age'
-    },
-    {
-      type: 7,
-      label: '车型:',
-      key: 'intentDrivingCarTypeName'
     },
     {
       type: 'live',
@@ -401,14 +391,19 @@ export default class extends Vue {
     },
     {
       type: 7,
+      label: '工作城市:',
+      key: 'workCityName'
+    },
+    {
+      type: 7,
       label: '驾照类型:',
       key: 'drivingLicenceTypeName'
     },
     {
-      type: 7,
       label: '是否工作地车牌:',
       w: '120px',
-      key: 'isLocalPlateName'
+      type: 'isLocalPlate',
+      slot: true
     },
     {
       type: 7,
@@ -437,7 +432,24 @@ export default class extends Vue {
       label: '是否新能源:',
       w: '100px',
       slot: true
+    },
+    {
+      type: 7,
+      label: '司机姓名:',
+      key: 'name'
+    },
+    {
+      type: 7,
+      label: '司机手机号:',
+      w: '100px',
+      key: 'phone'
+    },
+    {
+      type: 7,
+      label: '车型:',
+      key: 'intentDrivingCarTypeName'
     }
+
   ]
 
   @Watch('busiTypeName')

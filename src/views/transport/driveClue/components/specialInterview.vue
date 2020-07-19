@@ -638,9 +638,6 @@ export default class extends Vue {
         let params = ['source_channel', 'accep_payment_range', 'accep_payment_range', 'driving_licence_type', 'invite_type', 'intent_delivery_mode', 'strategy_right', 'cooperate_focus_point', 'cooperate_key_factor', 'intent_work_duration']
         let { data: res } = await GetDictionaryList(params)
         if (res.success) {
-          this.formItem.forEach((item:any) => {
-
-          })
           this.formItem[1].options = res.data.invite_type.map(function(item:any) {
             return { label: item.dictLabel, value: +item.dictValue }
           })
