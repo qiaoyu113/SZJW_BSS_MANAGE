@@ -635,7 +635,7 @@ export default class extends Vue {
     private async getDetail(value: any) {
       const { data } = await SelectOrderInfo({ orderId: value })
       if (data.success) {
-        this.ContractDetail = data.data
+        this.ContractDetail = Object.assign(this.ContractDetail, data.data)
       } else {
         this.$message.error(data)
       }
