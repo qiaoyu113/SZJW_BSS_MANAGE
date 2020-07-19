@@ -164,7 +164,7 @@
             label="城市"
           >
             <template slot-scope="{row}">
-              {{ row.city | DataIsNull }}
+              {{ row.cityName | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -491,27 +491,27 @@ export default class extends Vue {
       },
       {
         label: '待支付',
-        name: '1',
+        name: '5',
         num: ''
       },
       {
         label: '待确认',
-        name: '2',
+        name: '15',
         num: ''
       },
       {
         label: '待审核',
-        name: '3',
+        name: '20',
         num: ''
       },
       {
         label: '审核不通过',
-        name: '4',
+        name: '25',
         num: ''
       },
       {
         label: '已成交',
-        name: '5',
+        name: '30',
         num: ''
       }
     ];
