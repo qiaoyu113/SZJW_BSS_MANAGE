@@ -370,7 +370,6 @@ export default class extends Vue {
 
     mounted() {
       this.id = this.$route.query.id
-      console.log(this.id)
       this.getDetail(this.id)
     }
 
@@ -383,7 +382,7 @@ export default class extends Vue {
 
     // 请求列表
     private async getDetail(value: any) {
-      const { data } = await GetOrderDetail({ id: value })
+      const { data } = await GetOrderDetail({ orderId: value })
       if (data.success) {
         let datas = data.data
         this.orderDetail = datas
