@@ -10,6 +10,10 @@
       <BuyCarForm
         :list-query="listQuery"
         :date-value="DateValue"
+        :data-types="{
+          optionsCity,
+          optionsCar
+        }"
         @handle-tags="handleTags"
         @handle-query="search"
       />
@@ -85,6 +89,11 @@
             v-if="checkList.includes('购车车型')"
             prop="name"
             label="购车车型"
+          />
+          <el-table-column
+            v-if="checkList.includes('车辆型号')"
+            prop="name"
+            label="车辆型号"
           />
           <el-table-column
             v-if="checkList.includes('车辆信息')"
@@ -208,13 +217,30 @@
         </el-form-item>
         <el-form-item
           label="车型"
-          prop="carType"
+          prop="Intentional_compartment"
         >
           <el-input
-            v-model="dialogForm.carType"
+            v-model="dialogForm.Intentional_compartment"
             placeholder="请输入车型"
             maxlength="15"
           />
+        </el-form-item>
+        <el-form-item
+          label="车辆型号"
+          prop="carType"
+        >
+          <el-select
+            v-model="dialogForm.carType"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="(item, index) in optionsCar"
+              :key="index"
+              :label="item.dictLabel"
+              :value="Number(item.dictValue)"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="车辆信息"
@@ -272,7 +298,7 @@ import { BuyCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
-import { GetOpenCityData } from '@/api/common'
+import { GetOpenCityData, GetDictionaryList } from '@/api/common'
 import { getProductList, shelvesOrTheshelves, createProduct, updateProduct } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
 import { HandlePages } from '@/utils/index'
@@ -316,6 +342,7 @@ export default class extends Vue {
     productCode: '',
     status: '0',
     supplier: '',
+    Intentional_compartment: '', // 车型
     endDate: '',
     startDate: '',
     page: 1,
@@ -324,6 +351,7 @@ export default class extends Vue {
   private dropdownList: any[] = [
     '商品编号',
     '购车车型',
+    '车辆型号',
     '车辆信息',
     '供应商',
     '无税价格（元）',
@@ -335,6 +363,7 @@ export default class extends Vue {
   ];
   private checkList: any[] = this.dropdownList;
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
+  private optionsCar: any = [];
   // table
   private total = 0;
   private list: any[] = [];
@@ -348,6 +377,7 @@ export default class extends Vue {
     'busiType': 1,
     'carDescribe': '', // 车辆描述
     'carType': '', // 车辆类型
+    'Intentional_compartment': '', // 车辆型号
     'city': [], // 适用地市
     'price': '', // 价格
     'supplier': ''// 供应商
@@ -357,7 +387,10 @@ export default class extends Vue {
       { required: true, message: '请输入车辆信息', trigger: 'blur' }
     ],
     'carType': [
-      { required: true, message: '请输入车型', trigger: 'blur' }
+      { required: true, message: '请选择车辆型号', trigger: 'blur' }
+    ],
+    'Intentional_compartment': [
+      { required: true, message: '请输入车型', trigger: 'change' }
     ],
     'city': [
       { required: true, message: '请选择城市', trigger: 'change' }
@@ -387,6 +420,7 @@ export default class extends Vue {
   }
   // 所有请求方法
   private fetchData() {
+    this.getCity()
     this.getDictionary()
     this.getList(this.listQuery)
   }
@@ -525,6 +559,14 @@ export default class extends Vue {
     })
   }
   private async getDictionary() {
+    const { data } = await GetDictionaryList(['Intentional_compartment'])
+    if (data.success) {
+      this.optionsCar = data.data.Intentional_compartment
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async getCity() {
     const { data } = await GetOpenCityData()
     if (data.success) {
       this.optionsCity = data.data

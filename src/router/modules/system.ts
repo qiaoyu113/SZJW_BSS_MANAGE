@@ -113,7 +113,7 @@ const systemRouter: RouteConfig = {
       }
     },
     {
-      path: 'systemsetting', /* 权限管理 */
+      path: 'systemsetting', /* 系统设置 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/SystemSetting.vue'),
       name: 'SystemSetting',
       meta: {
@@ -130,7 +130,7 @@ const systemRouter: RouteConfig = {
       name: 'BuyCarType',
       meta: {
         title: 'carType',
-        activeMenu: '/system/systemsetting',
+        activeMenu: '/system/buycartype',
         noCache: false,
         icon: '',
         apiUrl: 'root'
@@ -142,7 +142,7 @@ const systemRouter: RouteConfig = {
       name: 'RentCarType',
       meta: {
         title: 'rentCar',
-        activeMenu: '/system/systemsetting',
+        activeMenu: '/system/rentcartype',
         noCache: false,
         icon: '',
         apiUrl: 'root'

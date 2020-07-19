@@ -65,7 +65,7 @@
                   v-for="(item, index) in optionsCustCategory"
                   :key="index"
                   :label="item.dictLabel"
-                  :value="item.dictValue"
+                  :value="Number(item.dictValue)"
                 />
               </el-select>
             </el-form-item>
@@ -136,7 +136,7 @@
                   v-for="(item, index) in optionsCity"
                   :key="index"
                   :label="item.name"
-                  :value="Number(item.code)"
+                  :value="item.code"
                 />
               </el-select>
             </el-form-item>
@@ -162,11 +162,12 @@
               <el-upload
                 :action="getImgUrls"
                 :headers="myHeaders"
+                :class="{'hide': fileList.length === 1}"
                 :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove('businessLicenseUrl')"
-                :on-success="handleUpSuccess('businessLicenseUrl')"
+                :on-remove="handleRemove"
+                :on-success="handleUpSuccess"
                 :limit="1"
-                :file-list="imageList"
+                :file-list="fileList"
                 :before-upload="beforeAvatarUpload"
                 accept="image/*"
                 list-type="picture-card"
@@ -214,12 +215,13 @@
 </template>
 
 <script lang="ts">
+import ElImageViewer from 'element-ui/packages/image/src/image-viewer.vue'
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
-import { TransformCustomer, GetCustomerOff, GetLineClueDetail } from '@/api/cargo'
+import { TransformCustomer, GetCustomerOff, GetLineClueDetail, GetCustomerDetails, EditCustomer, GetPhone } from '@/api/cargo'
 import { GetDictionaryList, GetOpenCityData } from '@/api/common'
 import { UserModule } from '@/store/modules/user'
 
@@ -227,12 +229,14 @@ import '@/styles/common.scss'
 @Component({
   name: 'ConversionClue',
   components: {
-    SectionContainer
+    SectionContainer,
+    ElImageViewer
   }
 })
 export default class extends Vue {
   private loading: boolean = false;
   private id: any = ''
+  private isEdit: boolean = false;
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private optionsCustCategory: any[] = []
   private ruleForm:any = {
@@ -287,7 +291,8 @@ export default class extends Vue {
   private showDio:boolean = false
   private isloading:boolean = false
   private getImgUrls:string = this.getImgUrl()
-  private imageList:any[] = []
+  private imageList:any[] = [];
+  private fileList: any[] = []
   private showViewer:boolean = false
   private myHeaders:any = { Authorization: UserModule.token }
   // 判断是否是PC
@@ -299,12 +304,15 @@ export default class extends Vue {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         // alert('submit!')
+        if (this.isEdit) {
+          this.editSubmint()
+          return
+        }
         this.loading = true
         const { data } = await TransformCustomer(this.ruleForm)
         this.loading = false
         if (data.success) {
           this.$message.success(`转化成功`)
-          console.log(data)
         } else {
           this.$message.error(data)
         }
@@ -314,7 +322,23 @@ export default class extends Vue {
       }
     })
   }
-
+  private async editSubmint() {
+    this.loading = true
+    const { data } = await EditCustomer(this.ruleForm)
+    this.loading = false
+    if (data.success) {
+      this.$message.success(`编辑成功`);
+      (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+      (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+        name: 'OwnerList'
+      })
+      this.$nextTick(() => {
+        this.$router.push({ name: 'OwnerList' })
+      })
+    } else {
+      this.$message.error(data)
+    }
+  }
   private resetForm(formName:any) {
     (this.$refs[formName] as ElForm).resetFields()
   }
@@ -348,25 +372,21 @@ export default class extends Vue {
   /**
    * 删除
    */
-  private handleRemove(key:any) {
-    let that = this
-    return (file:any, fileList:any[]) => {
-      that.ruleForm[key] = ''
-      that.imageList = []
-    }
+  private handleRemove(file:any, fileList:any[]) {
+    this.ruleForm.businessLicenseUrl = ''
+    this.fileList = []
   }
   /**
    * 上传成功
    */
-  private handleUpSuccess(key:any) {
-    let that = this
-    return (res:any) => {
-      if (res.success) {
-        that.ruleForm[key] = res.data.url
-        that.imageList.push({ url: res.data.url, name: res.data.name })
-      } else {
-        this.$message.error('上传图片错误：' + res)
-      }
+  private handleUpSuccess(res:any, file: any) {
+    if (res.success) {
+      this.ruleForm.businessLicenseUrl = res.data.url
+      this.fileList = [file]
+    } else {
+      this.$message.error('上传图片错误：' + res)
+      this.ruleForm.businessLicenseUrl = ''
+      this.fileList = []
     }
   }
   /**
@@ -400,13 +420,58 @@ export default class extends Vue {
       clueId: this.id
     })
     if (data.success) {
-      const { company, name, phone, position, address } = data.data
+      const { company, name, phone, position, address, lineSaleId } = data.data
       this.ruleForm.clueId = this.id
+      this.ruleForm.lineSaleId = lineSaleId // 线索销售
       this.ruleForm.address = address // 详细地址
       this.ruleForm.bussinessName = name // 姓名
-      this.ruleForm.bussinessPhone = phone // 手机号
+      // this.ruleForm.bussinessPhone = phone // 手机号
       this.ruleForm.customerCompanyName = company // 公司
       this.ruleForm.bussinessPosition = position // 职务
+      this.getPhone()
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async getCusDetails() {
+    const { data } = await GetCustomerDetails({
+      customerId: this.id,
+      info: 'edit'
+    })
+    if (data.success) {
+      const details = data.data
+      this.ruleForm.address = details.address
+      this.ruleForm.businessLicenseUrl = details.businessLicenseUrl
+      this.ruleForm.bussinessCard = details.bussinessCard
+      this.ruleForm.bussinessName = details.bussinessName
+      this.ruleForm.bussinessPhone = details.bussinessPhone
+      this.ruleForm.bussinessPosition = details.bussinessPosition
+      this.ruleForm.city = details.city
+      this.ruleForm.classification = details.classification
+      this.ruleForm.clueId = details.clueId
+      this.ruleForm.contractEnd = new Date(details.contractEnd)
+      this.ruleForm.customerCompanyMain = details.customerCompanyMain
+      this.ruleForm.customerCompanyName = details.customerCompanyName
+      this.ruleForm.customerId = details.customerId
+      this.ruleForm.lineSaleId = details.lineSaleId
+      this.ruleForm.remark = details.address
+      if (details.businessLicenseUrl) {
+        this.fileList.push({
+          name: +new Date(),
+          url: details.businessLicenseUrl
+        })
+      }
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async getPhone() {
+    const { data } = await GetPhone({
+      clueId: this.ruleForm.clueId
+    })
+    if (data.success) {
+      // console.log(data)
+      this.ruleForm.bussinessPhone = data.data
     } else {
       this.$message.error(data)
     }
@@ -414,25 +479,33 @@ export default class extends Vue {
   private async getCustomerOff() {
     const { data } = await GetCustomerOff()
     if (data.success) {
-      console.log(data.data)
+      // console.log(data.data)
+      const list = data.data
+      if (list && list[0]) {
+        this.ruleForm.city = list[0].code
+      }
     } else {
       this.$message.error(data)
     }
   }
   private fetchData() {
-    // 获取客户下销售
-    this.getCustomerOff()
     // 获取字典
     this.getDictionaryList()
     // 获取工作城市
     this.getDictionary()
     // 获取线索详情
-    if (this.id) {
+    if (this.id && !this.isEdit) {
       this.getDetails()
+      // 获取当前登录用户城市
+      this.getCustomerOff()
+    } else {
+      // 获取客户详情
+      this.getCusDetails()
     }
   }
   mounted() {
     this.id = this.$route.query.id
+    this.isEdit = this.$route.name === 'EditCustomer'
     this.fetchData()
   }
 }
@@ -453,5 +526,10 @@ export default class extends Vue {
 }
 .el-form-item__label {
   color: #999999;
+}
+.hide{
+  .el-upload--picture-card {
+    display: none;
+  }
 }
 </style>

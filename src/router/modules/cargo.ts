@@ -77,6 +77,19 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
+      path: 'editcustomer', /* 编辑货主 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ConversionClue.vue'),
+      name: 'EditCustomer',
+      meta: {
+        apiUrl: 'root',
+        activeMenu: '/cargo/ownerlist',
+        title: 'editcustomer',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
       path: 'importclue', /* 导入 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportClue.vue'),
       name: 'ImportClue',

@@ -91,6 +91,27 @@ export const TransformCustomer = (data: any) =>
     method: 'post',
     data
   })
+// 货主详情
+export const GetCustomerDetails = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/customer/onlyCustomerInfo`,
+    method: 'get',
+    params
+  })
+// 货主编辑
+export const EditCustomer = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/customer/edit`,
+    method: 'post',
+    data
+  })
+// 获取手机号
+export const GetPhone = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/getPhone`,
+    method: 'get',
+    params
+  })
 // 货主列表下属销售
 export const GetCustomerOff = () =>
   request({
