@@ -34,7 +34,6 @@ export default class extends Vue {
 
  @Watch('activeName', { deep: true })
   private onListQueryChange(value: any) {
-    debugger
     this.handleTab()
   }
  mounted() {
