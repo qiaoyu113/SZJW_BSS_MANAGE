@@ -137,9 +137,6 @@
       <template v-slot:createDate="scope">
         <span>{{ scope.row.createDate | Timestamp }}</span>
       </template>
-      <template v-slot:followPerson="scope">
-        {{ scope.row.lastfollowRecordInfo && scope.row.lastfollowRecordInfo.followerName }}
-      </template>
       <template v-slot:op="scope">
         <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
           <el-button
@@ -206,6 +203,7 @@
     <clue-distribution
       ref="clueDistribution"
       :rows="muls"
+      @onRefresh="getList"
     />
 
     <PitchBox
@@ -216,7 +214,7 @@
     >
       <template slot-scope="slotProp">
         <span>{{ slotProp.item.name }}</span>
-        <span>{{ slotProp.item.code }}</span>
+        <span>{{ slotProp.item.clueId }}</span>
         <span>{{ slotProp.item.phone }}</span>
       </template>
     </PitchBox>
@@ -468,8 +466,7 @@ export default class extends Vue {
       slot: true
     },
     {
-      key: 'followPerson',
-      slot: true,
+      key: 'gmName',
       label: '跟进人'
     },
     {

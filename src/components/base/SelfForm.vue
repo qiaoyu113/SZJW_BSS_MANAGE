@@ -87,7 +87,7 @@
             v-else-if="item.type ===6"
             v-model="listQuery[item.key]"
             type="date"
-
+            value-format="timestamp"
             placeholder="选择日期"
             v-on="item.listeners"
           />
@@ -109,6 +109,7 @@
             v-model="listQuery[item.key]"
             type="datetime"
             placeholder="选择日期"
+            value-format="timestamp"
             v-on="item.listeners"
           />
           <slot

@@ -272,7 +272,7 @@ export default class extends Vue {
    *取消按钮
    */
   handleCancelClick() {
-
+    this.$router.go(-1)
   }
 
   /**

@@ -229,9 +229,9 @@
       @changeDrawer="changeDrawer"
     >
       <template slot-scope="slotProp">
-        <span>{{ slotProp.item.a }}</span>
-        <span>{{ slotProp.item.b }}</span>
-        <span>{{ slotProp.item.c }}</span>
+        <span>{{ slotProp.item.name }}</span>
+        <span>{{ slotProp.item.driverId }}</span>
+        <span>{{ slotProp.item.busiTypeName }}</span>
       </template>
     </PitchBox>
   </div>
@@ -424,6 +424,7 @@ export default class extends Vue {
       key: 'carrierStatus',
       label: '是否存在',
       w: '130px',
+      col: 12,
       options: [
         {
           label: '待上岗运力',
@@ -658,11 +659,11 @@ export default class extends Vue {
         this.page.total = res.page.total
         this.tableData = res.data
         for (let i = 0; i < this.tab.length; i++) {
-          let item = this.tab[i]
-          if (item.name === this.listQuery.status) {
+          let item:Tab = this.tab[i]
+          if (item.name === '') {
             item.num = res.title.all
           } else {
-            item.num = 0
+            item.num = res.title[item.name as string]
           }
         }
       } else {
@@ -777,11 +778,15 @@ export default class extends Vue {
         }
       })
     } else if (key === 'account') { // 账户
-
+      this.$message.warning('该功能暂没开放')
     } else if (key === 'order') { // 创建订单
-
+      this.$router.push({
+        path: '/join/creatorder'
+      })
     } else if (key === 'transport') { // 创建运力
-
+      this.$router.push({
+        path: '/transport/creattransport'
+      })
     }
   }
 
