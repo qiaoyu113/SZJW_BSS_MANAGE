@@ -91,8 +91,8 @@
                 clearable
               >
                 <el-option
-                  v-for="item in optionsCity"
-                  :key="item.code"
+                  v-for="(item, index) in optionsCity"
+                  :key="index"
                   :label="item.name"
                   :value="Number(item.code)"
                 />
