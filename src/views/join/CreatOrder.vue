@@ -1078,6 +1078,7 @@ export default class CreatLine extends Vue {
         this.ruleForm.driverInfoFORM.name = i.detail.name
         this.ruleForm.driverInfoFORM.phone = i.detail.phone
         this.ruleForm.driverInfoFORM.workCity = i.detail.workCity
+        this.ruleForm.driverInfoFORM.workCityName = i.detail.workCityName
         this.ruleForm.driverInfoFORM.driverId = driverId
       }
     })

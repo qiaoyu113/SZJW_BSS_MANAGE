@@ -411,6 +411,7 @@ import { GetJoinManageList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
+import { TagsViewModule } from '@/store/modules/tags-view'
 import '@/styles/common.scss'
 
     @Component({
@@ -677,13 +678,19 @@ export default class extends Vue {
           const { data } = await SubmitOrderDeliver({
             OrderDeliverFORM: this.ruleForm,
             plateNo: this.ruleForm.plateNo,
-            // driverId: this.ContractDetail.driverId
-            driverId: '18'
+            driverId: this.ContractDetail.driverId
           })
           if (data.success) {
-            this.ContractDetail = data.data
+            (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+            (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+              name: 'ClueList'
+            })
+            this.$nextTick(() => {
+              this.$router.push({ name: 'ClueList' })
+            })
+            this.$message.success('提交成功')
           } else {
-            this.$message.error(data)
+            this.$message.error(data.errorMsg)
           }
         } else {
           console.log('error submit!!')

@@ -232,7 +232,7 @@
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
-                    @click.native="cancelHandle(scope.row.orderId)"
+                    @click.native="cancelHandle(scope.row)"
                   >
                     取消
                   </el-dropdown-item>
@@ -561,7 +561,6 @@ export default class extends Vue {
     };
 
     created() {
-      console.log()
       this.fetchData()
     }
 
@@ -674,7 +673,6 @@ export default class extends Vue {
     // 弹窗操作
     private confirmAssign(done: any) {
       // 提交操作
-      console.log(111333)
       if (this.multipleSelectionAssign.length) {
         this.assignShowDialog = false
       } else {
@@ -703,14 +701,14 @@ export default class extends Vue {
     }
 
     // 取消操作
-    private cancelHandle(id: string | (string | null)[] | null | undefined) {
+    private cancelHandle(detail: any) {
       this.showDialog = {
         visible: true,
         title: '取消订单',
         text: '确认取消订单吗？如果存在意向金金额，请下线进行退款!',
         name: '1'
       }
-      this.cancelId = id
+      this.cancelId = detail
     }
     // 订单退款审核
     private refundHandle(data: any) {
@@ -720,11 +718,17 @@ export default class extends Vue {
 
     // 取消请求
     private async cancelPost() {
-      const { data } = await CancelOrder({ orderId: this.cancelId, operateFlag: 'cancel' })
+      const { data } = await CancelOrder({
+        orderId: this.cancelId.orderId,
+        operateFlag: 'cancel',
+        'cooperationModel': this.cancelId.cooperationModel,
+        'createSource': this.cancelId.createSource,
+        'driverId': this.cancelId.driverId
+      })
       if (data.success) {
-        if (data.data.flag) {
-          this.$message.success('订单取消成功')
-        }
+        this.$message.success('订单取消成功')
+        this.list = []
+        this.fetchData()
       } else {
         this.$message.error(data.errorMsg)
       }
