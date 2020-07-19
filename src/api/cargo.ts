@@ -77,6 +77,26 @@ export const GetLineDetail = (params: any) =>
     params
   })
 
+// 货主线索编辑为有效线索
+export const ActivationClue = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/activationClue`,
+    method: 'get',
+    params
+  })
+// 转化货主
+export const TransformCustomer = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/customer/transformCustomer`,
+    method: 'post',
+    data
+  })
+// 货主列表下属销售
+export const GetCustomerOff = () =>
+  request({
+    url: `/base/v1/base/office/getCurrentLowerOfficeCityData`,
+    method: 'get'
+  })
 // 创建线路提交
 export const createLine = (data: any) =>
   request({

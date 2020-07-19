@@ -191,7 +191,7 @@ export default class extends Vue {
     this.$router.push({ name: 'EditRole', query: { id: row.id } })
   }
   private deleteRole(item: any) {
-    this.$confirm(`您确定要删除“${item.roleName}”吗？`, '删除组织', {
+    this.$confirm(`您确定要删除“${item.nick}”吗？`, '删除角色', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'

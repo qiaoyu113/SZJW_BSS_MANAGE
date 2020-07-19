@@ -225,7 +225,7 @@
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goClue(scope.row.clueId)"
+                    @click.native="goClue(scope.row.customerId)"
                   >
                     编辑
                   </el-dropdown-item>
@@ -546,7 +546,7 @@ export default class extends Vue {
 
     // 跳转线索
     private goClue(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'ConversionClue', query: { id: id } })
+      this.$router.push({ name: 'EditCustomer', query: { id: id } })
     }
 
     // 批量操作

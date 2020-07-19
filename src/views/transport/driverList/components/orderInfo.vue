@@ -20,21 +20,21 @@
               <span v-else-if="row.cooperationModel ===2">租车</span>
               <span v-else-if="row.cooperationModel ===3">带车</span>
             </template>
-            <template v-slot:d="{row}">
+            <template v-slot:cooperationTime="{row}">
               {{ row.cooperationTime }}个月
             </template>
-            <template v-slot:e="{row}">
+            <template v-slot:goodsAmount="{row}">
               ￥{{ row.goodsAmount }}
             </template>
-            <template v-slot:f="{row}">
+            <template v-slot:rake="{row}">
               {{ row.rake }}%
             </template>
-            <template v-slot:g="{row}">
+            <template v-slot:payCompleteTime="{row}">
               {{ row.payCompleteTime | Timestamp }}
             </template>
             <template slot="detail">
               <router-link
-                :to="{path: '/'}"
+                :to="{path: '/join/orderdetail',query: {id: item.orderId}}"
                 class="link"
               >
                 详情>>

@@ -248,7 +248,43 @@ export default class extends Vue {
       const { data } = await GetContractDetail({ contractId: value })
       if (data.success) {
         let datas = data.data
-        this.ContractDetail = datas
+        if (!datas.driverInfoBusiVO) {
+          datas.driverInfoBusiVO = {
+            'address': '',
+            'bankCardNo': '',
+            'busiType': '',
+            'busiTypeName': '',
+            'carType': '',
+            'carTypeName': '',
+            'clueId': '',
+            'corpUserId': '',
+            'createDate': '',
+            'createId': '',
+            'createName': '',
+            'delFlag': true,
+            'driverId': '',
+            'email': '',
+            'exterUserId': '',
+            'gmId': '',
+            'gmName': '',
+            'gmTeam': '',
+            'gmTeamId': '',
+            'idNo': '',
+            'name': '',
+            'phone': '',
+            'remark': '',
+            'sourceChannel': '',
+            'sourceChannelName': '',
+            'status': '',
+            'statusName': '',
+            'updateDate': '',
+            'updateId': '',
+            'updateName': '',
+            'workCity': '',
+            'workCityName': ''
+          }
+        }
+        this.ContractDetail = Object.assign(this.ContractDetail, datas)
       } else {
         this.$message.error(data)
       }

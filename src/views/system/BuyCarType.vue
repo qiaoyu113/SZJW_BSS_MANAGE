@@ -253,8 +253,8 @@
             :disabled="!isAdd"
           >
             <el-option
-              v-for="item in optionsCity"
-              :key="item.code"
+              v-for="(item, index) in optionsCity"
+              :key="index"
               :label="item.name"
               :value="item.code"
             />
@@ -301,11 +301,11 @@ export default class extends Vue {
     },
     {
       label: '已上架',
-      name: '1'
+      name: '10'
     },
     {
       label: '已下架',
-      name: '2'
+      name: '20'
     }
   ];
   private DateValue: any[] = [];

@@ -69,7 +69,6 @@
               :value="ContractDetail.busiTypeName"
             />
           </el-col>
-          {{ ContractDetail.cooperationModel }}
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="合租模式"
@@ -94,7 +93,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="订单成交时间"
-              :value="ContractDetail.deliverDate"
+              :value="ContractDetail.deliverDate | Timestamp"
             />
           </el-col>
 
@@ -108,14 +107,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="购买车型"
-              :value="ContractDetail.cooperationCar"
+              :value="ContractDetail.cooperationCarName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="车辆信息"
-              value="xxx"
+              :value="ContractDetail.orderInfoVO.carMessage"
             />
           </el-col>
 
@@ -322,7 +321,7 @@
           </div>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="金融返利"
+              label="金融返利(元)"
               prop="financialRebate"
             >
               <el-input v-model="ruleForm.financialRebate" />
@@ -330,7 +329,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="保险返利"
+              label="保险返利(元)"
               prop="insuranceRebate"
             >
               <el-input v-model="ruleForm.insuranceRebate" />
@@ -338,7 +337,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="上牌返利"
+              label="上牌返利(元)"
               prop="plateNoRebate"
             >
               <el-input v-model="ruleForm.plateNoRebate" />
@@ -346,7 +345,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              label="其他返利"
+              label="其他返利(元)"
               prop="otherRebate"
             >
               <el-input v-model="ruleForm.otherRebate" />
@@ -408,9 +407,11 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId } from '@/api/join'
+import { GetJoinManageList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
+import { TagsViewModule } from '@/store/modules/tags-view'
 import '@/styles/common.scss'
 
     @Component({
@@ -444,6 +445,9 @@ export default class extends Vue {
       'createSource': '',
       'deliverDate': '',
       'driverId': '',
+      'orderInfoVO': {
+        'carMessage': ''
+      },
       'driverInfoVO': {
         'address': '',
         'bankCardNo': '',
@@ -532,7 +536,7 @@ export default class extends Vue {
       'gpsSimNo': '',
       'gpsSupplier': '',
       'insuranceRebate': '',
-      'operationId': '1',
+      'operationId': '',
       'orderDeliverRebateFORMs': [
         {
           'chassis': '',
@@ -641,14 +645,14 @@ export default class extends Vue {
     private remoteMethod(query: any) {
       if (query !== '') {
         this.loading = true
-        GetOperManagerListByUserId({
+        GetJoinManageList({
           key: query
         }).then((response:any) => {
           if (response.data.success) {
             let array = response.data.data
             let newArr: any = []
             array.forEach((i: any) => {
-              newArr.push({ value: i.driverId, label: i.name + i.phone })
+              newArr.push({ value: i.id, label: i.name + i.mobile })
             })
             this.managerList = newArr
             this.loading = false
@@ -677,9 +681,16 @@ export default class extends Vue {
             driverId: this.ContractDetail.driverId
           })
           if (data.success) {
-            this.ContractDetail = data.data
+            (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+            (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+              name: 'ClueList'
+            })
+            this.$nextTick(() => {
+              this.$router.push({ name: 'ClueList' })
+            })
+            this.$message.success('提交成功')
           } else {
-            this.$message.error(data)
+            this.$message.error(data.errorMsg)
           }
         } else {
           console.log('error submit!!')

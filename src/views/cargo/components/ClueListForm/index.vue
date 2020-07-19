@@ -56,8 +56,8 @@
                     clearable
                   >
                     <el-option
-                      v-for="item in dataTypes.optionsCity"
-                      :key="item.code"
+                      v-for="(item, index) in dataTypes.optionsCity"
+                      :key="index"
                       :label="item.name"
                       :value="item.code"
                     />

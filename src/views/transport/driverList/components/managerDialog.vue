@@ -25,6 +25,7 @@ import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { UpdateDriverBDManager, driverDownToGm } from '@/api/driver'
 import { GetManagerLists } from '@/api/common'
+import { delayTime } from '@/settings'
 interface IState {
   [key: string]: any;
 }
@@ -47,7 +48,7 @@ export default class extends Vue {
   private dialogItems:any[] = [
     {
       type: 2,
-      key: 'manager',
+      key: 'gmId',
       label: '请选择加盟经理',
       tagAttrs: {
         placeholder: '请选择新的加盟经理',
@@ -111,7 +112,7 @@ export default class extends Vue {
   }
   async confirm() {
     try {
-      if (!this.dialogForm.manager) {
+      if (!this.dialogForm.gmId) {
         return this.$message.error('请选择加盟经理')
       }
       if (this.type === 'modify') {
@@ -137,7 +138,11 @@ export default class extends Vue {
       if (res.success) {
         this.showAlert = false
         this.$message.success('操作成功')
-        this.getList()
+        setTimeout(() => {
+          this.getList()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`driver to gm fail:${err}`)
@@ -160,7 +165,11 @@ export default class extends Vue {
       if (res.success) {
         this.showAlert = false
         this.$message.success('操作成功')
-        this.getList()
+        setTimeout(() => {
+          this.getList()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`modify manager fail:${err}`)
