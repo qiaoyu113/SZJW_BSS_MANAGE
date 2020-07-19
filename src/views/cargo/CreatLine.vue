@@ -678,7 +678,7 @@ export default class CreatLine extends Vue {
           ruleForm.provinceArea = ruleForm.address[0]
           ruleForm.cityArea = ruleForm.address[1]
           ruleForm.countyArea = ruleForm.address[2]
-          ruleForm.districtArea = ruleForm.districtArea
+          // ruleForm.districtArea = ruleForm.districtArea
         }
         if (ruleForm.address.length !== 0) {
           ruleForm.warehouseProvince = ruleForm.address[0]
