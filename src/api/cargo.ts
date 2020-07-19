@@ -164,7 +164,7 @@ export const manualDeactivate = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/manualDeactivate`,
     method: 'post',
-    data
+    params:data
   })
 
 // 线路上架
@@ -179,14 +179,14 @@ export const mountGuard = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/mountGuard`,
     method: 'post',
-    data
+    params:data
   })
 // 线路下架
 export const shelveLine = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/shelveLine`,
     method: 'post',
-    data
+    params:data
   })
 
 // 线路列表

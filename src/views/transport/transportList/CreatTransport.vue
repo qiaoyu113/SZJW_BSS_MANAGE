@@ -736,7 +736,7 @@ export default class extends Vue {
 
   private orderGet(index:number, ele:any) {
     this.orderId = ele.orderId
-    if (!ele.flag) {
+    if (ele.flag) {
       return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
     } else {
       this.isHasOrder = true

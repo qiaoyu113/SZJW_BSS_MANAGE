@@ -358,7 +358,6 @@ export default class extends Vue {
       },
       {
         type: 'createDate',
-        key: 'createDate',
         label: '创建时间',
         slot: true
       },

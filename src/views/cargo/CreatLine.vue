@@ -50,10 +50,15 @@
           <SelfItem
             :rule-form="ruleForm"
             :pccol="8"
-            :params="{prop: 'address',type: 8,label: '仓位置',tagAttrs: {props: {
-              lazy: true,
-              lazyLoad: loadAddress
-            }}}"
+            :params="{prop: 'address',type: 8,label: '仓位置',tagAttrs: {
+              placeholder: '请选择仓位置',
+              'default-expanded-keys': true,
+              'default-checked-keys': true,
+              'node-key': 'warehouseProvince',
+              props: {
+                lazy: true,
+                lazyLoad: loadAddress
+              }}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -94,10 +99,15 @@
             :rule-form="ruleForm"
             :pccol="8"
             :params="{prop: 'delivery',type: 8,label: '配送区域',
-                      tagAttrs: {props: {
-                        lazy: true,
-                        lazyLoad: loadAddress
-                      }}}"
+                      tagAttrs: {
+                        placeholder: '请选择配送区域',
+                        'default-expanded-keys': true,
+                        'default-checked-keys': true,
+                        'node-key': 'provinceArea',
+                        props: {
+                          lazy: true,
+                          lazyLoad: loadhouseAddress
+                        }}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -112,7 +122,7 @@
         <el-row>
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'dayNo',type: 1,label: '每日配送趟数',tagAttrs: {placeholder: '请输入配送趟数'},kind: 'number'}"
+            :params="{prop: 'dayNo',type: 1,label: '每日配送趟数',tagAttrs: {placeholder: '请输入配送趟数',maxlength: 6},kind: 'number'}"
           />
           <div
             v-if="ruleForm['dayNo'] > 0"
@@ -533,6 +543,24 @@ export default class CreatLine extends Vue {
     }
   }
 
+  private async deArr(params:string[]) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: params.length > 2
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+
   async loadCityByCode(params:any) {
     try {
       let { data: res } = await GetCityByCode(params)
@@ -570,14 +598,13 @@ export default class CreatLine extends Vue {
       this.ruleForm.shipperOffer = Number(this.ruleForm.dayNo) * Number(this.ruleForm.monthNo) * Number(this.ruleForm.everyTripGuaranteed)
       return true
     } else {
-      this.ruleForm.shipperOffer = ''
+      // this.ruleForm.shipperOffer = ''
       return true
     }
   }
 
   @Watch('ruleForm.dayNo')
   private dayNoChange(val:any) {
-    console.log(val)
     for (let i = 0; i < val; i++) {
       this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
         workingTimeStart: '', workingTimeEnd: ''
@@ -601,13 +628,13 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.incomeSettlementMethod')
   private changeRuleForm(value:any) {
     if (value === 1) {
-      this.ruleForm.everyUnitPrice = ''
+      // this.ruleForm.everyUnitPrice = ''
       this.NoshipperOffer = true
-      this.ruleForm.shipperOffer = ''
+      // this.ruleForm.shipperOffer = ''
     } else {
-      this.ruleForm.everyUnitPrice = ''
+      // this.ruleForm.everyUnitPrice = ''
       this.NoshipperOffer = false
-      this.ruleForm.shipperOffer = ''
+      // this.ruleForm.shipperOffer = ''
     }
   }
 
@@ -633,9 +660,30 @@ export default class CreatLine extends Vue {
   private async againForm(formName:any) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        console.log(this.ruleForm)
+        let ruleForm = { ...this.ruleForm }
+        if (ruleForm.everyUnitPrice === '') {
+          ruleForm.everyUnitPrice = 0
+        }
+        for (let i = 0; i < ruleForm.dayNo; i++) {
+          ruleForm.lineDeliveryInfoFORMS.push(ruleForm['lineDeliveryInfoFORMS' + i])
+        }
+        for (let i = 0; i < ruleForm.dayNo; i++) {
+          delete ruleForm['lineDeliveryInfoFORMS' + i]
+        }
+        if (ruleForm.address.length !== 0) {
+          ruleForm.warehouseProvince = ruleForm.address[0]
+          ruleForm.warehouseCity = ruleForm.address[1]
+          ruleForm.warehouseCounty = ruleForm.address[2]
+          ruleForm.warehouseTown = ruleForm.address[3]
+          // ruleForm.warehouseDistrict = ruleForm.warehouseDistrict
+        }
+        if (ruleForm.delivery.length !== 0) {
+          ruleForm.provinceArea = ruleForm.delivery[0]
+          ruleForm.cityArea = ruleForm.delivery[1]
+          ruleForm.countyArea = ruleForm.delivery[2]
+        }
         // alert('submit!')
-        let { data } = await editLine({ ...this.ruleForm, ...{ lineId: this.lineId } })
+        let { data } = await editLine({ ...ruleForm, ...{ lineId: this.lineId } })
         if (data.success) {
           console.log(data.data)
           this.$message.success('线路已提交成功')
@@ -674,18 +722,16 @@ export default class CreatLine extends Vue {
         for (let i = 0; i < ruleForm.dayNo; i++) {
           ruleForm.lineDeliveryInfoFORMS.push(ruleForm['lineDeliveryInfoFORMS' + i])
         }
-        if (ruleForm.address.length !== 0) {
-          ruleForm.provinceArea = ruleForm.address[0]
-          ruleForm.cityArea = ruleForm.address[1]
-          ruleForm.countyArea = ruleForm.address[2]
-          // ruleForm.districtArea = ruleForm.districtArea
+        if (ruleForm.delivery.length !== 0) {
+          ruleForm.provinceArea = ruleForm.delivery[0]
+          ruleForm.cityArea = ruleForm.delivery[1]
+          ruleForm.countyArea = ruleForm.delivery[2]
         }
         if (ruleForm.address.length !== 0) {
           ruleForm.warehouseProvince = ruleForm.address[0]
           ruleForm.warehouseCity = ruleForm.address[1]
           ruleForm.warehouseCounty = ruleForm.address[2]
           ruleForm.warehouseTown = ruleForm.address[3]
-          // ruleForm.warehouseDistrict = ruleForm.warehouseDistrict
         }
         this.createdLine(ruleForm)
       } else {
@@ -715,9 +761,6 @@ export default class CreatLine extends Vue {
   }
   private picConfirm(done: any) {
     done(this.$router.go(-1))
-  }
-  private async lineInfo() {
-    // let { data } = await
   }
   // 判断是否是PC
   get isPC() {
@@ -776,6 +819,25 @@ export default class CreatLine extends Vue {
       this.$router.go(-1)
     }
   }
+  private async loadhouseAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.deArr(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
+  }
 
   private fetchData() {
     this.GetDictionaryAll()
@@ -786,10 +848,15 @@ export default class CreatLine extends Vue {
       let allParams = data.data
       this.customerOptions = [{ value: allParams.customerId, label: allParams.bussinessName }]
       this.ruleForm = { ...this.ruleForm, ...allParams }
-      // this.ruleForm.address.push(...[allParams.warehouseProvince + '', allParams.warehouseCity + '', allParams.warehouseCounty + '', allParams.warehouseTown + ''])
-      // this.ruleForm.delivery.push(...[allParams.warehouseProvince + '', allParams.warehouseCity + '', allParams.warehouseCounty + ''])
-      // this.ruleForm.warehouseDistrict = allParams.warehouse
-      // this.ruleForm.address = ['340000', '340200', '340207', '350203003000']
+      // 仓位置
+      this.ruleForm.address.push(this.ruleForm.warehouseProvince + '')
+      this.ruleForm.address.push(this.ruleForm.warehouseCity + '')
+      this.ruleForm.address.push(this.ruleForm.warehouseCounty + '')
+      this.ruleForm.address.push(this.ruleForm.warehouseTown + '')
+      // 配送区域
+      this.ruleForm.delivery.push(this.ruleForm.provinceArea + '')
+      this.ruleForm.delivery.push(this.ruleForm.cityArea + '')
+      this.ruleForm.delivery.push(this.ruleForm.countyArea + '')
       setTimeout(() => {
         for (let i = 0; i < Number(allParams.dayNo); i++) {
           this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {

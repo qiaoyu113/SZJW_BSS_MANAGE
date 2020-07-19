@@ -73,7 +73,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="配送区域"
-            value="字段待定"
+            :value="ruleForm.lineArea"
           />
         </el-col>
 
@@ -160,7 +160,7 @@
         </el-col>
 
         <el-col
-          v-if="ruleForm.incomeSettlementMethodName === 2"
+          v-if="ruleForm.incomeSettlementMethod === 2"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -169,7 +169,7 @@
           />
         </el-col>
         <el-col
-          v-if="ruleForm.incomeSettlementMethodName === 2"
+          v-if="ruleForm.incomeSettlementMethod === 2"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -185,7 +185,7 @@
         </el-col>
 
         <el-col
-          v-if="ruleForm.incomeSettlementMethodName === 1"
+          v-if="ruleForm.incomeSettlementMethod === 1"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -279,7 +279,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路角色"
-            :value="ruleForm.busiTypeName"
+            :value="busiTypeName"
           />
         </el-col>
       </el-row>
@@ -289,25 +289,25 @@
       class="steps"
     >
       <el-steps
-        :active="2"
+        :active="status"
         align-center
       >
         <el-step
           title="创建线路"
-          description="张明明  2020-09-10"
         />
         <el-step
-          title="外线BGL已审核"
-          description="张明明"
+          title="已审核"
         />
         <el-step
           title="标书可上岗"
-          description="张明明"
         />
         <el-step
           title="售罄"
         />
       </el-steps>
+      <!-- description="张明明  2020-09-10" -->
+      <!-- description="张明明" -->
+      <!-- description="张明明" -->
     </div>
     <div
       v-if="pageStatus === 2"
@@ -374,6 +374,7 @@ import '@/styles/common.scss'
   })
 
 export default class extends Vue {
+  private status:number = 1
   private auditBack:boolean = false
   private auditBackText:string = ''
   private ruleForm:any = {
@@ -473,6 +474,9 @@ export default class extends Vue {
   private async GetDetail() {
     let { data: res } = await GetLineDetail({ lineId: this.lineId })
     if (res.success) {
+      // if (res.data.auditState === 3) {
+      //   this.status = 1
+      // }
       this.ruleForm = { ...this.ruleForm, ...res.data }
       if (this.ruleForm.deliveryWeekCycle) {
         this.checkList = this.ruleForm.deliveryWeekCycle.split(',')
