@@ -659,11 +659,11 @@ export default class extends Vue {
         this.page.total = res.page.total
         this.tableData = res.data
         for (let i = 0; i < this.tab.length; i++) {
-          let item = this.tab[i]
-          if (item.name === this.listQuery.status) {
+          let item:Tab = this.tab[i]
+          if (item.name === '') {
             item.num = res.title.all
           } else {
-            item.num = 0
+            item.num = res.title[item.name as string]
           }
         }
       } else {
