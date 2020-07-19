@@ -81,3 +81,11 @@ export const Upload = (params: any, data: any) =>
     method: 'post',
     data
   })
+
+// 获取支付方式
+export const GetPayList = (data:any) =>
+  request({
+    url: `${baseURL}/v1/order/getPayTypeList`,
+    method: 'get',
+    data
+  })

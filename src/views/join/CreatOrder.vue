@@ -44,6 +44,7 @@
         </el-row>
       </SectionContainer>
       <SectionContainer
+        v-if="driverId"
         title="司机信息"
         :md="true"
       >
@@ -63,7 +64,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="工作城市"
-              :value="ruleForm.driverInfoFORM.workCity"
+              :value="ruleForm.driverInfoFORM.workCityName"
             />
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -81,6 +82,7 @@
         </el-row>
       </SectionContainer>
       <SectionContainer
+        v-if="driverId"
         title="商品信息"
         :md="true"
       >
@@ -176,7 +178,7 @@
       </SectionContainer>
 
       <SectionContainer
-        v-if="ruleForm.cooperationModel"
+        v-if="ruleForm.cooperationModel && driverId"
         title="商品附加信息"
         :md="true"
       >
@@ -338,6 +340,7 @@
         </div>
       </SectionContainer>
       <SectionContainer
+        v-if="driverId"
         :title="`支付信息` + `( 订单金额：¥` + orderPrice + ` )`"
         :md="true"
       >
@@ -438,7 +441,10 @@
       </SectionContainer>
     </el-form>
     <!--按钮-->
-    <div class="btn_box">
+    <div
+      v-if="driverId"
+      class="btn_box"
+    >
       <el-button
         type="primary"
         name="CreatLine-btn-creat"

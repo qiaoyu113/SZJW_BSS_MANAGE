@@ -160,7 +160,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionaryList, GetJoinManageList, GetOpenCityData } from '@/api/common'
+import { GetDictionaryList, GetJoinManageList, GetOpenCityData, GetPayList } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -319,7 +319,15 @@ export default class extends Vue {
     const { data } = await GetDictionaryList(['busi_type', 'pay_type'])
     if (data.success) {
       this.optionsBusi = data.data.busi_type
-      this.optionsPay = data.data.pay_type
+      // this.optionsPay = data.data.pay_type
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async getPayList() {
+    const { data } = await GetPayList({})
+    if (data.success) {
+      this.optionsPay = data.data
     } else {
       this.$message.error(data)
     }
