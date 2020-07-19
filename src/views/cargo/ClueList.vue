@@ -235,7 +235,7 @@
                     转化
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click.native="goEdit(row.clueId)"
+                    @click.native="goEdit(row)"
                   >
                     编辑
                   </el-dropdown-item>
@@ -397,7 +397,7 @@ import Dialog from '@/components/Dialog/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 
 import { GetDictionaryList, GetOpenCityData } from '@/api/common'
-import { GetClueList, GetSaleList, Distribution, ExpiredClue } from '@/api/cargo'
+import { GetClueList, GetSaleList, Distribution, ExpiredClue, ActivationClue } from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
 
 import { SettingsModule } from '@/store/modules/settings'
@@ -624,8 +624,27 @@ export default class extends Vue {
     this.$router.push({ name: 'ClueDetail', query: { id: id } })
   }
   // 编辑
-  private goEdit(id: string | (string | null)[] | null | undefined) {
-    this.$router.push({ name: 'EditClue', query: { id: id } })
+  private goEdit(row: any) {
+    const id = row.clueId
+    if (row.clueState === 3) {
+      // 失效状态弹窗
+      this.$confirm(`该线索是无效线索！若想编辑请确定设置为有效线索，且线索状态为待跟进！`, `提示`, {
+        type: 'warning'
+      })
+        .then(async() => {
+          const { data } = await ActivationClue({ clueId: id })
+          if (data.success) {
+            this.$message.success(`设置成功`)
+            this.handleSearch()
+            this.$router.push({ name: 'EditClue', query: { id: id } })
+          } else {
+            this.$message.error(data)
+          }
+        }).catch(() => {
+        })
+    } else {
+      this.$router.push({ name: 'EditClue', query: { id: id } })
+    }
   }
   // 跟进
   private goFollow(row: any) {

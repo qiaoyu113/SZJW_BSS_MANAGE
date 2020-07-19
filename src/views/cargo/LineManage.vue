@@ -589,6 +589,7 @@ export default class LineManage extends Vue {
   };
   private showPutDio:boolean = false
   private showGetDio:boolean = false
+  // private workDio:boolean = false
   page:PageObj ={
     page: 1,
     limit: 10,
@@ -924,6 +925,10 @@ export default class LineManage extends Vue {
       case 'putaway':
         this.showPutDio = true
         break
+      case 'gowork':
+        // this.workDio = true
+        this.workDo(row.lineId)
+        break
       case 'getaway':
         this.showGetDio = true
         break
@@ -939,6 +944,29 @@ export default class LineManage extends Vue {
       default:
         break
     }
+  }
+  private workDo(id:string) {
+    this.$confirm('此操作将上岗, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async() => {
+      // id
+      let { data } = await mountGuard({ lineId: 'XL202007180006' })
+      if (data.success) {
+        this.$message({
+          type: 'success',
+          message: '上岗成功!'
+        })
+      } else {
+        this.$message.error(data.errorMsg || data)
+      }
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消上岗'
+      })
+    })
   }
 
   private useStop(id:string) {

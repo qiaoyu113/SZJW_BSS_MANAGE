@@ -36,6 +36,7 @@ interface IState {
 })
 export default class extends Vue {
   @Prop({ default: () => [] }) rows!:any
+  @Prop({ default: () => [] }) options!:any[]
   @Prop({ default: '' }) type!:string
   private showAlert = false
   private title:string = ''
@@ -52,14 +53,15 @@ export default class extends Vue {
         placeholder: '请选择新的运营经理',
         filterable: true
       },
-      options: [
-        {
-          label: 'jack',
-          value: 'jack'
-        }
-      ]
+      options: []
     }
   ]
+
+  @Watch('options', { deep: true })
+  optionsChange(val:any[]) {
+    console.log(456)
+    this.dialogItems[0].options = val
+  }
 
   @Watch('type')
   onTypeChange(val:string) {
@@ -68,6 +70,8 @@ export default class extends Vue {
     } else if (this.type === 'distribution') {
       this.title = '分配运营经理'
     }
+  }
+  mounted() {
   }
   /**
    *发开模态框

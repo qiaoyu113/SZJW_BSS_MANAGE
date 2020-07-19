@@ -408,6 +408,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId } from '@/api/join'
+import { GetJoinManageList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -532,7 +533,7 @@ export default class extends Vue {
       'gpsSimNo': '',
       'gpsSupplier': '',
       'insuranceRebate': '',
-      'operationId': '1',
+      'operationId': '',
       'orderDeliverRebateFORMs': [
         {
           'chassis': '',
@@ -641,14 +642,14 @@ export default class extends Vue {
     private remoteMethod(query: any) {
       if (query !== '') {
         this.loading = true
-        GetOperManagerListByUserId({
+        GetJoinManageList({
           key: query
         }).then((response:any) => {
           if (response.data.success) {
             let array = response.data.data
             let newArr: any = []
             array.forEach((i: any) => {
-              newArr.push({ value: i.driverId, label: i.name + i.phone })
+              newArr.push({ value: i.id, label: i.name + i.mobile })
             })
             this.managerList = newArr
             this.loading = false
@@ -674,7 +675,8 @@ export default class extends Vue {
           const { data } = await SubmitOrderDeliver({
             OrderDeliverFORM: this.ruleForm,
             plateNo: this.ruleForm.plateNo,
-            driverId: this.ContractDetail.driverId
+            // driverId: this.ContractDetail.driverId
+            driverId: '18'
           })
           if (data.success) {
             this.ContractDetail = data.data
