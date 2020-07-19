@@ -15,7 +15,6 @@
       class="tab-box"
     >
       <el-tabs
-
         v-model="activeValue"
         @tab-click="handleClick"
       >
