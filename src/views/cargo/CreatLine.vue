@@ -675,14 +675,17 @@ export default class CreatLine extends Vue {
           ruleForm.lineDeliveryInfoFORMS.push(ruleForm['lineDeliveryInfoFORMS' + i])
         }
         if (ruleForm.address.length !== 0) {
-          ruleForm.homeProvince = ruleForm.address[0]
-          ruleForm.homeCity = ruleForm.address[1]
-          ruleForm.homeCounty = ruleForm.address[2]
+          ruleForm.provinceArea = ruleForm.address[0]
+          ruleForm.cityArea = ruleForm.address[1]
+          ruleForm.countyArea = ruleForm.address[2]
+          ruleForm.districtArea = ruleForm.districtArea
         }
         if (ruleForm.address.length !== 0) {
-          ruleForm.homeProvince = ruleForm.address[0]
-          ruleForm.homeCity = ruleForm.address[1]
-          ruleForm.homeCounty = ruleForm.address[2]
+          ruleForm.warehouseProvince = ruleForm.address[0]
+          ruleForm.warehouseCity = ruleForm.address[1]
+          ruleForm.warehouseCounty = ruleForm.address[2]
+          ruleForm.warehouseTown = ruleForm.address[3]
+          // ruleForm.warehouseDistrict = ruleForm.warehouseDistrict
         }
         this.createdLine(ruleForm)
       } else {
@@ -785,9 +788,8 @@ export default class CreatLine extends Vue {
       this.ruleForm = { ...this.ruleForm, ...allParams }
       // this.ruleForm.address.push(...[allParams.warehouseProvince + '', allParams.warehouseCity + '', allParams.warehouseCounty + '', allParams.warehouseTown + ''])
       // this.ruleForm.delivery.push(...[allParams.warehouseProvince + '', allParams.warehouseCity + '', allParams.warehouseCounty + ''])
-      this.ruleForm.warehouseDistrict = allParams.warehouse
-      this.ruleForm.districtArea = allParams.districtArea
-      this.ruleForm.address = ['340000', '340200', '340207', '350203003000']
+      // this.ruleForm.warehouseDistrict = allParams.warehouse
+      // this.ruleForm.address = ['340000', '340200', '340207', '350203003000']
       setTimeout(() => {
         for (let i = 0; i < Number(allParams.dayNo); i++) {
           this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {

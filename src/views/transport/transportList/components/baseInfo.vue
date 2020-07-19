@@ -10,16 +10,17 @@
         :form-item="item.title === '基本信息' ? formItem : formItemOther"
         label-width="150px"
       >
-        <template v-slot:g="{row}">
-          {{ row.g | Timestamp }}
-        </template>
         <template v-slot:detail="{row}">
           <router-link
-            :to="{path: '/'}"
+            :to="{path: '/transport/driverdetail',query: {id: row.driverId}}"
             class="link"
           >
             {{ row.driverId }}
           </router-link>
+        </template>
+        <template v-slot:createDate="{row}">
+          <!-- {{ row.createDate | Timestamp }} -->
+          {{ row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
       </self-form>
     </dd>
@@ -56,11 +57,11 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'busiType',
+      key: 'busiTypeName',
       label: '业务线:'
     },
     {
-      key: 'workCity',
+      key: 'workCityName',
       type: 7,
       label: '工作城市:'
     },
@@ -116,9 +117,10 @@ export default class extends Vue {
       label: '创建人手机号:'
     },
     {
+      type: 'createDate',
       key: 'createDate',
-      type: 7,
-      label: '创建时间:'
+      label: '创建时间:',
+      slot: true
     }
   ]
 
