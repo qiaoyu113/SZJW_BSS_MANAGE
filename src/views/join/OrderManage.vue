@@ -486,7 +486,7 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: '0',
+        name: '',
         num: ''
       },
       {
