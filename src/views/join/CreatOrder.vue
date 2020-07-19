@@ -956,7 +956,8 @@ export default class CreatLine extends Vue {
     const { data } = await GetOrderDetail({ orderId: id })
     if (data.success) {
       let datas = data.data
-      this.ruleForm = Object.assign(datas, this.ruleForm)
+      this.ruleForm = Object.assign(this.ruleForm, datas)
+      console.log(this.ruleForm)
     } else {
       this.$message.error(data)
     }
