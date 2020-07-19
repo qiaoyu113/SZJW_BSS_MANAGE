@@ -31,7 +31,7 @@
                     clearable
                   >
                     <el-option
-                      v-for="(item, index) in optionsCity"
+                      v-for="(item, index) in dataTypes.optionsCity"
                       :key="index"
                       :label="item.name"
                       :value="item.code"
@@ -48,7 +48,23 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 12 : 24">
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="车辆型号">
+                  <el-select
+                    v-model="listQuery.Intentional_compartment"
+                    placeholder="请选择"
+                    clearable
+                  >
+                    <el-option
+                      v-for="(item, index) in dataTypes.optionsCar"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 20 : 24">
                 <el-form-item label="创建日期">
                   <el-date-picker
                     v-model="DateValueChild"
@@ -62,7 +78,7 @@
                 </el-form-item>
               </el-col>
               <el-col
-                :span="isPC ? 12 : 24"
+                :span="isPC ? 4 : 24"
                 class="btn-box"
               >
                 <el-button
@@ -102,11 +118,13 @@ import '@/styles/common.scss'
 export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
-
+  @Prop({ default: () => {} }) private dataTypes!: {
+      optionsCity: [],
+      optionsCar: []
+    };
   private DateValueChild: any = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'status', 'busiType', 'startDate']; // 添加过滤listQuery中key的名称
   private loading: boolean = false;
-  private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
@@ -147,25 +165,23 @@ export default class extends Vue {
   }
 
   created() {
-    this.getDictionary()
   }
 
-  private async getDictionary() {
-    const { data } = await GetOpenCityData()
-    if (data.success) {
-      this.optionsCity = data.data
-    } else {
-      this.$message.error(data)
-    }
-  }
   // 匹配创建tags标签
   private matchName(key: any, value: any) {
     let vodeName = ''
-    const cityName = this.optionsCity.find(item => item.code === value)
+    const {
+      optionsCity,
+      optionsCar } = this.dataTypes
+    const cityItem = optionsCity.find((item: any) => item.code === value)
+    const carItem = optionsCar.find((item: any) => item.code === value)
     switch (key) {
       // 根据listQuery中的key来判断
       case 'city':
-        vodeName = cityName ? cityName.name : ''
+        vodeName = cityItem ? cityItem['name'] : value
+        break
+      case 'Intentional_compartment':
+        vodeName = carItem ? carItem['dictLabel'] : value
         break
       default:
         vodeName = this.listQuery[key] || ''
