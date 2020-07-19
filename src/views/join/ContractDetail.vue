@@ -15,7 +15,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟经理"
-            :value="ContractDetail.driverInfoBusiVO.phone"
+            :value="ContractDetail.driverInfoBusiVO.gmName"
           />
         </el-col>
 
