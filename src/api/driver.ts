@@ -130,6 +130,17 @@ export const GetSpecialInterviewLists = (data: any) =>
     data
   })
 
+/**
+   *
+   * 修改司机面试表
+   */
+export const EditDriverInterviewEdit = (data: any[]) =>
+  request({
+    url: `${prefix}/v1/driver/clue/clue/edit/interview`,
+    method: 'post',
+    data
+  })
+
 // ------------司机列表接口-----------------
 
 /**

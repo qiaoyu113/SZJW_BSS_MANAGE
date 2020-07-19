@@ -242,3 +242,5 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
 }
 
 export const phoneReg = /^[1][3-9][0-9]{9}$/
+
+export const types = []

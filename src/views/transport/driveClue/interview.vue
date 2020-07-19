@@ -159,6 +159,7 @@ import { GetOpenCityData, GetManagerLists, GetDictionaryList } from '@/api/commo
 import { phoneReg } from '@/utils/index.ts'
 import SpecialInterview from './components/specialInterview.vue'
 import ShareInterview from './components/shareInterview.vue'
+import { delayTime } from '@/settings'
 
 interface IState {
   [key: string]: any;
@@ -274,7 +275,7 @@ export default class extends Vue {
         this.listQuery.workCity = res.data.workCity + ''
         this.listQuery.carType = res.data.carType + ''
         this.listQuery.busiType = res.data.busiType
-        if (res.data.existInterviewDate) {
+        if (res.data.existInterviewData) {
           this.getEditDetail()
         }
       }
@@ -391,15 +392,19 @@ export default class extends Vue {
    *完成按钮
    */
   handleFinishClick() {
-    this.$router.push({
-      path: '/transport/driverclue'
-    })
+    setTimeout(() => {
+      this.$router.push({
+        path: '/transport/driverclue'
+      })
+    }, delayTime)
   }
   /**
    *直接创建订单
    */
   handleCreateOeder() {
-
+    this.$router.push({
+      path: '/join/creatorder'
+    })
   }
 }
 </script>
