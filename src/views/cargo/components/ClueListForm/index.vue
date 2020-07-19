@@ -238,7 +238,7 @@ export default class extends Vue {
         vodeName = sourceItem ? sourceItem['dictLabel'] : value
         break
       case 'clueState':
-        vodeName = clueItem ? clueItem['lable'] : value
+        vodeName = clueItem ? clueItem['label'] : value
         break
       case 'distributionState':
         vodeName = distributionItem ? distributionItem['label'] : value

@@ -174,7 +174,7 @@ export default class extends Vue {
       optionsCity,
       optionsCar } = this.dataTypes
     const cityItem = optionsCity.find((item: any) => item.code === value)
-    const carItem = optionsCar.find((item: any) => item.code === value)
+    const carItem = optionsCar.find((item: any) => item.dictValue === value)
     switch (key) {
       // 根据listQuery中的key来判断
       case 'city':

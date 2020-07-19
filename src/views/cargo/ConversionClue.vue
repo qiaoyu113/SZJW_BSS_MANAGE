@@ -136,7 +136,7 @@
                   v-for="(item, index) in optionsCity"
                   :key="index"
                   :label="item.name"
-                  :value="Number(item.code)"
+                  :value="item.code"
                 />
               </el-select>
             </el-form-item>
@@ -162,11 +162,12 @@
               <el-upload
                 :action="getImgUrls"
                 :headers="myHeaders"
+                :class="{'hide': fileList.length === 1}"
                 :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove('businessLicenseUrl')"
-                :on-success="handleUpSuccess('businessLicenseUrl')"
+                :on-remove="handleRemove"
+                :on-success="handleUpSuccess"
                 :limit="1"
-                :file-list="imageList"
+                :file-list="fileList"
                 :before-upload="beforeAvatarUpload"
                 accept="image/*"
                 list-type="picture-card"
@@ -214,6 +215,7 @@
 </template>
 
 <script lang="ts">
+import ElImageViewer from 'element-ui/packages/image/src/image-viewer.vue'
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import SectionContainer from '@/components/SectionContainer/index.vue'
@@ -227,7 +229,8 @@ import '@/styles/common.scss'
 @Component({
   name: 'ConversionClue',
   components: {
-    SectionContainer
+    SectionContainer,
+    ElImageViewer
   }
 })
 export default class extends Vue {
@@ -287,7 +290,8 @@ export default class extends Vue {
   private showDio:boolean = false
   private isloading:boolean = false
   private getImgUrls:string = this.getImgUrl()
-  private imageList:any[] = []
+  private imageList:any[] = [];
+  private fileList: any[] = []
   private showViewer:boolean = false
   private myHeaders:any = { Authorization: UserModule.token }
   // 判断是否是PC
@@ -348,25 +352,21 @@ export default class extends Vue {
   /**
    * 删除
    */
-  private handleRemove(key:any) {
-    let that = this
-    return (file:any, fileList:any[]) => {
-      that.ruleForm[key] = ''
-      that.imageList = []
-    }
+  private handleRemove(file:any, fileList:any[]) {
+    this.ruleForm.businessLicenseUrl = ''
+    this.fileList = []
   }
   /**
    * 上传成功
    */
-  private handleUpSuccess(key:any) {
-    let that = this
-    return (res:any) => {
-      if (res.success) {
-        that.ruleForm[key] = res.data.url
-        that.imageList.push({ url: res.data.url, name: res.data.name })
-      } else {
-        this.$message.error('上传图片错误：' + res)
-      }
+  private handleUpSuccess(res:any, file: any) {
+    if (res.success) {
+      this.ruleForm.businessLicenseUrl = res.data.url
+      this.fileList = [file]
+    } else {
+      this.$message.error('上传图片错误：' + res)
+      this.ruleForm.businessLicenseUrl = ''
+      this.fileList = []
     }
   }
   /**
@@ -400,8 +400,9 @@ export default class extends Vue {
       clueId: this.id
     })
     if (data.success) {
-      const { company, name, phone, position, address } = data.data
+      const { company, name, phone, position, address, lineSaleId } = data.data
       this.ruleForm.clueId = this.id
+      this.ruleForm.lineSaleId = lineSaleId // 线索销售
       this.ruleForm.address = address // 详细地址
       this.ruleForm.bussinessName = name // 姓名
       this.ruleForm.bussinessPhone = phone // 手机号
@@ -414,7 +415,11 @@ export default class extends Vue {
   private async getCustomerOff() {
     const { data } = await GetCustomerOff()
     if (data.success) {
-      console.log(data.data)
+      // console.log(data.data)
+      const list = data.data
+      if (list && list[0]) {
+        this.ruleForm.city = list[0].code
+      }
     } else {
       this.$message.error(data)
     }
@@ -453,5 +458,10 @@ export default class extends Vue {
 }
 .el-form-item__label {
   color: #999999;
+}
+.hide{
+  .el-upload--picture-card {
+    display: none;
+  }
 }
 </style>
