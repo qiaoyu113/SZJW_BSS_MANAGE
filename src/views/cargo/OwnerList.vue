@@ -97,7 +97,7 @@
           <el-table-column
             v-if="checkList.indexOf('销售') > -1"
             :key="checkList.length + 'e'"
-            class-name="status-col"
+            align="left"
             label="销售"
           >
             <template slot-scope="scope">
