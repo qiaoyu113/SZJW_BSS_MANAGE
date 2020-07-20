@@ -63,7 +63,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="工作城市"
-              :value="ruleForm.driverInfoFORM.workCity"
+              :value="ruleForm.driverInfoFORM.workCityName"
             />
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -417,7 +417,7 @@
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
       >
-        提交审核
+        提交
       </el-button>
       <el-button
         name="CreatLine-btn-creat"
@@ -603,6 +603,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/base/SelfItem.vue'
+import { TagsViewModule } from '@/store/modules/tags-view'
 import '@/styles/common.scss'
 @Component({
   name: 'OrderCheck',
@@ -1020,8 +1021,16 @@ export default class CreatLine extends Vue {
           operateFlag: 'confirm'
         }).then((data: any) => {
           if (data.success) {
-            let datas = data.data
-            console.log(datas)
+            (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+            (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+              name: 'OrderManage'
+            })
+            this.$nextTick(() => {
+              setTimeout(() => {
+                this.$router.push({ name: 'OrderManage' })
+              }, 1500)
+            })
+            this.$message.success('操作成功，审核通过')
           } else {
             this.$message.error(data.errorMsg)
           }

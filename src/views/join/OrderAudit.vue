@@ -406,7 +406,9 @@ export default class extends Vue {
           name: 'OrderManage'
         })
         this.$nextTick(() => {
-          this.$router.push({ name: 'OrderManage' })
+          setTimeout(() => {
+            this.$router.push({ name: 'OrderManage' })
+          }, 1500)
         })
         this.$message.success('操作成功，审核通过')
       } else {

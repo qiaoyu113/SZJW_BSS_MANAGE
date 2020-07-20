@@ -21,7 +21,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'creatOrder',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -33,7 +33,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'orderDetail',
-        noCache: false
+        noCache: true
       }
     },
     {
