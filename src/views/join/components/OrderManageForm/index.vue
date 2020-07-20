@@ -61,9 +61,9 @@
                   >
                     <el-option
                       v-for="item in optionsPay"
-                      :key="item.dictValue"
-                      :label="item.dictLabel"
-                      :value="item.dictValue"
+                      :key="item.dictTypeCode"
+                      :label="item.dictTypeName"
+                      :value="item.dictTypeCode"
                     />
                   </el-select>
                 </el-form-item>
@@ -130,12 +130,12 @@
                 :span="isPC ? 12 : 24"
                 class="btn-box"
               >
-                <el-button
+                <!-- <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="success"
                 >
                   导出订单
-                </el-button>
+                </el-button> -->
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   @click="reset"
@@ -249,6 +249,7 @@ export default class extends Vue {
     this.getDictionary()
     this.getJoinManageList()
     this.getCity()
+    this.getPayList()
   }
 
   // 匹配创建tags标签
@@ -288,8 +289,8 @@ export default class extends Vue {
         break
       case 'payType':
         for (let entry of this.optionsPay) {
-          if (entry.dictValue === value) {
-            vodeName = entry.dictLabel
+          if (entry.dictTypeCode === value) {
+            vodeName = entry.dictTypeName
           }
         }
         break
@@ -376,7 +377,9 @@ export default class extends Vue {
 
   private reset() {
     for (let key in this.listQuery) {
-      this.listQuery[key] = ''
+      if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
+        this.listQuery['page'] = 1
+      }
     }
     this.DateValueChild = []
   }

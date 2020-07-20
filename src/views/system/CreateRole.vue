@@ -144,7 +144,28 @@ export default class extends Vue {
   private authorityList: any = []
   private data:any = []
   private productList: any = []
-  private scopeList: any = []
+  private scopeList: any = [
+    {
+      dictValue: 0,
+      dictLabel: '全部'
+    },
+    {
+      dictValue: 1,
+      dictLabel: '大区'
+    },
+    {
+      dictValue: 2,
+      dictLabel: '城市'
+    },
+    {
+      dictValue: 3,
+      dictLabel: '小组'
+    },
+    {
+      dictValue: 4,
+      dictLabel: '个人'
+    }
+  ]
   private rules:any = {
     nick: [
       { required: true, message: '请输入角色中文名称', trigger: 'blur' },
@@ -270,11 +291,11 @@ export default class extends Vue {
   private traverseTree(data:any) {
     var setChecked = (list: any) => {
       for (var i in list) {
-        let checked = '4'
+        let checked = 4
         if (this.isEdit && this.authorityList && this.authorityList.length > 0) {
           const item = this.authorityList.find((d: any) => d.authorityId === list[i].id)
           if (item) {
-            checked = String(item.dataScope)
+            checked = item.dataScope
           }
         }
         list[i].checked = checked

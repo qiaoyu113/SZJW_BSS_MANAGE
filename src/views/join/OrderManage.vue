@@ -76,7 +76,7 @@
         >
           <el-table-column
             v-if="checkList.indexOf('订单编号') > -1"
-            :key="Math.random()"
+            :key="checkList.length + '1'"
             align="left"
             fixed
             label="订单编号"
@@ -88,6 +88,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('司机姓名') > -1"
+            :key="checkList.length + '2'"
             align="left"
             label="司机姓名"
           >
@@ -98,6 +99,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('订单状态') > -1"
+            :key="checkList.length + '3'"
             align="left"
             label="订单状态"
           >
@@ -108,6 +110,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合作模式') > -1"
+            :key="checkList.length + '4'"
             align="left"
             label="合作模式"
           >
@@ -118,6 +121,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('商品分类') > -1"
+            :key="checkList.length + '5'"
             align="left"
             label="商品分类"
           >
@@ -128,6 +132,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('订单金额') > -1"
+            :key="checkList.length + '6'"
             align="left"
             label="订单金额"
           >
@@ -140,6 +145,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合作期限') > -1"
+            :key="checkList.length + '7'"
             align="left"
             label="合作期限(月)"
           >
@@ -150,6 +156,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('支付方式') > -1"
+            :key="checkList.length + '8'"
             align="left"
             label="支付方式"
           >
@@ -160,16 +167,18 @@
 
           <el-table-column
             v-if="checkList.indexOf('城市') > -1"
+            :key="checkList.length + '9'"
             align="left"
             label="城市"
           >
             <template slot-scope="{row}">
-              {{ row.city | DataIsNull }}
+              {{ row.cityName | DataIsNull }}
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('加盟经理') > -1"
+            :key="checkList.length + '10'"
             align="left"
             label="加盟经理"
           >
@@ -180,6 +189,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('创建人') > -1"
+            :key="checkList.length + '11'"
             align="left"
             label="创建人"
           >
@@ -190,6 +200,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('订单创建时间') > -1"
+            :key="checkList.length + '12'"
             align="left"
             label="订单创建时间"
           >
@@ -199,7 +210,7 @@
           </el-table-column>
 
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + '13'"
             align="left"
             label="操作"
             fixed="right"
@@ -226,7 +237,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
-                    @click.native="goCreat(scope.row.orderId)"
+                    @click.native="goCreat(scope.row.orderId, true)"
                   >
                     提交
                   </el-dropdown-item>
@@ -255,7 +266,7 @@
                   </el-dropdown-item> -->
                   <el-dropdown-item
                     v-if="scope.row.status === 25"
-                    @click.native="goCreat(scope.row.orderId)"
+                    @click.native="goCreat(scope.row, false)"
                   >
                     重新提交审核
                   </el-dropdown-item>
@@ -486,32 +497,32 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: '0',
+        name: '',
         num: ''
       },
       {
         label: '待支付',
-        name: '1',
+        name: '5',
         num: ''
       },
       {
         label: '待确认',
-        name: '2',
+        name: '15',
         num: ''
       },
       {
         label: '待审核',
-        name: '3',
+        name: '20',
         num: ''
       },
       {
         label: '审核不通过',
-        name: '4',
+        name: '25',
         num: ''
       },
       {
         label: '已成交',
-        name: '5',
+        name: '30',
         num: ''
       }
     ];
@@ -657,8 +668,16 @@ export default class extends Vue {
     }
 
     // 提交 重新提交
-    private goCreat(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'CreatOrder', query: { id: id } })
+    private goCreat(detail: any, type: any) {
+      if (type) {
+        this.$router.push({ name: 'CreatOrder', query: { id: detail.orderId } })
+      } else {
+        if (detail.createSource === 1) {
+          this.$router.push({ name: 'CreatOrder', query: { id: detail.orderId } })
+        } else {
+          this.$router.push({ name: 'OrderCheck', query: { id: detail.orderId } })
+        }
+      }
     }
 
     // 确认和审核按钮

@@ -33,6 +33,22 @@
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="线索状态">
+                  <el-select
+                    v-model="listQuery.clueState"
+                    placeholder="请选择"
+                    clearable
+                  >
+                    <el-option
+                      v-for="item in dataTypes.optionsClue"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="线索来源">
                   <el-select
                     v-model="listQuery.clueSource"
@@ -209,7 +225,7 @@ export default class extends Vue {
       optionsLineSource,
       optionsSale } = this.dataTypes
     const cityItem = optionsCity.find((item: any) => item.code === value)
-    const clueItem = optionsClue.find((item: any) => item.code === value)
+    const clueItem = optionsClue.find((item: any) => item.value === value)
     const distributionItem = optionsDistribution.find((item: any) => item.value === value)
     const sourceItem = optionsLineSource.find((item: any) => item.dictValue === value)
     const saleItem = optionsSale.find((item: any) => item.saleId === value)
@@ -221,8 +237,8 @@ export default class extends Vue {
       case 'clueSource':
         vodeName = sourceItem ? sourceItem['dictLabel'] : value
         break
-      case 'clueItem':
-        vodeName = clueItem ? clueItem['name'] : value
+      case 'clueState':
+        vodeName = clueItem ? clueItem['label'] : value
         break
       case 'distributionState':
         vodeName = distributionItem ? distributionItem['label'] : value

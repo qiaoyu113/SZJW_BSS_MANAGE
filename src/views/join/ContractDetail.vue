@@ -15,14 +15,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="加盟经理"
-            :value="ContractDetail.driverInfoBusiVO.phone"
+            :value="ContractDetail.driverInfoBusiVO.gmName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="城市"
-            :value="ContractDetail.driverInfoBusiVO.workCity"
+            :value="ContractDetail.driverInfoBusiVO.workCityName"
           />
         </el-col>
       </el-row>

@@ -76,7 +76,7 @@
         >
           <el-table-column
             v-if="checkList.indexOf('订单编号') > -1"
-            :key="Math.random()"
+            :key="checkList.length + '1'"
             align="left"
             fixed
             label="订单编号"
@@ -88,16 +88,18 @@
 
           <el-table-column
             v-if="checkList.indexOf('司机姓名') > -1"
+            :key="checkList.length + '2'"
             align="left"
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.driverName | DataIsNull }} </span>
+              <span>{{ scope.row.diverName | DataIsNull }} </span>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('城市') > -1"
+            :key="checkList.length + '3'"
             align="left"
             label="城市"
           >
@@ -108,6 +110,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('加盟经理') > -1"
+            :key="checkList.length + '4'"
             align="left"
             label="加盟经理"
           >
@@ -118,16 +121,22 @@
 
           <el-table-column
             v-if="checkList.indexOf('交付状态') > -1"
+            :key="checkList.length + '5'"
             align="left"
             label="交付状态"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.statusName | DataIsNull }}</p>
+              <p>
+                <span v-if="scope.row.isDeliver === 1">已交付</span>
+                <span v-else-if="scope.row.isDeliver === 0">待交付</span>
+                <span v-else>暂无数据</span>
+              </p>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('车牌号') > -1"
+            :key="checkList.length + '6'"
             align="left"
             label="车牌号"
           >
@@ -140,30 +149,32 @@
 
           <el-table-column
             v-if="checkList.indexOf('操作人') > -1"
+            :key="checkList.length + '7'"
             align="left"
             label="操作人"
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.dealName | DataIsNull }}</span>
+                <span>{{ scope.row.deliverName | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('交付完成时间') > -1"
+            :key="checkList.length + '8'"
             align="left"
             label="交付完成时间"
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.dealTime | DataIsNull }}</span>
+                <span>{{ scope.row.deliverDate | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
 
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + '9'"
             align="left"
             label="操作"
             fixed="right"
@@ -189,6 +200,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-if="scope.row.status === 30 || scope.row.status === 35 || scope.row.status === 40"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     交付
@@ -316,7 +328,6 @@ export default class extends Vue {
     };
 
     created() {
-      console.log()
       this.fetchData()
     }
 

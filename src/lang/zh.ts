@@ -11,6 +11,7 @@ export default {
     editClue: '编辑线索',
     followUpClue: '跟进线索',
     conversionClue: '转化货主',
+    editcustomer: '编辑货主',
     importClue: '导入',
     importDetail: '导入详情',
     clueDetail: '线索详情',

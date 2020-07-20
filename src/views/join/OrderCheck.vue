@@ -63,7 +63,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="工作城市"
-              :value="ruleForm.driverInfoFORM.workCity"
+              :value="ruleForm.driverInfoFORM.workCityName"
             />
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -413,11 +413,12 @@
     <!--按钮-->
     <div class="btn_box">
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         type="primary"
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
       >
-        提交审核
+        提交
       </el-button>
       <el-button
         name="CreatLine-btn-creat"
@@ -603,6 +604,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/base/SelfItem.vue'
+import { TagsViewModule } from '@/store/modules/tags-view'
 import '@/styles/common.scss'
 @Component({
   name: 'OrderCheck',
@@ -615,6 +617,7 @@ import '@/styles/common.scss'
 })
 export default class CreatLine extends Vue {
   private id:any = ''
+  private fullscreenLoading: Boolean = false
   private pageStatus:number = 0
   private remain: number = 0
   private readyPay: number = 0
@@ -885,6 +888,7 @@ export default class CreatLine extends Vue {
     if (data.success) {
       let datas = data.data
       this.ruleForm = Object.assign(datas, this.ruleForm)
+      this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
     } else {
       this.$message.error(data)
     }
@@ -1020,8 +1024,17 @@ export default class CreatLine extends Vue {
           operateFlag: 'confirm'
         }).then((data: any) => {
           if (data.success) {
-            let datas = data.data
-            console.log(datas)
+            this.fullscreenLoading = true;
+            (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+            (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+              name: 'OrderManage'
+            })
+            this.$nextTick(() => {
+              setTimeout(() => {
+                this.$router.push({ name: 'OrderManage' })
+              }, 1500)
+            })
+            this.$message.success('操作成功，审核通过')
           } else {
             this.$message.error(data.errorMsg)
           }

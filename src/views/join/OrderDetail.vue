@@ -174,11 +174,7 @@
               label="支付方式"
             >
               <template slot-scope="scope">
-                <span v-if="scope.row.payType === '1'">账户</span>
-                <span v-if="scope.row.payType === '2'">微信支付</span>
-                <span v-if="scope.row.payType === '3'">云鸟钱包</span>
-                <span v-if="scope.row.payType === '4'">支付宝</span>
-                <span v-if="scope.row.payType === '5'">银联支付</span>
+                <span>{{ scope.row.payTypeName }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -194,15 +190,11 @@
               label="支付截图"
             >
               <template slot-scope="scope">
-                <el-button
-                  v-if="scope.row.status === '1'"
-                  type="warning"
-                  size="small"
-                  plain
-                  @click="goBill(scope.row, scope.$index)"
-                >
-                  查看
-                </el-button>
+                <el-image
+                  v-if="scope.row.payImageUrl"
+                  :preview-src-list="[scope.row.payImageUrl]"
+                  :src="scope.row.payImageUrl"
+                />
               </template>
             </el-table-column>
             <el-table-column
@@ -239,7 +231,7 @@
             <el-col :span="24">
               <DetailItem
                 name="订单状态"
-                :value="orderDetail.driverInfoVO.statusName"
+                :value="orderDetail.statusName"
               />
             </el-col>
             <el-col :span="24">
@@ -249,7 +241,7 @@
               /> -->
               <DetailItem
                 name="订单生成时间"
-                :value="orderDetail.driverInfoVO.createDate | Timestamp"
+                :value="orderDetail.createDate | Timestamp"
               />
             </el-col>
             <el-col :span="24">
@@ -259,7 +251,7 @@
               /> -->
               <DetailItem
                 name="订单确认时间"
-                :value="orderDetail.driverInfoVO.confirmTime | Timestamp"
+                :value="orderDetail.confirmTime | Timestamp"
               />
             </el-col>
             <el-col :span="24">
@@ -269,7 +261,7 @@
               /> -->
               <DetailItem
                 name="审核不通过时间"
-                :value="orderDetail.driverInfoVO.passTime | Timestamp"
+                :value="orderDetail.notPassTime | Timestamp"
               />
             </el-col>
             <el-col :span="24">
@@ -279,7 +271,7 @@
               /> -->
               <DetailItem
                 name="审核通过时间"
-                :value="orderDetail.driverInfoVO.notPassTime | Timestamp"
+                :value="orderDetail.passTime | Timestamp"
               />
             </el-col>
           </div>

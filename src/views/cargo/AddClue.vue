@@ -415,8 +415,18 @@ export default class extends Vue {
     'remark': ''
   }
   private rules:any = {
-    isFollowUp: [
-      { required: true, message: '请选择是否继续跟进', trigger: 'change' }
+    clueSource: [
+      { required: true, message: '请选择线索来源', trigger: 'change' }
+    ],
+    name: [
+      { required: true, message: '请输入姓名', trigger: 'blue' }
+    ],
+    phone: [
+      { required: true, message: '请输入手机号', trigger: 'blue' },
+      { pattern: /^1\d{10}$/, message: '请输入正确格式的手机号', trigger: 'blue' }
+    ],
+    city: [
+      { required: true, message: '请选择城市', trigger: 'change' }
     ]
   }
 
