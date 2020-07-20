@@ -174,6 +174,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('操作') > -1"
             :key="checkList.length + '9'"
             align="left"
             label="操作"
@@ -230,7 +231,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { GetDelieverList } from '@/api/join'
 import { CargoListData } from '@/api/types'
@@ -326,6 +327,13 @@ export default class extends Vue {
       'payType': '',
       'status': ''
     };
+
+    @Watch('checkList', { deep: true })
+    private checkListChange(val:any) {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
+    }
 
     created() {
       this.fetchData()

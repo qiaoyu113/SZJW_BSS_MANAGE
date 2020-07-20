@@ -400,7 +400,7 @@ export default class extends Vue {
     @Watch('checkList', { deep: true })
     private checkListChange(val:any) {
       this.$nextTick(() => {
-        ((this.$refs['ruleForm']) as any).doLayout()
+        ((this.$refs['multipleTable']) as any).doLayout()
       })
     }
 

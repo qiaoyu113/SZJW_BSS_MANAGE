@@ -438,7 +438,7 @@
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
       >
-        提交
+        提交审核
       </el-button>
       <el-button
         name="CreatLine-btn-creat"
