@@ -157,8 +157,16 @@
             align="left"
             label="联系电话"
           >
-            <template slot-scope="{row}">
-              {{ row.bussinessPhone | DataIsNull }}
+            <template slot-scope="scope">
+              <el-button
+                v-if="scope.row.isPhone"
+                type="text"
+                style="padding: 0 4px"
+                @click="getAllPhone(scope.row, scope.$index)"
+              >
+                {{ scope.row.bussinessPhone | DataIsNull }}
+              </el-button>
+              <span v-else>{{ scope.row.bussinessPhone | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -356,6 +364,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { GetCustomerList, GetCustomerSaleList, Distribution } from '@/api/customer'
+import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -463,6 +472,13 @@ export default class extends Vue {
       limit: 20
     };
 
+    @Watch('checkList', { deep: true })
+    private checkListChange(val:any) {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
+    }
+
     created() {
       this.fetchData()
     }
@@ -495,7 +511,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 
@@ -512,16 +527,13 @@ export default class extends Vue {
 
     // 请求列表
     private async getList(value: any) {
-      console.log(value)
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
       const { data } = await GetCustomerList(this.listQuery)
       if (data.success) {
         this.list = data.data
-        if (data.title) {
-          this.tab[0].num = data.title.all
-        }
+        this.tab[0].num = data.page.total
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
@@ -652,6 +664,16 @@ export default class extends Vue {
       }
       return (index: number) => {
         return index + 1 + (page - 1) * limit
+      }
+    }
+
+    // 查看手机号
+    private async getAllPhone(detail:any, index: any) {
+      const { data } = await GetFindBusinessPhone({ customerId: detail.customerId })
+      if (data.success) {
+        this.list[index].bussinessPhone = data.data
+      } else {
+        this.$message.error(data.errorMsg)
       }
     }
 }

@@ -112,7 +112,14 @@ export const GetPhone = (params: any) =>
     method: 'get',
     params
   })
-// 货主列表下属销售
+// 获取手机号2
+export const ShowPhone = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/showPhone`,
+    method: 'get',
+    params
+  })
+// 查询当前用户所拥有的地市
 export const GetCustomerOff = () =>
   request({
     url: `/base/v1/base/office/getCurrentLowerOfficeCityData`,
@@ -164,7 +171,7 @@ export const manualDeactivate = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/manualDeactivate`,
     method: 'post',
-    params:data
+    params: data
   })
 
 // 线路上架
@@ -179,14 +186,14 @@ export const mountGuard = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/mountGuard`,
     method: 'post',
-    params:data
+    params: data
   })
 // 线路下架
 export const shelveLine = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/shelveLine`,
     method: 'post',
-    params:data
+    params: data
   })
 
 // 线路列表
@@ -230,4 +237,45 @@ export const customerCheckNames = (data: any) =>
     url: `/line_center/v1/line/customer/fuzzy/checkNames`,
     method: 'post',
     data
+  })
+
+// 线索模版导入记录列表
+export const importInfoList = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/importInfoList`,
+    method: 'post',
+    data
+  })
+// 线索模版导入详细记录列表
+export const importDetailList = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/importDetailList`,
+    method: 'post',
+    data
+  })
+// 批量导入货主线索列表—— 展示消息_此次操作信息会在导入详细列表展示
+export const fileUpload = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/importLineClue`,
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data
+  })
+// 货主手机号查询
+export const GetFindBusinessPhone = (params: any) =>
+  request({
+    url: `/line/v1/customer/findBusinessPhone`,
+    method: 'get',
+    params
+  })
+
+// 线索手机号查询
+
+export const GetShowPhone = (params: any) =>
+  request({
+    url: `/line/v1/line/clue/showPhone`,
+    method: 'get',
+    params
   })

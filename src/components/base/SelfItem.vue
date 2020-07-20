@@ -184,7 +184,6 @@ export default class SelfItem extends Vue {
     return SettingsModule.isPC
   }
   private onGetcity(obj:any) {
-    console.log(obj)
   }
 }
 </script>

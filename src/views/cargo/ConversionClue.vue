@@ -221,7 +221,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
-import { TransformCustomer, GetCustomerOff, GetLineClueDetail, GetCustomerDetails, EditCustomer, GetPhone } from '@/api/cargo'
+import { TransformCustomer, GetCustomerOff, GetLineClueDetail, GetCustomerDetails, EditCustomer } from '@/api/cargo'
 import { GetDictionaryList, GetOpenCityData } from '@/api/common'
 import { UserModule } from '@/store/modules/user'
 
@@ -341,6 +341,7 @@ export default class extends Vue {
   }
   private resetForm(formName:any) {
     (this.$refs[formName] as ElForm).resetFields()
+    this.fileList = []
   }
   /**
    *获取上传路径
@@ -399,7 +400,7 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.optionsCity = res.data
+        // this.optionsCity = res.data
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -417,7 +418,8 @@ export default class extends Vue {
   }
   private async getDetails() {
     const { data } = await GetLineClueDetail({
-      clueId: this.id
+      clueId: this.id,
+      info: 'edit'
     })
     if (data.success) {
       const { company, name, phone, position, address, lineSaleId } = data.data
@@ -425,10 +427,9 @@ export default class extends Vue {
       this.ruleForm.lineSaleId = lineSaleId // 线索销售
       this.ruleForm.address = address // 详细地址
       this.ruleForm.bussinessName = name // 姓名
-      // this.ruleForm.bussinessPhone = phone // 手机号
+      this.ruleForm.bussinessPhone = phone // 手机号
       this.ruleForm.customerCompanyName = company // 公司
       this.ruleForm.bussinessPosition = position // 职务
-      this.getPhone()
     } else {
       this.$message.error(data)
     }
@@ -465,22 +466,12 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-  private async getPhone() {
-    const { data } = await GetPhone({
-      clueId: this.ruleForm.clueId
-    })
-    if (data.success) {
-      // console.log(data)
-      this.ruleForm.bussinessPhone = data.data
-    } else {
-      this.$message.error(data)
-    }
-  }
   private async getCustomerOff() {
     const { data } = await GetCustomerOff()
     if (data.success) {
       // console.log(data.data)
       const list = data.data
+      this.optionsCity = list
       if (list && list[0]) {
         this.ruleForm.city = list[0].code
       }

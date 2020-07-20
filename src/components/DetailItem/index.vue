@@ -13,6 +13,7 @@
       class="detail-value"
     >
       {{ valueName }}
+      <slot />
     </div>
   </div>
 </template>

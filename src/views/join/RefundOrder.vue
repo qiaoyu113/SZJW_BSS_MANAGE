@@ -271,7 +271,6 @@ export default class extends Vue {
     };
 
     created() {
-      console.log()
       this.fetchData()
     }
 
@@ -293,7 +292,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 

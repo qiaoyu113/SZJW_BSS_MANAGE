@@ -77,22 +77,25 @@
           />
           <el-table-column
             v-if="checkList.includes('手机')"
+            :key="checkList.length + 'mobile'"
             prop="mobile"
             label="手机"
           />
           <el-table-column
             v-if="checkList.includes('角色')"
+            :key="checkList.length + 'roleName'"
             prop="roleName"
             label="角色"
           />
           <el-table-column
             v-if="checkList.includes('组织')"
+            :key="checkList.length + 'officeName'"
             prop="officeName"
             label="组织"
           />
           <el-table-column
             v-if="checkList.includes('操作')"
-            :key="checkList.length"
+            :key="checkList.length + 'right'"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -199,6 +202,13 @@ export default class extends Vue {
   private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
+  // Watch
+  @Watch('checkList', { deep: true })
+  private onval(value: any) {
+    this.$nextTick(() => {
+      ((this.$refs['multipleTable']) as any).doLayout()
+    })
+  }
   // 计算属性
   get isPC() {
     return SettingsModule.isPC

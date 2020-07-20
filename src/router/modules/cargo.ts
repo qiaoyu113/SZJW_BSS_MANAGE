@@ -128,18 +128,18 @@ const cargoRouter: RouteConfig = {
         noCache: true
       }
     },
-    {
-      path: 'myclue', /* 我的线索 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/MyClue.vue'),
-      name: 'MyClue',
-      meta: {
-        title: 'myClue',
-        activeMenu: '/cargo/myclue',
-        noCache: false,
-        icon: '',
-        apiUrl: 'root'
-      }
-    },
+    // {
+    //   path: 'myclue', /* 我的线索 */
+    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/MyClue.vue'),
+    //   name: 'MyClue',
+    //   meta: {
+    //     title: 'myClue',
+    //     activeMenu: '/cargo/myclue',
+    //     noCache: false,
+    //     icon: '',
+    //     apiUrl: 'root'
+    //   }
+    // },
     {
       path: 'ownerlist', /* 货主列表 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/OwnerList.vue'),

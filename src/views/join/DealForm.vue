@@ -71,8 +71,8 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
-              name="合租模式"
-              :value="ContractDetail.cooperationModel === '1' ? '购车' : (ContractDetail.cooperationModel === '2' ? '租车' : ContractDetail.cooperationModel === '3' ? '带车' : '暂无数据')"
+              name="合作模式"
+              :value="ContractDetail.cooperationModelName"
             />
           </el-col>
 
@@ -714,6 +714,7 @@ export default class extends Vue {
           this.fullscreenLoading = true
           this.ruleForm.orderId = this.ContractDetail.orderId
           this.ruleForm.driverId = this.ContractDetail.driverId
+          this.ruleForm.cooperationModel = this.ContractDetail.cooperationModel
           const { data } = await SubmitOrderDeliver(this.ruleForm
           )
           if (data.success) {
@@ -726,6 +727,7 @@ export default class extends Vue {
             })
             this.$message.success('提交成功')
           } else {
+            this.fullscreenLoading = false
             this.$message.error(data.errorMsg)
           }
         } else {
@@ -737,10 +739,6 @@ export default class extends Vue {
 
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
-    }
-
-    private handleClick() {
-      console.log(this.tabVal)
     }
 }
 </script>

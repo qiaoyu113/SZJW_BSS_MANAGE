@@ -97,20 +97,38 @@
             <el-col :span="24">
               <DetailItem
                 name="合同生成时间"
-                :value="ContractDetail.createDate + (ContractDetail.remark)"
-              />
+                :value="ContractDetail.createDate | Timestamp"
+              >
+                <template>
+                  <span>{{ (ContractDetail.remark) }}</span>
+                </template>
+              </DetailItem>
             </el-col>
-            <el-col :span="24">
+            <el-col
+              v-if="ContractDetail.status === 2"
+              :span="24"
+            >
               <DetailItem
                 name="合同签约时间"
-                :value="ContractDetail.signTime + ' 由' + ContractDetail.driverInfoBusiVO.name + (ContractDetail.driverInfoBusiVO.phone) + '签署成功;'"
-              />
+                :value="ContractDetail.signTime | Timestamp"
+              >
+                <template>
+                  <span>{{ ' 由' + ContractDetail.driverInfoBusiVO.name + (ContractDetail.driverInfoBusiVO.phone) + '签署成功;' }}</span>
+                </template>
+              </DetailItem>
             </el-col>
-            <el-col :span="24">
+            <el-col
+              v-if="ContractDetail.status === 3"
+              :span="24"
+            >
               <DetailItem
                 name="合同过期时间"
-                :value="ContractDetail.signTime + ' 由系统到期自动失效'"
-              />
+                :value="ContractDetail.signTime | Timestamp"
+              >
+                <template>
+                  <span> 由系统到期自动失效</span>
+                </template>
+              </DetailItem>
             </el-col>
           </div>
         </el-col>

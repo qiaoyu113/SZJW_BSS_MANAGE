@@ -848,11 +848,6 @@ export default class CreatLine extends Vue {
     }
   }
 
-  @Watch('payForm', { deep: true })
-  private changePayForm(value:any) {
-    console.log(value)
-  }
-
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any) {
     if (value === '1') {
@@ -886,11 +881,6 @@ export default class CreatLine extends Vue {
   private changeGoodsAmount(value:any) {
     this.orderPrice = value
     this.remain = this.orderPrice - this.readyPay
-  }
-
-  @Watch('remain')
-  private changeGoodsAmounts(value:any) {
-    console.log(4, value)
   }
 
   // 判断是否是PC
@@ -1028,6 +1018,8 @@ export default class CreatLine extends Vue {
   // 立即支付
   private goBill(res: any, index: any) {
     this.orderIndex = index
+    if (!res.payType) res.payType = ''
+    if (res.payImageUrl === '0') res.payImageUrl = ''
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
   }
@@ -1130,6 +1122,7 @@ export default class CreatLine extends Vue {
                 })
               }, 1500)
             } else {
+              this.fullscreenLoading = false
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {
@@ -1143,6 +1136,7 @@ export default class CreatLine extends Vue {
               this.$message.success('创建订单成功！')
               this.$router.push({ name: 'OrderManage' })
             } else {
+              this.fullscreenLoading = false
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {
