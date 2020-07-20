@@ -75,7 +75,17 @@
             <DetailItem
               name="对接业务联系电话"
               :value="OwnerDetail.bussinessPhone"
-            />
+            >
+              <template>
+                <el-button
+                  type="text"
+                  style="padding: 0 4px"
+                  @click="getAllPhone(true)"
+                >
+                  查看
+                </el-button>
+              </template>
+            </DetailItem>
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
@@ -169,7 +179,17 @@
             <DetailItem
               name="手机号"
               :value="OwnerDetail.clueInfoVO.phone"
-            />
+            >
+              <template>
+                <el-button
+                  type="text"
+                  style="padding: 0 4px"
+                  @click="getAllPhone(false)"
+                >
+                  查看
+                </el-button>
+              </template>
+            </DetailItem>
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
@@ -326,7 +346,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetOwnerDetail } from '@/api/cargo'
+import { GetOwnerDetail, GetFindBusinessPhone, GetShowPhone } from '@/api/cargo'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -445,8 +465,23 @@ export default class extends Vue {
       (this.$refs[formName] as ElForm).resetFields()
     }
 
-    private handleClick() {
-      console.log(this.tabVal)
+    // 查看手机号
+    private async getAllPhone(type: Boolean) {
+      if (type) {
+        const { data } = await GetFindBusinessPhone({ customerId: this.id })
+        if (data.success) {
+          this.OwnerDetail.bussinessPhone = data.data
+        } else {
+          this.$message.error(data)
+        }
+      } else {
+        const { data } = await GetShowPhone({ clueId: this.OwnerDetail.clueId })
+        if (data.success) {
+          this.OwnerDetail.clueInfoVO.phone = data.data
+        } else {
+          this.$message.error(data)
+        }
+      }
     }
 }
 </script>

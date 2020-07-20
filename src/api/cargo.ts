@@ -136,3 +136,20 @@ export const customerCheckNames = (data: any) =>
     method: 'post',
     data
   })
+
+// 货主手机号查询
+export const GetFindBusinessPhone = (params: any) =>
+  request({
+    url: `/line/v1/customer/findBusinessPhone`,
+    method: 'get',
+    params
+  })
+
+// 线索手机号查询
+
+export const GetShowPhone = (params: any) =>
+  request({
+    url: `/line/v1/line/clue/showPhone`,
+    method: 'get',
+    params
+  })
