@@ -206,6 +206,7 @@
           />
         </el-col>
         <el-col
+          v-if="ruleForm.deliveryWeekCycle !== ''"
           :span="24"
           class="detail-group"
         >
@@ -279,7 +280,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="线路角色"
-            :value="busiTypeName"
+            :value="ruleForm.busiTypeName"
           />
         </el-col>
       </el-row>
@@ -479,7 +480,12 @@ export default class extends Vue {
       // }
       this.ruleForm = { ...this.ruleForm, ...res.data }
       if (this.ruleForm.deliveryWeekCycle) {
-        this.checkList = this.ruleForm.deliveryWeekCycle.split(',')
+        let checkList = this.ruleForm.deliveryWeekCycle.split(',')
+        if (checkList.length === 7) {
+          this.checkList.push('')
+        } else {
+          this.checkList = this.ruleForm.deliveryWeekCycle.split(',')
+        }
       } else {
         this.checkList = []
       }

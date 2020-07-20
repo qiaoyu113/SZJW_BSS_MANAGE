@@ -131,7 +131,7 @@
             >{{ scope.row.lineId }}</span>
           </template>
           <template v-slot:createDate="scope">
-            {{ scope.row.createDate |parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+            {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
           </template>
           <template v-slot:busiType="scope">
             {{ scope.row.busiType === 0 ? '专车':'共享' }}
@@ -329,7 +329,6 @@
         </self-table>
       </div>
     </div>
-
     <!-- 上架 -->
     <Dialog
       :visible.sync="showPutDio"
@@ -353,7 +352,9 @@
           <el-input
             v-model="diaUpcarNum"
             type="number"
+            :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
+            @blur="checkMountGuardNo"
           />
         </div>
         <p class="dioBox">
@@ -413,7 +414,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetOpenCityData, GetCityByCode } from '@/api/common'
+import { GetDictionaryList, GetOpenCityData, GetCityByCode, GetJoinManageList } from '@/api/common'
 import SelfTable from '@/components/base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import '@/styles/common.scss'
@@ -450,31 +451,37 @@ export default class LineManage extends Vue {
     {
       label: '全部',
       name: '',
+      id: 0,
       num: 0
     },
     {
       label: '待上架',
       name: '1',
+      id: 1,
       num: 0
     },
     {
       label: '已上架',
       name: '2',
+      id: 2,
       num: 0
     },
     {
       label: '已售罄',
       name: '4',
+      id: 4,
       num: 0
     },
     {
       label: '已下架',
       name: '3',
+      id: 3,
       num: 0
     },
     {
       label: '已停用',
       name: '5',
+      id: 5,
       num: 0
     }
   ];
@@ -498,7 +505,8 @@ export default class LineManage extends Vue {
       key: 'lineSaleId',
       label: '线路销售',
       tagAttrs: {
-        placeholder: '请选择线路销售'
+        placeholder: '请选择线路销售',
+        filterable: true
       },
       options: []
     },
@@ -516,7 +524,8 @@ export default class LineManage extends Vue {
       label: '选择车型',
       key: 'cartype',
       tagAttrs: {
-        placeholder: '请选择车型'
+        placeholder: '请选择车型',
+        filterable: true
       },
       options: []
     },
@@ -605,7 +614,6 @@ export default class LineManage extends Vue {
   };
   private showPutDio:boolean = false
   private showGetDio:boolean = false
-  // private workDio:boolean = false
   page:PageObj ={
     page: 1,
     limit: 10,
@@ -842,21 +850,28 @@ export default class LineManage extends Vue {
     } else {
       this.$message.error(res.errorMsg)
     }
-    // let city = await GetOpenCityData()
-    // console.log(city.data.success)
-    // if (city.data.success) {
-    //   let arr = city.data.data.map(function(ele:any) {
-    //     return { value: ele.code, label: ele.name }
-    //   })
-    //   this.formItem.map(ele => {
-    //     if (ele.key === 'workCoty') {
-    //       ele.options = arr
-    //     }
-    //   })
-    // } else {
-    //   this.$message.error(data)
-    // }
+    this.getLowerStaffInfo()
   }
+
+  private async getLowerStaffInfo() {
+    try {
+      let { data: res } = await GetJoinManageList({})
+      if (res.success) {
+        this.formItem.map(ele => {
+          if (ele.key === 'lineSaleId') {
+            ele.options = res.data.map(function(ele:any) {
+              return { value: Number(ele.id), label: ele.name }
+            })
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
+  }
+
   private goDetail(id:string) {
     this.$router.push({ path: '/cargo/linedetail', query: { id: id } })
   }
@@ -954,6 +969,8 @@ export default class LineManage extends Vue {
         break
       case 'putaway':
         this.showPutDio = true
+        this.diaUpcar = row.waitDirveValidity
+        this.diaUpcarNum = row.deployNo
         break
       case 'gowork':
         // this.workDio = true
@@ -966,7 +983,7 @@ export default class LineManage extends Vue {
         this.$router.push({ path: 'linedetail', query: { id: row.lineId } })
         break
       case 'showpic':
-        this.$router.push({ path: 'showpicture', query: { id: row.lineId } })
+        this.$router.push({ path: 'showpicture', query: { id: row.lineId, info: JSON.stringify(row) } })
         break
       case 'stopuse':
         this.useStop(row.lineId)
@@ -974,9 +991,6 @@ export default class LineManage extends Vue {
       default:
         break
     }
-    setTimeout(() => {
-      this.getList()
-    }, delayTime)
   }
   private workDo(id:string) {
     this.$confirm('此操作将上岗, 是否继续?', '提示', {
@@ -990,6 +1004,9 @@ export default class LineManage extends Vue {
           type: 'success',
           message: '上岗成功!'
         })
+        setTimeout(() => {
+          this.getList()
+        }, delayTime)
       } else {
         this.$message.error(data.errorMsg || data)
       }
@@ -1013,6 +1030,9 @@ export default class LineManage extends Vue {
           type: 'success',
           message: '停用成功!'
         })
+        setTimeout(() => {
+          this.getList()
+        }, delayTime)
       } else {
         this.$message.error(data.errorMsg || data)
       }
@@ -1020,6 +1040,12 @@ export default class LineManage extends Vue {
   }
 
   // 上架操作
+  private checkMountGuardNo(val:string) {
+    if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
+      this.diaUpcarNum = this.rowInfo.mountGuardNo
+      this.$message.error('可上车数要大于或等于已上岗标书数量')
+    }
+  }
   private async putConfirm(done: any) {
     let params = {
       'deployNo': this.diaUpcarNum,
@@ -1028,14 +1054,26 @@ export default class LineManage extends Vue {
     }
     let { data } = await shelfAdjustment(params)
     if (data.success) {
-      done(this.$message.success('上架调整完成'))
+      setTimeout(() => {
+        this.getList()
+      }, delayTime)
+      done(
+        this.$message.success('上架调整完成'),
+        this.diaUpcarNum = '',
+        this.diaUpcar = '',
+        this.id = ''
+      )
     } else {
       this.$message.error(data.errorMsg || data)
     }
   }
   private putCancel(done: any) {
     this.$message.info('点击了取消')
-    done()
+    done(
+      this.diaUpcarNum = '',
+      this.diaUpcar = '',
+      this.id = ''
+    )
   }
 
   // 下架操作
@@ -1043,6 +1081,9 @@ export default class LineManage extends Vue {
     let { data } = await shelveLine({ lineId: this.id })
     if (data.success) {
       done(this.$message.success('下架完成'))
+      setTimeout(() => {
+        this.getList()
+      }, delayTime)
     } else {
       this.$message.error(data.errorMsg || data)
     }

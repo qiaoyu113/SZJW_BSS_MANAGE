@@ -774,7 +774,12 @@ export default class extends Vue {
       })
     } else if (key === 'transport') { // 创建运力
       this.$router.push({
-        path: '/transport/creattransport'
+        path: '/transport/creattransport',
+        query: {
+          id: row.driverId,
+          name: row.name,
+          phone: row.phone
+        }
       })
     }
   }

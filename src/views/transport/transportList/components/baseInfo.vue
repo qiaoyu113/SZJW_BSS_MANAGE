@@ -97,7 +97,7 @@ export default class extends Vue {
       label: '所属司机手机号:'
     },
     {
-      key: 'gmIdName',
+      key: 'gmName',
       type: 7,
       label: '运营经理:'
     },
