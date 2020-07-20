@@ -251,6 +251,7 @@
                     >
                       <el-input
                         v-model="scope.row.chassis"
+                        v-only-number="{min: 0, precision: 2}"
                         size="mini"
                         class="edit-cell"
                       />
@@ -269,6 +270,7 @@
                     >
                       <el-input
                         v-model="scope.row.vehicle"
+                        v-only-number="{min: 0, precision: 2}"
                         size="mini"
                         class="edit-cell"
                       />
@@ -287,6 +289,7 @@
                     >
                       <el-input
                         v-model="scope.row.gps"
+                        v-only-number="{min: 0, precision: 2}"
                         size="mini"
                         class="edit-cell"
                       />
@@ -305,6 +308,7 @@
                     >
                       <el-input
                         v-model="scope.row.tailgate"
+                        v-only-number="{min: 0, precision: 2}"
                         size="mini"
                         class="edit-cell"
                       />
@@ -324,11 +328,16 @@
               label="金融返利(元)"
               prop="financialRebate"
             >
-              <el-input v-model="ruleForm.financialRebate" />
+              <el-input
+                v-model="ruleForm.financialRebate"
+                v-only-number="{min: 0, precision: 2}"
+                type="number"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
+              v-only-number="{min: 0, precision: 2}"
               label="保险返利(元)"
               prop="insuranceRebate"
             >
@@ -337,6 +346,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
+              v-only-number="{min: 0, precision: 2}"
               label="上牌返利(元)"
               prop="plateNoRebate"
             >
@@ -345,6 +355,7 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
+              v-only-number="{min: 0, precision: 2}"
               label="其他返利(元)"
               prop="otherRebate"
             >
@@ -527,6 +538,7 @@ export default class extends Vue {
     }
     private ruleForm:any = {
       'plateNo': '',
+      'driverId': '',
       'cooperationModel': '',
       'dealId': '',
       'engineInvoiceNo': '',
@@ -675,18 +687,17 @@ export default class extends Vue {
         if (valid) {
           // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
           // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
-          const { data } = await SubmitOrderDeliver({
-            OrderDeliverFORM: this.ruleForm,
-            plateNo: this.ruleForm.plateNo,
-            driverId: this.ContractDetail.driverId
-          })
+          this.ruleForm.orderId = this.ContractDetail.orderId
+          this.ruleForm.driverId = this.ContractDetail.driverId
+          const { data } = await SubmitOrderDeliver(this.ruleForm
+          )
           if (data.success) {
             (TagsViewModule as any).delView(this.$route); // 关闭当前页面
             (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
-              name: 'ClueList'
+              name: 'DealManage'
             })
             this.$nextTick(() => {
-              this.$router.push({ name: 'ClueList' })
+              this.$router.push({ name: 'DealManage' })
             })
             this.$message.success('提交成功')
           } else {

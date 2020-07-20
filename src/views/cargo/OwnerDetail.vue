@@ -143,7 +143,7 @@
           <el-col :span="isPC ? 12 : 24">
             <el-image
               :preview-src-list="[OwnerDetail.businessLicenseUrl]"
-              src="OwnerDetail.businessLicenseUrl"
+              :src="OwnerDetail.businessLicenseUrl"
             />
           </el-col>
         </el-row>
@@ -422,7 +422,7 @@ export default class extends Vue {
     // 请求详情
     private async fetchData(value: any) {
       console.log(value)
-      const { data } = await GetOwnerDetail({ customerId: value })
+      const { data } = await GetOwnerDetail({ customerId: value, info: 'info' })
       if (data.success) {
         this.OwnerDetail = data.data
       } else {

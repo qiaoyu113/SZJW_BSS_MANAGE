@@ -92,7 +92,7 @@
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.driverName | DataIsNull }} </span>
+              <span>{{ scope.row.diverName | DataIsNull }} </span>
             </template>
           </el-table-column>
 
@@ -145,7 +145,7 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.dealName | DataIsNull }}</span>
+                <span>{{ scope.row.deliverName | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -157,7 +157,7 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.dealTime | DataIsNull }}</span>
+                <span>{{ scope.row.deliverDate | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -189,6 +189,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-if="scope.row.status === 30 || scope.row.status === 35 || scope.row.status === 40"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     交付
