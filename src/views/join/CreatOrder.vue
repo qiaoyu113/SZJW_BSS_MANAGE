@@ -733,7 +733,8 @@ export default class CreatLine extends Vue {
     'updateDate': '',
     'supplier': '',
     'carModel': '',
-    'updateId': ''
+    'updateId': '',
+    'productId': ''
   }
   private rules:any = {
     'driverInfoFORM.idNo': [
@@ -927,6 +928,7 @@ export default class CreatLine extends Vue {
     if (data.success) {
       this.ruleForm.carPrice = data.data.price
       this.ruleForm.describe = data.data.describe
+      this.ruleForm.productId = data.data.productCode
     } else {
       this.$message.error(data)
     }
