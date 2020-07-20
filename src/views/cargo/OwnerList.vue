@@ -65,13 +65,15 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column
+            :key="checkList.length + 'c'"
+            fixed
             reserve-selection
             type="selection"
             width="55"
           />
           <el-table-column
             v-if="checkList.indexOf('货主编号') > -1"
-            :key="Math.random()"
+            :key="checkList.length + 'a'"
             align="left"
             fixed
             label="货主编号"
@@ -83,6 +85,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('线索编号') > -1"
+            :key="checkList.length + 'd'"
             align="left"
             label="线索编号"
           >
@@ -93,6 +96,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('销售') > -1"
+            :key="checkList.length + 'e'"
             class-name="status-col"
             label="销售"
           >
@@ -103,6 +107,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('公司简称') > -1"
+            :key="checkList.length + 'f'"
             align="left"
             label="公司简称"
           >
@@ -113,6 +118,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('分类') > -1"
+            :key="checkList.length + 'g'"
             align="left"
             label="分类"
           >
@@ -123,6 +129,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('城市') > -1"
+            :key="checkList.length + 'k'"
             align="left"
             label="城市"
           >
@@ -135,6 +142,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('联系人') > -1"
+            :key="checkList.length + 'm'"
             align="left"
             label="联系人"
           >
@@ -145,16 +153,26 @@
 
           <el-table-column
             v-if="checkList.indexOf('联系电话') > -1"
+            :key="checkList.length + 'l'"
             align="left"
             label="联系电话"
           >
-            <template slot-scope="{row}">
-              {{ row.bussinessPhone | DataIsNull }}
+            <template slot-scope="scope">
+              <el-button
+                v-if="scope.row.isPhone"
+                type="text"
+                style="padding: 0 4px"
+                @click="getAllPhone(scope.row, scope.$index)"
+              >
+                {{ scope.row.bussinessPhone | DataIsNull }}
+              </el-button>
+              <span v-else>{{ scope.row.bussinessPhone | DataIsNull }}</span>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('身份证号') > -1"
+            :key="checkList.length + 'n'"
             align="left"
             label="身份证号"
           >
@@ -165,6 +183,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
+            :key="checkList.length + 'y'"
             align="left"
             label="创建日期"
           >
@@ -175,6 +194,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合同止期') > -1"
+            :key="checkList.length + 'h'"
             align="left"
             label="合同止期"
           >
@@ -185,6 +205,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('备注') > -1"
+            :key="checkList.length + 'o'"
             align="left"
             label="备注"
           >
@@ -194,10 +215,11 @@
           </el-table-column>
 
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + 'b'"
             align="left"
             label="操作"
             fixed="right"
+            show-overflow-tooltip
             :width="isPC ? 'auto' : '50'"
           >
             <template slot-scope="scope">
@@ -339,9 +361,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { GetCustomerList, GetCustomerSaleList, Distribution } from '@/api/customer'
+import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -481,7 +504,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 
@@ -498,7 +520,6 @@ export default class extends Vue {
 
     // 请求列表
     private async getList(value: any) {
-      console.log(value)
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
@@ -527,7 +548,6 @@ export default class extends Vue {
       this.dialogListQuery.limit = value.limit
       this.dialogLoading = true
       const { data } = await GetCustomerSaleList(this.dialogListQuery)
-      console.log(data)
       if (data.success) {
         this.dialogList = data.data
         this.dialogTotal = data.page ? data.page.total : data.data.length
@@ -623,7 +643,7 @@ export default class extends Vue {
           message: '请先选择货主再进行操作！'
         })
       }
-      // done()
+    // done()
     }
     // 弹窗表格选中
     private handleSelectionDialog(val: any) {
@@ -639,6 +659,16 @@ export default class extends Vue {
       }
       return (index: number) => {
         return index + 1 + (page - 1) * limit
+      }
+    }
+
+    // 查看手机号
+    private async getAllPhone(detail:any, index: any) {
+      const { data } = await GetFindBusinessPhone({ customerId: detail.customerId })
+      if (data.success) {
+        this.list[index].bussinessPhone = data.data
+      } else {
+        this.$message.error(data.errorMsg)
       }
     }
 }
@@ -734,6 +764,9 @@ export default class extends Vue {
   }
   .pagination-container {
     background: #f8f9fa;
+  }
+  .el-table th.gutter {
+    display: table-cell !important
   }
 }
 </style>

@@ -50,21 +50,21 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="商品分类"
-            :value="ContractDetail.busiTypeName"
+            :value="ContractDetail.orderInfoVO.busiTypeName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="合租模式"
-            :value="ContractDetail.cooperationModel === 1 ? '购车' : (ContractDetail.cooperationModel === 2 ? '租车' : ContractDetail.cooperationModel === 3 ? '带车' : '暂无数据')"
+            name="合作模式"
+            :value="ContractDetail.orderInfoVO.cooperationModelName"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="合作期限"
-            :value="ContractDetail.cooperationTime"
+            name="合作期限(月)"
+            :value="ContractDetail.orderInfoVO.cooperationTime"
           />
         </el-col>
 
@@ -78,14 +78,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.orderInfoVO.deliverDate | Timestamp"
+            :value="ContractDetail.orderInfoVO.passTime | Timestamp"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="供应商"
-            :value="ContractDetail.orderInfoVO.deliverDate"
+            :value="ContractDetail.orderInfoVO.supplier"
           />
         </el-col>
 
@@ -106,14 +106,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="无税报价"
-            :value="ContractDetail.carPrice"
+            :value="ContractDetail.orderInfoVO.carPrice"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="车牌号"
-            :value="ContractDetail.plateNo"
+            :value="ContractDetail.orderInfoVO.plateNo"
           />
         </el-col>
       </el-row>
@@ -168,11 +168,10 @@
           <div class="table_box">
             <el-table
               ref="multipleTable"
-              :data="ContractDetail.orderDeliverRebateFORMs"
+              :data="ContractDetail.orderDeliverRebateVOs"
               :row-style="{height: '20px'}"
               :cell-style="{padding: '5px 0'}"
               size="mini"
-              :height="'100%'"
               fit
               :border="isPC"
               stripe
@@ -298,14 +297,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.dealTime | Timestamp"
+            :value="ContractDetail.orderInfoVO.passTime | Timestamp"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交付完成时间"
-            :value="ContractDetail.deliverDate | Timestamp"
+            :value="ContractDetail.dealTime | Timestamp"
           />
         </el-col>
       </el-row>
@@ -552,10 +551,6 @@ export default class extends Vue {
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
     }
-
-    private handleClick() {
-      console.log(this.tabVal)
-    }
 }
 </script>
 
@@ -609,7 +604,20 @@ export default class extends Vue {
     color: #4a4a4a;
     font-weight: 400;
   }
-
+  .assist_title{
+      width: 100%;
+      text-align: center;
+      span{
+        line-height: 35px;
+        color:#666;
+        font-size: 12px;
+        background: $main-btn;
+        display: inline;
+        padding: 3px 10px;
+        color:#fff;
+        border-radius: 16px;
+      }
+  }
   .follow{
       width:100%;
       p{

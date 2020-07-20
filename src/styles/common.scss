@@ -35,6 +35,13 @@
     font-size: 12px !important;
 }
 
+body .el-table th.gutter {
+    display: table-cell !important;
+}
+body .el-table colgroup.gutter {
+    display: table-cell !important;
+}
+
 @media screen and (max-width: 700px) {
     .el-picker-panel{
         left: 0 !important;

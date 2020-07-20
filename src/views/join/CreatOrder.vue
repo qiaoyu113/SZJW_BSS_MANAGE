@@ -309,7 +309,6 @@
           </el-col>
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
-              v-if="ruleForm.cooperationModel !== '3'"
               label="车牌号"
               prop="plateNo"
             >
@@ -395,7 +394,7 @@
         <el-row>
           <el-col :span="isPC ? 24 : 24">
             <p class="hint_title">
-              支付记录 <span>(已支付金额： ¥{{ readyPay }}，未支付: ¥ {{ orderPrice - remain - readyPay }} )</span>
+              支付记录 <span>(已支付金额： ¥{{ readyPay }}，未支付: ¥ {{ Number(orderPrice) - Number(remain) - Number(readyPay) }} )</span>
             </p>
             <el-form-item :label="` `">
               <el-table
@@ -413,7 +412,7 @@
                 >
                   <template slot-scope="scope">
                     <el-button
-                      v-if="scope.row.status === '1'"
+                      v-if="Number(scope.row.status) === 1"
                       type="warning"
                       size="small"
                       plain
@@ -422,7 +421,7 @@
                       立即支付
                     </el-button>
                     <el-button
-                      v-if="scope.row.status === '3'"
+                      v-if="Number(scope.row.status) === 3"
                       type="text"
                       size="small"
                       style="color: #67C23A;"
@@ -437,7 +436,7 @@
                 >
                   <template slot-scope="scope">
                     <el-button
-                      v-if="scope.row.status === '3'"
+                      v-if="Number(scope.row.status) === 3"
                       type="text"
                       size="small"
                       @click="handleClick(scope.row, scope.$index)"
@@ -445,7 +444,7 @@
                       查看
                     </el-button>
                     <el-button
-                      v-if="scope.row.status === '1'"
+                      v-if="Number(scope.row.status) === 1"
                       type="text"
                       size="small"
                       @click="delClick(scope.row, scope.$index)"
@@ -466,6 +465,7 @@
       class="btn_box"
     >
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         type="primary"
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
@@ -650,12 +650,13 @@
 import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
 import { GetDictionaryList, Upload } from '@/api/common'
-import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType } from '@/api/join'
+import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/base/SelfItem.vue'
+import { TagsViewModule } from '@/store/modules/tags-view'
 import '@/styles/common.scss'
 @Component({
   name: 'CreatOrder',
@@ -684,6 +685,8 @@ export default class CreatLine extends Vue {
   private loading:boolean = false
   private showMessage:boolean = false
   private showMessageBill:boolean = false
+  private fullscreenLoading: Boolean = false
+  private id: any = ''
   private ruleForm:any = {
     'operateFlag': 'creat',
     'busiType': '',
@@ -733,7 +736,8 @@ export default class CreatLine extends Vue {
     'updateDate': '',
     'supplier': '',
     'carModel': '',
-    'updateId': ''
+    'updateId': '',
+    'productId': ''
   }
   private rules:any = {
     'driverInfoFORM.idNo': [
@@ -844,11 +848,6 @@ export default class CreatLine extends Vue {
     }
   }
 
-  @Watch('payForm', { deep: true })
-  private changePayForm(value:any) {
-    console.log(value)
-  }
-
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any) {
     if (value === '1') {
@@ -927,6 +926,7 @@ export default class CreatLine extends Vue {
     if (data.success) {
       this.ruleForm.carPrice = data.data.price
       this.ruleForm.describe = data.data.describe
+      this.ruleForm.productId = data.data.productCode
     } else {
       this.$message.error(data)
     }
@@ -949,9 +949,10 @@ export default class CreatLine extends Vue {
     this.getDictionary()
   }
 
-  created() {
+  mounted() {
     this.fetchData()
     let id = this.$route.query.id
+    this.id = id
     if (id) {
       this.getDetail(id)
     }
@@ -964,6 +965,19 @@ export default class CreatLine extends Vue {
       let datas = data.data
       this.ruleForm = Object.assign(this.ruleForm, datas)
       this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
+      this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
+      this.orderPrice = this.ruleForm.goodsAmount
+      let notReadPay = 0
+      this.ruleForm.orderPayRecordInfoFORMList.forEach((i: any) => {
+        if (Number(i.status) !== 1) {
+          this.readyPay = Number(this.readyPay) + Number(i.money)
+        } else {
+          notReadPay = notReadPay + Number(i.money)
+        }
+      })
+      setTimeout(() => {
+        this.remain = Number(this.orderPrice) - notReadPay
+      }, 100)
       this.ruleForm.busiType = this.ruleForm.busiType.toString()
       this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
     } else {
@@ -999,12 +1013,10 @@ export default class CreatLine extends Vue {
   }
   // 删除
   private delClick(res: any, index: any) {
-    console.log(res, index)
     this.ruleForm.orderPayRecordInfoFORMList.splice(index, 1)
   }
   // 立即支付
   private goBill(res: any, index: any) {
-    console.log(res)
     this.orderIndex = index
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
@@ -1019,7 +1031,6 @@ export default class CreatLine extends Vue {
   // 选择图片
   private async handleChange(file: any, fileList: any) {
     let formData = new FormData() // 创建form对象
-    console.log(1, file)
     formData.append('file', file.raw)
     let { data } = await Upload({
       expire: 0,
@@ -1092,17 +1103,42 @@ export default class CreatLine extends Vue {
   private submitForm(formName:any) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        CreateNewOrder(this.ruleForm
-        ).then((data: any) => {
-          if (data.data.success) {
-            this.$message.success('创建订单成功！')
-            this.$router.push({ name: 'OrderManage' })
-          } else {
-            this.$message.error(data.data.errorMsg)
-          }
-        }).catch(err => {
-          this.$message.error(err)
-        })
+        if (this.id) {
+          this.ruleForm.operateFlag = 'rePay'
+          RepayOrder(this.ruleForm
+          ).then((data: any) => {
+            if (data.data.success) {
+              this.fullscreenLoading = true
+              this.$message.success('创建订单成功！')
+              setTimeout(() => {
+                (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+                (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+                  name: 'OrderManage'
+                })
+                this.$nextTick(() => {
+                  this.$router.push({ name: 'OrderManage' })
+                })
+              }, 1500)
+            } else {
+              this.$message.error(data.data.errorMsg)
+            }
+          }).catch(err => {
+            this.$message.error(err)
+          })
+        } else {
+          CreateNewOrder(this.ruleForm
+          ).then((data: any) => {
+            if (data.data.success) {
+              this.fullscreenLoading = true
+              this.$message.success('创建订单成功！')
+              this.$router.push({ name: 'OrderManage' })
+            } else {
+              this.$message.error(data.data.errorMsg)
+            }
+          }).catch(err => {
+            this.$message.error(err)
+          })
+        }
       } else {
         console.log('error submit!!')
         return false

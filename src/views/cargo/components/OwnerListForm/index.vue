@@ -338,8 +338,12 @@ export default class extends Vue {
 
   private reset() {
     for (let key in this.listQuery) {
-      this.listQuery[key] = ''
+      if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
+        this.listQuery['page'] = 1
+      }
     }
+    this.DateValueChild = []
+    this.DateValueChild2 = []
   }
 }
 </script>

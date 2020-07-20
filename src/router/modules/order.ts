@@ -4,7 +4,7 @@ import Layout from '@/layout/index.vue'
 const orderRouter: RouteConfig = {
   path: '/join', /* 加盟中心 */
   component: Layout,
-  redirect: '/join/contractlist',
+  redirect: '/join/ordermanage',
   name: 'Join',
   meta: {
     title: 'joinTitle',
@@ -21,7 +21,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'creatOrder',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -33,7 +33,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'orderDetail',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -45,7 +45,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/join/ordermanage',
         title: 'orderLog',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -111,7 +111,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/join/contractlist',
         title: 'contractDetail',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -122,7 +122,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/join/dealmanage',
         title: 'dealForm',
-        noCache: false,
+        noCache: true,
         hidden: true
       }
     },
@@ -134,7 +134,7 @@ const orderRouter: RouteConfig = {
         apiUrl: 'root',
         title: 'dealManageDetail',
         activeMenu: '/join/dealmanage',
-        noCache: false,
+        noCache: true,
         hidden: true
       }
     },
