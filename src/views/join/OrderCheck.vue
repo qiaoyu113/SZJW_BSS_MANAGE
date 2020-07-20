@@ -413,6 +413,7 @@
     <!--按钮-->
     <div class="btn_box">
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         type="primary"
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
@@ -616,6 +617,7 @@ import '@/styles/common.scss'
 })
 export default class CreatLine extends Vue {
   private id:any = ''
+  private fullscreenLoading: Boolean = false
   private pageStatus:number = 0
   private remain: number = 0
   private readyPay: number = 0
@@ -1021,6 +1023,7 @@ export default class CreatLine extends Vue {
           operateFlag: 'confirm'
         }).then((data: any) => {
           if (data.success) {
+            this.fullscreenLoading = true;
             (TagsViewModule as any).delView(this.$route); // 关闭当前页面
             (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
               name: 'OrderManage'

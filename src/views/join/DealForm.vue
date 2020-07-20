@@ -411,6 +411,7 @@
 
       <div class="btn_box">
         <el-button
+          v-loading.fullscreen.lock="fullscreenLoading"
           type="primary"
           @click="submitForm('ruleForm')"
         >
@@ -445,6 +446,7 @@ import '@/styles/common.scss'
 
 export default class extends Vue {
     private id: any = ''
+    private fullscreenLoading: Boolean = false
     private tabVal: any = '1'
     private loading: any = false
     private managerList: any[] = []
@@ -709,6 +711,7 @@ export default class extends Vue {
         if (valid) {
           // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
           // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
+          this.fullscreenLoading = true
           this.ruleForm.orderId = this.ContractDetail.orderId
           this.ruleForm.driverId = this.ContractDetail.driverId
           const { data } = await SubmitOrderDeliver(this.ruleForm

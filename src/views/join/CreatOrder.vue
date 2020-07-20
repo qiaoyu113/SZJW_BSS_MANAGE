@@ -465,6 +465,7 @@
       class="btn_box"
     >
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         type="primary"
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
@@ -684,6 +685,7 @@ export default class CreatLine extends Vue {
   private loading:boolean = false
   private showMessage:boolean = false
   private showMessageBill:boolean = false
+  private fullscreenLoading: Boolean = false
   private id: any = ''
   private ruleForm:any = {
     'operateFlag': 'creat',
@@ -1116,6 +1118,7 @@ export default class CreatLine extends Vue {
           RepayOrder(this.ruleForm
           ).then((data: any) => {
             if (data.data.success) {
+              this.fullscreenLoading = true
               this.$message.success('创建订单成功！')
               setTimeout(() => {
                 (TagsViewModule as any).delView(this.$route); // 关闭当前页面
@@ -1136,6 +1139,7 @@ export default class CreatLine extends Vue {
           CreateNewOrder(this.ruleForm
           ).then((data: any) => {
             if (data.data.success) {
+              this.fullscreenLoading = true
               this.$message.success('创建订单成功！')
               this.$router.push({ name: 'OrderManage' })
             } else {

@@ -220,6 +220,7 @@
     <!--按钮-->
     <div class="btn_box">
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         type="success"
         name="OrderAudit-btn-pass"
         @click="auditPass()"
@@ -227,6 +228,7 @@
         审核通过
       </el-button>
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         name="OrderAudit-btn-nopass"
         type="danger"
         @click="auditNoPass()"
@@ -255,6 +257,7 @@ import '@/styles/common.scss'
 })
 export default class extends Vue {
     private id: any = ''
+    private fullscreenLoading: Boolean = false
     private orderDetail: any = {
       'busiType': '',
       'busiTypeName': '',
@@ -401,6 +404,7 @@ export default class extends Vue {
         createSource: this.orderDetail.createSource
       })
       if (data.success) {
+        this.fullscreenLoading = true;
         (TagsViewModule as any).delView(this.$route); // 关闭当前页面
         (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
           name: 'OrderManage'
@@ -426,6 +430,7 @@ export default class extends Vue {
         createSource: this.orderDetail.createSource
       })
       if (data.success) {
+        this.fullscreenLoading = true;
         (TagsViewModule as any).delView(this.$route); // 关闭当前页面
         (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
           name: 'OrderManage'
