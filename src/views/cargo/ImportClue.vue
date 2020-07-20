@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :date-value="DateValue"
         @handle-tags="handleTags"
+        @handle-query="handleSearch"
       />
     </SuggestContainer>
     <div class="table_box">
@@ -19,18 +20,40 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <el-button
-          type="primary"
-          :class="isPC ? 'btn-item' : 'btn-item-m'"
+        <el-upload
+          ref="upload"
+          :http-request="customUpload"
+          :on-remove="handleRemove"
+          :on-change="handleChange"
+          :file-list="fileList"
+          :auto-upload="true"
+          :multiple="false"
+          :accept="'.xlsx'"
+          class="upload-demo"
+          action="/line/gmv/importFile"
+          :show-file-list="false"
         >
-          <i class="el-icon-upload2" />
-          <span v-if="isPC">线索模板导入</span>
-        </el-button>
-        <el-button :class="isPC ? 'btn-item' : 'btn-item-m'">
+          <el-button
+            slot="trigger"
+            type="primary"
+            :class="isPC ? 'btn-item' : 'btn-item-m'"
+          >
+            <i class="el-icon-upload2" />
+            <span v-if="isPC">线索模板导入</span>
+          </el-button>
+        </el-upload>
+
+        <el-button
+          :class="isPC ? 'btn-item' : 'btn-item-m'"
+          @click="downLoad(0)"
+        >
           <i class="el-icon-download" />
           <span v-if="isPC">线索模板下载</span>
         </el-button>
-        <el-button :class="isPC ? 'btn-item' : 'btn-item-m'">
+        <el-button
+          :class="isPC ? 'btn-item' : 'btn-item-m'"
+          @click="downLoad(1)"
+        >
           <i class="el-icon-download" />
           <span v-if="isPC">线索模板说明</span>
         </el-button>
@@ -74,10 +97,9 @@
           style="width: 100%"
           align="left"
           row-key="id"
-          @cell-click="tableClick"
         >
           <el-table-column
-            :key="Math.random()"
+            :key="checkList.length + 'index'"
             type="index"
             width="55"
             label="序号"
@@ -87,38 +109,76 @@
           />
           <el-table-column
             v-if="checkList.includes('导入日期')"
+            :key="checkList.length + 'date'"
             prop="date"
             label="导入日期"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ row.createDate | Timestamp }}
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.includes('文档名称')"
-            prop="date"
+            :key="checkList.length + 'fileName'"
+            prop="fileName"
             label="文档名称"
           >
             <template slot-scope="{row}">
-              <el-button type="text">
-                {{ row.name }}
-              </el-button>
+              <el-link
+                :underline="false"
+                type="primary"
+                @click="goDetails(row.importId)"
+              >
+                {{ row.fileName }}
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column
             v-if="checkList.includes('导入结果')"
-            prop="date"
+            :key="checkList.length + 'center'"
             label="导入结果"
-          />
+            align="center"
+          >
+            <template slot-scope="{row}">
+              <el-tag
+                v-if="row.importState === 1"
+                :disable-transitions="false"
+                type="success"
+              >
+                成功
+              </el-tag>
+              <el-tag
+                v-if="row.importState === 2"
+                :disable-transitions="false"
+                type="info"
+              >
+                导入中
+              </el-tag>
+              <el-tag
+                v-if="row.importState === 0"
+                :disable-transitions="false"
+                type="danger"
+              >
+                失败
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.includes('线索总数')"
-            prop="date"
+            :key="checkList.length + 'clueNo'"
+            prop="clueNo"
             label="线索总数"
           />
           <el-table-column
             v-if="checkList.includes('失败记录数')"
-            prop="date"
+            :key="checkList.length + 'failureNo'"
+            prop="failureNo"
             label="失败记录数"
           />
           <el-table-column
             v-if="checkList.includes('检测错误数')"
-            prop="date"
+            :key="checkList.length + 'errorNo'"
+            prop="errorNo"
             label="检测错误数"
           />
         </el-table>
@@ -136,13 +196,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { ImportListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import { CargoListData } from '@/api/types'
-
+import { HandlePages } from '@/utils/index'
+import { importInfoList, fileUpload } from '@/api/cargo'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
@@ -164,14 +224,10 @@ export default class extends Vue {
   private tab: any[] = [];
   private DateValue: any[] = [];
   private listQuery: IState = {
-    key: '',
-    city: '',
     page: 1,
     limit: 30,
     endDate: '',
-    startDate: '',
-    state: '',
-    lineSaleId: ''
+    startDate: ''
   };
   private dropdownList: any[] = [
     '导入日期',
@@ -181,23 +237,66 @@ export default class extends Vue {
     '失败记录数',
     '检测错误数'
   ];
+  private downlist: any[] = [
+    `https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/line_clue/货主线索导入模板.xlsx`,
+    `https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/line_clue/线索模板说明.xls`
+  ];
+
   private checkList: any[] = this.dropdownList;
   // table
   private total = 0;
-  private list: CargoListData[] = [];
+  private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
+
+  // 导入
+  private fileList: any[] = []
+  // Watch
+  @Watch('checkList', { deep: true })
+  private onval(value: any) {
+    this.$nextTick(() => {
+      ((this.$refs['multipleTable']) as any).doLayout()
+    })
+  }
   // 计算属性
   get isPC() {
     return SettingsModule.isPC
   }
   // 事件处理
+  // 导入
+  private handleRemove(file: any, fileList: any) {
+    this.fileList = fileList
+  }
+  private customUpload(param: any) {
+    // 自定义上传
+    const formData = new FormData()
+    formData.append('file', param.file)
+    fileUpload(formData).then(({ data } : any) => {
+      if (data.success) {
+        this.$message.success('上传成功')
+      } else {
+        this.$message({
+          showClose: true,
+          duration: 0,
+          message: data.errorMsg,
+          type: 'error'
+        })
+      }
+    })
+  }
+  private handleChange(file: any, fileList: any) {
+    this.fileList = fileList.slice(-3)
+  }
   // 处理tags方法
   private handleTags(value: any) {
     this.tags = value
   }
   // 所有请求方法
   private fetchData() {
+    this.getList(this.listQuery)
+  }
+  // search
+  private handleSearch() {
     this.getList(this.listQuery)
   }
   // 处理query方法
@@ -209,15 +308,46 @@ export default class extends Vue {
   private handleDate(value: any) {
     // this.DateValue = value
   }
-  // button
-  // 添加明细原因 row 当前行 column 当前列
-  private tableClick(row: any, column: any, cell: any, event: any) {}
+  // downLoad
+  private downLoad(key: number) {
+    window.open(this.downlist[key])
+  }
   // 请求列表
-  private async getList(value: any) {}
+  private async getList(value: any) {
+    this.listQuery.page = value.page
+    this.listQuery.limit = value.limit
+    this.listLoading = true
+    const { data } = await importInfoList(this.listQuery)
+    if (data.success) {
+      this.list = data.data.list
+      const page = {
+        limit: data.data.pageSize,
+        page: data.data.pageNum,
+        total: data.data.total
+      }
+      data.page = await HandlePages(page)
+      this.total = page.total
+    } else {
+      this.$message.error(data)
+    }
+    setTimeout(() => {
+      const el = document.querySelector(
+        '.el-table .el-table__body-wrapper'
+      ) as HTMLElement
+      el.scroll(0, 0)
+      this.listLoading = false
+    }, 0.5 * 1000)
+  }
   // table index
   private indexMethod(index: number) {
     let { page, limit } = this.listQuery
     return index + 1 + (page - 1) * limit
+  }
+  private goDetails(id: any) {
+    this.$router.push({ name: 'ImportDetail', query: { id: id } })
+  }
+  mounted() {
+    this.fetchData()
   }
 }
 </script>
@@ -250,10 +380,34 @@ export default class extends Vue {
   background-color: $assist-btn;
   border-color: $assist-btn;
 }
+.ImportClue-m {
+  padding-bottom: 0;
+  box-sizing: border-box;
+  .table_box {
+    height: calc(100vh - 183px) !important;
+    background: #ffffff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    overflow: hidden;
+    transform: translateZ(0);
+    .table_center {
+      height: calc(100vh - 300px) !important;
+      padding-bottom: 0;
+      box-sizing: border-box;
+      background: #ffffff;
+    }
+  }
+}
 </style>
 <style scoped>
 .ImportClue >>> .TableHeader_title,
 .ImportClue-m >>> .TableHeader_title {
   display: none;
+}
+.ImportClue >>> .TableHeader_button,
+.ImportClue-m >>> .TableHeader_button{
+  flex: 1
+}
+.upload-demo{
+  display: inline-block;
 }
 </style>

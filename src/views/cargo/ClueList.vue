@@ -91,6 +91,7 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column
+            :key="checkList.length + 'selection'"
             type="selection"
             width="55"
             reserve-selection
@@ -107,12 +108,14 @@
           />
           <el-table-column
             v-if="checkList.indexOf('线索编号') > -1"
+            :key="checkList.length + 'clueId'"
             label="线索编号"
             prop="clueId"
           />
 
           <el-table-column
             v-if="checkList.indexOf('分配状态') > -1"
+            :key="checkList.length + 'distributionState'"
             label="分配状态"
           >
             <template slot-scope="{row}">
@@ -122,12 +125,14 @@
 
           <el-table-column
             v-if="checkList.indexOf('销售') > -1"
+            :key="checkList.length + 'lineSaleName'"
             label="销售"
             prop="lineSaleName"
           />
 
           <el-table-column
             v-if="checkList.indexOf('线索状态') > -1"
+            :key="checkList.length + 'clueState'"
             label="线索状态"
           >
             <template slot-scope="{row}">
@@ -137,39 +142,73 @@
 
           <el-table-column
             v-if="checkList.indexOf('线索来源') > -1"
+            :key="checkList.length + 'clueSourceName'"
             label="线索来源"
             prop="clueSourceName"
           />
 
           <el-table-column
             v-if="checkList.indexOf('城市') > -1"
+            :key="checkList.length + 'cityName'"
             label="城市"
             prop="cityName"
           />
 
           <el-table-column
             v-if="checkList.indexOf('公司') > -1"
+            :key="checkList.length + 'company'"
             label="公司"
             prop="company"
-          />
+          >
+            <!-- 保留8个字 -->
+            <template slot-scope="{row}">
+              {{ row.company | subString(8) }}
+            </template>
+          </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('姓名') > -1"
+            :key="checkList.length + 'name'"
             label="姓名"
             prop="name"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ row.name | subString(8) }}
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.indexOf('手机号') > -1"
+            :key="checkList.length + 'phone'"
             label="手机号"
-            prop="phone"
-          />
+          >
+            <template slot-scope="{row}">
+              <el-link
+                v-if="row.phone.includes('*')"
+                :underline="false"
+                type="primary"
+                @click="showPhone(row)"
+              >
+                {{ row.phone }}
+              </el-link>
+              <div v-else>
+                {{ row.phone }}
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.indexOf('职务') > -1"
+            :key="checkList.length + 'position'"
             label="职务"
             prop="position"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ row.position | subString(8) }}
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
+
+            :key="checkList.length + 'createDate'"
             label="创建日期"
           >
             <template slot-scope="{row}">
@@ -178,17 +217,23 @@
           </el-table-column>
           <el-table-column
             v-if="checkList.indexOf('更新日期') > -1"
+            :key="checkList.length + 'updateDate'"
             label="更新日期"
           >
             <template slot-scope="{row}">
-              {{ row.createDate | Timestamp }}
+              {{ row.updateDate | Timestamp }}
             </template>
           </el-table-column>
           <el-table-column
             v-if="checkList.indexOf('备注') > -1"
+            :key="checkList.length + 'remark'"
             label="备注"
             prop="remark"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ row.remark | subString(15) }}
+            </template>
+          </el-table-column>
           <el-table-column
             :key="checkList.length"
             label="操作"
@@ -220,16 +265,17 @@
                     详情
                   </el-dropdown-item>
                   <!--
-                    0：待跟进 1：已跟进 2：已转化 3：无效
-                    待跟进，已跟进显示跟进按钮
+                    已分配，待跟进
+                    已分配，已跟进
                    -->
                   <el-dropdown-item
-                    v-if="row.clueState === 0 || row.clueState === 1"
+                    v-if="row.distributionState === 1 && (row.clueState === 0 || row.clueState === 1)"
                     @click.native="goFollow(row)"
                   >
                     跟进
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-if="row.isTransform !== '1'"
                     @click.native="goConversion(row.clueId)"
                   >
                     转化
@@ -271,7 +317,7 @@
         :closable="false"
       />
       <el-table
-        :data="optionsSale"
+        :data="optionsDialogSale"
         size="mini"
         stripe
         highlight-current-row
@@ -385,7 +431,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
@@ -396,8 +442,8 @@ import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 
-import { GetDictionaryList, GetOpenCityData } from '@/api/common'
-import { GetClueList, GetSaleList, Distribution, ExpiredClue, ActivationClue } from '@/api/cargo'
+import { GetDictionaryList, GetJoinManageList } from '@/api/common'
+import { GetClueList, Distribution, ExpiredClue, ActivationClue, GetCustomerOff, GetSaleList, ShowPhone } from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
 
 import { SettingsModule } from '@/store/modules/settings'
@@ -454,6 +500,13 @@ const optionsDistribution: any = [
     findClue(status: string) {
       const item = optionsClue.find(({ value }:any) => value === status)
       return item ? item['label'] : status
+    },
+    subString(str: string, num: number) {
+      let val = str
+      if (typeof str === 'string') {
+        val = str.substr(0, num) + (str.length > num ? '...' : '')
+      }
+      return val
     }
   }
 })
@@ -498,6 +551,7 @@ export default class extends Vue {
   private optionsDistribution: any = optionsDistribution; //
   private optionsLineSource: any = []
   private optionsSale: any = []
+  private optionsDialogSale: any = [] // 弹窗销售列表
   // table
   private total = 0;
   private list: any[] = [];
@@ -533,6 +587,13 @@ export default class extends Vue {
   // 侧边栏
   private drawer: boolean = false;
 
+  // Watch
+  @Watch('checkList', { deep: true })
+  private onval(value: any) {
+    this.$nextTick(() => {
+      ((this.$refs['multipleTable']) as any).doLayout()
+    })
+  }
   // 计算属性
   get isPC() {
     return SettingsModule.isPC
@@ -544,10 +605,14 @@ export default class extends Vue {
   }
   // 所有请求方法
   private fetchData() {
-    this.getCity()
+    // this.getCity()
     this.getDictionary()
     this.getSaleList()
-    this.getList(this.listQuery)
+
+    Promise.all([this.getCity(), this.getJoinManageList()])
+      .then(() => {
+        this.getList(this.listQuery)
+      })
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
@@ -570,12 +635,30 @@ export default class extends Vue {
   private handleSelectionChange(val: any) {
     this.multipleSelection = val
   }
+  // 获取手机号
+  private async showPhone(row: any) {
+    const { data } = await ShowPhone({ clueId: row.clueId })
+    if (data.success) {
+      // eslint-disable-next-line require-atomic-updates
+      row.phone = data.data
+    } else {
+      this.$message.error(data)
+    }
+  }
   // 请求列表
   private async getList(value: any) {
     this.listQuery.page = value.page
     this.listQuery.limit = value.limit
     this.listLoading = true
-    const { data } = await GetClueList(this.listQuery)
+
+    const postData = {
+      ...this.listQuery
+    }
+    postData.citys = postData.city === '' ? this.optionsCity.map((item: any) => item.code) : [postData.city]
+    postData.lineSaleIds = postData.lineSaleId === '' ? this.optionsSale.map((item: any) => item.id) : [postData.lineSaleId]
+    delete postData.city
+    delete postData.lineSaleId
+    const { data } = await GetClueList(postData)
     if (data.success) {
       this.list = data.data
       data.page = await HandlePages(data.page)
@@ -600,23 +683,45 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-  // 获取城市
-  private async getCity() {
-    const { data } = await GetOpenCityData()
+  private async getJoinManageList() {
+    return new Promise((resolve, reject) => {
+      GetJoinManageList({})
+        .then(({ data }: any) => {
+          if (data.success) {
+            this.optionsSale = data.data
+          } else {
+            this.$message.error(data)
+          }
+          resolve(data)
+        }).catch((err: any) => {
+          reject(err)
+        })
+    })
+  }
+  // 获取弹窗销售
+  private async getSaleList() {
+    const { data } = await GetSaleList()
     if (data.success) {
-      this.optionsCity = data.data
+      this.optionsDialogSale = data.data
     } else {
       this.$message.error(data)
     }
   }
-  // 获取销售
-  private async getSaleList() {
-    const { data } = await GetSaleList()
-    if (data.success) {
-      this.optionsSale = data.data
-    } else {
-      this.$message.error(data)
-    }
+  // 获取城市
+  private async getCity() {
+    return new Promise((resolve, reject) => {
+      GetCustomerOff()
+        .then(({ data }) => {
+          if (data.success) {
+            this.optionsCity = data.data
+          } else {
+            this.$message.error(data)
+          }
+          resolve(data)
+        }).catch((err: any) => {
+          reject(err)
+        })
+    })
   }
   // 按钮操作
   // 详情
@@ -661,8 +766,8 @@ export default class extends Vue {
     this.$router.push({ name: 'ConversionClue', query: { id: id } })
   }
   // 导入
-  private goImport(id: string | (string | null)[] | null | undefined) {
-    this.$router.push({ name: 'ImportClue', query: { id: id } })
+  private goImport() {
+    this.$router.push({ name: 'ImportClue' })
   }
 
   // 新增线索

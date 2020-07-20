@@ -15,11 +15,22 @@
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          :span="isPC ? 6 : 24"
+          class="posr"
+        >
           <DetailItem
             name="手机号"
             :value="details.phone"
           />
+          <el-button
+            v-if="details.isPhone"
+            class="showPhone"
+            size="mini"
+            @click="showPhone"
+          >
+            {{ '查看' }}
+          </el-button>
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
@@ -192,7 +203,7 @@ import { GetCustomerList } from '@/api/customer'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetLineClueDetail } from '@/api/cargo'
+import { GetLineClueDetail, ShowPhone } from '@/api/cargo'
 import '@/styles/common.scss'
 const optionsClue: any = [
   // （0：待跟进 1：已跟进 2：已转化 3：无效）
@@ -249,7 +260,8 @@ export default class extends Vue {
   private async getDetail() {
     this.loading = true
     const { data } = await GetLineClueDetail({
-      clueId: this.id
+      clueId: this.id,
+      info: 'info'
     })
     this.loading = false
     if (data.success) {
@@ -258,7 +270,17 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-
+  private async showPhone() {
+    const { data } = await ShowPhone({
+      clueId: this.details.clueId
+    })
+    if (data.success) {
+      this.details.phone = data.data
+      this.details.isPhone = false
+    } else {
+      this.$message.error(data)
+    }
+  }
   private fetchData() {
     this.getDetail()
   }
@@ -307,8 +329,16 @@ export default class extends Vue {
 </style>
 
 <style lang="scss" scope>
+.posr{
+  position: relative;
+}
 .wrap {
   flex-wrap: wrap;
+}
+.showPhone{
+  position: absolute;
+  left: 120px;
+  bottom: 3px;
 }
 .follow-card {
   margin-bottom: 20px;

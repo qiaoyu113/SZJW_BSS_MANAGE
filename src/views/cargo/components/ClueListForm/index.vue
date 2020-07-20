@@ -106,8 +106,8 @@
                     <el-option
                       v-for="(item, index) in dataTypes.optionsSale"
                       :key="index"
-                      :label="item.saleName"
-                      :value="item.saleId"
+                      :label="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -228,7 +228,7 @@ export default class extends Vue {
     const clueItem = optionsClue.find((item: any) => item.value === value)
     const distributionItem = optionsDistribution.find((item: any) => item.value === value)
     const sourceItem = optionsLineSource.find((item: any) => item.dictValue === value)
-    const saleItem = optionsSale.find((item: any) => item.saleId === value)
+    const saleItem = optionsSale.find((item: any) => item.id === value)
     switch (key) {
       // 根据listQuery中的key来判断
       case 'city':
@@ -244,7 +244,7 @@ export default class extends Vue {
         vodeName = distributionItem ? distributionItem['label'] : value
         break
       case 'lineSaleId':
-        vodeName = saleItem ? saleItem['saleName'] : value
+        vodeName = saleItem ? saleItem['name'] : value
         break
       default:
         vodeName = this.listQuery[key] || ''

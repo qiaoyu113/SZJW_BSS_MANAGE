@@ -125,7 +125,7 @@
                 跟进记录{{ index + 1 }}
               </div>
               <el-button
-                v-if="index !== 0"
+                v-if="index !== 0 && !item.id"
                 class="card-del"
                 type="danger"
                 icon="el-icon-close"
@@ -144,6 +144,7 @@
               >
                 <el-date-picker
                   v-model="item.visitDate"
+                  :disabled="!!item.id"
                   type="datetime"
                   placeholder="选择日期时间"
                   clearable
@@ -159,6 +160,7 @@
               >
                 <el-input
                   v-model="item.visitAddress"
+                  :disabled="!!item.id"
                   placeholder="请输入"
                   maxlength="50"
                   clearable
@@ -174,6 +176,7 @@
               >
                 <el-input
                   v-model="item.visitRecord"
+                  :disabled="!!item.id"
                   placeholder="请输入"
                   maxlength="200"
                   clearable
@@ -223,19 +226,8 @@ export default class extends Vue {
   private ruleForm:any = {
     'clueId': '',
     'isFollowUp': '',
-    'lineClueDemandForms': [
-      {
-        'demandCarType': '',
-        'demandNo': ''
-      }
-    ],
-    'lineClueFollowForms': [
-      {
-        'visitAddress': '',
-        'visitDate': '',
-        'visitRecord': ''
-      }
-    ]
+    'lineClueDemandForms': [],
+    'lineClueFollowForms': []
   }
   private rules:any = {
     isFollowUp: [
@@ -286,6 +278,24 @@ export default class extends Vue {
 
   private resetForm(formName:any) {
     (this.$refs[formName] as any).resetFields()
+    this.ruleForm['lineClueDemandForms'] = [
+      {
+        'demandCarType': '',
+        'demandNo': ''
+      }
+    ]
+    const list = this.ruleForm['lineClueFollowForms'].filter((a: any) => a.id)
+    if (list.length > 0) {
+      this.ruleForm['lineClueFollowForms'] = list
+    } else {
+      this.ruleForm['lineClueFollowForms'] = [
+        {
+          'visitAddress': '',
+          'visitDate': '',
+          'visitRecord': ''
+        }
+      ]
+    }
   }
   private removeCar(index:number) {
     this.ruleForm.lineClueDemandForms.splice(index, 1)
@@ -317,11 +327,27 @@ export default class extends Vue {
     this.loading = false
     if (data.success) {
       const detail = data.data
-      if (detail.lineClueFollowVos && detail.lineClueFollowVos.length > 0) {
-        this.ruleForm.lineClueFollowForms = detail.lineClueFollowVos
+      const { lineClueFollowVos, lineClueDemandVos } = data.data
+      if (lineClueFollowVos && lineClueFollowVos.length > 0) {
+        this.ruleForm.lineClueFollowForms = lineClueFollowVos
+      } else {
+        this.ruleForm.lineClueFollowForms = [
+          {
+            'demandCarType': '',
+            'demandNo': ''
+          }
+        ]
       }
-      if (detail.lineClueDemandVos && detail.lineClueDemandVos.length > 0) {
-        this.ruleForm.lineClueDemandForms = detail.lineClueDemandVos
+      if (lineClueDemandVos && lineClueDemandVos.length > 0) {
+        this.ruleForm.lineClueDemandForms = lineClueDemandVos
+      } else {
+        this.ruleForm.lineClueDemandForms = [
+          {
+            'visitAddress': '',
+            'visitDate': '',
+            'visitRecord': ''
+          }
+        ]
       }
       this.ruleForm.isFollowUp = detail.isTransform
     } else {
