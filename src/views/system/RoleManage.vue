@@ -65,17 +65,19 @@
           />
           <el-table-column
             v-if="checkList.includes('描述')"
+            :key="checkList.length + 'description'"
             prop="description"
             label="描述"
           />
           <el-table-column
             v-if="checkList.includes('人数')"
+            :key="checkList.length + 'usedUserCount'"
             prop="usedUserCount"
             label="人数"
           />
           <el-table-column
             v-if="checkList.includes('操作')"
-            :key="checkList.length"
+            :key="checkList.length + 'right'"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -120,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import { roleList, createRole, updateRole, deleteRole } from '@/api/system'
@@ -160,6 +162,13 @@ export default class extends Vue {
   private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
+  // Watch
+  @Watch('checkList', { deep: true })
+  private onval(value: any) {
+    this.$nextTick(() => {
+      ((this.$refs['multipleTable']) as any).doLayout()
+    })
+  }
   // 计算属性
   get isPC() {
     return SettingsModule.isPC

@@ -89,6 +89,7 @@
                 v-model="ruleForm.city"
                 placeholder="请选择"
                 clearable
+                filterable
               >
                 <el-option
                   v-for="(item, index) in optionsCity"
@@ -204,10 +205,12 @@
               }"
             >
               <div
-                v-if="index === 0"
+                v-if="index === 0 && ruleForm.lineClueDemandForms.length < 4"
                 class="mb10"
               >
-                <el-button @click="addCar">
+                <el-button
+                  @click="addCar"
+                >
                   添加+
                 </el-button>
               </div>
@@ -218,6 +221,7 @@
                   v-model="item.demandCarType"
                   placeholder="请选择"
                   clearable
+                  filterable
                 >
                   <el-option
                     v-for="city in optionsCar"
@@ -268,7 +272,10 @@
           align="middle"
         >
           <el-col :span="12">
-            <el-button @click="addFollow">
+            <el-button
+              v-if="ruleForm.lineClueFollowForms.length < 10"
+              @click="addFollow"
+            >
               添加跟进记录
             </el-button>
           </el-col>
@@ -289,7 +296,7 @@
                 跟进记录{{ index + 1 }}
               </div>
               <el-button
-                v-if="index !== 0"
+                v-if="index !== 0 && !item.id"
                 class="card-del"
                 type="danger"
                 icon="el-icon-close"
@@ -308,6 +315,7 @@
               >
                 <el-date-picker
                   v-model="item.visitDate"
+                  :disabled="!!item.id"
                   type="datetime"
                   placeholder="选择日期时间"
                   clearable
@@ -323,6 +331,7 @@
               >
                 <el-input
                   v-model="item.visitAddress"
+                  :disabled="!!item.id"
                   placeholder="请输入"
                   maxlength="50"
                   clearable
@@ -338,6 +347,7 @@
               >
                 <el-input
                   v-model="item.visitRecord"
+                  :disabled="!!item.id"
                   placeholder="请输入"
                   maxlength="200"
                   clearable
@@ -371,7 +381,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 
 import { GetDictionaryList, GetOpenCityData } from '@/api/common'
-import { GetLineClueDetail, SaveLineClue, EditLineClue, GetSaleList } from '@/api/cargo'
+import { GetLineClueDetail, SaveLineClue, EditLineClue, GetSaleList, GetCustomerOff } from '@/api/cargo'
 
 import '@/styles/common.scss'
 @Component({
@@ -395,19 +405,8 @@ export default class extends Vue {
     'clueSource': '',
     'company': '',
     'isFollowUp': '',
-    'lineClueDemandForms': [
-      {
-        'demandCarType': '',
-        'demandNo': ''
-      }
-    ],
-    'lineClueFollowForms': [
-      {
-        'visitAddress': '',
-        'visitDate': '',
-        'visitRecord': ''
-      }
-    ],
+    'lineClueDemandForms': [],
+    'lineClueFollowForms': [],
     'lineSaleId': '',
     'name': '',
     'phone': '',
@@ -415,6 +414,9 @@ export default class extends Vue {
     'remark': ''
   }
   private rules:any = {
+    isFollowUp: [
+      { required: true, message: '请选择是否继续跟进', trigger: 'change' }
+    ],
     clueSource: [
       { required: true, message: '请选择线索来源', trigger: 'change' }
     ],
@@ -479,6 +481,24 @@ export default class extends Vue {
 
   private resetForm(formName:any) {
     (this.$refs[formName] as any).resetFields()
+    this.ruleForm['lineClueDemandForms'] = [
+      {
+        'demandCarType': '',
+        'demandNo': ''
+      }
+    ]
+    const list = this.ruleForm['lineClueFollowForms'].filter((a: any) => a.id)
+    if (list.length > 0) {
+      this.ruleForm['lineClueFollowForms'] = list
+    } else {
+      this.ruleForm['lineClueFollowForms'] = [
+        {
+          'visitAddress': '',
+          'visitDate': '',
+          'visitRecord': ''
+        }
+      ]
+    }
   }
   private removeCar(index:number) {
     this.ruleForm.lineClueDemandForms.splice(index, 1)
@@ -492,11 +512,21 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-  // 获取城市
-  private async getCity() {
-    const { data } = await GetOpenCityData()
+  // // 获取城市
+  // private async getCity() {
+  //   const { data } = await GetOpenCityData()
+  //   if (data.success) {
+  //     this.optionsCity = data.data
+  //   } else {
+  //     this.$message.error(data)
+  //   }
+  // }
+  private async getCustomerOff() {
+    const { data } = await GetCustomerOff()
     if (data.success) {
-      this.optionsCity = data.data
+      // console.log(data.data)
+      const list = data.data
+      this.optionsCity = list
     } else {
       this.$message.error(data)
     }
@@ -523,7 +553,8 @@ export default class extends Vue {
   private async getDetail() {
     this.loading = true
     const { data } = await GetLineClueDetail({
-      clueId: this.id
+      clueId: this.id,
+      info: 'edit'
     })
     this.loading = false
     if (data.success) {
@@ -534,9 +565,24 @@ export default class extends Vue {
 
       if (lineClueFollowVos && lineClueFollowVos.length > 0) {
         this.ruleForm.lineClueFollowForms = lineClueFollowVos
+      } else {
+        this.ruleForm.lineClueFollowForms = [
+          {
+            'demandCarType': '',
+            'demandNo': ''
+          }
+        ]
       }
       if (lineClueDemandVos && lineClueDemandVos.length > 0) {
         this.ruleForm.lineClueDemandForms = lineClueDemandVos
+      } else {
+        this.ruleForm.lineClueDemandForms = [
+          {
+            'visitAddress': '',
+            'visitDate': '',
+            'visitRecord': ''
+          }
+        ]
       }
       this.ruleForm.isFollowUp = isTransform
       this.ruleForm.address = address
@@ -564,7 +610,7 @@ export default class extends Vue {
   }
   private fetchData() {
     this.getDictionaryList()
-    this.getCity()
+    this.getCustomerOff()
     this.getSaleList()
     if (this.isEdit) {
       this.getDetail()

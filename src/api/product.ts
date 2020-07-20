@@ -29,7 +29,13 @@ export const getCarlist = () =>
     url: `${baseURL}/v1/product/product/carType/list`,
     method: 'get'
   })
-
+// 获取车辆型号
+export const GetCarModelList = (params: any) =>
+  request({
+    url: `${baseURL}/v1/product/product/getCarModelList`,
+    method: 'get',
+    params
+  })
 // 上架或者下架商品
 export const shelvesOrTheshelves = (data: any) =>
   request({
@@ -51,4 +57,13 @@ export const getSettingSystem = () =>
   request({
     url: `${baseURL}/v1/product/product/system/setting`,
     method: 'get'
+  })
+
+// 导出
+export const ProductDownload = (params: any) =>
+  request({
+    url: `${baseURL}/v1/product/product/download`,
+    method: 'get',
+    responseType: 'blob',
+    params
   })
