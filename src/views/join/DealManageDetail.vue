@@ -99,7 +99,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="车辆信息"
-            :value="ContractDetail.orderInfoVO.carMessage"
+            :value="ContractDetail.carMessage"
           />
         </el-col>
 

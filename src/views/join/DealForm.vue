@@ -114,7 +114,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="车辆信息"
-              :value="ContractDetail.orderInfoVO.carMessage"
+              :value="ContractDetail.carMessage"
             />
           </el-col>
 
@@ -373,9 +373,19 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="供应商"
-              prop="gpsSupplier"
+              prop="cooperationCar"
             >
-              <el-input v-model="ruleForm.gpsSupplier" />
+              <el-select
+                v-model="ruleForm.gpsSupplier"
+                placeholder="请选择供应商"
+              >
+                <el-option
+                  v-for="item in gpsSupplier"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
 
@@ -418,7 +428,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId } from '@/api/join'
-import { GetJoinManageList } from '@/api/common'
+import { GetJoinManageList, GetDictionaryList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -438,6 +448,7 @@ export default class extends Vue {
     private tabVal: any = '1'
     private loading: any = false
     private managerList: any[] = []
+    private gpsSupplier: any[] = []
     private ContractDetail: any = {
       'busiType': '',
       'busiTypeName': '',
@@ -630,6 +641,7 @@ export default class extends Vue {
     created() {
       this.id = this.$route.query.id
       this.getDetail(this.id)
+      this.getDictionary()
     }
 
     mounted() {
@@ -648,6 +660,16 @@ export default class extends Vue {
       const { data } = await SelectOrderInfo({ orderId: value })
       if (data.success) {
         this.ContractDetail = Object.assign(this.ContractDetail, data.data)
+        this.ruleForm.plateNo = this.ContractDetail.plateNo
+      } else {
+        this.$message.error(data)
+      }
+    }
+    // 查询供应商
+    private async getDictionary() {
+      const { data } = await GetDictionaryList(['gps_supplier'])
+      if (data.success) {
+        this.gpsSupplier = data.data.gps_supplier
       } else {
         this.$message.error(data)
       }

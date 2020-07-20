@@ -7,6 +7,13 @@ export const CreateNewOrder = (params: any) =>
     data: params
   })
 
+export const RepayOrder = (params: any) =>
+  request({
+    url: '/order/v1/order/rePay',
+    method: 'post',
+    data: params
+  })
+
 export const GetOrderDetail = (params: any) =>
   request({
     url: '/order/v1/order/orderDetail',

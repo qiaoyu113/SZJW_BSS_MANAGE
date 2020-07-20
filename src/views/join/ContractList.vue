@@ -72,11 +72,11 @@
           stripe
           highlight-current-row
           style="width: 100%"
-          row-key="customerNo"
+          row-key="contractId"
         >
           <el-table-column
             v-if="checkList.indexOf('合同编号') > -1"
-            :key="checkList.length + 'a'"
+            :key="checkList.length + '1'"
             align="left"
             :fixed="isPC"
             label="合同编号"
@@ -88,7 +88,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('订单编号') > -1"
-            :key="checkList.length + 'b'"
+            :key="checkList.length + '2'"
             align="left"
             label="订单编号"
           >
@@ -99,7 +99,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合同名称') > -1"
-            :key="checkList.length + 'c'"
+            :key="checkList.length + '3'"
             class-name="status-col"
             align="left"
             label="合同名称"
@@ -110,10 +110,10 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('公司姓名') > -1"
-            :key="checkList.length + 'd'"
+            v-if="checkList.indexOf('司机姓名') > -1"
+            :key="checkList.length + '4'"
             align="left"
-            label="公司姓名"
+            label="司机姓名"
           >
             <template slot-scope="{row}">
               {{ row.driverName | DataIsNull }}
@@ -122,7 +122,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合同归属') > -1"
-            :key="checkList.length + 'e'"
+            :key="checkList.length + '5'"
             align="left"
             label="合同归属"
           >
@@ -133,7 +133,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合同状态') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + '6'"
             align="left"
             label="合同状态"
           >
@@ -146,7 +146,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('生成时间') > -1"
-            :key="checkList.length + 'g'"
+            :key="checkList.length + '7'"
             align="left"
             label="生成时间"
           >
@@ -157,7 +157,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('联系电话') > -1"
-            :key="checkList.length + 'h'"
+            :key="checkList.length + '8'"
             align="left"
             label="联系电话"
           >
@@ -168,7 +168,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('身份证号') > -1"
-            :key="checkList.length + 'i'"
+            :key="checkList.length + '9'"
             align="left"
             label="身份证号"
           >
@@ -179,7 +179,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
-            :key="checkList.length + 'j'"
+            :key="checkList.length + '10'"
             align="left"
             label="创建日期"
           >
@@ -190,7 +190,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('合同止期') > -1"
-            :key="checkList.length + 'k'"
+            :key="checkList.length + '11'"
             align="left"
             label="合同止期"
           >
@@ -201,7 +201,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('备注') > -1"
-            :key="checkList.length + 'm'"
+            :key="checkList.length + '12'"
             align="left"
             label="备注"
           >
@@ -211,7 +211,8 @@
           </el-table-column>
 
           <el-table-column
-            :key="checkList.length + 'l'"
+            v-if="checkList.indexOf('操作') > -1"
+            :key="checkList.length + '13'"
             align="left"
             label="操作"
             fixed="right"
@@ -337,7 +338,8 @@ export default class extends Vue {
       '司机姓名',
       '合同归属',
       '合同状态',
-      '生成时间'
+      '生成时间',
+      '操作'
     ];
     private checkList: any[] = this.dropdownList;
     private tab: any[] = [
@@ -521,7 +523,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .ContractList {
   padding: 15px;
   padding-bottom: 0;
@@ -569,7 +571,7 @@ export default class extends Vue {
 }
 </style>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .ContractList-m {
   padding-bottom: 0;
   box-sizing: border-box;

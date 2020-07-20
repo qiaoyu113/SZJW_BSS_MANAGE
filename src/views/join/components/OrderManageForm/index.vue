@@ -130,12 +130,12 @@
                 :span="isPC ? 12 : 24"
                 class="btn-box"
               >
-                <el-button
+                <!-- <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="success"
                 >
                   导出订单
-                </el-button>
+                </el-button> -->
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   @click="reset"
@@ -377,7 +377,9 @@ export default class extends Vue {
 
   private reset() {
     for (let key in this.listQuery) {
-      this.listQuery[key] = ''
+      if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
+        this.listQuery['page'] = 1
+      }
     }
     this.DateValueChild = []
   }
