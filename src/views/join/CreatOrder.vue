@@ -1018,6 +1018,8 @@ export default class CreatLine extends Vue {
   // 立即支付
   private goBill(res: any, index: any) {
     this.orderIndex = index
+    if (!res.payType) res.payType = ''
+    if (res.payImageUrl === '0') res.payImageUrl = ''
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
   }
@@ -1120,6 +1122,7 @@ export default class CreatLine extends Vue {
                 })
               }, 1500)
             } else {
+              this.fullscreenLoading = false
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {
@@ -1133,6 +1136,7 @@ export default class CreatLine extends Vue {
               this.$message.success('创建订单成功！')
               this.$router.push({ name: 'OrderManage' })
             } else {
+              this.fullscreenLoading = false
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {

@@ -282,7 +282,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { GetContractList, ActiveContract, DownloadContract } from '@/api/join'
 import { CargoListData } from '@/api/types'
@@ -396,6 +396,13 @@ export default class extends Vue {
       page: 1,
       limit: 20
     };
+
+    @Watch('checkList', { deep: true })
+    private checkListChange(val:any) {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
+    }
 
     created() {
       this.fetchData()

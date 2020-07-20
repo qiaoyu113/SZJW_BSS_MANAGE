@@ -244,7 +244,10 @@
                 :value="orderDetail.createDate | Timestamp"
               />
             </el-col>
-            <el-col :span="24">
+            <el-col
+              v-if="orderDetail.status === 20"
+              :span="24"
+            >
               <!-- <DetailItem
                 name="订单确认时间"
                 :value="(orderDetail.driverInfoVO.confirmTime | Timestamp) + (driverInfoVO.driverInfoVO.confirmName)"
@@ -254,7 +257,10 @@
                 :value="orderDetail.confirmTime | Timestamp"
               />
             </el-col>
-            <el-col :span="24">
+            <el-col
+              v-if="orderDetail.status === 25"
+              :span="24"
+            >
               <!-- <DetailItem
                 name="审核不通过时间"
                 :value="(orderDetail.driverInfoVO.passTime | Timestamp) + (driverInfoVO.driverInfoVO.notPassName)"
@@ -264,7 +270,10 @@
                 :value="orderDetail.notPassTime | Timestamp"
               />
             </el-col>
-            <el-col :span="24">
+            <el-col
+              v-if="orderDetail.status === 30"
+              :span="24"
+            >
               <!-- <DetailItem
                 name="审核通过时间"
                 :value="(orderDetail.driverInfoVO.notPassTime | Timestamp) + (driverInfoVO.driverInfoVO.passName)"

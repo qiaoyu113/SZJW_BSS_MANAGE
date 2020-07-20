@@ -438,7 +438,7 @@
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
       >
-        提交
+        提交审核
       </el-button>
       <el-button
         name="CreatLine-btn-creat"
@@ -1086,6 +1086,7 @@ export default class CreatLine extends Vue {
           })
           this.$message.success('操作成功，审核通过')
         } else {
+          this.fullscreenLoading = false
           this.$message.error(data.errorMsg)
         }
       } else {

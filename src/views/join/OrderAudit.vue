@@ -440,6 +440,7 @@ export default class extends Vue {
         })
         this.$message.success('操作成功，审核不通过')
       } else {
+        this.fullscreenLoading = false
         this.$message.error(data.errorMsg)
       }
     }

@@ -98,7 +98,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 6 : 24">
+              <!-- <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="所属小组">
                   <el-select
                     v-model="listQuery.groupId"
@@ -112,7 +112,7 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="订单创建时间">
                   <el-date-picker

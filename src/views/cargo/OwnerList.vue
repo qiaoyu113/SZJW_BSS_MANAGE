@@ -472,6 +472,13 @@ export default class extends Vue {
       limit: 20
     };
 
+    @Watch('checkList', { deep: true })
+    private checkListChange(val:any) {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
+    }
+
     created() {
       this.fetchData()
     }
@@ -526,9 +533,7 @@ export default class extends Vue {
       const { data } = await GetCustomerList(this.listQuery)
       if (data.success) {
         this.list = data.data
-        if (data.title) {
-          this.tab[0].num = data.title.all
-        }
+        this.tab[0].num = data.page.total
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
