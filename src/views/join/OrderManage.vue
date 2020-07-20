@@ -237,7 +237,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
-                    @click.native="goCreat(scope.row.orderId, true)"
+                    @click.native="goCreat(scope.row, true)"
                   >
                     提交
                   </el-dropdown-item>
@@ -592,7 +592,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 
@@ -683,7 +682,7 @@ export default class extends Vue {
     // 确认和审核按钮
     private goCheck(id: string | (string | null)[] | null | undefined, type: any) {
       if (type) {
-        this.$router.push({ name: 'OrderDetail', query: { id: id } })
+        this.$router.push({ name: 'OrderCheck', query: { id: id } })
       } else {
         this.$router.push({ name: 'OrderAudit', query: { id: id } })
       }

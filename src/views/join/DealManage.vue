@@ -168,7 +168,7 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.deliverDate | DataIsNull }}</span>
+                <span>{{ scope.row.deliverDate | Timestamp }}</span>
               </p>
             </template>
           </el-table-column>

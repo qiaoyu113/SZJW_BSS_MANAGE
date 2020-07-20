@@ -848,11 +848,6 @@ export default class CreatLine extends Vue {
     }
   }
 
-  @Watch('payForm', { deep: true })
-  private changePayForm(value:any) {
-    console.log(value)
-  }
-
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any) {
     if (value === '1') {
@@ -886,11 +881,6 @@ export default class CreatLine extends Vue {
   private changeGoodsAmount(value:any) {
     this.orderPrice = value
     this.remain = this.orderPrice - this.readyPay
-  }
-
-  @Watch('remain')
-  private changeGoodsAmounts(value:any) {
-    console.log(4, value)
   }
 
   // 判断是否是PC

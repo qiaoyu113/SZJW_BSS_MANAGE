@@ -441,12 +441,11 @@ export default class extends Vue {
 
     // 请求详情
     private async fetchData(value: any) {
-      console.log(value)
       const { data } = await GetOwnerDetail({ customerId: value, info: 'info' })
       if (data.success) {
         this.OwnerDetail = data.data
       } else {
-        this.$message.error(data)
+        this.$message.error(data.errorMsg)
       }
     }
 
@@ -472,7 +471,7 @@ export default class extends Vue {
         if (data.success) {
           this.OwnerDetail.bussinessPhone = data.data
         } else {
-          this.$message.error(data)
+          this.$message.error(data.errorMsg)
         }
       } else {
         const { data } = await GetShowPhone({ clueId: this.OwnerDetail.clueId })
