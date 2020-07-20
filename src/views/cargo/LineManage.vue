@@ -558,9 +558,9 @@ export default class LineManage extends Vue {
     {
       type: 8,
       key: 'houseAddress',
-      label: '线路区域:',
+      label: '配送区域:',
       tagAttrs: {
-        placeholder: '线路区域',
+        placeholder: '请输入配送区域',
         props: {
           lazy: true,
           lazyLoad: this.getLineArea
