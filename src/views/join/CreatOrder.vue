@@ -1120,6 +1120,7 @@ export default class CreatLine extends Vue {
                 })
               }, 1500)
             } else {
+              this.fullscreenLoading = false
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {
@@ -1133,6 +1134,7 @@ export default class CreatLine extends Vue {
               this.$message.success('创建订单成功！')
               this.$router.push({ name: 'OrderManage' })
             } else {
+              this.fullscreenLoading = false
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {

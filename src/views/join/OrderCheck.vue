@@ -1086,6 +1086,7 @@ export default class CreatLine extends Vue {
           })
           this.$message.success('操作成功，审核通过')
         } else {
+          this.fullscreenLoading = false
           this.$message.error(data.errorMsg)
         }
       } else {
