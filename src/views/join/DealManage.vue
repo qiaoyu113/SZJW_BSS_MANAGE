@@ -293,12 +293,12 @@ export default class extends Vue {
       },
       {
         label: '待交付',
-        name: '1',
+        name: '0',
         num: ''
       },
       {
         label: '已交付',
-        name: '2',
+        name: '1',
         num: ''
       }
     ];

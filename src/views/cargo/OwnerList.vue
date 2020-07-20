@@ -157,8 +157,15 @@
             align="left"
             label="联系电话"
           >
-            <template slot-scope="{row}">
-              {{ row.bussinessPhone | DataIsNull }}
+            <template slot-scope="scope">
+              {{ scope.row.bussinessPhone | DataIsNull }}
+              <el-button
+                type="text"
+                style="padding: 0 4px"
+                @click="getAllPhone(scope.row, scope.$index)"
+              >
+                查看
+              </el-button>
             </template>
           </el-table-column>
 
@@ -356,6 +363,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { GetCustomerList, GetCustomerSaleList, Distribution } from '@/api/customer'
+import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -652,6 +660,16 @@ export default class extends Vue {
       }
       return (index: number) => {
         return index + 1 + (page - 1) * limit
+      }
+    }
+
+    // 查看手机号
+    private async getAllPhone(detail:any, index: any) {
+      const { data } = await GetFindBusinessPhone({ customerId: detail.customerId })
+      if (data.success) {
+        this.list[index].bussinessPhone = data.data
+      } else {
+        this.$message.error(data)
       }
     }
 }
