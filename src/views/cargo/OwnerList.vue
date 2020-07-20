@@ -158,15 +158,15 @@
             label="联系电话"
           >
             <template slot-scope="scope">
-              {{ scope.row.bussinessPhone | DataIsNull }}
               <el-button
                 v-if="scope.row.isPhone"
                 type="text"
                 style="padding: 0 4px"
                 @click="getAllPhone(scope.row, scope.$index)"
               >
-                查看
+                {{ scope.row.bussinessPhone | DataIsNull }}
               </el-button>
+              <span v-else>{{ scope.row.bussinessPhone | DataIsNull }}</span>
             </template>
           </el-table-column>
 

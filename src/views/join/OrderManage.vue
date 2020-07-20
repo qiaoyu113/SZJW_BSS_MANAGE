@@ -682,7 +682,7 @@ export default class extends Vue {
     // 确认和审核按钮
     private goCheck(id: string | (string | null)[] | null | undefined, type: any) {
       if (type) {
-        this.$router.push({ name: 'OrderDetail', query: { id: id } })
+        this.$router.push({ name: 'OrderCheck', query: { id: id } })
       } else {
         this.$router.push({ name: 'OrderAudit', query: { id: id } })
       }

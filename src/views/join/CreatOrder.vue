@@ -883,11 +883,6 @@ export default class CreatLine extends Vue {
     this.remain = this.orderPrice - this.readyPay
   }
 
-  @Watch('remain')
-  private changeGoodsAmounts(value:any) {
-    console.log(4, value)
-  }
-
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
