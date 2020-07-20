@@ -888,6 +888,7 @@ export default class CreatLine extends Vue {
     if (data.success) {
       let datas = data.data
       this.ruleForm = Object.assign(datas, this.ruleForm)
+      this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
     } else {
       this.$message.error(data)
     }
