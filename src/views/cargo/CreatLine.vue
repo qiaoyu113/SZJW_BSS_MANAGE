@@ -18,16 +18,24 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'customerId',type: 5,label: '货主名称',tagAttrs: {
+              clearable: true,
               filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
-              placeholder: '请输入选择货主',filterable: true,disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},options: customerOptions}"
+              placeholder: '请输入选择货主',filterable: true,
+              disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},options: customerOptions}"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'lineName',type: 1,label: '内部使用线路名称',tagAttrs: {placeholder: '名称应具有辨识度'}}"
+            :params="{prop: 'lineName',type: 1,label: '内部使用线路名称',
+                      tagAttrs: {
+                        placeholder: '名称应具有辨识度',
+                        maxlength: 10,
+                        showWordLimit: true,
+                        clearable: true
+                      }}"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'deployNo',type: 1,label: '可上车数',kind: 'number',tagAttrs: {placeholder: '请输入可上车数'}}"
+            :params="{prop: 'deployNo',type: 1,label: '可上车数',kind: 'number',tagAttrs: {placeholder: '请输入可上车数',min: 0,max: 11,clearable: true}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -62,7 +70,7 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'remark',type: 1,label: '备注信息/线路描述',kind: 'textarea',tagAttrs: {maxlength:
-              500, row: 6, showWordLimit: true}}"
+              500, row: 6, showWordLimit: true,placeholder: '请输入备注信息或线路描述'}}"
           />
         </el-row>
       </SectionContainer>
@@ -656,6 +664,15 @@ export default class CreatLine extends Vue {
     }
   }
 
+  // 可上车数
+  @Watch('ruleForm.deployNo')
+  private changeDeployNo(value:any) {
+    if (value > 11 || value < 0) {
+      this.ruleForm.deployNo = ''
+      this.$message.info('可上车数必须大于0小于11')
+    }
+  }
+
   private checkBoxChange() {
     if (this.ruleForm.deliveryWeekCycle && this.ruleForm.deliveryWeekCycle.includes('')) {
       this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(item => item.type)
@@ -705,6 +722,15 @@ export default class CreatLine extends Vue {
           ruleForm.provinceArea = ruleForm.delivery[0]
           ruleForm.cityArea = ruleForm.delivery[1]
           ruleForm.countyArea = ruleForm.delivery[2]
+        }
+        if (ruleForm.deliveryWeekCycle.indexOf('') > -1) {
+          let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
+            return ele !== ''
+          })
+          ruleForm.deliveryWeekCycle = { ...deliveryWeekCycle }
+        }
+        if (ruleForm.deliveryWeekCycle.length === 0) {
+          ruleForm.deliveryWeekCycle = ''
         }
         // alert('submit!')
         let { data } = await editLine({ ...ruleForm, ...{ lineId: this.lineId } })

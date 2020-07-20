@@ -436,24 +436,24 @@ export default class extends Vue {
         },
         options: [
           {
-            label: '专车',
-            value: '0'
+            label: '梧桐专车',
+            value: 0
           },
           {
-            label: '共享',
-            value: '1'
+            label: '梧桐共享',
+            value: 1
           }
         ]
       },
-      {
-        type: 2,
-        key: 'gmGroup',
-        label: '运营小组',
-        tagAttrs: {
-          placeholder: '请选择运营小组'
-        },
-        options: []
-      },
+      // {
+      //   type: 2,
+      //   key: 'gmGroup',
+      //   label: '运营小组',
+      //   tagAttrs: {
+      //     placeholder: '请选择运营小组'
+      //   },
+      //   options: []
+      // },
       {
         type: 2,
         key: 'gmId',
@@ -557,16 +557,20 @@ export default class extends Vue {
     private handleResetClick() {
       this.tags = []
       this.listQuery = {
-        workCity: '',
-        carrierId: '',
-        name: '',
-        phone: '',
-        carType: '',
-        busiType: '',
-        gmGroup: '',
-        gmId: '',
-        dirverName: '',
-        driverPhone: '',
+        'gmId': '',
+        'limit': '10',
+        'page': '1',
+        status: null,
+        workCity: null,
+        carrierId: null,
+        name: null,
+        phone: null,
+        carType: null,
+        busiType: null,
+        // gmGroup: null,
+        // gmId: null,
+        dirverName: null,
+        driverPhone: null,
         createDate: []
       }
     }
@@ -866,9 +870,9 @@ export default class extends Vue {
    */
   handleQuery(value:any, key:any) {
     if (key === 'time') {
-      this.listQuery[key] = []
+      this.listQuery[key] = null
     } else {
-      this.listQuery[key] = value
+      this.listQuery[key] = null
     }
     this.listQuery.status = this.listQuery.state
     this.getList(this.listQuery)
