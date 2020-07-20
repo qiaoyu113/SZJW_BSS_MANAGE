@@ -647,7 +647,6 @@ export default class extends Vue {
     @Watch('checkList', { deep: true })
     private checkListChange(val:any) {
       this.columns = this.dropdownList.filter(item => val.includes(item.label))
-      console.log(this.columns)
     }
 
     activated() {
