@@ -1018,6 +1018,8 @@ export default class CreatLine extends Vue {
   // 立即支付
   private goBill(res: any, index: any) {
     this.orderIndex = index
+    if (!res.payType) res.payType = ''
+    if (res.payImageUrl === '0') res.payImageUrl = ''
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
   }
