@@ -848,11 +848,6 @@ export default class CreatLine extends Vue {
     }
   }
 
-  @Watch('payForm', { deep: true })
-  private changePayForm(value:any) {
-    console.log(value)
-  }
-
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any) {
     if (value === '1') {

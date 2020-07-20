@@ -738,10 +738,6 @@ export default class extends Vue {
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
     }
-
-    private handleClick() {
-      console.log(this.tabVal)
-    }
 }
 </script>
 

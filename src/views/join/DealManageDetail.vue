@@ -78,7 +78,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.orderInfoVO.deliverDate | Timestamp"
+            :value="ContractDetail.orderInfoVO.passTime | Timestamp"
           />
         </el-col>
 
@@ -297,14 +297,14 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.dealTime | Timestamp"
+            :value="ContractDetail.orderInfoVO.passTime | Timestamp"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交付完成时间"
-            :value="ContractDetail.deliverDate | Timestamp"
+            :value="ContractDetail.dealTime | Timestamp"
           />
         </el-col>
       </el-row>
@@ -550,10 +550,6 @@ export default class extends Vue {
 
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
-    }
-
-    private handleClick() {
-      console.log(this.tabVal)
     }
 }
 </script>

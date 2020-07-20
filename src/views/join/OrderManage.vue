@@ -237,7 +237,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
-                    @click.native="goCreat(scope.row.orderId, true)"
+                    @click.native="goCreat(scope.row, true)"
                   >
                     提交
                   </el-dropdown-item>
@@ -592,7 +592,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 

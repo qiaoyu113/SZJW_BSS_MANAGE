@@ -790,11 +790,6 @@ export default class CreatLine extends Vue {
     }
   }
 
-  @Watch('payForm', { deep: true })
-  private changePayForm(value:any) {
-    console.log(value)
-  }
-
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any) {
     if (value === '1') {
@@ -926,7 +921,6 @@ export default class CreatLine extends Vue {
   }
   // 立即支付
   private goBill(res: any, index: any) {
-    console.log(res)
     this.orderIndex = index
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
@@ -949,7 +943,6 @@ export default class CreatLine extends Vue {
           this.payForm.status = '3'
           this.readyPay = Number(this.readyPay) + Number(this.payForm.money)
           this.ruleForm.orderPayRecordInfoFORMList[index] = Object.assign(this.ruleForm.orderPayRecordInfoFORMList[index], this.payForm)
-          console.log(this.ruleForm.orderPayRecordInfoFORMList)
           Vue.set(this.ruleForm.orderPayRecordInfoFORMList, index, this.ruleForm.orderPayRecordInfoFORMList[index])
           this.showMessageBill = false
         } else {

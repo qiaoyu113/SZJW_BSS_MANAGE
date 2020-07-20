@@ -160,6 +160,7 @@
             <template slot-scope="scope">
               {{ scope.row.bussinessPhone | DataIsNull }}
               <el-button
+                v-if="scope.row.isPhone"
                 type="text"
                 style="padding: 0 4px"
                 @click="getAllPhone(scope.row, scope.$index)"
@@ -503,7 +504,6 @@ export default class extends Vue {
 
     // 处理tags方法
     private handleTags(value: any) {
-      console.log(value)
       this.tags = value
     }
 
@@ -520,7 +520,6 @@ export default class extends Vue {
 
     // 请求列表
     private async getList(value: any) {
-      console.log(value)
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
@@ -669,7 +668,7 @@ export default class extends Vue {
       if (data.success) {
         this.list[index].bussinessPhone = data.data
       } else {
-        this.$message.error(data)
+        this.$message.error(data.errorMsg)
       }
     }
 }
