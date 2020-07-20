@@ -202,6 +202,8 @@ export default class TakePicture extends Vue {
   private myHeaders:any = { Authorization: UserModule.token }
 
   mounted() {
+    this.info = JSON.parse((this.$route.query.info) as any)
+    this.postForm = { ...this.info }
     this.postForm.lineId = this.$route.query.id
     let routeArr = this.$route.path.split('/')
     if (routeArr[2] === 'showpicture') {
@@ -209,8 +211,6 @@ export default class TakePicture extends Vue {
       this.getDetails()
     } else {
       this.isdetail = false
-      this.info = JSON.parse((this.$route.query.info) as any)
-      this.postForm = { ...this.info }
     }
   }
   /**

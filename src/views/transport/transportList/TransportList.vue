@@ -105,7 +105,7 @@
         @selection-change="handleChange"
       >
         <template v-slot:createDate="scope">
-          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+          {{ scope.row.createDate | Timestamp }}
         </template>
         <template v-slot:op="scope">
           <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
@@ -123,18 +123,6 @@
               />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <!-- <el-dropdown-item
-                v-if="[4].includes(scope.row.status)"
-                command="distribution"
-              >
-                <template v-if="isPC">
-                  分配
-                </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
-              </el-dropdown-item> -->
               <el-dropdown-item
                 command="editor"
               >
@@ -273,7 +261,7 @@ interface PageObj {
 export default class extends Vue {
     private IntentionalCompartment:any[] = []
     private type:string = ''
-    // private total = 0
+    private title:any = {}
     private managerArr:any[] = []
     private list: CargoListData[] = []
     private dropdownList:any[] = []
@@ -284,22 +272,22 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: '0',
+        name: null,
         num: '0'
       },
       {
         label: '待上岗',
-        name: '1',
+        name: 0,
         num: '0'
       },
       {
         label: '上岗',
-        name: '2',
+        name: 1,
         num: '0'
       },
       {
         label: '停用',
-        name: '3',
+        name: 2,
         num: '0'
       }
     ]
@@ -345,7 +333,7 @@ export default class extends Vue {
         label: '所属司机手机号'
       },
       {
-        key: 'gmIdName',
+        key: 'gmName',
         label: '运营经理'
       },
       {
@@ -357,7 +345,7 @@ export default class extends Vue {
         label: '创建人'
       },
       {
-        type: 'createDate',
+        key: 'createDate',
         label: '创建时间',
         slot: true
       },
@@ -379,39 +367,27 @@ export default class extends Vue {
       total: 20
     }
     private listQuery:IState = {
-      // 'busiType': '',
-      // 'carType': '',
-      // 'carrierId': '',
-      // 'driverName': '',
-      // 'driverPhone': '',
-      // 'endTime': '',
-      // 'gmGroup': '',
-      // 'gmId': '',
-      // 'limit': '',
-      // 'name': '',
-      // 'page': '',
-      // 'pageNumber': '',
-      // 'phone': '',
-      // 'startTime': '',
-      // 'status': '',
-      // 'workCoty': ''
-      // workCity: '',
-      // carrierId: '',
-      // name: '',
-      // phone: '',
-      // carType: '',
-      // busiType: '',
-      // gmGroup: '',
-      // gmId: '',
-      // dirverName: '',
-      // driverPhone: '',
-      // createDate: []
+      'gmId': '',
+      'limit': '10',
+      'page': '1',
+      status: null,
+      workCity: null,
+      carrierId: null,
+      name: null,
+      phone: null,
+      carType: null,
+      busiType: null,
+      // gmGroup: null,
+      // gmId: null,
+      dirverName: null,
+      driverPhone: null,
+      createDate: []
     }
 
     private formItem:any[] = [
       {
         type: 2,
-        key: 'workCoty',
+        key: 'workCity',
         label: '工作城市',
         tagAttrs: {
           placeholder: '请选择工作城市'
@@ -507,7 +483,7 @@ export default class extends Vue {
       },
       {
         type: 3,
-        key: 'startTime',
+        key: 'createDate',
         label: '创建时间',
         col: 12,
         tagAttrs: {
@@ -709,7 +685,7 @@ export default class extends Vue {
           return { value: ele.code, label: ele.name }
         })
         this.formItem.map(ele => {
-          if (ele.key === 'workCoty') {
+          if (ele.key === 'workCity') {
             ele.options = arr
           }
         })
@@ -894,6 +870,7 @@ export default class extends Vue {
     } else {
       this.listQuery[key] = value
     }
+    this.listQuery.status = this.listQuery.state
     this.getList(this.listQuery)
   }
 
@@ -905,28 +882,26 @@ export default class extends Vue {
     const { data } = await getCarrierInfoList(this.listQuery)
     if (data.success) {
       this.tableData = data.data
+      this.title = data.title
       data.page = await HandlePages(data.page)
       this.page.total = data.page.total
       this.tab.map(ele => {
-        // switch (ele.label) {
-        //   case '全部':
-        //     ele.num = this.title.all
-        //     break
-        //   case '上岗':
-        //     ele.num = this.title.waitShelvesNum
-        //     break
-        //   case '待上岗':
-        //     ele.num = this.title.isShelvesNum
-        //     break
-        //   case '已售罄':
-        //     ele.num = this.title.soldNum
-        //     break
-        //   case '停用':
-        //     ele.num = this.title.noShelvesNum
-        //     break
-        //   default:
-        //     break
-        // }
+        switch (ele.label) {
+          case '全部':
+            ele.num = this.title.all
+            break
+          case '上岗':
+            ele.num = this.title['1']
+            break
+          case '待上岗':
+            ele.num = this.title['0']
+            break
+          case '停用':
+            ele.num = this.title['2']
+            break
+          default:
+            break
+        }
       })
       setTimeout(() => {
         this.listLoading = false
