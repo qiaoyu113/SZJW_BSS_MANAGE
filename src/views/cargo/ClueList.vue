@@ -28,6 +28,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           name="cluelist_creat_btn"
@@ -37,6 +38,7 @@
           <span v-if="isPC">新增线索</span>
         </el-button>
         <el-button
+          size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           name="cluelist_creat_btn"
@@ -51,6 +53,7 @@
           trigger="click"
         >
           <el-button
+            size="small"
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
           >

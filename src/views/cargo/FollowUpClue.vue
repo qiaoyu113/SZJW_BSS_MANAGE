@@ -41,10 +41,12 @@
               }"
             >
               <div
-                v-if="index === 0"
+                v-if="index === 0 && ruleForm.lineClueDemandForms.length < 4"
                 class="mb10"
               >
-                <el-button @click="addCar">
+                <el-button
+                  @click="addCar"
+                >
                   添加+
                 </el-button>
               </div>
@@ -104,7 +106,10 @@
           align="middle"
         >
           <el-col :span="12">
-            <el-button @click="addFollow">
+            <el-button
+              v-if="ruleForm.lineClueFollowForms.length < 10"
+              @click="addFollow"
+            >
               添加跟进记录
             </el-button>
           </el-col>
