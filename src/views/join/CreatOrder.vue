@@ -470,7 +470,7 @@
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
       >
-        立即创建
+        提交
       </el-button>
       <el-button
         name="CreatLine-btn-creat"
@@ -1100,6 +1100,7 @@ export default class CreatLine extends Vue {
         this.ruleForm.driverInfoFORM.phone = i.detail.phone
         this.ruleForm.driverInfoFORM.workCity = i.detail.workCity
         this.ruleForm.driverInfoFORM.workCityName = i.detail.workCityName
+        this.ruleForm.driverInfoFORM.idNo = i.detail.idNo
         this.ruleForm.driverInfoFORM.driverId = driverId
       }
     })

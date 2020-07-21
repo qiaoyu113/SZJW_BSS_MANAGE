@@ -275,9 +275,9 @@
       @changeDrawer="changeDrawer"
     >
       <template slot-scope="slotProp">
-        <span>{{ slotProp.item.creater }}</span>
-        <span>{{ slotProp.item.clientPhone }}</span>
-        <span>{{ slotProp.item.city }}</span>
+        <span>{{ slotProp.item.bussinessName }}</span>
+        <span>{{ slotProp.item.bussinessPhone }}</span>
+        <span>{{ slotProp.item.cityName }}</span>
       </template>
     </PitchBox>
 
@@ -302,7 +302,6 @@
         height="38vh"
         style="width: 100%;"
         align="left"
-        row-key="saleId"
       >
         <el-table-column
           type="selection"
@@ -313,7 +312,8 @@
           <template slot-scope="scope">
             <el-radio
               v-model="templateRadio"
-              :label="scope.row.messageTemplateId"
+              class="redio-label"
+              :label="scope.row.saleId"
               @change.native="handleSelectionDialog(scope.row.saleId)"
             />
           </template>
@@ -394,7 +394,7 @@ interface IState {
   }
 })
 export default class extends Vue {
-    private showDialog: Object= {
+    private showDialog: any = {
       visible: false,
       title: '提示',
       text: '内容',
@@ -494,7 +494,7 @@ export default class extends Vue {
     }
     // 确认清除
     private confirm(done:any) {
-      if (this.showDialog[name] === '1') {
+      if (this.showDialog.name === '1') {
         (this.$refs.multipleTable as any).clearSelection()
         this.multipleSelection = []
       } else {
@@ -553,8 +553,8 @@ export default class extends Vue {
       this.dialogLoading = true
       const { data } = await GetCustomerSaleList(this.dialogListQuery)
       if (data.success) {
-        this.dialogList = data.data
-        this.dialogTotal = data.page ? data.page.total : data.data.length
+        this.dialogList = data.data.list
+        this.dialogTotal = data.data.pages ? data.data.total : data.data.list.length
       } else {
         this.$message.error(data)
       }
@@ -678,7 +678,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .OwnerList {
   padding: 15px;
   padding-bottom: 0;
@@ -782,5 +782,11 @@ export default class extends Vue {
 
 .el-form-item__label {
   color: #999999;
+}
+
+.redio-label{
+  .el-radio__label{
+    display: none;
+  }
 }
 </style>
