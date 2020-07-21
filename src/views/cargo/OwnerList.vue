@@ -447,7 +447,6 @@ export default class extends Vue {
       startDate: '',
       state: '',
       lineSaleId: '',
-
       bussinessName: '',
       bussinessPhone: '',
       classification: '',
