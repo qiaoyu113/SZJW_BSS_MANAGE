@@ -532,7 +532,6 @@ export default class LineManage extends Vue {
     {
       type: 1,
       label: '线路名称',
-      w: '140px',
       key: 'lineName',
       tagAttrs: {
         placeholder: '请输入线路名称'
@@ -541,7 +540,6 @@ export default class LineManage extends Vue {
     {
       type: 1,
       label: '线路编号',
-      w: '140px',
       key: 'lineId',
       tagAttrs: {
         placeholder: '请输入线路编号'
@@ -610,7 +608,9 @@ export default class LineManage extends Vue {
     houseAddress: [],
     returnWarehouse: '',
     time: [],
-    jobTime: []
+    jobTime: [],
+    jobStartDate: '',
+    jobEndDate: ''
   };
   private showPutDio:boolean = false
   private showGetDio:boolean = false
@@ -794,7 +794,9 @@ export default class LineManage extends Vue {
       houseAddress: [],
       returnWarehouse: '',
       time: [],
-      jobTime: []
+      jobTime: [],
+      jobStartDate: '',
+      jobEndDate: ''
     }
   }
   /**
@@ -802,6 +804,7 @@ export default class LineManage extends Vue {
    */
   handleFilterClick() {
     let blackLists = ['shelvesState']
+    this.tags = []
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
@@ -896,8 +899,9 @@ export default class LineManage extends Vue {
       this.listQuery.shelvesState && (params.shelvesState = this.listQuery.shelvesState)
       if (this.listQuery.time.length > 0) {
         params.startDate = this.listQuery.time[0]
-        params.endDate = this.listQuery.time[1]
+        params.endDate = this.listQuery.time[1] + 86399999
       }
+      console.log(this.listQuery.jobTime)
       if (this.listQuery.jobTime.length > 0) {
         params.jobStartDate = this.listQuery.time[0]
         params.jobEndDate = this.listQuery.time[1]

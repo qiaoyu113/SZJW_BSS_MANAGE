@@ -536,6 +536,7 @@ export default class extends Vue {
    * 查询
    */
     private handleQueryClick() {
+      this.tags = []
       let blackLists = ['state']
       for (let key in this.listQuery) {
         if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {

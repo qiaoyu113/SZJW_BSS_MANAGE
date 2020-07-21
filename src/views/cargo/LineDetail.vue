@@ -484,7 +484,9 @@ export default class extends Vue {
         if (checkList.length === 7) {
           this.checkList.push('')
         } else {
-          this.checkList = this.ruleForm.deliveryWeekCycle.split(',')
+          this.checkList = this.ruleForm.deliveryWeekCycle.map(function(ele:any) {
+            return +ele
+          })
         }
       } else {
         this.checkList = []

@@ -727,7 +727,9 @@ export default class CreatLine extends Vue {
           let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
             return ele !== ''
           })
-          ruleForm.deliveryWeekCycle = { ...deliveryWeekCycle }
+          ruleForm.deliveryWeekCycle = deliveryWeekCycle.join(',')
+        } else {
+          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(',')
         }
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
@@ -787,7 +789,9 @@ export default class CreatLine extends Vue {
           let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
             return ele !== ''
           })
-          ruleForm.deliveryWeekCycle = { ...deliveryWeekCycle }
+          ruleForm.deliveryWeekCycle = deliveryWeekCycle.join(',')
+        } else {
+          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(',')
         }
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
@@ -930,6 +934,16 @@ export default class CreatLine extends Vue {
       this.ruleForm.delivery.push(this.ruleForm.provinceArea + '')
       this.ruleForm.delivery.push(this.ruleForm.cityArea + '')
       this.ruleForm.delivery.push(this.ruleForm.countyArea + '')
+
+      if (this.ruleForm.deliveryWeekCycle === '') {
+        this.ruleForm.deliveryWeekCycle = []
+      } else {
+        if (this.ruleForm.deliveryWeekCycle.length === 7) {
+          this.ruleForm.deliveryWeekCycle = [0]
+        } else {
+          this.ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.split(',')
+        }
+      }
 
       setTimeout(() => {
         for (let i = 0; i < Number(allParams.dayNo); i++) {
