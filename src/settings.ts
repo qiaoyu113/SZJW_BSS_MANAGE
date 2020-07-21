@@ -14,7 +14,7 @@ interface ISettings {
 
 // You can customize below settings :)
 const settings: ISettings = {
-  title: '云鸟科技有限公司',
+  title: '云鸟梧桐综合业务支撑平台',
   showSettings: true,
   showTagsView: true,
   fixedHeader: true,

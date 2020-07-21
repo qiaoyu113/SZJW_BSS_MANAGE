@@ -81,6 +81,40 @@
       <br>
       <social-sign />
     </el-dialog>
+    <Dialog
+      :visible.sync="assignShowDialog"
+      :title="`该账号密码不安全，请重新设置`"
+      :confirm="confirm"
+    >
+      <el-row>
+        <el-form
+          ref="reCreatRule"
+          :model="reCreat"
+          :rules="rules"
+          :label-width="isPC ? '120px' : '30%'"
+          class="refundForm"
+        >
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="密码设置">
+              <el-input
+                v-model="reCreat.orderId"
+                placeholder="请输入密码"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="确认密码">
+              <el-input
+                v-model="reCreat.orderIds"
+                placeholder="请再次输入密码"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+    </Dialog>
   </div>
 </template>
 
@@ -103,6 +137,9 @@ import { SettingsModule } from '@/store/modules/settings'
   }
 })
 export default class extends Vue {
+  private assignShowDialog = false
+  private reCreat: any[] = []
+  private rules: any[] = []
   private validateUsername = (rule: any, value: string, callback: Function) => {
     if (!isValidUsername(value)) {
       callback(new Error('请输入账号'))
@@ -118,8 +155,8 @@ export default class extends Vue {
     }
   }
   private loginForm = {
-    username: 'admin',
-    password: '123456'
+    username: '',
+    password: ''
   }
   private loginRules = {
     username: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -196,6 +233,10 @@ export default class extends Vue {
       }
       return acc
     }, {} as Dictionary<string>)
+  }
+
+  private confirm() {
+
   }
 }
 </script>
@@ -447,7 +488,7 @@ $color: #2194E0;
   .logo{
     width: 100%;
     height: 28vh;
-    background: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/95ee944cbce04d6e99797887254618b7')no-repeat;
+    background: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/a6ce085a5d6e425295ab487097e9cd3a')no-repeat;
     -webkit-background-size: cover;
     background-size: cover;
     overflow: hidden;
