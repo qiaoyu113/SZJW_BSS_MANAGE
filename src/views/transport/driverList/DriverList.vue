@@ -345,7 +345,8 @@ export default class extends Vue {
       key: 'driverId',
       label: '司机编号',
       tagAttrs: {
-        placeholder: '请输入司机编号'
+        placeholder: '请输入司机编号',
+        maxlength: 32
       }
     },
     {
@@ -353,7 +354,8 @@ export default class extends Vue {
       key: 'name',
       label: '姓名',
       tagAttrs: {
-        placeholder: '请输入姓名'
+        placeholder: '请输入姓名',
+        maxlength: 10
       }
     },
     {
@@ -361,7 +363,8 @@ export default class extends Vue {
       key: 'phone',
       label: '手机号',
       tagAttrs: {
-        placeholder: '请输入手机号'
+        placeholder: '请输入手机号',
+        maxlength: 11
       }
     },
     {

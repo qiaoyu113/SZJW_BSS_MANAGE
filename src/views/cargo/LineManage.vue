@@ -959,7 +959,7 @@ export default class LineManage extends Vue {
         this.$router.push({ path: 'lineaudit', query: { id: row.lineId } })
         break
       case 'take':
-        this.$router.push({ path: 'takepicture', query: { lineSaleId: row.lineSaleId, lineId: row.lineId } })
+        this.$router.push({ path: 'takepicture', query: { lineId: row.lineId } })
         break
       case 'showtender':
         this.$router.push({ path: 'showtender', query: { id: row.lineId } })

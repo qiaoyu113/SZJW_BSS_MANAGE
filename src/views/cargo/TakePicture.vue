@@ -205,7 +205,6 @@ export default class TakePicture extends Vue {
   mounted() {
     this.postForm.lineId = this.$route.query.lineId || ''
     this.postForm.id = this.$route.query.id || ''
-    this.postForm.lineSaleId = this.$route.query.lineSaleId || ''
     let routeArr = this.$route.path.split('/')
     if (routeArr[2] === 'showpicture') {
       this.isdetail = true
@@ -220,9 +219,9 @@ export default class TakePicture extends Vue {
   private getImgUrl() {
     let url
     if (window.location.host === 'http://192.168.0.134/:9528') {
-      url = 'http://szjw-bss-web.m1.yunniao.cn/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
+      url = 'http://szjw-bss-web.m1.yunniao.cn/api/core/v1/upload/uploadOSS/lineImg/true/0'
     } else {
-      url = '/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
+      url = '/api/core/v1/upload/uploadOSS/lineImg/true/0'
     }
     return url
   }
@@ -288,13 +287,14 @@ export default class TakePicture extends Vue {
         cargoPlacementUrl: this.postForm.cargoPlacementUrl,
         distributionSiteUrl: this.postForm.distributionSiteUrl,
         loadingSituationUrl: this.postForm.loadingSituationUrl,
-        warehouseLoadingLocationUrl: this.postForm.warehouseLoadingLocationUrl
+        warehouseLoadingLocationUrl: this.postForm.warehouseLoadingLocationUrl,
+        lineId: this.postForm.lineId,
+        createDate: this.postForm.createDate,
+        lineSaleId: this.postForm.lineSaleId
       }
 
       if (this.postForm.id) {
         params.id = this.postForm.id // 查看线路照片
-      } else {
-        params.lineSaleId = this.postForm.lineSaleId // 拍照
       }
       let { data: res } = await SaveOrUpdatePicture(params)
       this.isloading = false

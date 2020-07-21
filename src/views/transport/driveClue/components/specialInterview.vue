@@ -16,7 +16,7 @@ import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { SpecialInterview, EditDriverInterviewEdit } from '@/api/driver'
 import { GetCityByCode, GetManagerLists, GetDictionaryList } from '@/api/common'
-import { types } from '@/utils/index'
+import { validatorNumberRange } from '@/utils/index'
 
 interface IState {
   [key: string]: any;
@@ -117,7 +117,8 @@ export default class extends Vue {
         key: 'heavyAgentName',
         label: '重代理姓名:',
         tagAttrs: {
-          placeholder: '重代理姓名'
+          placeholder: '重代理姓名',
+          maxlength: 10
         }
       },
       {
@@ -472,54 +473,6 @@ export default class extends Vue {
         ]
       }
     ]
-    /**
-   *原收入
-   */
-  private validateOriginIncomeAvg = (rule: any, value: string, callback: Function) => {
-    if (Number(value) < 0 || Number(value) > 25000) {
-      return callback(new Error('请输入0-25000之间的数字'))
-    }
-    callback()
-  }
-  /**
-   * 期望收入
-   */
-  private validateExpIncomeAvg = (rule: any, value: string, callback: Function) => {
-    if (Number(value) < 3000 || Number(value) > 25000) {
-      return callback(new Error('请输入3000-25000之间的数字'))
-    }
-    callback()
-  }
-  /**
-   *货物运输经验（月
-   */
-   private validateExperience = (rule: any, value: string, callback: Function) => {
-     if (Number(value) < 0 || Number(value) > 500) {
-       return callback(new Error('请输入0-500之间的数字'))
-     }
-     callback()
-   }
-   // 实际驾龄
-    private validateDrivingAge = (rule: any, value: string, callback: Function) => {
-      if (Number(value) < 0 || Number(value) > 500) {
-        return callback(new Error('请输入0-500之间的数字'))
-      }
-      callback()
-    }
-    // 本市居住时长
-    private validateLivingAge = (rule: any, value: string, callback: Function) => {
-      if (Number(value) < 0 || Number(value) > 730) {
-        return callback(new Error('请输入0-730之间的数字'))
-      }
-      callback()
-    }
-    // 司机年龄
-    private validAge = (rule: any, value: string, callback: Function) => {
-      if (Number(value) < 0 || Number(value) > 60) {
-        return callback(new Error('请输入0-60之间的数字'))
-      }
-      callback()
-    }
 
     private rules = {
       gmId: [
@@ -536,7 +489,7 @@ export default class extends Vue {
       ],
       age: [
         { required: true, message: '请输入年龄', trigger: 'blur' },
-        { validator: this.validAge, trigger: 'blur' }
+        { validator: validatorNumberRange(0, 60), trigger: 'blur' }
       ],
       interviewAddress: [
         { required: true, message: '请选择居住地址', trigger: 'blur' }
@@ -561,11 +514,11 @@ export default class extends Vue {
       ],
       originIncomeAvg: [
         { required: true, message: '请输入原职业月均收入', trigger: 'blur' },
-        { validator: this.validateOriginIncomeAvg, trigger: 'blur' }
+        { validator: validatorNumberRange(0, 25000), trigger: 'blur' }
       ],
       expIncomeAvg: [
         { required: true, message: '请输入期望月均净收入，去油去电', trigger: 'blur' },
-        { validator: this.validateExpIncomeAvg, trigger: 'blur' }
+        { validator: validatorNumberRange(3000, 25000), trigger: 'blur' }
       ],
       householdType: [
         { required: true, message: '请选择户籍类型', trigger: 'blur' }
@@ -581,15 +534,15 @@ export default class extends Vue {
       ],
       experience: [
         { required: true, message: '请输入', trigger: 'blur' },
-        { validator: this.validateExperience, trigger: 'blur' }
+        { validator: validatorNumberRange(0, 500), trigger: 'blur' }
       ],
       drivingAge: [
         { required: true, message: '请输入实际货车驾龄', trigger: 'blur' },
-        { validator: this.validateDrivingAge, trigger: 'blur' }
+        { validator: validatorNumberRange(0, 500), trigger: 'blur' }
       ],
       livingAge: [
         { required: true, message: '请输入本城市居住时长', trigger: 'blur' },
-        { validator: this.validateLivingAge, trigger: 'blur' }
+        { validator: validatorNumberRange(0, 730), trigger: 'blur' }
       ],
       drivingLicenceType: [
         { required: true, message: '请选择驾照类型', trigger: 'blur' }
