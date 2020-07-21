@@ -19,11 +19,15 @@
               >
                 <template slot="detail">
                   <router-link
-                    :to="{path: '/transport//orderdetail',query: {id: detailQuery.orderId}}"
+                    :to="{path: '/transport/orderdetail',query: {id: detailQuery.orderId}}"
                     class="link"
                   >
                     详情>>
                   </router-link>
+                </template>
+
+                <template v-slot:payTypeName="{row}">
+                  {{ row.payTypeName === '' ? row.orderPayRecordInfoVOList[0].payTypeName : row.payTypeName }}
                 </template>
                 <template v-slot:payCompleteTime="{row}">
                   {{ row.payCompleteTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
@@ -135,7 +139,7 @@ export default class extends Vue {
     cooperationCarName: '',
     cooperationTime: '',
     goodsAmount: '',
-    payType: '',
+    payTypeName: '',
     payCompleteTime: ''
   }
 
@@ -178,15 +182,14 @@ export default class extends Vue {
       label: '订单金额:'
     },
     {
-      type: 7,
-      key: 'payTypeName',
-      label: '支付方式:'
+      type: 'payTypeName',
+      label: '支付方式:',
+      slot: true
     },
     {
       type: 'payCompleteTime',
-      key: 'payCompleteTime',
       label: '支付时间:',
-      solt: true
+      slot: true
     },
     {
       slot: true,

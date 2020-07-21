@@ -707,11 +707,11 @@ export default class extends Vue {
     }
 
     private async submitForm(formName:any) {
+      this.fullscreenLoading = true;
       (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
         if (valid) {
           // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
           // this.ContractDetail.orderDeliverRebateFORMs[0].priceType = 1
-          this.fullscreenLoading = true
           this.ruleForm.orderId = this.ContractDetail.orderId
           this.ruleForm.driverId = this.ContractDetail.driverId
           this.ruleForm.cooperationModel = this.ContractDetail.cooperationModel
@@ -732,6 +732,7 @@ export default class extends Vue {
           }
         } else {
           console.log('error submit!!')
+          this.fullscreenLoading = false
           return false
         }
       })

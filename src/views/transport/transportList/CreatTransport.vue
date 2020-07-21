@@ -817,6 +817,7 @@ export default class extends Vue {
         }
         this.driverOptions.push(optionItem)
         this.phoneNum = driverId
+        this.getOrderList(driverId)
       }
     }
   }
