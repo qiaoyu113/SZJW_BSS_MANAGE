@@ -80,7 +80,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetOpenCityData } from '@/api/common'
+import { GetDictionaryCity } from '@/api/common'
 import { getSettingSystem, settingSystem } from '@/api/product'
 import '@/styles/common.scss'
 @Component({
@@ -168,7 +168,7 @@ export default class extends Vue {
     }
   }
   private async getDictionary() {
-    const { data } = await GetOpenCityData()
+    const { data } = await GetDictionaryCity()
     if (data.success) {
       this.optionsCity = data.data
     } else {

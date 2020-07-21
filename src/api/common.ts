@@ -34,7 +34,11 @@ export const GetOpenCityData = () => request({
   url: `${baseURL}/v1/base/office/getCurrentLowerOfficeCityData`,
   method: 'get'
 })
-
+// 获取字典城市
+export const GetDictionaryCity = () => request({
+  url: `${baseURL}/v1/base/area/getOpenCityData`,
+  method: 'get'
+})
 // 运营经理
 export const getOperManager = () =>
   request({
