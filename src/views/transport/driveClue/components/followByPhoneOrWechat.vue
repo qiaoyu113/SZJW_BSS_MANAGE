@@ -49,7 +49,9 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '跟进情况描述',
         type: 'textarea',
-        rows: 3
+        rows: 3,
+        maxlength: 100,
+        'show-word-limit': 100
       }
     }
   ]

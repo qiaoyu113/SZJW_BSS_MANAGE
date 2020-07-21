@@ -31,7 +31,7 @@ export const GetArea = (data: any) =>
 
 // 获取工作城市
 export const GetOpenCityData = () => request({
-  url: `${baseURL}/v1/base/area/getOpenCityData`,
+  url: `${baseURL}/v1/base/office/getCurrentLowerOfficeCityData`,
   method: 'get'
 })
 // 获取字典城市
@@ -81,7 +81,7 @@ export const detailCity = (data:any) =>
 // 上传文件
 export const Upload = (params: any, data: any) =>
   request({
-    url: `${baseURL}/v1/base/upload/uploadOSS/${params.folder}/${params.isEncode}/${params.expire}`,
+    url: `core/v1/upload/uploadOSS/${params.folder}/${params.isEncode}/${params.expire}`,
     method: 'post',
     data
   })

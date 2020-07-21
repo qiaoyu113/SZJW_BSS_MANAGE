@@ -552,14 +552,14 @@
               <el-upload
                 class="avatar-uploader"
                 :show-file-list="false"
-                action="/api/base/v1/upload/uploadOSS/img/true/-1"
+                action="/api/core/v1/upload/uploadOSS/img/true/-1"
                 :before-upload="beforeAvatarUpload"
                 :on-change="handleChange"
                 :auto-upload="false"
                 :data="ruleForm"
               >
                 <img
-                  v-if="payForm.payImageUrl"
+                  v-if="payForm.payImageUrl && payForm.payImageUrl !== '0'"
                   :src="payForm.payImageUrl"
                   style="width:100%;"
                 >
@@ -589,7 +589,7 @@
               prop="remarks"
             >
               <el-input
-                v-model="ruleForm.remarks"
+                v-model="payForm.remarks"
                 type="textarea"
               />
             </el-form-item>
@@ -968,7 +968,6 @@ export default class CreatLine extends Vue {
       this.ruleForm = Object.assign(this.ruleForm, datas)
       this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
       this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
-      this.ruleForm.cooperationCar = this.ruleForm.cooperationCar.toString()
       this.orderPrice = this.ruleForm.goodsAmount
       let notReadPay = 0
       this.ruleForm.orderPayRecordInfoFORMList.forEach((i: any) => {
@@ -983,6 +982,8 @@ export default class CreatLine extends Vue {
       }, 100)
       this.ruleForm.busiType = this.ruleForm.busiType.toString()
       this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
+      // this.ruleForm.carModel = this.ruleForm.carModel.toString()
+      // this.ruleForm.cooperationCar = this.ruleForm.cooperationCar.toString()
     } else {
       this.$message.error(data)
     }
@@ -998,7 +999,8 @@ export default class CreatLine extends Vue {
         this.ruleForm.orderPayRecordInfoFORMList.push(
           {
             money: Number(this.payNumber).toFixed(2).toString(),
-            status: '1'
+            status: '1',
+            payImageUrl: '0'
           }
         )
         this.payNumber = ''
@@ -1020,9 +1022,11 @@ export default class CreatLine extends Vue {
   }
   // 立即支付
   private goBill(res: any, index: any) {
+    console.log(res)
     this.orderIndex = index
     if (!res.payType) res.payType = ''
-    if (res.payImageUrl === '0') res.payImageUrl = ''
+    if (!res.payImageUrl) res.payImageUrl = '0'
+    // if (res.payImageUrl === '0') res.payImageUrl = ''
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
   }

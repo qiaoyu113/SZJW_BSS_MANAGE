@@ -253,4 +253,18 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
 
 export const phoneReg = /^[1][3-9][0-9]{9}$/
 
-export const types = []
+
+/**
+ * 表单数字范围校验
+ * @param {number} min
+ * @param {number} max
+ * @returns {(rule: any, value: string, callback: Function) => any}
+ */
+export function validatorNumberRange(min:number, max:number) {
+  return function(rule: any, value: string, callback: Function) {
+    if (Number(value) < min || Number(value) > max) {
+      return callback(new Error(`请输入${min}-${max}之间的数字`))
+    }
+    callback()
+  }
+}
