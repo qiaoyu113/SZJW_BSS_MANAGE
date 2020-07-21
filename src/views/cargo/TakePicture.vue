@@ -160,6 +160,7 @@ import { UserModule } from '@/store/modules/user'
 })
 export default class TakePicture extends Vue {
   private isdetail:boolean = false
+  private info:any = {}
   private postForm:any = {
     id: '',
     lineId: '',
@@ -201,14 +202,16 @@ export default class TakePicture extends Vue {
   private myHeaders:any = { Authorization: UserModule.token }
 
   mounted() {
+    this.info = JSON.parse((this.$route.query.info) as any)
+    this.postForm = { ...this.info }
     this.postForm.lineId = this.$route.query.id
     let routeArr = this.$route.path.split('/')
     if (routeArr[2] === 'showpicture') {
       this.isdetail = true
+      this.getDetails()
     } else {
       this.isdetail = false
     }
-    this.getDetails()
   }
   /**
    *获取上传路径

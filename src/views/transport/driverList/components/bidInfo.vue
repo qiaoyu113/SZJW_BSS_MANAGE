@@ -1,33 +1,38 @@
 <template>
   <div class="bidInfo">
-    <dl
-      v-for="item in lists"
-      :key="item.code"
-    >
-      <dt class="title">
-        标书编号:{{ item.code }}
-      </dt>
-      <dd>
-        <self-form
-          class="base"
-          :list-query="item"
-          :form-item="formItem"
-          label-width="80px"
-        >
-          <template v-slot:c="{row}">
-            {{ row.c | Timestamp }}
-          </template>
-          <template slot="detail">
-            <router-link
-              :to="{path: '/'}"
-              class="link"
-            >
-              详情>>
-            </router-link>
-          </template>
-        </self-form>
-      </dd>
-    </dl>
+    <template v-if="lists.length > 0">
+      <dl
+        v-for="item in lists"
+        :key="item.code"
+      >
+        <dt class="title">
+          标书编号:{{ item.code }}
+        </dt>
+        <dd>
+          <self-form
+            class="base"
+            :list-query="item"
+            :form-item="formItem"
+            label-width="80px"
+          >
+            <template v-slot:c="{row}">
+              {{ row.c | Timestamp }}
+            </template>
+            <template slot="detail">
+              <router-link
+                :to="{path: '/'}"
+                class="link"
+              >
+                详情>>
+              </router-link>
+            </template>
+          </self-form>
+        </dd>
+      </dl>
+    </template>
+    <div v-else>
+      <span class="noData">暂无数据</span>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -64,6 +69,12 @@ export default class extends Vue {
         color: #649CEE;
         font-weight:bold;
       }
+    }
+    .noData {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height:100px;
     }
   }
 </style>

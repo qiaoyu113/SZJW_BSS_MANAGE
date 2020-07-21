@@ -15,7 +15,61 @@ export const GetDriverList = (data: any) =>
     data
   })
 
-// 线路详情
+// 线索列表
+export const GetClueList = (data: any) =>
+  request({
+    url: `/line_center/v1/line/clue/queryLineClueList`,
+    method: 'post',
+    data
+  })
+// 根据当前登陆人,获取所分配的销售列表,统计货主线索
+export const GetSaleList = () =>
+  request({
+    url: `${ptrfix}/v1/line/clue/saleList`,
+    method: 'get'
+  })
+// 批量分配销售
+export const Distribution = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/distribution`,
+    method: 'post',
+    data
+  })
+// 无效货主线索 & 点击有效不允许调用
+export const ExpiredClue = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/expiredClue`,
+    method: 'post',
+    data
+  })
+// 根据货主线索ID查询详细内容
+export const GetLineClueDetail = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/lineClueInfo`,
+    method: 'get',
+    params
+  })
+// 新增货主线索信息
+export const SaveLineClue = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/save`,
+    method: 'post',
+    data
+  })
+// 货主线索进行编辑
+export const EditLineClue = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/lineClueEdit`,
+    method: 'put',
+    data
+  })
+// 是否继续跟进
+export const IsFollowClue = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/followClue`,
+    method: 'post',
+    data
+  })
 export const GetLineDetail = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/detail`,
@@ -23,6 +77,54 @@ export const GetLineDetail = (params: any) =>
     params
   })
 
+// 货主线索编辑为有效线索
+export const ActivationClue = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/activationClue`,
+    method: 'get',
+    params
+  })
+// 转化货主
+export const TransformCustomer = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/customer/transformCustomer`,
+    method: 'post',
+    data
+  })
+// 货主详情
+export const GetCustomerDetails = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/customer/onlyCustomerInfo`,
+    method: 'get',
+    params
+  })
+// 货主编辑
+export const EditCustomer = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/customer/edit`,
+    method: 'post',
+    data
+  })
+// 获取手机号
+export const GetPhone = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/getPhone`,
+    method: 'get',
+    params
+  })
+// 获取手机号2
+export const ShowPhone = (params: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/showPhone`,
+    method: 'get',
+    params
+  })
+// 查询当前用户所拥有的地市
+export const GetCustomerOff = () =>
+  request({
+    url: `/base/v1/base/office/getCurrentLowerOfficeCityData`,
+    method: 'get'
+  })
 // 创建线路提交
 export const createLine = (data: any) =>
   request({
@@ -69,7 +171,7 @@ export const manualDeactivate = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/manualDeactivate`,
     method: 'post',
-    data
+    params: data
   })
 
 // 线路上架
@@ -84,14 +186,14 @@ export const mountGuard = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/mountGuard`,
     method: 'post',
-    data
+    params: data
   })
 // 线路下架
 export const shelveLine = (data: any) =>
   request({
     url: `${ptrfix}/v1/line/shelveLine`,
     method: 'post',
-    data
+    params: data
   })
 
 // 线路列表
@@ -137,6 +239,30 @@ export const customerCheckNames = (data: any) =>
     data
   })
 
+// 线索模版导入记录列表
+export const importInfoList = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/importInfoList`,
+    method: 'post',
+    data
+  })
+// 线索模版导入详细记录列表
+export const importDetailList = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/importDetailList`,
+    method: 'post',
+    data
+  })
+// 批量导入货主线索列表—— 展示消息_此次操作信息会在导入详细列表展示
+export const fileUpload = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/clue/importLineClue`,
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data
+  })
 // 货主手机号查询
 export const GetFindBusinessPhone = (params: any) =>
   request({

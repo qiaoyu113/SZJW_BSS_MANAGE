@@ -85,7 +85,8 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '请输入姓名'
+        placeholder: '请输入姓名',
+        maxlength: 10
       },
       label: '姓名',
       key: 'name'
@@ -101,7 +102,8 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '请输入微信'
+        placeholder: '请输入微信',
+        maxlength: 20
       },
       label: '微信',
       key: 'wechatNo'
@@ -172,20 +174,20 @@ export default class extends Vue {
       { required: true, message: '请输入电话', trigger: 'blur' },
       { validator: this.validatePhone, trigger: 'blur' }
     ],
-    wechat: [
-      { required: true, message: '请输入微信', trigger: 'blur' }
+    wechatNo: [
+      { required: false, message: '请输入微信', trigger: 'blur' }
+    ],
+    workCity: [
+      { required: true, message: '请选择工作城市', trigger: 'change' }
     ],
     carType: [
       { required: true, message: '请选择车型', trigger: 'change' }
     ],
-    channel: [
+    sourceChannel: [
       { required: true, message: '请选择来源渠道', trigger: 'change' }
     ],
-    city: [
-      { required: true, message: '请选择工作城市', trigger: 'change' }
-    ],
-    followPerson: [
-      { required: true, message: '请选择跟进人', trigger: 'change' }
+    busiType: [
+      { required: true, message: '请选择业务线', trigger: 'change' }
     ]
   }
   get isPC() {
@@ -272,7 +274,7 @@ export default class extends Vue {
    *取消按钮
    */
   handleCancelClick() {
-
+    this.$router.go(-1)
   }
 
   /**

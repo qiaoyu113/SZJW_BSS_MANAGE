@@ -20,6 +20,7 @@
       >
         <el-button
           type="primary"
+          size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="goCreateUser"
         >
@@ -33,6 +34,7 @@
           <el-button
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
+            size="small"
           >
             <i class="el-icon-s-operation" />
             <span v-if="isPC">筛选</span>
@@ -77,22 +79,25 @@
           />
           <el-table-column
             v-if="checkList.includes('手机')"
+            :key="checkList.length + 'mobile'"
             prop="mobile"
             label="手机"
           />
           <el-table-column
             v-if="checkList.includes('角色')"
+            :key="checkList.length + 'roleName'"
             prop="roleName"
             label="角色"
           />
           <el-table-column
             v-if="checkList.includes('组织')"
+            :key="checkList.length + 'officeName'"
             prop="officeName"
             label="组织"
           />
           <el-table-column
             v-if="checkList.includes('操作')"
-            :key="checkList.length"
+            :key="checkList.length + 'right'"
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
@@ -156,6 +161,7 @@ import { UserListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import { getUserList, enableOrDisable, resetPassword } from '@/api/system'
+import { HandlePages } from '@/utils/index'
 
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -198,6 +204,13 @@ export default class extends Vue {
   private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
+  // Watch
+  @Watch('checkList', { deep: true })
+  private onval(value: any) {
+    this.$nextTick(() => {
+      ((this.$refs['multipleTable']) as any).doLayout()
+    })
+  }
   // 计算属性
   get isPC() {
     return SettingsModule.isPC
@@ -227,6 +240,7 @@ export default class extends Vue {
     const { data } = await getUserList(this.listQuery)
     if (data.success) {
       this.list = data.data
+      data.page = await HandlePages(data.page)
       this.total = data.page.total
     } else {
       this.$message.error(data)

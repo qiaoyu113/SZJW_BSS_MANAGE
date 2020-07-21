@@ -159,6 +159,7 @@ import { GetOpenCityData, GetManagerLists, GetDictionaryList } from '@/api/commo
 import { phoneReg } from '@/utils/index.ts'
 import SpecialInterview from './components/specialInterview.vue'
 import ShareInterview from './components/shareInterview.vue'
+import { delayTime } from '@/settings'
 
 interface IState {
   [key: string]: any;
@@ -244,6 +245,9 @@ export default class extends Vue {
     ],
     carType: [
       { required: true, message: '请选择车型', trigger: 'change' }
+    ],
+    busiType: [
+      { required: true, message: '请选择业务类型', trigger: 'change' }
     ]
   }
 
@@ -253,10 +257,31 @@ export default class extends Vue {
   }
 
   mounted() {
-    this.listQuery.clueId = (this.$route as any).query.id
     this.getBaseInfo()
     this.getOpenCitys()
-    this.getClueDetailByClueId()
+    this.listQuery.clueId = (this.$route as any).query.id
+    if (this.listQuery.clueId) {
+      this.getClueDetailByClueId()
+    } else {
+      this.formItem.push({
+        type: 2,
+        tagAttrs: {
+          placeholder: '请选择业务线'
+        },
+        label: '业务线',
+        key: 'busiType',
+        options: [
+          {
+            label: '专车',
+            value: 0
+          },
+          {
+            label: '共享',
+            value: 1
+          }
+        ]
+      })
+    }
   }
 
   /**
@@ -274,7 +299,7 @@ export default class extends Vue {
         this.listQuery.workCity = res.data.workCity + ''
         this.listQuery.carType = res.data.carType + ''
         this.listQuery.busiType = res.data.busiType
-        if (res.data.existInterviewDate) {
+        if (res.data.existInterviewData) {
           this.getEditDetail()
         }
       }
@@ -391,15 +416,19 @@ export default class extends Vue {
    *完成按钮
    */
   handleFinishClick() {
-    this.$router.push({
-      path: '/transport/driverclue'
-    })
+    setTimeout(() => {
+      this.$router.push({
+        path: '/transport/driverclue'
+      })
+    }, delayTime)
   }
   /**
    *直接创建订单
    */
   handleCreateOeder() {
-
+    this.$router.push({
+      path: '/join/creatorder'
+    })
   }
 }
 </script>

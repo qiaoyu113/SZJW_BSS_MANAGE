@@ -20,11 +20,12 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { ClueDispatch } from '@/api/driver'
 import { GetManagerLists } from '@/api/common'
+import { delayTime } from '@/settings'
 interface IState {
   [key: string]: any;
 }
@@ -113,12 +114,19 @@ export default class extends Vue {
       let { data: res } = await ClueDispatch(params)
       if (res.success) {
         this.showAlert = false
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.handleRefresh()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`confirm fail:${err}`)
     }
+  }
+  @Emit('onRefresh')
+  handleRefresh() {
   }
 }
 </script>

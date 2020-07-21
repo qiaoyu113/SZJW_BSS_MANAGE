@@ -87,7 +87,7 @@
             v-else-if="item.type ===6"
             v-model="listQuery[item.key]"
             type="date"
-
+            value-format="timestamp"
             placeholder="选择日期"
             v-on="item.listeners"
           />
@@ -109,6 +109,20 @@
             v-model="listQuery[item.key]"
             type="datetime"
             placeholder="选择日期"
+            value-format="timestamp"
+            v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
+          />
+          <el-time-picker
+            v-else-if="item.type ===10"
+            v-model="listQuery[item.key]"
+            is-range
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围"
+            value-format="timestamp"
+            v-bind="item.tagAttrs || {}"
             v-on="item.listeners"
           />
           <slot

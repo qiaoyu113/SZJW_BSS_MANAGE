@@ -102,7 +102,7 @@
             当前跟进人
           </p>
           <p class="text">
-            {{ baseForm.gmInfo | DataIsNull }}
+            {{ baseForm.gmName | DataIsNull }}
           </p>
         </el-col>
       </el-row>
@@ -206,7 +206,7 @@
     </el-card>
     <!-- 面试表 -->
     <interview-card
-      :is-add="!baseForm.existInterviewDate"
+      :is-add="!baseForm.existInterviewData"
       :obj="interviewObj"
       @onBtn="handleBtnClick"
     />
@@ -256,7 +256,7 @@ export default class extends Vue {
     busiType: '',
     gmInfo: '',
     statusName: '',
-    existInterviewDate: false
+    existInterviewData: false
   }
   private interviewObj:any = {}
   // 判断是否是PC
@@ -283,6 +283,7 @@ export default class extends Vue {
       let { data: res } = await GetInterviewDetail(params)
       if (res.success) {
         this.interviewObj = res.data
+        this.interviewObj.busiType = this.baseForm.busiType
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -301,7 +302,7 @@ export default class extends Vue {
       let { data: res } = await GetClueDetailByClueId(params)
       if (res.success) {
         this.baseForm = { ...this.baseForm, ...res.data }
-        if (this.baseForm.existInterviewDate) {
+        if (this.baseForm.existInterviewData) {
           this.getInterviewInfo()
         }
       }

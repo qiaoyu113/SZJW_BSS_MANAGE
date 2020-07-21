@@ -1,6 +1,6 @@
 <template>
   <div class="accountInfo">
-    <dl>
+    <dl v-if="Object.keys(listQuery).length > 0">
       <dt>{{ listQuery.name }}</dt>
       <dd>
         <el-row :class="isPC ? 'flex' :''">
@@ -44,6 +44,9 @@
         </el-row>
       </dd>
     </dl>
+    <div v-else>
+      <span class="noData">暂无数据</span>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -142,6 +145,12 @@ export default class extends Vue {
         display: flex;
         align-items: center;
       }
+    }
+    .noData {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height:100px;
     }
   }
 </style>

@@ -150,36 +150,9 @@ export default class extends Vue {
   private orderLists = []
 
   private transportLists = []
-  private bidLists = [
-    {
-      code: '202007091001',
-      a: '穆家祥',
-      b: '吴江体育用品',
-      c: Date.now(),
-      d: '202007091001',
-      e: '吴江体育用品'
-    },
-    {
-      code: '202007091002',
-      a: '穆家祥',
-      b: '吴江体育用品',
-      c: Date.now(),
-      d: '202007091002',
-      e: '吴江体育用品'
-    }
-  ]
+  private bidLists = []
 
-  private accountObj = {
-    name: '穆家祥',
-    a: '20200709313331',
-    b: '15021578502',
-    c: '北京市',
-    d: '4.2米厢货',
-    e: '共享一组、专车二组',
-    f: 100000,
-    g: 100,
-    h: 200000
-  }
+  private accountObj = {}
 
   private baseObj = {}
 

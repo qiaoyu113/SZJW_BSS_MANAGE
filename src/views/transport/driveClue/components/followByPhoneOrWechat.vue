@@ -99,6 +99,8 @@ export default class extends Vue {
         this.showAlert = false
         this.$message.success(`操作成功`)
         this.getRecord()
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`confirm fail:${err}`)
