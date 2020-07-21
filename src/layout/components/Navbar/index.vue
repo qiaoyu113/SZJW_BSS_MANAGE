@@ -21,13 +21,13 @@
         >
           <setting class="right-menu-item hover-effect" />
         </el-tooltip>
-        <el-tooltip
+        <!-- <el-tooltip
           :content="$t('navbar.down')"
           effect="dark"
           placement="bottom"
         >
           <down-tool class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
         <!-- <el-tooltip
           :content="$t('navbar.open')"
           effect="dark"
