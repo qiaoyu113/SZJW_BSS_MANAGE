@@ -327,7 +327,8 @@ $light_gray:#eee;
 .login-container {
   width: 100%;
   height: 100vh;
-  background: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/c95533048fda4b14bd5d69350917ae18')no-repeat;
+  background: $bg4;
+  background: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/95ee944cbce04d6e99797887254618b7')no-repeat;
   background-size: 100% 100%;
   -webkit-background-size: cover;
   background-size: cover;
