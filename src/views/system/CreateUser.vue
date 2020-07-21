@@ -7,7 +7,7 @@
       ref="ruleForm"
       :model="ruleForm"
       :rules="rules"
-      :label-width="isPC ? '160px' : '80px'"
+      :label-width="isPC ? '100px' : '80px'"
     >
       <SectionContainer :title="isEdit ? '编辑账号' : '创建账号'">
         <el-row>
@@ -66,10 +66,12 @@
                 ref="cascaderOff"
                 v-model="officeList"
                 :options="optionsOffice"
+                :show-all-levels="false"
                 :props="{
                   label: 'name',
                   value: 'id',
-                  children: 'officeVOs'
+                  children: 'officeVOs',
+                  checkStrictly: true
                 }"
                 clearable
                 @change="handleChange"
@@ -295,7 +297,7 @@ export default class extends Vue {
     if (data.success) {
       const tree = this.traverseTree(data.data)
       this.optionsOffice = tree.data
-      this.officeList = tree.arr.map(item => Number(item))
+      this.officeList = tree.arr.slice().pop()
     } else {
       this.$message.error(data)
     }
