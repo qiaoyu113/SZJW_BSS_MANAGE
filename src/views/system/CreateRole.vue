@@ -147,23 +147,23 @@ export default class extends Vue {
   private scopeList: any = [
     {
       dictValue: 4,
-      dictLabel: '个人'
+      dictLabel: '个人数据'
     },
     {
       dictValue: 3,
-      dictLabel: '小组'
+      dictLabel: '小组数据'
     },
     {
       dictValue: 2,
-      dictLabel: '城市'
+      dictLabel: '城市数据'
     },
     {
       dictValue: 1,
-      dictLabel: '大区'
+      dictLabel: '大区数据'
     },
     {
       dictValue: 0,
-      dictLabel: '全部'
+      dictLabel: '全部数据'
     }
   ]
   private rules:any = {

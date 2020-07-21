@@ -136,7 +136,7 @@
                   v-for="(item, index) in optionsCity"
                   :key="index"
                   :label="item.name"
-                  :value="item.code"
+                  :value="Number(item.code)"
                 />
               </el-select>
             </el-form-item>
@@ -160,7 +160,7 @@
               prop="businessLicenseUrl"
             >
               <el-upload
-                :action="getImgUrls"
+                action="/api/base/v1/upload/uploadOSS/img/true/-1"
                 :headers="myHeaders"
                 :class="{'hide': fileList.length === 1}"
                 :on-preview="handlePictureCardPreview"
@@ -169,6 +169,8 @@
                 :limit="1"
                 :file-list="fileList"
                 :before-upload="beforeAvatarUpload"
+                :on-change="handleChange"
+                :auto-upload="false"
                 accept="image/*"
                 list-type="picture-card"
               >
@@ -222,7 +224,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { TransformCustomer, GetCustomerOff, GetLineClueDetail, GetCustomerDetails, EditCustomer } from '@/api/cargo'
-import { GetDictionaryList, GetOpenCityData } from '@/api/common'
+import { GetDictionaryList, GetOpenCityData, Upload } from '@/api/common'
 import { UserModule } from '@/store/modules/user'
 
 import '@/styles/common.scss'
@@ -290,7 +292,6 @@ export default class extends Vue {
   // 上传
   private showDio:boolean = false
   private isloading:boolean = false
-  private getImgUrls:string = this.getImgUrl()
   private imageList:any[] = [];
   private fileList: any[] = []
   private showViewer:boolean = false
@@ -312,7 +313,14 @@ export default class extends Vue {
         const { data } = await TransformCustomer(this.ruleForm)
         this.loading = false
         if (data.success) {
-          this.$message.success(`转化成功`)
+          this.$message.success(`转化成功`);
+          (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+          (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+            name: 'clueList'
+          })
+          this.$nextTick(() => {
+            this.$router.push({ name: 'clueList' })
+          })
         } else {
           this.$message.error(data)
         }
@@ -344,22 +352,14 @@ export default class extends Vue {
     this.fileList = []
   }
   /**
-   *获取上传路径
-   */
-  private getImgUrl() {
-    let url
-    if (window.location.host === 'http://192.168.0.134/:9528') {
-      url = 'http://szjw-bss-web.m1.yunniao.cn/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
-    } else {
-      url = '/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
-    }
-    return url
-  }
-  /**
    *上传前的校验
    */
   private beforeAvatarUpload(file:any) {
-    return true
+    const isImage = file.type.includes('image')
+    if (!isImage) {
+      this.$message.error('上传图片格式不正确')
+    }
+    return isImage
   }
   /**
    * 预览
@@ -390,23 +390,30 @@ export default class extends Vue {
       this.fileList = []
     }
   }
+  // 选择图片
+  private async handleChange(file: any, fileList: any) {
+    let formData = new FormData() // 创建form对象
+    formData.append('file', file.raw)
+    let { data } = await Upload({
+      expire: 0,
+      folder: 'img',
+      isEncode: true
+    },
+    formData)
+    if (data.success) {
+      this.ruleForm.businessLicenseUrl = data.data.url
+      this.fileList = [file]
+    } else {
+      this.$message.error('上传图片错误：' + data)
+      this.ruleForm.businessLicenseUrl = ''
+      this.fileList = []
+    }
+  }
   /**
    *关闭预览框
    */
   private closeViewer() {
     this.showViewer = false
-  }
-  private async getDictionary() {
-    try {
-      let { data: res } = await GetOpenCityData()
-      if (res.success) {
-        // this.optionsCity = res.data
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`${err}`)
-    }
   }
   private async getDictionaryList() {
     const { data } = await GetDictionaryList(['customer_category'])
@@ -482,13 +489,11 @@ export default class extends Vue {
   private fetchData() {
     // 获取字典
     this.getDictionaryList()
-    // 获取工作城市
-    this.getDictionary()
+    // 获取当前登录用户城市
+    this.getCustomerOff()
     // 获取线索详情
     if (this.id && !this.isEdit) {
       this.getDetails()
-      // 获取当前登录用户城市
-      this.getCustomerOff()
     } else {
       // 获取客户详情
       this.getCusDetails()

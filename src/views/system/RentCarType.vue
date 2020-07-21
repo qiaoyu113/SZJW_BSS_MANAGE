@@ -25,6 +25,7 @@
         :active-name="listQuery.status"
       >
         <el-button
+          size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="downLoad"
         >
@@ -32,6 +33,7 @@
           <span v-if="isPC">导出</span>
         </el-button>
         <el-button
+          size="small"
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="showDialog('create')"
@@ -44,6 +46,7 @@
           trigger="click"
         >
           <el-button
+            size="small"
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
           >
