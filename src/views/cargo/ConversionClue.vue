@@ -224,7 +224,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { TransformCustomer, GetCustomerOff, GetLineClueDetail, GetCustomerDetails, EditCustomer } from '@/api/cargo'
-import { GetDictionaryList, GetOpenCityData, Upload } from '@/api/common'
+import { GetDictionaryList, Upload } from '@/api/common'
 import { UserModule } from '@/store/modules/user'
 
 import '@/styles/common.scss'
@@ -316,10 +316,10 @@ export default class extends Vue {
           this.$message.success(`转化成功`);
           (TagsViewModule as any).delView(this.$route); // 关闭当前页面
           (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
-            name: 'clueList'
+            name: 'ClueList'
           })
           this.$nextTick(() => {
-            this.$router.push({ name: 'clueList' })
+            this.$router.push({ name: 'ClueList' })
           })
         } else {
           this.$message.error(data)
@@ -454,7 +454,7 @@ export default class extends Vue {
       this.ruleForm.bussinessName = details.bussinessName
       this.ruleForm.bussinessPhone = details.bussinessPhone
       this.ruleForm.bussinessPosition = details.bussinessPosition
-      this.ruleForm.city = details.city
+      this.ruleForm.city = Number(details.city)
       this.ruleForm.classification = details.classification
       this.ruleForm.clueId = details.clueId
       this.ruleForm.contractEnd = new Date(details.contractEnd)
@@ -476,11 +476,10 @@ export default class extends Vue {
   private async getCustomerOff() {
     const { data } = await GetCustomerOff()
     if (data.success) {
-      // console.log(data.data)
       const list = data.data
       this.optionsCity = list
-      if (list && list[0]) {
-        this.ruleForm.city = list[0].code
+      if (list && list[0] && !this.isEdit) {
+        this.ruleForm.city = Number(list[0].code)
       }
     } else {
       this.$message.error(data)

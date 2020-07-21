@@ -297,7 +297,9 @@ export default class extends Vue {
     if (data.success) {
       const tree = this.traverseTree(data.data)
       this.optionsOffice = tree.data
-      this.officeList = tree.arr.slice().pop()
+      if (tree.arr.length > 0) {
+        this.officeList = tree.arr.slice().pop()
+      }
     } else {
       this.$message.error(data)
     }

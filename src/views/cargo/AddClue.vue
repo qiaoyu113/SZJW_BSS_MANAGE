@@ -383,7 +383,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 
-import { GetDictionaryList, GetOpenCityData } from '@/api/common'
+import { GetDictionaryList } from '@/api/common'
 import { GetLineClueDetail, SaveLineClue, EditLineClue, GetSaleList, GetCustomerOff } from '@/api/cargo'
 
 import '@/styles/common.scss'
@@ -519,15 +519,6 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-  // // 获取城市
-  // private async getCity() {
-  //   const { data } = await GetOpenCityData()
-  //   if (data.success) {
-  //     this.optionsCity = data.data
-  //   } else {
-  //     this.$message.error(data)
-  //   }
-  // }
   private async getCustomerOff() {
     const { data } = await GetCustomerOff()
     if (data.success) {
