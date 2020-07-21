@@ -118,7 +118,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合作车型"
-            :value="orderDetail.cooperationCar"
+            :value="orderDetail.cooperationCarName"
           />
         </el-col>
 
