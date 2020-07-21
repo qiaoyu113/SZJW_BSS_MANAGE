@@ -16,6 +16,7 @@ import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { ShareInterview, EditDriverInterviewEdit } from '@/api/driver'
 import { GetCityByCode, GetManagerLists, GetDictionaryList } from '@/api/common'
+import { validatorNumberRange } from '@/utils/index'
 interface IState {
   [key: string]: any;
 }
@@ -226,46 +227,7 @@ export default class extends Vue {
       ]
     }
   ]
-  // 司机年龄
-  private validAge = (rule: any, value: string, callback: Function) => {
-    if (Number(value) < 0 || Number(value) > 60) {
-      return callback(new Error('请输入0-60之间的数字'))
-    }
-    callback()
-  }
-  /**
-   *原收入
-   */
-  private validateOriginIncomeAvg = (rule: any, value: string, callback: Function) => {
-    if (Number(value) < 0 || Number(value) > 25000) {
-      return callback(new Error('请输入0-25000之间的数字'))
-    }
-    callback()
-  }
-  /**
-   * 期望收入
-   */
-  private validateExpIncomeAvg = (rule: any, value: string, callback: Function) => {
-    if (Number(value) < 3000 || Number(value) > 25000) {
-      return callback(new Error('请输入3000-25000之间的数字'))
-    }
-    callback()
-  }
-  // 从业时间
-  private validateWorkDuration = (rule: any, value: string, callback: Function) => {
-    if (Number(value) < 0 || Number(value) > 500) {
-      return callback(new Error('请输入0-500之间的数字'))
-    }
-    callback()
-  }
-  // 零散活占比
 
-  private validateScatteredJobRate = (rule: any, value: string, callback: Function) => {
-    if (Number(value) < 0 || Number(value) > 100) {
-      return callback(new Error('请输入0-100之间的数字'))
-    }
-    callback()
-  }
   private rules = {
     interviewDate: [
       { required: true, message: '请输入活动名称', trigger: 'blur' }
@@ -278,7 +240,7 @@ export default class extends Vue {
     ],
     age: [
       { required: true, message: '请输入年龄', trigger: 'blur' },
-      { validator: this.validAge, trigger: 'blur' }
+      { validator: validatorNumberRange(0, 60), trigger: 'blur' }
     ],
     gmId: [
       { required: true, message: '请选择加盟经理', trigger: 'blur' }
@@ -300,19 +262,19 @@ export default class extends Vue {
     ],
     originIncomeAvg: [
       { required: true, message: '请输入原收入(去油)(元/月)', trigger: 'blur' },
-      { validator: this.validateOriginIncomeAvg, trigger: 'blur' }
+      { validator: validatorNumberRange(0, 25000), trigger: 'blur' }
     ],
     expIncomeAvg: [
       { required: true, message: '请输入期望收入(去油)(元/月)', trigger: 'blur' },
-      { validator: this.validateExpIncomeAvg, trigger: 'blur' }
+      { validator: validatorNumberRange(3000, 25000), trigger: 'blur' }
     ],
     workDuration: [
       { required: true, message: '请输入从业时间(月)', trigger: 'blur' },
-      { validator: this.validateWorkDuration, trigger: 'blur' }
+      { validator: validatorNumberRange(0, 500), trigger: 'blur' }
     ],
     scatteredJobRate: [
       { required: true, message: '请输入零散活占比(%)', trigger: 'blur' },
-      { validator: this.validateScatteredJobRate, trigger: 'blur' }
+      { validator: validatorNumberRange(0, 100), trigger: 'blur' }
 
     ],
     isNewEnergy: [

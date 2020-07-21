@@ -191,7 +191,8 @@ export default class extends Vue {
       key: 'name',
       label: '姓名:',
       tagAttrs: {
-        placeholder: '姓名'
+        placeholder: '姓名',
+        maxlength: 10
       }
     },
     {

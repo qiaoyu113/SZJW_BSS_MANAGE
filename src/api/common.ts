@@ -31,7 +31,7 @@ export const GetArea = (data: any) =>
 
 // 获取工作城市
 export const GetOpenCityData = () => request({
-  url: `${baseURL}/v1/base/area/getOpenCityData`,
+  url: `${baseURL}/v1/base/office/getCurrentLowerOfficeCityData`,
   method: 'get'
 })
 
