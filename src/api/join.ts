@@ -186,3 +186,12 @@ export const GetModelByTypeAndCityAndSupplierAndCarType = (data: any) =>
     method: 'post',
     data
   })
+
+// 交付导出
+export const DelieverExportDown = (params: any) =>
+  request({
+    url: '/business_center/v1/order/deliever/delieverExport',
+    method: 'get',
+    responseType: 'blob',
+    params
+  })
