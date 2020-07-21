@@ -630,6 +630,7 @@ export default class extends Vue {
    */
   handleFilterClick() {
     let blackLists = ['status']
+    this.tags = []
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
@@ -661,14 +662,8 @@ export default class extends Vue {
    *发起面试
    */
   handleInterviewClick() {
-    if (this.rows.length === 0) {
-      return this.$message.error('请选选择司机线索')
-    }
     this.$router.push({
-      path: '/transport/interview',
-      query: {
-        id: this.rows[0].clueId
-      }
+      path: '/transport/interview'
     })
   }
   /**

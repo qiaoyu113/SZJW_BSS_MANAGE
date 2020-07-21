@@ -635,7 +635,7 @@ export default class extends Vue {
    */
     async getBaseInfo() {
       try {
-        let params = ['source_channel', 'accep_payment_range', 'accep_payment_range', 'driving_licence_type', 'invite_type', 'intent_delivery_mode', 'strategy_right', 'cooperate_focus_point', 'cooperate_key_factor', 'intent_work_duration']
+        let params = ['source_channel', 'intent_cargo_type', 'accep_payment_range', 'driving_licence_type', 'invite_type', 'intent_delivery_mode', 'strategy_right', 'cooperate_focus_point', 'cooperate_key_factor', 'intent_work_duration']
         let { data: res } = await GetDictionaryList(params)
         if (res.success) {
           this.formItem[1].options = res.data.invite_type.map(function(item:any) {
@@ -647,7 +647,7 @@ export default class extends Vue {
           this.formItem[10].options = res.data.intent_delivery_mode.map(function(item:any) {
             return { label: item.dictLabel, value: +item.dictValue }
           })
-          this.formItem[11].options = res.data.accep_payment_range.map(function(item:any) {
+          this.formItem[11].options = res.data.intent_cargo_type.map(function(item:any) {
             return { label: item.dictLabel, value: +item.dictValue }
           })
           this.formItem[12].options = res.data.intent_work_duration.map(function(item:any) {

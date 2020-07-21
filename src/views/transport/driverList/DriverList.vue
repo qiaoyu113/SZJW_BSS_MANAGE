@@ -640,7 +640,7 @@ export default class extends Vue {
 
       if (this.listQuery.time.length > 1) {
         params.startDate = this.listQuery.time[0]
-        params.endDate = this.listQuery.time[1]
+        params.endDate = this.listQuery.time[1] + 86399999
       }
       let { data: res } = await GetDriverList(params)
       this.listLoading = false
@@ -673,10 +673,10 @@ export default class extends Vue {
    */
   private handleQueryClick() {
     let blackLists = ['status']
+    this.tags = []
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
-        console.log(name, key)
         if (name) {
           this.tags.push({
             type: 'info',
@@ -703,7 +703,8 @@ export default class extends Vue {
       sourceChannel: '',
       up: true,
       quit: 1,
-      time: []
+      time: [],
+      carrierStatus: ''
     }
     this.tags = []
     this.getList()

@@ -102,7 +102,7 @@
             当前跟进人
           </p>
           <p class="text">
-            {{ baseForm.gmInfo | DataIsNull }}
+            {{ baseForm.gmName | DataIsNull }}
           </p>
         </el-col>
       </el-row>
