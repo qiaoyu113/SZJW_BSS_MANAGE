@@ -380,8 +380,8 @@ export default class extends Vue {
       dirverName: null,
       driverPhone: null,
       createDate: [],
-      startTime: '',
-      endTime: ''
+      startDate: '',
+      endDate: ''
     }
 
     private formItem:any[] = [
@@ -573,7 +573,9 @@ export default class extends Vue {
         // gmId: null,
         dirverName: null,
         driverPhone: null,
-        createDate: []
+        createDate: [],
+        startDate: '',
+        endDate: ''
       }
       this.getList(this.listQuery)
     }
@@ -884,8 +886,8 @@ export default class extends Vue {
   private async getList(value: any) {
     this.listQuery.page = this.page.page
     this.listQuery.limit = this.page.limit
-    this.listQuery.startTime = this.listQuery.createDate[0]
-    this.listQuery.endTime = this.listQuery.createDate[1] + 86399999
+    this.listQuery.startDate = this.listQuery.createDate[0]
+    this.listQuery.endDate = this.listQuery.createDate[1] + 86399999
     this.listLoading = true
     const { data } = await getCarrierInfoList(this.listQuery)
     if (data.success) {
