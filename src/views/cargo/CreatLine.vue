@@ -187,7 +187,7 @@
             :pccol="16"
             :rule-form="ruleForm"
             :params="{prop: 'deliveryWeekCycle',type: 6,label: '配送周期',options: WeekCycleList,tagAttrs: {},listeners: {
-              change: this.checkBoxChange
+              change: checkBoxChange
             }}"
           />
         </el-row>

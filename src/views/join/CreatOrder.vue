@@ -589,7 +589,7 @@
               prop="remarks"
             >
               <el-input
-                v-model="ruleForm.remarks"
+                v-model="payForm.remarks"
                 type="textarea"
               />
             </el-form-item>
