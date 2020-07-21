@@ -7,11 +7,19 @@
             <el-form :label-width="isPC ? '120px' : '28%'">
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="购买车型">
-                  <el-input
+                  <el-select
                     v-model="listQuery.carType"
-                    placeholder="请输入购买车型"
+                    placeholder="请选择"
                     clearable
-                  />
+                    filterable
+                  >
+                    <el-option
+                      v-for="(item, index) in dataTypes.optionsCar"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="Number(item.dictValue)"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
@@ -29,10 +37,11 @@
                     v-model="listQuery.city"
                     placeholder="请选择"
                     clearable
+                    filterable
                   >
                     <el-option
-                      v-for="item in optionsCity"
-                      :key="item.code"
+                      v-for="(item, index) in dataTypes.optionsCity"
+                      :key="index"
                       :label="item.name"
                       :value="item.code"
                     />
@@ -47,6 +56,25 @@
                     clearable
                   />
                 </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 24 : 24">
+                <el-col :span="isPC ? 6 : 24">
+                  <el-form-item label="车辆型号">
+                    <el-select
+                      v-model="listQuery.model"
+                      placeholder="请选择"
+                      clearable
+                      filterable
+                    >
+                      <el-option
+                        v-for="(item, index) in dataTypes.optionsCarModel"
+                        :key="index"
+                        :label="item"
+                        :value="item"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
               </el-col>
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="创建日期">
@@ -66,12 +94,14 @@
                 class="btn-box"
               >
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   @click="resetForm"
                 >
                   重置
                 </el-button>
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
                   @click="search"
@@ -102,11 +132,14 @@ import '@/styles/common.scss'
 export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
-
+  @Prop({ default: () => {} }) private dataTypes!: {
+      optionsCity: [],
+      optionsCar: [],
+      optionsCarModel: []
+    };
   private DateValueChild: any = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'status', 'busiType', 'startDate']; // 添加过滤listQuery中key的名称
   private loading: boolean = false;
-  private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
@@ -147,25 +180,23 @@ export default class extends Vue {
   }
 
   created() {
-    this.getDictionary()
   }
 
-  private async getDictionary() {
-    const { data } = await GetOpenCityData()
-    if (data.success) {
-      this.optionsCity = data.data
-    } else {
-      this.$message.error(data)
-    }
-  }
   // 匹配创建tags标签
   private matchName(key: any, value: any) {
     let vodeName = ''
-    const cityName = this.optionsCity.find(item => item.code === value)
+    const {
+      optionsCity,
+      optionsCar } = this.dataTypes
+    const cityItem = optionsCity.find((item: any) => item.code === value)
+    const carItem = optionsCar.find((item: any) => Number(item.dictValue) === value)
     switch (key) {
       // 根据listQuery中的key来判断
       case 'city':
-        vodeName = cityName ? cityName.name : ''
+        vodeName = cityItem ? cityItem['name'] : value
+        break
+      case 'carType':
+        vodeName = carItem ? carItem['dictLabel'] : value
         break
       default:
         vodeName = this.listQuery[key] || ''

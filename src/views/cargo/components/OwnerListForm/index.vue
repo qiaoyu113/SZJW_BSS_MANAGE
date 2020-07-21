@@ -386,7 +386,7 @@ export default class extends Vue {
       .filter-item {
         float: right;
         // height: 34px;
-        font-size: 14px;
+        // font-size: 14px;
         margin-left: 10px;
       }
       .filter-item-m {

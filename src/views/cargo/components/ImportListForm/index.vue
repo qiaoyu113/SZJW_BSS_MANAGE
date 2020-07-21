@@ -5,21 +5,6 @@
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
           <el-row>
             <el-form :label-width="isPC ? '120px' : '28%'">
-              <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="销售">
-                  <el-select
-                    v-model="listQuery.city"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in optionsCity"
-                      :key="item.codeVal"
-                      :label="item.code"
-                      :value="item.codeVal"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="创建日期">
                   <el-date-picker
@@ -34,17 +19,21 @@
                 </el-form-item>
               </el-col>
               <el-col
-                :span="24"
+                :span="isPC ? 12 : 24"
                 class="btn-box"
               >
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  @click="resetForm"
                 >
                   重置
                 </el-button>
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  @click="search"
                 >
                   查询
                 </el-button>
@@ -59,7 +48,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -73,7 +61,7 @@ export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
-  private DateValueChild: any[] = []; // DateValue的赋值项
+  private DateValueChild: any = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
@@ -114,18 +102,6 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
-  created() {
-    this.getDictionary()
-  }
-
   // 匹配创建tags标签
   private matchName(key: any, value: any) {
     let vodeName = ''
@@ -144,25 +120,18 @@ export default class extends Vue {
     }
     return vodeName
   }
-
-  private async getDictionary() {
-    try {
-      let { data: res } = await GetOpenCityData()
-      if (res.success) {
-        this.optionsCity = res.data.map(function(item:any) {
-          return {
-            code: item.name,
-            codeVal: item.code
-          }
-        })
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`get `)
-    }
+  private search() {
+    this.$emit('handle-query')
   }
-
+  // 重置
+  private resetForm() {
+    for (const key in this.listQuery) {
+      if (!this.QUERY_KEY_LIST.includes(key)) {
+        this.listQuery[key] = ''
+      }
+    }
+    this.DateValueChild = null
+  }
   private changData() {
     if (this.DateValueChild) {
       this.listQuery.startDate = this.DateValueChild[0]

@@ -12,6 +12,7 @@ export default {
     editClue: 'editClue',
     followUpClue: 'followUpClue',
     conversionClue: 'conversionClue',
+    editcustomer: 'editcustomer',
     importClue: 'importClue',
     importDetail: 'importDetail',
     clueDetail: 'ClueDetail',

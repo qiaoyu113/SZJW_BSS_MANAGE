@@ -48,8 +48,8 @@
                 @change="handleCheckedCitiesChange"
               >
                 <el-checkbox
-                  v-for="item in optionsCity"
-                  :key="item.code"
+                  v-for="(item, index) in optionsCity"
+                  :key="index"
                   :label="item.code"
                 >
                   {{ item.name }}

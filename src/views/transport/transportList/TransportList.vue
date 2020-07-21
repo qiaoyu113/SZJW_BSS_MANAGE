@@ -104,6 +104,9 @@
         @onPageSize="handlePageSize"
         @selection-change="handleChange"
       >
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate | Timestamp }}
+        </template>
         <template v-slot:op="scope">
           <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
             <span class="el-dropdown-link">
@@ -120,18 +123,6 @@
               />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                v-if="[4].includes(scope.row.status)"
-                command="distribution"
-              >
-                <template v-if="isPC">
-                  分配
-                </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
-              </el-dropdown-item>
               <el-dropdown-item
                 command="editor"
               >
@@ -155,6 +146,7 @@
                 />
               </el-dropdown-item>
               <el-dropdown-item
+                v-if="[0,1].includes(scope.row.status)"
                 command="stop"
               >
                 <template v-if="isPC">
@@ -165,7 +157,7 @@
                   class="el-icon-chat-dot-square"
                 />
               </el-dropdown-item>
-              <el-dropdown-item
+              <!-- <el-dropdown-item
                 command="gowork"
               >
                 <template v-if="isPC">
@@ -175,8 +167,9 @@
                   v-else
                   class="el-icon-edit"
                 />
-              </el-dropdown-item>
+              </el-dropdown-item> -->
               <el-dropdown-item
+                v-if="[2].includes(scope.row.status) && scope.row.isRefund === 0"
                 command="alive"
               >
                 <template v-if="isPC">
@@ -209,6 +202,7 @@
       ref="transportDia"
       :rows="rows"
       :type="type"
+      :options="managerArr"
       @onRows="rows = []"
     />
 
@@ -238,6 +232,7 @@ import { getLabel } from '@/utils/index.ts'
 import SelfForm from '@/components/base/SelfForm.vue'
 import ManagerDialog from './components/managerDialog.vue'
 import workDialog from './components/workDialog.vue'
+import { delayTime } from '@/settings'
 
 interface IState {
   [key: string]: any;
@@ -266,7 +261,8 @@ interface PageObj {
 export default class extends Vue {
     private IntentionalCompartment:any[] = []
     private type:string = ''
-    // private total = 0
+    private title:any = {}
+    private managerArr:any[] = []
     private list: CargoListData[] = []
     private dropdownList:any[] = []
     private checkList:any[] =[]
@@ -276,22 +272,22 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: '0',
+        name: null,
         num: '0'
       },
       {
         label: '待上岗',
-        name: '1',
+        name: 0,
         num: '0'
       },
       {
         label: '上岗',
-        name: '2',
+        name: 1,
         num: '0'
       },
       {
         label: '停用',
-        name: '3',
+        name: 2,
         num: '0'
       }
     ]
@@ -329,7 +325,7 @@ export default class extends Vue {
         label: '运力状态'
       },
       {
-        key: 'driverId',
+        key: 'driverName',
         label: '所属司机'
       },
       {
@@ -337,7 +333,7 @@ export default class extends Vue {
         label: '所属司机手机号'
       },
       {
-        key: 'gmIdName',
+        key: 'gmName',
         label: '运营经理'
       },
       {
@@ -350,7 +346,8 @@ export default class extends Vue {
       },
       {
         key: 'createDate',
-        label: '创建时间'
+        label: '创建时间',
+        slot: true
       },
       {
         key: 'op',
@@ -370,28 +367,27 @@ export default class extends Vue {
       total: 20
     }
     private listQuery:IState = {
-      // 'busiType': '',
-      // 'carType': '',
-      // 'carrierId': '',
-      // 'driverName': '',
-      // 'driverPhone': '',
-      // 'endTime': '',
-      // 'gmGroup': '',
-      // 'gmId': '',
-      // 'limit': '',
-      // 'name': '',
-      // 'page': '',
-      // 'pageNumber': '',
-      // 'phone': '',
-      // 'startTime': '',
-      // 'status': '',
-      // 'workCoty': ''
+      'gmId': '',
+      'limit': '10',
+      'page': '1',
+      status: null,
+      workCity: null,
+      carrierId: null,
+      name: null,
+      phone: null,
+      carType: null,
+      busiType: null,
+      // gmGroup: null,
+      // gmId: null,
+      dirverName: null,
+      driverPhone: null,
+      createDate: []
     }
 
     private formItem:any[] = [
       {
         type: 2,
-        key: 'workCoty',
+        key: 'workCity',
         label: '工作城市',
         tagAttrs: {
           placeholder: '请选择工作城市'
@@ -440,24 +436,24 @@ export default class extends Vue {
         },
         options: [
           {
-            label: '专车',
-            value: '0'
+            label: '梧桐专车',
+            value: 0
           },
           {
-            label: '共享',
-            value: '1'
+            label: '梧桐共享',
+            value: 1
           }
         ]
       },
-      {
-        type: 2,
-        key: 'gmGroup',
-        label: '运营小组',
-        tagAttrs: {
-          placeholder: '请选择运营小组'
-        },
-        options: []
-      },
+      // {
+      //   type: 2,
+      //   key: 'gmGroup',
+      //   label: '运营小组',
+      //   tagAttrs: {
+      //     placeholder: '请选择运营小组'
+      //   },
+      //   options: []
+      // },
       {
         type: 2,
         key: 'gmId',
@@ -487,7 +483,7 @@ export default class extends Vue {
       },
       {
         type: 3,
-        key: 'startTime',
+        key: 'createDate',
         label: '创建时间',
         col: 12,
         tagAttrs: {
@@ -561,16 +557,20 @@ export default class extends Vue {
     private handleResetClick() {
       this.tags = []
       this.listQuery = {
-        workCityName: '',
-        carrierId: '',
-        name: '',
-        phone: '',
-        carTypeName: '',
-        busiTypeName: '',
-        gmGroup: '',
-        gmIdName: '',
-        dirverName: '',
-        driverPhone: '',
+        'gmId': '',
+        'limit': '10',
+        'page': '1',
+        status: null,
+        workCity: null,
+        carrierId: null,
+        name: null,
+        phone: null,
+        carType: null,
+        busiType: null,
+        // gmGroup: null,
+        // gmId: null,
+        dirverName: null,
+        driverPhone: null,
         createDate: []
       }
     }
@@ -689,7 +689,7 @@ export default class extends Vue {
           return { value: ele.code, label: ele.name }
         })
         this.formItem.map(ele => {
-          if (ele.key === 'workCoty') {
+          if (ele.key === 'workCity') {
             ele.options = arr
           }
         })
@@ -701,6 +701,7 @@ export default class extends Vue {
         let arr = manager.data.data.map(function(ele:any) {
           return { value: Number(ele.id), label: ele.name }
         })
+        this.managerArr = arr
         this.formItem.map(ele => {
           if (ele.key === 'gmId') {
             ele.options = arr
@@ -720,6 +721,9 @@ export default class extends Vue {
               type: 'success',
               message: '运力停用成功!'
             })
+            setTimeout(() => {
+              this.getList(this.listQuery)
+            }, delayTime)
           } else {
             this.$message.error(data.data.msg)
           }
@@ -729,6 +733,9 @@ export default class extends Vue {
               type: 'success',
               message: '激活成功!'
             })
+            setTimeout(() => {
+              this.getList(this.listQuery)
+            }, delayTime)
           } else {
             this.$message.error(data.data.msg)
           }
@@ -746,9 +753,7 @@ export default class extends Vue {
       }).then(() => {
         let params = {
           'carrierId': row.carrierId,
-          // carrierId: 'YL202007150003',
-          // carrierStatus: 2
-          carrierStatus: row.status
+          'carrierStatus': 2
         }
         this.updateCarrier(params, '停用')
       }).catch(() => {
@@ -767,7 +772,7 @@ export default class extends Vue {
       }).then(() => {
         let params = {
           'carrierId': row.carrierId,
-          'carrierStatus': row.status
+          'carrierStatus': 0
         }
         this.updateCarrier(params, '激活')
       }).catch(() => {
@@ -786,8 +791,8 @@ export default class extends Vue {
       let id = row.carrierId
       switch (key) {
         case 'gowork':
-          this.rowItem = row;
-          (this.$refs.workDia as any).openDialog()
+          this.rowItem = row
+          // (this.$refs.workDia as any).openDialog()
           break
         case 'alive':
           this.aliveTransport(row)
@@ -865,10 +870,11 @@ export default class extends Vue {
    */
   handleQuery(value:any, key:any) {
     if (key === 'time') {
-      this.listQuery[key] = []
+      this.listQuery[key] = null
     } else {
-      this.listQuery[key] = value
+      this.listQuery[key] = null
     }
+    this.listQuery.status = this.listQuery.state
     this.getList(this.listQuery)
   }
 
@@ -880,28 +886,26 @@ export default class extends Vue {
     const { data } = await getCarrierInfoList(this.listQuery)
     if (data.success) {
       this.tableData = data.data
+      this.title = data.title
       data.page = await HandlePages(data.page)
       this.page.total = data.page.total
       this.tab.map(ele => {
-        // switch (ele.label) {
-        //   case '全部':
-        //     ele.num = this.title.all
-        //     break
-        //   case '上岗':
-        //     ele.num = this.title.waitShelvesNum
-        //     break
-        //   case '待上岗':
-        //     ele.num = this.title.isShelvesNum
-        //     break
-        //   case '已售罄':
-        //     ele.num = this.title.soldNum
-        //     break
-        //   case '停用':
-        //     ele.num = this.title.noShelvesNum
-        //     break
-        //   default:
-        //     break
-        // }
+        switch (ele.label) {
+          case '全部':
+            ele.num = this.title.all
+            break
+          case '上岗':
+            ele.num = this.title['1']
+            break
+          case '待上岗':
+            ele.num = this.title['0']
+            break
+          case '停用':
+            ele.num = this.title['2']
+            break
+          default:
+            break
+        }
       })
       setTimeout(() => {
         this.listLoading = false

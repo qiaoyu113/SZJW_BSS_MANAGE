@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
-import { ShareInterview } from '@/api/driver'
+import { ShareInterview, EditDriverInterviewEdit } from '@/api/driver'
 import { GetCityByCode, GetManagerLists, GetDictionaryList } from '@/api/common'
 interface IState {
   [key: string]: any;
@@ -60,6 +60,9 @@ export default class extends Vue {
       label: '面试地址:',
       tagAttrs: {
         placeholder: '面试地址',
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'interviewProvince',
         props: {
           lazy: true,
           lazyLoad: this.loadinterviewAddress
@@ -103,6 +106,9 @@ export default class extends Vue {
       key: 'home',
       label: '现住址:',
       tagAttrs: {
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'liveProvince',
         placeholder: '现住址',
         props: {
           lazy: true,
@@ -348,10 +354,10 @@ export default class extends Vue {
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
         this.formItem[7].options = res.data.source_channel.map(function(item:any) {
-          return { label: item.dictLabel, value: item.dictValue }
+          return { label: item.dictLabel, value: +item.dictValue }
         })
         this.formItem[8].options = res.data.driving_licence_type.map(function(item:any) {
-          return { label: item.dictLabel, value: item.dictValue }
+          return { label: item.dictLabel, value: +item.dictValue }
         })
       } else {
         this.$message.error(res.errorMsg)
@@ -360,9 +366,16 @@ export default class extends Vue {
       console.log(`get base info fail:${err}`)
     }
   }
-  @Watch('obj', { deep: true })
+  @Watch('obj', { deep: true, immediate: true })
   handleObjChange(val:any) {
-    this.listQuery = { ...this.listQuery, ...this.obj }
+    this.listQuery = { ...this.listQuery, ...val }
+    this.listQuery.interviewAddress.push(val.interviewProvince + '')
+    this.listQuery.interviewAddress.push(val.interviewCity + '')
+    this.listQuery.interviewAddress.push(val.interviewCounty + '')
+    this.listQuery.home.push(val.liveProvince + '')
+    this.listQuery.home.push(val.liveCity + '')
+    this.listQuery.home.push(val.liveCounty + '')
+    this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
   }
 
   /**
@@ -430,35 +443,45 @@ export default class extends Vue {
     }
   }
   async handlePassClick() {
+    let params = {
+      age: this.listQuery.age,
+      interviewDate: this.listQuery.interviewDate,
+      gmId: this.listQuery.gmId,
+      sourceChannel: this.listQuery.sourceChannel,
+      drivingLicenceType: this.listQuery.drivingLicenceType,
+      isLocalPlate: this.listQuery.isLocalPlate,
+      originIncomeAvg: this.listQuery.originIncomeAvg,
+      expIncomeAvg: this.listQuery.expIncomeAvg,
+      workDuration: this.listQuery.workDuration,
+      scatteredJobRate: this.listQuery.scatteredJobRate,
+      isNewEnergy: this.listQuery.isNewEnergy,
+      interviewProvince: this.listQuery.interviewAddress[0],
+      interviewCity: this.listQuery.interviewAddress[1],
+      interviewCounty: this.listQuery.interviewAddress[2],
+      interviewDistrict: this.listQuery.interviewDistrict,
+      liveProvince: this.listQuery.home[0],
+      liveCity: this.listQuery.home[1],
+      liveCounty: this.listQuery.home[2],
+      liveDistrict: this.listQuery.liveDistrict,
+      name: this.form.name,
+      phone: this.form.phone,
+      workCity: this.form.workCity,
+      carType: this.form.carType,
+      clueId: this.form.clueId,
+      intentDrivingCarType: this.form.carType,
+      busiType: this.form.busiType
+    }
+    if (Object.keys(this.obj).length > 0) {
+      this.edit(params)
+    } else {
+      this.create(params)
+    }
+  }
+  /**
+   * 录入面试表
+   */
+  async create(params:any) {
     try {
-      let params = {
-        age: this.listQuery.age,
-        interviewDate: this.listQuery.interviewDate,
-        gmId: this.listQuery.gmId,
-        sourceChannel: this.listQuery.sourceChannel,
-        drivingLicenceType: this.listQuery.drivingLicenceType,
-        isLocalPlate: this.listQuery.isLocalPlate,
-        originIncomeAvg: this.listQuery.originIncomeAvg,
-        expIncomeAvg: this.listQuery.expIncomeAvg,
-        workDuration: this.listQuery.workDuration,
-        scatteredJobRate: this.listQuery.scatteredJobRate,
-        isNewEnergy: this.listQuery.isNewEnergy,
-        interviewProvince: this.listQuery.interviewAddress[0],
-        interviewCity: this.listQuery.interviewAddress[1],
-        interviewCounty: this.listQuery.interviewAddress[2],
-        interviewDistrict: this.listQuery.interviewDistrict,
-        liveProvince: this.listQuery.home[0],
-        liveCity: this.listQuery.home[1],
-        liveCounty: this.listQuery.home[2],
-        liveDistrict: this.listQuery.liveDistrict,
-        name: this.form.name,
-        phone: this.form.phone,
-        workCity: this.form.workCity,
-        carType: this.form.carType,
-        clueId: this.form.clueId,
-        intentDrivingCarType: this.form.carType,
-        busiType: this.form.busiType
-      }
       let { data: res } = await ShareInterview(params)
       if (res.success) {
         this.handleFinish()
@@ -467,6 +490,22 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`share add fail:${err}`)
+    }
+  }
+
+  /**
+     * 编辑面试表
+     */
+  async edit(params:any) {
+    try {
+      let { data: res } = await EditDriverInterviewEdit(params)
+      if (res.success) {
+        this.handleFinish()
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`edit fail:${err}`)
     }
   }
 

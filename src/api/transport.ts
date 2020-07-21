@@ -90,11 +90,3 @@ export const GetDriverClueList = (data: any[]) =>
     method: 'post',
     data
   })
-
-/* 修改司机索引 */
-export const EditDriverClue = (data: any[]) =>
-  request({
-    url: '',
-    method: 'post',
-    data
-  })

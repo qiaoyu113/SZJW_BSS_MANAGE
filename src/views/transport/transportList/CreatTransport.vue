@@ -66,17 +66,17 @@
                     :class=" item.flag ? 'orderItem' : 'orderItemNo'"
                     @click="orderGet(index,item)"
                   >
-                    <span class="orderNum">订单编号：{{ item.orderId }}</span>
-                    <span>商品分类：{{ item.busiTypeName }}</span>
-                    <span v-if="item.cooperationModel === 1">合作模式：购车</span>
-                    <span v-if="item.cooperationModel === 2">合作模式：租车</span>
-                    <span v-if="item.cooperationModel === 3">合作模式：带车</span>
-                    <span>合作车型：{{ item.cooperationCarName }}</span>
+                    <span class="orderNum">订单编号：{{ item.orderInfo.orderId }}</span>
+                    <span>商品分类：{{ item.orderInfo.busiTypeName }}</span>
+                    <span v-if="item.orderInfo.cooperationModel === 1">合作模式：购车</span>
+                    <span v-else-if="item.orderInfo.cooperationModel === 2">合作模式：租车</span>
+                    <span v-else-if="item.orderInfo.cooperationModel === 3">合作模式：带车</span>
+                    <span>合作车型：{{ item.orderInfo.cooperationCarName }}</span>
                     <div class="goDetail">
-                      <span>订单金额：￥{{ item.goodsAmount }}</span>
+                      <span>订单金额：￥{{ item.orderInfo.goodsAmount }}</span>
                       <span
                         style="margin-left:20px"
-                        @click="goOrderDetail(item.orderId)"
+                        @click="goOrderDetail(item.orderInfo.orderId)"
                       >详情></span>
                     </div>
                   </div>
@@ -186,7 +186,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
@@ -227,6 +227,7 @@ export default class extends Vue {
   private loading:boolean = false
   private list:any[] = []
   private orderList:any[] = []
+  private phoneList:any[] =[]
   private orderInfo:any = {
     carType: '',
     // 车型
@@ -416,6 +417,9 @@ export default class extends Vue {
       key: 'address',
       tagAttrs: {
         placeholder: '请输入家庭住址',
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'homeProvince',
         props: {
           lazy: true,
           lazyLoad: this.loadhouseAddress
@@ -517,9 +521,24 @@ export default class extends Vue {
     }
   }
 
+  @Watch('orderInfo.phone')
+  changePhone(val:string) {
+    this.phoneList.map(ele => {
+      if (ele.driverId === this.driverId) {
+        if (String(val) === String(ele.phone)) {
+          this.orderInfo = { ...this.orderInfo, ...ele }
+        }
+      }
+    })
+  }
+
   private nextChoose() {
     if (this.phoneNum === '') {
       this.$message.error('请填写手机号码或者司机姓名')
+      return
+    }
+    if (this.orderList.length === 0) {
+      this.$message.error('暂无订单')
       return
     }
     if (this.activeItem === null) {
@@ -529,11 +548,6 @@ export default class extends Vue {
     if (!this.isHasOrder) {
       return this.$message.error('该司机目前没有创建订单，暂无法创建运力')
     }
-    // var phone = this.phoneNum
-    // if (!(/^1[3456789]\d{9}$/.test(phone))) {
-    //   this.$message.error('手机号码有误，请重填')
-    //   return false
-    // }
     this.activeCreat = 2
   }
 
@@ -541,7 +555,64 @@ export default class extends Vue {
     this.activeCreat = 1
   }
   private backAgain() {
+    this.isEditor = true
     this.activeCreat = 1
+    this.pagestate = false
+    this.phoneNum = ''
+    this.activeItem = null
+    this.chooseOrderState = false
+    this.driverOptions = []
+    this.orderInfo = {
+      carType: '',
+      // 车型
+      gmId: '',
+      // 运营经理
+      name: '',
+      // 运力姓名
+      phone: '',
+      // 联系方式
+      plateNo: '',
+      // 车牌号
+      workCity: '',
+      // 工作城市
+      orderId: '',
+      // 所选的订单号
+      driverId: '',
+      // 所属司机id
+
+      // -------------
+      status: null,
+      // 运力状态
+      carrierId: null,
+      // 运力id有此字段为修改运力信息
+      age: null,
+      // 司机年龄
+      householdType: null,
+      // 户口类型，1农村2城镇
+      workExperience: null,
+      // 货物运输经验（月）
+      cargoType: null,
+      // 配送货物类型
+      homeCity: null,
+      // 家庭住址-市
+      homeCounty: null,
+      // 家庭住址-区县
+      homeDistrict: null,
+      // 家庭住址-具体区域
+      homeProvince: null,
+      address: [],
+      // 家庭住址-省
+      expMonthlyIncome: null,
+      // 期望月收入
+      avgMonthlyIncome: null,
+      // 平均月收入
+      isIndebted: null,
+      // 是否存在贷款，1是2否
+      maxWorkTime: null,
+      // 可接受一天工作时长
+      remarks: null
+    // 备注
+    }
   }
   private backRouter() {
     this.$router.push('transportlist')
@@ -579,6 +650,7 @@ export default class extends Vue {
       this.loading = true
       let { data } = await driverList({ key: query })
       if (data.success) {
+        this.phoneList = data.data
         let driverOptions = data.data.map(function(ele:any) {
           return { value: ele.driverId, label: `${ele.name}(${ele.phone})` }
         })
@@ -663,7 +735,7 @@ export default class extends Vue {
   }
 
   private orderGet(index:number, ele:any) {
-    this.orderId = ele.orderId
+    this.orderId = ele.orderInfo.orderId
     if (!ele.flag) {
       return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
     } else {
@@ -674,16 +746,17 @@ export default class extends Vue {
 
   private async getOrderList(val:any) {
     this.driverId = val
-    let { data } = await transportOrderList({ driverId: val })
-    if (data.success) {
-      this.orderList = data.data
+    let { data: res } = await transportOrderList({ driverId: val })
+    if (res.success) {
+      this.orderList = res.data
+
       if (this.orderList.length === 0) {
         this.chooseOrderState = false
       } else {
         this.chooseOrderState = true
       }
     } else {
-      this.$message.error(data)
+      this.$message.error(res.errorMsg)
     }
   }
 
@@ -700,12 +773,16 @@ export default class extends Vue {
     if (data.success) {
       this.activeCreat = 2
       let orderInfo = data.data
+
       for (let ele in orderInfo) {
         if (orderInfo[ele] === 0) {
           orderInfo[ele] = ''
         }
       }
       this.orderInfo = { ...this.orderInfo, ...orderInfo }
+      this.orderInfo.address.push(this.orderInfo.homeProvince + '')
+      this.orderInfo.address.push(this.orderInfo.homeCity + '')
+      this.orderInfo.address.push(this.orderInfo.homeCounty + '')
     } else {
       this.$message.error(data.data.errorMsg)
     }
@@ -727,9 +804,21 @@ export default class extends Vue {
       this.orderInfo.carrierId = carrierId
       this.getCarrierDetail(carrierId)
     } else {
+      let driverId = this.$route.query.id as string
+      let name = this.$route.query.name as string
+      let phone = this.$route.query.phone as string
       this.pagestate = false
       this.isEditor = true
       this.activeCreat = 1
+      if (driverId) {
+        let optionItem = {
+          label: `${name}(${phone})`,
+          value: driverId
+        }
+        this.driverOptions.push(optionItem)
+        this.phoneNum = driverId
+        this.getOrderList(driverId)
+      }
     }
   }
 }
@@ -826,6 +915,7 @@ export default class extends Vue {
             }
           }
           .orderItemNo{
+            cursor: pointer;
             margin-left: 20px;
             border: 1px solid #bdcdf1;
             padding: 10px 20px;

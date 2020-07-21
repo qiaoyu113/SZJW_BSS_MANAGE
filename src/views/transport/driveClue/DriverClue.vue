@@ -49,7 +49,7 @@
         @click.stop="handleCreateClue"
       >
         <i
-          class="el-icon-edit"
+          class="el-icon-plus"
         />
         <span v-if="isPC">创建线索</span>
       </el-button>
@@ -60,7 +60,7 @@
         @click="handleInterviewClick"
       >
         <i
-          class="el-icon-edit"
+          class="el-icon-phone-outline"
         />
         <span v-if="isPC">发起面试</span>
       </el-button>
@@ -137,9 +137,6 @@
       <template v-slot:createDate="scope">
         <span>{{ scope.row.createDate | Timestamp }}</span>
       </template>
-      <template v-slot:followPerson="scope">
-        {{ scope.row.lastfollowRecordInfo && scope.row.lastfollowRecordInfo.followerName }}
-      </template>
       <template v-slot:op="scope">
         <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
           <el-button
@@ -195,7 +192,7 @@
               </template>
               <i
                 v-else
-                class="el-icon-chat-dot-square"
+                class="el-icon-right"
               />
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -206,6 +203,7 @@
     <clue-distribution
       ref="clueDistribution"
       :rows="muls"
+      @onRefresh="getList"
     />
 
     <PitchBox
@@ -216,7 +214,7 @@
     >
       <template slot-scope="slotProp">
         <span>{{ slotProp.item.name }}</span>
-        <span>{{ slotProp.item.code }}</span>
+        <span>{{ slotProp.item.clueId }}</span>
         <span>{{ slotProp.item.phone }}</span>
       </template>
     </PitchBox>
@@ -344,7 +342,8 @@ export default class extends Vue {
     sourceChannel: '',
     workCity: '',
     gmId: '',
-    onlyMe: ''
+    onlyMe: '',
+    clueId: ''
   }
   /**
    *表单数组
@@ -423,6 +422,14 @@ export default class extends Vue {
           value: false
         }
       ]
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入编号'
+      },
+      label: '编号',
+      key: 'clueId'
     }
   ]
 
@@ -468,8 +475,7 @@ export default class extends Vue {
       slot: true
     },
     {
-      key: 'followPerson',
-      slot: true,
+      key: 'gmName',
       label: '跟进人'
     },
     {
@@ -623,7 +629,8 @@ export default class extends Vue {
       sourceChannel: '',
       workCity: '',
       gmId: '',
-      onlyMe: ''
+      onlyMe: '',
+      clueId: ''
     }
     this.tags = []
   }
@@ -633,6 +640,7 @@ export default class extends Vue {
    */
   handleFilterClick() {
     let blackLists = ['status']
+    this.tags = []
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
@@ -664,14 +672,8 @@ export default class extends Vue {
    *发起面试
    */
   handleInterviewClick() {
-    if (this.rows.length === 0) {
-      return this.$message.error('请选选择司机线索')
-    }
     this.$router.push({
-      path: '/transport/interview',
-      query: {
-        id: this.rows[0].clueId
-      }
+      path: '/transport/interview'
     })
   }
   /**

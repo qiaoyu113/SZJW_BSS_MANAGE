@@ -135,6 +135,17 @@
                 </el-radio>
               </el-radio-group>
             </el-form-item>
+            <el-form-item
+              v-if="dialogForm.controlType"
+              label="页面地址"
+              prop="url"
+            >
+              <el-input
+                v-model="dialogForm.url"
+                maxlength="100"
+                placeholder="请输入页面地址"
+              />
+            </el-form-item>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -143,7 +154,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
@@ -183,7 +194,7 @@ export default class extends Vue {
   private rules: any = {
     authName: [
       { required: true, message: '请输入权限名称', trigger: 'blur' },
-      { pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/, message: '请输入2-10个中文', trigger: 'blur' }
+      { pattern: /^(?:[\u4e00-\u9fa5·]{1,10})$/, message: '请输入1-10个中文', trigger: 'blur' }
     ],
     url: [
       { required: true, message: '请输入页面地址', trigger: 'blur' },
@@ -195,6 +206,13 @@ export default class extends Vue {
   }
   private isAdd: boolean = false;
   private disabled: boolean = false;
+
+  @Watch('dialogForm.controlType')
+  private onval(value:any) {
+    if (!value) {
+      this.dialogForm.url = ''
+    }
+  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
@@ -231,7 +249,7 @@ export default class extends Vue {
           const { data } = await updateAuthority(postData)
           if (data.success) {
             this.$message.success(`编辑成功`)
-            this.update(postData)
+            this.update(postData, this.dialogForm.childAuth)
             this.showDialog = false
           } else {
             this.$message.error(data)
@@ -304,7 +322,8 @@ export default class extends Vue {
     this.addData.childAuth.push(newChild)
   }
   // update tree节点
-  private update(data: any) {
+  private update(data: any, childAuth: any) {
+    data.childAuth = childAuth
     this.$set(this.addNode, 'data', data)
   }
   // 清楚dialog

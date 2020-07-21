@@ -47,7 +47,9 @@ export default class extends Vue {
       this.valueName = val
     }
   }
-
+  mounted() {
+    this.valueName = this.value
+  }
   get isPC() {
     return SettingsModule.isPC
   }

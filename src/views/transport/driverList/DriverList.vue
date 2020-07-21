@@ -122,7 +122,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-turn-off"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -134,7 +134,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-right"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -146,7 +146,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-release"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -170,7 +170,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-chat-dot-square"
+                  class="el-icon-view"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -182,7 +182,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-user"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -194,7 +194,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-order"
                 />
               </el-dropdown-item>
               <el-dropdown-item
@@ -206,7 +206,7 @@
                 </template>
                 <i
                   v-else
-                  class="el-icon-edit"
+                  class="el-icon-s-custom"
                 />
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -229,9 +229,9 @@
       @changeDrawer="changeDrawer"
     >
       <template slot-scope="slotProp">
-        <span>{{ slotProp.item.a }}</span>
-        <span>{{ slotProp.item.b }}</span>
-        <span>{{ slotProp.item.c }}</span>
+        <span>{{ slotProp.item.name }}</span>
+        <span>{{ slotProp.item.driverId }}</span>
+        <span>{{ slotProp.item.busiTypeName }}</span>
       </template>
     </PitchBox>
   </div>
@@ -323,7 +323,6 @@ export default class extends Vue {
     name: '',
     phone: '',
     busiType: '',
-    gmTeam: '',
     gmId: '',
     sourceChannel: '',
     carrierStatus: '',
@@ -385,15 +384,6 @@ export default class extends Vue {
     },
     {
       type: 2,
-      key: 'gmTeam',
-      label: '加盟小组',
-      tagAttrs: {
-        placeholder: '请选择加盟小组'
-      },
-      options: []
-    },
-    {
-      type: 2,
       key: 'gmId',
       label: '加盟经理',
       tagAttrs: {
@@ -424,6 +414,7 @@ export default class extends Vue {
       key: 'carrierStatus',
       label: '是否存在',
       w: '130px',
+      col: 12,
       options: [
         {
           label: '待上岗运力',
@@ -495,7 +486,8 @@ export default class extends Vue {
   private columns:any[] = [
     {
       key: 'driverId',
-      label: '司机编号'
+      label: '司机编号',
+      width: '140px'
     },
     {
       key: 'name',
@@ -591,7 +583,7 @@ export default class extends Vue {
     try {
       let { data: res } = await GetManagerLists()
       if (res.success) {
-        this.formItem[6].options = res.data.map(function(item:any) {
+        this.formItem[5].options = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
@@ -643,13 +635,12 @@ export default class extends Vue {
       this.listQuery.name && (params.name = this.listQuery.name)
       this.listQuery.phone && (params.phone = this.listQuery.phone)
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
-      this.listQuery.gmTeam !== '' && (params.gmTeam = this.listQuery.gmTeam)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.sourceChannel && (params.sourceChannel = this.listQuery.sourceChannel)
 
       if (this.listQuery.time.length > 1) {
         params.startDate = this.listQuery.time[0]
-        params.endDate = this.listQuery.time[1]
+        params.endDate = this.listQuery.time[1] + 86399999
       }
       let { data: res } = await GetDriverList(params)
       this.listLoading = false
@@ -658,11 +649,11 @@ export default class extends Vue {
         this.page.total = res.page.total
         this.tableData = res.data
         for (let i = 0; i < this.tab.length; i++) {
-          let item = this.tab[i]
-          if (item.name === this.listQuery.status) {
+          let item:Tab = this.tab[i]
+          if (item.name === '') {
             item.num = res.title.all
           } else {
-            item.num = 0
+            item.num = res.title[item.name as string]
           }
         }
       } else {
@@ -682,10 +673,10 @@ export default class extends Vue {
    */
   private handleQueryClick() {
     let blackLists = ['status']
+    this.tags = []
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
-        console.log(name, key)
         if (name) {
           this.tags.push({
             type: 'info',
@@ -708,12 +699,12 @@ export default class extends Vue {
       name: '',
       phone: '',
       busiType: '',
-      gmTeam: '',
       gmId: '',
       sourceChannel: '',
       up: true,
       quit: 1,
-      time: []
+      time: [],
+      carrierStatus: ''
     }
     this.tags = []
     this.getList()
@@ -777,11 +768,20 @@ export default class extends Vue {
         }
       })
     } else if (key === 'account') { // 账户
-
+      this.$message.warning('该功能暂没开放')
     } else if (key === 'order') { // 创建订单
-
+      this.$router.push({
+        path: '/join/creatorder'
+      })
     } else if (key === 'transport') { // 创建运力
-
+      this.$router.push({
+        path: '/transport/creattransport',
+        query: {
+          id: row.driverId,
+          name: row.name,
+          phone: row.phone
+        }
+      })
     }
   }
 

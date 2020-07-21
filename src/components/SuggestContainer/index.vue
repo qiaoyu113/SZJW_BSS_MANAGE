@@ -15,7 +15,6 @@
       class="tab-box"
     >
       <el-tabs
-
         v-model="activeValue"
         @tab-click="handleClick"
       >
@@ -29,7 +28,7 @@
             slot="label"
             class="tab_label"
           >{{ item.label }} <i
-            v-if="item.num"
+
             class="tab_num"
           >{{ item.num }}</i> </span>
         </el-tab-pane>
