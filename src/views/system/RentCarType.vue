@@ -301,7 +301,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
 import { HandlePages } from '@/utils/index'
 import { GetCustomerOff } from '@/api/cargo'
-import { GetOpenCityData, GetDictionaryList } from '@/api/common'
+import { GetDictionaryList } from '@/api/common'
 import { getProductList, shelvesOrTheshelves, createProduct, updateProduct, ProductDownload } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -429,14 +429,13 @@ export default class extends Vue {
   private fetchData() {
     this.getCity()
     this.getDictionary()
-    // 获取弹窗城市
-    this.getDialogCity()
     this.getList(this.listQuery)
   }
-  private async getDialogCity() {
+  private async getCity() {
     const { data } = await GetCustomerOff()
     if (data.success) {
       this.optionsDialogCity = data.data
+      this.optionsCity = data.data
     } else {
       this.$message.error(data)
     }
@@ -580,14 +579,6 @@ export default class extends Vue {
     const { data } = await GetDictionaryList(['Intentional_compartment'])
     if (data.success) {
       this.optionsCar = data.data.Intentional_compartment
-    } else {
-      this.$message.error(data)
-    }
-  }
-  private async getCity() {
-    const { data } = await GetOpenCityData()
-    if (data.success) {
-      this.optionsCity = data.data
     } else {
       this.$message.error(data)
     }
