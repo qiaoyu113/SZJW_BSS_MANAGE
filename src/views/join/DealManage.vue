@@ -405,11 +405,19 @@ export default class extends Vue {
         this.$router.push({ name: 'DealManageDetail', query: { id: id } })
       }
     }
+
+    // private filterObj(obj:any) {
+    //   let result: any = {}
+    //   Object.keys(obj).filter((key) => obj[key] !== '').forEach((key) => {
+    //     result[key] = obj[key]
+    //   })
+    //   return result
+    // }
     // 导出
     private async downLoad() {
-      const postData = this.filterObj(this.listQuery)
-      delete postData.page
-      delete postData.limit
+      const postData = this.listQuery
+      // delete postData.page
+      // delete postData.limit
       DelieverExportDown(postData)
         .then((res) => {
           this.$message({
