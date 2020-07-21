@@ -239,7 +239,7 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
         if (listQuery[key].length === 2) {
           for (let i = 0; i < listQuery[key].length; i++) {
             let item = listQuery[key][i]
-            time.push(parseTime(item, '{h}:{i}:{s}'))
+            time.push(parseTime(item, '{h}:{i}'))
           }
           label = time.join('-')
         }

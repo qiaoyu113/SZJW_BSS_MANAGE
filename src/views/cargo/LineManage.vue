@@ -19,6 +19,7 @@
           <el-button
             type="warning"
             :class="isPC ? '' : 'btnMobile'"
+            size="small"
             name="linemanage_reset_btn"
             @click="handleResetClick"
           >
@@ -27,6 +28,7 @@
           <el-button
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
+            size="small"
             name="linemanage_filter_btn"
             @click="handleFilterClick"
           >
@@ -49,15 +51,15 @@
                 class="numCol"
                 v-text="title.all"
               />
-              条线路，总计已上岗
-              <span
-                class="numCol"
-                v-text="title.mountGuardNo"
-              />
-              个，可上岗
+              条线路，总计可上岗
               <span
                 class="numCol"
                 v-text="title.canMountGuardNo"
+              />
+              个，已上岗
+              <span
+                class="numCol"
+                v-text="title.mountGuardNo"
               />
               个，已下线
               <span
@@ -408,7 +410,7 @@ import { getLabel } from '@/utils/index.ts'
 import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, parseTime } from '@/utils/index'
 import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll } from '@/api/cargo'
 import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
@@ -522,7 +524,7 @@ export default class LineManage extends Vue {
     {
       type: 2,
       label: '选择车型',
-      key: 'cartype',
+      key: 'carType',
       tagAttrs: {
         placeholder: '请选择车型',
         filterable: true
@@ -593,7 +595,7 @@ export default class LineManage extends Vue {
       col: 12,
       label: '工作开始时间段',
       w: '130px',
-      type: 3,
+      type: 10,
       key: 'jobTime'
     }
   ]
@@ -601,14 +603,15 @@ export default class LineManage extends Vue {
     shelvesState: '',
     lineSaleId: '',
     auditState: '',
-    cartype: '',
+    carType: '',
     lineName: '',
     lineId: '',
     customerName: '',
     houseAddress: [],
     returnWarehouse: '',
     time: [],
-    jobTime: [],
+    // jobTime: [Date.now(),Date.now()],
+    jobTime: this.getTimeArr(),
     jobStartDate: '',
     jobEndDate: ''
   };
@@ -731,6 +734,17 @@ export default class LineManage extends Vue {
     }
   }
 
+  private getTimeArr() {
+    // 凌晨时间：
+    let atime:any = new Date(new Date().setHours(0, 0, 0, 0))
+    // 23点时间：
+    let btime:any = new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)
+    let timeArr:string[] = []
+    timeArr.push(atime)
+    timeArr.push(btime)
+    return timeArr
+  }
+
   mounted() {
     this.dropdownList = [...this.columns]
     this.checkList = this.dropdownList.map(item => item.label)
@@ -783,21 +797,23 @@ export default class LineManage extends Vue {
    *重置按钮
    */
   handleResetClick() {
+    this.tags = []
     this.listQuery = {
       shelvesState: '',
       lineSaleId: '',
       auditState: '',
-      cartype: '',
+      carType: '',
       lineName: '',
       lineId: '',
       customerName: '',
       houseAddress: [],
       returnWarehouse: '',
       time: [],
-      jobTime: [],
+      jobTime: this.getTimeArr(),
       jobStartDate: '',
       jobEndDate: ''
     }
+    this.getList()
   }
   /**
    *筛选按钮
@@ -843,7 +859,7 @@ export default class LineManage extends Vue {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
       this.formItem.map(ele => {
-        if (ele.key === 'cartype') {
+        if (ele.key === 'carType') {
           ele.options = cartype
         }
         if (ele.key === 'auditState') {
@@ -885,7 +901,7 @@ export default class LineManage extends Vue {
       let params:any = {
         lineSaleId: this.listQuery.lineSaleId,
         auditState: this.listQuery.auditState,
-        cartype: this.listQuery.cartype,
+        carType: this.listQuery.carType,
         lineName: this.listQuery.lineName,
         lineId: this.listQuery.lineId,
         customerName: this.listQuery.customerName,
@@ -903,8 +919,8 @@ export default class LineManage extends Vue {
       }
       console.log(this.listQuery.jobTime)
       if (this.listQuery.jobTime.length > 0) {
-        params.jobStartDate = this.listQuery.time[0]
-        params.jobEndDate = this.listQuery.time[1]
+        params.jobStartDate = parseTime(this.listQuery.jobTime[0], '{h}:{i}')
+        params.jobEndDate = parseTime(this.listQuery.jobTime[1], '{h}:{i}')
       }
       const { data: res } = await lineListAll(params)
       this.listLoading = false

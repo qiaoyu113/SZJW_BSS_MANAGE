@@ -272,22 +272,22 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: null,
+        name: 'null',
         num: '0'
       },
       {
         label: '待上岗',
-        name: 0,
+        name: '0',
         num: '0'
       },
       {
         label: '上岗',
-        name: 1,
+        name: '1',
         num: '0'
       },
       {
         label: '停用',
-        name: 2,
+        name: '2',
         num: '0'
       }
     ]
@@ -364,12 +364,10 @@ export default class extends Vue {
     private page:PageObj = {
       page: 1,
       limit: 20,
-      total: 20
+      total: 0
     }
     private listQuery:IState = {
-      'gmId': '',
-      'limit': '10',
-      'page': '1',
+      gmId: '',
       status: null,
       workCity: null,
       carrierId: null,
@@ -437,11 +435,11 @@ export default class extends Vue {
         options: [
           {
             label: '梧桐专车',
-            value: 0
+            value: '0'
           },
           {
             label: '梧桐共享',
-            value: 1
+            value: '1'
           }
         ]
       },
@@ -556,11 +554,12 @@ export default class extends Vue {
    *重置
    */
     private handleResetClick() {
+      console.log(123)
       this.tags = []
       this.listQuery = {
-        'gmId': '',
-        'limit': '10',
-        'page': '1',
+        gmId: '',
+        limit: '10',
+        page: '1',
         status: null,
         workCity: null,
         carrierId: null,
@@ -574,6 +573,7 @@ export default class extends Vue {
         driverPhone: null,
         createDate: []
       }
+      this.getList(this.listQuery)
     }
 
     private gmConfirm(done: any) {
@@ -866,14 +866,13 @@ export default class extends Vue {
     this.tags = value
   }
 
-  /**
-   * 删除顶部表单的选项
-   */
+  // tab切换
   handleQuery(value:any, key:any) {
+    console.log(value, key, 455)
     if (key === 'time') {
       this.listQuery[key] = null
     } else {
-      this.listQuery[key] = null
+      this.listQuery[key] = value
     }
     this.listQuery.status = this.listQuery.state
     this.getList(this.listQuery)
@@ -881,8 +880,8 @@ export default class extends Vue {
 
   // 请求列表
   private async getList(value: any) {
-    this.listQuery.page = value.page
-    this.listQuery.limit = value.limit
+    this.listQuery.page = this.page.page
+    this.listQuery.limit = this.page.limit
     this.listLoading = true
     const { data } = await getCarrierInfoList(this.listQuery)
     if (data.success) {
