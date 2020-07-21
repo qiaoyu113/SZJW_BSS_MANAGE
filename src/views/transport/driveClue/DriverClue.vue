@@ -342,7 +342,8 @@ export default class extends Vue {
     sourceChannel: '',
     workCity: '',
     gmId: '',
-    onlyMe: ''
+    onlyMe: '',
+    clueId: ''
   }
   /**
    *表单数组
@@ -421,6 +422,14 @@ export default class extends Vue {
           value: false
         }
       ]
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入编号'
+      },
+      label: '编号',
+      key: 'clueId'
     }
   ]
 
@@ -620,7 +629,8 @@ export default class extends Vue {
       sourceChannel: '',
       workCity: '',
       gmId: '',
-      onlyMe: ''
+      onlyMe: '',
+      clueId: ''
     }
     this.tags = []
   }
