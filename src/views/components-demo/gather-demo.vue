@@ -322,7 +322,8 @@ export default class extends Vue {
       onlyCan: '',
       time: [],
       gender: 'male',
-      checkbox: []
+      checkbox: [],
+      timeRange: [Date.now(), Date.now()]
     }
     private formItem:any[] = [
       {
@@ -396,6 +397,14 @@ export default class extends Vue {
             value: 'shanghai'
           }
         ]
+      },
+      {
+        type: 10,
+        label: '时间选择',
+        key: 'timeRange',
+        tagAttrs: {
+          'arrow-control': true
+        }
       }
     ]
     page:PageObj ={
