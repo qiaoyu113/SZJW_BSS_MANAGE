@@ -28,7 +28,7 @@
             slot="label"
             class="tab_label"
           >{{ item.label }} <i
-            v-if="item.num"
+
             class="tab_num"
           >{{ item.num }}</i> </span>
         </el-tab-pane>
