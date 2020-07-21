@@ -396,6 +396,7 @@ export default class extends Vue {
 
     // 审核通过
     private async auditPass(value: any) {
+      this.fullscreenLoading = true
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditPass',
@@ -404,7 +405,6 @@ export default class extends Vue {
         createSource: this.orderDetail.createSource
       })
       if (data.success) {
-        this.fullscreenLoading = true;
         (TagsViewModule as any).delView(this.$route); // 关闭当前页面
         (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
           name: 'OrderManage'
@@ -422,6 +422,7 @@ export default class extends Vue {
 
     // 审核通过
     private async auditNoPass(value: any) {
+      this.fullscreenLoading = true
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditNotPass',
@@ -430,7 +431,6 @@ export default class extends Vue {
         createSource: this.orderDetail.createSource
       })
       if (data.success) {
-        this.fullscreenLoading = true;
         (TagsViewModule as any).delView(this.$route); // 关闭当前页面
         (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
           name: 'OrderManage'

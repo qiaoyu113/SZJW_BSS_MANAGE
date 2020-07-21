@@ -159,7 +159,7 @@ export default class extends Vue {
   private optionsClassification: any[] = []
   private DateValueChild: any[] = []; // DateValue的赋值项
   private DateValueChild2: any[] = []; // DateValue的赋值项
-  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate']; // 添加过滤listQuery中key的名称
+  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate', 'contractEndStartTime']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
@@ -181,6 +181,7 @@ export default class extends Vue {
             type: '',
             key: key
           })
+          console.log(tags)
         } else if (value[key] && key === 'endDate') {
           tags.unshift({
             name:
@@ -312,20 +313,21 @@ export default class extends Vue {
     }
   }
 
-  private changData() {
-    if (this.DateValueChild) {
-      this.listQuery.startDate = this.DateValueChild[0]
-      this.listQuery.endDate = this.DateValueChild[1]
+  private changData2() {
+    if (this.DateValueChild2) {
+      this.listQuery.startDate = this.DateValueChild2[0]
+      this.listQuery.endDate = this.DateValueChild2[1]
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
+    console.log(this.listQuery)
   }
 
-  private changData2() {
-    if (this.DateValueChild2) {
-      this.listQuery.contractEndStartTime = this.DateValueChild2[0]
-      this.listQuery.contractEndEndTime = this.DateValueChild2[1]
+  private changData() {
+    if (this.DateValueChild) {
+      this.listQuery.contractEndStartTime = this.DateValueChild[0]
+      this.listQuery.contractEndEndTime = this.DateValueChild[1]
     } else {
       this.listQuery.contractEndStartTime = ''
       this.listQuery.contractEndEndTime = ''
