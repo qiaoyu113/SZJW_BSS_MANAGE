@@ -122,6 +122,7 @@ import DownTool from '@/components/DownTool/index.vue'
 import Setting from '@/components/Setting/index.vue'
 import OpenNew from '@/components/OpenNew/index.vue'
 import SizeSelect from '@/components/SizeSelect/index.vue'
+import { SettingsModule } from '@/store/modules/settings'
 
 @Component({
   name: 'Navbar',
@@ -139,6 +140,11 @@ import SizeSelect from '@/components/SizeSelect/index.vue'
   }
 })
 export default class extends Vue {
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
   get sidebar() {
     return AppModule.sidebar
   }

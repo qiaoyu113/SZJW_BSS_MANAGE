@@ -21,16 +21,16 @@
         :tab="tab"
         :active-name="listQuery.state"
       >
-        <!-- <el-button
+        <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
           name="cluelist_creat_btn"
-          @click="showDialog.visible = true"
+          @click="downLoad"
         >
-          <i class="el-icon-plus" />
-          <span v-if="isPC">创建客户</span>
-        </el-button> -->
+          <i class="el-icon-download" />
+          <span v-if="isPC">导出</span>
+        </el-button>
 
         <el-dropdown
           :hide-on-click="false"
@@ -200,13 +200,15 @@
                   <i class="el-icon-setting el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
+                  <!-- v-if="(scope.row.status === 30 || scope.row.status === 35 || scope.row.status === 40) && scope.row.isDeliver === 0" -->
                   <el-dropdown-item
-                    v-if="scope.row.status === 30 || scope.row.status === 35 || scope.row.status === 40"
+                    v-if="scope.row.isDeliver === 0"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     交付
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-if="scope.row.isDeliver === 1"
                     @click.native="goDetail(scope.row.orderId, 2)"
                   >
                     详情
@@ -233,7 +235,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetDelieverList } from '@/api/join'
+import { GetDelieverList, DelieverExportDown } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -289,7 +291,7 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: '0',
+        name: '99',
         num: ''
       },
       {
@@ -310,7 +312,7 @@ export default class extends Vue {
       limit: 30,
       endDate: '',
       startDate: '',
-      state: '',
+      state: '99',
       lineSaleId: '',
       'busiType': '',
       'cooperationModel': '',
@@ -402,6 +404,41 @@ export default class extends Vue {
       } else {
         this.$router.push({ name: 'DealManageDetail', query: { id: id } })
       }
+    }
+
+    // private filterObj(obj:any) {
+    //   let result: any = {}
+    //   Object.keys(obj).filter((key) => obj[key] !== '').forEach((key) => {
+    //     result[key] = obj[key]
+    //   })
+    //   return result
+    // }
+    // 导出
+    private async downLoad() {
+      const postData = this.listQuery
+      // delete postData.page
+      // delete postData.limit
+      DelieverExportDown(postData)
+        .then((res) => {
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
+          const fileName = res.headers['content-disposition'].split('fileName=')[1]
+          this.download(res.data, decodeURI(fileName))
+        })
+    }
+    private download(data: any, name: any) {
+      if (!data) {
+        return
+      }
+      let url = window.URL.createObjectURL(new Blob([data]))
+      let link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.setAttribute('download', name)
+      document.body.appendChild(link)
+      link.click()
     }
 }
 </script>
