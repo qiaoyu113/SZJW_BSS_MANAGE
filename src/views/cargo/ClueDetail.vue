@@ -130,7 +130,7 @@
       </el-row>
     </SectionContainer>
     <SectionContainer
-      v-else
+      v-if="details.clueState !==3 && details.clueState !== 0"
       title="跟进信息"
       :md="true"
     >

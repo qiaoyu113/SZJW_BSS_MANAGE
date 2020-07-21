@@ -92,7 +92,8 @@ export default class extends Vue {
       key: 'idNo',
       label: '身份证号:',
       tagAttrs: {
-        placeholder: '请输入身份证号'
+        placeholder: '请输入身份证号',
+        maxlength: 18
       }
     },
     {

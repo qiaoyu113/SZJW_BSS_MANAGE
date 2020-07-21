@@ -522,7 +522,7 @@
               <el-upload
                 class="avatar-uploader"
                 :show-file-list="false"
-                action="/api/base/v1/upload/uploadOSS/img/true/-1"
+                action="/api/core/v1/upload/uploadOSS/img/true/-1"
                 :before-upload="beforeAvatarUpload"
                 :on-change="handleChange"
                 :auto-upload="false"

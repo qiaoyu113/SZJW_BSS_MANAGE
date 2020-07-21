@@ -15,19 +15,20 @@
         <!-- <header-search class="right-menu-item" /> -->
         <error-log class="errLog-container right-menu-item hover-effect" />
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.setting')"
           effect="dark"
           placement="bottom"
         >
           <setting class="right-menu-item hover-effect" />
         </el-tooltip>
-        <el-tooltip
+        <!-- <el-tooltip
           :content="$t('navbar.down')"
           effect="dark"
           placement="bottom"
         >
           <down-tool class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
         <!-- <el-tooltip
           :content="$t('navbar.open')"
           effect="dark"
@@ -36,6 +37,7 @@
           <open-new class="right-menu-item hover-effect" />
         </el-tooltip> -->
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.screenfull')"
           effect="dark"
           placement="bottom"
@@ -50,6 +52,7 @@
           <size-select class="right-menu-item hover-effect" />
         </el-tooltip> -->
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.language')"
           effect="dark"
           placement="bottom"
@@ -119,6 +122,7 @@ import DownTool from '@/components/DownTool/index.vue'
 import Setting from '@/components/Setting/index.vue'
 import OpenNew from '@/components/OpenNew/index.vue'
 import SizeSelect from '@/components/SizeSelect/index.vue'
+import { SettingsModule } from '@/store/modules/settings'
 
 @Component({
   name: 'Navbar',
@@ -136,6 +140,11 @@ import SizeSelect from '@/components/SizeSelect/index.vue'
   }
 })
 export default class extends Vue {
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
   get sidebar() {
     return AppModule.sidebar
   }

@@ -76,7 +76,7 @@
           <template slot-scope="{node,data}">
             <span>{{ node.label }}</span>
             <el-radio-group
-              v-show="node.checked && node.level !== 1"
+              v-show="node.checked && node.level !== 1 && data.controlType"
               v-model="data.checked"
               class="ml10"
               size="mini"
@@ -146,24 +146,24 @@ export default class extends Vue {
   private productList: any = []
   private scopeList: any = [
     {
-      dictValue: 0,
-      dictLabel: '全部'
-    },
-    {
-      dictValue: 1,
-      dictLabel: '大区'
-    },
-    {
-      dictValue: 2,
-      dictLabel: '城市'
+      dictValue: 4,
+      dictLabel: '个人数据'
     },
     {
       dictValue: 3,
-      dictLabel: '小组'
+      dictLabel: '小组数据'
     },
     {
-      dictValue: 4,
-      dictLabel: '个人'
+      dictValue: 2,
+      dictLabel: '城市数据'
+    },
+    {
+      dictValue: 1,
+      dictLabel: '大区数据'
+    },
+    {
+      dictValue: 0,
+      dictLabel: '全部数据'
     }
   ]
   private rules:any = {
@@ -298,8 +298,9 @@ export default class extends Vue {
             checked = item.dataScope
           }
         }
-        list[i].checked = checked
-
+        if (list[i].controlType) {
+          list[i].checked = checked
+        }
         if (list[i].childAuth) {
           setChecked(list[i].childAuth)
         }

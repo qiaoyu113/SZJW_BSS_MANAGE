@@ -1,5 +1,5 @@
 // Set utils function parseTime to filter
-export { parseTime, Timestamp, DataIsNull } from '@/utils'
+export { parseTime, Timestamp, TimestampYMD, DataIsNull } from '@/utils'
 
 // Filter for article status
 export const articleStatusFilter = (status: string) => {

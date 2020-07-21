@@ -33,12 +33,19 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 .SectionContainer{
     width: 100%;
     background: #FFFFFF;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     margin-bottom: 6px;
+    .el-row{
+      list-style-type: none;
+    }
+    [class*=el-col-]{
+      display: inline-block;
+      vertical-align: top;
+    }
     .title{
         width:100%;
         height: 58px;

@@ -70,12 +70,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  size="small"
                   @click="reset"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  size="small"
                   type="primary"
                   @click="research"
                 >
@@ -240,6 +242,7 @@ export default class extends Vue {
       if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
         this.listQuery['page'] = 1
       }
+      if (key !== 'state') this.listQuery['state'] = 'all'
     }
     this.DateValueChild = []
   }

@@ -233,7 +233,7 @@ import ClueDistribution from './components/clueDistribution.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { getLabel } from '@/utils/index.ts'
 import { delayTime } from '@/settings'
-import { GetOpenCityData, GetDictionaryList } from '@/api/common'
+import { GetOpenCityData, GetDictionaryList, GetManagerLists } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -342,7 +342,8 @@ export default class extends Vue {
     sourceChannel: '',
     workCity: '',
     gmId: '',
-    onlyMe: ''
+    onlyMe: '',
+    clueId: ''
   }
   /**
    *表单数组
@@ -351,7 +352,8 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '请输入姓名'
+        placeholder: '请输入姓名',
+        maxlength: 10
       },
       label: '姓名',
       key: 'name'
@@ -359,7 +361,8 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '请输入电话'
+        placeholder: '请输入电话',
+        maxlength: 11
       },
       label: '电话',
       key: 'phone'
@@ -421,6 +424,15 @@ export default class extends Vue {
           value: false
         }
       ]
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入编号',
+        maxlength: 14
+      },
+      label: '编号',
+      key: 'clueId'
     }
   ]
 
@@ -498,13 +510,28 @@ export default class extends Vue {
     this.getBaseInfo()
     this.getOpenCitys()
     this.getList()
+    this.getManagers()
   }
 
   @Watch('checkList', { deep: true })
   private checkListChange(val:any) {
     this.columns = this.dropdownList.filter(item => val.includes(item.label))
   }
-
+  /**
+   * 获取跟进人列表
+   */
+  async getManagers() {
+    try {
+      let { data: res } = await GetManagerLists()
+      if (res.success) {
+        this.formItem[5].options = res.data.map((item:any) => ({ label: item.name, value: item.id }))
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get manager fail:${err}`)
+    }
+  }
   /**
    *获取基础信息
    */
@@ -620,9 +647,11 @@ export default class extends Vue {
       sourceChannel: '',
       workCity: '',
       gmId: '',
-      onlyMe: ''
+      onlyMe: '',
+      clueId: ''
     }
     this.tags = []
+    this.getList()
   }
 
   /**
@@ -632,7 +661,7 @@ export default class extends Vue {
     let blackLists = ['status']
     this.tags = []
     for (let key in this.listQuery) {
-      if (this.listQuery[key] !== '' && this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+      if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
         if (name) {
           this.tags.push({

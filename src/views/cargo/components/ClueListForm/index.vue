@@ -118,7 +118,7 @@
                     v-model="DateValueChild"
                     :class="isPC ? '' : 'el-date-m'"
                     type="daterange"
-                    value-format="timestamp"
+                    value-format="yyyy-MM-dd"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     @change="changData()"
@@ -130,12 +130,14 @@
                 class="btn-box"
               >
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   @click="resetForm"
                 >
                   重置
                 </el-button>
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
                   @click="search"
@@ -273,8 +275,8 @@ export default class extends Vue {
 
   private changData() {
     if (this.DateValueChild) {
-      this.listQuery.startDate = this.DateValueChild[0]
-      this.listQuery.endDate = this.DateValueChild[1]
+      this.listQuery.startDate = this.DateValueChild[0] + ' 00:00:00'
+      this.listQuery.endDate = this.DateValueChild[1] + ' 23:59:59'
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''

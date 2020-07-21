@@ -1,5 +1,9 @@
 <template>
-  <div class="login-container">
+  <div :class="isPC ? 'login-container' : 'login-container-m'">
+    <div
+      v-if="!isPC"
+      class="logo"
+    />
     <el-form
       ref="loginForm"
       :model="loginForm"
@@ -9,10 +13,9 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">
-          梧桐BSS {{ $t('login.title') }}
-        </h3>
-        <!--<lang-select class="set-language" />-->
+        <p class="title">
+          云鸟梧桐综合业务支撑平台
+        </p>
       </div>
 
       <el-form-item
@@ -20,16 +23,8 @@
         style="background: #fff;"
       >
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon name="user" />
         </span>
-        <!-- <el-input
-          v-model="loginForm.username"
-          :placeholder="$t('login.username')"
-          name="username"
-          type="text"
-          style="background: #fff;"
-          auto-complete="on"
-        /> -->
         <el-input
           ref="username"
           v-model="loginForm.username"
@@ -43,10 +38,10 @@
 
       <el-form-item
         prop="password"
-        style="background: #fff;"
+        style="background: #fff;margin-bottom: 70px;"
       >
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon name="password" />
         </span>
         <el-input
           v-model="loginForm.password"
@@ -60,7 +55,7 @@
           class="show-pwd"
           @click="showPwd"
         >
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <svg-icon :name="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
       <div class="wrapper">
@@ -68,30 +63,13 @@
           :loading="loading"
           class="button"
           type="primary"
-          style="width:100%;margin-bottom:30px;"
+          style="width:100%;margin:auto;"
           @click.native.prevent="handleLogin"
         >
           {{ $t('login.logIn') }}
         </el-button>
       </div>
-      <!-- <div style="position:relative">
-        <div class="tips">
-          <span>{{ $t('login.username') }} : admin</span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">
-            {{ $t('login.username') }} : editor
-          </span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
-
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          {{ $t('login.thirdparty') }}
-        </el-button>
-      </div> -->
     </el-form>
-    <div class="shadowBg" />
 
     <el-dialog
       :title="$t('login.thirdparty')"
@@ -103,6 +81,40 @@
       <br>
       <social-sign />
     </el-dialog>
+    <Dialog
+      :visible.sync="assignShowDialog"
+      :title="`该账号密码不安全，请重新设置`"
+      :confirm="confirm"
+    >
+      <el-row>
+        <el-form
+          ref="reCreatRule"
+          :model="reCreat"
+          :rules="rules"
+          :label-width="isPC ? '120px' : '30%'"
+          class="refundForm"
+        >
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="密码设置">
+              <el-input
+                v-model="reCreat.orderId"
+                placeholder="请输入密码"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="确认密码">
+              <el-input
+                v-model="reCreat.orderIds"
+                placeholder="请再次输入密码"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+    </Dialog>
   </div>
 </template>
 
@@ -115,6 +127,7 @@ import { UserModule } from '@/store/modules/user'
 import { isValidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect/index.vue'
 import SocialSign from './components/SocialSignin.vue'
+import { SettingsModule } from '@/store/modules/settings'
 
 @Component({
   name: 'Login',
@@ -124,6 +137,9 @@ import SocialSign from './components/SocialSignin.vue'
   }
 })
 export default class extends Vue {
+  private assignShowDialog = false
+  private reCreat: any[] = []
+  private rules: any[] = []
   private validateUsername = (rule: any, value: string, callback: Function) => {
     if (!isValidUsername(value)) {
       callback(new Error('请输入账号'))
@@ -139,8 +155,8 @@ export default class extends Vue {
     }
   }
   private loginForm = {
-    username: 'admin',
-    password: '123456'
+    username: '',
+    password: ''
   }
   private loginRules = {
     username: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -168,6 +184,15 @@ export default class extends Vue {
       (this.$refs.username as Input).focus()
     } else if (this.loginForm.password === '') {
       (this.$refs.password as Input).focus()
+    }
+  }
+
+  // 判断是否是PC
+  get isPC() {
+    if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+      return false
+    } else {
+      return true
     }
   }
 
@@ -209,6 +234,10 @@ export default class extends Vue {
       return acc
     }, {} as Dictionary<string>)
   }
+
+  private confirm() {
+
+  }
 }
 </script>
 
@@ -223,46 +252,6 @@ export default class extends Vue {
       transform: skewY(-45deg) translateX(12.5em);
     }
   }
-
-  .wrapper {
-    display: block;
-    position: relative;
-    width: 100%;
-  }
-  .button {
-    padding: 0.75em 2em;
-    text-align: center;
-    text-decoration: none;
-    color: $color;
-    border: 2px solid $color;
-    font-size: 24px;
-    display: inline-block;
-    border-radius: 0.3em;
-    transition: all 0.2s ease-in-out;
-    position: relative;
-    overflow: hidden;
-    &:before {
-      content: "";
-      background-color: rgba(255,255,255,0.5);
-      height: 100%;
-      width: 3em;
-      display: block;
-      position: absolute;
-      top: 0;
-      left: -4.5em;
-      transform: skewX(-45deg) translateX(0);
-      transition: none;
-    }
-    &:hover {
-      background-color: $color;
-      color: #fff;
-      border-bottom: 4px solid darken($color, 10%);
-      &:before {
-        transform: skewX(-45deg) translateX(35.5em);
-        transition: all 0.3s ease-in-out;
-      }
-    }
-  }
 </style>
 
 <style rel="stylesheet/scss" lang="scss">
@@ -273,6 +262,7 @@ export default class extends Vue {
   //$light_gray:#eee;
   $light_gray:#01466f;
   $cursor: #fff;
+  $color: #2194E0;
 
   @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
     .login-container .el-input input{
@@ -285,6 +275,28 @@ export default class extends Vue {
 
   /* reset element-ui css */
   .login-container {
+
+  .wrapper {
+    display: block;
+    position: relative;
+    width: 430px;
+    text-align: center;
+    margin: auto;
+  }
+  .button {
+    padding: 0.75em 2em;
+    text-align: center;
+    text-decoration: none;
+    color: $color;
+    border: 2px solid $color;
+    font-size: 24px;
+    display: inline-block;
+    border-radius: 25px;
+    transition: all 0.2s ease-in-out;
+    overflow: hidden;
+    position: relative;
+    margin:auto;
+  }
     .el-button{
       line-height:2;
       font-size:14px;
@@ -296,8 +308,9 @@ export default class extends Vue {
       transition: all 1s;
       cursor: pointer;
       /*background: #298f9b;*/
-      background: #5C5758;
-      border: 1px solid #5C5758;
+      background:#399FFB;
+      border: 1px solid #399FFB;
+      border-radius: 25px;
     }
     .el-input {
       display: inline-block;
@@ -323,10 +336,12 @@ export default class extends Vue {
       }
     }
     .el-form-item {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 5px;
-      color: #454545;
+      width: 430px;
+      background: #384F86;
+      border: 1px solid #399FFB;
+      border-radius: 29px;
+      color: #fff;
+      margin:0 auto 40px;
     }
   }
 </style>
@@ -334,15 +349,18 @@ export default class extends Vue {
 <style rel="stylesheet/scss" lang="scss" scoped>
 $bg:linear-gradient(140deg,#01466f,#e14494);
 $bg3:linear-gradient(180deg,rgb(74, 183, 189),#AEFB7C);
+$bg4:#0D1846;
 $bg2:url('http://thyrsi.com/t6/674/1551184579x2890202953.png')no-repeat;
 $dark_gray:#889aa4;
 $light_gray:#eee;
+$color: #2194E0;
 
 .login-container {
-  min-height: 100%;
   width: 100%;
-  max-height: 100%;
-  background: $bg3;
+  height: 100vh;
+  background: $bg4;
+  background: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/95ee944cbce04d6e99797887254618b7')no-repeat;
+  background-size: 100% 100%;
   -webkit-background-size: cover;
   background-size: cover;
   overflow: hidden;
@@ -358,34 +376,20 @@ $light_gray:#eee;
   }
   .login-form {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 5.7%;
     top: 0;
-    bottom: 130px;
-    width: 580px;
-    height: 350px;
-    padding: 35px 35px 30px;
+    bottom: 0;
+    width: 595px;
+    height: 470px;
     margin: auto;
-    background: -webkit-gradient(linear,left bottom,left top,from(#E6CF45),color-stop(33%,#E6CF45),color-stop(66%,#E6CF45),to(#E6CF45));
+    background: #172452;
+    border: 1px solid #3887F7;
     background-size: 1px 300%;
     background-position: 0px 100%;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,.5);
     transition: box-shadow .5s,transform .5s;
     z-index: 100;
-  }
-  .login-form:before {
-    content:"";
-    position: absolute;
-    right: 0;
-    left: 0;
-    bottom: -130px;
-    margin: auto;
-    width: 0;
-    height: 0;
-    border-left: 40px solid transparent;
-    border-right: 40px solid transparent;
-    border-top: 140px solid #E6CF45;
   }
   .el-form-item__content{
     background:#fff !important;
@@ -403,23 +407,18 @@ $light_gray:#eee;
   .svg-container {
     padding: 6px 5px 6px 15px;
     /*color: $dark_gray;*/
-    color: #4ca2cc;
+    color: #4ca2cc !important;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
   }
   .title-container {
     position: relative;
-    h3{
-      /*color: #298f9b !important;*/
-      color: #fff !important;
-    }
     .title {
-      font-size: 26px;
-      color: $light_gray;
-      margin: 0px auto 40px auto;
+      font-size: 32px;
+      color: #FFFFFF;
       text-align: center;
-      font-weight: bold;
+      margin-top: 60px;
     }
     .set-language {
       color: #fff;
@@ -435,7 +434,7 @@ $light_gray:#eee;
     right: 10px;
     top: 7px;
     font-size: 16px;
-    color: $dark_gray;
+    color: #4ca2cc !important;
     cursor: pointer;
     user-select: none;
   }
@@ -445,17 +444,114 @@ $light_gray:#eee;
     bottom: 6px;
   }
 }
-.login-container::before{
-  content: '';
-  width:100%;
-  height:20%;
-  position: fixed;
-  transform: translate(50% , 50%);
-  top:-50%;
-  left:-50%;
-  mix-blend-mode:screen;
-  /*background:url("https://image.weilanwl.com/gif/wave.gif")no-repeat;*/
-  z-index:0;
+.shadowBg{
+  position: relative;
+  width: 2240px;
+  height: 2240px;
+  border-radius: 50%;
+  background-color: #f7f6f4;
+  background-image: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/a764556ca46f4e5d8d2b27c6817f6295');
+  background-size: 5px 5px;
+  bottom: -805px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px rgba(0,0,0,.2);
+}
+
+.login-container-m {
+  width: 100%;
+  height: 100vh;
+  -webkit-background-size: cover;
+  background-size: cover;
+  overflow: hidden;
+  .wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    text-align: center;
+    margin: auto;
+  }
+  .button {
+    height: 40px;
+    text-align: center;
+    text-decoration: none;
+    color: #ABCEFB;
+    font-size: 16px;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    margin:auto;
+    background: #2F448A;
+    border-radius: 10px;
+  }
+  .logo{
+    width: 100%;
+    height: 28vh;
+    background: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/a6ce085a5d6e425295ab487097e9cd3a')no-repeat;
+    -webkit-background-size: cover;
+    background-size: cover;
+    overflow: hidden;
+  }
+  .login-form {
+    width: 100%;
+    margin: auto;
+    z-index: 100;
+    padding: 10px 20px;
+    box-sizing: border-box;
+  }
+  .el-form-item__content{
+    background:#fff !important;
+  }
+  .tips {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 10px;
+    span {
+      &:first-of-type {
+        margin-right: 16px;
+      }
+    }
+  }
+  .svg-container {
+    padding: 6px 5px 6px 15px;
+    /*color: $dark_gray;*/
+    color: #4ca2cc !important;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
+  }
+  .title-container {
+    display: none;
+    .title {
+      font-size: 32px;
+      color: #FFFFFF;
+      text-align: center;
+      margin-top: 60px;
+    }
+    .set-language {
+      color: #fff;
+      position: absolute;
+      top: 3px;
+      font-size:18px;
+      right: 0px;
+      cursor: pointer;
+    }
+  }
+  .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 16px;
+    color: #4ca2cc !important;
+    cursor: pointer;
+    user-select: none;
+  }
+  .thirdparty-button {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+  }
 }
 .shadowBg{
   position: relative;

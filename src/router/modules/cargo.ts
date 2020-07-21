@@ -300,7 +300,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'takePicture',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         icon: '',
         hidden: true,
         apiUrl: 'root'

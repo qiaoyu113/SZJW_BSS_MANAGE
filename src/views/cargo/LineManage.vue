@@ -979,7 +979,7 @@ export default class LineManage extends Vue {
         this.$router.push({ path: 'lineaudit', query: { id: row.lineId } })
         break
       case 'take':
-        this.$router.push({ path: 'takepicture', query: { id: row.lineId, info: JSON.stringify(row) } })
+        this.$router.push({ path: 'takepicture', query: { lineId: row.lineId } })
         break
       case 'showtender':
         this.$router.push({ path: 'showtender', query: { id: row.lineId } })
@@ -1003,7 +1003,7 @@ export default class LineManage extends Vue {
         this.$router.push({ path: 'linedetail', query: { id: row.lineId } })
         break
       case 'showpic':
-        this.$router.push({ path: 'showpicture', query: { id: row.lineId, info: JSON.stringify(row) } })
+        this.$router.push({ path: 'showpicture', query: { id: row.id, lineId: row.lineId } })
         break
       case 'stopuse':
         this.useStop(row.lineId)

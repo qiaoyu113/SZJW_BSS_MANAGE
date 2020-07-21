@@ -76,7 +76,7 @@ const systemRouter: RouteConfig = {
       }
     },
     {
-      path: 'editRole',
+      path: 'editrole',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'EditRole',
       meta: {

@@ -26,6 +26,7 @@
         :active-name="listQuery.status"
       >
         <el-button
+          size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="downLoad"
         >
@@ -34,6 +35,7 @@
         </el-button>
         <el-button
           type="primary"
+          size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="showDialog('create')"
         >
@@ -45,6 +47,7 @@
           trigger="click"
         >
           <el-button
+            size="small"
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
           >
@@ -315,7 +318,7 @@ import { BuyCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
-import { GetOpenCityData, GetDictionaryList } from '@/api/common'
+import { GetDictionaryList } from '@/api/common'
 import { GetCustomerOff } from '@/api/cargo'
 import { getProductList, shelvesOrTheshelves, createProduct, updateProduct, GetCarModelList, ProductDownload } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
@@ -450,13 +453,13 @@ export default class extends Vue {
     this.getCity()
     this.getDictionary()
     // 获取弹窗城市
-    this.getDialogCity()
     this.getList(this.listQuery)
   }
-  private async getDialogCity() {
+  private async getCity() {
     const { data } = await GetCustomerOff()
     if (data.success) {
       this.optionsDialogCity = data.data
+      this.optionsCity = data.data
     } else {
       this.$message.error(data)
     }
@@ -606,14 +609,6 @@ export default class extends Vue {
     const { data } = await GetDictionaryList(['Intentional_compartment'])
     if (data.success) {
       this.optionsCar = data.data.Intentional_compartment
-    } else {
-      this.$message.error(data)
-    }
-  }
-  private async getCity() {
-    const { data } = await GetOpenCityData()
-    if (data.success) {
-      this.optionsCity = data.data
     } else {
       this.$message.error(data)
     }

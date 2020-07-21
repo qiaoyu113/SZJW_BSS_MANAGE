@@ -5,8 +5,11 @@
       title="组织管理"
     >
       <RoleTree
+        ref="tree"
         :data="data"
         :props="defaultProps"
+        node-key="id"
+        :default-expand-all="false"
       >
         <template slot-scope="{node,data}">
           <svg-icon
@@ -225,6 +228,7 @@ import { off } from 'codemirror'
   }
 })
 export default class extends Vue {
+  private defaultExpandAll: boolean = false;
   private loading: boolean = false;
   private data: any = [];
   private defaultProps: any = {
@@ -320,6 +324,8 @@ export default class extends Vue {
       this.$message.error(`处于顶端，不能继续上移`)
       return
     }
+    const nodeExpaned = node.expanded
+    const prevExpaned = prev.expanded
     this.disabled = true
     this.sortOffice({
       fromId: node.data.id,
@@ -330,10 +336,16 @@ export default class extends Vue {
         return prev.data.id === item.id
       })
       children.splice(index, 2, JSON.parse(JSON.stringify(node.data)), JSON.parse(JSON.stringify(prev.data)))
+      this.$nextTick(() => {
+        let node1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(node.data.id)
+        node1.expanded = nodeExpaned
+        let prev1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(prev.data.id)
+        prev1.expanded = prevExpaned
+      })
     })
   }
   private async downOffice(node:any, item: any) {
-    // 向上
+    // 下
     if (this.disabled) {
       return
     }
@@ -343,6 +355,9 @@ export default class extends Vue {
       this.$message.error(`处于末端，不能继续下移`)
       return
     }
+    const nodeExpaned = node.expanded
+    const nextExpaned = next.expanded
+
     this.disabled = true
     this.sortOffice({
       fromId: node.data.id,
@@ -353,6 +368,12 @@ export default class extends Vue {
         return node.data.id === item.id
       })
       children.splice(index, 2, JSON.parse(JSON.stringify(next.data)), JSON.parse(JSON.stringify(node.data)))
+      this.$nextTick(() => {
+        let node1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(node.data.id)
+        node1.expanded = nodeExpaned
+        let next1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(next.data.id)
+        next1.expanded = nextExpaned
+      })
     })
   }
   private async sortOffice(postData: any, callback:any) {
@@ -428,8 +449,19 @@ export default class extends Vue {
     this.loading = false
     if (data.success) {
       this.data = data.data
+      this.$nextTick(() => {
+        // 兼容上下移动进行手动展开所有节点
+        this.openAll()
+      })
     } else {
       this.$message.error(data)
+    }
+  }
+  // 展开所有节点
+  openAll() {
+    const nodes = (this.$refs['tree'] as any).$refs['roleTree'].store._getAllNodes()
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].expanded = true
     }
   }
   // 删除

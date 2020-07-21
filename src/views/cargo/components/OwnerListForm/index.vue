@@ -118,6 +118,7 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  size="small"
                   @click="reset"
                 >
                   重置
@@ -125,6 +126,7 @@
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  size="small"
                   @click="research"
                 >
                   查询
@@ -384,7 +386,7 @@ export default class extends Vue {
       .filter-item {
         float: right;
         // height: 34px;
-        font-size: 14px;
+        // font-size: 14px;
         margin-left: 10px;
       }
       .filter-item-m {

@@ -16,6 +16,7 @@
         :reserve-selection="true"
         type="selection"
         width="50"
+        :selectable="func"
       />
       <el-table-column
         v-for="item in columns"
@@ -82,10 +83,16 @@
     />
   </div>
 </template>
+
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import Pagination from '@/components/Pagination/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
+
+function disabledCheckBox(row:any, index:number):boolean {
+  return true
+}
+
 interface PageObj {
   page:Number,
   limit:Number,
@@ -97,10 +104,12 @@ interface PageObj {
     Pagination
   }
 })
+
 export default class extends Vue {
   @Prop({ default: () => [] }) tableData!:any[]
   @Prop({ default: () => [] }) columns!:any[]
   @Prop({ default: true }) index!:boolean
+  @Prop({ default: () => disabledCheckBox }) func!:Function
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }

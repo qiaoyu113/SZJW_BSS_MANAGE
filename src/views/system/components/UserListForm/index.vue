@@ -97,12 +97,14 @@
                 class="btn-box"
               >
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   @click="resetForm('ruleForm')"
                 >
                   重置
                 </el-button>
                 <el-button
+                  size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
                   @click="searchForm"
