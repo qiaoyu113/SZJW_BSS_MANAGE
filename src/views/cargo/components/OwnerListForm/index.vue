@@ -316,7 +316,7 @@ export default class extends Vue {
   private changData2() {
     if (this.DateValueChild2) {
       this.listQuery.startDate = this.DateValueChild2[0]
-      this.listQuery.endDate = this.DateValueChild2[1]
+      this.listQuery.endDate = this.DateValueChild2[1] + 86399999
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
@@ -327,7 +327,7 @@ export default class extends Vue {
   private changData() {
     if (this.DateValueChild) {
       this.listQuery.contractEndStartTime = this.DateValueChild[0]
-      this.listQuery.contractEndEndTime = this.DateValueChild[1]
+      this.listQuery.contractEndEndTime = this.DateValueChild[1] + 86399999
     } else {
       this.listQuery.contractEndStartTime = ''
       this.listQuery.contractEndEndTime = ''
