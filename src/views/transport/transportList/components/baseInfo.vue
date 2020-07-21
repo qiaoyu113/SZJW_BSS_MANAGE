@@ -19,7 +19,6 @@
           </router-link>
         </template>
         <template v-slot:createDate="{row}">
-          <!-- {{ row.createDate | Timestamp }} -->
           {{ row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
       </self-form>
@@ -118,7 +117,6 @@ export default class extends Vue {
     },
     {
       type: 'createDate',
-      key: 'createDate',
       label: '创建时间:',
       slot: true
     }
