@@ -199,7 +199,7 @@
             label="合同止期"
           >
             <template slot-scope="{row}">
-              {{ row.contractEnd | Timestamp }}
+              {{ row.contractEnd | TimestampYMD }}
             </template>
           </el-table-column>
 
@@ -210,7 +210,8 @@
             label="备注"
           >
             <template slot-scope="{row}">
-              {{ row.remark | DataIsNull }}
+              <span v-if="row.remark.length > 16">{{ splice(row.remark) + '...' }}</span>
+              <span v-else>{{ row.remark | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -434,7 +435,7 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: '0',
+        name: '',
         num: ''
       }
     ];
@@ -674,6 +675,11 @@ export default class extends Vue {
       } else {
         this.$message.error(data.errorMsg)
       }
+    }
+
+    // 截取备注
+    private splice(value: any) {
+      return value.slice(0, 16)
     }
 }
 </script>

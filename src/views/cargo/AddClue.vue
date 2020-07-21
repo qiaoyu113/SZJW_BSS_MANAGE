@@ -12,7 +12,10 @@
     >
       <SectionContainer title="基本信息">
         <el-row>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="!isEdit"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
               label="分配销售"
               prop="lineSaleId"
@@ -156,7 +159,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item v-if="!isEdit">
+        <el-form-item v-if="!isEdit || (isEdit && details.clueState === 0)">
           <div class="btn_box">
             <el-button
               type="primary"
@@ -171,7 +174,7 @@
         </el-form-item>
       </SectionContainer>
       <SectionContainer
-        v-if="isEdit"
+        v-if="isEdit && details.clueState !== 0"
         title="需求信息"
       >
         <el-row>
@@ -261,7 +264,7 @@
       </SectionContainer>
 
       <SectionContainer
-        v-if="isEdit"
+        v-if="isEdit && details.clueState !== 0"
         title="跟进记录"
         class="posr"
       >
@@ -391,6 +394,7 @@ import '@/styles/common.scss'
   }
 })
 export default class extends Vue {
+  private details: any = {};
   private loading: boolean = false;
   private id: any = ''
   private isEdit: boolean = false; // 是否是编辑页面
@@ -457,6 +461,9 @@ export default class extends Vue {
         let subForm = SaveLineClue
         let successMsg = '新增成功'
         const postData = { ...this.ruleForm }
+        if (this.details && this.details.clueState === 0) {
+          postData.isFollowUp = null
+        }
         if (this.isEdit) {
           subForm = EditLineClue
           successMsg = '编辑成功'
@@ -481,16 +488,16 @@ export default class extends Vue {
 
   private resetForm(formName:any) {
     (this.$refs[formName] as any).resetFields()
-    this.ruleForm['lineClueDemandForms'] = [
+    this.ruleForm['lineClueDemandForms'] = this.details.clueState !== 0 ? [
       {
         'demandCarType': '',
         'demandNo': ''
       }
-    ]
+    ] : []
     const list = this.ruleForm['lineClueFollowForms'].filter((a: any) => a.id)
     if (list.length > 0) {
       this.ruleForm['lineClueFollowForms'] = list
-    } else {
+    } else if (this.details.clueState !== 0) {
       this.ruleForm['lineClueFollowForms'] = [
         {
           'visitAddress': '',
@@ -559,13 +566,14 @@ export default class extends Vue {
     this.loading = false
     if (data.success) {
       const detail = data.data
+      this.details = data.data
       const {
         address, city, clueId, clueSource, company, lineClueFollowVos, lineClueDemandVos, isTransform, lineSaleId, name, phone, position, remark
       } = detail
 
       if (lineClueFollowVos && lineClueFollowVos.length > 0) {
         this.ruleForm.lineClueFollowForms = lineClueFollowVos
-      } else {
+      } else if (this.details.clueState !== 0) {
         this.ruleForm.lineClueFollowForms = [
           {
             'demandCarType': '',
@@ -575,7 +583,7 @@ export default class extends Vue {
       }
       if (lineClueDemandVos && lineClueDemandVos.length > 0) {
         this.ruleForm.lineClueDemandForms = lineClueDemandVos
-      } else {
+      } else if (this.details.clueState !== 0) {
         this.ruleForm.lineClueDemandForms = [
           {
             'visitAddress': '',

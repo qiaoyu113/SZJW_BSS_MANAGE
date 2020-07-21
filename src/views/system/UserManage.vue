@@ -20,6 +20,7 @@
       >
         <el-button
           type="primary"
+          size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="goCreateUser"
         >
@@ -33,6 +34,7 @@
           <el-button
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
+            size="small"
           >
             <i class="el-icon-s-operation" />
             <span v-if="isPC">筛选</span>

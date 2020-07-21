@@ -7,6 +7,7 @@
         :active-name="'0'"
       >
         <el-button
+          size="small"
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="goCreateUser"
@@ -19,6 +20,7 @@
           trigger="click"
         >
           <el-button
+            size="small"
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
           >

@@ -1,6 +1,9 @@
 <template>
-  <div class="login-container">
-    <div class="logo" />
+  <div :class="isPC ? 'login-container' : 'login-container-m'">
+    <div
+      v-if="!isPC"
+      class="logo"
+    />
     <el-form
       ref="loginForm"
       :model="loginForm"
@@ -13,7 +16,6 @@
         <p class="title">
           云鸟梧桐综合业务支撑平台
         </p>
-        <!--<lang-select class="set-language" />-->
       </div>
 
       <el-form-item
@@ -23,14 +25,6 @@
         <span class="svg-container">
           <svg-icon name="user" />
         </span>
-        <!-- <el-input
-          v-model="loginForm.username"
-          :placeholder="$t('login.username')"
-          name="username"
-          type="text"
-          style="background: #fff;"
-          auto-complete="on"
-        /> -->
         <el-input
           ref="username"
           v-model="loginForm.username"
@@ -44,7 +38,7 @@
 
       <el-form-item
         prop="password"
-        style="background: #fff;"
+        style="background: #fff;margin-bottom: 70px;"
       >
         <span class="svg-container">
           <svg-icon name="password" />
@@ -75,24 +69,7 @@
           {{ $t('login.logIn') }}
         </el-button>
       </div>
-      <!-- <div style="position:relative">
-        <div class="tips">
-          <span>{{ $t('login.username') }} : admin</span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">
-            {{ $t('login.username') }} : editor
-          </span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
-
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          {{ $t('login.thirdparty') }}
-        </el-button>
-      </div> -->
     </el-form>
-    <!-- <div class="shadowBg" /> -->
 
     <el-dialog
       :title="$t('login.thirdparty')"
@@ -104,6 +81,40 @@
       <br>
       <social-sign />
     </el-dialog>
+    <Dialog
+      :visible.sync="assignShowDialog"
+      :title="`该账号密码不安全，请重新设置`"
+      :confirm="confirm"
+    >
+      <el-row>
+        <el-form
+          ref="reCreatRule"
+          :model="reCreat"
+          :rules="rules"
+          :label-width="isPC ? '120px' : '30%'"
+          class="refundForm"
+        >
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="密码设置">
+              <el-input
+                v-model="reCreat.orderId"
+                placeholder="请输入密码"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 24 : 24">
+            <el-form-item label="确认密码">
+              <el-input
+                v-model="reCreat.orderIds"
+                placeholder="请再次输入密码"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+    </Dialog>
   </div>
 </template>
 
@@ -116,6 +127,7 @@ import { UserModule } from '@/store/modules/user'
 import { isValidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect/index.vue'
 import SocialSign from './components/SocialSignin.vue'
+import { SettingsModule } from '@/store/modules/settings'
 
 @Component({
   name: 'Login',
@@ -125,6 +137,9 @@ import SocialSign from './components/SocialSignin.vue'
   }
 })
 export default class extends Vue {
+  private assignShowDialog = false
+  private reCreat: any[] = []
+  private rules: any[] = []
   private validateUsername = (rule: any, value: string, callback: Function) => {
     if (!isValidUsername(value)) {
       callback(new Error('请输入账号'))
@@ -140,8 +155,8 @@ export default class extends Vue {
     }
   }
   private loginForm = {
-    username: 'admin',
-    password: '123456'
+    username: '',
+    password: ''
   }
   private loginRules = {
     username: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -169,6 +184,15 @@ export default class extends Vue {
       (this.$refs.username as Input).focus()
     } else if (this.loginForm.password === '') {
       (this.$refs.password as Input).focus()
+    }
+  }
+
+  // 判断是否是PC
+  get isPC() {
+    if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+      return false
+    } else {
+      return true
     }
   }
 
@@ -210,6 +234,10 @@ export default class extends Vue {
       return acc
     }, {} as Dictionary<string>)
   }
+
+  private confirm() {
+
+  }
 }
 </script>
 
@@ -224,6 +252,29 @@ export default class extends Vue {
       transform: skewY(-45deg) translateX(12.5em);
     }
   }
+</style>
+
+<style rel="stylesheet/scss" lang="scss">
+  /* 修复input 背景不协调 和光标变色 */
+  /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+
+  $bg:#283443;
+  //$light_gray:#eee;
+  $light_gray:#01466f;
+  $cursor: #fff;
+  $color: #2194E0;
+
+  @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+    .login-container .el-input input{
+      color: $cursor;
+      &::first-line {
+        color: $light_gray;
+      }
+    }
+  }
+
+  /* reset element-ui css */
+  .login-container {
 
   .wrapper {
     display: block;
@@ -246,28 +297,6 @@ export default class extends Vue {
     position: relative;
     margin:auto;
   }
-</style>
-
-<style rel="stylesheet/scss" lang="scss">
-  /* 修复input 背景不协调 和光标变色 */
-  /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
-  $bg:#283443;
-  //$light_gray:#eee;
-  $light_gray:#01466f;
-  $cursor: #fff;
-
-  @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-    .login-container .el-input input{
-      color: $cursor;
-      &::first-line {
-        color: $light_gray;
-      }
-    }
-  }
-
-  /* reset element-ui css */
-  .login-container {
     .el-button{
       line-height:2;
       font-size:14px;
@@ -281,6 +310,7 @@ export default class extends Vue {
       /*background: #298f9b;*/
       background:#399FFB;
       border: 1px solid #399FFB;
+      border-radius: 25px;
     }
     .el-input {
       display: inline-block;
@@ -323,6 +353,7 @@ $bg4:#0D1846;
 $bg2:url('http://thyrsi.com/t6/674/1551184579x2890202953.png')no-repeat;
 $dark_gray:#889aa4;
 $light_gray:#eee;
+$color: #2194E0;
 
 .login-container {
   width: 100%;
@@ -383,6 +414,115 @@ $light_gray:#eee;
   }
   .title-container {
     position: relative;
+    .title {
+      font-size: 32px;
+      color: #FFFFFF;
+      text-align: center;
+      margin-top: 60px;
+    }
+    .set-language {
+      color: #fff;
+      position: absolute;
+      top: 3px;
+      font-size:18px;
+      right: 0px;
+      cursor: pointer;
+    }
+  }
+  .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 16px;
+    color: #4ca2cc !important;
+    cursor: pointer;
+    user-select: none;
+  }
+  .thirdparty-button {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+  }
+}
+.shadowBg{
+  position: relative;
+  width: 2240px;
+  height: 2240px;
+  border-radius: 50%;
+  background-color: #f7f6f4;
+  background-image: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/a764556ca46f4e5d8d2b27c6817f6295');
+  background-size: 5px 5px;
+  bottom: -805px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px rgba(0,0,0,.2);
+}
+
+.login-container-m {
+  width: 100%;
+  height: 100vh;
+  -webkit-background-size: cover;
+  background-size: cover;
+  overflow: hidden;
+  .wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    text-align: center;
+    margin: auto;
+  }
+  .button {
+    height: 40px;
+    text-align: center;
+    text-decoration: none;
+    color: #ABCEFB;
+    font-size: 16px;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    margin:auto;
+    background: #2F448A;
+    border-radius: 10px;
+  }
+  .logo{
+    width: 100%;
+    height: 28vh;
+    background: url('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/a6ce085a5d6e425295ab487097e9cd3a')no-repeat;
+    -webkit-background-size: cover;
+    background-size: cover;
+    overflow: hidden;
+  }
+  .login-form {
+    width: 100%;
+    margin: auto;
+    z-index: 100;
+    padding: 10px 20px;
+    box-sizing: border-box;
+  }
+  .el-form-item__content{
+    background:#fff !important;
+  }
+  .tips {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 10px;
+    span {
+      &:first-of-type {
+        margin-right: 16px;
+      }
+    }
+  }
+  .svg-container {
+    padding: 6px 5px 6px 15px;
+    /*color: $dark_gray;*/
+    color: #4ca2cc !important;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
+  }
+  .title-container {
+    display: none;
     .title {
       font-size: 32px;
       color: #FFFFFF;

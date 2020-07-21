@@ -77,7 +77,7 @@ export const detailCity = (data:any) =>
 // 上传文件
 export const Upload = (params: any, data: any) =>
   request({
-    url: `${baseURL}/v1/base/upload/uploadOSS/${params.folder}/${params.isEncode}/${params.expire}`,
+    url: `core/v1/upload/uploadOSS/${params.folder}/${params.isEncode}/${params.expire}`,
     method: 'post',
     data
   })

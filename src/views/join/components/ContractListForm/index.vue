@@ -96,12 +96,14 @@
               >
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  size="small"
                   @click="reset"
                 >
                   重置
                 </el-button>
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  size="small"
                   type="primary"
                   @click="research"
                 >

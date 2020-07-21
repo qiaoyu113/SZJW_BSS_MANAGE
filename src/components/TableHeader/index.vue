@@ -19,11 +19,11 @@ import { SettingsModule } from '@/store/modules/settings'
   name: 'TableHeader'
 })
 export default class extends Vue {
-  @Prop({ default: '0' }) private activeName: any // 默认为0 选择第一个
+  @Prop({ default: '' }) private activeName: any // 默认为0 选择第一个
   @Prop({ default: [] }) private tab: any
 
   private tabName: any = ''
-  private active: any = '0'
+  private active: any = ''
 
   @Watch('activeName', { deep: true })
   private onListQueryChange(value: any) {
