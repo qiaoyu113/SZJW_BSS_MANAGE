@@ -128,7 +128,7 @@
             >
               <el-input
                 v-model="ruleForm.cooperationTime"
-                v-only-number="{min: 0, max: 12}"
+                v-only-number="{min: 0, max: 99}"
                 placeholder="合作期限"
                 type="number"
               />
@@ -141,7 +141,7 @@
             >
               <el-input
                 v-model="ruleForm.incomeGuarantee"
-                v-only-number="{min: 0, precision: 2}"
+                v-only-number="{min: 0, precision: 2, max: 999999}"
                 placeholder="请输入收入保障"
                 maxlength="10"
                 type="number"
@@ -168,7 +168,7 @@
             >
               <el-input
                 v-model="ruleForm.goodsAmount"
-                v-only-number="{min: 0, precision: 2}"
+                v-only-number="{min: 0, precision: 2, max: 999999}"
                 placeholder="请输入商品金额"
                 type="number"
               />
@@ -434,6 +434,7 @@
     <!--按钮-->
     <div class="btn_box">
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         type="primary"
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
@@ -441,6 +442,7 @@
         提交审核
       </el-button>
       <el-button
+        v-loading.fullscreen.lock="fullscreenLoading"
         name="CreatLine-btn-creat"
         @click="resetForm('ruleForm')"
       >
@@ -1069,12 +1071,12 @@ export default class CreatLine extends Vue {
   }
   // 提交
   private async submitForm(formName:any) {
+    this.fullscreenLoading = true;
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         this.ruleForm.operateFlag = 'confirm'
         const { data } = await PostConfirmOrder(this.ruleForm)
         if (data.success) {
-          this.fullscreenLoading = true;
           (TagsViewModule as any).delView(this.$route); // 关闭当前页面
           (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
             name: 'OrderManage'
@@ -1090,6 +1092,7 @@ export default class CreatLine extends Vue {
           this.$message.error(data.errorMsg)
         }
       } else {
+        this.fullscreenLoading = false
         console.log('error submit!!')
         return false
       }
