@@ -76,6 +76,7 @@
         <el-select
           v-model="ruleForm[params.prop]"
           v-bind="params.tagAttrs || {}"
+          v-on="params.listeners"
         >
           <el-option
             v-for="(sub,index) in params.options"

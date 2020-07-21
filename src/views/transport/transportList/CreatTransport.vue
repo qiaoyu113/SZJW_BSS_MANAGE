@@ -737,7 +737,7 @@ export default class extends Vue {
   private orderGet(index:number, ele:any) {
     this.orderId = ele.orderInfo.orderId
     if (!ele.flag) {
-      return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
+      return this.$message.error('当前订单配额达到上限或者未交付')
     } else {
       this.isHasOrder = true
       this.activeItem = index
@@ -761,7 +761,7 @@ export default class extends Vue {
   }
 
   private goOrderDetail(id:string) {
-    this.$router.push({ path: 'orderdetail', query: { id: id } })
+    this.$router.push({ path: '/join/orderdetail', query: { id: id } })
   }
 
   private fetchData() {

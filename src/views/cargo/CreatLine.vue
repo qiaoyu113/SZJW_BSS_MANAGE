@@ -43,8 +43,16 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'waitDirveValidity',type: 2,label: '等待上车有效期（天）',placeholder: '请输入有效期'}"
+            :params="{prop: 'waitDirveValidity',type: 2,label: '等待上车有效期（天）',tagAttrs: {
+              placeholder: '请输入有效期',
+              'picker-options': {
+                disabledDate(time) {
+                  return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000 )
+                }
+              }
+            }}"
           />
+
           <SelfItem
             :rule-form="ruleForm"
             :pccol="8"
@@ -60,7 +68,10 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'warehouseDistrict',type: 1,label: '仓位置详细地址',tagAttrs: {placeholder: '请输入仓位置详细地址'}}"
+            :params="{prop: 'warehouseDistrict',type: 1,label: '仓位置详细地址',tagAttrs: {placeholder: '请输入仓位置详细地址',
+                                                                                    maxlength: 20,
+                                                                                    showWordLimit: true,
+                                                                                    clearable: true}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -119,7 +130,10 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'districtArea',type: 1,label: '配送区域详细地址',tagAttrs: {placeholder: '请输入配送区域详细地址'}}"
+            :params="{prop: 'districtArea',type: 1,label: '配送区域详细地址',tagAttrs: {placeholder: '请输入配送区域详细地址',
+                                                                                maxlength: 20,
+                                                                                showWordLimit: true,
+                                                                                clearable: true}}"
           />
         </el-row>
       </SectionContainer>
@@ -130,7 +144,7 @@
         <el-row>
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'dayNo',type: 1,label: '每日配送趟数',tagAttrs: {placeholder: '请输入配送趟数',maxlength: 6},kind: 'number'}"
+            :params="{prop: 'dayNo',type: 1,label: '每日配送趟数',tagAttrs: {placeholder: '每日配送趟数不能超过6次',maxlength: 6},kind: 'number'}"
           />
           <div
             v-if="ruleForm['dayNo'] > 0"
@@ -175,7 +189,7 @@
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 2"
             :rule-form="ruleForm"
-            :params="{prop: 'everyUnitPrice',type: 1,label: '每趟提成单价（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟提成'}}"
+            :params="{prop: 'everyUnitPrice',type: 1,label: '每趟提成单价（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟提成',min: 0,max: 2000,type: number}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -326,7 +340,7 @@ import '@/styles/common.scss'
   }
 })
 export default class CreatLine extends Vue {
-  private lineSaleIdState:boolean = false
+  private lineSaleIdState:boolean = true
   private optionsSale:any[] = []
   private lineSaleId:string = ''
   private loading:boolean = false
@@ -446,13 +460,15 @@ export default class CreatLine extends Vue {
     ],
     lineName: [
       { required: true, message: '线路名称不能为空', trigger: 'blur' },
-      { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+      { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' },
+      { validator: this.validator(0, 11) }
     ],
     lineType: [
       { required: true, message: '线路类型不能为空', trigger: 'change' }
     ],
     deployNo: [
-      { required: true, message: '可上车数不能为空', trigger: 'change' }
+      { required: true, message: '可上车数不能为空', trigger: 'change' },
+      { validator: this.validator(0, 11) }
     ],
     address: [
       { required: true, message: '仓位置不能为空', trigger: 'change' }
@@ -479,22 +495,26 @@ export default class CreatLine extends Vue {
       { required: true, message: '请选择是否回单', trigger: 'change' }
     ],
     deliveryNo: [
-      { required: true, message: '每日平均配送点位数不能为空', trigger: 'change' }
+      { required: true, message: '每日平均配送点位数不能为空', trigger: 'change' },
+      { validator: this.validator(0, 100) }
     ],
     deliveryWeekCycle: [
       { required: true, message: '配送周期不能为空', trigger: 'change' }
     ],
     distance: [
-      { required: true, message: '公里数不能为空', trigger: 'change' }
+      { required: true, message: '公里数不能为空', trigger: 'change' },
+      { validator: this.validator(0, 2000) }
     ],
     dayNo: [
-      { required: true, message: '每日配送趟数不能为空', trigger: 'change' }
+      { required: true, message: '每日配送趟数不能为空', trigger: 'change' },
+      { validator: this.validator(0, 6) }
     ],
     // lineDeliveryInfoFORMS: [
     //   { required: true, message: '工作时间不能为空', trigger: 'change' }
     // ],
     monthNo: [
-      { required: true, message: '出车天数不能为空', trigger: 'change' }
+      { required: true, message: '出车天数不能为空', trigger: 'change' },
+      { validator: this.validator(0, 32) }
     ],
     incomeSettlementMethod: [
       { required: true, message: '结算方式不能为空', trigger: 'change' }
@@ -506,13 +526,17 @@ export default class CreatLine extends Vue {
       { required: true, message: '结算天数不能为空', trigger: 'change' }
     ],
     everyTripGuaranteed: [
-      { required: true, message: '单趟价格不能为空', trigger: 'change' }
+      { required: true, message: '单趟价格不能为空', trigger: 'change' },
+      { validator: this.validator(0, 2000) }
     ],
     shipperOffer: [
-      { required: true, message: '预计货主月报价不能为空', trigger: 'change' }
+      { required: true, message: '预计货主月报价不能为空', trigger: 'change' },
+      { validator: this.validator(0, 100000) }
     ],
     everyUnitPrice: [
-      { required: true, message: '提成单价不能为空', trigger: 'change' }
+      { required: true, message: '提成单价不能为空', trigger: 'change' },
+      { min: 0, max: 2000, message: '提成区间在0-2000之间', trigger: 'change' },
+      { validator: this.validator(0, 2000) }
     ],
     cargoType: [
       { required: true, message: '货物类型不能为空', trigger: 'change' }
@@ -529,6 +553,20 @@ export default class CreatLine extends Vue {
     warehouseDistrict: [ // 详细仓位置
       { required: true, message: '详细地址不能为空', trigger: 'change' }
     ]
+  }
+
+  // 数字校验
+  validator(c:number, d:number) {
+    return function sizeDeliveryNo(rule:any, value:any, callback:Function) {
+      if (Number(value) < c || Number(value) > d) {
+        return callback(new Error(`请输入${c}-${d}之间的数字`))
+      }
+      callback()
+    }
+  }
+
+  private pickerDisabled(time:any) {
+    return time.getTime() > Date.now()
   }
 
   private async loadAddress(node:any, resolve:any) {
@@ -622,7 +660,13 @@ export default class CreatLine extends Vue {
   }
 
   @Watch('ruleForm.dayNo')
-  private dayNoChange(val:any) {
+  private dayNoChange(val:any, oldVal:any) {
+    if (val > 6) {
+      this.ruleForm.dayNo = ''
+    }
+    for (let j = 0; j < Number(oldVal); j++) {
+      delete this.ruleForm['lineDeliveryInfoFORMS' + j]
+    }
     for (let i = 0; i < val; i++) {
       this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
         workingTimeStart: '', workingTimeEnd: ''
@@ -636,9 +680,10 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.customerId')
   private customerIdChange(val:any) {
     if (this.pageStatus === 1) {
-      let lineSaleId = JSON.parse(this.ruleForm.customerId).lineSaleId
+      let lineSaleId = JSON.parse(val).lineSaleId
       if (lineSaleId) {
         this.lineSaleId = lineSaleId
+        this.ruleForm.lineSaleId = lineSaleId
       }
     }
   }
@@ -716,7 +761,6 @@ export default class CreatLine extends Vue {
           ruleForm.warehouseCity = ruleForm.address[1]
           ruleForm.warehouseCounty = ruleForm.address[2]
           ruleForm.warehouseTown = ruleForm.address[3]
-          // ruleForm.warehouseDistrict = ruleForm.warehouseDistrict
         }
         if (ruleForm.delivery.length !== 0) {
           ruleForm.provinceArea = ruleForm.delivery[0]
@@ -727,7 +771,9 @@ export default class CreatLine extends Vue {
           let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
             return ele !== ''
           })
-          ruleForm.deliveryWeekCycle = { ...deliveryWeekCycle }
+          ruleForm.deliveryWeekCycle = deliveryWeekCycle.join(',')
+        } else {
+          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(',')
         }
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
@@ -750,22 +796,22 @@ export default class CreatLine extends Vue {
 
   // 复制线路
   private async copyForm(formName:any) {
-    (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
-      if (valid) {
-        this.createdLine(this.ruleForm)
-      } else {
-        console.log('error submit!!')
-        return false
-      }
-    })
+    this.dealData(formName, 2)
   }
 
   // 新建
   private submitForm(formName:any) {
+    this.dealData(formName, 1)
+  }
+
+  // 保存数据处理
+  private dealData(formName:any, type:number) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         let ruleForm = { ...this.ruleForm }
-        ruleForm.customerId = JSON.parse(ruleForm.customerId).customerId
+        if (type === 1) {
+          ruleForm.customerId = JSON.parse(ruleForm.customerId).customerId
+        }
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
         }
@@ -787,7 +833,9 @@ export default class CreatLine extends Vue {
           let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
             return ele !== ''
           })
-          ruleForm.deliveryWeekCycle = { ...deliveryWeekCycle }
+          ruleForm.deliveryWeekCycle = deliveryWeekCycle.join(',')
+        } else {
+          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(',')
         }
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
@@ -817,6 +865,7 @@ export default class CreatLine extends Vue {
   private picCancel(done: any) {
     done()
   }
+
   private picConfirm(done: any) {
     done(this.$router.go(-1))
   }
@@ -824,6 +873,7 @@ export default class CreatLine extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+
   private async GetDictionaryAll() {
     let dictArr = ['Intentional_compartment', 'type_of_goods', 'line_distinguished_type', 'linetask_stability_rate', 'line_type', 'settlement_cycle', 'settlement_days', 'goods_weight', 'handling_difficulty_degree']
     let { data } = await GetDictionaryList(dictArr)
@@ -869,10 +919,16 @@ export default class CreatLine extends Vue {
     }
     this.getLowerStaffInfo()
   }
+
   private async getLowerStaffInfo() {
     try {
       let { data: res } = await GetJoinManageList({})
       if (res.success) {
+        if (res.data.length > 1) {
+          this.lineSaleIdState = false
+        } else {
+          this.lineSaleIdState = true
+        }
         this.optionsSale = res.data.map(function(ele:any) {
           return { value: Number(ele.id), label: ele.name }
         })
@@ -892,6 +948,7 @@ export default class CreatLine extends Vue {
       this.$router.go(-1)
     }
   }
+
   private async loadhouseAddress(node:any, resolve:any) {
     let params:string[] = []
     if (node.level === 0) {
@@ -915,21 +972,33 @@ export default class CreatLine extends Vue {
   private fetchData() {
     this.GetDictionaryAll()
   }
+
   private async getDetail(id:string) {
     let { data } = await GetLineDetail({ lineId: id })
     if (data.success) {
       let allParams = data.data
+      if (allParams.deliveryWeekCycle === '') {
+        allParams.deliveryWeekCycle = []
+      } else {
+        allParams.deliveryWeekCycle = allParams.deliveryWeekCycle.split(',')
+        if (allParams.deliveryWeekCycle.length === 7) {
+          allParams.deliveryWeekCycle = ['', '1', '2', '3', '4', '5', '6', '7']
+        }
+      }
+      allParams.address = []
+      allParams.delivery = []
+      // 仓位置
+      allParams.address.push(allParams.warehouseProvince + '')
+      allParams.address.push(allParams.warehouseCity + '')
+      allParams.address.push(allParams.warehouseCounty + '')
+      allParams.address.push(Number(allParams.warehouseTown))
+      // 配送区域
+      allParams.delivery.push(allParams.provinceArea + '')
+      allParams.delivery.push(allParams.cityArea + '')
+      allParams.delivery.push(allParams.countyArea + '')
+
       this.customerOptions = [{ value: allParams.customerId, label: allParams.bussinessName }]
       this.ruleForm = { ...this.ruleForm, ...allParams }
-      // 仓位置
-      this.ruleForm.address.push(this.ruleForm.warehouseProvince + '')
-      this.ruleForm.address.push(this.ruleForm.warehouseCity + '')
-      this.ruleForm.address.push(this.ruleForm.warehouseCounty + '')
-      this.ruleForm.address.push(this.ruleForm.warehouseTown + '')
-      // 配送区域
-      this.ruleForm.delivery.push(this.ruleForm.provinceArea + '')
-      this.ruleForm.delivery.push(this.ruleForm.cityArea + '')
-      this.ruleForm.delivery.push(this.ruleForm.countyArea + '')
 
       setTimeout(() => {
         for (let i = 0; i < Number(allParams.dayNo); i++) {
@@ -942,7 +1011,8 @@ export default class CreatLine extends Vue {
       this.$message.error(data)
     }
   }
-  mounted() {
+
+  created() {
     this.fetchData()
     let routeArr = this.$route.path.split('/')
     if (routeArr[2] === 'creatline') {
