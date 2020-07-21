@@ -45,7 +45,11 @@ export default class extends Vue {
    }
    for (let index = 0; index < this.tab.length; index++) {
      const element = this.tab[index].name
-     if (element.toString() === this.active.toString()) this.tabName = this.tab[index].label
+     if (element === '') {
+       this.tabName = '全部'
+     } else {
+       if (element.toString() === this.active.toString()) this.tabName = this.tab[index].label
+     }
    }
  }
 

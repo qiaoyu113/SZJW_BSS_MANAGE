@@ -64,7 +64,7 @@
                   <i :class="( index ) === activeItem ? 'el-icon-star-on' : 'el-icon-star-off'" />
                   <div
                     :class=" item.flag ? 'orderItem' : 'orderItemNo'"
-                    @click="orderGet(index,item.orderInfo)"
+                    @click="orderGet(index,item)"
                   >
                     <span class="orderNum">订单编号：{{ item.orderInfo.orderId }}</span>
                     <span>商品分类：{{ item.orderInfo.busiTypeName }}</span>
@@ -735,8 +735,8 @@ export default class extends Vue {
   }
 
   private orderGet(index:number, ele:any) {
-    this.orderId = ele.orderId
-    if (ele.flag) {
+    this.orderId = ele.orderInfo.orderId
+    if (!ele.flag) {
       return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
     } else {
       this.isHasOrder = true
@@ -804,9 +804,21 @@ export default class extends Vue {
       this.orderInfo.carrierId = carrierId
       this.getCarrierDetail(carrierId)
     } else {
+      let driverId = this.$route.query.id as string
+      let name = this.$route.query.name as string
+      let phone = this.$route.query.phone as string
       this.pagestate = false
       this.isEditor = true
       this.activeCreat = 1
+      if (driverId) {
+        let optionItem = {
+          label: `${name}(${phone})`,
+          value: driverId
+        }
+        this.driverOptions.push(optionItem)
+        this.phoneNum = driverId
+        this.getOrderList(driverId)
+      }
     }
   }
 }
@@ -903,6 +915,7 @@ export default class extends Vue {
             }
           }
           .orderItemNo{
+            cursor: pointer;
             margin-left: 20px;
             border: 1px solid #bdcdf1;
             padding: 10px 20px;

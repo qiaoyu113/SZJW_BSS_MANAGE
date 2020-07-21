@@ -18,16 +18,24 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'customerId',type: 5,label: '货主名称',tagAttrs: {
+              clearable: true,
               filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
-              placeholder: '请输入选择货主',filterable: true,disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},options: customerOptions}"
+              placeholder: '请输入选择货主',filterable: true,
+              disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},options: customerOptions}"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'lineName',type: 1,label: '内部使用线路名称',tagAttrs: {placeholder: '名称应具有辨识度'}}"
+            :params="{prop: 'lineName',type: 1,label: '内部使用线路名称',
+                      tagAttrs: {
+                        placeholder: '名称应具有辨识度',
+                        maxlength: 10,
+                        showWordLimit: true,
+                        clearable: true
+                      }}"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'deployNo',type: 1,label: '可上车数',kind: 'number',placeholder: '请输入可上车数'}"
+            :params="{prop: 'deployNo',type: 1,label: '可上车数',kind: 'number',tagAttrs: {placeholder: '请输入可上车数',min: 0,max: 11,clearable: true}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -36,16 +44,6 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'waitDirveValidity',type: 2,label: '等待上车有效期（天）',placeholder: '请输入有效期'}"
-          />
-          <SelfItem
-            :rule-form="ruleForm"
-            :params="{prop: 'remark',type: 1,label: '备注信息/线路描述',kind: 'textarea',tagAttrs: {maxlength:
-              500, row: 6, showWordLimit: true}}"
-          />
-          <SelfItem
-            :rule-form="ruleForm"
-            :pccol="16"
-            :params="{prop: 'stabilityRate',type: 3,label: '线路稳定性',radio: linetask}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -63,6 +61,16 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'warehouseDistrict',type: 1,label: '仓位置详细地址',tagAttrs: {placeholder: '请输入仓位置详细地址'}}"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :pccol="16"
+            :params="{prop: 'stabilityRate',type: 3,label: '线路稳定性',radio: linetask}"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{prop: 'remark',type: 1,label: '备注信息/线路描述',kind: 'textarea',tagAttrs: {maxlength:
+              500, row: 6, showWordLimit: true,placeholder: '请输入备注信息或线路描述'}}"
           />
         </el-row>
       </SectionContainer>
@@ -174,6 +182,14 @@
             :pccol="12"
             :params="{prop: 'settlementCycle',type: 3,label: '结算周期',radio: settlement}"
           />
+          <SelfItem
+            v-if="ruleForm['stabilityRate'] >= 3"
+            :pccol="16"
+            :rule-form="ruleForm"
+            :params="{prop: 'deliveryWeekCycle',type: 6,label: '配送周期',options: WeekCycleList,tagAttrs: {},listeners: {
+              change: this.checkBoxChange
+            }}"
+          />
         </el-row>
       </SectionContainer>
       <SectionContainer
@@ -211,22 +227,7 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'lineSaleId',type: 5,label: '所属销售',
-                      tagAttrs: {placeholder: '请选择所属销售',disabled: lineSaleIdState},options: [{
-                        value: '1',
-                        label: '黄金糕'
-                      }, {
-                        value: '选项2',
-                        label: '双皮奶'
-                      }, {
-                        value: '选项3',
-                        label: '蚵仔煎'
-                      }, {
-                        value: '选项4',
-                        label: '龙须面'
-                      }, {
-                        value: '选项5',
-                        label: '北京烤鸭'
-                      }]}"
+                      tagAttrs: {placeholder: '请选择所属销售',disabled: lineSaleIdState,filterable: true},options: optionsSale}"
           />
           <!-- <SelfItem
             :rule-form="ruleForm"
@@ -309,7 +310,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetCityByCode, detailCity } from '@/api/common'
+import { GetDictionaryList, GetCityByCode, detailCity, GetJoinManageList } from '@/api/common'
 import { createLine, editLine, customerCheckNames, GetLineDetail } from '@/api/cargo'
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -326,6 +327,7 @@ import '@/styles/common.scss'
 })
 export default class CreatLine extends Vue {
   private lineSaleIdState:boolean = false
+  private optionsSale:any[] = []
   private lineSaleId:string = ''
   private loading:boolean = false
   private lineType:any[] = []
@@ -342,6 +344,16 @@ export default class CreatLine extends Vue {
   private showDio:boolean = false
   private NoshipperOffer:boolean = false
   private customerOptions:any[] = []
+  private WeekCycleList:any[] = [
+    { label: '全部', type: '' },
+    { label: '周一', type: '1' },
+    { label: '周二', type: '2' },
+    { label: '周三', type: '3' },
+    { label: '周四', type: '4' },
+    { label: '周五', type: '5' },
+    { label: '周六', type: '6' },
+    { label: '周日', type: '7' }
+  ]
   private ruleForm:any = {
     carType: '',
     // 选择车型
@@ -365,7 +377,7 @@ export default class CreatLine extends Vue {
     // 每日配送趟数
     deliveryNo: '',
     // 预计每日平均配送点位数
-    deliveryWeekCycle: '',
+    deliveryWeekCycle: [],
     // 配送周期(周一至周日对应数字拼接)
     deployNo: '',
     // 可上车数量
@@ -455,7 +467,10 @@ export default class CreatLine extends Vue {
       { required: true, message: '车型不能为空', trigger: 'change' }
     ],
     delivery: [
-      { required: true, message: '请选择活动资源', trigger: 'change' }
+      { required: true, message: '请选择配送区域', trigger: 'change' }
+    ],
+    districtArea: [
+      { required: true, message: '请选择配送区域详细地址', trigger: 'change' }
     ],
     returnWarehouse: [
       { required: true, message: '请选择是否返单', trigger: 'change' }
@@ -464,7 +479,10 @@ export default class CreatLine extends Vue {
       { required: true, message: '请选择是否回单', trigger: 'change' }
     ],
     deliveryNo: [
-      { required: true, message: '请选择活动资源', trigger: 'change' }
+      { required: true, message: '每日平均配送点位数不能为空', trigger: 'change' }
+    ],
+    deliveryWeekCycle: [
+      { required: true, message: '配送周期不能为空', trigger: 'change' }
     ],
     distance: [
       { required: true, message: '公里数不能为空', trigger: 'change' }
@@ -638,6 +656,29 @@ export default class CreatLine extends Vue {
     }
   }
 
+  // 配送周期
+  @Watch('ruleForm.stabilityRate')
+  private changeStability(value:any) {
+    if (value < 3) {
+      this.ruleForm.deliveryWeekCycle = []
+    }
+  }
+
+  // 可上车数
+  @Watch('ruleForm.deployNo')
+  private changeDeployNo(value:any) {
+    if (value > 11 || value < 0) {
+      this.ruleForm.deployNo = ''
+      this.$message.info('可上车数必须大于0小于11')
+    }
+  }
+
+  private checkBoxChange() {
+    if (this.ruleForm.deliveryWeekCycle && this.ruleForm.deliveryWeekCycle.includes('')) {
+      this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(item => item.type)
+    }
+  }
+
   private async remoteMethod(query: any) {
     if (query !== '') {
       this.loading = true
@@ -681,6 +722,15 @@ export default class CreatLine extends Vue {
           ruleForm.provinceArea = ruleForm.delivery[0]
           ruleForm.cityArea = ruleForm.delivery[1]
           ruleForm.countyArea = ruleForm.delivery[2]
+        }
+        if (ruleForm.deliveryWeekCycle.indexOf('') > -1) {
+          let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
+            return ele !== ''
+          })
+          ruleForm.deliveryWeekCycle = { ...deliveryWeekCycle }
+        }
+        if (ruleForm.deliveryWeekCycle.length === 0) {
+          ruleForm.deliveryWeekCycle = ''
         }
         // alert('submit!')
         let { data } = await editLine({ ...ruleForm, ...{ lineId: this.lineId } })
@@ -733,6 +783,15 @@ export default class CreatLine extends Vue {
           ruleForm.warehouseCounty = ruleForm.address[2]
           ruleForm.warehouseTown = ruleForm.address[3]
         }
+        if (ruleForm.deliveryWeekCycle.indexOf('') > -1) {
+          let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
+            return ele !== ''
+          })
+          ruleForm.deliveryWeekCycle = { ...deliveryWeekCycle }
+        }
+        if (ruleForm.deliveryWeekCycle.length === 0) {
+          ruleForm.deliveryWeekCycle = ''
+        }
         this.createdLine(ruleForm)
       } else {
         console.log('error submit!!')
@@ -744,7 +803,6 @@ export default class CreatLine extends Vue {
   private async createdLine(params:any) {
     let { data } = await createLine(params)
     if (data.success) {
-      console.log(data.data)
       this.$message.success('线路创建成功')
       this.$router.go(-1)
     } else {
@@ -809,6 +867,21 @@ export default class CreatLine extends Vue {
     } else {
       this.$message.error(data)
     }
+    this.getLowerStaffInfo()
+  }
+  private async getLowerStaffInfo() {
+    try {
+      let { data: res } = await GetJoinManageList({})
+      if (res.success) {
+        this.optionsSale = res.data.map(function(ele:any) {
+          return { value: Number(ele.id), label: ele.name }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
   }
 
   private cancelBtn() {
@@ -857,6 +930,7 @@ export default class CreatLine extends Vue {
       this.ruleForm.delivery.push(this.ruleForm.provinceArea + '')
       this.ruleForm.delivery.push(this.ruleForm.cityArea + '')
       this.ruleForm.delivery.push(this.ruleForm.countyArea + '')
+
       setTimeout(() => {
         for (let i = 0; i < Number(allParams.dayNo); i++) {
           this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
@@ -929,6 +1003,9 @@ export default class CreatLine extends Vue {
 }
 </style>
 <style scoped>
+.CreatLine >>> .el-cascader{
+  width: 100%;
+}
 @media screen and (min-width: 701px) {
   .SelfItem .el-select {
     width: 100%;

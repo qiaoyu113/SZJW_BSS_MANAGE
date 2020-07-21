@@ -128,7 +128,7 @@
             >
               <el-input
                 v-model="ruleForm.cooperationTime"
-                v-only-number="{min: 0, max: 12}"
+                v-only-number="{min: 0, max: 99}"
                 placeholder="合作期限"
                 type="number"
               />
@@ -141,7 +141,7 @@
             >
               <el-input
                 v-model="ruleForm.incomeGuarantee"
-                v-only-number="{min: 0, precision: 2}"
+                v-only-number="{min: 0, precision: 2, max: 999999}"
                 placeholder="请输入收入保障"
                 maxlength="10"
                 type="number"
@@ -168,7 +168,7 @@
             >
               <el-input
                 v-model="ruleForm.goodsAmount"
-                v-only-number="{min: 0, precision: 2}"
+                v-only-number="{min: 0, precision: 2, max: 999999}"
                 placeholder="请输入商品金额"
                 type="number"
               />
@@ -373,7 +373,7 @@
             <el-form-item :label="`剩余添加金额： ¥` + remain + ``">
               <el-input
                 v-model="payNumber"
-                v-only-number="{min: 0, max: '', precision: 2}"
+                v-only-number="{min: 0, precision: 2, max: 999999}"
                 placeholder="请输入支付金额"
                 maxlength="10"
               />
@@ -470,7 +470,7 @@
         name="CreatLine-btn-creat"
         @click="submitForm('ruleForm')"
       >
-        立即创建
+        提交
       </el-button>
       <el-button
         name="CreatLine-btn-creat"
@@ -874,7 +874,9 @@ export default class CreatLine extends Vue {
     if (this.ruleForm.cooperationModel === '1') {
       this.getModelByTypeAndCityAndSupplierAndCarType()
     }
-    this.getPrice()
+    if (this.ruleForm.cooperationModel !== '3') {
+      this.getPrice()
+    }
   }
 
   @Watch('ruleForm.goodsAmount', { deep: true })
@@ -966,6 +968,7 @@ export default class CreatLine extends Vue {
       this.ruleForm = Object.assign(this.ruleForm, datas)
       this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
       this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
+      this.ruleForm.cooperationCar = this.ruleForm.cooperationCar.toString()
       this.orderPrice = this.ruleForm.goodsAmount
       let notReadPay = 0
       this.ruleForm.orderPayRecordInfoFORMList.forEach((i: any) => {
@@ -1097,12 +1100,14 @@ export default class CreatLine extends Vue {
         this.ruleForm.driverInfoFORM.phone = i.detail.phone
         this.ruleForm.driverInfoFORM.workCity = i.detail.workCity
         this.ruleForm.driverInfoFORM.workCityName = i.detail.workCityName
+        this.ruleForm.driverInfoFORM.idNo = i.detail.idNo
         this.ruleForm.driverInfoFORM.driverId = driverId
       }
     })
   }
   // 提交
   private submitForm(formName:any) {
+    this.fullscreenLoading = true;
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         if (this.id) {
@@ -1110,7 +1115,6 @@ export default class CreatLine extends Vue {
           RepayOrder(this.ruleForm
           ).then((data: any) => {
             if (data.data.success) {
-              this.fullscreenLoading = true
               this.$message.success('创建订单成功！')
               setTimeout(() => {
                 (TagsViewModule as any).delView(this.$route); // 关闭当前页面
@@ -1126,6 +1130,7 @@ export default class CreatLine extends Vue {
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {
+            this.fullscreenLoading = false
             this.$message.error(err)
           })
         } else {
@@ -1140,10 +1145,12 @@ export default class CreatLine extends Vue {
               this.$message.error(data.data.errorMsg)
             }
           }).catch(err => {
+            this.fullscreenLoading = false
             this.$message.error(err)
           })
         }
       } else {
+        this.fullscreenLoading = false
         console.log('error submit!!')
         return false
       }

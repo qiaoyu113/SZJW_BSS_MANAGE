@@ -224,12 +224,22 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
           }
           break
         }
-      } else if (item.type === 3) { // 处理日期区间
+      } else if ([3].includes(item.type)) { // 处理日期区间
         let time:any[] = []
         if (listQuery[key].length === 2) {
           for (let i = 0; i < listQuery[key].length; i++) {
             let item = listQuery[key][i]
             time.push(parseTime(item, '{y}-{m}-{d}'))
+          }
+          label = time.join('-')
+        }
+        break
+      } else if ([10].includes(item.type)) {
+        let time:any[] = []
+        if (listQuery[key].length === 2) {
+          for (let i = 0; i < listQuery[key].length; i++) {
+            let item = listQuery[key][i]
+            time.push(parseTime(item, '{h}:{i}:{s}'))
           }
           label = time.join('-')
         }

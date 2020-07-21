@@ -19,7 +19,6 @@
           </router-link>
         </template>
         <template v-slot:createDate="{row}">
-          <!-- {{ row.createDate | Timestamp }} -->
           {{ row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
       </self-form>
@@ -97,7 +96,7 @@ export default class extends Vue {
       label: '所属司机手机号:'
     },
     {
-      key: 'gmIdName',
+      key: 'gmName',
       type: 7,
       label: '运营经理:'
     },
@@ -118,7 +117,6 @@ export default class extends Vue {
     },
     {
       type: 'createDate',
-      key: 'createDate',
       label: '创建时间:',
       slot: true
     }

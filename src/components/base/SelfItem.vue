@@ -87,6 +87,27 @@
       </el-form-item>
 
       <el-form-item
+        v-if="params.type === 6"
+        :label-width="width+'px'"
+        :label="params.label+'：'"
+        :prop="params.prop"
+      >
+        <el-checkbox-group
+          v-model="ruleForm[params.prop]"
+          v-bind="params.tagAttrs || {}"
+          v-on="params.listeners"
+        >
+          <el-checkbox
+            v-for="(subs,index) in params.options"
+            :key="'checkbox-'+subs.label+'-'+index"
+            :label="subs.type"
+          >
+            {{ subs.label }}
+          </el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+
+      <el-form-item
         v-if="params.type === 7"
         :label-width="width+'px'"
         :label="params.label+'：'"

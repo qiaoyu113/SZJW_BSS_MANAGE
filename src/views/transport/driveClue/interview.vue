@@ -245,6 +245,9 @@ export default class extends Vue {
     ],
     carType: [
       { required: true, message: '请选择车型', trigger: 'change' }
+    ],
+    busiType: [
+      { required: true, message: '请选择业务类型', trigger: 'change' }
     ]
   }
 
@@ -254,10 +257,31 @@ export default class extends Vue {
   }
 
   mounted() {
-    this.listQuery.clueId = (this.$route as any).query.id
     this.getBaseInfo()
     this.getOpenCitys()
-    this.getClueDetailByClueId()
+    this.listQuery.clueId = (this.$route as any).query.id
+    if (this.listQuery.clueId) {
+      this.getClueDetailByClueId()
+    } else {
+      this.formItem.push({
+        type: 2,
+        tagAttrs: {
+          placeholder: '请选择业务线'
+        },
+        label: '业务线',
+        key: 'busiType',
+        options: [
+          {
+            label: '专车',
+            value: 0
+          },
+          {
+            label: '共享',
+            value: 1
+          }
+        ]
+      })
+    }
   }
 
   /**
