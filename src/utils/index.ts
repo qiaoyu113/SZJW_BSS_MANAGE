@@ -1,5 +1,6 @@
 // Parse the time to string
 import Vue from 'vue'
+let context = new Vue()
 
 export const parseTime = (
   time?: object | string | number,
@@ -244,6 +245,11 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
           label = time.join('-')
         }
         break
+      } else if ([8].includes(item.type)) {
+        let address:any = []
+        if (listQuery[key].length > 0) {
+          console.log(listQuery[key],9999)
+        }
       }
     }
   }
