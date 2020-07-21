@@ -651,6 +651,7 @@ export default class extends Vue {
       clueId: ''
     }
     this.tags = []
+    this.getList()
   }
 
   /**
@@ -660,7 +661,7 @@ export default class extends Vue {
     let blackLists = ['status']
     this.tags = []
     for (let key in this.listQuery) {
-      if (this.listQuery[key] !== '' && this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+      if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
         if (name) {
           this.tags.push({
