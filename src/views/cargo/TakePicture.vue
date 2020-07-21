@@ -216,9 +216,9 @@ export default class TakePicture extends Vue {
   private getImgUrl() {
     let url
     if (window.location.host === 'http://192.168.0.134/:9528') {
-      url = 'http://szjw-bss-web.m1.yunniao.cn/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
+      url = 'http://szjw-bss-web.m1.yunniao.cn/api/core/v1/upload/uploadOSS/lineImg/true/0'
     } else {
-      url = '/api/base/v1/base/upload/uploadOSS/lineImg/true/0'
+      url = '/api/core/v1/upload/uploadOSS/lineImg/true/0'
     }
     return url
   }
