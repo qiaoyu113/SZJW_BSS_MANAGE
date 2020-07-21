@@ -172,7 +172,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'lineManage',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         icon: '',
         apiUrl: 'root'
       }
@@ -235,7 +235,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'creatLine',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         icon: '',
         apiUrl: 'root',
         hidden: true
@@ -248,7 +248,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'lineDetail',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         icon: '',
         hidden: true,
         apiUrl: 'root'
@@ -261,7 +261,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'lineEdit',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         icon: '',
         hidden: true,
         apiUrl: 'root'
@@ -274,7 +274,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'lineCopy',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         icon: '',
         hidden: true,
         apiUrl: 'root'
@@ -287,7 +287,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'lineAudit',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         icon: '',
         hidden: true,
         apiUrl: 'root'

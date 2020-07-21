@@ -19,7 +19,7 @@
               >
                 <template slot="detail">
                   <router-link
-                    :to="{path: '/transport/orderdetail',query: {id: detailQuery.orderId}}"
+                    :to="{path: '/join/orderdetail',query: {id: detailQuery.orderId}}"
                     class="link"
                   >
                     详情>>

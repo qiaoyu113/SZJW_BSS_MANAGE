@@ -8,6 +8,7 @@
       @handle-query="handleQuery"
     >
       <self-form
+        ref="lineForm"
         :list-query="listQuery"
         :form-item="formItem"
         label-width="100px"
@@ -589,7 +590,14 @@ export default class LineManage extends Vue {
       col: 12,
       label: '创建时间',
       type: 3,
-      key: 'time'
+      key: 'time',
+      tagAttrs: {
+        'picker-options': {
+          disabledDate(time:any) {
+            return (time.getTime() < Date.now() - (18 * 30 * 86400000) || time.getTime() > Date.now() + (18 * 30 * 86400000))
+          }
+        }
+      }
     },
     {
       col: 12,
