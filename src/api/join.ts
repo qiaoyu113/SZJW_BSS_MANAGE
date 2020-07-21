@@ -195,3 +195,21 @@ export const DelieverExportDown = (params: any) =>
     responseType: 'blob',
     data: params
   })
+
+// 合同导出
+export const ContractExport = (params: any) =>
+  request({
+    url: `business_center/v1/contract/contractExport`,
+    method: 'post',
+    responseType: 'blob',
+    data: params
+  })
+
+// 订单导出
+export const OrderExport = (params: any) =>
+  request({
+    url: `business_center/v1/order/orderExport`,
+    method: 'post',
+    responseType: 'blob',
+    data: params
+  })
