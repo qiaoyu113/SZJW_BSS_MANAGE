@@ -15,6 +15,7 @@
         <!-- <header-search class="right-menu-item" /> -->
         <error-log class="errLog-container right-menu-item hover-effect" />
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.setting')"
           effect="dark"
           placement="bottom"
@@ -36,6 +37,7 @@
           <open-new class="right-menu-item hover-effect" />
         </el-tooltip> -->
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.screenfull')"
           effect="dark"
           placement="bottom"
@@ -50,6 +52,7 @@
           <size-select class="right-menu-item hover-effect" />
         </el-tooltip> -->
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.language')"
           effect="dark"
           placement="bottom"
