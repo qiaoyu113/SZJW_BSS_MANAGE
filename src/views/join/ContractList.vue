@@ -26,7 +26,7 @@
           type="primary"
           size="small"
           name="cluelist_creat_btn"
-          @click="showDialog.visible = true"
+          @click="downLoad"
         >
           <i class="el-icon-download" />
           <span v-if="isPC">导出</span>
@@ -284,7 +284,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetContractList, ActiveContract, DownloadContract } from '@/api/join'
+import { GetContractList, ActiveContract, DownloadContract, ContractExport } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -524,6 +524,34 @@ export default class extends Vue {
     // 合同详情
     private goDetail(id: string | (string | null)[] | null | undefined) {
       this.$router.push({ name: 'ContractDetail', query: { id: id } })
+    }
+
+    // 导出
+    private async downLoad() {
+      const postData = this.listQuery
+      // delete postData.page
+      // delete postData.limit
+      ContractExport(postData)
+        .then((res) => {
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
+          const fileName = res.headers['content-disposition'].split('fileName=')[1]
+          this.download(res.data, decodeURI(fileName))
+        })
+    }
+    private download(data: any, name: any) {
+      if (!data) {
+        return
+      }
+      let url = window.URL.createObjectURL(new Blob([data]))
+      let link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.setAttribute('download', name)
+      document.body.appendChild(link)
+      link.click()
     }
 }
 </script>
