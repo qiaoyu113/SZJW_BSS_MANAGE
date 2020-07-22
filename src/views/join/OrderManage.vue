@@ -26,6 +26,17 @@
           type="primary"
           size="small"
           name="cluelist_creat_btn"
+          @click="downLoad"
+        >
+          <i class="el-icon-download" />
+          <span v-if="isPC">导出</span>
+        </el-button>
+
+        <el-button
+          :class="isPC ? 'btn-item' : 'btn-item-m'"
+          type="primary"
+          size="small"
+          name="cluelist_creat_btn"
           @click="$router.push({name: 'CreatOrder'})"
         >
           <i class="el-icon-plus" />
@@ -419,7 +430,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetOrderInfoList, CancelOrder } from '@/api/join'
+import { GetOrderInfoList, CancelOrder, OrderExport } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -746,6 +757,7 @@ export default class extends Vue {
       const { data } = await CancelOrder({
         orderId: this.cancelId.orderId,
         operateFlag: 'cancel',
+        'status': this.cancelId.status,
         'cooperationModel': this.cancelId.cooperationModel,
         'createSource': this.cancelId.createSource,
         'driverId': this.cancelId.driverId
@@ -757,6 +769,37 @@ export default class extends Vue {
       } else {
         this.$message.error(data.errorMsg)
       }
+    }
+
+    // 导出
+    private async downLoad() {
+      const postData = this.listQuery
+      // delete postData.page
+      // delete postData.limit
+      const { data } = await OrderExport(postData)
+      if (data.success) {
+        this.$message({
+          type: 'success',
+          message: '导出成功!'
+        })
+        // const fileName = headers['content-disposition'].split('fileName=')[1]
+        // this.download(data, decodeURI(fileName))
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+
+    private download(data: any, name: any) {
+      if (!data) {
+        return
+      }
+      let url = window.URL.createObjectURL(new Blob([data]))
+      let link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.setAttribute('download', name)
+      document.body.appendChild(link)
+      link.click()
     }
 }
 </script>

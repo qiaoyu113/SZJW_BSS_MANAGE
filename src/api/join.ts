@@ -30,9 +30,10 @@ export const GetOrderLog = (params: any) =>
 
 export const GetDriverList = (params: any) =>
   request({
-    url: '/driver/v1/driver/getDriverAll',
-    method: 'get',
-    params
+    // url: '/driver/v1/driver/getDriverAll',
+    url: '/carrier_center/v1/driver/getDriverList',
+    method: 'post',
+    data: params
   })
 
 export const GetDriverDetail = (params: any) =>
@@ -191,6 +192,24 @@ export const GetModelByTypeAndCityAndSupplierAndCarType = (data: any) =>
 export const DelieverExportDown = (params: any) =>
   request({
     url: '/business_center/v1/order/deliever/delieverExport',
+    method: 'post',
+    responseType: 'blob',
+    data: params
+  })
+
+// 合同导出
+export const ContractExport = (params: any) =>
+  request({
+    url: `business_center/v1/contract/contractExport`,
+    method: 'post',
+    // responseType: 'blob',
+    data: params
+  })
+
+// 订单导出
+export const OrderExport = (params: any) =>
+  request({
+    url: `business_center/v1/order/orderExport`,
     method: 'post',
     responseType: 'blob',
     data: params

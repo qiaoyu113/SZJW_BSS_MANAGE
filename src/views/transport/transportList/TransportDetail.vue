@@ -19,7 +19,7 @@
               >
                 <template slot="detail">
                   <router-link
-                    :to="{path: '/transport/orderdetail',query: {id: detailQuery.orderId}}"
+                    :to="{path: '/join/orderdetail',query: {id: detailQuery.orderId}}"
                     class="link"
                   >
                     详情>>
@@ -223,11 +223,11 @@ export default class extends Vue {
     title: '其他信息',
     age: '',
     householdTypeName: '',
-    workExperienceName: '',
-    homeDistrict: '',
+    workExperience: '',
+    addr: '',
     cargoTypeName: '',
     expMonthlyIncomeName: '',
-    avgMonthlyIncomeName: '',
+    avgMonthlyIncome: '',
     isIndebtedName: '',
     maxWorkTimeName: '',
     remarks: ''

@@ -1,5 +1,6 @@
 // Parse the time to string
 import Vue from 'vue'
+let context = new Vue()
 
 export const parseTime = (
   time?: object | string | number,
@@ -239,7 +240,7 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
         if (listQuery[key].length === 2) {
           for (let i = 0; i < listQuery[key].length; i++) {
             let item = listQuery[key][i]
-            time.push(parseTime(item, '{h}:{i}:{s}'))
+            time.push(parseTime(item, '{h}:{i}'))
           }
           label = time.join('-')
         }
@@ -262,6 +263,9 @@ export const phoneReg = /^[1][3-9][0-9]{9}$/
  */
 export function validatorNumberRange(min:number, max:number) {
   return function(rule: any, value: string, callback: Function) {
+    if (!Number.isInteger(Number(value))) {
+      return callback(new Error("请输入正整数的数字"))
+    }
     if (Number(value) < min || Number(value) > max) {
       return callback(new Error(`请输入${min}-${max}之间的数字`))
     }

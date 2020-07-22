@@ -174,11 +174,7 @@
               label="支付方式"
             >
               <template slot-scope="scope">
-                <span v-if="scope.row.payType === '1'">账户</span>
-                <span v-if="scope.row.payType === '2'">微信支付</span>
-                <span v-if="scope.row.payType === '3'">云鸟钱包</span>
-                <span v-if="scope.row.payType === '4'">支付宝</span>
-                <span v-if="scope.row.payType === '5'">银联支付</span>
+                <span>{{ scope.row.payTypeName }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -194,15 +190,12 @@
               label="支付截图"
             >
               <template slot-scope="scope">
-                <el-button
-                  v-if="scope.row.status === '1'"
-                  type="warning"
-                  size="small"
-                  plain
-                  @click="goBill(scope.row, scope.$index)"
-                >
-                  查看
-                </el-button>
+                <el-image
+                  v-if="scope.row.payImageUrl"
+                  style="width:50px;height:50px;"
+                  :preview-src-list="[scope.row.payImageUrl]"
+                  :src="scope.row.payImageUrl"
+                />
               </template>
             </el-table-column>
             <el-table-column
@@ -400,6 +393,7 @@ export default class extends Vue {
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditPass',
+        status: this.orderDetail.status,
         cooperationModel: this.orderDetail.cooperationModel,
         driverId: this.orderDetail.driverId,
         createSource: this.orderDetail.createSource
@@ -426,6 +420,7 @@ export default class extends Vue {
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditNotPass',
+        status: this.orderDetail.status,
         cooperationModel: this.orderDetail.cooperationModel,
         driverId: this.orderDetail.driverId,
         createSource: this.orderDetail.createSource

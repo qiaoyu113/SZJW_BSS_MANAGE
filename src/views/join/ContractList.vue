@@ -26,7 +26,7 @@
           type="primary"
           size="small"
           name="cluelist_creat_btn"
-          @click="showDialog.visible = true"
+          @click="downLoad"
         >
           <i class="el-icon-download" />
           <span v-if="isPC">导出</span>
@@ -238,11 +238,13 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-if="scope.row.status === 3 || scope.row.status === 4"
                     @click.native="Down(scope.row.contractId)"
                   >
                     下载
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-if="scope.row.status === 3"
                     @click.native="Activate(scope.row.contractId)"
                   >
                     激活
@@ -284,7 +286,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetContractList, ActiveContract, DownloadContract } from '@/api/join'
+import { GetContractList, ActiveContract, DownloadContract, ContractExport } from '@/api/join'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
@@ -422,7 +424,12 @@ export default class extends Vue {
     private async confirm(done:any) {
       const { data } = await ActiveContract({ contractId: this.ActivateId })
       if (data.success) {
-        this.$message.success('激活成功')
+        if (data.data.flag) {
+          this.$message.success('激活成功')
+          this.fetchData()
+        } else {
+          this.$message.error(data.data.msg)
+        }
       } else {
         this.$message.error(data.errorMsg)
       }
@@ -524,6 +531,36 @@ export default class extends Vue {
     // 合同详情
     private goDetail(id: string | (string | null)[] | null | undefined) {
       this.$router.push({ name: 'ContractDetail', query: { id: id } })
+    }
+
+    // 导出
+    private async downLoad() {
+      const postData = this.listQuery
+      // delete postData.page
+      // delete postData.limit
+      const { data } = await ContractExport(postData)
+      if (data.success) {
+        this.$message({
+          type: 'success',
+          message: '导出成功!'
+        })
+        // const fileName = headers['content-disposition'].split('fileName=')[1]
+        // this.download(data, decodeURI(fileName))
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+    private download(data: any, name: any) {
+      if (!data) {
+        return
+      }
+      let url = window.URL.createObjectURL(new Blob([data]))
+      let link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.setAttribute('download', name)
+      document.body.appendChild(link)
+      link.click()
     }
 }
 </script>

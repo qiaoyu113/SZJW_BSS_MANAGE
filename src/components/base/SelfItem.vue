@@ -76,6 +76,7 @@
         <el-select
           v-model="ruleForm[params.prop]"
           v-bind="params.tagAttrs || {}"
+          v-on="params.listeners"
         >
           <el-option
             v-for="(sub,index) in params.options"
@@ -112,7 +113,6 @@
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
-        :required="params.required"
       >
         <el-time-select
           v-model="ruleForm[params.prop].workingTimeStart"

@@ -193,6 +193,7 @@ import SelfForm from '@/components/base/SelfForm.vue'
 import { saveCarrierInfo, transportOrderList, transportOrderDetail, driverList } from '@/api/transport'
 import { GetDictionary, GetDictionaryList, GetOpenCityData, getOperManager, GetCityByCode } from '@/api/common'
 import '@/styles/common.scss'
+import { validatorNumberRange } from '@/utils/index.ts'
 
   interface IState {
     [key: string]: any;
@@ -288,7 +289,8 @@ export default class extends Vue {
       tagAttrs: {
         showWordLimit: true,
         placeholder: '请输入姓名',
-        maxlength: '10'
+        maxlength: 10,
+        clearable: true
       }
     },
     {
@@ -487,7 +489,10 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入备注（最多可填100字）',
         type: 'textarea',
-        rows: 4
+        rows: 4,
+        maxlength: 100,
+        row: 6,
+        showWordLimit: true
       }
     }
   ]
@@ -510,7 +515,26 @@ export default class extends Vue {
     ],
     gmId: [
       { required: true, message: '请选择运营经理', trigger: 'change' }
+    ],
+    age: [
+      { validator: this.checkAge, trigger: 'blur' }
+    ],
+    workExperience: [
+      { validator: validatorNumberRange(1, 500) }
+    ],
+    avgMonthlyIncome: [
+      { validator: validatorNumberRange(1, 25000) }
     ]
+  }
+
+  private checkAge(rule:any, value:any, callback:Function) {
+    if (value < 18) {
+      callback(new Error('必须年满18岁'))
+    } else if (value > 100) {
+      callback(new Error('请输入100以内的数字'))
+    } else {
+      callback()
+    }
   }
 
   private checkPhone(rule:any, value:any, callback:any) {
@@ -737,7 +761,7 @@ export default class extends Vue {
   private orderGet(index:number, ele:any) {
     this.orderId = ele.orderInfo.orderId
     if (!ele.flag) {
-      return this.$message.error('该订单绑定运力数已满，暂不可继续添加运力')
+      return this.$message.error('当前订单配额达到上限或者未交付')
     } else {
       this.isHasOrder = true
       this.activeItem = index
@@ -761,7 +785,7 @@ export default class extends Vue {
   }
 
   private goOrderDetail(id:string) {
-    this.$router.push({ path: 'orderdetail', query: { id: id } })
+    this.$router.push({ path: '/join/orderdetail', query: { id: id } })
   }
 
   private fetchData() {

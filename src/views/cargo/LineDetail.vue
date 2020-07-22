@@ -7,8 +7,8 @@
       <el-row>
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="货主姓名"
-            :value="ruleForm.bussinessName"
+            name="货主名称"
+            :value="ruleForm.customerName"
           />
         </el-col>
 
@@ -47,7 +47,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="上架有效期（天）"
-            :value="ruleForm.waitDirveValidity"
+            :value="waitDirveValidity(ruleForm.waitDirveValidity)"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
@@ -363,6 +363,7 @@ import { GetLineDetail, approvedLine, notApprovedLine } from '@/api/cargo'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
+import { parseTime } from '@/utils/index.ts'
 import '@/styles/common.scss'
 
   @Component({
@@ -379,6 +380,7 @@ export default class extends Vue {
   private auditBack:boolean = false
   private auditBackText:string = ''
   private ruleForm:any = {
+    customerName: '',
     bussinessName: '',
     carType: '',
     carTypeName: '',
@@ -465,6 +467,10 @@ export default class extends Vue {
     }
   }
 
+  waitDirveValidity(val:number) {
+    return parseTime(val)
+  }
+
   time(num:number) {
     let obj = this.ruleForm['lineDeliveryInfoFORMS'][0]
     return obj.workingTimeStart + '-' + obj.workingTimeEnd
@@ -484,7 +490,9 @@ export default class extends Vue {
         if (checkList.length === 7) {
           this.checkList.push('')
         } else {
-          this.checkList = this.ruleForm.deliveryWeekCycle.split(',')
+          this.checkList = this.ruleForm.deliveryWeekCycle.split(',').map(function(ele:any) {
+            return +ele
+          })
         }
       } else {
         this.checkList = []

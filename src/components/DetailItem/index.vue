@@ -78,6 +78,7 @@ export default class extends Vue {
     font-size: 14px;
     color: #333;
     font-weight: 500;
+    overflow-wrap: break-word;
     // line-height: 36px;
   }
 }

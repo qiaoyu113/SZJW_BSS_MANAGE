@@ -134,7 +134,7 @@ const transportRouter: RouteConfig = {
       meta: {
         title: 'transportList',
         activeMenu: '/transport/transportlist',
-        noCache: false,
+        noCache: true,
         icon: '',
         apiUrl: 'root'
       }
@@ -146,7 +146,7 @@ const transportRouter: RouteConfig = {
       meta: {
         title: 'creatTransport',
         activeMenu: '/transport/transportlist',
-        noCache: false,
+        noCache: true,
         hidden: true,
         icon: '',
         apiUrl: 'root'
@@ -159,7 +159,7 @@ const transportRouter: RouteConfig = {
       meta: {
         title: 'editorTransport',
         activeMenu: '/transport/transportlist',
-        noCache: false,
+        noCache: true,
         hidden: true,
         icon: '',
         apiUrl: 'root'
