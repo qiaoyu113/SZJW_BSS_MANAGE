@@ -69,15 +69,17 @@
       <SectionContainer title="角色授权">
         <RoleTree
           ref="tree"
+          class="treeLine"
           :data="data"
           :props="defaultProps"
           node-key="id"
           :show-checkbox="true"
+          :indent="0"
         >
           <template slot-scope="{node,data}">
             <span>{{ node.label }}</span>
             <el-radio-group
-              v-show="node.checked && node.level !== 1 && data.controlType"
+              v-show="node.checked && ((node.level !== 1 && data.controlType) || node.level === 3)"
               v-model="data.checked"
               class="ml10"
               size="mini"
@@ -121,6 +123,8 @@ import { GetDictionaryList } from '@/api/common'
 import { authorityList, createRole, getRoleDetail, updateRole } from '@/api/system'
 
 import '@/styles/common.scss'
+import '@/styles/tree-line.scss'
+
 @Component({
   name: 'CreateRole',
   components: {
@@ -281,7 +285,7 @@ export default class extends Vue {
       if (data.success) {
         this.ruleForm = data.data
         this.ruleForm.productLine = String(data.data.productLine)
-        this.authorityList = data.data.authorities
+        this.authorityList = data.data.authorities || []
       } else {
         this.$message.error(data)
       }
@@ -299,7 +303,7 @@ export default class extends Vue {
             checked = item.dataScope
           }
         }
-        if (list[i].controlType) {
+        if (list[i].controlType || list[i].authType === 3) {
           list[i].checked = checked
         }
         if (list[i].childAuth) {

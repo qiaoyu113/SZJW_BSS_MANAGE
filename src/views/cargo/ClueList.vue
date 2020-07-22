@@ -34,7 +34,7 @@
           name="cluelist_creat_btn"
           @click="createClue"
         >
-          <i class="el-icon-s-operation" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">新增线索</span>
         </el-button>
         <el-button
@@ -44,7 +44,7 @@
           name="cluelist_creat_btn"
           @click="goImport"
         >
-          <i class="el-icon-s-operation" />
+          <i class="el-icon-download" />
           <span v-if="isPC">导入</span>
         </el-button>
 
@@ -278,7 +278,7 @@
                     跟进
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="row.isTransform !== '1'"
+                    v-if="row.isTransform !== '1' && row.clueState !== 2"
                     @click.native="goConversion(row.clueId)"
                   >
                     转化
@@ -515,7 +515,13 @@ const optionsDistribution: any = [
 })
 export default class extends Vue {
   private tags: any[] = [];
-  private tab: any[] = [];
+  private tab: any[] = [
+    {
+      label: '全部',
+      name: '',
+      num: ''
+    }
+  ];
 
   private DateValue: any[] = [];
   private listQuery: IState = {
@@ -619,7 +625,7 @@ export default class extends Vue {
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
-    this.listQuery[key] = value
+    // this.listQuery[key] = value
     this.getList(this.listQuery)
   }
   // 处理query方法
@@ -915,7 +921,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       height: calc(100vh - 360px) !important;
-      padding: 30px;
+      padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
@@ -929,7 +935,7 @@ export default class extends Vue {
   padding-bottom: 0;
   box-sizing: border-box;
   .table_box {
-    height: calc(100vh - 183px) !important;
+    height: calc(100vh - 225px) !important;
     background: #ffffff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
@@ -955,5 +961,11 @@ export default class extends Vue {
 .btn-item-filtrate-m {
   background-color: $assist-btn;
   border-color: $assist-btn;
+}
+</style>
+<style scoped>
+.ClueList >>> .tab_num,
+.ClueList-m >>> .tab_num {
+  display: none
 }
 </style>

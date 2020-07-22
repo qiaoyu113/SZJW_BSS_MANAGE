@@ -24,6 +24,7 @@
                 v-model="ruleForm.lineSaleId"
                 placeholder="请选择"
                 clearable
+                filterable
               >
                 <el-option
                   v-for="(item, index) in optionsSale"

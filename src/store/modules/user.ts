@@ -1,5 +1,5 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
-import { login, logout, getUserInfo } from '@/api/users'
+import { login, logout, getUserInfo, resetPwd } from '@/api/users'
 import { getToken, setToken, removeToken, setUser } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
 import { PermissionModule } from './permission'
@@ -62,6 +62,9 @@ class User extends VuexModule implements IUserState {
     const { data } = await login({ username, password })
     if (data.success) {
       if (data.data.flag) {
+        if (!data.data.settingFlag) {
+          return data.data
+        }
         setToken(data.data.token)
         setUser(data.data)
         let roleName = ''
@@ -88,6 +91,12 @@ class User extends VuexModule implements IUserState {
     } else {
       Message.error(data.errorMsg)
     }
+  }
+
+  @Action
+  public async ResetPassword({ token, password } : any) {
+    const { data } = await resetPwd(token, password)
+    return data
   }
 
   @Action
