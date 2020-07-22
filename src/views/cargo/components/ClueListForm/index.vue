@@ -80,7 +80,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <!-- <el-col :span="isPC ? 6 : 24">
+              <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="分配状态">
                   <el-select
                     v-model="listQuery.distributionState"
@@ -95,7 +95,7 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col> -->
+              </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="销售">
                   <el-select
@@ -177,7 +177,7 @@ export default class extends Vue {
     };
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private DateValueChild: any = []; // DateValue的赋值项
-  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'distributionState', 'startDate']; // 添加过滤listQuery中key的名称
+  private QUERY_KEY_LIST: any[] = ['page', 'limit', 'startDate']; // 添加过滤listQuery中key的名称
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {

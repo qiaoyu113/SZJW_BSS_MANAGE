@@ -142,6 +142,7 @@ import LangSelect from '@/components/LangSelect/index.vue'
 import SocialSign from './components/SocialSignin.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import Dialog from '@/components/Dialog/index.vue'
+
 @Component({
   name: 'Login',
   components: {
@@ -156,6 +157,7 @@ export default class extends Vue {
     passwd: '',
     checkPass: ''
   };
+  private token: any = ''
   private rules: any = {
     passwd: [
       { required: true, message: '请输入密码', trigger: 'blur' },
@@ -202,8 +204,8 @@ export default class extends Vue {
     }
   }
   private loginForm = {
-    username: '15712863969',
-    password: '15712863969'
+    username: '13500000000',
+    password: '13500000000'
   };
   private loginRules = {
     username: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -259,13 +261,14 @@ export default class extends Vue {
       if (valid) {
         this.loading = true
         const data = await UserModule.Login(this.loginForm)
-        console.log(data)
         // Just to simulate the time of the request
         setTimeout(() => {
           this.loading = false
         }, 0.5 * 1000)
-        if (data.settingFlag) {
+        if (data && !data.settingFlag) {
           // 强制修改密码
+          // this.reCreat.id = data.
+          this.token = data.token
           this.assignShowDialog = true
           return
         }
@@ -296,7 +299,21 @@ export default class extends Vue {
       (this.$refs.reCreatRule as any).clearValidate()
     })
   }
-  private confirm() {}
+  private async confirm(done: any) {
+    const { data } = await UserModule.ResetPassword({
+      token: this.token,
+      password: {
+        passwd: this.reCreat.passwd
+      }
+    })
+    // console.log(data)
+    if (data.success) {
+      done()
+      this.$message.success(`重置成功，请重新登录`)
+    } else {
+      this.$message.error(data)
+    }
+  }
 }
 </script>
 

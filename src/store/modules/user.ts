@@ -62,7 +62,7 @@ class User extends VuexModule implements IUserState {
     const { data } = await login({ username, password })
     if (data.success) {
       if (data.data.flag) {
-        if (data.data.settingFlag) {
+        if (!data.data.settingFlag) {
           return data.data
         }
         setToken(data.data.token)
@@ -94,8 +94,9 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async resetPassword({ token, password } : any) {
+  public async ResetPassword({ token, password } : any) {
     const { data } = await resetPwd(token, password)
+    return data
   }
 
   @Action
