@@ -313,7 +313,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       height: calc(100vh - 360px) !important;
-      padding: 30px;
+      padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;

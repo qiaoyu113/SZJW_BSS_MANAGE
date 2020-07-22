@@ -5,6 +5,7 @@
   >
     <SectionContainer title="权限管理">
       <RoleTree
+        class="treeLine"
         :data="data"
         :props="defaultProps"
         :indent="0"
@@ -167,6 +168,7 @@ import {
   deleteAuthority
 } from '@/api/system'
 import '@/styles/common.scss'
+import '@/styles/tree-line.scss'
 
 @Component({
   name: 'PermissionManage',
@@ -389,57 +391,5 @@ export default class extends Vue {
 <style scoped>
 .PermissionManage .el-badge >>> sup {
   transform: translateY(6px);
-}
-.PermissionManage >>> .el-tree > .el-tree-node:after {
-  border-top: none;
-}
-.PermissionManage >>> .el-tree-node {
-  position: relative;
-  padding-left: 16px;
-}
-.PermissionManage >>> .el-tree-node__expand-icon.is-leaf {
-  display: none;
-}
-.PermissionManage >>> .el-tree-node__children {
-  padding-left: 16px;
-}
-
-.PermissionManage >>> .el-tree-node :last-child:before {
-  height: 38px;
-}
-.PermissionManage >>> .el-tree > .el-tree-node:before {
-  border-left: none;
-}
-.PermissionManage >>> .el-tree > .el-tree-node:after {
-  border-top: none;
-}
-
-.PermissionManage >>> .el-tree-node:before {
-  content: "";
-  left: -4px;
-  position: absolute;
-  right: auto;
-  border-width: 1px;
-}
-.PermissionManage >>> .el-tree-node:after {
-  content: "";
-  left: -4px;
-  position: absolute;
-  right: auto;
-  border-width: 1px;
-}
-
-.PermissionManage >>> .el-tree-node:before {
-  border-left: 1px solid #C0C4CC;
-  bottom: 0px;
-  height: 100%;
-  top: -22px;
-  width: 1px;
-}
-.PermissionManage >>> .el-tree-node:after {
-  border-top: 1px solid #C0C4CC;
-  height: 20px;
-  top: 15px;
-  width: 16px;
 }
 </style>

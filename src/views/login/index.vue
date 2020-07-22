@@ -204,8 +204,8 @@ export default class extends Vue {
     }
   }
   private loginForm = {
-    username: '13500000000',
-    password: '13500000000'
+    username: '',
+    password: ''
   };
   private loginRules = {
     username: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -300,13 +300,12 @@ export default class extends Vue {
     })
   }
   private async confirm(done: any) {
-    const { data } = await UserModule.ResetPassword({
+    const data = await UserModule.ResetPassword({
       token: this.token,
       password: {
-        passwd: this.reCreat.passwd
+        password: this.reCreat.passwd
       }
     })
-    // console.log(data)
     if (data.success) {
       done()
       this.$message.success(`重置成功，请重新登录`)

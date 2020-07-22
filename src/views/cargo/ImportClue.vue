@@ -36,6 +36,7 @@
           <el-button
             slot="trigger"
             type="primary"
+            size="mini"
             :class="isPC ? 'btn-item' : 'btn-item-m'"
           >
             <i class="el-icon-upload2" />
@@ -45,6 +46,7 @@
 
         <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
+          size="mini"
           @click="downLoad(0)"
         >
           <i class="el-icon-download" />
@@ -52,6 +54,7 @@
         </el-button>
         <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
+          size="mini"
           @click="downLoad(1)"
         >
           <i class="el-icon-download" />
@@ -63,6 +66,7 @@
         >
           <el-button
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
+            size="mini"
             type="primary"
           >
             <i class="el-icon-s-operation" />
@@ -221,11 +225,17 @@ interface IState {
 })
 export default class extends Vue {
   private tags: any[] = [];
-  private tab: any[] = [];
+  private tab: any[] = [
+    {
+      label: '全部',
+      name: '',
+      num: ''
+    }
+  ];
   private DateValue: any[] = [];
   private listQuery: IState = {
     page: 1,
-    limit: 30,
+    limit: 20,
     endDate: '',
     startDate: ''
   };
@@ -301,7 +311,7 @@ export default class extends Vue {
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
-    this.listQuery[key] = value
+    // this.listQuery[key] = value
     this.fetchData()
   }
   // 处理选择日期方法
@@ -364,7 +374,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       height: calc(100vh - 360px) !important;
-      padding: 30px;
+      padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
@@ -409,5 +419,9 @@ export default class extends Vue {
 }
 .upload-demo{
   display: inline-block;
+}
+.ImportClue >>> .tab_num,
+.ImportClue-m >>> .tab_num {
+  display: none
 }
 </style>

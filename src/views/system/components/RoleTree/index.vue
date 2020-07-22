@@ -16,12 +16,12 @@
           v-on="$listeners"
         >
           <template slot-scope="{node, data}">
-            <span :class="'custom-tree-node ' + `tree-leave-${node.level}`">
+            <div :class="'custom-tree-node ' + `tree-leave-${node.level}`">
               <slot
                 :node="node"
                 :data="data"
               />
-            </span>
+            </div>
           </template>
         </el-tree>
       </el-col>

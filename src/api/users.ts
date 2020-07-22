@@ -42,7 +42,7 @@ export const login = (data: any) =>
 
 export const resetPwd = (token: any, data: any) =>
   request({
-    url: '/base/v1/base/user/update',
+    url: '/base/v1/base/user/updateUserPwd',
     method: 'post',
     headers: {
       Authorization: token
