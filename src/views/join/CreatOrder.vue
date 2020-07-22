@@ -32,7 +32,7 @@
               filterable
               remote
               reserve-keyword
-              placeholder="请输入司机姓名或完整手机号"
+              placeholder="请输入司机编号/姓名/手机号"
               @change="checkDiver"
             >
               <el-option
@@ -233,9 +233,9 @@
               >
                 <el-option
                   v-for="item in optionsCompany"
-                  :key="item.codeVal"
-                  :label="item.code"
-                  :value="item.codeVal"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
