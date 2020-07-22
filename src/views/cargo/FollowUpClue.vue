@@ -153,6 +153,7 @@
                   type="datetime"
                   placeholder="选择日期时间"
                   clearable
+                  value-format="yyyy-MM-dd HH:mm:ss"
                 />
               </el-form-item>
               <el-form-item

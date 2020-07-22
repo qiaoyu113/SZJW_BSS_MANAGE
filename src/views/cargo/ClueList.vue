@@ -445,7 +445,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 
-import { GetDictionaryList, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetManagerLists } from '@/api/common'
 import { GetClueList, Distribution, ExpiredClue, ActivationClue, GetCustomerOff, GetSaleList, ShowPhone } from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
 
@@ -694,7 +694,9 @@ export default class extends Vue {
   }
   private async getJoinManageList() {
     return new Promise((resolve, reject) => {
-      GetJoinManageList({})
+      GetManagerLists({
+        uri: '/v1/line/clue/queryLineClueList'
+      })
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsSale = data.data

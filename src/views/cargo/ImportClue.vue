@@ -316,7 +316,7 @@ export default class extends Vue {
   }
   // 处理选择日期方法
   private handleDate(value: any) {
-    // this.DateValue = value
+    this.DateValue = value
   }
   // downLoad
   private downLoad(key: number) {
