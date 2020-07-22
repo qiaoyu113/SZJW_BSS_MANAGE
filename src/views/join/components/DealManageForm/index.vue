@@ -40,6 +40,7 @@
                 <el-form-item label="加盟经理">
                   <el-select
                     v-model="listQuery.joinManageId"
+                    filterable
                     placeholder="请选择"
                   >
                     <el-option
@@ -278,6 +279,12 @@ export default class extends Vue {
   .menuBox {
     padding: 20px 30px 0 0;
     box-sizing: border-box;
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+    right: 15px;
+    left: 15px;
     .btn-box {
       text-align: center;
       .filter-item {

@@ -32,7 +32,7 @@
               filterable
               remote
               reserve-keyword
-              placeholder="请输入司机姓名或完整手机号"
+              placeholder="请输入司机编号/姓名/手机号"
               @change="checkDiver"
             >
               <el-option
@@ -233,9 +233,9 @@
               >
                 <el-option
                   v-for="item in optionsCompany"
-                  :key="item.codeVal"
-                  :label="item.code"
-                  :value="item.codeVal"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
@@ -307,7 +307,7 @@
           </el-col>
           <!--车辆型号-->
           <el-col
-            v-if="ruleForm.supplier && ruleForm.cooperationCar && ruleForm.cooperationModel !== '3'"
+            v-if="ruleForm.supplier && ruleForm.cooperationCar && ruleForm.cooperationModel === '1'"
             :span="isPC ? 6 : 24"
           >
             <el-form-item
@@ -498,6 +498,7 @@
         提交
       </el-button>
       <el-button
+        v-if="!id"
         name="CreatLine-btn-creat"
         @click="resetForm('ruleForm')"
       >
@@ -883,19 +884,26 @@ export default class CreatLine extends Vue {
       this.getCompany()
     } else if (value === '2') {
       this.getCompany()
+      this.ruleForm.cooperationCar = ''
+    } else {
+      this.ruleForm.cooperationCar = ''
     }
   }
 
   @Watch('ruleForm.buyCarCompany', { deep: true })
   private changeCarCompany(value:any) {
     // this.ruleForm.cooperationCar = ''
-    this.getCar()
+    if (value) {
+      this.getCar()
+    }
   }
 
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any) {
     // this.ruleForm.cooperationCar = ''
-    this.getCar()
+    if (value) {
+      this.getCar()
+    }
   }
 
   @Watch('ruleForm.cooperationCar', { deep: true })

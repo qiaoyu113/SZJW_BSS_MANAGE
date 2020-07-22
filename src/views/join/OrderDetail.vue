@@ -87,21 +87,30 @@
       :md="true"
     >
       <el-row>
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="年检有效期"
             :value="orderDetail.goodsAmount | Timestamp"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="保险有效期"
             :value="orderDetail.insuranceTime | Timestamp"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="租赁公司"
             :value="orderDetail.leaseCarCompany"
@@ -111,7 +120,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="购车公司"
-            :value="orderDetail.buyCarCompany"
+            :value="orderDetail.supplier"
           />
         </el-col>
 
@@ -138,7 +147,7 @@
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="无税车架"
+            name="无税车价"
             :value="orderDetail.carPrice"
           />
         </el-col>

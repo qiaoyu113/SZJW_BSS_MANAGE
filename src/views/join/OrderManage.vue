@@ -535,6 +535,11 @@ export default class extends Vue {
         label: '已成交',
         name: '30',
         num: ''
+      },
+      {
+        label: '已取消',
+        name: '10',
+        num: ''
       }
     ];
     private listQuery: IState = {
@@ -644,6 +649,7 @@ export default class extends Vue {
           this.tab[3].num = data.title.toAudit
           this.tab[4].num = data.title.auditNotPass
           this.tab[5].num = data.title.haveDeal
+          this.tab[6].num = data.title.haveCancel
         }
         data.page = await HandlePages(data.page)
         this.total = data.page.total
@@ -830,8 +836,8 @@ export default class extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 360px) !important;
-      padding: 30px;
+      height: calc(100vh - 340px) !important;
+      padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
