@@ -792,7 +792,6 @@ export default class extends Vue {
    * 更多操作
    */
     handleCommandChange(key:string|number, row:any) {
-      console.log(key)
       let id = row.carrierId
       switch (key) {
         case 'gowork':
@@ -966,7 +965,7 @@ export default class extends Vue {
       overflow: hidden;
       .table_center{
         height: calc(100vh - 360px) !important;
-        padding:30px;
+        padding:0px;
         padding-bottom: 0;
         box-sizing: border-box;
         background: #FFFFFF;
@@ -1012,7 +1011,7 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
       overflow: hidden;
       .table_center{
-        height: calc(100vh - 300px) !important;
+        height: calc(100vh - 340px) !important;
         padding-bottom: 0;
         box-sizing: border-box;
         background: #FFFFFF;
@@ -1042,4 +1041,16 @@ export default class extends Vue {
 .el-form-item__label{
   color: #999999;
 }
+</style>
+<style scoped>
+  .TransportList >>> .el-collapse-item__wrap {
+    padding: 20px 30px 0 0;
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+    right: 15px;
+    left: 15px;
+  }
 </style>

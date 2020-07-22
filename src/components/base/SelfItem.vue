@@ -218,5 +218,7 @@ export default class SelfItem extends Vue {
     height:36px;
     line-height: 36px;
   }
-
+  .SelfItem >>> .el-col-8{
+    float: left!important
+  }
   </style>
