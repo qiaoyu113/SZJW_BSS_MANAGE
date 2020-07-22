@@ -76,6 +76,7 @@
                   <el-select
                     v-model="listQuery.lineSaleId"
                     placeholder="请选择"
+                    filterable
                   >
                     <el-option
                       v-for="item in optionsSale"

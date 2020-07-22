@@ -40,6 +40,7 @@
                 <el-form-item label="加盟经理">
                   <el-select
                     v-model="listQuery.joinManageId"
+                    filterable
                     placeholder="请选择"
                   >
                     <el-option
