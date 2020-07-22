@@ -61,16 +61,12 @@ export const GetCityByCode = (data: any) =>
    *
    *获取加盟经理列表
    */
-export const GetManagerLists = () =>
+export const GetManagerLists = (params:any) =>
   request({
-    url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
+    url: `${baseURL}/v1/base/user/getCurrUserAuthList?uri=${params.uri}`,
     method: 'post'
   })
 
-/**
-   *
-   *获取加盟经理列表
-   */
 export const detailCity = (data:any) =>
   request({
     url: `${baseURL}/v1/base/area/getTownByCountryCode`,

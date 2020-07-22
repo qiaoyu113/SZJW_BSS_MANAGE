@@ -99,18 +99,21 @@
         </template>
         <template v-slot:op="scope">
           <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
-            <span class="el-dropdown-link">
-              <el-button
+            <span
+              v-if="isPC"
+              class="el-dropdown-link"
+            >
+              更多操作<i
                 v-if="isPC"
-                :a="scope"
-                type="text"
-              >
-                更多操作
-              </el-button>
-              <i
-                v-else
-                class="el-icon-setting"
+                class="el-icon-arrow-down el-icon--right"
               />
+            </span>
+            <span
+              v-else
+              style="font-size: 18px;"
+              class="el-dropdown-link"
+            >
+              <i class="el-icon-setting el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item
@@ -542,7 +545,6 @@ export default class extends Vue {
     {
       key: 'op',
       label: '操作',
-      fixed: 'right',
       disabled: true,
       slot: true
     }
@@ -583,7 +585,10 @@ export default class extends Vue {
    */
   async getManagers() {
     try {
-      let { data: res } = await GetManagerLists()
+      let params = {
+        uri: '/v1/driver/getDriverList'
+      }
+      let { data: res } = await GetManagerLists(params)
       if (res.success) {
         this.formItem[5].options = res.data.map(function(item:any) {
           return {
@@ -899,6 +904,12 @@ export default class extends Vue {
       margin-top: 10px;
       width:100%;
     }
+  }
+</style>
+
+<style scoped>
+  .DriverList >>> .el-form-item__label {
+    color:#999;
   }
 </style>
 

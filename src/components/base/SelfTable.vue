@@ -4,7 +4,7 @@
       ref="multipleTable"
       :row-style="{height: '20px'}"
       :cell-style="{padding: '5px 0'}"
-      height="calc(100% - 90px)"
+      max-height="400px"
       :data="tableData"
       :border="isPC"
       size="mini"
@@ -162,7 +162,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .selfTable{
     padding: 0px 30px;
-    height:calc(100vh - 267px);
+    /*height:calc(100vh - 330px);*/
     background: #FFFFFF;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     overflow: hidden;
