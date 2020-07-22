@@ -233,9 +233,9 @@
               >
                 <el-option
                   v-for="item in optionsCompany"
-                  :key="item.codeVal"
-                  :label="item.code"
-                  :value="item.codeVal"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
