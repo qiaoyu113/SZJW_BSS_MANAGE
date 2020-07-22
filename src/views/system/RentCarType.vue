@@ -38,7 +38,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="showDialog('create')"
         >
-          <i class="el-icon-s-operation" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">新建商品</span>
         </el-button>
         <el-dropdown

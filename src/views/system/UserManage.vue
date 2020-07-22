@@ -24,7 +24,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="goCreateUser"
         >
-          <i class="el-icon-edit" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">新建用户</span>
         </el-button>
         <el-dropdown
