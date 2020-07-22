@@ -138,7 +138,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="是否继续跟进"
-            :value="details.isTransform ? '是' : '否'"
+            :value="details.isTransform === 1 ? '是' : '否'"
           />
         </el-col>
         <el-col

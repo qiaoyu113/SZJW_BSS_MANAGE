@@ -16,7 +16,7 @@
           v-on="$listeners"
         >
           <template slot-scope="{node, data}">
-            <span class="custom-tree-node">
+            <span :class="'custom-tree-node ' + `tree-leave-${node.level}`">
               <slot
                 :node="node"
                 :data="data"

@@ -3,7 +3,7 @@
     <SuggestContainer
       :tab="tab"
       :tags="tags"
-      :active-name="listQuery.state"
+      :active-name="listQuery.distributionState"
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
@@ -278,7 +278,7 @@
                     跟进
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="row.isTransform !== '1'"
+                    v-if="row.isTransform !== '1' && row.clueState !== 2"
                     @click.native="goConversion(row.clueId)"
                   >
                     转化
@@ -515,7 +515,13 @@ const optionsDistribution: any = [
 })
 export default class extends Vue {
   private tags: any[] = [];
-  private tab: any[] = [];
+  private tab: any[] = [
+    {
+      value: '',
+      label: '全部'
+    },
+    ...optionsDistribution
+  ];
 
   private DateValue: any[] = [];
   private listQuery: IState = {
