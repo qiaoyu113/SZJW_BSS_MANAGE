@@ -3,7 +3,7 @@
     <SuggestContainer
       :tab="tab"
       :tags="tags"
-      :active-name="listQuery.distributionState"
+      :active-name="listQuery.state"
       @handle-date="handleDate"
       @handle-query="handleQuery"
     >
@@ -517,10 +517,10 @@ export default class extends Vue {
   private tags: any[] = [];
   private tab: any[] = [
     {
-      value: '',
-      label: '全部'
-    },
-    ...optionsDistribution
+      label: '全部',
+      name: '',
+      num: ''
+    }
   ];
 
   private DateValue: any[] = [];
@@ -935,14 +935,14 @@ export default class extends Vue {
   padding-bottom: 0;
   box-sizing: border-box;
   .table_box {
-    height: calc(100vh - 183px) !important;
+    height: calc(100vh - 225px) !important;
     background: #ffffff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 300px) !important;
-      padding-bottom: 0;
+      height: calc(100vh - 360px) !important;
+      padding: 0 30px;
       box-sizing: border-box;
       background: #ffffff;
     }
@@ -961,5 +961,11 @@ export default class extends Vue {
 .btn-item-filtrate-m {
   background-color: $assist-btn;
   border-color: $assist-btn;
+}
+</style>
+<style scoped>
+.ClueList >>> .tab_num,
+.ClueList-m >>> .tab_num {
+  display: none
 }
 </style>
