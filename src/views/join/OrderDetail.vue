@@ -88,7 +88,7 @@
     >
       <el-row>
         <el-col
-          v-if="orderDetail.cooperationModel !== 1"
+          v-if="orderDetail.cooperationModel === 3"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -98,7 +98,7 @@
         </el-col>
 
         <el-col
-          v-if="orderDetail.cooperationModel !== 1"
+          v-if="orderDetail.cooperationModel === 3"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -108,16 +108,19 @@
         </el-col>
 
         <el-col
-          v-if="orderDetail.cooperationModel !== 1"
+          v-if="orderDetail.cooperationModel === 2"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
             name="租赁公司"
-            :value="orderDetail.leaseCarCompany"
+            :value="orderDetail.supplier"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel === 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="购车公司"
             :value="orderDetail.supplier"
