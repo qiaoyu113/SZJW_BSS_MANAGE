@@ -155,6 +155,7 @@ import '@/styles/common.scss'
 export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
+  @Prop({ default: () => [] }) private DateValue2!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private optionsCompany: any[] = []
   private optionsSale: any[] = []
@@ -166,6 +167,11 @@ export default class extends Vue {
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
     this.DateValueChild = value
+  }
+
+  @Watch('DateValue2', { deep: true })
+  private onDateChange2(value: any) {
+    this.DateValueChild2 = value
   }
 
   // listQuery同步tags公共方法
@@ -183,7 +189,6 @@ export default class extends Vue {
             type: '',
             key: key
           })
-          console.log(tags)
         } else if (value[key] && key === 'endDate') {
           tags.unshift({
             name:
@@ -323,7 +328,6 @@ export default class extends Vue {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
-    console.log(this.listQuery)
   }
 
   private changData() {

@@ -382,8 +382,8 @@ export default class extends Vue {
       if (data.success) {
         this.list = data.data
         this.tab[0].num = data.title.all
-        this.tab[1].num = data.title.delivered
-        this.tab[2].num = data.title.notDelivered
+        this.tab[1].num = data.title.notDelivered
+        this.tab[2].num = data.title.delivered
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
@@ -418,15 +418,17 @@ export default class extends Vue {
       const postData = this.listQuery
       // delete postData.page
       // delete postData.limit
-      DelieverExportDown(postData)
-        .then((res) => {
-          this.$message({
-            type: 'success',
-            message: '导出成功!'
-          })
-          const fileName = res.headers['content-disposition'].split('fileName=')[1]
-          this.download(res.data, decodeURI(fileName))
+      const { data } = await DelieverExportDown(postData)
+      if (data.success) {
+        this.$message({
+          type: 'success',
+          message: '导出成功!'
         })
+        // const fileName = headers['content-disposition'].split('fileName=')[1]
+        // this.download(data, decodeURI(fileName))
+      } else {
+        this.$message.error(data.errorMsg)
+      }
     }
     private download(data: any, name: any) {
       if (!data) {

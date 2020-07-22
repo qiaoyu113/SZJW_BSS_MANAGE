@@ -138,8 +138,11 @@ import { SettingsModule } from '@/store/modules/settings'
 })
 export default class extends Vue {
   private assignShowDialog = false
-  private reCreat: any[] = []
-  private rules: any[] = []
+  private reCreat: any = {
+    orderId: '',
+    orderIds: ''
+  }
+  private rules: any = {}
   private validateUsername = (rule: any, value: string, callback: Function) => {
     if (!isValidUsername(value)) {
       callback(new Error('请输入账号'))
