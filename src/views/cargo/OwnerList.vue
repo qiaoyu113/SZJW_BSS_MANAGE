@@ -73,6 +73,15 @@
             width="55"
           />
           <el-table-column
+            :key="checkList.length + 'index'"
+            type="index"
+            width="55"
+            label="序号"
+            :index="indexMethod('listQuery')"
+            align="center"
+            fixed
+          />
+          <el-table-column
             v-if="checkList.indexOf('货主编号') > -1"
             :key="checkList.length + 'a'"
             align="left"
