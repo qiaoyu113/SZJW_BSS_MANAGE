@@ -382,8 +382,8 @@ export default class extends Vue {
       if (data.success) {
         this.list = data.data
         this.tab[0].num = data.title.all
-        this.tab[1].num = data.title.delivered
-        this.tab[2].num = data.title.notDelivered
+        this.tab[1].num = data.title.notDelivered
+        this.tab[2].num = data.title.delivered
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
