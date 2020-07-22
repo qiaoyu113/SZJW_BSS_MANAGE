@@ -525,16 +525,16 @@ export default class LineManage extends Vue {
       },
       options: []
     },
-    {
-      type: 2,
-      key: 'auditState',
-      label: '审核状态',
-      tagAttrs: {
-        clearable: true,
-        placeholder: '请选择审核状态'
-      },
-      options: []
-    },
+    // {
+    //   type: 2,
+    //   key: 'auditState',
+    //   label: '审核状态',
+    //   tagAttrs: {
+    //     clearable: true,
+    //     placeholder: '请选择审核状态'
+    //   },
+    //   options: []
+    // },
     {
       type: 2,
       label: '选择车型',
@@ -630,7 +630,7 @@ export default class LineManage extends Vue {
     city: '',
     shelvesState: '',
     lineSaleId: '',
-    auditState: '',
+    // auditState: '',
     carType: '',
     lineName: '',
     lineId: '',
@@ -653,10 +653,6 @@ export default class LineManage extends Vue {
   private tableData:any[] = []
 
   private columns:any[] = [
-    {
-      key: 'auditStateName',
-      label: '审核状态'
-    },
     {
       key: 'lineId',
       label: '线路编号',
@@ -830,7 +826,7 @@ export default class LineManage extends Vue {
       city: '',
       shelvesState: '',
       lineSaleId: '',
-      auditState: '',
+      // auditState: '',
       carType: '',
       lineName: '',
       lineId: '',
@@ -850,15 +846,18 @@ export default class LineManage extends Vue {
   handleFilterClick() {
     let blackLists = ['shelvesState']
     this.tags = []
-    let address:any[] = (this.$refs.lineForm as any).$refs.cascader[0].getCheckedNodes()[0].pathLabels
-    if (address.length !== 0) {
-      let addressLabel = address.join('-')
-      this.tags.push({
-        key: 'houseAddress',
-        name: addressLabel,
-        type: 'info'
-      })
+    if (this.listQuery.houseAddress.length !== 0) {
+      let address:any = (this.$refs.lineForm as any).$refs.cascader[0].getCheckedNodes()[0].pathLabels || undefined
+      if (address) {
+        let addressLabel = address.join('-')
+        this.tags.push({
+          key: 'houseAddress',
+          name: addressLabel,
+          type: 'info'
+        })
+      }
     }
+
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
@@ -885,7 +884,8 @@ export default class LineManage extends Vue {
   }
 
   private async dicList() {
-    let params = ['Intentional_compartment', 'line_audit_state']
+    // , 'line_audit_state'
+    let params = ['Intentional_compartment']
     let { data: res } = await GetDictionaryList(params)
     if (res.success) {
       // eslint-disable-next-line camelcase
@@ -893,16 +893,16 @@ export default class LineManage extends Vue {
       let cartype = Intentional_compartment.map(function(ele:any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let state = line_audit_state.map(function(ele:any) {
-        return { value: Number(ele.dictValue), label: ele.dictLabel }
-      })
+      // let state = line_audit_state.map(function(ele:any) {
+      //   return { value: Number(ele.dictValue), label: ele.dictLabel }
+      // })
       this.formItem.map(ele => {
         if (ele.key === 'carType') {
           ele.options = cartype
         }
-        if (ele.key === 'auditState') {
-          ele.options = state
-        }
+        // if (ele.key === 'auditState') {
+        //   ele.options = state
+        // }
       })
     } else {
       this.$message.error(res.errorMsg)
@@ -952,7 +952,7 @@ export default class LineManage extends Vue {
       let params:any = {
         city: this.listQuery.city,
         lineSaleId: this.listQuery.lineSaleId,
-        auditState: this.listQuery.auditState,
+        // auditState: this.listQuery.auditState,
         carType: this.listQuery.carType,
         lineName: this.listQuery.lineName,
         lineId: this.listQuery.lineId,

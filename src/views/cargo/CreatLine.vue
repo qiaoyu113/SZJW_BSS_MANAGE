@@ -241,7 +241,7 @@
           <SelfItem
             :rule-form="ruleForm"
             :params="{prop: 'lineSaleId',type: 5,label: '所属销售',
-                      tagAttrs: {placeholder: '请选择所属销售',disabled: lineSaleIdState,filterable: true},options: optionsSale}"
+                      tagAttrs: {placeholder: '请选择所属销售',disabled: true,filterable: true},options: optionsSale}"
           />
           <!-- <SelfItem
             :rule-form="ruleForm"
@@ -415,14 +415,6 @@ export default class CreatLine extends Vue {
     incomeSettlementMethod: '',
     // 收入结算方式：:传站 2:多点配
     lineDeliveryInfoFORMS: [],
-    lineDeliveryInfoFORMS0: [],
-    lineDeliveryInfoFORMS1: [],
-    lineDeliveryInfoFORMS2: [],
-    lineDeliveryInfoFORMS3: [],
-    lineDeliveryInfoFORMS4: [],
-    lineDeliveryInfoFORMS5: [],
-    workingTimeStart: '',
-    workingTimeEnd: '',
     // 配送时间
     lineId: '',
     // 线路id
@@ -690,6 +682,7 @@ export default class CreatLine extends Vue {
       this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
         workingTimeStart: '', workingTimeEnd: ''
       })
+      this.rules.push()
       this.rules['lineDeliveryInfoFORMS' + i] = [
         { required: true, message: '工作时间不能为空', trigger: 'blur' }
       ]
@@ -732,7 +725,12 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.deliveryWeekCycle')
   private changeDeliveryWeekCycle(val:any, oldVal:any) {
     console.log(val, oldVal)
-    // if (val.length === 8 && oldVal) {}
+    if (val.length === 7 && val.indexOf('') === -1) {
+      return (val = val.push(''))
+    }
+    if (val.indexOf('') > -1) {
+      // if () {}
+    }
   }
 
   // 可上车数
@@ -745,9 +743,9 @@ export default class CreatLine extends Vue {
   }
 
   private checkBoxChange() {
-    if (this.ruleForm.deliveryWeekCycle && this.ruleForm.deliveryWeekCycle.includes('')) {
-      this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(item => item.type)
-    }
+    // if (this.ruleForm.deliveryWeekCycle && this.ruleForm.deliveryWeekCycle.includes('')) {
+    //   this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(item => item.type)
+    // }
   }
 
   private async remoteMethod(query: any) {
