@@ -88,6 +88,7 @@
                   <el-select
                     v-model="listQuery.joinManageId"
                     placeholder="请选择加盟经理"
+                    filterable
                   >
                     <el-option
                       v-for="item in optionsJoin"

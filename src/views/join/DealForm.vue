@@ -170,6 +170,7 @@
       </SectionContainer>
 
       <SectionContainer
+        v-if="ContractDetail.cooperationModel === 1"
         title="车辆交付"
         :md="true"
       >
