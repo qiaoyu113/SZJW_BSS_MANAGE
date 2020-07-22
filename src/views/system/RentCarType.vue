@@ -328,15 +328,18 @@ export default class extends Vue {
   private tab: any[] = [
     {
       label: '全部',
-      name: ''
+      name: '',
+      num: ''
     },
     {
       label: '已上架',
-      name: '10'
+      name: '10',
+      num: ''
     },
     {
       label: '已下架',
-      name: '20'
+      name: '20',
+      num: ''
     }
   ];
   private DateValue: any[] = [];
@@ -475,6 +478,11 @@ export default class extends Vue {
       this.list = data.data
       data.page = await HandlePages(data.page)
       this.total = data.page.total
+      // title
+      const title = data.title
+      this.tab[0].num = title.totalCount
+      this.tab[1].num = title.shelvesCount
+      this.tab[2].num = title.theShelvesCount
     } else {
       this.$message.error(data)
     }
