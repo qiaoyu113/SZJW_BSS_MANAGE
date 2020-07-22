@@ -135,12 +135,12 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'workExperienceName',
+      key: 'workExperience',
       label: '货物运输经验（月）:'
     },
     {
       type: 7,
-      key: 'homeDistrict',
+      key: 'addr',
       label: '家庭住址:'
     },
     {
@@ -154,7 +154,7 @@ export default class extends Vue {
       label: '期望月收入:'
     },
     {
-      key: 'avgMonthlyIncomeName',
+      key: 'avgMonthlyIncome',
       type: 7,
       label: '平均月收入:'
     },

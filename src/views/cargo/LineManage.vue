@@ -123,6 +123,7 @@
           :table-data="tableData"
           :columns="columns"
           :page="page"
+          :func="chooseBox(chooseState)"
           @olclick="handleOlClick"
           @onPageSize="handlePageSize"
           @selection-change="handleChange"
@@ -399,8 +400,8 @@
       @changeDrawer="changeDrawer"
     >
       <template slot-scope="slotProp">
-        <span>{{ slotProp.item.customerNo }}</span>
-        <span>{{ slotProp.item.customerName }}</span>
+        <span>{{ slotProp.item.lineName }}</span>
+        <span>{{ slotProp.item.lineSaleName }}</span>
       </template>
     </PitchBox>
   </div>
@@ -446,6 +447,7 @@ import '@/styles/common.scss'
   })
 
 export default class LineManage extends Vue {
+  private chooseState:any = null
   private rowInfo:any = {}
   private id:string = ''
   private diaUpcar:string = ''
@@ -497,12 +499,22 @@ export default class LineManage extends Vue {
   private DateValue: any[] = [];
   private operationList: any[] = [
     { icon: 'el-icon-edit-outline', name: '查看选中', color: '#999' },
-    { icon: 'el-icon-edit', name: '复制', color: '#978374' },
-    { icon: 'el-icon-view', name: '审核', color: '#978374' }
+    { icon: 'el-icon-edit', name: '清空选择', color: '#978374' },
+    { icon: 'el-icon-view', name: '批量审核通过', color: '#978374' },
+    { icon: 'el-icon-view', name: '批量审核不通过', color: '#978374' }
   ];
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
   private formItem:any[] = [
+    {
+      type: 2,
+      key: 'city',
+      label: '工作城市',
+      tagAttrs: {
+        placeholder: '请选择工作城市'
+      },
+      options: []
+    },
     {
       type: 2,
       key: 'lineSaleId',
@@ -518,6 +530,7 @@ export default class LineManage extends Vue {
       key: 'auditState',
       label: '审核状态',
       tagAttrs: {
+        clearable: true,
         placeholder: '请选择审核状态'
       },
       options: []
@@ -537,7 +550,8 @@ export default class LineManage extends Vue {
       label: '线路名称',
       key: 'lineName',
       tagAttrs: {
-        placeholder: '请输入线路名称'
+        placeholder: '请输入线路名称',
+        clearable: true
       }
     },
     {
@@ -545,6 +559,7 @@ export default class LineManage extends Vue {
       label: '线路编号',
       key: 'lineId',
       tagAttrs: {
+        clearable: true,
         placeholder: '请输入线路编号'
       }
     },
@@ -553,6 +568,7 @@ export default class LineManage extends Vue {
       label: '货主名称',
       key: 'customerName',
       tagAttrs: {
+        clearable: true,
         placeholder: '请输入货主名称'
       }
     },
@@ -561,7 +577,9 @@ export default class LineManage extends Vue {
       key: 'houseAddress',
       label: '配送区域:',
       tagAttrs: {
+        ref: 'cascader',
         placeholder: '请输入配送区域',
+        clearable: true,
         props: {
           lazy: true,
           lazyLoad: this.getLineArea
@@ -573,6 +591,7 @@ export default class LineManage extends Vue {
       key: 'returnWarehouse',
       label: '是否需要返仓',
       tagAttrs: {
+        clearable: true,
         placeholder: '请选择是否需要返仓'
       },
       options: [
@@ -608,6 +627,7 @@ export default class LineManage extends Vue {
     }
   ]
   private listQuery: IState = {
+    city: '',
     shelvesState: '',
     lineSaleId: '',
     auditState: '',
@@ -807,6 +827,7 @@ export default class LineManage extends Vue {
   handleResetClick() {
     this.tags = []
     this.listQuery = {
+      city: '',
       shelvesState: '',
       lineSaleId: '',
       auditState: '',
@@ -829,6 +850,15 @@ export default class LineManage extends Vue {
   handleFilterClick() {
     let blackLists = ['shelvesState']
     this.tags = []
+    let address:any[] = (this.$refs.lineForm as any).$refs.cascader[0].getCheckedNodes()[0].pathLabels
+    if (address.length !== 0) {
+      let addressLabel = address.join('-')
+      this.tags.push({
+        key: 'houseAddress',
+        name: addressLabel,
+        type: 'info'
+      })
+    }
     for (let key in this.listQuery) {
       if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
         let name = getLabel(this.formItem, this.listQuery, key)
@@ -878,6 +908,19 @@ export default class LineManage extends Vue {
       this.$message.error(res.errorMsg)
     }
     this.getLowerStaffInfo()
+    let city = await GetOpenCityData()
+    if (city.data.success) {
+      let arr = city.data.data.map(function(ele:any) {
+        return { value: ele.code, label: ele.name }
+      })
+      this.formItem.map(ele => {
+        if (ele.key === 'city') {
+          ele.options = arr
+        }
+      })
+    } else {
+      this.$message.error(city.data.errorMsg)
+    }
   }
 
   private async getLowerStaffInfo() {
@@ -907,6 +950,7 @@ export default class LineManage extends Vue {
     try {
       this.listLoading = true
       let params:any = {
+        city: this.listQuery.city,
         lineSaleId: this.listQuery.lineSaleId,
         auditState: this.listQuery.auditState,
         carType: this.listQuery.carType,
@@ -925,7 +969,6 @@ export default class LineManage extends Vue {
         params.startDate = this.listQuery.time[0]
         params.endDate = this.listQuery.time[1] + 86399999
       }
-      console.log(this.listQuery.jobTime)
       if (this.listQuery.jobTime.length > 0) {
         params.jobStartDate = parseTime(this.listQuery.jobTime[0], '{h}:{i}')
         params.jobEndDate = parseTime(this.listQuery.jobTime[1], '{h}:{i}')
@@ -1020,6 +1063,7 @@ export default class LineManage extends Vue {
         break
     }
   }
+
   private workDo(id:string) {
     this.$confirm('此操作将上岗, 是否继续?', '提示', {
       confirmButtonText: '确定',
@@ -1074,6 +1118,7 @@ export default class LineManage extends Vue {
       this.$message.error('可上车数要大于或等于已上岗标书数量')
     }
   }
+
   private async putConfirm(done: any) {
     let params = {
       'deployNo': this.diaUpcarNum,
@@ -1095,6 +1140,7 @@ export default class LineManage extends Vue {
       this.$message.error(data.errorMsg || data)
     }
   }
+
   private putCancel(done: any) {
     this.$message.info('点击了取消')
     done(
@@ -1187,8 +1233,30 @@ export default class LineManage extends Vue {
       }
     } else if (val.name === '清空选择') {
       (this.$refs.LineManageTable as any).toggleRowSelection()
+    } else if (val.name === '批量审核通过') {
+      this.chooseState = 1
+    } else if (val.name === '批量审核不通过') {
+      this.chooseState = 1
     }
   }
+
+  // 批量禁用状态处理
+  private chooseBox(state:any) {
+    return function(row:any, index:number) {
+      if (state === null) {
+        return true
+      }
+      console.log(1)
+      if (row.shelvesState !== state) {
+        console.log(2)
+        return false// 禁用状态
+      } else {
+        console.log(3)
+        return true// 非禁用状态
+      }
+    }
+  }
+
   /**
    * 勾选表格
    */
