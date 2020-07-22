@@ -8,7 +8,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="司机姓名"
-            :value="ContractDetail.driverInfoBusiVO.name"
+            :value="ContractDetail.driverInfoBusiVO.name + '(' + ContractDetail.driverInfoBusiVO.phone + ')'"
           />
         </el-col>
 

@@ -246,7 +246,7 @@
               />
             </el-col>
             <el-col
-              v-if="orderDetail.status === 20"
+              v-if="orderDetail.status === 30"
               :span="24"
             >
               <!-- <DetailItem

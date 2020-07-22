@@ -546,24 +546,10 @@
                 placeholder="请选择支付方式"
               >
                 <el-option
-                  label="账户"
-                  value="1"
-                />
-                <el-option
-                  label="微信支付"
-                  value="2"
-                />
-                <el-option
-                  label="云鸟钱包"
-                  value="3"
-                />
-                <el-option
-                  label="支付宝"
-                  value="4"
-                />
-                <el-option
-                  label="银联支付"
-                  value="5"
+                  v-for="item in optionsPay"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
                 />
               </el-select>
             </el-form-item>
@@ -655,8 +641,25 @@
         <el-col :span="isPC ? 24 : 24">
           <DetailItem
             name="支付图片"
-            type="image"
-            :value="payForm.payImageUrl"
+            value=" "
+          >
+            <template>
+              <el-image
+                v-if="payForm.payImageUrl"
+                style="width:50px;height:50px;"
+                :preview-src-list="[payForm.payImageUrl]"
+                :src="payForm.payImageUrl"
+              />
+              <span v-else>暂无数据</span>
+            </template>
+          </DetailItem>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="isPC ? 24 : 24">
+          <DetailItem
+            name="交易编号"
+            :value="payForm.outTradeNo"
           />
         </el-col>
       </el-row>
@@ -664,7 +667,7 @@
         <el-col :span="isPC ? 24 : 24">
           <DetailItem
             name="备注"
-            :value="payForm.remarks"
+            :value="payForm.remarks | DataIsNull"
           />
         </el-col>
       </el-row>
@@ -674,7 +677,7 @@
 <script lang="ts">
 import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
-import { GetDictionaryList, Upload } from '@/api/common'
+import { GetDictionaryList, Upload, GetPayList } from '@/api/common'
 import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
@@ -705,6 +708,7 @@ export default class CreatLine extends Vue {
   private optionsRentCompany: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
   private driverList: any[] = []
   private optionsCarType: any[] = []
+  private optionsPay: any[] = []
   private payNumber: any = ''
   private billDetail: any = {}
   private loading:boolean = false
@@ -843,7 +847,7 @@ export default class CreatLine extends Vue {
       { required: true, message: '请选择支付方式', trigger: 'change' }
     ],
     payImageUrl: [
-      { required: false, message: '请上传支付图片', trigger: 'change' }
+      { required: true, message: '请上传支付图片', trigger: 'change' }
     ],
     remake: [
       { required: true, message: '请选择活动区域', trigger: 'change' }
@@ -915,14 +919,24 @@ export default class CreatLine extends Vue {
     return SettingsModule.isPC
   }
   private async getDictionary() {
-    const { data } = await GetDictionaryList(['Intentional_compartment', 'busi_type'])
+    const { data } = await GetDictionaryList(['Intentional_compartment', 'busi_type', 'pay_type'])
     if (data.success) {
       this.optionsCar2 = data.data.Intentional_compartment
+      this.optionsPay = data.data.pay_type
       this.optionsBusi = data.data.busi_type.splice(0, 2)
     } else {
       this.$message.error(data)
     }
   }
+  // 支付查询
+  // private async getPayList() {
+  //   const { data } = await GetPayList({})
+  //   if (data.success) {
+  //     this.optionsPay = data.data
+  //   } else {
+  //     this.$message.error(data)
+  //   }
+  // }
   // 查供应商
   private async getCompany() {
     let { data } = await GetSupplierByTypeAndCity(
@@ -974,6 +988,7 @@ export default class CreatLine extends Vue {
   // 所有请求
   private async fetchData() {
     this.getDictionary()
+    // this.getPayList()
   }
 
   mounted() {
@@ -1008,7 +1023,9 @@ export default class CreatLine extends Vue {
       this.ruleForm.busiType = this.ruleForm.busiType.toString()
       this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
       // this.ruleForm.carModel = this.ruleForm.carModel.toString()
-      // this.ruleForm.cooperationCar = this.ruleForm.cooperationCar.toString()
+      if (this.ruleForm.cooperationModel === '3') {
+        this.ruleForm.cooperationCar = this.ruleForm.cooperationCar.toString()
+      }
     } else {
       this.$message.error(data)
     }
@@ -1053,7 +1070,6 @@ export default class CreatLine extends Vue {
   }
   // 立即支付
   private goBill(res: any, index: any) {
-    console.log(res)
     this.orderIndex = index
     if (!res.payType) res.payType = ''
     if (!res.payImageUrl) res.payImageUrl = '0'

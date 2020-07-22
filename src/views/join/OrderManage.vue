@@ -776,16 +776,19 @@ export default class extends Vue {
       const postData = this.listQuery
       // delete postData.page
       // delete postData.limit
-      OrderExport(postData)
-        .then((res) => {
-          this.$message({
-            type: 'success',
-            message: '导出成功!'
-          })
-          const fileName = res.headers['content-disposition'].split('fileName=')[1]
-          this.download(res.data, decodeURI(fileName))
+      const { data } = await OrderExport(postData)
+      if (data.success) {
+        this.$message({
+          type: 'success',
+          message: '导出成功!'
         })
+        // const fileName = headers['content-disposition'].split('fileName=')[1]
+        // this.download(data, decodeURI(fileName))
+      } else {
+        this.$message.error(data.errorMsg)
+      }
     }
+
     private download(data: any, name: any) {
       if (!data) {
         return
