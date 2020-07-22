@@ -17,7 +17,7 @@
           :class="isPC ? 'btnPc' : ''"
         >
           <el-button
-
+            size="small"
             type="warning"
             :class="isPC ? '' : 'btnMobile'"
             name="driverclue_reset_btn"
@@ -26,7 +26,7 @@
             重置
           </el-button>
           <el-button
-
+            size="small"
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
             name="driverclue_filter_btn"
@@ -44,7 +44,7 @@
     >
       <el-button
         type="primary"
-        size="small"
+        size="mini"
         name="driverclue_creat_btn"
         @click.stop="handleCreateClue"
       >
@@ -55,7 +55,7 @@
       </el-button>
       <el-button
         type="primary"
-        size="small"
+        size="mini"
         name="driverclue_interview_btn"
         @click="handleInterviewClick"
       >
@@ -70,14 +70,15 @@
         trigger="click"
       >
         <el-button
-          type="primary"
-          size="small"
+          type="warning"
+          size="mini"
           style="margin-left:10px"
           name="driverclue_column_btn"
         >
           <i
             class="el-icon-s-operation"
           />
+          <span v-if="isPC">筛选</span>
         </el-button>
         <el-dropdown-menu slot="dropdown">
           <el-checkbox-group v-model="checkList">
@@ -98,7 +99,6 @@
     <self-table
       ref="driverClueTable"
       v-loading="listLoading"
-      border
       :operation-list="operationList"
       :table-data="tableData"
       :columns="columns"
@@ -108,6 +108,13 @@
       @olclick="handleOlClick"
       @selection-change="handleChange"
     >
+      <template
+        v-slot:name="scope"
+      >
+        <router-link :to="{path: '/transport/followClue',query: {id: scope.row.clueId}}">
+          {{ scope.row.name }}
+        </router-link>
+      </template>
       <template v-slot:status="scope">
         <span
           v-if="scope.row.status === 1"
@@ -120,7 +127,7 @@
         <span
           v-else-if="scope.row.status === 3"
           class="round giveup"
-        >已放弃</span>
+        >跟进中</span>
         <span
           v-else-if="scope.row.status === 4"
           class="round giveup"
@@ -139,17 +146,23 @@
       </template>
       <template v-slot:op="scope">
         <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
-          <el-button
+          <span
             v-if="isPC"
-            :a="scope"
-            type="text"
+            class="el-dropdown-link"
           >
-            更多操作
-          </el-button>
-          <i
+            更多操作<i
+              v-if="isPC"
+              class="el-icon-arrow-down el-icon--right"
+            />
+          </span>
+          <span
             v-else
-            class="el-icon-setting"
-          />
+            style="font-size: 18px;"
+            class="el-dropdown-link"
+          >
+            <i class="el-icon-setting el-icon--right" />
+          </span>
+
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
               command="edit"
@@ -448,7 +461,7 @@ export default class extends Vue {
     {
       key: 'name',
       label: '姓名',
-      disabled: true
+      slot: true
     },
     {
       key: 'clueId',
@@ -466,7 +479,8 @@ export default class extends Vue {
     },
     {
       key: 'carTypeName',
-      label: '车型'
+      label: '车型',
+      width: '130px'
     },
     {
       key: 'sourceChannelName',
@@ -489,9 +503,10 @@ export default class extends Vue {
     },
     {
       slot: true,
-      fixed: 'right',
       key: 'op',
-      label: '操作'
+      label: '操作',
+      disabled: true,
+      fixed: 'right'
     }
   ]
 
@@ -522,7 +537,10 @@ export default class extends Vue {
    */
   async getManagers() {
     try {
-      let { data: res } = await GetManagerLists()
+      let params = {
+        uri: `/v1/driver/clue/list/key-query`
+      }
+      let { data: res } = await GetManagerLists(params)
       if (res.success) {
         this.formItem[5].options = res.data.map((item:any) => ({ label: item.name, value: item.id }))
       } else {
@@ -810,5 +828,9 @@ export default class extends Vue {
 <style scoped>
   .DriverClue >>> .TableHeader_button {
     flex:2;
+  }
+
+  .DriverClue >>> .el-form-item__label {
+    color:#999;
   }
 </style>

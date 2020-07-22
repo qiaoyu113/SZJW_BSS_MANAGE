@@ -1,6 +1,9 @@
 <template>
   <div class="driverDetail">
-    <el-card class="baseInfo">
+    <el-card
+      class="baseInfo"
+      shadow="never"
+    >
       <self-form
         class="base"
         :list-query="listQuery"

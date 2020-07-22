@@ -292,7 +292,10 @@ export default class extends Vue {
    */
   async getManagers() {
     try {
-      let { data: res } = await GetManagerLists()
+      let params = {
+        uri: '/v1/driver/clue/clue/share/interview'
+      }
+      let { data: res } = await GetManagerLists(params)
       if (res.success) {
         this.formItem[4].options = res.data.map(function(item:any) {
           return {

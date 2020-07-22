@@ -61,16 +61,12 @@ export const GetCityByCode = (data: any) =>
    *
    *获取加盟经理列表
    */
-export const GetManagerLists = () =>
+export const GetManagerLists = (params:any) =>
   request({
-    url: `${baseURL}/v1/base/user/getJoinManagerListByUserId`,
+    url: `${baseURL}/v1/base/user/getCurrUserAuthList?uri=${params.uri}`,
     method: 'post'
   })
 
-/**
-   *
-   *获取加盟经理列表
-   */
 export const detailCity = (data:any) =>
   request({
     url: `${baseURL}/v1/base/area/getTownByCountryCode`,
@@ -91,5 +87,16 @@ export const GetPayList = (data:any) =>
   request({
     url: `order/v1/order/getPayTypeList`,
     method: 'get',
+    data
+  })
+
+/**
+   *
+   * 获取下载文件列表
+   */
+export const GetDownFileList = (data:any) =>
+  request({
+    url: `/core/v1/core/exportDownRecord/selectByUserId`,
+    method: 'post',
     data
   })

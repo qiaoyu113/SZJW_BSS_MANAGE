@@ -67,10 +67,20 @@
         <h4>自定义表单</h4>
         <div class="demo">
           <self-form
+            ref="demoForm"
             :list-query="form"
             :form-item="formItem"
             label-with="80px"
-          />
+          >
+            <template slot="button">
+              <el-button
+                type="primary"
+                @click="handleGetAddress"
+              >
+                点击获取省市县
+              </el-button>
+            </template>
+          </self-form>
         </div>
         <div class="tip">
           <p> <span>【self-form】</span> 为自定义表单 </p>
@@ -260,6 +270,7 @@ import SelfTable from '@/components/base/SelfTable.vue'
 import Dialog from '@/components/Dialog/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
+import { GetCityByCode } from '@/api/common'
 
 interface PageObj {
   page:Number,
@@ -323,7 +334,8 @@ export default class extends Vue {
       time: [],
       gender: 'male',
       checkbox: [],
-      timeRange: [Date.now(), Date.now()]
+      timeRange: [Date.now(), Date.now()],
+      address: []
     }
     private formItem:any[] = [
       {
@@ -405,6 +417,24 @@ export default class extends Vue {
         tagAttrs: {
           'arrow-control': true
         }
+      },
+      {
+        type: 8,
+        label: '省、市、县',
+        key: 'address',
+        tagAttrs: {
+          placeholder: '请选择',
+          ref: 'cascader',
+          props: {
+            lazy: true,
+            lazyLoad: this.loadinterviewAddress
+          }
+        }
+      },
+      {
+        type: 'button',
+        slot: true,
+        col: 24
       }
     ]
     page:PageObj ={
@@ -553,6 +583,52 @@ export default class extends Vue {
     // 表格下拉菜单
     handleCommandChange(key:string|number, row:any) {
       console.log('xxx:', key, row)
+    }
+    async loadinterviewAddress(node:any, resolve:any) {
+      let params:string[] = []
+      if (node.level === 0) {
+        params = ['100000']
+      } else if (node.level === 1) {
+        params = ['100000']
+        params.push(node.value)
+      } else if (node.level === 2) {
+        params = ['100000']
+        params.push(node.parent.value)
+        params.push(node.value)
+      }
+      try {
+        let nodes = await this.loadCityByCode(params)
+        resolve(nodes)
+      } catch (err) {
+        resolve([])
+      }
+    }
+    /**
+     * 加载城市
+     */
+    async loadCityByCode(params:string[]) {
+      try {
+        let { data: res } = await GetCityByCode(params)
+        if (res.success) {
+          const nodes = res.data.map(function(item:any) {
+            return {
+              value: item.code,
+              label: item.name,
+              leaf: params.length > 2
+            }
+          })
+          return nodes
+        }
+      } catch (err) {
+        console.log(`load city by code fail:${err}`)
+      }
+    }
+
+    handleGetAddress() {
+      if (this.form.address.length < 3) {
+        return this.$message.warning('请选择省、市、县')
+      }
+      console.log((this.$refs.demoForm as any).$refs.cascader.getCheckedNodes()[0].pathLabels)
     }
 }
 </script>

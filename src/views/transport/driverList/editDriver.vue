@@ -1,6 +1,9 @@
 <template>
   <div class="editDriver">
-    <el-card header="基础信息">
+    <el-card
+      header="基础信息"
+      shadow="never"
+    >
       <self-form
         ref="editDriver"
         :list-query="listQuery"

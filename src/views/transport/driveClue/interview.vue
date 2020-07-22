@@ -1,6 +1,6 @@
 <template>
   <div class="interview">
-    <el-card>
+    <el-card shadow="never">
       <div
         slot="header"
         class="header"
@@ -155,7 +155,7 @@ import SelfForm from '@/components/base/SelfForm.vue'
 import { InterviewBasic, GetInterviewEditDetail, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetOpenCityData, GetManagerLists, GetDictionaryList } from '@/api/common'
+import { GetOpenCityData, GetDictionaryList } from '@/api/common'
 import { phoneReg } from '@/utils/index.ts'
 import SpecialInterview from './components/specialInterview.vue'
 import ShareInterview from './components/shareInterview.vue'
@@ -381,7 +381,11 @@ export default class extends Vue {
       let params = { ...this.listQuery }
       let { data: res } = await InterviewBasic(params)
       if (res.success) {
-        this.active = 1
+        if (res.data.allowNext) {
+          this.active = 1
+        } else {
+          this.$message.error(res.data.msg)
+        }
       } else {
         this.$message.error(res.errorMsg)
       }
