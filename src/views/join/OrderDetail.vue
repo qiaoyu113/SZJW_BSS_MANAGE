@@ -147,7 +147,7 @@
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="无税车架"
+            name="无税车价"
             :value="orderDetail.carPrice"
           />
         </el-col>
