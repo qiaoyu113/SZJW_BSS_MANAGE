@@ -135,7 +135,7 @@ export default class extends Vue {
   private changData() {
     if (this.DateValueChild) {
       this.listQuery.startDate = this.DateValueChild[0]
-      this.listQuery.endDate = this.DateValueChild[1]
+      this.listQuery.endDate = this.DateValueChild[1] + 86399999
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''

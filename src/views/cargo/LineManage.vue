@@ -358,7 +358,7 @@
             type="number"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
-            @blur="checkMountGuardNo"
+            @change="checkMountGuardNo"
           />
         </div>
         <p class="dioBox">
@@ -1114,8 +1114,8 @@ export default class LineManage extends Vue {
   // 上架操作
   private checkMountGuardNo(val:string) {
     if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
       this.$message.error('可上车数要大于或等于已上岗标书数量')
+      this.diaUpcarNum = ''
     }
   }
 
@@ -1425,4 +1425,16 @@ export default class LineManage extends Vue {
       margin-top: 10px;
       width:100%;
     }
+</style>
+<style scoped>
+  .LineManage >>> .el-collapse-item__wrap {
+    padding: 20px 30px 0 0;
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+    right: 15px;
+    left: 15px;
+  }
 </style>
