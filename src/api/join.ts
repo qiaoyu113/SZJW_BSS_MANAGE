@@ -202,7 +202,7 @@ export const ContractExport = (params: any) =>
   request({
     url: `business_center/v1/contract/contractExport`,
     method: 'post',
-    responseType: 'blob',
+    // responseType: 'blob',
     data: params
   })
 
