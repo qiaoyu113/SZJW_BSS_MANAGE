@@ -663,7 +663,9 @@ export default class extends Vue {
       const { data } = await SelectOrderInfo({ orderId: value })
       if (data.success) {
         this.ContractDetail = Object.assign(this.ContractDetail, data.data)
-        this.ruleForm.plateNo = this.ContractDetail.plateNo
+        if (data.data.cooperationModel !== 1) {
+          this.ruleForm.plateNo = this.ContractDetail.plateNo
+        }
       } else {
         this.$message.error(data)
       }
