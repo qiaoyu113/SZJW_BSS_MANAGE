@@ -244,7 +244,7 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import ClueDistribution from './components/clueDistribution.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
-import { getLabel } from '@/utils/index.ts'
+import { getLabel, phoneReg } from '@/utils/index.ts'
 import { delayTime } from '@/settings'
 import { GetOpenCityData, GetDictionaryList, GetManagerLists } from '@/api/common'
 interface IState {
@@ -597,6 +597,9 @@ export default class extends Vue {
    */
   async getList() {
     try {
+      if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
+        return this.$message.error('请输入正确的手机号')
+      }
       this.listLoading = true
       let params:any = {
         limit: this.page.limit,

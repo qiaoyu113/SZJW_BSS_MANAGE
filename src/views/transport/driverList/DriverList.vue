@@ -251,7 +251,7 @@ import PitchBox from '@/components/PitchBox/index.vue'
 import { getLabel } from '@/utils/index.ts'
 import { DriverFollowUpToDown, GetDriverList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, phoneReg } from '@/utils/index'
 import { GetManagerLists, GetOpenCityData } from '@/api/common'
 interface IState {
     [key: string]: any;
@@ -630,6 +630,9 @@ export default class extends Vue {
    */
   async getList() {
     try {
+      if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
+        return this.$message.error('请输入正确的手机号')
+      }
       this.listLoading = true
       let params:any = {
         limit: this.page.limit,
