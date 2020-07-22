@@ -1,6 +1,6 @@
 <template>
   <div class="DriverList">
-    <el-card>
+    <el-card shadow="never">
       <suggest-container
         :tab="tab"
         :tags="tags"
@@ -56,14 +56,15 @@
           trigger="click"
         >
           <el-button
-            type="primary"
-            size="small"
+            type="warning"
+            size="mini"
             style="margin-left:10px"
             name="driverclue_column_btn"
           >
             <i
               class="el-icon-s-operation"
             />
+            <span v-if="isPC">筛选</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-checkbox-group v-model="checkList">
@@ -84,7 +85,6 @@
       <self-table
         ref="driverListTable"
         v-loading="listLoading"
-        border
         row-key="driverId"
         :operation-list="operationList"
         :table-data="tableData"
@@ -416,7 +416,6 @@ export default class extends Vue {
       type: 4,
       key: 'carrierStatus',
       label: '是否存在',
-      w: '130px',
       col: 12,
       options: [
         {

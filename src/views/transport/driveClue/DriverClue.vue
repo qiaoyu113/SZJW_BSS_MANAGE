@@ -44,7 +44,7 @@
     >
       <el-button
         type="primary"
-        size="small"
+        size="mini"
         name="driverclue_creat_btn"
         @click.stop="handleCreateClue"
       >
@@ -55,7 +55,7 @@
       </el-button>
       <el-button
         type="primary"
-        size="small"
+        size="mini"
         name="driverclue_interview_btn"
         @click="handleInterviewClick"
       >
@@ -70,14 +70,15 @@
         trigger="click"
       >
         <el-button
-          type="primary"
-          size="small"
+          type="warning"
+          size="mini"
           style="margin-left:10px"
           name="driverclue_column_btn"
         >
           <i
             class="el-icon-s-operation"
           />
+          <span v-if="isPC">筛选</span>
         </el-button>
         <el-dropdown-menu slot="dropdown">
           <el-checkbox-group v-model="checkList">
@@ -98,7 +99,6 @@
     <self-table
       ref="driverClueTable"
       v-loading="listLoading"
-      border
       :operation-list="operationList"
       :table-data="tableData"
       :columns="columns"

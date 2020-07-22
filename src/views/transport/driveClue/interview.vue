@@ -1,6 +1,6 @@
 <template>
   <div class="interview">
-    <el-card>
+    <el-card shadow="never">
       <div
         slot="header"
         class="header"
@@ -381,7 +381,11 @@ export default class extends Vue {
       let params = { ...this.listQuery }
       let { data: res } = await InterviewBasic(params)
       if (res.success) {
-        this.active = 1
+        if (res.data.allowNext) {
+          this.active = 1
+        } else {
+          this.$message.error(res.data.msg)
+        }
       } else {
         this.$message.error(res.errorMsg)
       }

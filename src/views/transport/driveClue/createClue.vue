@@ -1,6 +1,9 @@
 <template>
   <div class="CreateClue">
-    <el-card header="人工线索录入">
+    <el-card
+      header="人工线索录入"
+      shadow="never"
+    >
       <self-form
         ref="SelfForm"
         :list-query="listQuery"

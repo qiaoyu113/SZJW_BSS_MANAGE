@@ -89,3 +89,14 @@ export const GetPayList = (data:any) =>
     method: 'get',
     data
   })
+
+/**
+   *
+   * 获取下载文件列表
+   */
+export const GetDownFileList = (data:any) =>
+  request({
+    url: `/core/v1/core/exportDownRecord/selectByUserId`,
+    method: 'post',
+    data
+  })
