@@ -29,8 +29,8 @@
                 <el-option
                   v-for="(item, index) in optionsSale"
                   :key="index"
-                  :label="item.saleName"
-                  :value="Number(item.saleId)"
+                  :label="item.name"
+                  :value="Number(item.id)"
                 />
               </el-select>
             </el-form-item>
@@ -384,8 +384,8 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 
-import { GetDictionaryList } from '@/api/common'
-import { GetLineClueDetail, SaveLineClue, EditLineClue, GetSaleList, GetCustomerOff } from '@/api/cargo'
+import { GetDictionaryList, GetManagerLists } from '@/api/common'
+import { GetLineClueDetail, SaveLineClue, EditLineClue, GetCustomerOff } from '@/api/cargo'
 
 import '@/styles/common.scss'
 @Component({
@@ -513,7 +513,9 @@ export default class extends Vue {
   }
   // 获取销售
   private async getSaleList() {
-    const { data } = await GetSaleList()
+    const { data } = await GetManagerLists({
+      uri: '/v1/line/clue/save'
+    })
     if (data.success) {
       this.optionsSale = data.data
     } else {
