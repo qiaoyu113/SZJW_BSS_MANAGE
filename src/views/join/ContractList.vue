@@ -238,11 +238,13 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-if="scope.row.status === 3 || scope.row.status === 4"
                     @click.native="Down(scope.row.contractId)"
                   >
                     下载
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-if="scope.row.status === 3"
                     @click.native="Activate(scope.row.contractId)"
                   >
                     激活
@@ -422,7 +424,12 @@ export default class extends Vue {
     private async confirm(done:any) {
       const { data } = await ActiveContract({ contractId: this.ActivateId })
       if (data.success) {
-        this.$message.success('激活成功')
+        if (data.data.flag) {
+          this.$message.success('激活成功')
+          this.fetchData()
+        } else {
+          this.$message.error(data.data.msg)
+        }
       } else {
         this.$message.error(data.errorMsg)
       }

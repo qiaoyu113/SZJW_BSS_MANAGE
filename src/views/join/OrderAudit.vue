@@ -400,6 +400,7 @@ export default class extends Vue {
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditPass',
+        status: this.orderDetail.status,
         cooperationModel: this.orderDetail.cooperationModel,
         driverId: this.orderDetail.driverId,
         createSource: this.orderDetail.createSource
@@ -426,6 +427,7 @@ export default class extends Vue {
       const { data } = await PostAuditOrder({
         orderId: this.id,
         operateFlag: 'auditNotPass',
+        status: this.orderDetail.status,
         cooperationModel: this.orderDetail.cooperationModel,
         driverId: this.orderDetail.driverId,
         createSource: this.orderDetail.createSource

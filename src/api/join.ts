@@ -30,9 +30,10 @@ export const GetOrderLog = (params: any) =>
 
 export const GetDriverList = (params: any) =>
   request({
-    url: '/driver/v1/driver/getDriverAll',
-    method: 'get',
-    params
+    // url: '/driver/v1/driver/getDriverAll',
+    url: '/carrier_center/v1/driver/getDriverList',
+    method: 'post',
+    data: params
   })
 
 export const GetDriverDetail = (params: any) =>
