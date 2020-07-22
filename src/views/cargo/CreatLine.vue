@@ -35,7 +35,7 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'deployNo',type: 1,label: '可上车数',kind: 'number',tagAttrs: {placeholder: '请输入可上车数',min: 0,max: 11,clearable: true}}"
+            :params="{prop: 'deployNo',type: 1,label: '可上车数',kind: 'number',tagAttrs: {placeholder: '请输入可上车数',min: 1,max: 11,clearable: true}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -153,7 +153,7 @@
               v-for="(item,idx) in Number(ruleForm['dayNo'])"
               :key="item"
               :rule-form="ruleForm"
-              :params="{prop: `lineDeliveryInfoFORMS${idx}`,type: 7,label: '预计工作时间',placeholder: '请选择时间',required: true}"
+              :params="{prop: `lineDeliveryInfoFORMS${idx}`,type: 7,label: '预计工作时间',placeholder: '请选择时间'}"
             />
           </div>
 
@@ -189,7 +189,7 @@
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 2"
             :rule-form="ruleForm"
-            :params="{prop: 'everyUnitPrice',type: 1,label: '每趟提成单价（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟提成',min: 0,max: 2000,type: number}}"
+            :params="{prop: 'everyUnitPrice',type: 1,label: '每趟提成单价（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟提成',type: number}}"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -331,6 +331,8 @@ import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/base/SelfItem.vue'
 import '@/styles/common.scss'
+import { validatorNumberRange } from '@/utils/index.ts'
+import { registerTheme } from 'echarts'
 @Component({
   name: 'CreatLine',
   components: {
@@ -358,6 +360,7 @@ export default class CreatLine extends Vue {
   private showDio:boolean = false
   private NoshipperOffer:boolean = false
   private customerOptions:any[] = []
+  private checkAll:boolean = false
   private WeekCycleList:any[] = [
     { label: '全部', type: '' },
     { label: '周一', type: '1' },
@@ -412,6 +415,14 @@ export default class CreatLine extends Vue {
     incomeSettlementMethod: '',
     // 收入结算方式：:传站 2:多点配
     lineDeliveryInfoFORMS: [],
+    lineDeliveryInfoFORMS0: [],
+    lineDeliveryInfoFORMS1: [],
+    lineDeliveryInfoFORMS2: [],
+    lineDeliveryInfoFORMS3: [],
+    lineDeliveryInfoFORMS4: [],
+    lineDeliveryInfoFORMS5: [],
+    workingTimeStart: '',
+    workingTimeEnd: '',
     // 配送时间
     lineId: '',
     // 线路id
@@ -459,16 +470,14 @@ export default class CreatLine extends Vue {
       { required: true, message: '货主不能为空', trigger: 'blur' }
     ],
     lineName: [
-      { required: true, message: '线路名称不能为空', trigger: 'blur' },
-      { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' },
-      { validator: this.validator(0, 11) }
+      { required: true, message: '线路名称不能为空', trigger: 'blur' }
     ],
     lineType: [
       { required: true, message: '线路类型不能为空', trigger: 'change' }
     ],
     deployNo: [
       { required: true, message: '可上车数不能为空', trigger: 'change' },
-      { validator: this.validator(0, 11) }
+      { validator: validatorNumberRange(1, 11) }
     ],
     address: [
       { required: true, message: '仓位置不能为空', trigger: 'change' }
@@ -496,25 +505,46 @@ export default class CreatLine extends Vue {
     ],
     deliveryNo: [
       { required: true, message: '每日平均配送点位数不能为空', trigger: 'change' },
-      { validator: this.validator(0, 100) }
+      { validator: validatorNumberRange(1, 100) }
     ],
     deliveryWeekCycle: [
       { required: true, message: '配送周期不能为空', trigger: 'change' }
     ],
     distance: [
       { required: true, message: '公里数不能为空', trigger: 'change' },
-      { validator: this.validator(0, 2000) }
+      { validator: validatorNumberRange(1, 2000) }
     ],
     dayNo: [
       { required: true, message: '每日配送趟数不能为空', trigger: 'change' },
-      { validator: this.validator(0, 6) }
+      { validator: validatorNumberRange(1, 6) }
     ],
-    // lineDeliveryInfoFORMS: [
-    //   { required: true, message: '工作时间不能为空', trigger: 'change' }
-    // ],
+    lineDeliveryInfoFORMS0: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
+    lineDeliveryInfoFORMS1: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
+    lineDeliveryInfoFORMS2: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
+    lineDeliveryInfoFORMS3: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
+    lineDeliveryInfoFORMS4: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
+    lineDeliveryInfoFORMS5: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
+    workingTimeStart: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
+    workingTimeEnd: [
+      { required: true, message: '工作时间不能为空', trigger: 'change' }
+    ],
     monthNo: [
       { required: true, message: '出车天数不能为空', trigger: 'change' },
-      { validator: this.validator(0, 32) }
+      { validator: validatorNumberRange(1, 32) }
     ],
     incomeSettlementMethod: [
       { required: true, message: '结算方式不能为空', trigger: 'change' }
@@ -527,16 +557,15 @@ export default class CreatLine extends Vue {
     ],
     everyTripGuaranteed: [
       { required: true, message: '单趟价格不能为空', trigger: 'change' },
-      { validator: this.validator(0, 2000) }
+      { validator: validatorNumberRange(1, 2000) }
     ],
     shipperOffer: [
       { required: true, message: '预计货主月报价不能为空', trigger: 'change' },
-      { validator: this.validator(0, 100000) }
+      { validator: validatorNumberRange(1, 100000) }
     ],
     everyUnitPrice: [
       { required: true, message: '提成单价不能为空', trigger: 'change' },
-      { min: 0, max: 2000, message: '提成区间在0-2000之间', trigger: 'change' },
-      { validator: this.validator(0, 2000) }
+      { validator: validatorNumberRange(1, 2000) }
     ],
     cargoType: [
       { required: true, message: '货物类型不能为空', trigger: 'change' }
@@ -553,16 +582,6 @@ export default class CreatLine extends Vue {
     warehouseDistrict: [ // 详细仓位置
       { required: true, message: '详细地址不能为空', trigger: 'change' }
     ]
-  }
-
-  // 数字校验
-  validator(c:number, d:number) {
-    return function sizeDeliveryNo(rule:any, value:any, callback:Function) {
-      if (Number(value) < c || Number(value) > d) {
-        return callback(new Error(`请输入${c}-${d}之间的数字`))
-      }
-      callback()
-    }
   }
 
   private pickerDisabled(time:any) {
@@ -661,7 +680,7 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.dayNo')
   private dayNoChange(val:any, oldVal:any) {
-    if (val > 6) {
+    if (Number(val) > 6) {
       this.ruleForm.dayNo = ''
     }
     for (let j = 0; j < Number(oldVal); j++) {
@@ -704,15 +723,22 @@ export default class CreatLine extends Vue {
   // 配送周期
   @Watch('ruleForm.stabilityRate')
   private changeStability(value:any) {
-    if (value < 3) {
+    if (Number(value) < 3) {
       this.ruleForm.deliveryWeekCycle = []
     }
+  }
+
+  // 配送周期
+  @Watch('ruleForm.deliveryWeekCycle')
+  private changeDeliveryWeekCycle(val:any, oldVal:any) {
+    console.log(val, oldVal)
+    // if (val.length === 8 && oldVal) {}
   }
 
   // 可上车数
   @Watch('ruleForm.deployNo')
   private changeDeployNo(value:any) {
-    if (value > 11 || value < 0) {
+    if (Number(value) > 11 || Number(value) < 0) {
       this.ruleForm.deployNo = ''
       this.$message.info('可上车数必须大于0小于11')
     }
@@ -812,6 +838,10 @@ export default class CreatLine extends Vue {
         if (type === 1) {
           ruleForm.customerId = JSON.parse(ruleForm.customerId).customerId
         }
+        if (type === 2) {
+          delete ruleForm.createDate
+          delete ruleForm.createId
+        }
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
         }
@@ -840,6 +870,8 @@ export default class CreatLine extends Vue {
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
         }
+        // console.log(ruleForm)
+        // return
         this.createdLine(ruleForm)
       } else {
         console.log('error submit!!')

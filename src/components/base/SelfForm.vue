@@ -98,6 +98,7 @@
           >{{ listQuery[item.key] | DataIsNull }}</span>
           <el-cascader
             v-else-if="item.type ===8"
+            ref="cascader"
             v-model="listQuery[item.key]"
             v-bind="item.tagAttrs || {}"
             :options="item.options"
@@ -138,7 +139,7 @@
   </el-row>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
@@ -147,7 +148,8 @@ import '@/styles/common.scss'
   }
 
   @Component({
-    name: 'SelfForm'
+    name: 'SelfForm.houseAddress'
+
   })
 export default class extends Vue {
     // 判断是否是PC
@@ -158,6 +160,7 @@ export default class extends Vue {
     get isPC() {
       return SettingsModule.isPC
     }
+
     submitForm(args:any) {
       ((this.$refs['ruleForm']) as any).validate((valid:boolean) => {
         if (valid) {

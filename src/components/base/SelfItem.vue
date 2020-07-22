@@ -113,7 +113,6 @@
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
-        :required="params.required"
       >
         <el-time-select
           v-model="ruleForm[params.prop].workingTimeStart"

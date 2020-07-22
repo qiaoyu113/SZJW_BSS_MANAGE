@@ -192,6 +192,7 @@
               <template slot-scope="scope">
                 <el-image
                   v-if="scope.row.payImageUrl"
+                  style="width:50px;height:50px;"
                   :preview-src-list="[scope.row.payImageUrl]"
                   :src="scope.row.payImageUrl"
                 />
@@ -245,7 +246,7 @@
               />
             </el-col>
             <el-col
-              v-if="orderDetail.status === 20"
+              v-if="orderDetail.status === 30"
               :span="24"
             >
               <!-- <DetailItem

@@ -520,10 +520,10 @@ export default class extends Vue {
       { validator: this.checkAge, trigger: 'blur' }
     ],
     workExperience: [
-      { validator: validatorNumberRange(0, 500) }
+      { validator: validatorNumberRange(1, 500) }
     ],
     avgMonthlyIncome: [
-      { validator: validatorNumberRange(0, 25000) }
+      { validator: validatorNumberRange(1, 25000) }
     ]
   }
 

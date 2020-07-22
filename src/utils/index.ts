@@ -245,11 +245,6 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
           label = time.join('-')
         }
         break
-      } else if ([8].includes(item.type)) {
-        let address:any = []
-        if (listQuery[key].length > 0) {
-          console.log(listQuery[key],9999)
-        }
       }
     }
   }
@@ -268,6 +263,9 @@ export const phoneReg = /^[1][3-9][0-9]{9}$/
  */
 export function validatorNumberRange(min:number, max:number) {
   return function(rule: any, value: string, callback: Function) {
+    if (!Number.isInteger(Number(value))) {
+      return callback(new Error("请输入正整数的数字"))
+    }
     if (Number(value) < min || Number(value) > max) {
       return callback(new Error(`请输入${min}-${max}之间的数字`))
     }

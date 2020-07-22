@@ -757,6 +757,7 @@ export default class extends Vue {
       const { data } = await CancelOrder({
         orderId: this.cancelId.orderId,
         operateFlag: 'cancel',
+        'status': this.cancelId.status,
         'cooperationModel': this.cancelId.cooperationModel,
         'createSource': this.cancelId.createSource,
         'driverId': this.cancelId.driverId
@@ -775,16 +776,19 @@ export default class extends Vue {
       const postData = this.listQuery
       // delete postData.page
       // delete postData.limit
-      OrderExport(postData)
-        .then((res) => {
-          this.$message({
-            type: 'success',
-            message: '导出成功!'
-          })
-          const fileName = res.headers['content-disposition'].split('fileName=')[1]
-          this.download(res.data, decodeURI(fileName))
+      const { data } = await OrderExport(postData)
+      if (data.success) {
+        this.$message({
+          type: 'success',
+          message: '导出成功!'
         })
+        // const fileName = headers['content-disposition'].split('fileName=')[1]
+        // this.download(data, decodeURI(fileName))
+      } else {
+        this.$message.error(data.errorMsg)
+      }
     }
+
     private download(data: any, name: any) {
       if (!data) {
         return
@@ -826,8 +830,8 @@ export default class extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 360px) !important;
-      padding: 30px;
+      height: calc(100vh - 340px) !important;
+      padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;

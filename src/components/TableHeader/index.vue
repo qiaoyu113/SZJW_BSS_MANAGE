@@ -79,7 +79,7 @@ export default class extends Vue {
     width: 100%;
     background: #FFFFFF;
     overflow: hidden;
-    border: 1px solid  #F8F9FA;
+    // border: 1px solid  #F8F9FA;
     padding: 10px 30px;
     box-sizing: border-box;
     display: flex;
