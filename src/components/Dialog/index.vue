@@ -65,7 +65,11 @@ export default class extends Vue {
   }
   // 判断是否是PC
   get isPC() {
-    return SettingsModule.isPC
+    if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+      return false
+    } else {
+      return true
+    }
   }
   private onConfirm() {
     this.confirm && typeof this.confirm === 'function' ? this.confirm(() => {

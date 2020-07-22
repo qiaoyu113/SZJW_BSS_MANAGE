@@ -1,6 +1,6 @@
 <template>
   <div class="interviewCard">
-    <el-card>
+    <el-card shadow="never">
       <div
         slot="header"
         class="interHeader"

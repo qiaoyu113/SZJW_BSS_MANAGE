@@ -1,7 +1,7 @@
 <template>
   <div class="followClue">
     <!-- 基本信息 -->
-    <el-card>
+    <el-card shadow="never">
       <div
         slot="header"
         class="card_header"
@@ -113,7 +113,10 @@
       :rows="[{clueId: id}]"
     />
     <!-- 跟进记录 -->
-    <el-card style="margin-top:20px;">
+    <el-card
+      style="margin-top:20px;"
+      shadow="never"
+    >
       <div
         slot="header"
         class="card_header"

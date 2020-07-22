@@ -73,7 +73,10 @@ export default class extends Vue {
    */
   async getManagers() {
     try {
-      let { data: res } = await GetManagerLists()
+      let params = {
+        uri: '/v1/driver/driverDownToGm'
+      }
+      let { data: res } = await GetManagerLists(params)
       if (res.success) {
         this.dialogItems[0].options = res.data.map(function(item:any) {
           return {

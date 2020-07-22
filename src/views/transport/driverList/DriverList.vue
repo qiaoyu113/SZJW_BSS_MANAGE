@@ -1,6 +1,6 @@
 <template>
   <div class="DriverList">
-    <el-card>
+    <el-card shadow="never">
       <suggest-container
         :tab="tab"
         :tags="tags"
@@ -56,14 +56,15 @@
           trigger="click"
         >
           <el-button
-            type="primary"
-            size="small"
+            type="warning"
+            size="mini"
             style="margin-left:10px"
             name="driverclue_column_btn"
           >
             <i
               class="el-icon-s-operation"
             />
+            <span v-if="isPC">筛选</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-checkbox-group v-model="checkList">
@@ -84,7 +85,6 @@
       <self-table
         ref="driverListTable"
         v-loading="listLoading"
-        border
         row-key="driverId"
         :operation-list="operationList"
         :table-data="tableData"
@@ -99,18 +99,21 @@
         </template>
         <template v-slot:op="scope">
           <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
-            <span class="el-dropdown-link">
-              <el-button
+            <span
+              v-if="isPC"
+              class="el-dropdown-link"
+            >
+              更多操作<i
                 v-if="isPC"
-                :a="scope"
-                type="text"
-              >
-                更多操作
-              </el-button>
-              <i
-                v-else
-                class="el-icon-setting"
+                class="el-icon-arrow-down el-icon--right"
               />
+            </span>
+            <span
+              v-else
+              style="font-size: 18px;"
+              class="el-dropdown-link"
+            >
+              <i class="el-icon-setting el-icon--right" />
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item
@@ -416,7 +419,6 @@ export default class extends Vue {
       type: 4,
       key: 'carrierStatus',
       label: '是否存在',
-      w: '130px',
       col: 12,
       options: [
         {
@@ -543,9 +545,9 @@ export default class extends Vue {
     {
       key: 'op',
       label: '操作',
-      fixed: 'right',
       disabled: true,
-      slot: true
+      slot: true,
+      fixed: 'right'
     }
   ]
 
@@ -584,7 +586,10 @@ export default class extends Vue {
    */
   async getManagers() {
     try {
-      let { data: res } = await GetManagerLists()
+      let params = {
+        uri: '/v1/driver/getDriverList'
+      }
+      let { data: res } = await GetManagerLists(params)
       if (res.success) {
         this.formItem[5].options = res.data.map(function(item:any) {
           return {
@@ -900,6 +905,22 @@ export default class extends Vue {
       margin-top: 10px;
       width:100%;
     }
+  }
+</style>
+
+<style scoped>
+  .DriverList >>> .el-form-item__label {
+    color:#999;
+  }
+  .DriverList >>> .el-collapse-item__wrap {
+    padding: 20px 30px 0 0;
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+    right: 15px;
+    left: 15px;
   }
 </style>
 

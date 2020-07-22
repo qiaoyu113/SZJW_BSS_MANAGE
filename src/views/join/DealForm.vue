@@ -170,6 +170,7 @@
       </SectionContainer>
 
       <SectionContainer
+        v-if="ContractDetail.cooperationModel === 1"
         title="车辆交付"
         :md="true"
       >
@@ -215,7 +216,7 @@
           <el-col :span="isPC ? 24 : 24">
             <div class="table_box">
               <el-table
-                ref="ruleForm"
+                ref="ruleForm2"
                 :data="ruleForm.orderDeliverRebateFORMs"
                 :row-style="{height: '20px'}"
                 :cell-style="{padding: '5px 0'}"
@@ -662,7 +663,9 @@ export default class extends Vue {
       const { data } = await SelectOrderInfo({ orderId: value })
       if (data.success) {
         this.ContractDetail = Object.assign(this.ContractDetail, data.data)
-        this.ruleForm.plateNo = this.ContractDetail.plateNo
+        if (data.data.cooperationModel !== 1) {
+          this.ruleForm.plateNo = this.ContractDetail.plateNo
+        }
       } else {
         this.$message.error(data)
       }
@@ -752,6 +755,8 @@ export default class extends Vue {
   .el-form-item__label{
     color: #4a4a4a;
     font-weight: 400;
+    width: 100%;
+    text-align: left;
   }
   .assist_title{
       width: 100%;

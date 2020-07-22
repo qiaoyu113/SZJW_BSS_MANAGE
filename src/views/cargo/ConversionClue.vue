@@ -356,8 +356,12 @@ export default class extends Vue {
    */
   private beforeAvatarUpload(file:any) {
     const isImage = file.type.includes('image')
+    const isLt10M = file.size / 1024 / 1024 < 10
     if (!isImage) {
       this.$message.error('上传图片格式不正确')
+    }
+    if (!isLt10M) {
+      this.$message.error('上传图片大小不能超过10MB')
     }
     return isImage
   }

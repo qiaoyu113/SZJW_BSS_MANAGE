@@ -24,7 +24,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="goCreateUser"
         >
-          <i class="el-icon-edit" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">新建用户</span>
         </el-button>
         <el-dropdown
@@ -313,7 +313,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       height: calc(100vh - 360px) !important;
-      padding: 30px;
+      padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;

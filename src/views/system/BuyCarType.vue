@@ -39,7 +39,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="showDialog('create')"
         >
-          <i class="el-icon-s-operation" />
+          <i class="el-icon-plus" />
           <span v-if="isPC">新建商品</span>
         </el-button>
         <el-dropdown
@@ -344,15 +344,18 @@ export default class extends Vue {
   private tab: any[] = [
     {
       label: '全部',
-      name: ''
+      name: '',
+      num: ''
     },
     {
       label: '已上架',
-      name: '10'
+      name: '10',
+      num: ''
     },
     {
       label: '已下架',
-      name: '20'
+      name: '20',
+      num: ''
     }
   ];
   private DateValue: any[] = [];
@@ -500,6 +503,11 @@ export default class extends Vue {
       this.list = data.data
       data.page = await HandlePages(data.page)
       this.total = data.page.total
+      // title
+      const title = data.title
+      this.tab[0].num = title.totalCount
+      this.tab[1].num = title.shelvesCount
+      this.tab[2].num = title.theShelvesCount
     } else {
       this.$message.error(data)
     }
@@ -652,6 +660,9 @@ export default class extends Vue {
   mounted() {
     this.fetchData()
   }
+  updated() {
+
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -670,7 +681,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       height: calc(100vh - 360px) !important;
-      padding: 30px;
+      padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;

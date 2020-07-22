@@ -575,7 +575,7 @@ export default class extends Vue {
         { required: true, message: '请选择是否是高意向司机', trigger: 'blur' }
       ],
       remarks: [
-        { required: true, message: '请输入remarks', trigger: 'blur' }
+        { required: true, message: '请输入备注', trigger: 'blur' }
       ]
     }
     mounted() {
@@ -633,7 +633,10 @@ export default class extends Vue {
    */
     async getManagers() {
       try {
-        let { data: res } = await GetManagerLists()
+        let params = {
+          uri: '/v1/driver/clue/clue/special/interview'
+        }
+        let { data: res } = await GetManagerLists(params)
         if (res.success) {
           this.formItem[0].options = res.data.map(function(item:any) {
             return {

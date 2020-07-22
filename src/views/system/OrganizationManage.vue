@@ -217,7 +217,6 @@ import { GetArea } from '@/api/common'
 import { getOfficeList, createOffice, deleteOffice, sortOffice, updateOffice } from '@/api/system'
 
 import '@/styles/common.scss'
-import { off } from 'codemirror'
 
 @Component({
   name: 'CreateRole',
@@ -274,7 +273,7 @@ export default class extends Vue {
         })
     }
   }
-  private areaList: any = ['330000', '330100']
+  private areaList: any = []
   private rules: any = {
     name: [
       { required: true, message: '请输入组织名称', trigger: 'blur' },
