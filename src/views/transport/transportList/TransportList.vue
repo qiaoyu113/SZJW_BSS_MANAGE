@@ -218,7 +218,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { CargoListData } from '@/api/types'
 import PitchBox from '@/components/PitchBox/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, phoneReg } from '@/utils/index'
 import SelfTable from '@/components/base/SelfTable.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
@@ -226,7 +226,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { TransportListForm } from '../components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
-import { GetDictionaryList, GetOpenCityData, getOperManager } from '@/api/common'
+import { GetDictionaryList, GetOpenCityData, GetJoinManageList } from '@/api/common'
 import { updateCarrierStatus, getCarrierInfoList } from '@/api/transport'
 import { getLabel } from '@/utils/index.ts'
 import SelfForm from '@/components/base/SelfForm.vue'
@@ -415,7 +415,8 @@ export default class extends Vue {
         key: 'phone',
         label: '运力手机号',
         tagAttrs: {
-          placeholder: '请输入手机号'
+          placeholder: '请输入手机号',
+          type: ''
         }
       },
       {
@@ -701,7 +702,10 @@ export default class extends Vue {
       } else {
         this.$message.error(data)
       }
-      let manager = await getOperManager()
+      let paramurl:any = {
+        uri: '/v1/transport/transportList'
+      }
+      let manager = await GetJoinManageList(paramurl)
       if (manager.data.success) {
         let arr = manager.data.data.map(function(ele:any) {
           return { value: Number(ele.id), label: ele.name }
@@ -883,6 +887,9 @@ export default class extends Vue {
 
   // 请求列表
   private async getList(value: any) {
+    if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
+      return this.$message.error('请输入正确的手机号')
+    }
     this.listQuery.page = this.page.page
     this.listQuery.limit = this.page.limit
     this.listQuery.startDate = this.listQuery.createDate[0]
