@@ -546,7 +546,8 @@ export default class extends Vue {
       key: 'op',
       label: '操作',
       disabled: true,
-      slot: true
+      slot: true,
+      fixed: 'right'
     }
   ]
 
@@ -910,6 +911,16 @@ export default class extends Vue {
 <style scoped>
   .DriverList >>> .el-form-item__label {
     color:#999;
+  }
+  .DriverList >>> .el-collapse-item__wrap {
+    padding: 20px 30px 0 0;
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+    right: 15px;
+    left: 15px;
   }
 </style>
 
