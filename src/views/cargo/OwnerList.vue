@@ -10,6 +10,7 @@
       <OwnerListForm
         :list-query="listQuery"
         :date-value="DateValue"
+        :date-value2="DateValue2"
         @handle-tags="handleTags"
         @handle-query="getList"
       />
@@ -409,6 +410,7 @@ export default class extends Vue {
     private tags: any[] = [];
     private templateRadio: any[] = []
     private DateValue: any[] = [];
+    private DateValue2: any[] = [];
     private multipleSelection: any[] = []
     private operationList: any[] = [
       { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: '3' },
@@ -521,8 +523,12 @@ export default class extends Vue {
     }
 
     // 处理选择日期方法
-    private handleDate(value: any) {
-      this.DateValue = value
+    private handleDate(value: any, name: any) {
+      if (name === 'startDate') {
+        this.DateValue = value
+      } else {
+        this.DateValue2 = value
+      }
     }
 
     // 请求列表
