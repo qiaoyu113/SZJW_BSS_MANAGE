@@ -5,22 +5,24 @@
   >
     <SectionContainer title="权限管理">
       <RoleTree
+        class="treeLine"
         :data="data"
         :props="defaultProps"
+        :indent="0"
       >
-        <template slot-scope="{node,data}">
-          <span
-            class="mr10"
-          >{{ node.label }}</span>
+        <template slot-scope="{node, data}">
+          <span class="mr10">{{ node.label }}</span>
           <div class="right-btn">
             <el-button
               v-if="data.authType !== 4"
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
-              @click.stop="() => {
-                appendAuth(node,data)
-              }"
+              @click.stop="
+                () => {
+                  appendAuth(node, data);
+                }
+              "
             />
             <el-button
               v-if="node.level !== 1"
@@ -28,18 +30,22 @@
               size="mini"
               class="delete"
               icon="el-icon-remove-outline"
-              @click.stop="() => {
-                deleteAuth(node,data)
-              }"
+              @click.stop="
+                () => {
+                  deleteAuth(node, data);
+                }
+              "
             />
             <el-button
               v-if="node.level !== 1"
               circle
               size="mini"
               icon="el-icon-edit"
-              @click.stop="() => {
-                updateAuth(node,data)
-              }"
+              @click.stop="
+                () => {
+                  updateAuth(node, data);
+                }
+              "
             />
           </div>
         </template>
@@ -123,14 +129,10 @@
               prop="controlType"
             >
               <el-radio-group v-model="dialogForm.controlType">
-                <el-radio
-                  :label="1"
-                >
+                <el-radio :label="1">
                   需要
                 </el-radio>
-                <el-radio
-                  :label="0"
-                >
+                <el-radio :label="0">
                   不需要
                 </el-radio>
               </el-radio-group>
@@ -159,8 +161,14 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
 import Dialog from '@/components/Dialog/index.vue'
-import { authorityList, createAuthority, updateAuthority, deleteAuthority } from '@/api/system'
+import {
+  authorityList,
+  createAuthority,
+  updateAuthority,
+  deleteAuthority
+} from '@/api/system'
 import '@/styles/common.scss'
+import '@/styles/tree-line.scss'
 
 @Component({
   name: 'PermissionManage',
@@ -182,33 +190,45 @@ export default class extends Vue {
   // 弹窗
   private showDialog: boolean = false;
   private activeName: string = '2';
-  private dialogTit: string = '新建权限'
+  private dialogTit: string = '新建权限';
   private dialogForm: any = {
-    'authName': '',
-    'authType': 0,
-    'controlType': '',
-    'parentId': 0,
-    'parentsId': '',
-    'url': ''
-  }
+    authName: '',
+    authType: 0,
+    controlType: '',
+    parentId: 0,
+    parentsId: '',
+    url: ''
+  };
   private rules: any = {
     authName: [
       { required: true, message: '请输入权限名称', trigger: 'blur' },
-      { pattern: /^(?:[\u4e00-\u9fa5·]{1,10})$/, message: '请输入1-10个中文', trigger: 'blur' }
+      {
+        pattern: /^(?:[\u4e00-\u9fa5·]{1,10})$/,
+        message: '请输入1-10个中文',
+        trigger: 'blur'
+      }
     ],
     url: [
       { required: true, message: '请输入页面地址', trigger: 'blur' },
-      { pattern: /^\/([\w-]+\/?)+$/, message: '请输入正确页面地址', trigger: 'blur' }
+      {
+        pattern: /^\/([\w-]+\/?)+$/,
+        message: '请输入正确页面地址',
+        trigger: 'blur'
+      }
     ],
     controlType: [
-      { required: true, message: '请选择是否需要数据权限控制', trigger: 'change' }
+      {
+        required: true,
+        message: '请选择是否需要数据权限控制',
+        trigger: 'change'
+      }
     ]
-  }
+  };
   private isAdd: boolean = false;
   private disabled: boolean = false;
 
   @Watch('dialogForm.controlType')
-  private onval(value:any) {
+  private onval(value: any) {
     if (!value) {
       this.dialogForm.url = ''
     }
@@ -218,7 +238,7 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
   private confirm(done: any) {
-    ((this.$refs['dialogForm']) as any).validate(async(valid:boolean) => {
+    (this.$refs['dialogForm'] as any).validate(async(valid: boolean) => {
       if (valid) {
         if (this.isAdd) {
           // 添加
@@ -229,7 +249,8 @@ export default class extends Vue {
           postData.controlType = postData.controlType || 0
           postData.authType = Number(this.activeName)
           postData.parentId = id
-          postData.parentsId = parentsId + (parentsId ? ',' : '') + `${this.addData.id}`
+          postData.parentsId =
+            parentsId + (parentsId ? ',' : '') + `${this.addData.id}`
           delete postData.id
           delete postData.childAuth
           const { data } = await createAuthority(postData)
@@ -272,7 +293,7 @@ export default class extends Vue {
   private fetchData() {
     this.authorityList()
   }
-  private appendAuth(node: any, data:any) {
+  private appendAuth(node: any, data: any) {
     this.addNode = node
     this.addData = data
     this.dialogTit = '新建权限'
@@ -290,19 +311,20 @@ export default class extends Vue {
     this.showDialog = true
   }
   // 删除
-  private async deleteAuth(node:any, item: any) {
+  private async deleteAuth(node: any, item: any) {
     this.$confirm(`您确定要删除“${item.authName}”吗？`, '删除权限', {
       type: 'warning'
-    }).then(async() => {
-      const { data } = await deleteAuthority(item.id)
-      if (data.success) {
-        this.$message.success(`删除成功`)
-        this.remove(node, item)
-      } else {
-        this.$message.error(data)
-      }
-    }).catch(() => {
     })
+      .then(async() => {
+        const { data } = await deleteAuthority(item.id)
+        if (data.success) {
+          this.$message.success(`删除成功`)
+          this.remove(node, item)
+        } else {
+          this.$message.error(data)
+        }
+      })
+      .catch(() => {})
   }
   // 删除tree 节点
   private remove(node: any, data: any) {
@@ -348,17 +370,17 @@ export default class extends Vue {
 .ml10 {
   margin-left: 10px;
 }
-.right-btn{
+.right-btn {
   display: inline-block;
-  .el-button{
+  .el-button {
     padding: 0;
     height: 32px;
     line-height: 32px;
     text-align: center;
-    background: rgba(0, 0, 0,0);
+    background: rgba(0, 0, 0, 0);
     font-size: 20px;
-    border-color: rgba(0,0,0,0);
-    &.delete{
+    border-color: rgba(0, 0, 0, 0);
+    &.delete {
       &:hover {
         color: $--color-danger;
       }
@@ -367,7 +389,7 @@ export default class extends Vue {
 }
 </style>
 <style scoped>
-.PermissionManage .el-badge >>> sup{
-  transform: translateY(6px)
+.PermissionManage .el-badge >>> sup {
+  transform: translateY(6px);
 }
 </style>

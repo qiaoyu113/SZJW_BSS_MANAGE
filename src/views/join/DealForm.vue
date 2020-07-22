@@ -216,7 +216,7 @@
           <el-col :span="isPC ? 24 : 24">
             <div class="table_box">
               <el-table
-                ref="ruleForm"
+                ref="ruleForm2"
                 :data="ruleForm.orderDeliverRebateFORMs"
                 :row-style="{height: '20px'}"
                 :cell-style="{padding: '5px 0'}"
@@ -753,6 +753,8 @@ export default class extends Vue {
   .el-form-item__label{
     color: #4a4a4a;
     font-weight: 400;
+    width: 100%;
+    text-align: left;
   }
   .assist_title{
       width: 100%;
