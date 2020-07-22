@@ -45,6 +45,7 @@ export default class extends Vue {
     [class*=el-col-]{
       display: inline-block;
       vertical-align: top;
+      float: none;
     }
     .title{
         width:100%;

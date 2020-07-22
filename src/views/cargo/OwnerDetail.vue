@@ -182,6 +182,7 @@
             >
               <template>
                 <el-button
+                  v-if="OwnerDetail.clueInfoVO.isPhone"
                   type="text"
                   style="padding: 0 4px"
                   @click="getAllPhone(false)"
@@ -272,14 +273,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="详细地址"
-              :value="OwnerDetail.address"
+              :value="OwnerDetail.clueInfoVO.address"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="备注"
-              :value="OwnerDetail.remark"
+              :value="OwnerDetail.clueInfoVO.remark"
             />
           </el-col>
         </el-row>
@@ -485,7 +486,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .OwnerDetail {
   width: 100%;
   padding: 20px;
@@ -510,7 +511,7 @@ export default class extends Vue {
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scope>
 .OwnerDetail-m {
   width: 100%;
   .el-form-item__label{

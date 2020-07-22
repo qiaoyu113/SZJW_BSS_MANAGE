@@ -5,10 +5,12 @@
         title="订单攻略"
         name="1"
       >
-        <div>1、交付信息会根据订单信息，不同的配置，需要把必填项都填写完整后提交。</div>
-        <div>2、合作模式：购车，需要填写车辆交付，如返利等，如有问题可以联系供应链同事。</div>
-        <div>3、运营经理负责成交后的司机运营跟进。</div>
-        <div>4、GPS绑定的编号，需要填写准确，对后期的设备状态和轨迹，会有影响。</div>
+        <div>1、创建订单根据订单的订单金额和支付金额，如果等于订单未待审核，如果不等于为待支付，需要再次提交。</div>
+        <div>2、微信小程序缴费无需重新创建订单，待确认状态的订单，点击确认并提交。</div>
+        <div>3、电子合同会根据创建订单的信息生成，请确保真实有效；如：司机姓名和身份证号需要同身份证、手机号的办卡人是本人。</div>
+        <div>4、运力配额：一个订单可以对应多少个运力，如：618车队需要临时上车，在订单上面创建运力上车。</div>
+        <div>5、待支付的订单，会在小程序-我的订单中显示，司机和加盟经理都可以进行支付，支付完成，订单完成。</div>
+        <div>6、根据订单金额，添加支付金额， 订单会被拆分多笔支付。如：存在意向金、首款、尾款的场景。</div>
       </el-collapse-item>
     </el-collapse>
     <el-form
@@ -97,6 +99,7 @@
                   v-for="item in optionsBusi"
                   :key="item.dictValue"
                   :label="item.dictValue"
+                  :value="item.dictValue"
                 >
                   {{ item.dictLabel }}
                 </el-radio>
@@ -134,7 +137,10 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.busiType === '0'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
               label="收入保障（元）"
               prop="incomeGuarantee"
@@ -183,9 +189,11 @@
         :md="true"
       >
         <el-row class="detail">
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.busiType !== '1' && ruleForm.cooperationModel === '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '3'"
               label="年检有效期"
               prop="inspectionTime"
             >
@@ -196,9 +204,11 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.busiType !== '1' && ruleForm.cooperationModel === '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '3'"
               label="保险有效期"
               prop="insuranceTime"
             >
@@ -209,9 +219,11 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel === '2'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '2'"
               label="租赁公司"
               prop="supplier"
             >
@@ -228,9 +240,11 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel === '1'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '1'"
               label="购车公司"
               prop="supplier"
             >
@@ -248,9 +262,11 @@
             </el-form-item>
           </el-col>
           <!--购车和租车-->
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
               label="合作车型"
               prop="cooperationCar"
             >
@@ -268,9 +284,11 @@
             </el-form-item>
           </el-col>
           <!--带车-->
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel === '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '3'"
               label="合作车型"
               prop="cooperationCar"
             >
@@ -288,9 +306,11 @@
             </el-form-item>
           </el-col>
           <!--车辆型号-->
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.supplier && ruleForm.cooperationCar && ruleForm.cooperationModel !== '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.supplier && ruleForm.cooperationCar && ruleForm.cooperationModel !== '3'"
               label="车辆型号"
               prop="cooperationCar"
             >
@@ -307,7 +327,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel !== '1'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
               label="车牌号"
               prop="plateNo"
@@ -348,9 +371,11 @@
                 :value="ruleForm.describe"
               />
             </el-col>
-            <el-col :span="isPC ? 6 : 24">
+            <el-col
+              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
+              :span="isPC ? 6 : 24"
+            >
               <DetailItem
-                v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
                 name="无税车价"
                 :value="ruleForm.carPrice"
               />
@@ -893,7 +918,7 @@ export default class CreatLine extends Vue {
     const { data } = await GetDictionaryList(['Intentional_compartment', 'busi_type'])
     if (data.success) {
       this.optionsCar2 = data.data.Intentional_compartment
-      this.optionsBusi = data.data.busi_type
+      this.optionsBusi = data.data.busi_type.splice(0, 2)
     } else {
       this.$message.error(data)
     }
@@ -991,22 +1016,26 @@ export default class CreatLine extends Vue {
 
   // 添加金额
   private addPayList() {
-    if (this.payNumber) {
-      if (Number(this.payNumber) > Number(this.remain)) {
-        this.$message.error('添加的支付金额，不能超过剩余添加金额')
+    if (this.ruleForm.orderPayRecordInfoFORMList.length < 10) {
+      if (this.payNumber) {
+        if (Number(this.payNumber) > Number(this.remain)) {
+          this.$message.error('添加的支付金额，不能超过剩余添加金额')
+        } else {
+          this.remain = Number(this.remain) - Number(this.payNumber)
+          this.ruleForm.orderPayRecordInfoFORMList.push(
+            {
+              money: Number(this.payNumber).toFixed(2).toString(),
+              status: '1',
+              payImageUrl: '0'
+            }
+          )
+          this.payNumber = ''
+        }
       } else {
-        this.remain = Number(this.remain) - Number(this.payNumber)
-        this.ruleForm.orderPayRecordInfoFORMList.push(
-          {
-            money: Number(this.payNumber).toFixed(2).toString(),
-            status: '1',
-            payImageUrl: '0'
-          }
-        )
-        this.payNumber = ''
+        this.$message.warning('请输入支付金额')
       }
     } else {
-      this.$message.warning('请输入支付金额')
+      this.$message.warning('最多可添加10条支付记录')
     }
   }
 
@@ -1018,6 +1047,8 @@ export default class CreatLine extends Vue {
   }
   // 删除
   private delClick(res: any, index: any) {
+    let money = this.ruleForm.orderPayRecordInfoFORMList[index].money
+    this.remain = Number(this.remain) + Number(money)
     this.ruleForm.orderPayRecordInfoFORMList.splice(index, 1)
   }
   // 立即支付
@@ -1058,7 +1089,7 @@ export default class CreatLine extends Vue {
   private confirm() {
     (this.$refs['payForm'] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        if (this.payForm.payImageUrl) {
+        if (this.payForm.payImageUrl && this.payForm.payImageUrl !== '0') {
           let index = this.orderIndex
           this.payForm.status = '3'
           this.readyPay = Number(this.readyPay) + Number(this.payForm.money)

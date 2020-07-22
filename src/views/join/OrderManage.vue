@@ -757,6 +757,7 @@ export default class extends Vue {
       const { data } = await CancelOrder({
         orderId: this.cancelId.orderId,
         operateFlag: 'cancel',
+        'status': this.cancelId.status,
         'cooperationModel': this.cancelId.cooperationModel,
         'createSource': this.cancelId.createSource,
         'driverId': this.cancelId.driverId
