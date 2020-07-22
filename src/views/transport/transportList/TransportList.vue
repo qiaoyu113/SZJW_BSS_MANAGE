@@ -751,7 +751,7 @@ export default class extends Vue {
     }
 
     private stopTransport(row:any) {
-      this.$confirm('是否解绑标书', '停用', {
+      this.$confirm('是否停用', '停用', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -770,7 +770,7 @@ export default class extends Vue {
     }
 
     private aliveTransport(row:any) {
-      this.$confirm('该运力选中的订单状态是否为：已退款', '激活', {
+      this.$confirm('是否激活', '激活', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
