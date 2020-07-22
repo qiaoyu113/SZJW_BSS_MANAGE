@@ -112,7 +112,11 @@ export default class extends Vue {
     this.tags.splice(i, 1)
     if (key === 'endDate') {
       this.$emit('handle-query', '', 'startDate')
-      this.$emit('handle-date', [])
+      this.$emit('handle-date', [], 'startDate')
+    }
+    if (key === 'contractEndEndTime') {
+      this.$emit('handle-query', '', 'contractEndStartTime')
+      this.$emit('handle-date', [], 'contractEndStartTime')
     }
     this.$emit('handle-query', '', key)
   }

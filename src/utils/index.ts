@@ -248,7 +248,7 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
       } else if ([8].includes(item.type)) {
         let address:any = []
         if (listQuery[key].length > 0) {
-          console.log(listQuery[key],9999)
+          console.log(listQuery[key], 9999)
         }
       }
     }
@@ -258,7 +258,6 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
 }
 
 export const phoneReg = /^[1][3-9][0-9]{9}$/
-
 
 /**
  * 表单数字范围校验
