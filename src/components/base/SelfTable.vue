@@ -4,7 +4,7 @@
       ref="multipleTable"
       :row-style="{height: '20px'}"
       :cell-style="{padding: '5px 0'}"
-      :max-height="calcHeight"
+      :max-height="height"
       :data="tableData"
       :border="isPC"
       size="mini"
@@ -126,8 +126,8 @@ export default class extends Vue {
   }
   multipleSelection:any[] =[]
 
-  get calcHeight() {
-    return document.documentElement.offsetHeight - 340 - 68 + 'px'
+  get height() {
+    return document.body.offsetHeight - 340 - 68 || document.documentElement.offsetHeight - 340 - 68
   }
   /**
    * 勾选中的item
