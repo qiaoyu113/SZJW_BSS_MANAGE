@@ -531,6 +531,9 @@ export default class extends Vue {
     // 处理query方法
     private handleQuery(value: any, key: any) {
       this.listQuery[key] = value
+      if (key === 'startDate' || key === 'contractEndStartTime') {
+        return
+      }
       this.fetchData()
     }
 
@@ -539,6 +542,8 @@ export default class extends Vue {
       if (name === 'startDate') {
         this.DateValue = value
       } else {
+        console.log(name)
+        console.log(value)
         this.DateValue2 = value
       }
     }
