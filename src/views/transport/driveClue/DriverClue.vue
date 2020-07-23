@@ -43,6 +43,7 @@
       active-name=""
     >
       <el-button
+        v-permission="['/v1/driver/clue/create/manually']"
         type="primary"
         size="mini"
         name="driverclue_creat_btn"
@@ -54,6 +55,7 @@
         <span v-if="isPC">创建线索</span>
       </el-button>
       <el-button
+        v-permission="['/v1/driver/clue/clue/special/interview','/v1/driver/clue/clue/share/interview','/v1/driver/clue/clue/edit/interview']"
         type="primary"
         size="mini"
         name="driverclue_interview_btn"
@@ -111,7 +113,10 @@
       <template
         v-slot:name="scope"
       >
-        <router-link :to="{path: '/transport/followClue',query: {id: scope.row.clueId}}">
+        <router-link
+          :to="{path: '/transport/followClue',query: {id: scope.row.clueId}}"
+          style="color: #409EFF;"
+        >
           {{ scope.row.name }}
         </router-link>
       </template>
@@ -165,6 +170,7 @@
 
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
+              v-permission="['/v1/driver/clue/clue/edit']"
               command="edit"
             >
               <template v-if="isPC">
@@ -176,6 +182,7 @@
               />
             </el-dropdown-item>
             <el-dropdown-item
+              v-permission="['/v1/driver/clue/clue/dispatch']"
               command="distribution"
             >
               <template v-if="isPC">
@@ -187,6 +194,7 @@
               />
             </el-dropdown-item>
             <el-dropdown-item
+              v-permission="['/v1/driver/clue/clue/special/interview','/v1/driver/clue/clue/share/interview','/v1/driver/clue/clue/edit/interview']"
               command="interview"
             >
               <template v-if="isPC">
@@ -198,6 +206,7 @@
               />
             </el-dropdown-item>
             <el-dropdown-item
+              v-permission="['/v1/driver/clue/clue/follow']"
               command="follow"
             >
               <template v-if="isPC">

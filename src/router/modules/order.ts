@@ -65,7 +65,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/OrderManage.vue'),
       name: 'OrderManage',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/order/getOrderInfoList',
         title: 'orderManage',
         noCache: false
       }
@@ -97,7 +97,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/ContractList.vue'),
       name: 'ContractList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/contract/getContractList',
         title: 'contractList',
         noCache: false
       }
@@ -143,7 +143,7 @@ const orderRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/join/DealManage.vue'),
       name: 'DealManage',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/order/deliever/getDelieverList',
         title: 'dealManage',
         noCache: false
       }
