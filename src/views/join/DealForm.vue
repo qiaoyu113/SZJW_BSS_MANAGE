@@ -392,6 +392,7 @@
       </SectionContainer>
 
       <SectionContainer
+        v-if="gpsShow"
         title="GPS交付"
         :md="true"
       >
@@ -460,7 +461,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId, GetGPSRole } from '@/api/join'
+import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId, GetGPSRoles } from '@/api/join'
 import { GetJoinManageList, GetDictionaryList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -481,6 +482,7 @@ export default class extends Vue {
     private fullscreenLoading: Boolean = false
     private tabVal: any = '1'
     private loading: any = false
+    private gpsShow: any = false
     private managerList: any[] = []
     private gpsSupplier: any[] = []
     private ContractDetail: any = {
@@ -676,7 +678,6 @@ export default class extends Vue {
       this.id = this.$route.query.id
       this.getDetail(this.id)
       this.getDictionary()
-      this.getGPSRole()
     }
 
     mounted() {
@@ -692,9 +693,9 @@ export default class extends Vue {
 
     // 判断GPS权限
     private async getGPSRole() {
-      const { data } = await GetGPSRole({})
+      const { data } = await GetGPSRoles({ cityCode: this.ContractDetail.city })
       if (data.success) {
-        console.log(data)
+        this.gpsShow = data.data
       } else {
         this.$message.error(data.errorMsg)
       }
@@ -708,6 +709,7 @@ export default class extends Vue {
         if (data.data.cooperationModel !== 1) {
           this.ruleForm.plateNo = this.ContractDetail.plateNo
         }
+        this.getGPSRole()
       } else {
         this.$message.error(data)
       }
