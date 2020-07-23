@@ -85,6 +85,7 @@
                     value-format="yyyy-MM-dd"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
+                    clearable
                     @change="changData()"
                   />
                 </el-form-item>

@@ -17,6 +17,7 @@
                 v-model="ruleForm.nick"
                 maxlength="10"
                 placeholder="请输入角色中文名称"
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -30,6 +31,7 @@
                 :disabled="isEdit"
                 placeholder="请输入角色英文名称"
                 maxlength="20"
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -41,6 +43,7 @@
               <el-select
                 v-model="ruleForm.productLine"
                 placeholder="请选择"
+                clearable
               >
                 <el-option
                   v-for="(item, index) in productList"
@@ -61,6 +64,7 @@
                 v-model="ruleForm.description"
                 placeholder="请输入角色描述"
                 maxlength="50"
+                clearable
               />
             </el-form-item>
           </el-col>

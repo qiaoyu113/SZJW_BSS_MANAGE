@@ -80,6 +80,7 @@
                 v-model="dialogForm.authName"
                 placeholder="请输入权限名称"
                 maxlength="10"
+                clearable
               />
             </el-form-item>
           </el-tab-pane>
@@ -96,6 +97,7 @@
                 v-model="dialogForm.authName"
                 placeholder="请输入权限名称"
                 maxlength="10"
+                clearable
               />
             </el-form-item>
             <el-form-item
@@ -106,6 +108,7 @@
                 v-model="dialogForm.url"
                 maxlength="100"
                 placeholder="请输入页面地址"
+                clearable
               />
             </el-form-item>
           </el-tab-pane>
@@ -122,6 +125,7 @@
                 v-model="dialogForm.authName"
                 placeholder="请输入权限名称"
                 maxlength="10"
+                clearable
               />
             </el-form-item>
             <el-form-item
@@ -146,6 +150,7 @@
                 v-model="dialogForm.url"
                 maxlength="100"
                 placeholder="请输入页面地址"
+                clearable
               />
             </el-form-item>
           </el-tab-pane>
@@ -229,7 +234,7 @@ export default class extends Vue {
 
   @Watch('dialogForm.controlType')
   private onval(value: any) {
-    if (!value) {
+    if (!value && this.addNode.level === 4) {
       this.dialogForm.url = ''
     }
   }

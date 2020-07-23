@@ -937,7 +937,7 @@ export default class extends Vue {
   padding-bottom: 0;
   box-sizing: border-box;
   .table_box {
-    height: calc(100vh - 225px) !important;
+    height: calc(100vh - 185px) !important;
     background: #ffffff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
