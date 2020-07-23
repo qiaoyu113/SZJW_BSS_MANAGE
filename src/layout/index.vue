@@ -88,7 +88,7 @@ export default class extends mixins(ResizeMixin) {
   top: 0;
   height: 100%;
   position: absolute;
-  z-index: 999;
+  z-index: 99999999;
 }
 
 .main-container {

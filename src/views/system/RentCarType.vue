@@ -74,7 +74,7 @@
           :row-style="{height: '20px'}"
           :cell-style="{padding: '5px 0'}"
           size="mini"
-          :height="'100%'"
+          :max-height="tableHeight"
           fit
           :border="isPC"
           stripe
@@ -419,6 +419,9 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+  get tableHeight() {
+    return SettingsModule.tableHeight
+  }
   // 事件处理
   private formatCity(city:any) {
     const data = this.optionsCity.find((item:any) => {
@@ -626,6 +629,11 @@ export default class extends Vue {
   mounted() {
     this.fetchData()
   }
+  activated() {
+    this.$nextTick(() => {
+      ((this.$refs['multipleTable']) as any).doLayout()
+    })
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -637,13 +645,11 @@ export default class extends Vue {
     display: block;
   }
   .table_box {
-    height: calc(100vh - 225px) !important;
     background: #ffffff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 360px) !important;
       padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
