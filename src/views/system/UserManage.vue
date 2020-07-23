@@ -101,6 +101,7 @@
             label="操作"
             fixed="right"
             :width="isPC ? 'auto' : '50'"
+            show-overflow-tooltip
           >
             <template slot-scope="{row}">
               <el-dropdown>

@@ -88,7 +88,7 @@ export default class extends mixins(ResizeMixin) {
   top: 0;
   height: 100%;
   position: absolute;
-  z-index: 99999999;
+  z-index: 2000;
 }
 
 .main-container {
@@ -107,7 +107,7 @@ export default class extends mixins(ResizeMixin) {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 1001;
+  z-index: 2001;
   overflow: hidden;
 }
 
