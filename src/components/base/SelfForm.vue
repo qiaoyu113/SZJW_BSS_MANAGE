@@ -132,6 +132,29 @@
             v-bind="item.tagAttrs || {}"
             v-on="item.listeners"
           />
+          <template
+            v-else-if="item.type ===12"
+          >
+            <el-time-select
+              v-model="listQuery[item.key].jobStartDate"
+              placeholder="起始时间"
+              :picker-options="{
+                start: '08:30',
+                step: '00:15',
+                end: '18:30'
+              }"
+            />
+            <el-time-select
+              v-model="listQuery[item.key].jobEndDate"
+              placeholder="结束时间"
+              :picker-options="{
+                start: '08:30',
+                step: '00:15',
+                end: '18:30',
+                minTime: listQuery[item.key].jobStartDate
+              }"
+            />
+          </template>
           <slot
             v-else-if="item.slot"
             :name="item.type"

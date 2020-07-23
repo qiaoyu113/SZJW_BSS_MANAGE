@@ -135,59 +135,39 @@
               <el-dropdown-item
                 command="editor"
               >
-                <template v-if="isPC">
+                <template>
                   编辑
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item>
               <el-dropdown-item
                 command="detail"
               >
-                <template v-if="isPC">
+                <template>
                   详情
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item>
               <el-dropdown-item
                 v-if="[0,1].includes(scope.row.status)"
                 command="stop"
               >
-                <template v-if="isPC">
+                <template>
                   停用
                 </template>
-                <i
-                  v-else
-                  class="el-icon-chat-dot-square"
-                />
               </el-dropdown-item>
               <!-- <el-dropdown-item
                 command="gowork"
               >
-                <template v-if="isPC">
+                <template>
                   上岗
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item> -->
               <el-dropdown-item
                 v-if="[2].includes(scope.row.status) && scope.row.isRefund === 0"
                 command="alive"
               >
-                <template v-if="isPC">
+                <template>
                   激活
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -311,7 +291,8 @@ export default class extends Vue {
       },
       {
         key: 'name',
-        label: '运力姓名'
+        label: '运力姓名',
+        disabled: true
       },
       {
         key: 'phone',
@@ -355,7 +336,8 @@ export default class extends Vue {
       },
       {
         key: 'createName',
-        label: '创建人'
+        label: '创建人',
+        disabled: true
       },
       {
         key: 'createDate',
