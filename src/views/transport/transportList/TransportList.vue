@@ -50,7 +50,10 @@
           name="Transport_btn_creat"
           @click="creatTransport"
         >
-          创建运力
+          <i
+            class="el-icon-plus"
+          />
+          <span v-if="isPC">创建运力</span>
         </el-button>
 
         <el-dropdown
@@ -62,7 +65,10 @@
             type="primary"
             size="small"
           >
-            筛选
+            <i
+              class="el-icon-s-operation"
+            />
+            <span v-if="isPC">筛选</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-checkbox-group v-model="checkList">
@@ -86,7 +92,10 @@
           name="Transport_btn_change"
           @click="handleModifyManager"
         >
-          修改运营经理
+          <i
+            class="el-icon-edit"
+          />
+          <span v-if="isPC">修改运营经理</span>
         </el-button>
       </tableheader>
 
