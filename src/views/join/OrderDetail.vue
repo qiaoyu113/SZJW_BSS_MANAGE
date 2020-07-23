@@ -267,7 +267,11 @@
               <DetailItem
                 name="订单生成时间"
                 :value="orderDetail.createDate | Timestamp"
-              />
+              >
+                <template>
+                  ({{ orderDetail.createName }})
+                </template>
+              </DetailItem>
             </el-col>
             <!-- <el-col
               v-if="orderDetail.status === 30"
@@ -293,7 +297,11 @@
               <DetailItem
                 name="审核不通过时间"
                 :value="orderDetail.notPassTime | Timestamp"
-              />
+              >
+                <template>
+                  ({{ orderDetail.notPassName }})
+                </template>
+              </DetailItem>
             </el-col>
             <el-col
               v-if="orderDetail.status === 30"
@@ -306,7 +314,11 @@
               <DetailItem
                 name="审核通过时间"
                 :value="orderDetail.passTime | Timestamp"
-              />
+              >
+                <template>
+                  ({{ orderDetail.passName }})
+                </template>
+              </DetailItem>
             </el-col>
           </div>
         </el-col>
