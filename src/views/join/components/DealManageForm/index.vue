@@ -10,6 +10,7 @@
                   <el-input
                     v-model="listQuery.orderId"
                     placeholder="请输入订单编号"
+                    clearable
                   />
                 </el-form-item>
               </el-col>
@@ -17,7 +18,8 @@
                 <el-form-item label="司机姓名">
                   <el-input
                     v-model="listQuery.diverName"
-                    placeholder="请输入司机姓名"
+                    placeholder="请输入司机编号/姓名/手机号"
+                    clearable
                   />
                 </el-form-item>
               </el-col>
@@ -198,7 +200,9 @@ export default class extends Vue {
 
   // 获取加盟经理
   private async getJoinManageList() {
-    const { data } = await GetJoinManageList({})
+    const { data } = await GetJoinManageList({
+      uri: '/v1/order/deliever/getDelieverList'
+    })
     if (data.success) {
       this.optionsJoin = data.data
     } else {

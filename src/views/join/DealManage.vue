@@ -93,7 +93,7 @@
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.diverName | DataIsNull }} </span>
+              <span>{{ scope.row.diverName | DataIsNull }} ({{ scope.row.driverPhone | DataIsNull }}) </span>
             </template>
           </el-table-column>
 
@@ -241,7 +241,7 @@ import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { DealManageForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -257,7 +257,7 @@ interface IState {
     SuggestContainer,
     TableHeader,
     DealManageForm,
-    Dialog
+    SelfDialog
   }
 })
 export default class extends Vue {

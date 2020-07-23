@@ -79,31 +79,47 @@
           <DetailItem
             name="订单成交时间"
             :value="ContractDetail.orderInfoVO.passTime | Timestamp"
-          />
+          >
+            <template>
+              ({{ ContractDetail.orderInfoVO.passName | DataIsNull }})
+            </template>
+          </DetailItem>
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="ContractDetail.cooperationModel !== 3"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="供应商"
             :value="ContractDetail.orderInfoVO.supplier"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="ContractDetail.cooperationModel !== 3"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="购买车型"
             :value="ContractDetail.orderInfoVO.cooperationCarName"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="ContractDetail.cooperationModel !== 3"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="车辆信息"
             :value="ContractDetail.orderInfoVO.carMessage"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="ContractDetail.cooperationModel === 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="无税报价"
             :value="ContractDetail.orderInfoVO.carPrice"
@@ -299,14 +315,22 @@
           <DetailItem
             name="订单成交时间"
             :value="ContractDetail.orderInfoVO.passTime | Timestamp"
-          />
+          >
+            <template>
+              ({{ ContractDetail.orderInfoVO.passName | DataIsNull }})
+            </template>
+          </DetailItem>
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交付完成时间"
             :value="ContractDetail.dealTime | Timestamp"
-          />
+          >
+            <template>
+              ({{ ContractDetail.dealName | DataIsNull }})
+            </template>
+          </DetailItem>
         </el-col>
       </el-row>
     </SectionContainer>
@@ -595,6 +619,9 @@ export default class extends Vue {
       padding: 15px 15px 20px;
       box-sizing: border-box;
   }
+  .el-radio-group{
+      margin-bottom: 20px !important;
+  }
 }
 </style>
 
@@ -660,9 +687,6 @@ export default class extends Vue {
 //   .el-radio-button__inner:hover{
 //       color: $assist-btn;
 //   }
-  .el-radio-group{
-      margin-bottom: 20px !important;
-  }
 }
 
 @media screen and (max-width: 700px) {
