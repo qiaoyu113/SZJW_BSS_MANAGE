@@ -768,7 +768,7 @@ export default class CreatLine extends Vue {
     'payCompleteTime': '',
     'payType': '',
     'plateNo': '',
-    'rake': '',
+    'rake': '7',
     'refundTime': '',
     'remarks': '',
     'status': '',

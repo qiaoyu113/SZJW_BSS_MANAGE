@@ -104,7 +104,7 @@
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.diverName | DataIsNull }} </span>
+              <span>{{ scope.row.diverName | DataIsNull }} ({{ scope.row.driverPhone | DataIsNull }})</span>
             </template>
           </el-table-column>
 
@@ -145,7 +145,7 @@
             v-if="checkList.indexOf('订单金额') > -1"
             :key="checkList.length + '6'"
             align="left"
-            label="订单金额"
+            label="订单金额(元)"
           >
             <template slot-scope="scope">
               <p>
