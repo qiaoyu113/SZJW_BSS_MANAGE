@@ -508,6 +508,9 @@ export default class extends Vue {
           border-radius: 16px;
       }
   }
+  .el-radio-group{
+      margin-bottom: 20px !important;
+  }
 }
 </style>
 
@@ -556,9 +559,6 @@ export default class extends Vue {
 //   .el-radio-button__inner:hover{
 //       color: $assist-btn;
 //   }
-  .el-radio-group{
-      margin-bottom: 20px !important;
-  }
 }
 
 @media screen and (max-width: 700px) {

@@ -93,7 +93,7 @@
         >
           <DetailItem
             name="年检有效期"
-            :value="orderDetail.goodsAmount | Timestamp"
+            :value="orderDetail.inspectionTime"
           />
         </el-col>
 
@@ -103,7 +103,7 @@
         >
           <DetailItem
             name="保险有效期"
-            :value="orderDetail.insuranceTime | Timestamp"
+            :value="orderDetail.insuranceTime"
           />
         </el-col>
 
@@ -134,21 +134,30 @@
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="车牌号"
             :value="orderDetail.plateNo"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 3"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="车辆信息"
-            :value="orderDetail.carPrice"
+            :value="orderDetail.carMessage"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 3"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="无税车价"
             :value="orderDetail.carPrice"
@@ -257,19 +266,19 @@
                 :value="orderDetail.createDate | Timestamp"
               />
             </el-col>
-            <el-col
+            <!-- <el-col
               v-if="orderDetail.status === 30"
               :span="24"
-            >
-              <!-- <DetailItem
+            > -->
+            <!-- <DetailItem
                 name="订单确认时间"
                 :value="(orderDetail.driverInfoVO.confirmTime | Timestamp) + (driverInfoVO.driverInfoVO.confirmName)"
               /> -->
-              <DetailItem
+            <!-- <DetailItem
                 name="订单确认时间"
                 :value="orderDetail.confirmTime | Timestamp"
               />
-            </el-col>
+            </el-col> -->
             <el-col
               v-if="orderDetail.status === 25"
               :span="24"
