@@ -1402,7 +1402,7 @@ export default class LineManage extends Vue {
         cursor: pointer;
       }
       height: calc(100vh - 300px) !important;
-      padding: 30px;
+      padding: 0px;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
@@ -1467,7 +1467,7 @@ export default class LineManage extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 300px) !important;
+      height: calc(100vh - 360px) !important;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
