@@ -349,6 +349,7 @@
             type="date"
             placeholder="选择日期"
             :picker-options="pickerOptions"
+            value-format="timestamp"
           />
         </div>
         <div class="dioBox">
@@ -358,7 +359,7 @@
             type="number"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
-            @change="checkMountGuardNo"
+            @input="checkMountGuardNo"
           />
         </div>
         <p class="dioBox">
@@ -656,7 +657,8 @@ export default class LineManage extends Vue {
     {
       key: 'lineId',
       label: '线路编号',
-      slot: true
+      slot: true,
+      disabled: true
     },
     {
       key: 'lineName',
@@ -665,12 +667,14 @@ export default class LineManage extends Vue {
     },
     {
       key: 'lineSaleName',
-      label: '所属销售'
+      label: '所属销售',
+      disabled: true
     },
     {
       key: 'carNum',
       label: '上车数（已上车）/可上车',
-      slot: true
+      slot: true,
+      disabled: true
     },
     {
       key: 'shipperOffer',
@@ -742,9 +746,11 @@ export default class LineManage extends Vue {
       fixed: 'right',
       key: 'operate',
       label: '操作',
-      slot: true
+      slot: true,
+      disabled: true
     },
     {
+      disabled: true,
       fixed: 'right',
       key: 'detail',
       slot: true,
@@ -754,7 +760,7 @@ export default class LineManage extends Vue {
 
   private pickerOptions:any = {
     disabledDate(time:any) {
-      return time.getTime() <= Date.now()
+      return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000)
     }
   }
 
@@ -1116,10 +1122,23 @@ export default class LineManage extends Vue {
     if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
       this.$message.error('可上车数要大于或等于已上岗标书数量')
       this.diaUpcarNum = ''
+      return
+    }
+    if (this.diaUpcarNum === '') {
+      this.$message.error('可上车数不能为空')
     }
   }
 
   private async putConfirm(done: any) {
+    if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
+      this.$message.error('可上车数要大于或等于已上岗标书数量')
+      this.diaUpcarNum = ''
+      return
+    }
+    if (this.diaUpcarNum === '') {
+      this.$message.error('可上车数不能为空')
+      return
+    }
     let params = {
       'deployNo': this.diaUpcarNum,
       'lineId': this.id,

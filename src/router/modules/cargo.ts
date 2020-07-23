@@ -339,7 +339,7 @@ const cargoRouter: RouteConfig = {
       meta: {
         title: 'showLog',
         activeMenu: '/cargo/linemanage',
-        noCache: false,
+        noCache: true,
         hidden: true,
         icon: '',
         apiUrl: 'root'
