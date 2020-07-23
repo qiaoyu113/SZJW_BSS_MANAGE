@@ -91,7 +91,7 @@
     >
       <el-row>
         <el-col
-          v-if="orderDetail.cooperationModel === 3 && ruleForm.busiType === '0'"
+          v-if="Number(orderDetail.cooperationModel) && Number(orderDetail.busiType) === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -101,7 +101,7 @@
         </el-col>
 
         <el-col
-          v-if="orderDetail.cooperationModel === 3 && ruleForm.busiType === '0'"
+          v-if="Number(orderDetail.cooperationModel) && Number(orderDetail.busiType) === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem

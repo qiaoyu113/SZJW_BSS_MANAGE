@@ -173,7 +173,7 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入司机姓名或手机号"
+                placeholder="请输入运营经理"
                 @change="checkManage"
               >
                 <el-option
@@ -460,7 +460,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId } from '@/api/join'
+import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId, GetGPSRole } from '@/api/join'
 import { GetJoinManageList, GetDictionaryList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -629,7 +629,7 @@ export default class extends Vue {
         { required: true, message: '请输入运营经理', trigger: 'change' }
       ],
       engineNo: [
-        { required: true, message: '请输入发动机号', trigger: 'change' }
+        { required: true, message: '请输入发动机发票号', trigger: 'change' }
       ],
       engineInvoiceNo: [
         { required: true, message: '请输入发动机号', trigger: 'change' }
@@ -668,7 +668,7 @@ export default class extends Vue {
         { required: true, message: '请输入设备ID号', trigger: 'change' }
       ],
       gpsSimNo: [
-        { required: true, message: '请输入gps', trigger: 'change' }
+        { required: true, message: '请输入SIM号', trigger: 'change' }
       ]
     }
 
@@ -676,6 +676,7 @@ export default class extends Vue {
       this.id = this.$route.query.id
       this.getDetail(this.id)
       this.getDictionary()
+      this.getGPSRole()
     }
 
     mounted() {
@@ -687,6 +688,16 @@ export default class extends Vue {
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
+    }
+
+    // 判断GPS权限
+    private async getGPSRole() {
+      const { data } = await GetGPSRole({})
+      if (data.success) {
+        console.log(data)
+      } else {
+        this.$message.error(data.errorMsg)
+      }
     }
 
     // 请求详情
