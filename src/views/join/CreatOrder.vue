@@ -598,6 +598,7 @@
                 v-model="payForm.transactionId"
                 placeholder="请输入流水编号"
                 maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -609,6 +610,8 @@
               <el-input
                 v-model="payForm.remarks"
                 type="textarea"
+                maxlength="150"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -725,10 +728,12 @@ export default class CreatLine extends Vue {
   private fullscreenLoading: Boolean = false
   private editors: Boolean = false
   private editorsCar: Boolean = false
+  private editorsSupplier: Boolean = false
   private id: any = ''
   private ruleForm:any = {
     'operateFlag': 'creat',
     'busiType': '',
+    'describe': '',
     'buyCarCompany': '',
     'capacityQuota': '',
     'carPrice': '',
@@ -821,7 +826,7 @@ export default class CreatLine extends Vue {
       { required: true, message: '请选择供应商', trigger: 'blur' }
     ],
     cooperationCar: [
-      { required: true, message: '请选择合作车型', trigger: 'change' }
+      { required: true, message: '请选择合作车型', trigger: 'blur' }
     ],
     plateNo: [
       { required: true, message: '请输入车牌号', trigger: 'change' }
@@ -889,6 +894,7 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any, oldValue:any) {
+    console.log(value, oldValue)
     if (value === '1') {
       if (!this.id) {
         this.ruleForm.supplier = ''
@@ -914,7 +920,14 @@ export default class CreatLine extends Vue {
       }
       this.getCompany()
     } else {
-      this.ruleForm.cooperationCar = ''
+      if (!this.id) {
+        this.ruleForm.cooperationCar = ''
+      } else {
+        if (this.editors) {
+          this.ruleForm.cooperationCar = ''
+        }
+        this.editors = true
+      }
     }
   }
 
@@ -929,7 +942,14 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any, oldValue:any) {
     // console.log('supplier', value, oldValue)
-    // this.ruleForm.cooperationCar = ''
+    if (!this.id) {
+      this.ruleForm.cooperationCar = ''
+    } else {
+      if (this.editorsSupplier) {
+        this.ruleForm.cooperationCar = ''
+      }
+      this.editorsSupplier = true
+    }
     if (value) {
       this.getCar()
     }
@@ -940,10 +960,14 @@ export default class CreatLine extends Vue {
     // console.log('cooperationCar', value, oldValue)
     if (this.ruleForm.cooperationModel === '1' || this.ruleForm.cooperationModel === '2') {
       if (value) {
-        if (this.editorsCar) {
+        if (this.id) {
+          if (this.editorsCar) {
+            this.ruleForm.carModel = ''
+          }
+          this.editorsCar = true
+        } else {
           this.ruleForm.carModel = ''
         }
-        this.editorsCar = true
         this.getModelByTypeAndCityAndSupplierAndCarType()
         this.getPrice()
       }
@@ -1059,10 +1083,11 @@ export default class CreatLine extends Vue {
     const { data } = await GetOrderDetail({ orderId: id })
     if (data.success) {
       let datas = data.data
+      datas.inspectionTime = new Date(datas.inspectionTime).getTime()
+      datas.insuranceTime = new Date(datas.insuranceTime).getTime()
       this.ruleForm = Object.assign(this.ruleForm, datas)
       this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
       this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
-      console.log(this.ruleForm.cooperationCar)
       this.orderPrice = this.ruleForm.goodsAmount
       let notReadPay = 0
       this.ruleForm.orderPayRecordInfoFORMList.forEach((i: any) => {
@@ -1140,9 +1165,11 @@ export default class CreatLine extends Vue {
     const is5M = file.size / 1024 / 1024 < 5
     if (!isImage) {
       this.$message.error('上传图片格式不正确')
+      return false
     }
     if (!is5M) {
       this.$message.error('图片大小不可超过5MB')
+      return false
     }
     return isImage
   }
