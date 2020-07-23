@@ -78,6 +78,7 @@
             >
               <template>
                 <el-button
+                  v-if="showReachPhone"
                   type="text"
                   style="padding: 0 4px"
                   @click="getAllPhone(true)"
@@ -364,6 +365,7 @@ import '@/styles/common.scss'
 export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
+    private showReachPhone: any = true
     private OwnerDetail:any = {
       'address': '',
       'businessLicenseUrl': '',
@@ -471,6 +473,7 @@ export default class extends Vue {
         const { data } = await GetFindBusinessPhone({ customerId: this.id })
         if (data.success) {
           this.OwnerDetail.bussinessPhone = data.data
+          this.showReachPhone = false
         } else {
           this.$message.error(data.errorMsg)
         }
