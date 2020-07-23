@@ -363,7 +363,7 @@ export default class extends Vue {
     if (!isLt10M) {
       this.$message.error('上传图片大小不能超过10MB')
     }
-    return isImage
+    return isImage && isLt10M
   }
   /**
    * 预览
@@ -396,6 +396,11 @@ export default class extends Vue {
   }
   // 选择图片
   private async handleChange(file: any, fileList: any) {
+    if (!this.beforeAvatarUpload(file.raw)) {
+      this.ruleForm.businessLicenseUrl = ''
+      this.fileList = []
+      return
+    }
     let formData = new FormData() // 创建form对象
     formData.append('file', file.raw)
     let { data } = await Upload({
