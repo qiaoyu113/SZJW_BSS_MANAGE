@@ -1041,13 +1041,23 @@ export default class CreatLine extends Vue {
   }
   private beforeAvatarUpload(file:any) {
     const isImage = file.type.includes('image')
+    const is5M = file.size / 1024 / 1024 < 5
     if (!isImage) {
       this.$message.error('上传图片格式不正确')
+      return false
+    }
+    if (!is5M) {
+      this.$message.error('图片大小不可超过5MB')
+      return false
     }
     return isImage
   }
   // 选择图片
   private async handleChange(file: any, fileList: any) {
+    if (!this.beforeAvatarUpload(file.raw)) {
+      this.payForm.payImageUrl = ''
+      return
+    }
     let formData = new FormData() // 创建form对象
     formData.append('file', file.raw)
     let { data } = await Upload({
