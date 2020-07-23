@@ -151,7 +151,6 @@ export default class extends Vue {
       this.listLoading = false
       if (res.success) {
         this.tableData = res.data
-        this.tableData = []
       } else {
         this.$message.error(res.errorMsg)
       }
