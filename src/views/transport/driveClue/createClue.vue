@@ -25,6 +25,7 @@
             取消
           </el-button>
           <el-button
+            v-permission="['/v1/driver/clue/create/manually']"
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
             name="driverclue_save_btn"
@@ -33,6 +34,7 @@
             保存
           </el-button>
           <el-button
+            v-permission="['/v1/driver/clue/clue/special/interview','/v1/driver/clue/clue/share/interview','/v1/driver/clue/clue/edit/interview']"
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
             name="driverclue_saveInterview_btn"

@@ -17,7 +17,7 @@ const transportRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/DriverClue.vue'),
       name: 'DriverClue',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/driver/clue/list/key-query',
         activeMenu: '/transport/driverclue',
         title: 'driverClue',
         icon: '',
@@ -27,7 +27,7 @@ const transportRouter: RouteConfig = {
     {
       path: 'createClue', /* 创建司机线索 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
-      name: 'CreateDriverClue',
+      name: 'CreateClue',
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverclue',
@@ -40,7 +40,7 @@ const transportRouter: RouteConfig = {
     {
       path: 'editClue', /* 编辑司机线索 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
-      name: 'EditDriverClue',
+      name: 'EditClue',
       meta: {
         apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
         activeMenu: '/transport/driverclue',
@@ -79,7 +79,7 @@ const transportRouter: RouteConfig = {
     {
       path: 'driverlist', /* 司机列表 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/DriverList.vue'),
-      name: 'DriverList',
+      name: '/v1/driver/getDriverList',
       meta: {
         apiUrl: 'root',
         activeMenu: '/transport/driverlist',
@@ -136,7 +136,7 @@ const transportRouter: RouteConfig = {
         activeMenu: '/transport/transportlist',
         noCache: true,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/order/getCarrierInfoList'
       }
     },
     {

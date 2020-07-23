@@ -17,7 +17,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/UserManage.vue'),
       name: 'UserManage',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/page/list',
         activeMenu: '/system/usermanage',
         title: 'userManage',
         icon: '',
@@ -59,7 +59,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/rolemanage',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/base/role/list'
       }
     },
     {
@@ -97,7 +97,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/organizationmanage',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/base/office/list/0'
       }
     },
     {
@@ -109,7 +109,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/permissionmanage',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/base/authority/list'
       }
     },
     {
@@ -121,7 +121,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/systemsetting',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/product/product/system/setting'
       }
     },
     {
@@ -133,7 +133,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/buycartype',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/product/product/list/page'
       }
     },
     {
@@ -145,7 +145,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/rentcartype',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/product/product/list/page'
       }
     }
   ]

@@ -44,3 +44,11 @@ export const setUser = (user: any) => {
   localStorage.setItem('bssLoginName', user.bssLoginName)
 }
 export const removeToken = () => Cookies.remove(tokenKey)
+
+export const getPermission = () => {
+  let str:string = localStorage.getItem('permission') || ''
+  if (str) {
+    return str.split(',')
+  }
+  return []
+}
