@@ -226,7 +226,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { TransportListForm } from '../components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
-import { GetDictionaryList, GetOpenCityData, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetOpenCityData, GetManagerLists } from '@/api/common'
 import { updateCarrierStatus, getCarrierInfoList } from '@/api/transport'
 import { getLabel } from '@/utils/index.ts'
 import SelfForm from '@/components/base/SelfForm.vue'
@@ -703,9 +703,9 @@ export default class extends Vue {
         this.$message.error(data)
       }
       let paramurl:any = {
-        uri: '/v1/transport/transportList'
+        uri: '/v1/order/getCarrierInfoList'
       }
-      let manager = await GetJoinManageList(paramurl)
+      let manager = await GetManagerLists(paramurl)
       if (manager.data.success) {
         let arr = manager.data.data.map(function(ele:any) {
           return { value: Number(ele.id), label: ele.name }
@@ -1050,23 +1050,12 @@ export default class extends Vue {
 }
 </style>
 <style scoped>
-  @media screen  and (min-width:700px) {
-    .TransportList >>> .el-collapse-item__wrap {
-      padding: 20px 30px 0 0;
-      box-sizing: border-box;
-      position: absolute;
-      z-index: 1000;
-      background: #fff;
-      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
-      right: 15px;
-      left: 15px;
-    }
-    .TransportList >>> .el-collapse-item__content {
-      padding-bottom: 0px;
-    }
-  }
-
-  .TransportList >>> .selfForm {
-    padding: 0px;
+  .TransportList >>> .el-collapse-item__wrap {
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+    right: 15px;
+    left: 15px;
   }
 </style>

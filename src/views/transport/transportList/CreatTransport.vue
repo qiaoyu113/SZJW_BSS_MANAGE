@@ -191,7 +191,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { saveCarrierInfo, transportOrderList, transportOrderDetail, driverList } from '@/api/transport'
-import { GetDictionary, GetDictionaryList, GetOpenCityData, GetJoinManageList, GetCityByCode } from '@/api/common'
+import { GetDictionary, GetDictionaryList, GetOpenCityData, GetManagerLists, GetCityByCode } from '@/api/common'
 import '@/styles/common.scss'
 import { validatorNumberRange } from '@/utils/index.ts'
 
@@ -746,7 +746,7 @@ export default class extends Vue {
     let paramurl:any = {
       uri: '/v1/carrier/saveCarrierInfo'
     }
-    let manager = await GetJoinManageList(paramurl)
+    let manager = await GetManagerLists(paramurl)
     if (manager.data.success) {
       let arr = manager.data.data.map(function(ele:any) {
         return { value: Number(ele.id), label: ele.name }

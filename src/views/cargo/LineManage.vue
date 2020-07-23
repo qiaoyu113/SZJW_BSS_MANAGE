@@ -414,12 +414,12 @@ import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages, parseTime } from '@/utils/index'
-import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll } from '@/api/cargo'
+import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll, customerCheckNames } from '@/api/cargo'
 import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetOpenCityData, GetCityByCode, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetOpenCityData, GetCityByCode, GetManagerLists } from '@/api/common'
 import SelfTable from '@/components/base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import '@/styles/common.scss'
@@ -506,6 +506,8 @@ export default class LineManage extends Vue {
   ];
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
+  private customerLoading:boolean = false
+  private customerOptions:any[] = []
   private formItem:any[] = [
     {
       type: 2,
@@ -565,13 +567,19 @@ export default class LineManage extends Vue {
       }
     },
     {
-      type: 1,
+      type: 2,
       label: '货主名称',
       key: 'customerName',
       tagAttrs: {
         clearable: true,
-        placeholder: '请输入货主名称'
-      }
+        placeholder: '请输入货主名称',
+        remote: true,
+        'reserve-keyword': true,
+        loading: this.customerLoading,
+        filterable: true,
+        'remote-method': this.remoteMethod
+      },
+      options: this.customerOptions
     },
     {
       type: 8,
@@ -775,6 +783,23 @@ export default class LineManage extends Vue {
     return timeArr
   }
 
+  private async remoteMethod(query: any) {
+    if (query !== '') {
+      this.customerLoading = true
+      let { data } = await customerCheckNames({ customerCompanyName: query })
+      if (data.success) {
+        this.customerOptions = data.data.map(function(ele:any) {
+          return { value: ele.customerId, label: ele.customerCompanyName }
+        })
+        this.customerLoading = false
+      } else {
+        this.$message.error(data.data.errorMsg)
+      }
+    } else {
+      this.customerOptions = []
+    }
+  }
+
   mounted() {
     this.dropdownList = [...this.columns]
     this.checkList = this.dropdownList.map(item => item.label)
@@ -931,7 +956,10 @@ export default class LineManage extends Vue {
 
   private async getLowerStaffInfo() {
     try {
-      let { data: res } = await GetJoinManageList({})
+      let paramsUrl = {
+        uri: '/v1/line/lineInfo/queryLineListByConditionsQuery'
+      }
+      let { data: res } = await GetManagerLists(paramsUrl)
       if (res.success) {
         this.formItem.map(ele => {
           if (ele.key === 'lineSaleId') {

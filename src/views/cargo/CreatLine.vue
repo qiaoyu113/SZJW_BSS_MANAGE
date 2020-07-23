@@ -324,7 +324,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetCityByCode, detailCity, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetCityByCode, detailCity, GetManagerLists } from '@/api/common'
 import { createLine, editLine, customerCheckNames, GetLineDetail } from '@/api/cargo'
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -535,7 +535,7 @@ export default class CreatLine extends Vue {
     ],
     shipperOffer: [
       { required: true, message: '预计货主月报价不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 99999) }
+      { validator: validatorNumberRange(1, 309999) }
     ],
     everyUnitPrice: [
       { required: true, message: '提成单价不能为空', trigger: 'change' },
@@ -951,7 +951,15 @@ export default class CreatLine extends Vue {
 
   private async getLowerStaffInfo() {
     try {
-      let { data: res } = await GetJoinManageList({})
+      let paramsUrl = {
+        uri: ''
+      }
+      if (this.pageStatus === 1 || this.pageStatus === 3) {
+        paramsUrl.uri = '/v1/line/create'
+      } else if (this.pageStatus === 2) {
+        paramsUrl.uri = '/v1/line/edit'
+      }
+      let { data: res } = await GetManagerLists(paramsUrl)
       if (res.success) {
         if (res.data.length > 1) {
           this.lineSaleIdState = false
