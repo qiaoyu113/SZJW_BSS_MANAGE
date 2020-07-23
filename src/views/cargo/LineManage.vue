@@ -760,7 +760,7 @@ export default class LineManage extends Vue {
 
   private pickerOptions:any = {
     disabledDate(time:any) {
-      return time.getTime() <= Date.now()
+      return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000)
     }
   }
 
@@ -1150,7 +1150,7 @@ export default class LineManage extends Vue {
         this.getList()
       }, delayTime)
       done(
-        // this.$message.success('上架调整完成'),
+        this.$message.success('上架调整完成'),
         this.diaUpcarNum = '',
         this.diaUpcar = '',
         this.id = ''
