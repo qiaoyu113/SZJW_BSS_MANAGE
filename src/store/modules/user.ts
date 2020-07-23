@@ -19,6 +19,7 @@ export interface IUserState {
 @Module({ dynamic: true, store, name: 'user' })
 class User extends VuexModule implements IUserState {
   public token = getToken() || ''
+  public uuid = ''
   public name = ''
   public avatar = ''
   public introduction = ''
@@ -28,6 +29,11 @@ class User extends VuexModule implements IUserState {
   @Mutation
   private SET_TOKEN(token: string) {
     this.token = token
+  }
+
+  @Mutation
+  private SET_UUID(uuid: string) {
+    this.uuid = uuid
   }
 
   @Mutation
@@ -78,6 +84,7 @@ class User extends VuexModule implements IUserState {
         }
         this.SET_EMAIL(roleName)
         this.SET_TOKEN(data.data.token)
+        this.SET_UUID(data.data.uuid)
         this.SET_NAME(data.data.bssLoginName ? data.data.bssLoginName : '暂无名称')
         this.SET_ROLES(data.data.stringPermissions)
         PermissionModule.GenerateRoutes(this.roles)
