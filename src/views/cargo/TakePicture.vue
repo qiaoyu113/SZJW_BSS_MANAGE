@@ -145,7 +145,7 @@
 <script lang="ts">
 // 引入element-ui 大图预览的隐藏组件
 import ElImageViewer from 'element-ui/packages/image/src/image-viewer.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import Dialog from '@/components/SelfDialog/index.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'

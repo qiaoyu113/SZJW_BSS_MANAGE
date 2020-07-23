@@ -410,7 +410,7 @@
 <script lang="ts">
 import { delayTime } from '@/settings'
 import { getLabel } from '@/utils/index.ts'
-import Dialog from '@/components/Dialog/index.vue'
+import Dialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages, parseTime } from '@/utils/index'

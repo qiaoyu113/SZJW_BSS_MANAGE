@@ -321,7 +321,7 @@
 </template>
 <script lang="ts">
 import { Form as ElForm, Input } from 'element-ui'
-import Dialog from '@/components/Dialog/index.vue'
+import Dialog from '@/components/SelfDialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import { GetDictionaryList, GetCityByCode, detailCity, GetManagerLists } from '@/api/common'

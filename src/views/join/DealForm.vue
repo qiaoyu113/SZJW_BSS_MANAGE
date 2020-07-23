@@ -93,32 +93,48 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="订单成交时间"
-              :value="ContractDetail.deliverDate | Timestamp"
-            />
+              :value="ContractDetail.passTime"
+            >
+              <template>
+                ({{ ContractDetail.passName | DataIsNull }})
+              </template>
+            </DetailItem>
           </el-col>
 
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ContractDetail.cooperationModel !== 3"
+            :span="isPC ? 6 : 24"
+          >
             <DetailItem
               name="供应商"
               :value="ContractDetail.deliverDate"
             />
           </el-col>
 
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ContractDetail.cooperationModel !== 3"
+            :span="isPC ? 6 : 24"
+          >
             <DetailItem
               name="购买车型"
               :value="ContractDetail.cooperationCarName"
             />
           </el-col>
 
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ContractDetail.cooperationModel !== 3"
+            :span="isPC ? 6 : 24"
+          >
             <DetailItem
               name="车辆信息"
               :value="ContractDetail.carMessage"
             />
           </el-col>
 
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ContractDetail.cooperationModel === 1"
+            :span="isPC ? 6 : 24"
+          >
             <DetailItem
               name="无税报价"
               :value="ContractDetail.carPrice"

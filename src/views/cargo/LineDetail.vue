@@ -356,7 +356,7 @@
 </template>
 
 <script lang="ts">
-import Dialog from '@/components/Dialog/index.vue'
+import Dialog from '@/components/SelfDialog/index.vue'
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { GetLineDetail, approvedLine, notApprovedLine } from '@/api/cargo'
