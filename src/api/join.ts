@@ -216,10 +216,9 @@ export const OrderExport = (params: any) =>
   })
 
 // GPS权限
-export const GetGPSRole = (params: any) =>
+export const GetGPSRoles = (params: any) =>
   request({
-    url: `/product/v1/product/product/system/setting`,
-    method: 'post',
-    responseType: 'blob',
-    data: params
+    url: `/base/v1/base/area/getDeliveryInfoByityCode`,
+    method: 'get',
+    params
   })
