@@ -3,7 +3,7 @@
     <SuggestContainer
       :tab="tab"
       :tags="tags"
-      :active-name="listQuery.state"
+      :active-name="listQuery.status"
       @handle-query="handleQuery"
     >
       <!-- 查询表单 -->
@@ -41,7 +41,7 @@
       <!--操作栏-->
       <TableHeader
         :tab="tab"
-        :active-name="listQuery.state"
+        :active-name="listQuery.status"
       >
         <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -50,7 +50,10 @@
           name="Transport_btn_creat"
           @click="creatTransport"
         >
-          创建运力
+          <i
+            class="el-icon-plus"
+          />
+          <span v-if="isPC">创建运力</span>
         </el-button>
 
         <el-dropdown
@@ -62,7 +65,10 @@
             type="primary"
             size="small"
           >
-            筛选
+            <i
+              class="el-icon-s-operation"
+            />
+            <span v-if="isPC">筛选</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-checkbox-group v-model="checkList">
@@ -86,7 +92,10 @@
           name="Transport_btn_change"
           @click="handleModifyManager"
         >
-          修改运营经理
+          <i
+            class="el-icon-edit"
+          />
+          <span v-if="isPC">修改运营经理</span>
         </el-button>
       </tableheader>
 
@@ -272,23 +281,27 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: 'null',
-        num: '0'
+        name: 'all',
+        num: '0',
+        id: 10
       },
       {
         label: '待上岗',
         name: '0',
-        num: '0'
+        num: '0',
+        id: 11
       },
       {
         label: '上岗',
         name: '1',
-        num: '0'
+        num: '0',
+        id: 12
       },
       {
         label: '停用',
         name: '2',
-        num: '0'
+        num: '0',
+        id: 13
       }
     ]
     private columns:any[] = [
@@ -368,7 +381,7 @@ export default class extends Vue {
     }
     private listQuery:IState = {
       gmId: '',
-      status: null,
+      status: 'all',
       workCity: null,
       carrierId: null,
       name: null,
@@ -388,7 +401,6 @@ export default class extends Vue {
       {
         type: 2,
         key: 'workCity',
-        // w: '130px',
         label: '工作城市',
         tagAttrs: {
           placeholder: '请选择工作城市'
@@ -398,7 +410,6 @@ export default class extends Vue {
       {
         type: 1,
         key: 'carrierId',
-        // w: '130px',
         label: '运力编号',
         tagAttrs: {
           placeholder: '请输入司机编号'
@@ -407,7 +418,6 @@ export default class extends Vue {
       {
         type: 1,
         key: 'name',
-        // w: '130px',
         label: '运力姓名',
         tagAttrs: {
           placeholder: '请输入姓名'
@@ -416,7 +426,6 @@ export default class extends Vue {
       {
         type: 1,
         key: 'phone',
-        // w: '130px',
         label: '运力手机号',
         tagAttrs: {
           placeholder: '请输入手机号',
@@ -426,7 +435,6 @@ export default class extends Vue {
       {
         type: 2,
         key: 'carType',
-        // w: '130px',
         label: '车型',
         tagAttrs: {
           placeholder: '请选择车型'
@@ -437,7 +445,6 @@ export default class extends Vue {
         type: 2,
         key: 'busiType',
         label: '业务线',
-        // w: '130px',
         tagAttrs: {
           placeholder: '业务线'
         },
@@ -464,7 +471,6 @@ export default class extends Vue {
       {
         type: 2,
         key: 'gmId',
-        // w: '130px',
         label: '运营经理',
         tagAttrs: {
           placeholder: '请选择运营经理'
@@ -492,7 +498,6 @@ export default class extends Vue {
       {
         type: 3,
         key: 'createDate',
-        // w: '130px',
         label: '创建时间',
         col: 12,
         tagAttrs: {
@@ -546,7 +551,7 @@ export default class extends Vue {
    */
     private handleQueryClick() {
       this.tags = []
-      let blackLists = ['state']
+      let blackLists = ['status']
       for (let key in this.listQuery) {
         if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
           let name = getLabel(this.formItem, this.listQuery, key)
@@ -565,7 +570,6 @@ export default class extends Vue {
    *重置
    */
     private handleResetClick() {
-      console.log(123)
       this.tags = []
       this.listQuery = {
         gmId: '',
@@ -886,10 +890,12 @@ export default class extends Vue {
     console.log(value, key, 455)
     if (key === 'time') {
       this.listQuery[key] = null
+    } else if (key === 'state') {
+      this.listQuery.status = value
     } else {
       this.listQuery[key] = value
     }
-    this.listQuery.status = this.listQuery.state
+
     this.getList(this.listQuery)
   }
 
@@ -903,7 +909,11 @@ export default class extends Vue {
     this.listQuery.startDate = this.listQuery.createDate[0]
     this.listQuery.endDate = this.listQuery.createDate[1] + 86399999
     this.listLoading = true
-    const { data } = await getCarrierInfoList(this.listQuery)
+    let params = { ...this.listQuery }
+    if (params.status === 'all') {
+      delete params.status
+    }
+    const { data } = await getCarrierInfoList(params)
     if (data.success) {
       this.tableData = data.data
       this.title = data.title

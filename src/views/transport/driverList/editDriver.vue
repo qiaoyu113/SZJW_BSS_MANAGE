@@ -152,9 +152,6 @@ export default class extends Vue {
     ],
     email: [
       { required: false, type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
-    ],
-    remark: [
-      { required: true, message: '请输入备注', trigger: ['blur'] }
     ]
   }
 
