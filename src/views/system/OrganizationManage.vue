@@ -165,6 +165,7 @@
               v-model="dialogForm.name"
               placeholder="请输入2-10位中文"
               maxlength="10"
+              clearable
             />
           </el-form-item>
         </template>
@@ -199,6 +200,7 @@
               v-model="dialogForm.name"
               placeholder="请输入2-10位中文"
               maxlength="10"
+              clearable
             />
           </el-form-item>
         </template>

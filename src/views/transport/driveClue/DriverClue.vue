@@ -244,7 +244,7 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import ClueDistribution from './components/clueDistribution.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
-import { getLabel } from '@/utils/index.ts'
+import { getLabel, phoneReg } from '@/utils/index.ts'
 import { delayTime } from '@/settings'
 import { GetOpenCityData, GetDictionaryList, GetManagerLists } from '@/api/common'
 interface IState {
@@ -366,7 +366,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入姓名',
-        maxlength: 10
+        maxlength: 10,
+        clearable: true
       },
       label: '姓名',
       key: 'name'
@@ -375,7 +376,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入电话',
-        maxlength: 11
+        maxlength: 11,
+        clearable: true
       },
       label: '电话',
       key: 'phone'
@@ -442,7 +444,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入编号',
-        maxlength: 14
+        maxlength: 14,
+        clearable: true
       },
       label: '编号',
       key: 'clueId'
@@ -597,6 +600,9 @@ export default class extends Vue {
    */
   async getList() {
     try {
+      if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
+        return this.$message.error('请输入正确的手机号')
+      }
       this.listLoading = true
       let params:any = {
         limit: this.page.limit,
@@ -796,7 +802,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import '@/styles/element-variables.scss';
   .DriverClue {
-    padding: 20px;
+    padding: 15px;
     .round {
       display: inline-block;
       padding: 1px 8px;
@@ -834,14 +840,20 @@ export default class extends Vue {
     color:#999;
   }
 
-  .DriverClue >>> .el-collapse-item__wrap {
-    padding: 20px 30px 0 0;
-    box-sizing: border-box;
-    position: absolute;
-    z-index: 1000;
-    background: #fff;
-    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
-    right: 15px;
-    left: 15px;
+  @media screen and (min-width: 700px) {
+    .DriverClue >>> .el-collapse-item__wrap {
+      padding: 20px 30px 0px 0px;
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 1000;
+      background: #fff;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+      right: 15px;
+      left: 15px;
+    }
+    .DriverClue >>> .el-collapse-item__content {
+      padding-bottom: 0px;
+    }
   }
+
 </style>
