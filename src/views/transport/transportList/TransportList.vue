@@ -3,7 +3,7 @@
     <SuggestContainer
       :tab="tab"
       :tags="tags"
-      :active-name="listQuery.state"
+      :active-name="listQuery.status"
       @handle-query="handleQuery"
     >
       <!-- 查询表单 -->
@@ -41,7 +41,7 @@
       <!--操作栏-->
       <TableHeader
         :tab="tab"
-        :active-name="listQuery.state"
+        :active-name="listQuery.status"
       >
         <el-button
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -281,23 +281,27 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: 'null',
-        num: '0'
+        name: '',
+        num: '',
+        id: 1
       },
       {
         label: '待上岗',
         name: '0',
-        num: '0'
+        num: '0',
+        id: 2
       },
       {
         label: '上岗',
         name: '1',
-        num: '0'
+        num: '0',
+        id: 3
       },
       {
         label: '停用',
         name: '2',
-        num: '0'
+        num: '0',
+        id: 4
       }
     ]
     private columns:any[] = [
@@ -377,7 +381,7 @@ export default class extends Vue {
     }
     private listQuery:IState = {
       gmId: '',
-      status: null,
+      status: '',
       workCity: null,
       carrierId: null,
       name: null,
@@ -547,7 +551,7 @@ export default class extends Vue {
    */
     private handleQueryClick() {
       this.tags = []
-      let blackLists = ['state']
+      let blackLists = ['status']
       for (let key in this.listQuery) {
         if (this.listQuery[key] && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
           let name = getLabel(this.formItem, this.listQuery, key)
@@ -566,7 +570,6 @@ export default class extends Vue {
    *重置
    */
     private handleResetClick() {
-      console.log(123)
       this.tags = []
       this.listQuery = {
         gmId: '',
@@ -887,10 +890,12 @@ export default class extends Vue {
     console.log(value, key, 455)
     if (key === 'time') {
       this.listQuery[key] = null
+    } else if (key === 'state') {
+      this.listQuery.status = value
     } else {
       this.listQuery[key] = value
     }
-    this.listQuery.status = this.listQuery.state
+
     this.getList(this.listQuery)
   }
 

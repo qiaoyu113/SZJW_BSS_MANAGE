@@ -303,7 +303,7 @@
         </el-button> -->
       </div>
 
-      <Dialog
+      <SelfDialog
         :visible.sync="showDio"
         :title="`取消提交`"
         :center="true"
@@ -315,13 +315,13 @@
             线路未提交，是否放弃编辑？
           </div>
         </div>
-      </Dialog>
+      </SelfDialog>
     </el-form>
   </div>
 </template>
 <script lang="ts">
 import { Form as ElForm, Input } from 'element-ui'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import { GetDictionaryList, GetCityByCode, detailCity, GetManagerLists } from '@/api/common'
@@ -338,7 +338,7 @@ import { registerTheme } from 'echarts'
   components: {
     SelfItem,
     SectionContainer,
-    Dialog
+    SelfDialog
   }
 })
 export default class CreatLine extends Vue {

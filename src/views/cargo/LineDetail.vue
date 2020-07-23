@@ -330,7 +330,7 @@
       </el-button>
     </div>
 
-    <Dialog
+    <SelfDialog
       :visible.sync="auditBack"
       :title="`驳回原因`"
       :center="true"
@@ -351,12 +351,12 @@
           />
         </div>
       </div>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
 <script lang="ts">
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
 import { GetLineDetail, approvedLine, notApprovedLine } from '@/api/cargo'
@@ -371,7 +371,7 @@ import '@/styles/common.scss'
     components: {
       DetailItem,
       SectionContainer,
-      Dialog
+      SelfDialog
     }
   })
 

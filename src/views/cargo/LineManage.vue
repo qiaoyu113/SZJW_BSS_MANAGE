@@ -334,7 +334,7 @@
       </div>
     </div>
     <!-- 上架 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showPutDio"
       :title="`上架调整`"
       :center="true"
@@ -369,10 +369,10 @@
           目前已上车数量：{{ rowInfo.mountGuardNo }}辆
         </p>
       </div>
-    </Dialog>
+    </SelfDialog>
 
     <!-- 下架 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showGetDio"
       :title="`下架`"
       :center="true"
@@ -392,7 +392,7 @@
           </p>
         </div>
       </div>
-    </Dialog>
+    </SelfDialog>
 
     <PitchBox
       :drawer.sync="drawer"
@@ -410,7 +410,7 @@
 <script lang="ts">
 import { delayTime } from '@/settings'
 import { getLabel } from '@/utils/index.ts'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages, parseTime } from '@/utils/index'
@@ -442,7 +442,7 @@ import '@/styles/common.scss'
       BettwenTitle,
       SelfTable,
       SelfForm,
-      Dialog,
+      SelfDialog,
       PitchBox
     }
   })
