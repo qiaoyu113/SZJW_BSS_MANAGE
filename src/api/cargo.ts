@@ -305,9 +305,9 @@ export const batchApproved = (data: any) =>
   })
 
 // 线路批量不审核通过
-export const batchNoApproved = (data: any) =>
+export const batchNoApproved = (data: any, bodyParams:any) =>
   request({
-    url: `${ptrfix}/v1/line/batchNotApproved`,
+    url: `${ptrfix}/v1/line/batchNotApproved?reason${data.reason}`,
     method: 'post',
-    data
+    data: bodyParams
   })

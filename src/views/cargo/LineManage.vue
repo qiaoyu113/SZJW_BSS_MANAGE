@@ -9,6 +9,7 @@
     >
       <self-form
         ref="lineForm"
+        class="lineForm"
         :list-query="listQuery"
         :form-item="formItem"
         label-width="100px"
@@ -311,7 +312,6 @@
             type="number"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
-            @blur="checkMountGuardNo"
           />
         </div>
         <p class="dioBox">
@@ -1209,27 +1209,13 @@ export default class LineManage extends Vue {
   }
 
   // 上架操作
-  private checkMountGuardNo(val: string) {
-    if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
-      this.$message.error('可上车数要大于或等于已上岗标书数量')
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
-    }
-    // if (this.diaUpcarNum === '') {
-    //   this.diaUpcarNum = this.rowInfo.mountGuardNo
-    //   this.$message.error('可上车数不能为空')
-    // }
-  }
-
   private async putConfirm(done: any) {
-    if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
+    if (Number(this.diaUpcarNum) < Number(this.rowInfo.mountGuardNo)) {
       this.$message.error('可上车数要大于或等于已上岗标书数量')
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
       return
     }
     if (this.diaUpcarNum === '') {
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
-      // this.$message.error('可上车数不能为空')
-      // return
+      this.diaUpcarNum = this.rowInfo.deployNo
     }
     if (Number(this.diaUpcarNum) >= 11 || Number(this.diaUpcarNum) <= 0) {
       this.$message.error('可上车数只能在0至11之间')
@@ -1361,15 +1347,21 @@ export default class LineManage extends Vue {
     let { data } = await batchApproved(lineArray)
     if (data.success) {
       this.$message.success('批量审核成功')
+      setTimeout(() => {
+        this.getList()
+      }, delayTime)
     } else {
       this.$message.error(data.errorMsg)
     }
   }
 
-  private async noApproved(params:any) {
-    let { data } = await batchNoApproved(params)
+  private async noApproved(params:any, bodyParams:any) {
+    let { data } = await batchNoApproved(params, bodyParams)
     if (data.success) {
       this.$message.success('批量审核不通过成功')
+      setTimeout(() => {
+        this.getList()
+      }, delayTime)
     } else {
       this.$message.error(data.errorMsg)
     }
@@ -1398,11 +1390,11 @@ export default class LineManage extends Vue {
     let lineArray = this.rows.map((ele:any) => {
       return ele.lineId
     })
+
     let params = {
-      reason: this.reason,
-      lineIds: lineArray
+      reason: this.reason
     }
-    done(this.noApproved(params))
+    done(this.noApproved(params, lineArray))
   }
 
   /**
@@ -1575,7 +1567,7 @@ export default class LineManage extends Vue {
 }
 </style>
 <style scoped>
-.LineManage >>> .el-input__inner{
+.LineManage .lineForm >>> .timeSelect .el-input__inner{
   width: 90%;
 }
 .LineManage >>> .el-collapse-item__wrap {

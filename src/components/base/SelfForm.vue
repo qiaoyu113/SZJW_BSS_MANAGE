@@ -137,20 +137,22 @@
           >
             <el-time-select
               v-model="listQuery[item.key].jobStartDate"
+              class="timeSelect"
               placeholder="起始时间"
               :picker-options="{
-                start: '08:30',
+                start: '00:00',
                 step: '00:15',
-                end: '18:30'
+                end: '23:45'
               }"
             />
             <el-time-select
               v-model="listQuery[item.key].jobEndDate"
+              class="timeSelect"
               placeholder="结束时间"
               :picker-options="{
-                start: '08:30',
+                start: '00:00',
                 step: '00:15',
-                end: '18:30',
+                end: '23:45',
                 minTime: listQuery[item.key].jobStartDate
               }"
             />

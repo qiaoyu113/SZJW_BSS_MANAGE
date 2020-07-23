@@ -152,7 +152,13 @@
               v-for="(item,idx) in Number(ruleForm['dayNo'])"
               :key="item"
               :rule-form="ruleForm"
-              :params="{prop: `lineDeliveryInfoFORMS${idx}`,type: 7,label: '预计工作时间',placeholder: '请选择时间'}"
+              :params="{prop: `lineDeliveryInfoFORMS${idx}`,type: 7,label: '预计工作时间',placeholder: '请选择时间',tagAttrs: {
+                'picker-options': {
+                  start: '00:00',
+                  step: '00:15',
+                  end: '23:45'
+                }
+              }}"
             />
           </div>
 

@@ -886,6 +886,10 @@ export default class extends Vue {
     if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
       return this.$message.error('请输入正确的手机号')
     }
+    if (this.listQuery.driverPhone && !phoneReg.test(this.listQuery.driverPhone)) {
+      return this.$message.error('请输入正确的手机号')
+    }
+
     this.listQuery.page = this.page.page
     this.listQuery.limit = this.page.limit
     this.listQuery.startDate = this.listQuery.createDate[0]
