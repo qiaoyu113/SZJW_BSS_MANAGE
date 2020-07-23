@@ -126,7 +126,7 @@
       :url-list="imageList"
     />
 
-    <SelfDialog
+    <Dialog
       :visible.sync="showDio"
       :title="`取消上传`"
       :center="true"
@@ -139,13 +139,13 @@
           v-text="`是否确认取消上传线路照片，点击<确认>，将取消本次上传？`"
         />
       </div>
-    </SelfDialog>
+    </Dialog>
   </div>
 </template>
 <script lang="ts">
 // 引入element-ui 大图预览的隐藏组件
 import ElImageViewer from 'element-ui/packages/image/src/image-viewer.vue'
-import SelfDialog from '@/components/SelfDialog/index.vue'
+import Dialog from '@/components/Dialog/index.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -154,7 +154,7 @@ import { UserModule } from '@/store/modules/user'
 @Component({
   name: 'TakePicture',
   components: {
-    SelfDialog,
+    Dialog,
     ElImageViewer
   }
 })
