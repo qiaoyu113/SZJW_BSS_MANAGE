@@ -11,7 +11,8 @@ export interface ISettingsState {
   showTagsView: boolean
   showSidebarLogo: boolean
   sidebarTextTheme: boolean
-  isPC: boolean
+  isPC: boolean,
+  tableHeight: number
 }
 
 @Module({ dynamic: true, store, name: 'settings' })
@@ -24,6 +25,7 @@ class Settings extends VuexModule implements ISettingsState {
   public showSidebarLogo = defaultSettings.showSidebarLogo
   public sidebarTextTheme = defaultSettings.sidebarTextTheme
   public isPC = defaultSettings.isPC
+  public tableHeight = defaultSettings.tableHeight
 
   @Mutation
   private CHANGE_SETTING(payload: { key: string, value: any }) {
@@ -45,6 +47,11 @@ class Settings extends VuexModule implements ISettingsState {
 
   @Action
   public ChangeIsPC(payload: { key: string, value: any}) {
+    this.CHANGE_SETTING(payload)
+  }
+
+  @Action
+  public ChangeTableHeight(payload: { key: string, value: any}) {
     this.CHANGE_SETTING(payload)
   }
 }
