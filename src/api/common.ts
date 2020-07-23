@@ -14,11 +14,10 @@ export const GetDictionaryList = (data: any) =>
     data
   })
 // 获取加盟经理列表
-export const GetJoinManageList = (data: any) =>
+export const GetJoinManageList = (params: any) =>
   request({
-    url: `${baseURL}/v1/base/user/getLowerStaffInfo`,
-    method: 'post',
-    data
+    url: `${baseURL}/v1/base/user/getCurrUserAuthList?url=${params.uri}`,
+    method: 'post'
   })
 
 // 地区

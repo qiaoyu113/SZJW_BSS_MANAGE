@@ -39,9 +39,9 @@ export default class extends Vue {
   }
 
   private handleTab() {
-    if (this.activeName && this.activeName !== '') {
-      this.active = this.activeName
-    }
+    // if (this.activeName && this.activeName !== '') {
+    this.active = this.activeName
+    // }
     for (let index = 0; index < this.tab.length; index++) {
       const element = this.tab[index].name
       if (element.toString() === this.active.toString()) this.tabName = this.tab[index].label

@@ -234,7 +234,9 @@ export default class extends Vue {
   }
   // 获取加盟经理
   private async getJoinManageList() {
-    const { data } = await GetJoinManageList({})
+    const { data } = await GetJoinManageList({
+      uri: '/v1/order/deliever/getDelieverList'
+    })
     if (data.success) {
       this.optionsJoin = data.data
     } else {

@@ -147,7 +147,7 @@
             >
               <el-input
                 v-model="ruleForm.incomeGuarantee"
-                v-only-number="{min: 0, precision: 2, max: 999999}"
+                v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入收入保障"
                 maxlength="10"
                 type="number"
@@ -161,7 +161,7 @@
             >
               <el-input
                 v-model="ruleForm.rake"
-                v-only-number="{min: 0, max: 100}"
+                v-only-number="{min: 0, max: 100, precision: 1}"
                 placeholder="请输入抽佣比例"
                 type="number"
               />
@@ -174,8 +174,9 @@
             >
               <el-input
                 v-model="ruleForm.goodsAmount"
-                v-only-number="{min: 0, precision: 2, max: 999999}"
+                v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入商品金额"
+                controls-position="right"
                 type="number"
               />
             </el-form-item>
@@ -200,6 +201,7 @@
               <el-date-picker
                 v-model="ruleForm.inspectionTime"
                 type="date"
+                value-format="timestamp"
                 placeholder="请输入年检有效期"
               />
             </el-form-item>
@@ -215,6 +217,7 @@
               <el-date-picker
                 v-model="ruleForm.insuranceTime"
                 type="date"
+                value-format="timestamp"
                 placeholder="请输入保险有效期"
               />
             </el-form-item>
@@ -398,7 +401,7 @@
             <el-form-item :label="`剩余添加金额： ¥` + remain + ``">
               <el-input
                 v-model="payNumber"
-                v-only-number="{min: 0, precision: 2, max: 999999}"
+                v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入支付金额"
                 maxlength="10"
               />
@@ -419,7 +422,7 @@
         <el-row>
           <el-col :span="isPC ? 24 : 24">
             <p class="hint_title">
-              支付记录 <span>(已支付金额： ¥{{ readyPay }}，未支付: ¥ {{ notPay }}</span>
+              支付记录 <span>(已支付金额： ¥{{ readyPay }}，未支付: ¥ {{ notPay }}）</span>
             </p>
             <el-form-item :label="` `">
               <el-table
@@ -531,7 +534,7 @@
             >
               <el-date-picker
                 v-model="payForm.payDate"
-                type="date"
+                type="datetime"
                 value-format="timestamp"
                 placeholder="请选择支付时间"
               />
@@ -566,6 +569,7 @@
                 :show-file-list="false"
                 action="/api/core/v1/upload/uploadOSS/img/true/-1"
                 :before-upload="beforeAvatarUpload"
+                accept="image/png,image/jpg,image/jpeg"
                 :on-change="handleChange"
                 :auto-upload="false"
                 :data="ruleForm"
@@ -591,7 +595,7 @@
               <el-input
                 v-model="payForm.transactionId"
                 placeholder="请输入流水编号"
-                maxlength="10"
+                maxlength="50"
               />
             </el-form-item>
           </el-col>
@@ -717,6 +721,7 @@ export default class CreatLine extends Vue {
   private showMessage:boolean = false
   private showMessageBill:boolean = false
   private fullscreenLoading: Boolean = false
+  private editors: Boolean = false
   private id: any = ''
   private ruleForm:any = {
     'operateFlag': 'creat',
@@ -798,7 +803,7 @@ export default class CreatLine extends Vue {
       { required: true, message: '请输入商品金额', trigger: 'change' }
     ],
     inspectionTime: [
-      { required: true, message: '请选择年检有效期', trigger: 'change' }
+      { required: true, message: '请选择年检有效期', trigger: 'blur' }
     ],
     insuranceTime: [
       { required: true, message: '请选择保险有效期', trigger: 'change' }
@@ -810,7 +815,7 @@ export default class CreatLine extends Vue {
       { required: true, message: '请选择购车公司', trigger: 'change' }
     ],
     supplier: [
-      { required: true, message: '请选择供应商', trigger: 'change' }
+      { required: true, message: '请选择供应商', trigger: 'blur' }
     ],
     cooperationCar: [
       { required: true, message: '请选择合作车型', trigger: 'change' }
@@ -880,12 +885,31 @@ export default class CreatLine extends Vue {
   }
 
   @Watch('ruleForm.cooperationModel', { deep: true })
-  private changecooperationModel(value:any) {
+  private changecooperationModel(value:any, oldValue:any) {
     if (value === '1') {
+      if (!this.id) {
+        this.ruleForm.supplier = ''
+        this.ruleForm.cooperationCar = ''
+      } else {
+        if (this.editors) {
+          this.ruleForm.supplier = ''
+          this.ruleForm.cooperationCar = ''
+        }
+        this.editors = true
+      }
       this.getCompany()
     } else if (value === '2') {
+      if (!this.id) {
+        this.ruleForm.supplier = ''
+        this.ruleForm.cooperationCar = ''
+      } else {
+        if (this.editors) {
+          this.ruleForm.supplier = ''
+          this.ruleForm.cooperationCar = ''
+        }
+        this.editors = true
+      }
       this.getCompany()
-      this.ruleForm.cooperationCar = ''
     } else {
       this.ruleForm.cooperationCar = ''
     }
@@ -900,7 +924,8 @@ export default class CreatLine extends Vue {
   }
 
   @Watch('ruleForm.supplier', { deep: true })
-  private changeleaseCarCompany(value:any) {
+  private changeleaseCarCompany(value:any, oldValue:any) {
+    // console.log('supplier', value, oldValue)
     // this.ruleForm.cooperationCar = ''
     if (value) {
       this.getCar()
@@ -908,10 +933,14 @@ export default class CreatLine extends Vue {
   }
 
   @Watch('ruleForm.cooperationCar', { deep: true })
-  private changeCooperationCar(value:any) {
-    if (this.ruleForm.cooperationModel === '1') {
-      this.getModelByTypeAndCityAndSupplierAndCarType()
-      this.getPrice()
+  private changeCooperationCar(value:any, oldValue:any) {
+    // console.log('cooperationCar', value, oldValue)
+    if (this.ruleForm.cooperationModel === '1' || this.ruleForm.cooperationModel === '2') {
+      if (value) {
+        this.ruleForm.carModel = ''
+        this.getModelByTypeAndCityAndSupplierAndCarType()
+        this.getPrice()
+      }
     }
   }
 
@@ -1022,6 +1051,7 @@ export default class CreatLine extends Vue {
       this.ruleForm = Object.assign(this.ruleForm, datas)
       this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
       this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
+      console.log(this.ruleForm.cooperationCar)
       this.orderPrice = this.ruleForm.goodsAmount
       let notReadPay = 0
       this.ruleForm.orderPayRecordInfoFORMList.forEach((i: any) => {
@@ -1088,14 +1118,20 @@ export default class CreatLine extends Vue {
     this.orderIndex = index
     if (!res.payType) res.payType = ''
     if (!res.payImageUrl) res.payImageUrl = '0'
+    if (!res.payDate) res.payDate = new Date().getTime()
     // if (res.payImageUrl === '0') res.payImageUrl = ''
     this.payForm = Object.assign(this.payForm, res)
+
     this.showMessageBill = true
   }
   private beforeAvatarUpload(file:any) {
     const isImage = file.type.includes('image')
+    const is5M = file.size / 1024 / 1024 < 5
     if (!isImage) {
       this.$message.error('上传图片格式不正确')
+    }
+    if (!is5M) {
+      this.$message.error('图片大小不可超过5MB')
     }
     return isImage
   }

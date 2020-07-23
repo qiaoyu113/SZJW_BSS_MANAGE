@@ -100,9 +100,7 @@
                     label-width="150px"
                     label=""
                   >
-                    <el-button
-                      @click="showDio = true"
-                    >
+                    <el-button @click="showDio = true">
                       取消
                     </el-button>
                     <el-button
@@ -159,9 +157,9 @@ import { UserModule } from '@/store/modules/user'
   }
 })
 export default class TakePicture extends Vue {
-  private isdetail:boolean = false
-  private info:any = {}
-  private postForm:any = {
+  private isdetail: boolean = false;
+  private info: any = {};
+  private postForm: any = {
     id: '',
     lineId: '',
     lineName: '',
@@ -172,8 +170,8 @@ export default class TakePicture extends Vue {
     cargoPlacementUrl: '',
     loadingSituationUrl: '',
     distributionSiteUrl: ''
-  }
-  private formList:any = [
+  };
+  private formList: any = [
     {
       label: '库房装货位置:',
       key: 'warehouseLoadingLocationUrl',
@@ -194,13 +192,13 @@ export default class TakePicture extends Vue {
       key: 'distributionSiteUrl',
       imageList: []
     }
-  ]
-  private showDio:boolean = false
-  private isloading:boolean = false
-  private getImgUrls:string = this.getImgUrl()
-  private imageList:any[] = []
-  private showViewer:boolean = false
-  private myHeaders:any = { Authorization: UserModule.token }
+  ];
+  private showDio: boolean = false;
+  private isloading: boolean = false;
+  private getImgUrls: string = this.getImgUrl();
+  private imageList: any[] = [];
+  private showViewer: boolean = false;
+  private myHeaders: any = { Authorization: UserModule.token };
 
   mounted() {
     this.postForm.lineId = this.$route.query.lineId || ''
@@ -219,7 +217,8 @@ export default class TakePicture extends Vue {
   private getImgUrl() {
     let url
     if (window.location.host === 'http://192.168.0.134/:9528') {
-      url = 'http://szjw-bss-web.m1.yunniao.cn/api/core/v1/upload/uploadOSS/lineImg/true/0'
+      url =
+        'http://szjw-bss-web.m1.yunniao.cn/api/core/v1/upload/uploadOSS/lineImg/true/0'
     } else {
       url = '/api/core/v1/upload/uploadOSS/lineImg/true/0'
     }
@@ -228,8 +227,13 @@ export default class TakePicture extends Vue {
   /**
    *上传前的校验
    */
-  private beforeAvatarUpload(file:any) {
-    const isJPG = ['application/x-bmp', 'image/jpeg', 'image/png', 'application/x-png'].includes(file.type)
+  private beforeAvatarUpload(file: any) {
+    const isJPG = [
+      'application/x-bmp',
+      'image/jpeg',
+      'image/png',
+      'application/x-png'
+    ].includes(file.type)
     const isLt7M = file.size / 1024 / 1024 < 7
 
     if (!isJPG) {
@@ -243,7 +247,7 @@ export default class TakePicture extends Vue {
   /**
    * 预览
    */
-  private handlePictureCardPreview(file:any) {
+  private handlePictureCardPreview(file: any) {
     this.imageList = [file.url]
     if (this.imageList.length > 0) {
       this.showViewer = true
@@ -252,9 +256,9 @@ export default class TakePicture extends Vue {
   /**
    * 删除
    */
-  private handleRemove(item:any) {
+  private handleRemove(item: any) {
     let that = this
-    return (file:any, fileList:any[]) => {
+    return (file: any, fileList: any[]) => {
       that.postForm[item.key] = ''
       item.imageList = []
     }
@@ -262,9 +266,9 @@ export default class TakePicture extends Vue {
   /**
    * 上传成功
    */
-  private handleUpSuccess(item:any) {
+  private handleUpSuccess(item: any) {
     let that = this
-    return (res:any) => {
+    return (res: any) => {
       if (res.success) {
         that.postForm[item.key] = res.data.url
         item.imageList.push({ url: res.data.url, name: res.data.name })
@@ -292,7 +296,7 @@ export default class TakePicture extends Vue {
   private async onSubmit() {
     this.isloading = true
     try {
-      let params:any = {
+      let params: any = {
         cargoPlacementUrl: this.postForm.cargoPlacementUrl,
         distributionSiteUrl: this.postForm.distributionSiteUrl,
         loadingSituationUrl: this.postForm.loadingSituationUrl,
@@ -331,12 +335,14 @@ export default class TakePicture extends Vue {
       this.isloading = false
       if (res.success) {
         this.postForm = { ...this.postForm, ...res.data }
-        this.formList.forEach((item:any) => {
+        this.formList.forEach((item: any) => {
           if (res.data[item.key]) {
-            item.imageList = [{
-              name: item.key,
-              url: res.data[item.key]
-            }]
+            item.imageList = [
+              {
+                name: item.key,
+                url: res.data[item.key]
+              }
+            ]
           }
         })
       } else {
@@ -355,90 +361,89 @@ export default class TakePicture extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.TakePicture{
+.TakePicture {
   width: 100%;
   padding: 50px 100px;
   box-sizing: border-box;
-  p{
+  p {
     margin-bottom: 20px;
   }
-  .picName{
+  .picName {
     font-weight: bold;
     font-size: 18px;
     margin-right: 30px;
   }
-  .picName_value{
+  .picName_value {
     font-weight: bold;
     font-size: 16px;
   }
-  .picInfo span{
+  .picInfo span {
     margin-right: 20px;
     font-size: 18px;
   }
-  .el-image{
+  .el-image {
     width: 148px;
     height: 148px;
   }
-
 }
 </style>
 <style lang="scss" scoped>
 .TakePicture-m {
   width: 100%;
-  .infoLine{
-    p{
+  .infoLine {
+    p {
       font-size: 12px;
       padding: 0px 60px;
       box-sizing: border-box;
     }
   }
-      .hide{
+  .hide {
     .el-upload--picture-card {
       display: none;
     }
   }
-  .el-image{
+  .el-image {
     width: 90px;
     height: 90px;
   }
 }
 </style>
 <style scoped>
-    .hide >>> .el-upload--picture-card {
-      display: none;
-    }
-
-.TakePicture >>> .el-dialog{
-  width: 500px!important;
+.hide >>> .el-upload--picture-card {
+  display: none;
 }
-    .TakePicture >>>  .image-slot{
-    width: 100%;
-    height: 100%;
-    border:1px dashed #c0ccda ;
-    font-size: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: #f5f7fa;
-    color: #909399;
-    text-align: center;
-    }
-        .TakePicture-m >>>  .image-slot{
-    width: 100%;
-    height: 100%;
-    border:1px dashed #c0ccda ;
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: #f5f7fa;
-    color: #909399;
-    text-align: center;
-    }
+
+.TakePicture >>> .el-dialog {
+  width: 500px !important;
+}
+.TakePicture >>> .image-slot {
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #c0ccda;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: #f5f7fa;
+  color: #909399;
+  text-align: center;
+}
+.TakePicture-m >>> .image-slot {
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #c0ccda;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: #f5f7fa;
+  color: #909399;
+  text-align: center;
+}
 </style>

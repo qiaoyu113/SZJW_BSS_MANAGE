@@ -345,7 +345,7 @@
           prop="phone"
         />
         <el-table-column
-          label="线索数量"
+          label="货主数量"
           prop="nums"
         />
       </el-table>

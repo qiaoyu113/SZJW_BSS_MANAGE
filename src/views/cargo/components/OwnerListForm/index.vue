@@ -143,7 +143,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData, GetDictionaryList, GetJoinManageList } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists } from '@/api/common'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -305,7 +305,9 @@ export default class extends Vue {
 
   private async getLowerStaffInfo() {
     try {
-      let { data: res } = await GetJoinManageList({})
+      let { data: res } = await GetManagerLists({
+        url: '/v1/line/customer/queryLineCustomerList'
+      })
       if (res.success) {
         this.optionsSale = res.data
       } else {
