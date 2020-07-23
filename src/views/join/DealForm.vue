@@ -629,10 +629,10 @@ export default class extends Vue {
         { required: true, message: '请输入运营经理', trigger: 'change' }
       ],
       engineNo: [
-        { required: true, message: '请输入发动机发票号', trigger: 'change' }
+        { required: true, message: '请输入发动机号', trigger: 'change' }
       ],
       engineInvoiceNo: [
-        { required: true, message: '请输入发动机号', trigger: 'change' }
+        { required: true, message: '请输入发动机发票号', trigger: 'change' }
       ],
       deliveryTime: [
         { required: true, message: '请选择交车日期', trigger: 'change' }

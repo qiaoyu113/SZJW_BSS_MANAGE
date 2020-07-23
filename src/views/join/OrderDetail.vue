@@ -91,7 +91,7 @@
     >
       <el-row>
         <el-col
-          v-if="Number(orderDetail.cooperationModel) && Number(orderDetail.busiType) === 0"
+          v-if="Number(orderDetail.cooperationModel) === 3 && Number(orderDetail.busiType) === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -101,7 +101,7 @@
         </el-col>
 
         <el-col
-          v-if="Number(orderDetail.cooperationModel) && Number(orderDetail.busiType) === 0"
+          v-if="Number(orderDetail.cooperationModel) === 3 && Number(orderDetail.busiType) === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -284,7 +284,11 @@
             <!-- <DetailItem
                 name="订单确认时间"
                 :value="orderDetail.confirmTime | Timestamp"
-              />
+              >
+                <template>
+                  ({{ orderDetail.confirmName }})
+                </template>
+              </DetailItem>
             </el-col> -->
             <el-col
               v-if="orderDetail.status === 25"
