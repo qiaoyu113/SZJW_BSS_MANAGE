@@ -280,8 +280,8 @@ export const GetShowPhone = (params: any) =>
     params
   })
 
-  // 线路名称模糊查询
-  export const fuzzyCheckNames = (data: any) =>
+// 线路名称模糊查询
+export const fuzzyCheckNames = (data: any) =>
   request({
     url: `/line_center/v1/line/lineInfo/fuzzyCheckNames`,
     method: 'post',
