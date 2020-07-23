@@ -1043,14 +1043,23 @@ export default class extends Vue {
 }
 </style>
 <style scoped>
-  .TransportList >>> .el-collapse-item__wrap {
-    padding: 20px 30px 0 0;
-    box-sizing: border-box;
-    position: absolute;
-    z-index: 1000;
-    background: #fff;
-    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
-    right: 15px;
-    left: 15px;
+  @media screen  and (min-width:700px) {
+    .TransportList >>> .el-collapse-item__wrap {
+      padding: 20px 30px 0 0;
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 1000;
+      background: #fff;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+      right: 15px;
+      left: 15px;
+    }
+    .TransportList >>> .el-collapse-item__content {
+      padding-bottom: 0px;
+    }
+  }
+
+  .TransportList >>> .selfForm {
+    padding: 0px;
   }
 </style>

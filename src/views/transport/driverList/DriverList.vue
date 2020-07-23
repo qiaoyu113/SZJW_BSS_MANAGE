@@ -347,7 +347,8 @@ export default class extends Vue {
       label: '司机编号',
       tagAttrs: {
         placeholder: '请输入司机编号',
-        maxlength: 32
+        maxlength: 32,
+        clearable: true
       }
     },
     {
@@ -356,7 +357,8 @@ export default class extends Vue {
       label: '姓名',
       tagAttrs: {
         placeholder: '请输入姓名',
-        maxlength: 10
+        maxlength: 10,
+        clearable: true
       }
     },
     {
@@ -365,7 +367,8 @@ export default class extends Vue {
       label: '手机号',
       tagAttrs: {
         placeholder: '请输入手机号',
-        maxlength: 11
+        maxlength: 11,
+        clearable: true
       }
     },
     {
@@ -913,17 +916,20 @@ export default class extends Vue {
   .DriverList >>> .el-form-item__label {
     color:#999;
   }
-  .DriverList >>> .el-collapse-item__wrap {
-    position: absolute;
-    z-index: 1000;
-    background: #fff;
-    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
-    right: 15px;
-    left: 15px;
+  @media screen and (min-width: 700px) {
+    .DriverList >>> .el-collapse-item__wrap {
+      position: absolute;
+      z-index: 1000;
+      background: #fff;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+      right: 15px;
+      left: 15px;
+    }
+    .DriverList >>> .el-collapse-item__content {
+      padding-bottom: 0px;
+    }
   }
-  .DriverList >>> .el-collapse-item__content {
-    padding-bottom: 0px;
-  }
+
 </style>
 
 <style>

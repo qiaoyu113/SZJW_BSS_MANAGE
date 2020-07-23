@@ -80,7 +80,8 @@ export default class extends Vue {
         type: 'textarea',
         rows: 2,
         maxlength: 32,
-        'show-word-limit': true
+        'show-word-limit': true,
+        clearable: true
       }
     },
     {
@@ -89,7 +90,8 @@ export default class extends Vue {
       label: '司机年龄:',
       tagAttrs: {
         placeholder: '请输入0-60之间的数字',
-        type: 'number'
+        type: 'number',
+        clearable: true
       }
     },
     {
@@ -126,7 +128,8 @@ export default class extends Vue {
         type: 'textarea',
         rows: 2,
         maxlength: 32,
-        'show-word-limit': true
+        'show-word-limit': true,
+        clearable: true
       }
     },
     {
@@ -175,7 +178,8 @@ export default class extends Vue {
       w: '160px',
       tagAttrs: {
         placeholder: '原收入(去油)(元/月)(请输入0-25000之间的数字)',
-        type: 'number'
+        type: 'number',
+        clearable: true
       }
     },
     {
@@ -185,7 +189,8 @@ export default class extends Vue {
       w: '170px',
       tagAttrs: {
         placeholder: '期望收入（去油）（元/月） (请输入3000-25000之间的数字)',
-        type: 'number'
+        type: 'number',
+        clearable: true
       }
     },
     {
@@ -195,7 +200,8 @@ export default class extends Vue {
       w: '120px',
       tagAttrs: {
         placeholder: '从业时间（月） (请输入0-500之间的数字)',
-        type: 'number'
+        type: 'number',
+        clearable: true
       }
     },
     {
@@ -205,7 +211,8 @@ export default class extends Vue {
       w: '130px',
       tagAttrs: {
         placeholder: '零散活占比（%） (请输入0-100之间的数字)',
-        type: 'number'
+        type: 'number',
+        clearable: true
       }
     },
     {

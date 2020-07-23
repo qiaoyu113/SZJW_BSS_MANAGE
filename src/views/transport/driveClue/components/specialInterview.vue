@@ -109,7 +109,8 @@ export default class extends Vue {
           type: 'textarea',
           rows: 2,
           maxlength: 30,
-          'show-word-limit': true
+          'show-word-limit': true,
+          clearable: true
         }
       },
       {
@@ -118,7 +119,8 @@ export default class extends Vue {
         label: '重代理姓名:',
         tagAttrs: {
           placeholder: '重代理姓名',
-          maxlength: 10
+          maxlength: 10,
+          clearable: true
         }
       },
       {
@@ -127,7 +129,8 @@ export default class extends Vue {
         label: '年龄:',
         tagAttrs: {
           placeholder: '请输入0-60之间的数字',
-          type: 'number'
+          type: 'number',
+          clearable: true
         }
       },
       {
@@ -155,7 +158,8 @@ export default class extends Vue {
           type: 'textarea',
           rows: 2,
           maxlength: 32,
-          'show-word-limit': true
+          'show-word-limit': true,
+          clearable: true
         }
       },
       {
@@ -184,7 +188,8 @@ export default class extends Vue {
           type: 'textarea',
           rows: 2,
           maxlength: 32,
-          'show-word-limit': true
+          'show-word-limit': true,
+          clearable: true
         }
       },
       {
@@ -234,7 +239,8 @@ export default class extends Vue {
         w: '260px',
         tagAttrs: {
           type: 'number',
-          placeholder: '请输入3000-25000之间的数字'
+          placeholder: '请输入3000-25000之间的数字',
+          clearable: true
         }
       },
       {
@@ -277,7 +283,8 @@ export default class extends Vue {
           type: 'textarea',
           rows: 2,
           maxlength: 32,
-          'show-word-limit': true
+          'show-word-limit': true,
+          clearable: true
         }
       },
       {
@@ -320,7 +327,8 @@ export default class extends Vue {
         w: '150px',
         tagAttrs: {
           placeholder: '请输入0-500之间的数字',
-          type: 'number'
+          type: 'number',
+          clearable: true
         }
       },
       {
@@ -330,7 +338,8 @@ export default class extends Vue {
         w: '160px',
         tagAttrs: {
           placeholder: '请输入0-730之间的数字',
-          type: 'number'
+          type: 'number',
+          clearable: true
         }
       },
       {
@@ -450,7 +459,8 @@ export default class extends Vue {
           placeholder: '请填写最多100个字,其他个性化要求，如没有填写无',
           type: 'textarea',
           maxlength: 100,
-          'show-word-limit': true
+          'show-word-limit': true,
+          clearable: true
         }
       },
       {

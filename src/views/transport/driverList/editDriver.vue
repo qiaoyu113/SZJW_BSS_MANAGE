@@ -73,7 +73,8 @@ export default class extends Vue {
       label: '姓名:',
       tagAttrs: {
         placeholder: '请输入姓名',
-        maxlength: 10
+        maxlength: 10,
+        clearable: true
       }
     },
     {
@@ -82,7 +83,8 @@ export default class extends Vue {
       label: '联系方式:',
       tagAttrs: {
         placeholder: '请输入联系方式',
-        maxlength: 11
+        maxlength: 11,
+        clearable: true
       }
     },
     {
@@ -96,7 +98,8 @@ export default class extends Vue {
       label: '身份证号:',
       tagAttrs: {
         placeholder: '请输入身份证号',
-        maxlength: 18
+        maxlength: 18,
+        clearable: true
       }
     },
     {
@@ -105,7 +108,8 @@ export default class extends Vue {
       label: '电子邮箱:',
       tagAttrs: {
         placeholder: '请输入电子邮箱',
-        maxlength: 20
+        maxlength: 20,
+        clearable: true
       }
     },
     {
@@ -118,7 +122,8 @@ export default class extends Vue {
         maxlength: 100,
         type: 'textarea',
         'show-word-limit': true,
-        rows: 3
+        rows: 3,
+        clearable: true
       }
     },
     {
