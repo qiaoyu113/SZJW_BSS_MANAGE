@@ -173,7 +173,7 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入司机姓名或手机号"
+                placeholder="请输入运营经理"
                 @change="checkManage"
               >
                 <el-option
@@ -392,6 +392,7 @@
       </SectionContainer>
 
       <SectionContainer
+        v-if="gpsShow"
         title="GPS交付"
         :md="true"
       >
@@ -460,7 +461,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId } from '@/api/join'
+import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId, GetGPSRoles } from '@/api/join'
 import { GetJoinManageList, GetDictionaryList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -481,6 +482,7 @@ export default class extends Vue {
     private fullscreenLoading: Boolean = false
     private tabVal: any = '1'
     private loading: any = false
+    private gpsShow: any = false
     private managerList: any[] = []
     private gpsSupplier: any[] = []
     private ContractDetail: any = {
@@ -632,7 +634,7 @@ export default class extends Vue {
         { required: true, message: '请输入发动机号', trigger: 'change' }
       ],
       engineInvoiceNo: [
-        { required: true, message: '请输入发动机号', trigger: 'change' }
+        { required: true, message: '请输入发动机发票号', trigger: 'change' }
       ],
       deliveryTime: [
         { required: true, message: '请选择交车日期', trigger: 'change' }
@@ -668,7 +670,7 @@ export default class extends Vue {
         { required: true, message: '请输入设备ID号', trigger: 'change' }
       ],
       gpsSimNo: [
-        { required: true, message: '请输入gps', trigger: 'change' }
+        { required: true, message: '请输入SIM号', trigger: 'change' }
       ]
     }
 
@@ -689,6 +691,16 @@ export default class extends Vue {
       return SettingsModule.isPC
     }
 
+    // 判断GPS权限
+    private async getGPSRole() {
+      const { data } = await GetGPSRoles({ cityCode: this.ContractDetail.city })
+      if (data.success) {
+        this.gpsShow = data.data
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+
     // 请求详情
     private async getDetail(value: any) {
       const { data } = await SelectOrderInfo({ orderId: value })
@@ -697,6 +709,7 @@ export default class extends Vue {
         if (data.data.cooperationModel !== 1) {
           this.ruleForm.plateNo = this.ContractDetail.plateNo
         }
+        this.getGPSRole()
       } else {
         this.$message.error(data)
       }

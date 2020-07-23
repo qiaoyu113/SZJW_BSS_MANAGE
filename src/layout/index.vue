@@ -70,6 +70,19 @@ export default class extends mixins(ResizeMixin) {
   private handleClickOutside() {
     AppModule.CloseSideBar(false)
   }
+
+  mounted() {
+    // ios无法呼键盘解决方案
+    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+      item.children[0].children[0].removeAttribute('readOnly')
+      // item.children[0].children[0].onblur = function() {
+      //   let _this = this
+      //   setTimeout(() => {
+      //     _this.removeAttribute('readOnly')
+      //   }, 200)
+      // }
+    })
+  }
 }
 </script>
 
@@ -88,7 +101,7 @@ export default class extends mixins(ResizeMixin) {
   top: 0;
   height: 100%;
   position: absolute;
-  z-index: 999;
+  z-index: 2000;
 }
 
 .main-container {
@@ -107,7 +120,7 @@ export default class extends mixins(ResizeMixin) {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 1001;
+  z-index: 2001;
   overflow: hidden;
 }
 

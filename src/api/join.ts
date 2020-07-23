@@ -200,7 +200,7 @@ export const DelieverExportDown = (params: any) =>
 // 合同导出
 export const ContractExport = (params: any) =>
   request({
-    url: `business_center/v1/contract/contractExport`,
+    url: `/business_center/v1/contract/contractExport`,
     method: 'post',
     // responseType: 'blob',
     data: params
@@ -209,8 +209,16 @@ export const ContractExport = (params: any) =>
 // 订单导出
 export const OrderExport = (params: any) =>
   request({
-    url: `business_center/v1/order/orderExport`,
+    url: `/business_center/v1/order/orderExport`,
     method: 'post',
     responseType: 'blob',
     data: params
+  })
+
+// GPS权限
+export const GetGPSRoles = (params: any) =>
+  request({
+    url: `/base/v1/base/area/getDeliveryInfoByityCode`,
+    method: 'get',
+    params
   })

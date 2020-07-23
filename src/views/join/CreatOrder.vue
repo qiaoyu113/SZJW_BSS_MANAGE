@@ -377,7 +377,7 @@
               />
             </el-col>
             <el-col
-              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
+              v-if="ruleForm.supplier && ruleForm.cooperationModel === '1'"
               :span="isPC ? 6 : 24"
             >
               <DetailItem
@@ -768,7 +768,7 @@ export default class CreatLine extends Vue {
     'payCompleteTime': '',
     'payType': '',
     'plateNo': '',
-    'rake': '',
+    'rake': '7',
     'refundTime': '',
     'remarks': '',
     'status': '',

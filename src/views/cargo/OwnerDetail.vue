@@ -78,6 +78,7 @@
             >
               <template>
                 <el-button
+                  v-if="showReachPhone"
                   type="text"
                   style="padding: 0 4px"
                   @click="getAllPhone(true)"
@@ -91,14 +92,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="职务"
-              :value="OwnerDetail.bussinessPosition"
+              :value="OwnerDetail.bussinessPosition | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="对接业务身份证号"
-              :value="OwnerDetail.bussinessCard"
+              :value="OwnerDetail.bussinessCard | DataIsNull"
             />
           </el-col>
 
@@ -364,6 +365,7 @@ import '@/styles/common.scss'
 export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
+    private showReachPhone: any = true
     private OwnerDetail:any = {
       'address': '',
       'businessLicenseUrl': '',
@@ -471,6 +473,7 @@ export default class extends Vue {
         const { data } = await GetFindBusinessPhone({ customerId: this.id })
         if (data.success) {
           this.OwnerDetail.bussinessPhone = data.data
+          this.showReachPhone = false
         } else {
           this.$message.error(data.errorMsg)
         }

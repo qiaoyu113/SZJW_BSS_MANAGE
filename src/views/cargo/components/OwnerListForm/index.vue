@@ -306,7 +306,7 @@ export default class extends Vue {
   private async getLowerStaffInfo() {
     try {
       let { data: res } = await GetManagerLists({
-        url: '/v1/line/customer/queryLineCustomerList'
+        uri: '/v1/line/customer/queryLineCustomerList'
       })
       if (res.success) {
         this.optionsSale = res.data

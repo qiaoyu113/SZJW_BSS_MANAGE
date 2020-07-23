@@ -14,6 +14,7 @@ service.interceptors.request.use(
     // Add X-Access-Token header to every request, you can add other custom headers here
     if (UserModule.token) {
       config.headers['Authorization'] = UserModule.token
+      config.headers['uuid'] = UserModule.uuid
     }
     return config
   },
@@ -33,24 +34,27 @@ service.interceptors.response.use(
     if (res.errorCode) {
       res.message = res.errorMsg || '接口错误' + res.errorCode + ',请联系技术人员。'
     }
-    if (res.code === 40101 || res.code === 40301) {
+    if (res.code === 401 || res.code === 402 || res.code === 406 || res.code === 407 || res.code === 408) {
       Message({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
       })
-      // 50008:非法的token; 50012:其他货主端登录了;  40101:Token 过期了;
-      if (res.code === 50008 || res.code === 50012 || res.code === 40101) {
-        // 请自行在引入 MessageBox
-        MessageBox.confirm('您无权访问该功能，可以取消继续留在该页面，或者重新登录', '确定登出', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          UserModule.ResetToken()
-          location.reload()
-        })
-      }
+      // 401    权限不足, 请登录
+      // 402    登陆超时,请重新登陆
+      // 406    您的信息被修改，请重新登录
+      // 407   您的账号被其他人登录，请重新登录
+      // 408   登陆状态已过期，请重新登录
+      // 请自行在引入 MessageBox
+      MessageBox.confirm('您无权访问该功能，可以取消继续留在该页面，或者重新登录', '确定登出', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        UserModule.ResetToken()
+        location.reload()
+      })
+      // }
       return Promise.reject(res.message)
     } else {
       return response
