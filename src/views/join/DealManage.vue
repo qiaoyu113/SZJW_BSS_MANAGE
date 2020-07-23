@@ -93,7 +93,7 @@
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.diverName | DataIsNull }} </span>
+              <span>{{ scope.row.diverName | DataIsNull }} ({{ scope.row.driverPhone | DataIsNull }}) </span>
             </template>
           </el-table-column>
 
