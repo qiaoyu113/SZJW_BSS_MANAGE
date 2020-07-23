@@ -374,11 +374,15 @@ export default class extends Vue {
     {
       type: 2,
       key: 'busiType',
-      label: '业绩线',
+      label: '业务线',
       tagAttrs: {
-        placeholder: '请选择业绩线'
+        placeholder: '请选择业务线'
       },
       options: [
+        {
+          label: '全部',
+          value: ''
+        },
         {
           label: '专车',
           value: 0
@@ -394,7 +398,8 @@ export default class extends Vue {
       key: 'gmId',
       label: '加盟经理',
       tagAttrs: {
-        placeholder: '请选择加盟经理'
+        placeholder: '请选择加盟经理',
+        filterable: true
       },
       options: []
     },
@@ -477,7 +482,6 @@ export default class extends Vue {
           }]
         }
       }
-
     },
     {
       slot: true,
@@ -574,6 +578,12 @@ export default class extends Vue {
     total: 0
   }
 
+  @Watch('listQuery.time')
+  onTimeChange(val:any) {
+    if (!val) {
+      this.listQuery.time = []
+    }
+  }
   mounted() {
     this.dropdownList = [...this.columns]
     this.checkList = this.dropdownList.map(item => item.label)
