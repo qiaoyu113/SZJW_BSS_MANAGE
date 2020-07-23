@@ -8,9 +8,9 @@
       :pc-col="12"
     >
       <template v-slot:interviewAddress="{row}">
-        <span>{{ row.interviewProvinceName }}
-          {{ row.interviewCityName }}
-          {{ row.interviewCountyName }}
+        <span>{{ row.liveProvinceName }}
+          {{ row.liveCityName }}
+          {{ row.liveCountyName }}
         </span>
       </template>
       <template v-slot:intentAddress="{row}">
@@ -106,7 +106,11 @@ export default class extends Vue {
       cooperateFocusPointName: '',
       cooperateKeyFactorName: '',
       isAdvancedIntention: '',
-      remarks: ''
+      remarks: '',
+      liveProvinceName: '',
+      liveCityName: '',
+      liveCountyName: '',
+      liveDistrict: ''
     }
 
     private formItem = [
@@ -148,7 +152,7 @@ export default class extends Vue {
       },
       {
         type: 7,
-        key: 'interviewDistrict',
+        key: 'liveDistrict',
         label: '详细居住地址:',
         w: '150px'
       },

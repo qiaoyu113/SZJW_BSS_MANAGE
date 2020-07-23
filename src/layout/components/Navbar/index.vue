@@ -23,6 +23,7 @@
           <setting class="right-menu-item hover-effect" />
         </el-tooltip>
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.down')"
           effect="dark"
           placement="bottom"

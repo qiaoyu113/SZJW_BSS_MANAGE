@@ -97,7 +97,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/organizationmanage',
         noCache: false,
         icon: '',
-        apiUrl: '/v1/base/office/list/0'
+        apiUrl: '/v1/base/office/list'
       }
     },
     {

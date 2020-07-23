@@ -113,7 +113,10 @@
       <template
         v-slot:name="scope"
       >
-        <router-link :to="{path: '/transport/followClue',query: {id: scope.row.clueId}}">
+        <router-link
+          :to="{path: '/transport/followClue',query: {id: scope.row.clueId}}"
+          style="color: #409EFF;"
+        >
           {{ scope.row.name }}
         </router-link>
       </template>
