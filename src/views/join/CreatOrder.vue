@@ -20,6 +20,7 @@
       class="demo-ruleForm"
     >
       <SectionContainer
+        v-if="!id"
         title="选择司机"
         :md="true"
       >
@@ -178,6 +179,7 @@
                 placeholder="请输入商品金额"
                 controls-position="right"
                 type="number"
+                @blur="goodBlur"
               />
             </el-form-item>
           </el-col>
@@ -375,7 +377,7 @@
               />
             </el-col>
             <el-col
-              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
+              v-if="ruleForm.supplier && ruleForm.cooperationModel === '1'"
               :span="isPC ? 6 : 24"
             >
               <DetailItem
@@ -722,6 +724,7 @@ export default class CreatLine extends Vue {
   private showMessageBill:boolean = false
   private fullscreenLoading: Boolean = false
   private editors: Boolean = false
+  private editorsCar: Boolean = false
   private id: any = ''
   private ruleForm:any = {
     'operateFlag': 'creat',
@@ -937,7 +940,10 @@ export default class CreatLine extends Vue {
     // console.log('cooperationCar', value, oldValue)
     if (this.ruleForm.cooperationModel === '1' || this.ruleForm.cooperationModel === '2') {
       if (value) {
-        this.ruleForm.carModel = ''
+        if (this.editorsCar) {
+          this.ruleForm.carModel = ''
+        }
+        this.editorsCar = true
         this.getModelByTypeAndCityAndSupplierAndCarType()
         this.getPrice()
       }
@@ -947,7 +953,7 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.goodsAmount', { deep: true })
   private changeGoodsAmount(value:any) {
     if (value <= (Number(this.readyPay) + Number(this.notPay))) {
-      this.ruleForm.goodsAmount = Number(this.readyPay) + Number(this.notPay)
+      // this.ruleForm.goodsAmount = Number(this.readyPay) + Number(this.notPay)
       this.orderPrice = Number(this.readyPay) + Number(this.notPay)
       this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
     } else {
@@ -1041,6 +1047,11 @@ export default class CreatLine extends Vue {
     if (id) {
       this.getDetail(id)
     }
+    let driverId = this.$route.query.driverId
+    if (driverId) {
+      this.ruleForm.driverId = driverId
+      this.remoteMethod(this.ruleForm.driverId, true)
+    }
   }
 
   // 获取订单详情
@@ -1112,6 +1123,7 @@ export default class CreatLine extends Vue {
     let money = this.ruleForm.orderPayRecordInfoFORMList[index].money
     this.remain = Number(this.remain) + Number(money)
     this.ruleForm.orderPayRecordInfoFORMList.splice(index, 1)
+    this.notPay = this.getNotPay()
   }
   // 立即支付
   private goBill(res: any, index: any) {
@@ -1121,7 +1133,6 @@ export default class CreatLine extends Vue {
     if (!res.payDate) res.payDate = new Date().getTime()
     // if (res.payImageUrl === '0') res.payImageUrl = ''
     this.payForm = Object.assign(this.payForm, res)
-
     this.showMessageBill = true
   }
   private beforeAvatarUpload(file:any) {
@@ -1137,6 +1148,10 @@ export default class CreatLine extends Vue {
   }
   // 选择图片
   private async handleChange(file: any, fileList: any) {
+    if (!this.beforeAvatarUpload(file.raw)) {
+      this.payForm.payImageUrl = ''
+      return
+    }
     let formData = new FormData() // 创建form对象
     formData.append('file', file.raw)
     let { data } = await Upload({
@@ -1172,7 +1187,7 @@ export default class CreatLine extends Vue {
     })
   }
   // 搜索司机列表
-  private remoteMethod(query: any) {
+  private remoteMethod(query: any, type: boolean) {
     if (query !== '') {
       this.loading = true
       GetDriverList({
@@ -1186,6 +1201,9 @@ export default class CreatLine extends Vue {
           })
           this.driverList = newArr
           this.loading = false
+          if (type) {
+            this.checkDiver(query)
+          }
         } else {
           this.$message.error(response.data.errorMsg)
         }
@@ -1273,6 +1291,14 @@ export default class CreatLine extends Vue {
       }
     })
     return num
+  }
+  // 商品金额监听
+  private goodBlur() {
+    if (Number(this.ruleForm.goodsAmount) <= (Number(this.readyPay) + Number(this.notPay))) {
+      this.ruleForm.goodsAmount = Number(this.readyPay) + Number(this.notPay)
+      // this.orderPrice = Number(this.readyPay) + Number(this.notPay)
+      // this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+    }
   }
 }
 </script>

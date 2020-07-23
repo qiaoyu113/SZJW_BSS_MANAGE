@@ -137,7 +137,7 @@
             label="商品分类"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.busiTypeName | DataIsNull }}</p>
+              <span>{{ scope.row.busiTypeName | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -601,7 +601,9 @@ export default class extends Vue {
     mounted() {}
 
     activated() {
-    // this.handleScroll()
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
     }
 
     // 判断是否是PC

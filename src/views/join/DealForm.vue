@@ -107,7 +107,7 @@
           >
             <DetailItem
               name="供应商"
-              :value="ContractDetail.deliverDate"
+              :value="ContractDetail.supplier"
             />
           </el-col>
 
@@ -116,7 +116,7 @@
             :span="isPC ? 6 : 24"
           >
             <DetailItem
-              name="购买车型"
+              name="合作车型"
               :value="ContractDetail.cooperationCarName"
             />
           </el-col>
@@ -142,7 +142,10 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ContractDetail.cooperationModel !== 1"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
               label="车牌号"
               prop="plateNo"
@@ -170,7 +173,7 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入司机姓名或手机号"
+                placeholder="请输入运营经理"
                 @change="checkManage"
               >
                 <el-option
@@ -196,7 +199,10 @@
               label="发动机号"
               prop="engineNo"
             >
-              <el-input v-model="ruleForm.engineNo" />
+              <el-input
+                v-model="ruleForm.engineNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -204,7 +210,10 @@
               label="发动机发票号"
               prop="engineInvoiceNo"
             >
-              <el-input v-model="ruleForm.engineInvoiceNo" />
+              <el-input
+                v-model="ruleForm.engineInvoiceNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -411,7 +420,10 @@
               label="设备ID号"
               prop="gpsDeviceNo"
             >
-              <el-input v-model="ruleForm.gpsDeviceNo" />
+              <el-input
+                v-model="ruleForm.gpsDeviceNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
 
@@ -420,7 +432,10 @@
               label="SIM号"
               prop="gpsSimNo"
             >
-              <el-input v-model="ruleForm.gpsSimNo" />
+              <el-input
+                v-model="ruleForm.gpsSimNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -445,7 +460,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId } from '@/api/join'
+import { SubmitOrderDeliver, SelectOrderInfo, GetOperManagerListByUserId, GetGPSRole } from '@/api/join'
 import { GetJoinManageList, GetDictionaryList } from '@/api/common'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -614,7 +629,7 @@ export default class extends Vue {
         { required: true, message: '请输入运营经理', trigger: 'change' }
       ],
       engineNo: [
-        { required: true, message: '请输入发动机号', trigger: 'change' }
+        { required: true, message: '请输入发动机发票号', trigger: 'change' }
       ],
       engineInvoiceNo: [
         { required: true, message: '请输入发动机号', trigger: 'change' }
@@ -653,7 +668,7 @@ export default class extends Vue {
         { required: true, message: '请输入设备ID号', trigger: 'change' }
       ],
       gpsSimNo: [
-        { required: true, message: '请输入gps', trigger: 'change' }
+        { required: true, message: '请输入SIM号', trigger: 'change' }
       ]
     }
 
@@ -661,6 +676,7 @@ export default class extends Vue {
       this.id = this.$route.query.id
       this.getDetail(this.id)
       this.getDictionary()
+      this.getGPSRole()
     }
 
     mounted() {
@@ -672,6 +688,16 @@ export default class extends Vue {
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
+    }
+
+    // 判断GPS权限
+    private async getGPSRole() {
+      const { data } = await GetGPSRole({})
+      if (data.success) {
+        console.log(data)
+      } else {
+        this.$message.error(data.errorMsg)
+      }
     }
 
     // 请求详情

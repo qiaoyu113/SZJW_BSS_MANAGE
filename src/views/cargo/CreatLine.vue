@@ -1,6 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable camelcase */
-/* eslint-disable camelcase */
 <template>
   <div
     :class="isPC ? 'CreatLine' : 'CreatLine-m'"
@@ -48,6 +45,7 @@
             :rule-form="ruleForm"
             :params="{prop: 'waitDirveValidity',type: 2,label: '等待上车有效期（天）',tagAttrs: {
               placeholder: '请输入有效期',
+              'value-format': 'timestamp',
               'picker-options': {
                 disabledDate(time) {
                   return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000 )
@@ -859,6 +857,7 @@ export default class CreatLine extends Vue {
         if (type === 2) {
           delete ruleForm.createDate
           delete ruleForm.createId
+          ruleForm.waitDirveValidity = new Date(ruleForm.waitDirveValidity).getTime()
         }
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
@@ -950,39 +949,29 @@ export default class CreatLine extends Vue {
     ]
     let { data } = await GetDictionaryList(dictArr)
     if (data.success) {
-      let {
-        Intentional_compartment,
-        type_of_goods,
-        line_distinguished_type,
-        linetask_stability_rate,
-        line_type,
-        settlement_cycle,
-        settlement_days,
-        goods_weight,
-        handling_difficulty_degree
-      } = data.data
-      let linetype = line_type.map(function(ele: any) {
+      let datas = data.data
+      let linetype = datas.line_type.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let carType = Intentional_compartment.map(function(ele: any) {
+      let carType = datas.Intentional_compartment.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let linetask = linetask_stability_rate.map(function(ele: any) {
+      let linetask = datas.linetask_stability_rate.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let settlement = settlement_cycle.map(function(ele: any) {
+      let settlement = datas.settlement_cycle.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let dayOver = settlement_days.map(function(ele: any) {
+      let dayOver = datas.settlement_days.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let goodsWeight = goods_weight.map(function(ele: any) {
+      let goodsWeight = datas.goods_weight.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let goodsType = type_of_goods.map(function(ele: any) {
+      let goodsType = datas.type_of_goods.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let difficulty = handling_difficulty_degree.map(function(ele: any) {
+      let difficulty = datas.handling_difficulty_degree.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
 
@@ -1084,6 +1073,7 @@ export default class CreatLine extends Vue {
       allParams.delivery.push(allParams.provinceArea + '')
       allParams.delivery.push(allParams.cityArea + '')
       allParams.delivery.push(allParams.countyArea + '')
+      allParams.waitDirveValidity = new Date(allParams.waitDirveValidity)
 
       this.customerOptions = [
         { value: allParams.customerId, label: allParams.customerName }
