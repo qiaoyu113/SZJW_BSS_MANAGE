@@ -388,6 +388,7 @@ export default class extends Vue {
       {
         type: 2,
         key: 'workCity',
+        // w: '130px',
         label: '工作城市',
         tagAttrs: {
           placeholder: '请选择工作城市'
@@ -397,6 +398,7 @@ export default class extends Vue {
       {
         type: 1,
         key: 'carrierId',
+        // w: '130px',
         label: '运力编号',
         tagAttrs: {
           placeholder: '请输入司机编号'
@@ -405,6 +407,7 @@ export default class extends Vue {
       {
         type: 1,
         key: 'name',
+        // w: '130px',
         label: '运力姓名',
         tagAttrs: {
           placeholder: '请输入姓名'
@@ -413,6 +416,7 @@ export default class extends Vue {
       {
         type: 1,
         key: 'phone',
+        // w: '130px',
         label: '运力手机号',
         tagAttrs: {
           placeholder: '请输入手机号',
@@ -422,6 +426,7 @@ export default class extends Vue {
       {
         type: 2,
         key: 'carType',
+        // w: '130px',
         label: '车型',
         tagAttrs: {
           placeholder: '请选择车型'
@@ -432,6 +437,7 @@ export default class extends Vue {
         type: 2,
         key: 'busiType',
         label: '业务线',
+        // w: '130px',
         tagAttrs: {
           placeholder: '业务线'
         },
@@ -458,6 +464,7 @@ export default class extends Vue {
       {
         type: 2,
         key: 'gmId',
+        // w: '130px',
         label: '运营经理',
         tagAttrs: {
           placeholder: '请选择运营经理'
@@ -485,6 +492,7 @@ export default class extends Vue {
       {
         type: 3,
         key: 'createDate',
+        // w: '130px',
         label: '创建时间',
         col: 12,
         tagAttrs: {

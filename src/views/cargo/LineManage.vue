@@ -414,7 +414,7 @@ import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages, parseTime } from '@/utils/index'
-import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll, customerCheckNames } from '@/api/cargo'
+import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll, customerCheckNames, fuzzyCheckNames } from '@/api/cargo'
 import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
@@ -507,7 +507,6 @@ export default class LineManage extends Vue {
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
   private customerLoading:boolean = false
-  private customerOptions:any[] = []
   private formItem:any[] = [
     {
       type: 2,
@@ -549,12 +548,13 @@ export default class LineManage extends Vue {
       options: []
     },
     {
-      type: 1,
+      type: 11,
       label: '线路名称',
       key: 'lineName',
       tagAttrs: {
         placeholder: '请输入线路名称',
-        clearable: true
+        clearable: true,
+        'fetch-suggestions': this.remoteMethodName
       }
     },
     {
@@ -562,24 +562,19 @@ export default class LineManage extends Vue {
       label: '线路编号',
       key: 'lineId',
       tagAttrs: {
-        clearable: true,
-        placeholder: '请输入线路编号'
+        placeholder: '请输入线路编号',
+        clearable: true
       }
     },
     {
-      type: 2,
+      type: 11,
       label: '货主名称',
       key: 'customerName',
       tagAttrs: {
         clearable: true,
         placeholder: '请输入货主名称',
-        remote: true,
-        'reserve-keyword': true,
-        loading: this.customerLoading,
-        filterable: true,
-        'remote-method': this.remoteMethod
-      },
-      options: this.customerOptions
+        'fetch-suggestions': this.remoteMethod
+      }
     },
     {
       type: 8,
@@ -783,20 +778,41 @@ export default class LineManage extends Vue {
     return timeArr
   }
 
-  private async remoteMethod(query: any) {
+  private async remoteMethod(query:string, cb:Function) {
     if (query !== '') {
-      this.customerLoading = true
-      let { data } = await customerCheckNames({ customerCompanyName: query })
+      let params = {
+        customerCompanyName: query
+      }
+      let { data } = await customerCheckNames(params)
       if (data.success) {
-        this.customerOptions = data.data.map(function(ele:any) {
-          return { value: ele.customerId, label: ele.customerCompanyName }
+        let options = data.data.map(function(ele:any) {
+          return { value: ele.customerCompanyName, label: ele.customerCompanyName }
         })
-        this.customerLoading = false
+        cb(options)
       } else {
         this.$message.error(data.data.errorMsg)
       }
     } else {
-      this.customerOptions = []
+      cb()
+    }
+  }
+
+  private async remoteMethodName(query:string, cb:Function) {
+    if (query !== '') {
+      let params = {
+        lineName: query
+      }
+      let { data } = await fuzzyCheckNames(params)
+      if (data.success) {
+        let options = data.data.map(function(ele:any) {
+          return { label: ele.lineName, value: ele.lineName }
+        })
+        cb(options)
+      } else {
+        this.$message.error(data.data.errorMsg)
+      }
+    } else {
+      cb()
     }
   }
 
