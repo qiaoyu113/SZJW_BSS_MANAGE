@@ -456,25 +456,7 @@ import '@/styles/common.scss'
 interface IState {
   [key: string]: any;
 }
-const optionsClue: any = [
-  // （0：待跟进 1：已跟进 2：已转化 3：无效）
-  {
-    value: 0,
-    label: '待跟进'
-  },
-  {
-    value: 1,
-    label: '已跟进'
-  },
-  {
-    value: 2,
-    label: '已转化'
-  },
-  {
-    value: 3,
-    label: '无效'
-  }
-] // 线索状态
+let optionsClue: any = [] // 线索状态
 const optionsDistribution: any = [
   {
     value: 0,
@@ -629,7 +611,12 @@ export default class extends Vue {
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
-    // this.listQuery[key] = value
+    if (key !== 'state') {
+      this.listQuery[key] = value
+    }
+    if (key === 'startDate') {
+      return
+    }
     this.getList(this.listQuery)
   }
   // 处理query方法
@@ -689,9 +676,16 @@ export default class extends Vue {
   }
   // 获取字典
   private async getDictionary() {
-    const { data } = await GetDictionaryList(['line_clue_source'])
+    const { data } = await GetDictionaryList(['line_clue_source', 'line_clue_state'])
     if (data.success) {
       this.optionsLineSource = data.data.line_clue_source
+      this.optionsClue = data.data.line_clue_state.map((item: any) => {
+        return {
+          value: Number(item.dictValue),
+          label: item.dictLabel
+        }
+      })
+      optionsClue = this.optionsClue.slice()
     } else {
       this.$message.error(data)
     }
