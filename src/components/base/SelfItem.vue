@@ -136,7 +136,7 @@
       </el-form-item>
 
       <el-form-item
-        v-if="params.type === 8"
+        v-if="params.type === 8 && params.isShow"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
