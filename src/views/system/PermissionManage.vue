@@ -51,7 +51,7 @@
         </template>
       </RoleTree>
     </SectionContainer>
-    <Dialog
+    <SelfDialog
       :visible.sync="showDialog"
       :title="dialogTit"
       :confirm="confirm"
@@ -80,6 +80,7 @@
                 v-model="dialogForm.authName"
                 placeholder="请输入权限名称"
                 maxlength="10"
+                clearable
               />
             </el-form-item>
           </el-tab-pane>
@@ -96,6 +97,7 @@
                 v-model="dialogForm.authName"
                 placeholder="请输入权限名称"
                 maxlength="10"
+                clearable
               />
             </el-form-item>
             <el-form-item
@@ -106,6 +108,7 @@
                 v-model="dialogForm.url"
                 maxlength="100"
                 placeholder="请输入页面地址"
+                clearable
               />
             </el-form-item>
           </el-tab-pane>
@@ -122,6 +125,7 @@
                 v-model="dialogForm.authName"
                 placeholder="请输入权限名称"
                 maxlength="10"
+                clearable
               />
             </el-form-item>
             <el-form-item
@@ -146,12 +150,13 @@
                 v-model="dialogForm.url"
                 maxlength="100"
                 placeholder="请输入页面地址"
+                clearable
               />
             </el-form-item>
           </el-tab-pane>
         </el-tabs>
       </el-form>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -160,7 +165,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import {
   authorityList,
   createAuthority,
@@ -175,7 +180,7 @@ import '@/styles/tree-line.scss'
   components: {
     SectionContainer,
     RoleTree,
-    Dialog
+    SelfDialog
   }
 })
 export default class extends Vue {
@@ -229,7 +234,7 @@ export default class extends Vue {
 
   @Watch('dialogForm.controlType')
   private onval(value: any) {
-    if (!value) {
+    if (!value && this.addNode.level === 4) {
       this.dialogForm.url = ''
     }
   }

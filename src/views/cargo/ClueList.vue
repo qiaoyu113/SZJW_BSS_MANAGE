@@ -305,7 +305,7 @@
       />
     </div>
     <!-- 批量分配线索 -->
-    <Dialog
+    <SelfDialog
       :class="'distributionDialog'"
       :visible.sync="showDialog"
       :title="`批量分配线索`"
@@ -373,7 +373,7 @@
         :limit.sync="dialogListQuery.limit"
         @pagination="getDialogList"
       /> -->
-    </Dialog>
+    </SelfDialog>
     <!-- 右侧侧边栏 -->
     <PitchBox
       :drawer.sync="drawer"
@@ -388,7 +388,7 @@
       </template>
     </PitchBox>
     <!-- 跟进弹窗 -->
-    <Dialog
+    <SelfDialog
       :class="'invalidDialog'"
       :visible.sync="followDialog"
       :title="`跟进状态判定`"
@@ -429,7 +429,7 @@
           />
         </el-form-item>
       </el-form>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -442,10 +442,10 @@ import SelfTable from '@/components/base/SelfTable.vue'
 import { ClueListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 
-import { GetDictionaryList, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetManagerLists } from '@/api/common'
 import { GetClueList, Distribution, ExpiredClue, ActivationClue, GetCustomerOff, GetSaleList, ShowPhone } from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
 
@@ -492,7 +492,7 @@ const optionsDistribution: any = [
     ClueListForm,
     TableHeader,
     Pagination,
-    Dialog,
+    SelfDialog,
     PitchBox
   },
   filters: {
@@ -694,7 +694,9 @@ export default class extends Vue {
   }
   private async getJoinManageList() {
     return new Promise((resolve, reject) => {
-      GetJoinManageList({})
+      GetManagerLists({
+        uri: '/v1/line/clue/queryLineClueList'
+      })
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsSale = data.data
@@ -935,7 +937,7 @@ export default class extends Vue {
   padding-bottom: 0;
   box-sizing: border-box;
   .table_box {
-    height: calc(100vh - 225px) !important;
+    height: calc(100vh - 185px) !important;
     background: #ffffff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;

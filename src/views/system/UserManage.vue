@@ -181,7 +181,13 @@ interface IState {
 })
 export default class extends Vue {
   private tags: any[] = [];
-  private tab: any[] = [];
+  private tab: any[] = [
+    {
+      label: '用户管理',
+      name: '',
+      num: ''
+    }
+  ];
   private listQuery: IState = {
     mobile: '',
     nickName: '',
@@ -306,13 +312,13 @@ export default class extends Vue {
   padding-bottom: 0;
   box-sizing: border-box;
   .table_box {
-    height: calc(100vh - 225px) !important;
+    height: calc(100vh - 173px) !important;
     background: #ffffff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 360px) !important;
+      height: calc(100vh - 308px) !important;
       padding: 0 30px;
       padding-bottom: 0;
       box-sizing: border-box;
@@ -324,13 +330,13 @@ export default class extends Vue {
   padding-bottom: 0;
   box-sizing: border-box;
   .table_box {
-    height: calc(100vh - 185px) !important;
+    height: calc(100vh - 133px) !important;
     background: #ffffff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 300px) !important;
+      height: calc(100vh - 248px) !important;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
@@ -348,9 +354,8 @@ export default class extends Vue {
 }
 </style>
 <style scoped>
-.UserManage >>> .TableHeader_title,
-.UserManage-m >>> .TableHeader_title {
-  /* display: none; */
-  opacity: 0;
+.UserManage >>> .tab-box,
+.UserManage-m >>> .tab-box {
+  display: none;
 }
 </style>

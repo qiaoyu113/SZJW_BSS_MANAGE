@@ -293,7 +293,7 @@
     </PitchBox>
 
     <!-- 批量分配货主 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="assignShowDialog"
       :title="`分配货主`"
       :confirm="confirmAssign"
@@ -358,16 +358,16 @@
         :limit.sync="dialogListQuery.limit"
         @pagination="getDialogList"
       />
-    </Dialog>
+    </SelfDialog>
     <!--提示窗口-->
-    <Dialog
+    <SelfDialog
       :visible.sync="showDialog.visible"
       :title="showDialog.title"
       :center="true"
       :confirm="confirm"
     >
       <p>{{ showDialog.text }}</p>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -381,7 +381,7 @@ import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfTable from '@/components/base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { OwnerListForm } from './components'
@@ -399,7 +399,7 @@ interface IState {
     SuggestContainer,
     TableHeader,
     OwnerListForm,
-    Dialog,
+    SelfDialog,
     SelfTable,
     PitchBox
   }

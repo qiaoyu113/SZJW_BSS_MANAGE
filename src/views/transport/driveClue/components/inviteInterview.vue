@@ -1,6 +1,6 @@
 <template>
   <div class="inviteInterview">
-    <Dialog
+    <SelfDialog
       :visible.sync="showAlert"
       title="邀请面试"
       width="40%"
@@ -18,12 +18,12 @@
         label-width="100px"
         @onPass="handlePass"
       />
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { ClueFollow } from '@/api/driver'
 interface IState {
@@ -32,7 +32,7 @@ interface IState {
 @Component({
   name: 'InviteInterview',
   components: {
-    Dialog,
+    SelfDialog,
     SelfForm
   }
 })
@@ -81,7 +81,8 @@ export default class extends Vue {
         type: 'textarea',
         rows: 4,
         'show-word-limit': true,
-        maxlength: 100
+        maxlength: 100,
+        clearable: true
       }
     }
   ]

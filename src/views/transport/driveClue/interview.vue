@@ -192,7 +192,8 @@ export default class extends Vue {
       label: '姓名:',
       tagAttrs: {
         placeholder: '姓名',
-        maxlength: 10
+        maxlength: 10,
+        clearable: true
       }
     },
     {
@@ -200,7 +201,8 @@ export default class extends Vue {
       key: 'phone',
       label: '电话:',
       tagAttrs: {
-        placeholder: '电话'
+        placeholder: '电话',
+        clearable: true
       }
     },
     {

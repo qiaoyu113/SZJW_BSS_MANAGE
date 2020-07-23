@@ -206,7 +206,7 @@
         @pagination="getList"
       />
     </div>
-    <Dialog
+    <SelfDialog
       :visible.sync="dialogVisible"
       :title="dialogTit"
       :confirm="confirm"
@@ -226,6 +226,7 @@
             v-model="dialogForm.supplier"
             placeholder="请输入供应商"
             maxlength="15"
+            clearable
           />
         </el-form-item>
         <el-form-item
@@ -254,6 +255,7 @@
             v-model="dialogForm.carDescribe"
             placeholder="请输入车辆信息"
             maxlength="50"
+            clearable
           />
         </el-form-item>
         <el-form-item
@@ -264,6 +266,7 @@
             v-model="dialogForm.price"
             v-only-number="{min: 0, max: 1000000, precision: 2}"
             placeholder="请输入无税价格"
+            clearable
           >
             <template slot="append">
               元
@@ -291,7 +294,7 @@
           </el-select>
         </el-form-item>
       </el-form>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -301,7 +304,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { RentCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages } from '@/utils/index'
 import { GetCustomerOff } from '@/api/cargo'
 import { GetDictionaryList } from '@/api/common'
@@ -320,7 +323,7 @@ interface IState {
     RentCarForm,
     TableHeader,
     Pagination,
-    Dialog
+    SelfDialog
   }
 })
 export default class extends Vue {

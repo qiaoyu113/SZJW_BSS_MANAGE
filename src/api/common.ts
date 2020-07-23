@@ -62,7 +62,7 @@ export const GetCityByCode = (data: any) =>
    */
 export const GetManagerLists = (params:any) =>
   request({
-    url: `${baseURL}/v1/base/user/getCurrUserAuthList?uri=${params.uri}`,
+    url: `${baseURL}/v1/base/user/getCurrUserAuthList?url=${params.uri}`,
     method: 'post'
   })
 

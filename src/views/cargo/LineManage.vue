@@ -349,6 +349,7 @@
             type="date"
             placeholder="选择日期"
             :picker-options="pickerOptions"
+            value-format="timestamp"
           />
         </div>
         <div class="dioBox">
@@ -358,7 +359,7 @@
             type="number"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
-            @blur="checkMountGuardNo"
+            @input="checkMountGuardNo"
           />
         </div>
         <p class="dioBox">
@@ -413,12 +414,12 @@ import Dialog from '@/components/Dialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages, parseTime } from '@/utils/index'
-import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll } from '@/api/cargo'
+import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll, customerCheckNames } from '@/api/cargo'
 import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetOpenCityData, GetCityByCode, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetOpenCityData, GetCityByCode, GetManagerLists } from '@/api/common'
 import SelfTable from '@/components/base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import '@/styles/common.scss'
@@ -505,6 +506,8 @@ export default class LineManage extends Vue {
   ];
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
+  private customerLoading:boolean = false
+  private customerOptions:any[] = []
   private formItem:any[] = [
     {
       type: 2,
@@ -564,13 +567,19 @@ export default class LineManage extends Vue {
       }
     },
     {
-      type: 1,
+      type: 2,
       label: '货主名称',
       key: 'customerName',
       tagAttrs: {
         clearable: true,
-        placeholder: '请输入货主名称'
-      }
+        placeholder: '请输入货主名称',
+        remote: true,
+        'reserve-keyword': true,
+        loading: this.customerLoading,
+        filterable: true,
+        'remote-method': this.remoteMethod
+      },
+      options: this.customerOptions
     },
     {
       type: 8,
@@ -656,7 +665,8 @@ export default class LineManage extends Vue {
     {
       key: 'lineId',
       label: '线路编号',
-      slot: true
+      slot: true,
+      disabled: true
     },
     {
       key: 'lineName',
@@ -665,12 +675,14 @@ export default class LineManage extends Vue {
     },
     {
       key: 'lineSaleName',
-      label: '所属销售'
+      label: '所属销售',
+      disabled: true
     },
     {
       key: 'carNum',
       label: '上车数（已上车）/可上车',
-      slot: true
+      slot: true,
+      disabled: true
     },
     {
       key: 'shipperOffer',
@@ -742,9 +754,11 @@ export default class LineManage extends Vue {
       fixed: 'right',
       key: 'operate',
       label: '操作',
-      slot: true
+      slot: true,
+      disabled: true
     },
     {
+      disabled: true,
       fixed: 'right',
       key: 'detail',
       slot: true,
@@ -754,7 +768,7 @@ export default class LineManage extends Vue {
 
   private pickerOptions:any = {
     disabledDate(time:any) {
-      return time.getTime() <= Date.now()
+      return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000)
     }
   }
 
@@ -767,6 +781,23 @@ export default class LineManage extends Vue {
     timeArr.push(atime)
     timeArr.push(btime)
     return timeArr
+  }
+
+  private async remoteMethod(query: any) {
+    if (query !== '') {
+      this.customerLoading = true
+      let { data } = await customerCheckNames({ customerCompanyName: query })
+      if (data.success) {
+        this.customerOptions = data.data.map(function(ele:any) {
+          return { value: ele.customerId, label: ele.customerCompanyName }
+        })
+        this.customerLoading = false
+      } else {
+        this.$message.error(data.data.errorMsg)
+      }
+    } else {
+      this.customerOptions = []
+    }
   }
 
   mounted() {
@@ -925,7 +956,10 @@ export default class LineManage extends Vue {
 
   private async getLowerStaffInfo() {
     try {
-      let { data: res } = await GetJoinManageList({})
+      let paramsUrl = {
+        uri: '/v1/line/lineInfo/queryLineListByConditionsQuery'
+      }
+      let { data: res } = await GetManagerLists(paramsUrl)
       if (res.success) {
         this.formItem.map(ele => {
           if (ele.key === 'lineSaleId') {
@@ -1114,12 +1148,25 @@ export default class LineManage extends Vue {
   // 上架操作
   private checkMountGuardNo(val:string) {
     if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
       this.$message.error('可上车数要大于或等于已上岗标书数量')
+      this.diaUpcarNum = ''
+      return
+    }
+    if (this.diaUpcarNum === '') {
+      this.$message.error('可上车数不能为空')
     }
   }
 
   private async putConfirm(done: any) {
+    if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
+      this.$message.error('可上车数要大于或等于已上岗标书数量')
+      this.diaUpcarNum = ''
+      return
+    }
+    if (this.diaUpcarNum === '') {
+      this.$message.error('可上车数不能为空')
+      return
+    }
     let params = {
       'deployNo': this.diaUpcarNum,
       'lineId': this.id,
@@ -1425,4 +1472,16 @@ export default class LineManage extends Vue {
       margin-top: 10px;
       width:100%;
     }
+</style>
+<style scoped>
+  .LineManage >>> .el-collapse-item__wrap {
+    padding: 20px 30px 0 0;
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+    right: 15px;
+    left: 15px;
+  }
 </style>

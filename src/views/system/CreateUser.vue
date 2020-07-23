@@ -355,6 +355,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .el-select,
+.el-cascader,
 .el-date-editor{
   width: auto;
   display: block;

@@ -324,7 +324,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import Dialog from '@/components/Dialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetCityByCode, detailCity, GetJoinManageList } from '@/api/common'
+import { GetDictionaryList, GetCityByCode, detailCity, GetManagerLists } from '@/api/common'
 import { createLine, editLine, customerCheckNames, GetLineDetail } from '@/api/cargo'
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -469,7 +469,7 @@ export default class CreatLine extends Vue {
     ],
     deployNo: [
       { required: true, message: '可上车数不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 11) }
+      { validator: validatorNumberRange(1, 10) }
     ],
     address: [
       { required: true, message: '仓位置不能为空', trigger: 'change' }
@@ -497,36 +497,18 @@ export default class CreatLine extends Vue {
     ],
     deliveryNo: [
       { required: true, message: '每日平均配送点位数不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 100) }
+      { validator: validatorNumberRange(1, 99) }
     ],
     deliveryWeekCycle: [
       { required: true, message: '配送周期不能为空', trigger: 'change' }
     ],
     distance: [
       { required: true, message: '公里数不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 2000) }
+      { validator: validatorNumberRange(1, 1999) }
     ],
     dayNo: [
       { required: true, message: '每日配送趟数不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 6) }
-    ],
-    lineDeliveryInfoFORMS0: [
-      { required: true, message: '工作时间不能为空', trigger: 'change' }
-    ],
-    lineDeliveryInfoFORMS1: [
-      { required: true, message: '工作时间不能为空', trigger: 'change' }
-    ],
-    lineDeliveryInfoFORMS2: [
-      { required: true, message: '工作时间不能为空', trigger: 'change' }
-    ],
-    lineDeliveryInfoFORMS3: [
-      { required: true, message: '工作时间不能为空', trigger: 'change' }
-    ],
-    lineDeliveryInfoFORMS4: [
-      { required: true, message: '工作时间不能为空', trigger: 'change' }
-    ],
-    lineDeliveryInfoFORMS5: [
-      { required: true, message: '工作时间不能为空', trigger: 'change' }
+      { validator: validatorNumberRange(1, 5) }
     ],
     workingTimeStart: [
       { required: true, message: '工作时间不能为空', trigger: 'change' }
@@ -536,7 +518,7 @@ export default class CreatLine extends Vue {
     ],
     monthNo: [
       { required: true, message: '出车天数不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 32) }
+      { validator: validatorNumberRange(1, 31) }
     ],
     incomeSettlementMethod: [
       { required: true, message: '结算方式不能为空', trigger: 'change' }
@@ -549,15 +531,15 @@ export default class CreatLine extends Vue {
     ],
     everyTripGuaranteed: [
       { required: true, message: '单趟价格不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 2000) }
+      { validator: validatorNumberRange(1, 1999) }
     ],
     shipperOffer: [
       { required: true, message: '预计货主月报价不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 100000) }
+      { validator: validatorNumberRange(1, 309999) }
     ],
     everyUnitPrice: [
       { required: true, message: '提成单价不能为空', trigger: 'change' },
-      { validator: validatorNumberRange(1, 2000) }
+      { validator: validatorNumberRange(1, 1999) }
     ],
     cargoType: [
       { required: true, message: '货物类型不能为空', trigger: 'change' }
@@ -600,6 +582,13 @@ export default class CreatLine extends Vue {
     try {
       if (node.level < 3) {
         let nodes = await this.loadCityByCode(params)
+        if (node.level === 2) {
+          for (let i = 0; i < nodes.length; i++) {
+            if (Number(nodes[i].value) === -99) {
+              nodes[i].leaf = true
+            }
+          }
+        }
         resolve(nodes)
       } else if (node.level === 3) {
         let nodes = await this.cityDeyail(query)
@@ -670,6 +659,7 @@ export default class CreatLine extends Vue {
     }
   }
 
+  // 每日配送次数
   @Watch('ruleForm.dayNo')
   private dayNoChange(val:any, oldVal:any) {
     if (Number(val) > 6) {
@@ -682,13 +672,13 @@ export default class CreatLine extends Vue {
       this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
         workingTimeStart: '', workingTimeEnd: ''
       })
-      this.rules.push()
       this.rules['lineDeliveryInfoFORMS' + i] = [
         { required: true, message: '工作时间不能为空', trigger: 'blur' }
       ]
     }
   }
 
+  // 货主
   @Watch('ruleForm.customerId')
   private customerIdChange(val:any) {
     if (this.pageStatus === 1) {
@@ -700,16 +690,17 @@ export default class CreatLine extends Vue {
     }
   }
 
+  // 配送方式
   @Watch('ruleForm.incomeSettlementMethod')
   private changeRuleForm(value:any) {
     if (value === 1) {
-      // this.ruleForm.everyUnitPrice = ''
+      this.ruleForm.everyUnitPrice = ''
       this.NoshipperOffer = true
-      // this.ruleForm.shipperOffer = ''
+      this.ruleForm.shipperOffer = ''
     } else {
-      // this.ruleForm.everyUnitPrice = ''
+      this.ruleForm.everyUnitPrice = ''
       this.NoshipperOffer = false
-      // this.ruleForm.shipperOffer = ''
+      this.ruleForm.shipperOffer = ''
     }
   }
 
@@ -721,31 +712,36 @@ export default class CreatLine extends Vue {
     }
   }
 
-  // 配送周期
-  @Watch('ruleForm.deliveryWeekCycle')
-  private changeDeliveryWeekCycle(val:any, oldVal:any) {
-    console.log(val, oldVal)
-    if (val.length === 7 && val.indexOf('') === -1) {
-      return (val = val.push(''))
-    }
-    if (val.indexOf('') > -1) {
-      // if () {}
-    }
-  }
-
   // 可上车数
   @Watch('ruleForm.deployNo')
   private changeDeployNo(value:any) {
-    if (Number(value) > 11 || Number(value) < 0) {
+    if (Number(value) >= 11 || Number(value) < 0) {
       this.ruleForm.deployNo = ''
       this.$message.info('可上车数必须大于0小于11')
     }
   }
 
+  // 配送周期
+  @Watch('ruleForm.deliveryWeekCycle')
+  private changeDeliveryWeekCycle(val:any, oldVal:any) {
+    if (oldVal.length === 8 && !val.includes('')) {
+      this.ruleForm.deliveryWeekCycle = []
+    } else if (!oldVal.includes('') && val.includes('')) {
+      this.ruleForm.deliveryWeekCycle = ['', '1', '2', '3', '4', '5', '6', '7']
+    } else if (val.length < 8 && val.includes('')) {
+      let index = val.findIndex((item:any) => item === '')
+      if (index > -1) {
+        val.splice(index, 1)
+      }
+    } else if (val.length === 7 && !val.includes('')) {
+      this.ruleForm.deliveryWeekCycle = ['', '1', '2', '3', '4', '5', '6', '7']
+    }
+  }
+
   private checkBoxChange() {
-    // if (this.ruleForm.deliveryWeekCycle && this.ruleForm.deliveryWeekCycle.includes('')) {
-    //   this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(item => item.type)
-    // }
+    if (this.ruleForm.deliveryWeekCycle && this.ruleForm.deliveryWeekCycle.includes('')) {
+      this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(item => item.type)
+    }
   }
 
   private async remoteMethod(query: any) {
@@ -868,8 +864,11 @@ export default class CreatLine extends Vue {
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
         }
-        // console.log(ruleForm)
-        // return
+        for (let i = 0; i < Number(ruleForm.dayNo); i++) {
+          if (!(ruleForm['lineDeliveryInfoFORMS' + i].workingTimeStart) || (!ruleForm['lineDeliveryInfoFORMS' + i].workingTimeEnd)) {
+            return this.$message.error('请检查预计工作时间，不能为空')
+          }
+        }
         this.createdLine(ruleForm)
       } else {
         console.log('error submit!!')
@@ -952,7 +951,15 @@ export default class CreatLine extends Vue {
 
   private async getLowerStaffInfo() {
     try {
-      let { data: res } = await GetJoinManageList({})
+      let paramsUrl = {
+        uri: ''
+      }
+      if (this.pageStatus === 1 || this.pageStatus === 3) {
+        paramsUrl.uri = '/v1/line/create'
+      } else if (this.pageStatus === 2) {
+        paramsUrl.uri = '/v1/line/edit'
+      }
+      let { data: res } = await GetManagerLists(paramsUrl)
       if (res.success) {
         if (res.data.length > 1) {
           this.lineSaleIdState = false
@@ -1027,7 +1034,7 @@ export default class CreatLine extends Vue {
       allParams.delivery.push(allParams.cityArea + '')
       allParams.delivery.push(allParams.countyArea + '')
 
-      this.customerOptions = [{ value: allParams.customerId, label: allParams.bussinessName }]
+      this.customerOptions = [{ value: allParams.customerId, label: allParams.customerName }]
       this.ruleForm = { ...this.ruleForm, ...allParams }
 
       setTimeout(() => {

@@ -1,229 +1,227 @@
 <template>
   <div class="DriverList">
-    <el-card shadow="never">
-      <suggest-container
-        :tab="tab"
-        :tags="tags"
-        :active-name="listQuery.status"
-        @handle-query="handleQuery"
+    <suggest-container
+      :tab="tab"
+      :tags="tags"
+      :active-name="listQuery.status"
+      @handle-query="handleQuery"
+    >
+      <!-- 查询表单 -->
+      <self-form
+        :list-query="listQuery"
+        :form-item="formItem"
+        label-width="80px"
       >
-        <!-- 查询表单 -->
-        <self-form
-          :list-query="listQuery"
-          :form-item="formItem"
-          label-width="80px"
-        >
-          <div
-            slot="btn1"
-            :class="isPC ? 'btnPc' : ''"
-          >
-            <el-button
-              type="primary"
-              :class="isPC ? '' : 'btnMobile'"
-              name="driverlist_query_btn"
-              size="small"
-              @click="handleQueryClick"
-            >
-              查询
-            </el-button>
-            <el-button
-              :class="isPC ? '' : 'btnMobile'"
-              name="driverlist_reset_btn"
-              size="small"
-              @click="handleResetClick"
-            >
-              重置
-            </el-button>
-            <el-button
-              :class="isPC ? '' : 'btnMobile'"
-              type="primary"
-              name="driverlist_manager_btn"
-              size="small"
-              @click="handleModifyManager"
-            >
-              修改加盟经理
-            </el-button>
-          </div>
-        </self-form>
-      </suggest-container>
-      <!-- 表格顶部的按钮 -->
-      <table-header
-        :tab="[]"
-        active-name=""
-      >
-        <el-dropdown
-          :hide-on-click="false"
-          trigger="click"
+        <div
+          slot="btn1"
+          :class="isPC ? 'btnPc' : ''"
         >
           <el-button
-            type="warning"
-            size="mini"
-            style="margin-left:10px"
-            name="driverclue_column_btn"
+            type="primary"
+            :class="isPC ? '' : 'btnMobile'"
+            name="driverlist_query_btn"
+            size="small"
+            @click="handleQueryClick"
           >
-            <i
-              class="el-icon-s-operation"
-            />
-            <span v-if="isPC">筛选</span>
+            查询
           </el-button>
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
+            name="driverlist_reset_btn"
+            size="small"
+            @click="handleResetClick"
+          >
+            重置
+          </el-button>
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
+            type="primary"
+            name="driverlist_manager_btn"
+            size="small"
+            @click="handleModifyManager"
+          >
+            修改加盟经理
+          </el-button>
+        </div>
+      </self-form>
+    </suggest-container>
+    <!-- 表格顶部的按钮 -->
+    <table-header
+      :tab="[]"
+      active-name=""
+    >
+      <el-dropdown
+        :hide-on-click="false"
+        trigger="click"
+      >
+        <el-button
+          type="warning"
+          size="mini"
+          style="margin-left:10px"
+          name="driverclue_column_btn"
+        >
+          <i
+            class="el-icon-s-operation"
+          />
+          <span v-if="isPC">筛选</span>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-checkbox-group v-model="checkList">
+            <el-dropdown-item
+              v-for="item in dropdownList"
+              :key="item.label"
+            >
+              <el-checkbox
+                :label="item.label"
+                :disabled="item.disabled"
+              />
+            </el-dropdown-item>
+          </el-checkbox-group>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </table-header>
+    <!-- 表格 -->
+    <self-table
+      ref="driverListTable"
+      v-loading="listLoading"
+      row-key="driverId"
+      :operation-list="operationList"
+      :table-data="tableData"
+      :columns="columns"
+      :page="page"
+      @olclick="handleOlClick"
+      @onPageSize="handlePageSize"
+      @selection-change="handleChange"
+    >
+      <template v-slot:createDate="scope">
+        {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+      </template>
+      <template v-slot:op="scope">
+        <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+          <span
+            v-if="isPC"
+            class="el-dropdown-link"
+          >
+            更多操作<i
+              v-if="isPC"
+              class="el-icon-arrow-down el-icon--right"
+            />
+          </span>
+          <span
+            v-else
+            style="font-size: 18px;"
+            class="el-dropdown-link"
+          >
+            <i class="el-icon-setting el-icon--right" />
+          </span>
           <el-dropdown-menu slot="dropdown">
-            <el-checkbox-group v-model="checkList">
-              <el-dropdown-item
-                v-for="item in dropdownList"
-                :key="item.label"
-              >
-                <el-checkbox
-                  :label="item.label"
-                  :disabled="item.disabled"
-                />
-              </el-dropdown-item>
-            </el-checkbox-group>
+            <el-dropdown-item
+              v-if="[4].includes(scope.row.status)"
+              command="distribution"
+            >
+              <template v-if="isPC">
+                分配
+              </template>
+              <i
+                v-else
+                class="el-icon-turn-off"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="[1,2,3].includes(scope.row.status)"
+              command="follow"
+            >
+              <template v-if="isPC">
+                跟进
+              </template>
+              <i
+                v-else
+                class="el-icon-right"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="[2].includes(scope.row.status)"
+              command="giveup"
+            >
+              <template v-if="isPC">
+                放弃
+              </template>
+              <i
+                v-else
+                class="el-icon-s-release"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="[1,2,3,4].includes(scope.row.status)"
+              command="edit"
+            >
+              <template v-if="isPC">
+                编辑
+              </template>
+              <i
+                v-else
+                class="el-icon-edit"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="[1,2,3,4].includes(scope.row.status)"
+              command="detail"
+            >
+              <template v-if="isPC">
+                详情
+              </template>
+              <i
+                v-else
+                class="el-icon-view"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="[3].includes(scope.row.status)"
+              command="account"
+            >
+              <template v-if="isPC">
+                账户
+              </template>
+              <i
+                v-else
+                class="el-icon-user"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="[1,2,3].includes(scope.row.status)"
+              command="order"
+            >
+              <template v-if="isPC">
+                创建订单
+              </template>
+              <i
+                v-else
+                class="el-icon-s-order"
+              />
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="[3].includes(scope.row.status)"
+              command="transport"
+            >
+              <template v-if="isPC">
+                创建运力
+              </template>
+              <i
+                v-else
+                class="el-icon-s-custom"
+              />
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-      </table-header>
-      <!-- 表格 -->
-      <self-table
-        ref="driverListTable"
-        v-loading="listLoading"
-        row-key="driverId"
-        :operation-list="operationList"
-        :table-data="tableData"
-        :columns="columns"
-        :page="page"
-        @olclick="handleOlClick"
-        @onPageSize="handlePageSize"
-        @selection-change="handleChange"
-      >
-        <template v-slot:createDate="scope">
-          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
-        </template>
-        <template v-slot:op="scope">
-          <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
-            <span
-              v-if="isPC"
-              class="el-dropdown-link"
-            >
-              更多操作<i
-                v-if="isPC"
-                class="el-icon-arrow-down el-icon--right"
-              />
-            </span>
-            <span
-              v-else
-              style="font-size: 18px;"
-              class="el-dropdown-link"
-            >
-              <i class="el-icon-setting el-icon--right" />
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                v-if="[4].includes(scope.row.status)"
-                command="distribution"
-              >
-                <template v-if="isPC">
-                  分配
-                </template>
-                <i
-                  v-else
-                  class="el-icon-turn-off"
-                />
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="[1,2,3].includes(scope.row.status)"
-                command="follow"
-              >
-                <template v-if="isPC">
-                  跟进
-                </template>
-                <i
-                  v-else
-                  class="el-icon-right"
-                />
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="[2].includes(scope.row.status)"
-                command="giveup"
-              >
-                <template v-if="isPC">
-                  放弃
-                </template>
-                <i
-                  v-else
-                  class="el-icon-s-release"
-                />
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="[1,2,3,4].includes(scope.row.status)"
-                command="edit"
-              >
-                <template v-if="isPC">
-                  编辑
-                </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="[1,2,3,4].includes(scope.row.status)"
-                command="detail"
-              >
-                <template v-if="isPC">
-                  详情
-                </template>
-                <i
-                  v-else
-                  class="el-icon-view"
-                />
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="[3].includes(scope.row.status)"
-                command="account"
-              >
-                <template v-if="isPC">
-                  账户
-                </template>
-                <i
-                  v-else
-                  class="el-icon-user"
-                />
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="[1,2,3].includes(scope.row.status)"
-                command="order"
-              >
-                <template v-if="isPC">
-                  创建订单
-                </template>
-                <i
-                  v-else
-                  class="el-icon-s-order"
-                />
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="[3].includes(scope.row.status)"
-                command="transport"
-              >
-                <template v-if="isPC">
-                  创建运力
-                </template>
-                <i
-                  v-else
-                  class="el-icon-s-custom"
-                />
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </self-table>
-      <manager-dialog
-        ref="driverListManager"
-        :rows="rows"
-        :type="type"
-        @onRefresh="handleGetList"
-        @onRows="rows = []"
-      />
-    </el-card>
+      </template>
+    </self-table>
+    <manager-dialog
+      ref="driverListManager"
+      :rows="rows"
+      :type="type"
+      @onRefresh="handleGetList"
+      @onRows="rows = []"
+    />
 
     <PitchBox
       :drawer.sync="drawer"
@@ -251,7 +249,7 @@ import PitchBox from '@/components/PitchBox/index.vue'
 import { getLabel } from '@/utils/index.ts'
 import { DriverFollowUpToDown, GetDriverList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, phoneReg } from '@/utils/index'
 import { GetManagerLists, GetOpenCityData } from '@/api/common'
 interface IState {
     [key: string]: any;
@@ -349,7 +347,8 @@ export default class extends Vue {
       label: '司机编号',
       tagAttrs: {
         placeholder: '请输入司机编号',
-        maxlength: 32
+        maxlength: 32,
+        clearable: true
       }
     },
     {
@@ -358,7 +357,8 @@ export default class extends Vue {
       label: '姓名',
       tagAttrs: {
         placeholder: '请输入姓名',
-        maxlength: 10
+        maxlength: 10,
+        clearable: true
       }
     },
     {
@@ -367,7 +367,8 @@ export default class extends Vue {
       label: '手机号',
       tagAttrs: {
         placeholder: '请输入手机号',
-        maxlength: 11
+        maxlength: 11,
+        clearable: true
       }
     },
     {
@@ -630,6 +631,9 @@ export default class extends Vue {
    */
   async getList() {
     try {
+      if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
+        return this.$message.error('请输入正确的手机号')
+      }
       this.listLoading = true
       let params:any = {
         limit: this.page.limit,
@@ -893,7 +897,7 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .DriverList {
-    padding: 20px;
+    padding: 15px;
     .btnPc {
       display: flex;
       flex-flow: row nowrap;
@@ -912,16 +916,20 @@ export default class extends Vue {
   .DriverList >>> .el-form-item__label {
     color:#999;
   }
-  .DriverList >>> .el-collapse-item__wrap {
-    padding: 20px 30px 0 0;
-    box-sizing: border-box;
-    position: absolute;
-    z-index: 1000;
-    background: #fff;
-    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
-    right: 15px;
-    left: 15px;
+  @media screen and (min-width: 700px) {
+    .DriverList >>> .el-collapse-item__wrap {
+      position: absolute;
+      z-index: 1000;
+      background: #fff;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+      right: 15px;
+      left: 15px;
+    }
+    .DriverList >>> .el-collapse-item__content {
+      padding-bottom: 0px;
+    }
   }
+
 </style>
 
 <style>
