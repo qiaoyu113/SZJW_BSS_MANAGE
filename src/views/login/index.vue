@@ -82,7 +82,7 @@
       <br>
       <social-sign />
     </el-dialog>
-    <Dialog
+    <SelfDialog
       :visible.sync="assignShowDialog"
       :title="`该账号密码不安全，请重新设置`"
       :confirm="confirm"
@@ -127,7 +127,7 @@
           </el-col>
         </el-form>
       </el-row>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -141,14 +141,14 @@ import { isValidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect/index.vue'
 import SocialSign from './components/SocialSignin.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 
 @Component({
   name: 'Login',
   components: {
     LangSelect,
     SocialSign,
-    Dialog
+    SelfDialog
   }
 })
 export default class extends Vue {

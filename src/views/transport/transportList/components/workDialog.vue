@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 分配线索 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showAlert"
       title="上岗"
       width="30%"
@@ -35,12 +35,12 @@
         :pc-col="12"
         label-width="110px"
       />
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 
 interface IState {
@@ -49,7 +49,7 @@ interface IState {
 @Component({
   name: 'workDialog',
   components: {
-    Dialog,
+    SelfDialog,
     SelfForm
   }
 })

@@ -1,6 +1,6 @@
 <template>
   <div class="downLine">
-    <Dialog
+    <SelfDialog
       :visible.sync="showAlert"
       title="标书下线"
       width="40%"
@@ -44,12 +44,12 @@
           </el-dropdown>
         </template>
       </self-form>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 
 interface IState {
@@ -58,7 +58,7 @@ interface IState {
 @Component({
   name: 'DownLine',
   components: {
-    Dialog,
+    SelfDialog,
     SelfForm
   }
 })

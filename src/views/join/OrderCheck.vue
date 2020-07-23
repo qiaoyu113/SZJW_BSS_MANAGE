@@ -450,7 +450,7 @@
       </el-button>
     </div>
     <!-- 支付 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showMessageBill"
       title="支付"
       :confirm="confirm"
@@ -566,9 +566,9 @@
           </el-col>
         </el-row>
       </el-form>
-    </Dialog>
+    </SelfDialog>
     <!-- 支付详情 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showMessage"
       title="支付详情"
     >
@@ -613,12 +613,12 @@
           />
         </el-col>
       </el-row>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 <script lang="ts">
 import { Form as ElForm, Input, Loading } from 'element-ui'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetDictionaryList, Upload } from '@/api/common'
 import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder, PostConfirmOrder } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -634,7 +634,7 @@ import '@/styles/common.scss'
     SelfItem,
     SectionContainer,
     DetailItem,
-    Dialog
+    SelfDialog
   }
 })
 export default class CreatLine extends Vue {
