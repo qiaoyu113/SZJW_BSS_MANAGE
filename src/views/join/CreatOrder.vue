@@ -131,7 +131,7 @@
             >
               <el-input
                 v-model="ruleForm.cooperationTime"
-                v-only-number="{min: 0, max: 99}"
+                v-only-number="{min: 0, max: 999}"
                 placeholder="合作期限"
                 type="number"
               />
@@ -419,7 +419,7 @@
         <el-row>
           <el-col :span="isPC ? 24 : 24">
             <p class="hint_title">
-              支付记录 <span>(已支付金额： ¥{{ readyPay }}，未支付: ¥ {{ Number(orderPrice) - Number(remain) - Number(readyPay) }} )</span>
+              支付记录 <span>(已支付金额： ¥{{ readyPay }}，未支付: ¥ {{ notPay }}</span>
             </p>
             <el-form-item :label="` `">
               <el-table
@@ -506,7 +506,7 @@
       </el-button>
     </div>
     <!-- 支付 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showMessageBill"
       title="支付"
       :confirm="confirm"
@@ -608,9 +608,9 @@
           </el-col>
         </el-row>
       </el-form>
-    </Dialog>
+    </SelfDialog>
     <!-- 支付详情 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showMessage"
       title="支付详情"
     >
@@ -672,12 +672,12 @@
           />
         </el-col>
       </el-row>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 <script lang="ts">
 import { Form as ElForm, Input } from 'element-ui'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetDictionaryList, Upload, GetPayList } from '@/api/common'
 import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -693,7 +693,7 @@ import '@/styles/common.scss'
     SelfItem,
     SectionContainer,
     DetailItem,
-    Dialog
+    SelfDialog
   }
 })
 export default class CreatLine extends Vue {
@@ -701,6 +701,7 @@ export default class CreatLine extends Vue {
   private remain: number = 0
   private readyPay: number = 0
   private orderPrice: number = 0
+  private notPay: number = 0
   private orderIndex:number = 0
   private optionsCar: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
   private optionsCar2: any[] = [] // 字典查询定义(命名规则为options + 类型名称)
@@ -874,7 +875,7 @@ export default class CreatLine extends Vue {
   @Watch('showMessage', { deep: true })
   private changeRule(value:any) {
     if (!value) {
-      (this.$refs['payForm'] as ElForm).resetFields()
+      // (this.$refs['payForm'] as ElForm).resetFields()
     }
   }
 
@@ -910,16 +911,21 @@ export default class CreatLine extends Vue {
   private changeCooperationCar(value:any) {
     if (this.ruleForm.cooperationModel === '1') {
       this.getModelByTypeAndCityAndSupplierAndCarType()
-    }
-    if (this.ruleForm.cooperationModel !== '3') {
       this.getPrice()
     }
   }
 
   @Watch('ruleForm.goodsAmount', { deep: true })
   private changeGoodsAmount(value:any) {
-    this.orderPrice = value
-    this.remain = this.orderPrice - this.readyPay
+    if (value <= (Number(this.readyPay) + Number(this.notPay))) {
+      this.ruleForm.goodsAmount = Number(this.readyPay) + Number(this.notPay)
+      this.orderPrice = Number(this.readyPay) + Number(this.notPay)
+      this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+    } else {
+      this.orderPrice = value
+      this.notPay = this.getNotPay()
+      this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+    }
   }
 
   // 判断是否是PC
@@ -1026,7 +1032,7 @@ export default class CreatLine extends Vue {
         }
       })
       setTimeout(() => {
-        this.remain = Number(this.orderPrice) - notReadPay
+        this.remain = Number(this.orderPrice) - (Number(notReadPay) + this.readyPay)
       }, 100)
       this.ruleForm.busiType = this.ruleForm.busiType.toString()
       this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
@@ -1055,6 +1061,7 @@ export default class CreatLine extends Vue {
             }
           )
           this.payNumber = ''
+          this.notPay = this.getNotPay()
         }
       } else {
         this.$message.warning('请输入支付金额')
@@ -1219,6 +1226,17 @@ export default class CreatLine extends Vue {
   // 重置
   private resetForm(formName:any) {
     (this.$refs[formName] as ElForm).resetFields()
+  }
+
+  // 未支付计算
+  private getNotPay() {
+    let num = 0
+    this.ruleForm.orderPayRecordInfoFORMList.forEach((i: any) => {
+      if (Number(i.status) === 1) {
+        num = num + Number(i.money)
+      }
+    })
+    return num
   }
 }
 </script>

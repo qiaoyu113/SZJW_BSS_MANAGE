@@ -160,12 +160,12 @@
         <div class="fucTip">
           <p> <span>[...]</span> 支持el-dialog 所有事件，如：open close 等 </p>
         </div>
-        <Dialog
+        <SelfDialog
           :visible.sync="showDialog"
         >
           <p>我是弹窗</p>
-        </Dialog>
-        <Dialog
+        </SelfDialog>
+        <SelfDialog
           :visible.sync="showDialog2"
           :title="`测试标题`"
           :before-close="beforeClose"
@@ -193,7 +193,7 @@
           <p>我是弹窗</p>
           <p>我是弹窗</p>
           <p>我是弹窗</p>
-        </Dialog>
+        </SelfDialog>
       </div>
     </div>
 
@@ -267,7 +267,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import Operation from '@/components/Operation/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import SelfTable from '@/components/base/SelfTable.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { GetCityByCode } from '@/api/common'
@@ -282,7 +282,7 @@ interface PageObj {
   components: {
     SuggestContainer,
     Operation,
-    Dialog,
+    SelfDialog,
     SelfForm,
     PitchBox,
     SelfTable
