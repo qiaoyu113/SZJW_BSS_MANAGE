@@ -267,6 +267,40 @@
       </el-row>
     </sectioncontainer>
     <SectionContainer
+      title="货物信息"
+      :md="true"
+    >
+      <el-row>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="货物类型"
+            :value="ruleForm.lineTypeName"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="货物总重量"
+            :value="ruleForm.goodsWeightName"
+          />
+        </el-col>
+        <el-col :span="isPC ? 6 : 24">
+          <DetailItem
+            name="是否需要搬运"
+            :value="ruleForm.carry === 1 ? '是' : '否'"
+          />
+        </el-col>
+        <el-col
+          v-if="ruleForm.carry === 1"
+          :span="isPC ? 6 : 24"
+        >
+          <DetailItem
+            name="装卸难度"
+            :value="ruleForm.handlingDifficultyDegreeName"
+          />
+        </el-col>
+      </el-row>
+    </SectionContainer>
+    <SectionContainer
       title="线路角色"
       :md="true"
     >
@@ -472,9 +506,15 @@ export default class extends Vue {
   private async GetDetail() {
     let { data: res } = await GetLineDetail({ lineId: this.lineId })
     if (res.success) {
-      // if (res.data.auditState === 3) {
-      //   this.status = 1
-      // }
+      if (res.data.auditState === 2 || res.data.auditState === 3) {
+        this.status = 2
+      }
+      if (res.data.shelvesState === 2) {
+        this.status = 3
+      }
+      if (res.data.shelvesState === 4) {
+        this.status = 4
+      }
       this.ruleForm = { ...this.ruleForm, ...res.data }
       if (this.ruleForm.deliveryWeekCycle) {
         let checkList = this.ruleForm.deliveryWeekCycle.split(',')

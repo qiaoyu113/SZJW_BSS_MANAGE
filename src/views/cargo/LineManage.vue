@@ -349,7 +349,7 @@
             type="number"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
-            @input="checkMountGuardNo"
+            @blur="checkMountGuardNo"
           />
         </div>
         <p class="dioBox">
@@ -1122,6 +1122,7 @@ export default class LineManage extends Vue {
         break
       case 'putaway':
         this.showPutDio = true
+        console.log(row)
         this.diaUpcar = row.waitDirveValidity
         this.diaUpcarNum = row.deployNo
         break
@@ -1202,22 +1203,27 @@ export default class LineManage extends Vue {
   private checkMountGuardNo(val: string) {
     if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
       this.$message.error('可上车数要大于或等于已上岗标书数量')
-      this.diaUpcarNum = ''
-      return
+      this.diaUpcarNum = this.rowInfo.mountGuardNo
     }
-    if (this.diaUpcarNum === '') {
-      this.$message.error('可上车数不能为空')
-    }
+    // if (this.diaUpcarNum === '') {
+    //   this.diaUpcarNum = this.rowInfo.mountGuardNo
+    //   this.$message.error('可上车数不能为空')
+    // }
   }
 
   private async putConfirm(done: any) {
     if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
       this.$message.error('可上车数要大于或等于已上岗标书数量')
-      this.diaUpcarNum = ''
+      this.diaUpcarNum = this.rowInfo.mountGuardNo
       return
     }
     if (this.diaUpcarNum === '') {
-      this.$message.error('可上车数不能为空')
+      this.diaUpcarNum = this.rowInfo.mountGuardNo
+      // this.$message.error('可上车数不能为空')
+      // return
+    }
+    if (Number(this.diaUpcarNum) >= 11 || Number(this.diaUpcarNum) <= 0) {
+      this.$message.error('可上车数只能在0至11之间')
       return
     }
     let params = {
