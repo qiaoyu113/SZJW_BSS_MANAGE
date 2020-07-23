@@ -799,7 +799,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import '@/styles/element-variables.scss';
   .DriverClue {
-    padding: 20px;
+    padding: 15px;
     .round {
       display: inline-block;
       padding: 1px 8px;
@@ -838,13 +838,14 @@ export default class extends Vue {
   }
 
   .DriverClue >>> .el-collapse-item__wrap {
-    padding: 20px 30px 0 0;
-    box-sizing: border-box;
     position: absolute;
     z-index: 1000;
     background: #fff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
     right: 15px;
     left: 15px;
+  }
+  .DriverClue >>> .el-collapse-item__content {
+    padding-bottom: 0px;
   }
 </style>
