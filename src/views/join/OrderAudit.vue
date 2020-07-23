@@ -22,7 +22,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="工作城市"
-            :value="orderDetail.city"
+            :value="orderDetail.driverInfoVO.workCityName"
           />
         </el-col>
 
@@ -42,7 +42,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="商品分类"
-            :value="orderDetail.busiType"
+            :value="orderDetail.busiTypeName"
           />
         </el-col>
 
@@ -87,58 +87,79 @@
       :md="true"
     >
       <el-row>
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="ruleForm.busiType === '0' && ruleForm.cooperationModel === '3'"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="年检有效期"
-            :value="orderDetail.goodsAmount | Timestamp"
+            :value="orderDetail.inspectionTime"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="ruleForm.busiType === '0' && ruleForm.cooperationModel === '3'"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="保险有效期"
-            :value="orderDetail.insuranceTime | Timestamp"
+            :value="orderDetail.insuranceTime"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel === 2"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="租赁公司"
-            :value="orderDetail.leaseCarCompany"
+            :value="orderDetail.supplier"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel === 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="购车公司"
-            :value="orderDetail.buyCarCompany"
+            :value="orderDetail.supplier"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="合作车型"
-            :value="orderDetail.cooperationCar"
+            :value="orderDetail.cooperationCarName"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 1"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="车牌号"
             :value="orderDetail.plateNo"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 3"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="车辆信息"
-            :value="orderDetail.carPrice"
+            :value="orderDetail.carMessage"
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="orderDetail.cooperationModel !== 3"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
-            name="无税车架"
+            name="无税车价"
             :value="orderDetail.carPrice"
           />
         </el-col>

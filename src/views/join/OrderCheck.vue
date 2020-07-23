@@ -5,10 +5,12 @@
         title="订单攻略"
         name="1"
       >
-        <div>1、交付信息会根据订单信息，不同的配置，需要把必填项都填写完整后提交。</div>
-        <div>2、合作模式：购车，需要填写车辆交付，如返利等，如有问题可以联系供应链同事。</div>
-        <div>3、运营经理负责成交后的司机运营跟进。</div>
-        <div>4、GPS绑定的编号，需要填写准确，对后期的设备状态和轨迹，会有影响。</div>
+        <div>1、创建订单根据订单的订单金额和支付金额，如果等于订单未待审核，如果不等于为待支付，需要再次提交。</div>
+        <div>2、微信小程序缴费无需重新创建订单，待确认状态的订单，点击确认并提交。</div>
+        <div>3、电子合同会根据创建订单的信息生成，请确保真实有效；如：司机姓名和身份证号需要同身份证、手机号的办卡人是本人。</div>
+        <div>4、运力配额：一个订单可以对应多少个运力，如：618车队需要临时上车，在订单上面创建运力上车。</div>
+        <div>5、待支付的订单，会在小程序-我的订单中显示，司机和加盟经理都可以进行支付，支付完成，订单完成。</div>
+        <div>6、根据订单金额，添加支付金额， 订单会被拆分多笔支付。如：存在意向金、首款、尾款的场景。</div>
       </el-collapse-item>
     </el-collapse>
     <el-form
@@ -18,6 +20,7 @@
       class="demo-ruleForm"
     >
       <SectionContainer
+        v-if="!id"
         title="选择司机"
         :md="true"
       >
@@ -30,7 +33,7 @@
               filterable
               remote
               reserve-keyword
-              placeholder="请输入司机姓名或完整手机号"
+              placeholder="请输入司机编号/姓名/手机号"
               @change="checkDiver"
             >
               <el-option
@@ -97,6 +100,7 @@
                   v-for="item in optionsBusi"
                   :key="item.dictValue"
                   :label="item.dictValue"
+                  :value="item.dictValue"
                 >
                   {{ item.dictLabel }}
                 </el-radio>
@@ -128,20 +132,23 @@
             >
               <el-input
                 v-model="ruleForm.cooperationTime"
-                v-only-number="{min: 0, max: 99}"
+                v-only-number="{min: 0, max: 999}"
                 placeholder="合作期限"
                 type="number"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.busiType === '0'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
               label="收入保障（元）"
               prop="incomeGuarantee"
             >
               <el-input
                 v-model="ruleForm.incomeGuarantee"
-                v-only-number="{min: 0, precision: 2, max: 999999}"
+                v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入收入保障"
                 maxlength="10"
                 type="number"
@@ -155,7 +162,7 @@
             >
               <el-input
                 v-model="ruleForm.rake"
-                v-only-number="{min: 0, max: 100}"
+                v-only-number="{min: 0, max: 100, precision: 1}"
                 placeholder="请输入抽佣比例"
                 type="number"
               />
@@ -168,9 +175,12 @@
             >
               <el-input
                 v-model="ruleForm.goodsAmount"
-                v-only-number="{min: 0, precision: 2, max: 999999}"
+                v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入商品金额"
+                disabled="disabled"
+                controls-position="right"
                 type="number"
+                @blur="goodBlur"
               />
             </el-form-item>
           </el-col>
@@ -183,35 +193,43 @@
         :md="true"
       >
         <el-row class="detail">
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.busiType === '0' && ruleForm.cooperationModel === '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '3'"
               label="年检有效期"
               prop="inspectionTime"
             >
               <el-date-picker
                 v-model="ruleForm.inspectionTime"
                 type="date"
+                value-format="timestamp"
                 placeholder="请输入年检有效期"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.busiType === '0' && ruleForm.cooperationModel === '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '3'"
               label="保险有效期"
               prop="insuranceTime"
             >
               <el-date-picker
                 v-model="ruleForm.insuranceTime"
                 type="date"
+                value-format="timestamp"
                 placeholder="请输入保险有效期"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel === '2'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '2'"
               label="租赁公司"
               prop="supplier"
             >
@@ -221,16 +239,18 @@
               >
                 <el-option
                   v-for="item in optionsCompany"
-                  :key="item.codeVal"
-                  :label="item.code"
-                  :value="item.codeVal"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel === '1'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '1'"
               label="购车公司"
               prop="supplier"
             >
@@ -248,9 +268,11 @@
             </el-form-item>
           </el-col>
           <!--购车和租车-->
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
               label="合作车型"
               prop="cooperationCar"
             >
@@ -268,9 +290,11 @@
             </el-form-item>
           </el-col>
           <!--带车-->
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel === '3'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.cooperationModel === '3'"
               label="合作车型"
               prop="cooperationCar"
             >
@@ -288,9 +312,11 @@
             </el-form-item>
           </el-col>
           <!--车辆型号-->
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.supplier && ruleForm.cooperationCar && ruleForm.cooperationModel === '1'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
-              v-if="ruleForm.supplier && ruleForm.cooperationCar && ruleForm.cooperationModel !== '3'"
               label="车辆型号"
               prop="cooperationCar"
             >
@@ -307,7 +333,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ruleForm.cooperationModel !== '1'"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
               label="车牌号"
               prop="plateNo"
@@ -348,9 +377,11 @@
                 :value="ruleForm.describe"
               />
             </el-col>
-            <el-col :span="isPC ? 6 : 24">
+            <el-col
+              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
+              :span="isPC ? 6 : 24"
+            >
               <DetailItem
-                v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
                 name="无税车价"
                 :value="ruleForm.carPrice"
               />
@@ -397,7 +428,7 @@
             </p>
             <el-form-item :label="` `">
               <el-table
-                :data="ruleForm.orderPayRecordInfoFORMList"
+                :data="ruleForm.orderPayRecordInfoVOList"
                 border
                 style="width: 100%"
               >
@@ -406,23 +437,40 @@
                   label="支付金额（元）"
                 />
                 <el-table-column
-                  prop="money"
+                  prop="payType"
                   label="支付方式"
-                />
+                >
+                  <template slot-scope="scope">
+                    <span>{{ scope.row.payTypeName }}</span>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="money"
                   label="支付时间"
-                />
+                >
+                  <template slot-scope="scope">
+                    {{ scope.row.payDate | Timestamp }}
+                  </template>
+                </el-table-column>
                 <el-table-column
-                  prop="money"
+                  prop="status"
                   label="支付截图"
-                />
+                >
+                  <template slot-scope="scope">
+                    <el-image
+                      v-if="scope.row.payImageUrl"
+                      style="width:50px;height:50px;"
+                      :preview-src-list="[scope.row.payImageUrl]"
+                      :src="scope.row.payImageUrl"
+                    />
+                  </template>
+                </el-table-column>
                 <el-table-column
-                  prop="money"
+                  prop="outTradeNo"
                   label="交易编号"
                 />
                 <el-table-column
-                  prop="money"
+                  prop="remarks"
                   label="备注"
                 />
               </el-table>
