@@ -171,9 +171,7 @@
                     class="el-icon-edit"
                   />
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="take"
-                >
+                <el-dropdown-item command="take">
                   <template v-if="isPC">
                     拍照
                   </template>
@@ -273,9 +271,7 @@
                 />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  command="linedetail"
-                >
+                <el-dropdown-item command="linedetail">
                   <template v-if="isPC">
                     查看线路详情
                   </template>
@@ -284,9 +280,7 @@
                     class="el-icon-edit"
                   />
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="showpic"
-                >
+                <el-dropdown-item command="showpic">
                   <template v-if="isPC">
                     查看线路照片
                   </template>
@@ -295,9 +289,7 @@
                     class="el-icon-delete"
                   />
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="showtender"
-                >
+                <el-dropdown-item command="showtender">
                   <template v-if="isPC">
                     查看全部标书
                   </template>
@@ -306,9 +298,7 @@
                     class="el-icon-edit"
                   />
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="showlog"
-                >
+                <el-dropdown-item command="showlog">
                   <template v-if="isPC">
                     操作日志
                   </template>
@@ -334,7 +324,7 @@
       </div>
     </div>
     <!-- 上架 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showPutDio"
       :title="`上架调整`"
       :center="true"
@@ -369,10 +359,10 @@
           目前已上车数量：{{ rowInfo.mountGuardNo }}辆
         </p>
       </div>
-    </Dialog>
+    </SelfDialog>
 
     <!-- 下架 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showGetDio"
       :title="`下架`"
       :center="true"
@@ -392,7 +382,7 @@
           </p>
         </div>
       </div>
-    </Dialog>
+    </SelfDialog>
 
     <PitchBox
       :drawer.sync="drawer"
@@ -410,49 +400,61 @@
 <script lang="ts">
 import { delayTime } from '@/settings'
 import { getLabel } from '@/utils/index.ts'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages, parseTime } from '@/utils/index'
-import { manualDeactivate, shelfAdjustment, mountGuard, shelveLine, lineListAll, customerCheckNames } from '@/api/cargo'
+import {
+  manualDeactivate,
+  shelfAdjustment,
+  mountGuard,
+  shelveLine,
+  lineListAll,
+  customerCheckNames,
+  fuzzyCheckNames
+} from '@/api/cargo'
 import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetOpenCityData, GetCityByCode, GetManagerLists } from '@/api/common'
+import {
+  GetDictionaryList,
+  GetOpenCityData,
+  GetCityByCode,
+  GetManagerLists
+} from '@/api/common'
 import SelfTable from '@/components/base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import '@/styles/common.scss'
 
-  interface PageObj {
-    page:Number,
-    limit:Number,
-    total?:Number
+interface PageObj {
+  page: Number;
+  limit: Number;
+  total?: Number;
+}
+
+interface IState {
+  [key: string]: any;
+}
+
+@Component({
+  name: 'LineManage',
+  components: {
+    Pagination,
+    SuggestContainer,
+    BettwenTitle,
+    SelfTable,
+    SelfForm,
+    SelfDialog,
+    PitchBox
   }
-
-  interface IState {
-    [key: string]: any;
-  }
-
-  @Component({
-    name: 'LineManage',
-    components: {
-      Pagination,
-      SuggestContainer,
-      BettwenTitle,
-      SelfTable,
-      SelfForm,
-      Dialog,
-      PitchBox
-    }
-  })
-
+})
 export default class LineManage extends Vue {
-  private chooseState:any = null
-  private rowInfo:any = {}
-  private id:string = ''
-  private diaUpcar:string = ''
-  private diaUpcarNum:string = ''
+  private chooseState: any = null;
+  private rowInfo: any = {};
+  private id: string = '';
+  private diaUpcar: string = '';
+  private diaUpcarNum: string = '';
   private tab: any[] = [
     {
       label: '全部',
@@ -491,7 +493,14 @@ export default class LineManage extends Vue {
       num: 0
     }
   ];
-  private title:any = { all: 0, waitShelvesNum: 0, isShelvesNum: 0, noShelvesNum: 0, soldNum: 0, disableNum: 0 }
+  private title: any = {
+    all: 0,
+    waitShelvesNum: 0,
+    isShelvesNum: 0,
+    noShelvesNum: 0,
+    soldNum: 0,
+    disableNum: 0
+  };
   private total = 0;
   private list: any[] = [];
   private limit: number = 20;
@@ -506,9 +515,8 @@ export default class LineManage extends Vue {
   ];
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
-  private customerLoading:boolean = false
-  private customerOptions:any[] = []
-  private formItem:any[] = [
+  private customerLoading: boolean = false;
+  private formItem: any[] = [
     {
       type: 2,
       key: 'city',
@@ -549,12 +557,13 @@ export default class LineManage extends Vue {
       options: []
     },
     {
-      type: 1,
+      type: 11,
       label: '线路名称',
       key: 'lineName',
       tagAttrs: {
         placeholder: '请输入线路名称',
-        clearable: true
+        clearable: true,
+        'fetch-suggestions': this.remoteMethodName
       }
     },
     {
@@ -562,24 +571,19 @@ export default class LineManage extends Vue {
       label: '线路编号',
       key: 'lineId',
       tagAttrs: {
-        clearable: true,
-        placeholder: '请输入线路编号'
+        placeholder: '请输入线路编号',
+        clearable: true
       }
     },
     {
-      type: 2,
+      type: 11,
       label: '货主名称',
       key: 'customerName',
       tagAttrs: {
         clearable: true,
         placeholder: '请输入货主名称',
-        remote: true,
-        'reserve-keyword': true,
-        loading: this.customerLoading,
-        filterable: true,
-        'remote-method': this.remoteMethod
-      },
-      options: this.customerOptions
+        'fetch-suggestions': this.remoteMethod
+      }
     },
     {
       type: 8,
@@ -621,8 +625,11 @@ export default class LineManage extends Vue {
       key: 'time',
       tagAttrs: {
         'picker-options': {
-          disabledDate(time:any) {
-            return (time.getTime() < Date.now() - (18 * 30 * 86400000) || time.getTime() > Date.now() + (18 * 30 * 86400000))
+          disabledDate(time: any) {
+            return (
+              time.getTime() < Date.now() - 18 * 30 * 86400000 ||
+              time.getTime() > Date.now() + 18 * 30 * 86400000
+            )
           }
         }
       }
@@ -634,7 +641,7 @@ export default class LineManage extends Vue {
       type: 10,
       key: 'jobTime'
     }
-  ]
+  ];
   private listQuery: IState = {
     city: '',
     shelvesState: '',
@@ -652,16 +659,16 @@ export default class LineManage extends Vue {
     jobStartDate: '',
     jobEndDate: ''
   };
-  private showPutDio:boolean = false
-  private showGetDio:boolean = false
-  page:PageObj ={
+  private showPutDio: boolean = false;
+  private showGetDio: boolean = false;
+  page: PageObj = {
     page: 1,
     limit: 10,
     total: 0
-  }
-  private tableData:any[] = []
+  };
+  private tableData: any[] = [];
 
-  private columns:any[] = [
+  private columns: any[] = [
     {
       key: 'lineId',
       label: '线路编号',
@@ -764,39 +771,70 @@ export default class LineManage extends Vue {
       slot: true,
       label: '详情'
     }
-  ]
+  ];
 
-  private pickerOptions:any = {
-    disabledDate(time:any) {
-      return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000)
+  private pickerOptions: any = {
+    disabledDate(time: any) {
+      return (
+        time.getTime() < Date.now() ||
+        time.getTime() > Date.now() + 41 * 86400000
+      )
     }
-  }
+  };
 
   private getTimeArr() {
     // 凌晨时间：
-    let atime:any = new Date(new Date().setHours(0, 0, 0, 0))
+    let atime: any = new Date(new Date().setHours(0, 0, 0, 0))
     // 23点时间：
-    let btime:any = new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)
-    let timeArr:string[] = []
+    let btime: any = new Date(
+      new Date(new Date().toLocaleDateString()).getTime() +
+        24 * 60 * 60 * 1000 -
+        1
+    )
+    let timeArr: string[] = []
     timeArr.push(atime)
     timeArr.push(btime)
     return timeArr
   }
 
-  private async remoteMethod(query: any) {
+  private async remoteMethod(query: string, cb: Function) {
     if (query !== '') {
-      this.customerLoading = true
-      let { data } = await customerCheckNames({ customerCompanyName: query })
+      let params = {
+        customerCompanyName: query
+      }
+      let { data } = await customerCheckNames(params)
       if (data.success) {
-        this.customerOptions = data.data.map(function(ele:any) {
-          return { value: ele.customerId, label: ele.customerCompanyName }
+        let options = data.data.map(function(ele: any) {
+          return {
+            value: ele.customerCompanyName,
+            label: ele.customerCompanyName
+          }
         })
-        this.customerLoading = false
+        cb(options)
       } else {
         this.$message.error(data.data.errorMsg)
       }
     } else {
-      this.customerOptions = []
+      cb()
+    }
+  }
+
+  private async remoteMethodName(query: string, cb: Function) {
+    if (query !== '') {
+      let params = {
+        lineName: query
+      }
+      let { data } = await fuzzyCheckNames(params)
+      if (data.success) {
+        let options = data.data.map(function(ele: any) {
+          return { label: ele.lineName, value: ele.lineName }
+        })
+        cb(options)
+      } else {
+        this.$message.error(data.data.errorMsg)
+      }
+    } else {
+      cb()
     }
   }
 
@@ -809,8 +847,8 @@ export default class LineManage extends Vue {
   /**
    * 省市县3级联动
    */
-  async getLineArea(node:any, resolve:any) {
-    let params:string[] = []
+  async getLineArea(node: any, resolve: any) {
+    let params: string[] = []
     if (node.level === 0) {
       params = ['100000']
     } else if (node.level === 1) {
@@ -829,13 +867,13 @@ export default class LineManage extends Vue {
     }
   }
   /**
-     * 加载城市
-     */
-  async loadCityByCode(params:string[]) {
+   * 加载城市
+   */
+  async loadCityByCode(params: string[]) {
     try {
       let { data: res } = await GetCityByCode(params)
       if (res.success) {
-        const nodes = res.data.map(function(item:any) {
+        const nodes = res.data.map(function(item: any) {
           return {
             value: item.code,
             label: item.name,
@@ -878,7 +916,9 @@ export default class LineManage extends Vue {
     let blackLists = ['shelvesState']
     this.tags = []
     if (this.listQuery.houseAddress.length !== 0) {
-      let address:any = (this.$refs.lineForm as any).$refs.cascader[0].getCheckedNodes()[0].pathLabels || undefined
+      let address: any =
+        (this.$refs.lineForm as any).$refs.cascader[0].getCheckedNodes()[0]
+          .pathLabels || undefined
       if (address) {
         let addressLabel = address.join('-')
         this.tags.push({
@@ -890,7 +930,11 @@ export default class LineManage extends Vue {
     }
 
     for (let key in this.listQuery) {
-      if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
+      if (
+        this.listQuery[key] !== '' &&
+        this.tags.findIndex(item => item.key === key) === -1 &&
+        !blackLists.includes(key)
+      ) {
         let name = getLabel(this.formItem, this.listQuery, key)
         if (name) {
           this.tags.push({
@@ -906,9 +950,9 @@ export default class LineManage extends Vue {
   }
 
   /**
-     * 分页
-     */
-  handlePageSize(page:any) {
+   * 分页
+   */
+  handlePageSize(page: any) {
     this.page.page = page.page
     this.page.limit = page.limit
     this.getList()
@@ -921,7 +965,7 @@ export default class LineManage extends Vue {
     if (res.success) {
       // eslint-disable-next-line camelcase
       let { Intentional_compartment, line_audit_state } = res.data
-      let cartype = Intentional_compartment.map(function(ele:any) {
+      let cartype = Intentional_compartment.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
       // let state = line_audit_state.map(function(ele:any) {
@@ -941,7 +985,7 @@ export default class LineManage extends Vue {
     this.getLowerStaffInfo()
     let city = await GetOpenCityData()
     if (city.data.success) {
-      let arr = city.data.data.map(function(ele:any) {
+      let arr = city.data.data.map(function(ele: any) {
         return { value: ele.code, label: ele.name }
       })
       this.formItem.map(ele => {
@@ -963,7 +1007,7 @@ export default class LineManage extends Vue {
       if (res.success) {
         this.formItem.map(ele => {
           if (ele.key === 'lineSaleId') {
-            ele.options = res.data.map(function(ele:any) {
+            ele.options = res.data.map(function(ele: any) {
               return { value: Number(ele.id), label: ele.name }
             })
           }
@@ -976,14 +1020,14 @@ export default class LineManage extends Vue {
     }
   }
 
-  private goDetail(id:string) {
+  private goDetail(id: string) {
     this.$router.push({ path: '/cargo/linedetail', query: { id: id } })
   }
   // 请求列表
   private async getList() {
     try {
       this.listLoading = true
-      let params:any = {
+      let params: any = {
         city: this.listQuery.city,
         lineSaleId: this.listQuery.lineSaleId,
         // auditState: this.listQuery.auditState,
@@ -998,7 +1042,8 @@ export default class LineManage extends Vue {
         page: this.page.page,
         limit: this.page.limit
       }
-      this.listQuery.shelvesState && (params.shelvesState = this.listQuery.shelvesState)
+      this.listQuery.shelvesState &&
+        (params.shelvesState = this.listQuery.shelvesState)
       if (this.listQuery.time.length > 0) {
         params.startDate = this.listQuery.time[0]
         params.endDate = this.listQuery.time[1] + 86399999
@@ -1048,9 +1093,9 @@ export default class LineManage extends Vue {
   }
 
   /**
-     * 表格下拉菜单
-     */
-  handleCommandChange(key:string|number, row:any) {
+   * 表格下拉菜单
+   */
+  handleCommandChange(key: string | number, row: any) {
     this.id = row.lineId
     this.rowInfo = row
     switch (key) {
@@ -1064,7 +1109,10 @@ export default class LineManage extends Vue {
         this.$router.push({ path: 'lineaudit', query: { id: row.lineId } })
         break
       case 'take':
-        this.$router.push({ path: 'takepicture', query: { lineId: row.lineId } })
+        this.$router.push({
+          path: 'takepicture',
+          query: { lineId: row.lineId }
+        })
         break
       case 'showtender':
         this.$router.push({ path: 'showtender', query: { id: row.lineId } })
@@ -1088,7 +1136,10 @@ export default class LineManage extends Vue {
         this.$router.push({ path: 'linedetail', query: { id: row.lineId } })
         break
       case 'showpic':
-        this.$router.push({ path: 'showpicture', query: { id: row.id, lineId: row.lineId } })
+        this.$router.push({
+          path: 'showpicture',
+          query: { id: row.id, lineId: row.lineId }
+        })
         break
       case 'stopuse':
         this.useStop(row.lineId)
@@ -1098,33 +1149,35 @@ export default class LineManage extends Vue {
     }
   }
 
-  private workDo(id:string) {
+  private workDo(id: string) {
     this.$confirm('此操作将上岗, 是否继续?', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
-    }).then(async() => {
-      let { data } = await mountGuard({ lineId: id })
-      if (data.success) {
-        this.$message({
-          type: 'success',
-          message: '上岗成功!'
-        })
-        setTimeout(() => {
-          this.getList()
-        }, delayTime)
-      } else {
-        this.$message.error(data.errorMsg || data)
-      }
-    }).catch(() => {
-      this.$message({
-        type: 'info',
-        message: '已取消上岗'
-      })
     })
+      .then(async() => {
+        let { data } = await mountGuard({ lineId: id })
+        if (data.success) {
+          this.$message({
+            type: 'success',
+            message: '上岗成功!'
+          })
+          setTimeout(() => {
+            this.getList()
+          }, delayTime)
+        } else {
+          this.$message.error(data.errorMsg || data)
+        }
+      })
+      .catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消上岗'
+        })
+      })
   }
 
-  private useStop(id:string) {
+  private useStop(id: string) {
     this.$confirm('此操作将停用该线路, 是否继续?', '停用', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -1146,7 +1199,7 @@ export default class LineManage extends Vue {
   }
 
   // 上架操作
-  private checkMountGuardNo(val:string) {
+  private checkMountGuardNo(val: string) {
     if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
       this.$message.error('可上车数要大于或等于已上岗标书数量')
       this.diaUpcarNum = ''
@@ -1168,9 +1221,9 @@ export default class LineManage extends Vue {
       return
     }
     let params = {
-      'deployNo': this.diaUpcarNum,
-      'lineId': this.id,
-      'waitDirveValidity': this.diaUpcar
+      deployNo: this.diaUpcarNum,
+      lineId: this.id,
+      waitDirveValidity: this.diaUpcar
     }
     let { data } = await shelfAdjustment(params)
     if (data.success) {
@@ -1179,9 +1232,9 @@ export default class LineManage extends Vue {
       }, delayTime)
       done(
         this.$message.success('上架调整完成'),
-        this.diaUpcarNum = '',
-        this.diaUpcar = '',
-        this.id = ''
+        (this.diaUpcarNum = ''),
+        (this.diaUpcar = ''),
+        (this.id = '')
       )
     } else {
       this.$message.error(data.errorMsg || data)
@@ -1190,15 +1243,11 @@ export default class LineManage extends Vue {
 
   private putCancel(done: any) {
     this.$message.info('点击了取消')
-    done(
-      this.diaUpcarNum = '',
-      this.diaUpcar = '',
-      this.id = ''
-    )
+    done((this.diaUpcarNum = ''), (this.diaUpcar = ''), (this.id = ''))
   }
 
   // 下架操作
-  private async getConfirm(done:any) {
+  private async getConfirm(done: any) {
     let { data } = await shelveLine({ lineId: this.id })
     if (data.success) {
       done(this.$message.success('下架完成'))
@@ -1216,7 +1265,7 @@ export default class LineManage extends Vue {
   }
 
   @Watch('checkList', { deep: true })
-  private checkListChange(val:any) {
+  private checkListChange(val: any) {
     this.columns = this.dropdownList.filter(item => val.includes(item.label))
   }
 
@@ -1250,14 +1299,14 @@ export default class LineManage extends Vue {
   }
 
   // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
-   private drawer:boolean = false
+  private drawer: boolean = false;
   /**
    *当前页勾选中的数组集合
    */
-  private rows:any[] = []
+  private rows: any[] = [];
   // 删除选中项目
-  private deletDrawerList(item:any, i:any) {
-    let arr:any[] = [item];
+  private deletDrawerList(item: any, i: any) {
+    let arr: any[] = [item];
     (this.$refs.LineManageTable as any).toggleRowSelection(arr)
     if (this.rows.length === 0) {
       this.drawer = false
@@ -1271,7 +1320,7 @@ export default class LineManage extends Vue {
   /**
    * 批量操作的按钮
    */
-  handleOlClick(val:any) {
+  handleOlClick(val: any) {
     if (val.name === '查看选中') {
       if (this.rows.length > 0) {
         this.drawer = true
@@ -1288,18 +1337,18 @@ export default class LineManage extends Vue {
   }
 
   // 批量禁用状态处理
-  private chooseBox(state:any) {
-    return function(row:any, index:number) {
+  private chooseBox(state: any) {
+    return function(row: any, index: number) {
       if (state === null) {
         return true
       }
       console.log(1)
       if (row.shelvesState !== state) {
         console.log(2)
-        return false// 禁用状态
+        return false // 禁用状态
       } else {
         console.log(3)
-        return true// 非禁用状态
+        return true // 非禁用状态
       }
     }
   }
@@ -1307,7 +1356,7 @@ export default class LineManage extends Vue {
   /**
    * 勾选表格
    */
-  handleChange(row:any) {
+  handleChange(row: any) {
     this.rows = row
   }
   // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
@@ -1315,22 +1364,22 @@ export default class LineManage extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/_variables.scss';
+@import "@/styles/_variables.scss";
 .LineManage {
   padding: 15px;
   padding-bottom: 0;
   box-sizing: border-box;
-  .btn-item-left{
+  .btn-item-left {
     border-radius: 4px;
     border: none;
     margin-right: 10px;
   }
-  .btn-item-right{
+  .btn-item-right {
     border-radius: 4px;
     border: none;
     margin-left: 10px;
   }
-  .btn-main-color{
+  .btn-main-color {
     border: 1px solid $main-btn;
     color: $main-btn;
   }
@@ -1348,8 +1397,8 @@ export default class LineManage extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      .linkTo{
-        color: #649CEE;
+      .linkTo {
+        color: #649cee;
         cursor: pointer;
       }
       height: calc(100vh - 300px) !important;
@@ -1371,18 +1420,18 @@ export default class LineManage extends Vue {
   .pagination-container {
     background: #fff;
   }
-  .overshop{
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-  .dioBox{
+  .overshop {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .dioBox {
     margin-bottom: 20px;
     padding: 0 20px;
-    .el-input{
-      width: 200px!important;
+    .el-input {
+      width: 200px !important;
     }
   }
 }
@@ -1391,12 +1440,12 @@ export default class LineManage extends Vue {
 .LineManage-m {
   padding-bottom: 0;
   box-sizing: border-box;
-  .btn-item-right-m{
+  .btn-item-right-m {
     border-radius: 4px;
     border: none;
     margin-right: 10px;
   }
-  .btn-item-left-m{
+  .btn-item-left-m {
     border-radius: 4px;
     border: none;
     margin-left: 10px;
@@ -1407,7 +1456,7 @@ export default class LineManage extends Vue {
     border-radius: 4px;
     border: none;
   }
-    .btn-main-color-m{
+  .btn-main-color-m {
     border: 1px solid $main-btn;
     color: $main-btn;
   }
@@ -1425,13 +1474,13 @@ export default class LineManage extends Vue {
       overflow-y: scroll;
     }
   }
-    .overshop{
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+  .overshop {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
   .edit-input {
     padding-right: 100px;
   }
@@ -1447,14 +1496,14 @@ export default class LineManage extends Vue {
 </style>
 
 <style lang="scss" scope>
-.numCol{
-  color: #649CEE;
-  margin: 0!important;
+.numCol {
+  color: #649cee;
+  margin: 0 !important;
 }
-.btn-main-color{
-    border: 1px solid $main-btn;
-    color:$main-btn
-  }
+.btn-main-color {
+  border: 1px solid $main-btn;
+  color: $main-btn;
+}
 .el-collapse-item__content {
   padding-bottom: 0;
 }
@@ -1462,26 +1511,26 @@ export default class LineManage extends Vue {
 .el-form-item__label {
   color: #999999;
 }
-    .btnPc {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: flex-end;
-    }
-    .btnMobile {
-      margin-left: 0;
-      margin-top: 10px;
-      width:100%;
-    }
+.btnPc {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+}
+.btnMobile {
+  margin-left: 0;
+  margin-top: 10px;
+  width: 100%;
+}
 </style>
 <style scoped>
-  .LineManage >>> .el-collapse-item__wrap {
-    padding: 20px 30px 0 0;
-    box-sizing: border-box;
-    position: absolute;
-    z-index: 1000;
-    background: #fff;
-    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
-    right: 15px;
-    left: 15px;
-  }
+.LineManage >>> .el-collapse-item__wrap {
+  padding: 20px 30px 0 0;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 1000;
+  background: #fff;
+  box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+  right: 15px;
+  left: 15px;
+}
 </style>

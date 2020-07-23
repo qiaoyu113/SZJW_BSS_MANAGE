@@ -1,3 +1,6 @@
+/* eslint-disable camelcase */
+/* eslint-disable camelcase */
+/* eslint-disable camelcase */
 <template>
   <div
     :class="isPC ? 'CreatLine' : 'CreatLine-m'"
@@ -146,9 +149,7 @@
             :rule-form="ruleForm"
             :params="{prop: 'dayNo',type: 1,label: '每日配送趟数',tagAttrs: {placeholder: '每日配送趟数不能超过6次',maxlength: 6},kind: 'number'}"
           />
-          <div
-            v-if="ruleForm['dayNo'] > 0"
-          >
+          <div v-if="ruleForm['dayNo'] > 0">
             <SelfItem
               v-for="(item,idx) in Number(ruleForm['dayNo'])"
               :key="item"
@@ -303,7 +304,7 @@
         </el-button> -->
       </div>
 
-      <Dialog
+      <SelfDialog
         :visible.sync="showDio"
         :title="`取消提交`"
         :center="true"
@@ -315,17 +316,27 @@
             线路未提交，是否放弃编辑？
           </div>
         </div>
-      </Dialog>
+      </SelfDialog>
     </el-form>
   </div>
 </template>
 <script lang="ts">
 import { Form as ElForm, Input } from 'element-ui'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDictionaryList, GetCityByCode, detailCity, GetManagerLists } from '@/api/common'
-import { createLine, editLine, customerCheckNames, GetLineDetail } from '@/api/cargo'
+import {
+  GetDictionaryList,
+  GetCityByCode,
+  detailCity,
+  GetManagerLists
+} from '@/api/common'
+import {
+  createLine,
+  editLine,
+  customerCheckNames,
+  GetLineDetail
+} from '@/api/cargo'
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
@@ -338,30 +349,30 @@ import { registerTheme } from 'echarts'
   components: {
     SelfItem,
     SectionContainer,
-    Dialog
+    SelfDialog
   }
 })
 export default class CreatLine extends Vue {
-  private lineSaleIdState:boolean = true
-  private optionsSale:any[] = []
-  private lineSaleId:string = ''
-  private loading:boolean = false
-  private lineType:any[] = []
-  private carType:any[] = []
-  private linetask:any[] =[]
-  private settlement:any[] = []
-  private dayOver:any[] = []
-  private goodsWeight:any[] = []
-  private goodsType:any[] = []
-  private difficulty:any[] = []
-  private pageStatus:number = 0
-  private pccol:number=6
-  private lineId:string = ''
-  private showDio:boolean = false
-  private NoshipperOffer:boolean = false
-  private customerOptions:any[] = []
-  private checkAll:boolean = false
-  private WeekCycleList:any[] = [
+  private lineSaleIdState: boolean = true;
+  private optionsSale: any[] = [];
+  private lineSaleId: string = '';
+  private loading: boolean = false;
+  private lineType: any[] = [];
+  private carType: any[] = [];
+  private linetask: any[] = [];
+  private settlement: any[] = [];
+  private dayOver: any[] = [];
+  private goodsWeight: any[] = [];
+  private goodsType: any[] = [];
+  private difficulty: any[] = [];
+  private pageStatus: number = 0;
+  private pccol: number = 6;
+  private lineId: string = '';
+  private showDio: boolean = false;
+  private NoshipperOffer: boolean = false;
+  private customerOptions: any[] = [];
+  private checkAll: boolean = false;
+  private WeekCycleList: any[] = [
     { label: '全部', type: '' },
     { label: '周一', type: '1' },
     { label: '周二', type: '2' },
@@ -370,8 +381,8 @@ export default class CreatLine extends Vue {
     { label: '周五', type: '5' },
     { label: '周六', type: '6' },
     { label: '周日', type: '7' }
-  ]
-  private ruleForm:any = {
+  ];
+  private ruleForm: any = {
     carType: '',
     // 选择车型
     cargoType: '',
@@ -456,11 +467,9 @@ export default class CreatLine extends Vue {
     // 仓位置-省
     warehouseTown: ''
     // 仓位置-乡镇、街道
-  }
-  private rules:any = {
-    customerId: [
-      { required: true, message: '货主不能为空', trigger: 'blur' }
-    ],
+  };
+  private rules: any = {
+    customerId: [{ required: true, message: '货主不能为空', trigger: 'blur' }],
     lineName: [
       { required: true, message: '线路名称不能为空', trigger: 'blur' }
     ],
@@ -471,18 +480,14 @@ export default class CreatLine extends Vue {
       { required: true, message: '可上车数不能为空', trigger: 'change' },
       { validator: validatorNumberRange(1, 10) }
     ],
-    address: [
-      { required: true, message: '仓位置不能为空', trigger: 'change' }
-    ],
+    address: [{ required: true, message: '仓位置不能为空', trigger: 'change' }],
     waitDirveValidity: [
       { required: true, message: '等待上车有效期不能为空', trigger: 'change' }
     ],
     stabilityRate: [
       { required: true, message: '线路稳定性不能为空', trigger: 'change' }
     ],
-    carType: [
-      { required: true, message: '车型不能为空', trigger: 'change' }
-    ],
+    carType: [{ required: true, message: '车型不能为空', trigger: 'change' }],
     delivery: [
       { required: true, message: '请选择配送区域', trigger: 'change' }
     ],
@@ -496,7 +501,11 @@ export default class CreatLine extends Vue {
       { required: true, message: '请选择是否回单', trigger: 'change' }
     ],
     deliveryNo: [
-      { required: true, message: '每日平均配送点位数不能为空', trigger: 'change' },
+      {
+        required: true,
+        message: '每日平均配送点位数不能为空',
+        trigger: 'change'
+      },
       { validator: validatorNumberRange(1, 99) }
     ],
     deliveryWeekCycle: [
@@ -544,27 +553,24 @@ export default class CreatLine extends Vue {
     cargoType: [
       { required: true, message: '货物类型不能为空', trigger: 'change' }
     ],
-    goodsWeight: [
-      { required: true, message: '货物总重量', trigger: 'change' }
-    ],
-    carry: [
-      { required: true, message: '是否搬运不能为空', trigger: 'change' }
-    ],
+    goodsWeight: [{ required: true, message: '货物总重量', trigger: 'change' }],
+    carry: [{ required: true, message: '是否搬运不能为空', trigger: 'change' }],
     lineSaleId: [
       { required: true, message: '所属销售不能为空', trigger: 'change' }
     ],
-    warehouseDistrict: [ // 详细仓位置
+    warehouseDistrict: [
+      // 详细仓位置
       { required: true, message: '详细地址不能为空', trigger: 'change' }
     ]
-  }
+  };
 
-  private pickerDisabled(time:any) {
+  private pickerDisabled(time: any) {
     return time.getTime() > Date.now()
   }
 
-  private async loadAddress(node:any, resolve:any) {
-    let params:string[] = []
-    let query:any = {
+  private async loadAddress(node: any, resolve: any) {
+    let params: string[] = []
+    let query: any = {
       countryCode: ''
     }
     if (node.level === 0) {
@@ -599,11 +605,11 @@ export default class CreatLine extends Vue {
     }
   }
 
-  private async deArr(params:string[]) {
+  private async deArr(params: string[]) {
     try {
       let { data: res } = await GetCityByCode(params)
       if (res.success) {
-        const nodes = res.data.map(function(item:any) {
+        const nodes = res.data.map(function(item: any) {
           return {
             value: item.code,
             label: item.name,
@@ -617,11 +623,11 @@ export default class CreatLine extends Vue {
     }
   }
 
-  async loadCityByCode(params:any) {
+  async loadCityByCode(params: any) {
     try {
       let { data: res } = await GetCityByCode(params)
       if (res.success) {
-        const nodes = res.data.map(function(item:any) {
+        const nodes = res.data.map(function(item: any) {
           return {
             value: item.code,
             label: item.name,
@@ -635,10 +641,10 @@ export default class CreatLine extends Vue {
     }
   }
 
-  async cityDeyail(params:string[]) {
+  async cityDeyail(params: string[]) {
     let { data: city } = await detailCity(params)
     if (city.success) {
-      const nodes = city.data.map(function(item:any) {
+      const nodes = city.data.map(function(item: any) {
         return {
           value: item.code,
           label: item.name,
@@ -651,7 +657,10 @@ export default class CreatLine extends Vue {
 
   get offer() {
     if (this.ruleForm.incomeSettlementMethod === 1) {
-      this.ruleForm.shipperOffer = Number(this.ruleForm.dayNo) * Number(this.ruleForm.monthNo) * Number(this.ruleForm.everyTripGuaranteed)
+      this.ruleForm.shipperOffer =
+        Number(this.ruleForm.dayNo) *
+        Number(this.ruleForm.monthNo) *
+        Number(this.ruleForm.everyTripGuaranteed)
       return true
     } else {
       // this.ruleForm.shipperOffer = ''
@@ -661,7 +670,7 @@ export default class CreatLine extends Vue {
 
   // 每日配送次数
   @Watch('ruleForm.dayNo')
-  private dayNoChange(val:any, oldVal:any) {
+  private dayNoChange(val: any, oldVal: any) {
     if (Number(val) > 6) {
       this.ruleForm.dayNo = ''
     }
@@ -670,7 +679,8 @@ export default class CreatLine extends Vue {
     }
     for (let i = 0; i < val; i++) {
       this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
-        workingTimeStart: '', workingTimeEnd: ''
+        workingTimeStart: '',
+        workingTimeEnd: ''
       })
       this.rules['lineDeliveryInfoFORMS' + i] = [
         { required: true, message: '工作时间不能为空', trigger: 'blur' }
@@ -680,7 +690,7 @@ export default class CreatLine extends Vue {
 
   // 货主
   @Watch('ruleForm.customerId')
-  private customerIdChange(val:any) {
+  private customerIdChange(val: any) {
     if (this.pageStatus === 1) {
       let lineSaleId = JSON.parse(val).lineSaleId
       if (lineSaleId) {
@@ -692,7 +702,7 @@ export default class CreatLine extends Vue {
 
   // 配送方式
   @Watch('ruleForm.incomeSettlementMethod')
-  private changeRuleForm(value:any) {
+  private changeRuleForm(value: any) {
     if (value === 1) {
       this.ruleForm.everyUnitPrice = ''
       this.NoshipperOffer = true
@@ -706,7 +716,7 @@ export default class CreatLine extends Vue {
 
   // 配送周期
   @Watch('ruleForm.stabilityRate')
-  private changeStability(value:any) {
+  private changeStability(value: any) {
     if (Number(value) < 3) {
       this.ruleForm.deliveryWeekCycle = []
     }
@@ -714,7 +724,7 @@ export default class CreatLine extends Vue {
 
   // 可上车数
   @Watch('ruleForm.deployNo')
-  private changeDeployNo(value:any) {
+  private changeDeployNo(value: any) {
     if (Number(value) >= 11 || Number(value) < 0) {
       this.ruleForm.deployNo = ''
       this.$message.info('可上车数必须大于0小于11')
@@ -723,13 +733,13 @@ export default class CreatLine extends Vue {
 
   // 配送周期
   @Watch('ruleForm.deliveryWeekCycle')
-  private changeDeliveryWeekCycle(val:any, oldVal:any) {
+  private changeDeliveryWeekCycle(val: any, oldVal: any) {
     if (oldVal.length === 8 && !val.includes('')) {
       this.ruleForm.deliveryWeekCycle = []
     } else if (!oldVal.includes('') && val.includes('')) {
       this.ruleForm.deliveryWeekCycle = ['', '1', '2', '3', '4', '5', '6', '7']
     } else if (val.length < 8 && val.includes('')) {
-      let index = val.findIndex((item:any) => item === '')
+      let index = val.findIndex((item: any) => item === '')
       if (index > -1) {
         val.splice(index, 1)
       }
@@ -739,8 +749,13 @@ export default class CreatLine extends Vue {
   }
 
   private checkBoxChange() {
-    if (this.ruleForm.deliveryWeekCycle && this.ruleForm.deliveryWeekCycle.includes('')) {
-      this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(item => item.type)
+    if (
+      this.ruleForm.deliveryWeekCycle &&
+      this.ruleForm.deliveryWeekCycle.includes('')
+    ) {
+      this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(
+        item => item.type
+      )
     }
   }
 
@@ -749,7 +764,7 @@ export default class CreatLine extends Vue {
       this.loading = true
       let { data } = await customerCheckNames({ customerCompanyName: query })
       if (data.success) {
-        let customerOptions = data.data.map(function(ele:any) {
+        let customerOptions = data.data.map(function(ele: any) {
           return { value: JSON.stringify(ele), label: ele.customerCompanyName }
         })
         this.customerOptions = customerOptions
@@ -763,7 +778,7 @@ export default class CreatLine extends Vue {
   }
 
   // 再次提交编辑
-  private async againForm(formName:any) {
+  private async againForm(formName: any) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         let ruleForm = { ...this.ruleForm }
@@ -771,7 +786,9 @@ export default class CreatLine extends Vue {
           ruleForm.everyUnitPrice = 0
         }
         for (let i = 0; i < ruleForm.dayNo; i++) {
-          ruleForm.lineDeliveryInfoFORMS.push(ruleForm['lineDeliveryInfoFORMS' + i])
+          ruleForm.lineDeliveryInfoFORMS.push(
+            ruleForm['lineDeliveryInfoFORMS' + i]
+          )
         }
         for (let i = 0; i < ruleForm.dayNo; i++) {
           delete ruleForm['lineDeliveryInfoFORMS' + i]
@@ -788,18 +805,25 @@ export default class CreatLine extends Vue {
           ruleForm.countyArea = ruleForm.delivery[2]
         }
         if (ruleForm.deliveryWeekCycle.indexOf('') > -1) {
-          let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
+          let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(
+            ele: any
+          ) {
             return ele !== ''
           })
           ruleForm.deliveryWeekCycle = deliveryWeekCycle.join(',')
         } else {
-          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(',')
+          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(
+            ','
+          )
         }
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
         }
         // alert('submit!')
-        let { data } = await editLine({ ...ruleForm, ...{ lineId: this.lineId } })
+        let { data } = await editLine({
+          ...ruleForm,
+          ...{ lineId: this.lineId }
+        })
         if (data.success) {
           console.log(data.data)
           this.$message.success('线路已提交成功')
@@ -815,17 +839,17 @@ export default class CreatLine extends Vue {
   }
 
   // 复制线路
-  private async copyForm(formName:any) {
+  private async copyForm(formName: any) {
     this.dealData(formName, 2)
   }
 
   // 新建
-  private submitForm(formName:any) {
+  private submitForm(formName: any) {
     this.dealData(formName, 1)
   }
 
   // 保存数据处理
-  private dealData(formName:any, type:number) {
+  private dealData(formName: any, type: number) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         let ruleForm = { ...this.ruleForm }
@@ -840,7 +864,9 @@ export default class CreatLine extends Vue {
           ruleForm.everyUnitPrice = 0
         }
         for (let i = 0; i < ruleForm.dayNo; i++) {
-          ruleForm.lineDeliveryInfoFORMS.push(ruleForm['lineDeliveryInfoFORMS' + i])
+          ruleForm.lineDeliveryInfoFORMS.push(
+            ruleForm['lineDeliveryInfoFORMS' + i]
+          )
         }
         if (ruleForm.delivery.length !== 0) {
           ruleForm.provinceArea = ruleForm.delivery[0]
@@ -854,18 +880,25 @@ export default class CreatLine extends Vue {
           ruleForm.warehouseTown = ruleForm.address[3]
         }
         if (ruleForm.deliveryWeekCycle.indexOf('') > -1) {
-          let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(ele:any) {
+          let deliveryWeekCycle = ruleForm.deliveryWeekCycle.filter(function(
+            ele: any
+          ) {
             return ele !== ''
           })
           ruleForm.deliveryWeekCycle = deliveryWeekCycle.join(',')
         } else {
-          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(',')
+          ruleForm.deliveryWeekCycle = this.ruleForm.deliveryWeekCycle.join(
+            ','
+          )
         }
         if (ruleForm.deliveryWeekCycle.length === 0) {
           ruleForm.deliveryWeekCycle = ''
         }
         for (let i = 0; i < Number(ruleForm.dayNo); i++) {
-          if (!(ruleForm['lineDeliveryInfoFORMS' + i].workingTimeStart) || (!ruleForm['lineDeliveryInfoFORMS' + i].workingTimeEnd)) {
+          if (
+            !ruleForm['lineDeliveryInfoFORMS' + i].workingTimeStart ||
+            !ruleForm['lineDeliveryInfoFORMS' + i].workingTimeEnd
+          ) {
             return this.$message.error('请检查预计工作时间，不能为空')
           }
         }
@@ -877,7 +910,7 @@ export default class CreatLine extends Vue {
     })
   }
 
-  private async createdLine(params:any) {
+  private async createdLine(params: any) {
     let { data } = await createLine(params)
     if (data.success) {
       this.$message.success('线路创建成功')
@@ -887,7 +920,7 @@ export default class CreatLine extends Vue {
     }
   }
 
-  private resetForm(formName:any) {
+  private resetForm(formName: any) {
     (this.$refs[formName] as ElForm).resetFields()
   }
 
@@ -904,34 +937,52 @@ export default class CreatLine extends Vue {
   }
 
   private async GetDictionaryAll() {
-    let dictArr = ['Intentional_compartment', 'type_of_goods', 'line_distinguished_type', 'linetask_stability_rate', 'line_type', 'settlement_cycle', 'settlement_days', 'goods_weight', 'handling_difficulty_degree']
+    let dictArr = [
+      'Intentional_compartment',
+      'type_of_goods',
+      'line_distinguished_type',
+      'linetask_stability_rate',
+      'line_type',
+      'settlement_cycle',
+      'settlement_days',
+      'goods_weight',
+      'handling_difficulty_degree'
+    ]
     let { data } = await GetDictionaryList(dictArr)
     if (data.success) {
-      // eslint-disable-next-line camelcase
-      let { Intentional_compartment, type_of_goods, line_distinguished_type, linetask_stability_rate, line_type, settlement_cycle, settlement_days, goods_weight, handling_difficulty_degree } = data.data
-      let linetype = line_type.map(function(ele:any) {
+      let {
+        Intentional_compartment,
+        type_of_goods,
+        line_distinguished_type,
+        linetask_stability_rate,
+        line_type,
+        settlement_cycle,
+        settlement_days,
+        goods_weight,
+        handling_difficulty_degree
+      } = data.data
+      let linetype = line_type.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      // eslint-disable-next-line camelcase
-      let carType = Intentional_compartment.map(function(ele:any) {
+      let carType = Intentional_compartment.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let linetask = linetask_stability_rate.map(function(ele:any) {
+      let linetask = linetask_stability_rate.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let settlement = settlement_cycle.map(function(ele:any) {
+      let settlement = settlement_cycle.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let dayOver = settlement_days.map(function(ele:any) {
+      let dayOver = settlement_days.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let goodsWeight = goods_weight.map(function(ele:any) {
+      let goodsWeight = goods_weight.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let goodsType = type_of_goods.map(function(ele:any) {
+      let goodsType = type_of_goods.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let difficulty = handling_difficulty_degree.map(function(ele:any) {
+      let difficulty = handling_difficulty_degree.map(function(ele: any) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
 
@@ -966,7 +1017,7 @@ export default class CreatLine extends Vue {
         } else {
           this.lineSaleIdState = true
         }
-        this.optionsSale = res.data.map(function(ele:any) {
+        this.optionsSale = res.data.map(function(ele: any) {
           return { value: Number(ele.id), label: ele.name }
         })
       } else {
@@ -986,8 +1037,8 @@ export default class CreatLine extends Vue {
     }
   }
 
-  private async loadhouseAddress(node:any, resolve:any) {
-    let params:string[] = []
+  private async loadhouseAddress(node: any, resolve: any) {
+    let params: string[] = []
     if (node.level === 0) {
       params = ['100000']
     } else if (node.level === 1) {
@@ -1010,7 +1061,7 @@ export default class CreatLine extends Vue {
     this.GetDictionaryAll()
   }
 
-  private async getDetail(id:string) {
+  private async getDetail(id: string) {
     let { data } = await GetLineDetail({ lineId: id })
     if (data.success) {
       let allParams = data.data
@@ -1034,13 +1085,17 @@ export default class CreatLine extends Vue {
       allParams.delivery.push(allParams.cityArea + '')
       allParams.delivery.push(allParams.countyArea + '')
 
-      this.customerOptions = [{ value: allParams.customerId, label: allParams.customerName }]
+      this.customerOptions = [
+        { value: allParams.customerId, label: allParams.customerName }
+      ]
       this.ruleForm = { ...this.ruleForm, ...allParams }
 
       setTimeout(() => {
         for (let i = 0; i < Number(allParams.dayNo); i++) {
           this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {
-            workingTimeStart: allParams.lineDeliveryInfoFORMS[i].workingTimeStart, workingTimeEnd: allParams.lineDeliveryInfoFORMS[i].workingTimeEnd
+            workingTimeStart:
+              allParams.lineDeliveryInfoFORMS[i].workingTimeStart,
+            workingTimeEnd: allParams.lineDeliveryInfoFORMS[i].workingTimeEnd
           })
         }
       }, 20)
@@ -1055,11 +1110,11 @@ export default class CreatLine extends Vue {
     if (routeArr[2] === 'creatline') {
       this.pageStatus = 1
     } else if (routeArr[2] === 'lineedit') {
-      this.lineId = (this.$route.query.id) as string
+      this.lineId = this.$route.query.id as string
       this.pageStatus = 2
       this.getDetail(this.lineId)
     } else if (routeArr[2] === 'linecopy') {
-      this.lineId = (this.$route.query.id) as string
+      this.lineId = this.$route.query.id as string
       this.pageStatus = 3
       this.getDetail(this.lineId)
     }
@@ -1071,57 +1126,59 @@ export default class CreatLine extends Vue {
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  .btn-content{
+  .btn-content {
     color: #4a4a4a;
     font-weight: 400;
   }
-  .btn_box{
+  .btn_box {
     padding-top: 40px;
     box-sizing: border-box;
   }
-    .dioBox{
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 20px;
-      padding: 0 20px;
-      .el-input{
-        width: 200px!important;
-      }
+  .dioBox {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    .el-input {
+      width: 200px !important;
+    }
   }
 }
 </style>
 <style lang="scss" scoped>
 .CreatLine-m {
   width: 100%;
-  .el-form-item__label{
+  .el-form-item__label {
     color: #4a4a4a;
     font-weight: 400;
   }
-  .btn_box{
+  .btn_box {
     padding: 30px 20px 0 20px;
     box-sizing: border-box;
-    .el-button{
+    .el-button {
       width: 100%;
     }
-    .el-button{
+    .el-button {
       margin: 0 0 20px 0;
     }
   }
 }
 </style>
 <style scoped>
-.CreatLine >>> .el-cascader{
+.CreatLine >>> .el-cascader {
   width: 100%;
 }
 @media screen and (min-width: 701px) {
   .SelfItem .el-select {
     width: 100%;
   }
-  .SelfItem  .el-input, .el-date-editor, .el-textarea {
+  .SelfItem .el-input,
+  .el-date-editor,
+  .el-textarea {
     width: 75%;
   }
-  .el-cascader{
-   width: 100%;
+  .el-cascader {
+    width: 100%;
   }
 }
 
@@ -1129,7 +1186,7 @@ export default class CreatLine extends Vue {
   .el-select {
     width: 100%;
   }
-  .el-input{
+  .el-input {
     width: 90%;
   }
 }

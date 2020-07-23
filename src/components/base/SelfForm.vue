@@ -126,6 +126,12 @@
             v-bind="item.tagAttrs || {}"
             v-on="item.listeners"
           />
+          <el-autocomplete
+            v-else-if="item.type ===11"
+            v-model="listQuery[item.key]"
+            v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
+          />
           <slot
             v-else-if="item.slot"
             :name="item.type"
@@ -210,6 +216,11 @@ export default class extends Vue {
     flex: 1;
   }
   .selfForm >>> .el-cascader {
+    display: flex;
+    flex: 1;
+  }
+
+  .selfForm >>> .el-autocomplete {
     display: flex;
     flex: 1;
   }
