@@ -5,7 +5,7 @@
       @click="downFile"
     />
 
-    <Dialog
+    <SelfDialog
       :visible.sync="dialogTableVisible"
       title="下载工具"
       width="50%"
@@ -93,13 +93,13 @@
         :limit.sync="page.limit"
         @pagination="handlePageSizeChange"
       />
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import { GetDownFileList } from '@/api/common'
 interface PageObj {
@@ -110,7 +110,7 @@ interface PageObj {
 @Component({
   name: 'DownTool',
   components: {
-    Dialog,
+    SelfDialog,
     Pagination
   }
 })

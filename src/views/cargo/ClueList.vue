@@ -305,7 +305,7 @@
       />
     </div>
     <!-- 批量分配线索 -->
-    <Dialog
+    <SelfDialog
       :class="'distributionDialog'"
       :visible.sync="showDialog"
       :title="`批量分配线索`"
@@ -373,7 +373,7 @@
         :limit.sync="dialogListQuery.limit"
         @pagination="getDialogList"
       /> -->
-    </Dialog>
+    </SelfDialog>
     <!-- 右侧侧边栏 -->
     <PitchBox
       :drawer.sync="drawer"
@@ -388,7 +388,7 @@
       </template>
     </PitchBox>
     <!-- 跟进弹窗 -->
-    <Dialog
+    <SelfDialog
       :class="'invalidDialog'"
       :visible.sync="followDialog"
       :title="`跟进状态判定`"
@@ -429,7 +429,7 @@
           />
         </el-form-item>
       </el-form>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -442,7 +442,7 @@ import SelfTable from '@/components/base/SelfTable.vue'
 import { ClueListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 
 import { GetDictionaryList, GetManagerLists } from '@/api/common'
@@ -492,7 +492,7 @@ const optionsDistribution: any = [
     ClueListForm,
     TableHeader,
     Pagination,
-    Dialog,
+    SelfDialog,
     PitchBox
   },
   filters: {

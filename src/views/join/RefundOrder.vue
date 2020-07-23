@@ -196,7 +196,7 @@ import { HandlePages } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { RefundForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -212,7 +212,7 @@ interface IState {
     SuggestContainer,
     TableHeader,
     RefundForm,
-    Dialog
+    SelfDialog
   }
 })
 export default class extends Vue {
