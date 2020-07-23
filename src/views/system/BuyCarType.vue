@@ -212,7 +212,7 @@
         @pagination="getList"
       />
     </div>
-    <Dialog
+    <SelfDialog
       :visible.sync="dialogVisible"
       :title="dialogTit"
       :confirm="confirm"
@@ -311,7 +311,7 @@
           </el-select>
         </el-form-item>
       </el-form>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -321,7 +321,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { BuyCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetDictionaryList } from '@/api/common'
 import { GetCustomerOff } from '@/api/cargo'
 import { getProductList, shelvesOrTheshelves, createProduct, updateProduct, GetCarModelList, ProductDownload } from '@/api/product'
@@ -340,7 +340,7 @@ interface IState {
     BuyCarForm,
     TableHeader,
     Pagination,
-    Dialog
+    SelfDialog
   }
 })
 export default class extends Vue {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 分配线索 -->
-    <Dialog
+    <SelfDialog
       :visible.sync="showAlert"
       :title="title"
       width="30%"
@@ -16,12 +16,12 @@
         :pc-col="24"
         label-width="110px"
       />
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { UpdateDriverBDManager, driverDownToGm } from '@/api/driver'
 import { GetManagerLists } from '@/api/common'
@@ -32,7 +32,7 @@ interface IState {
 @Component({
   name: 'ManagerDialog',
   components: {
-    Dialog,
+    SelfDialog,
     SelfForm
   }
 })

@@ -75,7 +75,7 @@
         </template>
       </RoleTree>
     </SectionContainer>
-    <Dialog
+    <SelfDialog
       :visible.sync="showDialog"
       :title="dialogTit"
       :confirm="confirm"
@@ -205,7 +205,7 @@
           </el-form-item>
         </template>
       </el-form>
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 
@@ -214,7 +214,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetArea } from '@/api/common'
 import { getOfficeList, createOffice, deleteOffice, sortOffice, updateOffice } from '@/api/system'
 
@@ -225,7 +225,7 @@ import '@/styles/common.scss'
   components: {
     SectionContainer,
     RoleTree,
-    Dialog
+    SelfDialog
   }
 })
 export default class extends Vue {

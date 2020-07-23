@@ -1,6 +1,6 @@
 <template>
   <div class="followByPhoneOrWechat">
-    <Dialog
+    <SelfDialog
       :visible.sync="showAlert"
       :title="title"
       width="30%"
@@ -15,12 +15,12 @@
         :pc-col="24"
         label-width="0px"
       />
-    </Dialog>
+    </SelfDialog>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
-import Dialog from '@/components/Dialog/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { ClueFollow } from '@/api/driver'
 interface IState {
@@ -29,7 +29,7 @@ interface IState {
 @Component({
   name: 'FollowByPhoneOrWechat',
   components: {
-    Dialog,
+    SelfDialog,
     SelfForm
   }
 })
