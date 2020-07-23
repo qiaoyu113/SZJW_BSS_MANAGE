@@ -232,6 +232,7 @@
             v-model="dialogForm.supplier"
             placeholder="请输入供应商"
             maxlength="15"
+            clearable
           />
         </el-form-item>
         <el-form-item
@@ -260,6 +261,7 @@
             v-model="dialogForm.model"
             placeholder="请输入车型"
             maxlength="15"
+            clearable
           />
         </el-form-item>
         <el-form-item
@@ -270,6 +272,7 @@
             v-model="dialogForm.carDescribe"
             placeholder="请输入车辆信息"
             maxlength="50"
+            clearable
           />
         </el-form-item>
         <el-form-item
@@ -280,6 +283,7 @@
             v-model="dialogForm.price"
             v-only-number="{min: 0, max: 1000000, precision: 2}"
             placeholder="请输入无税价格"
+            clearable
           >
             <template slot="append">
               元

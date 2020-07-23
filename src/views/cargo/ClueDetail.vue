@@ -359,21 +359,5 @@ export default class extends Vue {
     padding: 24px 30px;
   }
 }
-@media screen and (min-width: 701px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input {
-    width: 75%;
-  }
-}
 
-@media screen and (max-width: 700px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input {
-    width: 90%;
-  }
-}
 </style>
