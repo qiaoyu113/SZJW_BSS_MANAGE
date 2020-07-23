@@ -107,7 +107,7 @@
           >
             <DetailItem
               name="供应商"
-              :value="ContractDetail.deliverDate"
+              :value="ContractDetail.supplier"
             />
           </el-col>
 
@@ -116,7 +116,7 @@
             :span="isPC ? 6 : 24"
           >
             <DetailItem
-              name="购买车型"
+              name="合作车型"
               :value="ContractDetail.cooperationCarName"
             />
           </el-col>
@@ -142,7 +142,10 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="isPC ? 6 : 24">
+          <el-col
+            v-if="ContractDetail.cooperationModel !== 1"
+            :span="isPC ? 6 : 24"
+          >
             <el-form-item
               label="车牌号"
               prop="plateNo"
@@ -196,7 +199,10 @@
               label="发动机号"
               prop="engineNo"
             >
-              <el-input v-model="ruleForm.engineNo" />
+              <el-input
+                v-model="ruleForm.engineNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -204,7 +210,10 @@
               label="发动机发票号"
               prop="engineInvoiceNo"
             >
-              <el-input v-model="ruleForm.engineInvoiceNo" />
+              <el-input
+                v-model="ruleForm.engineInvoiceNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -411,7 +420,10 @@
               label="设备ID号"
               prop="gpsDeviceNo"
             >
-              <el-input v-model="ruleForm.gpsDeviceNo" />
+              <el-input
+                v-model="ruleForm.gpsDeviceNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
 
@@ -420,7 +432,10 @@
               label="SIM号"
               prop="gpsSimNo"
             >
-              <el-input v-model="ruleForm.gpsSimNo" />
+              <el-input
+                v-model="ruleForm.gpsSimNo"
+                maxlength="50"
+              />
             </el-form-item>
           </el-col>
         </el-row>

@@ -413,7 +413,9 @@ export default class extends Vue {
     mounted() {}
 
     activated() {
-    // this.handleScroll()
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
     }
 
     // 判断是否是PC
