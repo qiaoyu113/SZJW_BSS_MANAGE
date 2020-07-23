@@ -45,6 +45,7 @@
             :rule-form="ruleForm"
             :params="{prop: 'waitDirveValidity',type: 2,label: '等待上车有效期（天）',tagAttrs: {
               placeholder: '请输入有效期',
+              'value-format': 'timestamp',
               'picker-options': {
                 disabledDate(time) {
                   return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000 )
@@ -856,6 +857,7 @@ export default class CreatLine extends Vue {
         if (type === 2) {
           delete ruleForm.createDate
           delete ruleForm.createId
+          ruleForm.waitDirveValidity = new Date(ruleForm.waitDirveValidity).getTime()
         }
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
@@ -1071,6 +1073,7 @@ export default class CreatLine extends Vue {
       allParams.delivery.push(allParams.provinceArea + '')
       allParams.delivery.push(allParams.cityArea + '')
       allParams.delivery.push(allParams.countyArea + '')
+      allParams.waitDirveValidity = new Date(allParams.waitDirveValidity)
 
       this.customerOptions = [
         { value: allParams.customerId, label: allParams.customerName }

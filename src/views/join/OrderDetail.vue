@@ -67,7 +67,10 @@
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="ruleForm.busiType === '0'"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="收入保障"
             :value="orderDetail.incomeGuarantee"
@@ -88,7 +91,7 @@
     >
       <el-row>
         <el-col
-          v-if="orderDetail.cooperationModel === 3"
+          v-if="Number(orderDetail.cooperationModel) && Number(orderDetail.busiType) === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -98,7 +101,7 @@
         </el-col>
 
         <el-col
-          v-if="orderDetail.cooperationModel === 3"
+          v-if="Number(orderDetail.cooperationModel) && Number(orderDetail.busiType) === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
@@ -264,7 +267,11 @@
               <DetailItem
                 name="订单生成时间"
                 :value="orderDetail.createDate | Timestamp"
-              />
+              >
+                <template>
+                  ({{ orderDetail.createName }})
+                </template>
+              </DetailItem>
             </el-col>
             <!-- <el-col
               v-if="orderDetail.status === 30"
@@ -290,7 +297,11 @@
               <DetailItem
                 name="审核不通过时间"
                 :value="orderDetail.notPassTime | Timestamp"
-              />
+              >
+                <template>
+                  ({{ orderDetail.notPassName }})
+                </template>
+              </DetailItem>
             </el-col>
             <el-col
               v-if="orderDetail.status === 30"
@@ -303,7 +314,11 @@
               <DetailItem
                 name="审核通过时间"
                 :value="orderDetail.passTime | Timestamp"
-              />
+              >
+                <template>
+                  ({{ orderDetail.passName }})
+                </template>
+              </DetailItem>
             </el-col>
           </div>
         </el-col>

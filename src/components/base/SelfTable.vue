@@ -127,7 +127,7 @@ export default class extends Vue {
   multipleSelection:any[] =[]
 
   get height() {
-    return document.body.offsetHeight - 340 - 68 || document.documentElement.offsetHeight - 340 - 68
+    return document.body.offsetHeight - 340 || document.documentElement.offsetHeight - 340
   }
   /**
    * 勾选中的item

@@ -6,7 +6,7 @@
       <span class="tabName">{{ tabName }}</span>
       <div class="tagInfo">
         <i
-          style="font-size:23px;color:#FFA000;margin-right:10px"
+          style="font-size:16px;color:#FFA000;margin-right:10px"
           class="el-icon-warning"
           color="#FFA000"
         />
@@ -114,7 +114,7 @@ export default class extends Vue {
     width: 100%;
     background: #FFFFFF;
     overflow: hidden;
-    padding: 24px 30px 0 30px;
+    padding: 10px 30px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -142,11 +142,11 @@ export default class extends Vue {
       background: rgba(100,156,238,0.08);
       border: 1px solid #649CEE;
       border-radius: 4px;
-      padding: 12px 14px;
+      padding: 0px 14px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
-      font-size: 16px;
+      font-size: 12px;
       color: #656565;
       letter-spacing: 0;
       span{

@@ -783,7 +783,10 @@ export default class extends Vue {
       this.$message.warning('该功能暂没开放')
     } else if (key === 'order') { // 创建订单
       this.$router.push({
-        path: '/join/creatorder'
+        path: '/join/creatorder',
+        query: {
+          driverId: row.driverId
+        }
       })
     } else if (key === 'transport') { // 创建运力
       this.$router.push({
