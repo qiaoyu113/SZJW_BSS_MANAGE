@@ -211,7 +211,7 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
   for (let i = 0; i < formItem.length; i++) {
     let item = formItem[i]
     if (item.key === key) {
-      if ([1, 6].includes(item.type)) { // input、date  // 处理input和选择日期
+      if ([1, 6, 11].includes(item.type)) { // input、date  // 处理input和选择日期
         label = listQuery[key]
         break
       } else if ([2, 4, 5].includes(item.type)) { // 下拉框、 radio、checkbox

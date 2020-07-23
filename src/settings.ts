@@ -6,6 +6,7 @@ interface ISettings {
   fixedHeader: boolean // If true, will fix the header component
   openNew: boolean // If true, will open new window in your Browser
   isPC: boolean // judge preview window is pc or other
+  tableHeight: number // table max-height
   errorLog: string[] // The env to enable the errorlog component, default 'production' only
   sidebarTextTheme: boolean // If true, will change active text color for sidebar based on theme
   devServerPort: number // Port number for webpack-dev-server
@@ -21,6 +22,7 @@ const settings: ISettings = {
   showSidebarLogo: true,
   openNew: false,
   isPC: true,
+  tableHeight: 0,
   errorLog: ['production'],
   sidebarTextTheme: false,
   devServerPort: 9527,

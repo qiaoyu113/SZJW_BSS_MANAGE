@@ -36,12 +36,26 @@ export default class extends Vue {
     SettingsModule.ChangeIsPC({ key: 'isPC', value })
   }
 
+  get tableHeight() {
+    return SettingsModule.tableHeight
+  }
+  set tableHeight(value) {
+    SettingsModule.ChangeIsPC({ key: 'tableHeight', value })
+  }
+
   created() {
     if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
       this.isPC = false
     } else {
       this.isPC = true
     }
+    let otherHeight = 340 // 计算后的高度
+    if (this.isPC) {
+      otherHeight = 340
+    } else {
+      otherHeight = 300 // 移动端计算后的高度
+    }
+    this.tableHeight = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
 }
 </script>

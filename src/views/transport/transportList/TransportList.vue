@@ -281,27 +281,27 @@ export default class extends Vue {
     private tab: any[] = [
       {
         label: '全部',
-        name: '',
-        num: '',
-        id: 1
+        name: 'all',
+        num: '0',
+        id: 10
       },
       {
         label: '待上岗',
         name: '0',
         num: '0',
-        id: 2
+        id: 11
       },
       {
         label: '上岗',
         name: '1',
         num: '0',
-        id: 3
+        id: 12
       },
       {
         label: '停用',
         name: '2',
         num: '0',
-        id: 4
+        id: 13
       }
     ]
     private columns:any[] = [
@@ -381,7 +381,7 @@ export default class extends Vue {
     }
     private listQuery:IState = {
       gmId: '',
-      status: '',
+      status: 'all',
       workCity: null,
       carrierId: null,
       name: null,
@@ -909,7 +909,11 @@ export default class extends Vue {
     this.listQuery.startDate = this.listQuery.createDate[0]
     this.listQuery.endDate = this.listQuery.createDate[1] + 86399999
     this.listLoading = true
-    const { data } = await getCarrierInfoList(this.listQuery)
+    let params = { ...this.listQuery }
+    if (params.status === 'all') {
+      delete params.status
+    }
+    const { data } = await getCarrierInfoList(params)
     if (data.success) {
       this.tableData = data.data
       this.title = data.title
