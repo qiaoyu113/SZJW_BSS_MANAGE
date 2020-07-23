@@ -92,14 +92,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="职务"
-              :value="OwnerDetail.bussinessPosition"
+              :value="OwnerDetail.bussinessPosition | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="对接业务身份证号"
-              :value="OwnerDetail.bussinessCard"
+              :value="OwnerDetail.bussinessCard | DataIsNull"
             />
           </el-col>
 
