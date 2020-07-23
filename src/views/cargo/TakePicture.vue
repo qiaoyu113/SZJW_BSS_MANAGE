@@ -229,7 +229,16 @@ export default class TakePicture extends Vue {
    *上传前的校验
    */
   private beforeAvatarUpload(file:any) {
-    return true
+    const isJPG = ['application/x-bmp', 'image/jpeg', 'image/png', 'application/x-png'].includes(file.type)
+    const isLt7M = file.size / 1024 / 1024 < 7
+
+    if (!isJPG) {
+      this.$message.error('上传图片只能是 JPEG、PNG、BMP 格式!')
+    }
+    if (!isLt7M) {
+      this.$message.error('上传图片大小不能超过 7MB!')
+    }
+    return isJPG && isLt7M
   }
   /**
    * 预览

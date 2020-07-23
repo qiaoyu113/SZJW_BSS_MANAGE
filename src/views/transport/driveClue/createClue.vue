@@ -89,7 +89,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入姓名',
-        maxlength: 10
+        maxlength: 10,
+        clearable: true
       },
       label: '姓名',
       key: 'name'
@@ -97,7 +98,8 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '请输入电话'
+        placeholder: '请输入电话',
+        clearable: true
       },
       label: '电话',
       key: 'phone'
@@ -106,7 +108,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入微信',
-        maxlength: 20
+        maxlength: 20,
+        clearable: true
       },
       label: '微信',
       key: 'wechatNo'

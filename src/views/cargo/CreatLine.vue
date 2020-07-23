@@ -582,6 +582,13 @@ export default class CreatLine extends Vue {
     try {
       if (node.level < 3) {
         let nodes = await this.loadCityByCode(params)
+        if (node.level === 2) {
+          for (let i = 0; i < nodes.length; i++) {
+            if (Number(nodes[i].value) === -99) {
+              nodes[i].leaf = true
+            }
+          }
+        }
         resolve(nodes)
       } else if (node.level === 3) {
         let nodes = await this.cityDeyail(query)
