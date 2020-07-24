@@ -184,7 +184,10 @@
               label="是否需继续跟进"
               prop="isFollowUp"
             >
-              <el-radio-group v-model="ruleForm.isFollowUp">
+              <el-radio-group
+                v-model="ruleForm.isFollowUp"
+                :disabled="details.clueState === 2"
+              >
                 <el-radio
                   :label="1"
                 >
@@ -277,7 +280,7 @@
         >
           <el-col :span="12">
             <el-button
-              v-if="ruleForm.lineClueFollowForms.length < 10"
+              v-if="ruleForm.lineClueFollowForms.length < 10 && details.clueState !== 2"
               @click="addFollow"
             >
               添加跟进记录
@@ -323,6 +326,7 @@
                   type="datetime"
                   placeholder="选择日期时间"
                   clearable
+                  value-format="yyyy-MM-dd HH:mm:ss"
                 />
               </el-form-item>
               <el-form-item
@@ -466,6 +470,9 @@ export default class extends Vue {
           postData.isFollowUp = null
         }
         if (this.isEdit) {
+          if (this.details && this.details.clueState === 2) {
+            postData.isFollowUp = null
+          }
           subForm = EditLineClue
           successMsg = '编辑成功'
         }

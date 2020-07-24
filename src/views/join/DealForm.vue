@@ -169,12 +169,17 @@
               <!-- :remote-method="remoteMethod"
               :loading="loading"
                remote
-                reserve-keyword -->
+                reserve-keyword
               <el-select
                 v-model="ruleForm.operationId"
                 filterable
                 placeholder="请输入运营经理"
                 @change="checkManage"
+              > -->
+              <el-select
+                v-model="ruleForm.operationId"
+                filterable
+                placeholder="请输入运营经理"
               >
                 <el-option
                   v-for="item in managerList"
@@ -727,27 +732,26 @@ export default class extends Vue {
 
     // 搜索加盟经理列表
     private remoteMethod(query: any) {
-      query = '/v1/order/deliever/getDelieverList'
-      if (query !== '') {
-        // this.loading = true
-        GetJoinManageList({
-          key: query
-        }).then((response:any) => {
-          if (response.data.success) {
-            let array = response.data.data
-            let newArr: any = []
-            array.forEach((i: any) => {
-              newArr.push({ value: i.id, label: i.name + i.mobile })
-            })
-            this.managerList = newArr
-            // this.loading = false
-          } else {
-            this.$message.error(response.data.flag)
-          }
-        })
-      } else {
-        this.managerList = []
-      }
+      // if (query !== '') {
+      this.loading = true
+      GetJoinManageList({
+        uri: '/v1/order/deliever/getDelieverList'
+      }).then((response:any) => {
+        if (response.data.success) {
+          let array = response.data.data
+          let newArr: any = []
+          array.forEach((i: any) => {
+            newArr.push({ value: i.id, label: i.name + i.mobile })
+          })
+          this.managerList = newArr
+          this.loading = false
+        } else {
+          this.$message.error(response.data.flag)
+        }
+      })
+      // } else {
+      //   this.managerList = []
+      // }
     }
 
     // 选择运营经理

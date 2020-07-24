@@ -25,6 +25,7 @@
         :active-name="listQuery.status"
       >
         <el-button
+          v-permission="['/v1/product/product/rentalCar/download']"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="downLoad"
@@ -33,6 +34,7 @@
           <span v-if="isPC">导出</span>
         </el-button>
         <el-button
+          v-permission="['/v1/product/product/rentalCar/create']"
           size="small"
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -183,11 +185,13 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-permission="['/v1/product/product/rentalCar/shelvesOrTheshelves']"
                     @click.native="shelvesOrTheshelves(row)"
                   >
                     {{ row.status === 10 ? '下架' : '上架' }}
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/product/product/rentalCar/update']"
                     @click.native="showDialog(row)"
                   >
                     编辑

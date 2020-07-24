@@ -22,6 +22,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          v-permission="['/v1/contract/contractExport']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -239,17 +240,20 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-if="scope.row.status === 3 || scope.row.status === 4"
+                    v-permission="['/v1/order/contract/downloadContract']"
                     @click.native="Down(scope.row.contractId)"
                   >
                     下载
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.status === 3"
+                    v-permission="['/v1/order/contract/activeContract']"
                     @click.native="Activate(scope.row.contractId)"
                   >
                     激活
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/order/contract/contractDetail']"
                     @click.native="goDetail(scope.row.contractId)"
                   >
                     详情
@@ -431,7 +435,9 @@ export default class extends Vue {
       const { data } = await ActiveContract({ contractId: this.ActivateId })
       if (data.success) {
         if (data.data.flag) {
-          this.$message.success('激活成功')
+          setTimeout(() => {
+            this.$message.success('激活成功')
+          }, 1500)
           this.fetchData()
         } else {
           this.$message.error(data.data.msg)
@@ -544,19 +550,23 @@ export default class extends Vue {
 
     // 导出
     private async downLoad() {
-      const postData = this.listQuery
-      // delete postData.page
-      // delete postData.limit
-      const { data } = await ContractExport(postData)
-      if (data.success) {
-        this.$message({
-          type: 'success',
-          message: '导出成功!'
-        })
+      if (this.listQuery.startDate) {
+        const postData = this.listQuery
+        // delete postData.page
+        // delete postData.limit
+        const { data } = await ContractExport(postData)
+        if (data.success) {
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
         // const fileName = headers['content-disposition'].split('fileName=')[1]
         // this.download(data, decodeURI(fileName))
+        } else {
+          this.$message.error(data.errorMsg)
+        }
       } else {
-        this.$message.error(data.errorMsg)
+        this.$message.error('请选择合同生成时间')
       }
     }
     private download(data: any, name: any) {

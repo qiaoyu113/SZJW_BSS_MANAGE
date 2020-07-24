@@ -19,6 +19,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          v-permission="['/v1/base/user/create']"
           type="primary"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -123,16 +124,19 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-permission="['/v1/base/user/enableOrDisable']"
                     @click.native="enableOrDisable(row)"
                   >
                     {{ row.status === 1 ? '禁用' : '启用' }}
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/base/user/password/reset']"
                     @click.native="resetPassword(row)"
                   >
                     重置密码
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/base/user/update']"
                     @click.native="goEdit(row)"
                   >
                     编辑
