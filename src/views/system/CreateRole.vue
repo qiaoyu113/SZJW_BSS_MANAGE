@@ -79,6 +79,7 @@
           node-key="id"
           :show-checkbox="true"
           :indent="0"
+          :check-strictly="true"
         >
           <template slot-scope="{node,data}">
             <span>{{ node.label }}</span>

@@ -131,7 +131,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
-import { roleList, getOfficeList, createUser, updateUser, userDetail } from '@/api/system'
+import { roleList, getOfficeByCurrentUser, createUser, updateUser, userDetail } from '@/api/system'
 import '@/styles/common.scss'
 import { off } from 'codemirror'
 @Component({
@@ -292,8 +292,8 @@ export default class extends Vue {
     }
   }
   // 获取组织管理列表
-  private async getOfficeList() {
-    const { data } = await getOfficeList()
+  private async getOfficeByCurrentUser() {
+    const { data } = await getOfficeByCurrentUser()
     if (data.success) {
       const tree = this.traverseTree(data.data)
       this.optionsOffice = tree.data
@@ -342,7 +342,7 @@ export default class extends Vue {
         this.$message.error(data)
       }
     }
-    this.getOfficeList()
+    this.getOfficeByCurrentUser()
     this.getRoleList()
   }
   mounted() {
