@@ -352,9 +352,11 @@
               label="运力配额"
               prop="capacityQuota"
             >
-              <el-input
+              <el-input-number
                 v-model="ruleForm.capacityQuota"
-                v-only-number="{min: 1, max: 99}"
+                v-only-number="{min: 0, max: 999}"
+                :min="1"
+                :max="999"
                 placeholder="请输入运力配额"
                 maxlength="10"
               />
@@ -895,7 +897,7 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any, oldValue:any) {
-    console.log(value, oldValue)
+    // console.log(value, oldValue)
     if (value === '1') {
       if (!this.id) {
         this.ruleForm.supplier = ''
