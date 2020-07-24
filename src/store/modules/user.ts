@@ -85,6 +85,7 @@ class User extends VuexModule implements IUserState {
         this.SET_EMAIL(roleName)
         this.SET_TOKEN(data.data.token)
         this.SET_UUID(data.data.uuid)
+
         this.SET_NAME(data.data.bssLoginName ? data.data.bssLoginName : '暂无名称')
         this.SET_ROLES(data.data.stringPermissions)
         PermissionModule.GenerateRoutes(this.roles)
@@ -123,12 +124,14 @@ class User extends VuexModule implements IUserState {
     let roleName = ''
     let bssLoginName = (localStorage.getItem('bssLoginName') as any)
     let busiPermission = (localStorage.getItem('role') as any).split(',')
+    let uuid = (localStorage.getItem('uuid') as any)
     busiPermission.forEach((Item:any) => {
       if (Item === '0') roleName = '梧桐专车 '
       if (Item === '1') roleName = roleName + ' 梧桐共享'
     })
     this.SET_EMAIL(roleName)
     this.SET_NAME(bssLoginName)
+    this.SET_UUID(uuid)
     // const { data } = await getUserInfo({ /* Your params here */ })
     // if (!data) {
     //   throw Error('Verification failed, please Login again.')
