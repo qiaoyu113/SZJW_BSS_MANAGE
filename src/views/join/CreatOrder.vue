@@ -688,7 +688,8 @@
 import { Form as ElForm, Input } from 'element-ui'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetDictionaryList, Upload, GetPayList } from '@/api/common'
-import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder } from '@/api/join'
+import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder, GetRentalCarSupplierByTypeAndCity, GetRentalCarTypeByParams,
+  GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -906,7 +907,7 @@ export default class CreatLine extends Vue {
         }
         this.editors = true
       }
-      this.getCompany()
+      this.getCompany('1')
     } else if (value === '2') {
       if (!this.id) {
         this.ruleForm.supplier = ''
@@ -918,7 +919,7 @@ export default class CreatLine extends Vue {
         }
         this.editors = true
       }
-      this.getCompany()
+      this.getCompany('2')
     } else {
       if (!this.id) {
         this.ruleForm.cooperationCar = ''
@@ -935,7 +936,7 @@ export default class CreatLine extends Vue {
   private changeCarCompany(value:any) {
     // this.ruleForm.cooperationCar = ''
     if (value) {
-      this.getCar()
+      // this.getCar()
     }
   }
 
@@ -968,12 +969,19 @@ export default class CreatLine extends Vue {
         } else {
           this.ruleForm.carModel = ''
         }
-        this.getModelByTypeAndCityAndSupplierAndCarType()
-        this.getPrice()
+
+        if (this.ruleForm.cooperationModel === '1') {
+          this.getModelByTypeAndCityAndSupplierAndCarType()
+        } else {
+          this.getPrice()
+        }
       }
     }
   }
-
+  @Watch('ruleForm.carModel')
+  private changeCarModel(val:any) {
+    this.getBuyCarPrice() // 购车
+  }
   @Watch('ruleForm.goodsAmount', { deep: true })
   private changeGoodsAmount(value:any) {
     if (value <= (Number(this.readyPay) + Number(this.notPay))) {
@@ -1011,31 +1019,78 @@ export default class CreatLine extends Vue {
   //   }
   // }
   // 查供应商
-  private async getCompany() {
-    let { data } = await GetSupplierByTypeAndCity(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity }
-    )
-    if (data.success) {
-      this.optionsCompany = data.data
+  private async getCompany(str:string) {
+    let res:any = ''
+    if (str === '1') {
+      let { data } = await GetSupplierByTypeAndCity(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity }
+      )
+      res = data
+    } else if (str === '2') {
+      let { data } = await GetRentalCarSupplierByTypeAndCity(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity }
+      )
+      res = data
+    }
+
+    if (res.success) {
+      this.optionsCompany = res.data
     } else {
-      this.$message.error(data)
+      this.$message.error(res.errorMsg)
     }
   }
   // 查看车型
   private async getCar() {
-    let { data } = await GetCarTypeByTypeAndCityAndSupplier(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier }
+    let res:any = ''
+
+    if (this.ruleForm.cooperationModel === '1') {
+      // 购车
+      let { data } = await GetCarTypeByTypeAndCityAndSupplier(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier }
+      )
+      res = data
+    } else if (this.ruleForm.cooperationModel === '2') {
+      // 租车
+      let { data } = await GetRentalCarTypeByParams(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier }
+      )
+      res = data
+    }
+
+    if (res.success) {
+      this.optionsCar = res.data
+    } else {
+      this.$message.error(res.errorMsg)
+    }
+  }
+  // 查看无税车价-购车车
+  private async getBuyCarPrice() {
+    let { data } = await GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel(
+      {
+        busType: this.ruleForm.cooperationModel,
+        city: this.ruleForm.driverInfoFORM.workCity,
+        supplier: this.ruleForm.supplier,
+        carType: this.ruleForm.cooperationCar,
+        model: this.ruleForm.carModel
+      }
     )
     if (data.success) {
-      this.optionsCar = data.data
+      this.ruleForm.carPrice = data.data.price
+      this.ruleForm.describe = data.data.describe
+      this.ruleForm.productId = data.data.productCode
     } else {
       this.$message.error(data)
     }
   }
-  // 查看无税车价
+  // 查看无税车价-租车
   private async getPrice() {
     let { data } = await GetPriceAndByTypeAndCityAndSupplierAndCarType(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier, carType: this.ruleForm.cooperationCar }
+      {
+        busType: this.ruleForm.cooperationModel,
+        city: this.ruleForm.driverInfoFORM.workCity,
+        supplier: this.ruleForm.supplier,
+        carType: this.ruleForm.cooperationCar
+      }
     )
     if (data.success) {
       this.ruleForm.carPrice = data.data.price
