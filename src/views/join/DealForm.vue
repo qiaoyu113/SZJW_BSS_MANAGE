@@ -282,7 +282,8 @@
                     >
                       <el-input
                         v-model="scope.row.chassis"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
@@ -301,7 +302,8 @@
                     >
                       <el-input
                         v-model="scope.row.vehicle"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
@@ -320,7 +322,8 @@
                     >
                       <el-input
                         v-model="scope.row.gps"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
@@ -339,7 +342,8 @@
                     >
                       <el-input
                         v-model="scope.row.tailgate"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
