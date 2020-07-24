@@ -352,9 +352,11 @@
               label="运力配额"
               prop="capacityQuota"
             >
-              <el-input
+              <el-input-number
                 v-model="ruleForm.capacityQuota"
-                v-only-number="{min: 1, max: 99}"
+                v-only-number="{min: 0, max: 999}"
+                :min="1"
+                :max="999"
                 placeholder="请输入运力配额"
                 maxlength="10"
               />
