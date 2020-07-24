@@ -139,7 +139,7 @@ export const updateAuthority = (data: any = {}) =>
     method: 'post',
     data
   })
-// 权限管理-修改权限
+// 权限管理-删除权限
 export const deleteAuthority = (id: number) =>
   request({
     url: `${baseURL}/v1/base/authority/${id}`,

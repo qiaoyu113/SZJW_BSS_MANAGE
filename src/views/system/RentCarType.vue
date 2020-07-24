@@ -461,7 +461,10 @@ export default class extends Vue {
     } else {
       this.listQuery[key] = value
     }
-    this.fetchData()
+    if (key === 'startDate') {
+      return
+    }
+    this.search()
   }
   // search
   private search() {

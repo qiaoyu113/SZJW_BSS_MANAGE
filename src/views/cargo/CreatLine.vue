@@ -57,15 +57,22 @@
           <SelfItem
             :rule-form="ruleForm"
             :pccol="8"
-            :params="{prop: 'address',type: 8,label: '仓位置',tagAttrs: {
-              placeholder: '请选择仓位置',
-              'default-expanded-keys': true,
-              'default-checked-keys': true,
-              'node-key': 'warehouseProvince',
-              props: {
-                lazy: true,
-                lazyLoad: loadAddress
-              }}}"
+            :params="{
+              prop: 'address',
+              isShow: ruleForm.addressShow,
+              type: 8,
+              label: '仓位置',
+              tagAttrs: {
+                placeholder: '请选择仓位置',
+                'default-expanded-keys': true,
+                'default-checked-keys': true,
+                'node-key': 'warehouseProvince',
+                props: {
+                  lazy: true,
+                  lazyLoad: loadAddress
+                }
+              }
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -118,16 +125,22 @@
           <SelfItem
             :rule-form="ruleForm"
             :pccol="8"
-            :params="{prop: 'delivery',type: 8,label: '配送区域',
-                      tagAttrs: {
-                        placeholder: '请选择配送区域',
-                        'default-expanded-keys': true,
-                        'default-checked-keys': true,
-                        'node-key': 'provinceArea',
-                        props: {
-                          lazy: true,
-                          lazyLoad: loadhouseAddress
-                        }}}"
+            :params="{
+              prop: 'delivery',
+              type: 8,
+              isShow: ruleForm.deliveryShow,
+              label: '配送区域',
+              tagAttrs: {
+                placeholder: '请选择配送区域',
+                'default-expanded-keys': true,
+                'default-checked-keys': true,
+                'node-key': 'provinceArea',
+                props: {
+                  lazy: true,
+                  lazyLoad: loadhouseAddress
+                }
+              }
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -348,6 +361,9 @@ import SelfItem from '@/components/base/SelfItem.vue'
 import '@/styles/common.scss'
 import { validatorNumberRange } from '@/utils/index.ts'
 import { registerTheme } from 'echarts'
+interface IState {
+  [key: string]: any;
+}
 @Component({
   name: 'CreatLine',
   components: {
@@ -386,7 +402,7 @@ export default class CreatLine extends Vue {
     { label: '周六', type: '6' },
     { label: '周日', type: '7' }
   ];
-  private ruleForm: any = {
+  private ruleForm: IState = {
     carType: '',
     // 选择车型
     cargoType: '',
@@ -857,6 +873,7 @@ export default class CreatLine extends Vue {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         let ruleForm = { ...this.ruleForm }
+
         if (type === 1) {
           ruleForm.customerId = JSON.parse(ruleForm.customerId).customerId
         }
@@ -916,6 +933,7 @@ export default class CreatLine extends Vue {
   }
 
   private async createdLine(params: any) {
+    delete params.lineId
     let { data } = await createLine(params)
     if (data.success) {
       this.$message.success('线路创建成功')
@@ -1068,26 +1086,24 @@ export default class CreatLine extends Vue {
           allParams.deliveryWeekCycle = ['', '1', '2', '3', '4', '5', '6', '7']
         }
       }
-      allParams.address = []
-      allParams.delivery = []
-      // 仓位置
-      setTimeout(() => {
-        allParams.address.push(allParams.warehouseProvince + '')
-        allParams.address.push(allParams.warehouseCity + '')
-        allParams.address.push(allParams.warehouseCounty + '')
-        allParams.address.push(Number(allParams.warehouseTown))
-        // 配送区域
-        allParams.delivery.push(allParams.provinceArea + '')
-        allParams.delivery.push(allParams.cityArea + '')
-        allParams.delivery.push(allParams.countyArea + '')
-      }, 50)
+
       allParams.waitDirveValidity = new Date(allParams.waitDirveValidity)
 
       this.customerOptions = [
         { value: allParams.customerId, label: allParams.customerName }
       ]
       this.ruleForm = { ...this.ruleForm, ...allParams }
-
+      // 仓位置
+      this.ruleForm.address.push(allParams.warehouseProvince + '')
+      this.ruleForm.address.push(allParams.warehouseCity + '')
+      this.ruleForm.address.push(allParams.warehouseCounty + '')
+      this.ruleForm.address.push(Number(allParams.warehouseTown))
+      // 配送区域
+      this.ruleForm.delivery.push(allParams.provinceArea + '')
+      this.ruleForm.delivery.push(allParams.cityArea + '')
+      this.ruleForm.delivery.push(allParams.countyArea + '')
+      this.ruleForm.addressShow = true
+      this.ruleForm.deliveryShow = true
       setTimeout(() => {
         for (let i = 0; i < Number(allParams.dayNo); i++) {
           this.$set(this.ruleForm, 'lineDeliveryInfoFORMS' + i, {

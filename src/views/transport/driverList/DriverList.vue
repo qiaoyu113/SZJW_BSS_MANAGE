@@ -34,6 +34,7 @@
             重置
           </el-button>
           <el-button
+            v-permission="['/v1/driver/updateDriverBDManager']"
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
             name="driverlist_manager_btn"
@@ -117,6 +118,7 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
               v-if="[4].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverDownToGm']"
               command="distribution"
             >
               <template v-if="isPC">
@@ -129,6 +131,7 @@
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverFollowSave']"
               command="follow"
             >
               <template v-if="isPC">
@@ -141,6 +144,7 @@
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[2].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverFollowUpToDown']"
               command="giveup"
             >
               <template v-if="isPC">
@@ -153,6 +157,7 @@
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3,4].includes(scope.row.status)"
+              v-permission="['/v1/driver/updateDriver']"
               command="edit"
             >
               <template v-if="isPC">
@@ -165,6 +170,7 @@
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3,4].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverDetailByInview']"
               command="detail"
             >
               <template v-if="isPC">
@@ -189,6 +195,7 @@
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3].includes(scope.row.status)"
+              v-permission="['/v1/order/createNewOrder']"
               command="order"
             >
               <template v-if="isPC">
@@ -201,6 +208,7 @@
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[3].includes(scope.row.status)"
+              v-permission="['/v1/carrier/saveCarrierInfo']"
               command="transport"
             >
               <template v-if="isPC">
@@ -374,11 +382,15 @@ export default class extends Vue {
     {
       type: 2,
       key: 'busiType',
-      label: '业绩线',
+      label: '业务线',
       tagAttrs: {
-        placeholder: '请选择业绩线'
+        placeholder: '请选择业务线'
       },
       options: [
+        {
+          label: '全部',
+          value: ''
+        },
         {
           label: '专车',
           value: 0

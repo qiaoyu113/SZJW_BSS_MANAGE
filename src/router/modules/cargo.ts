@@ -17,7 +17,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueList.vue'),
       name: 'ClueList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/line/clue/queryLineClueList',
         activeMenu: '/cargo/cluelist',
         title: 'clueList',
         icon: '',
@@ -145,11 +145,11 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/OwnerList.vue'),
       name: 'OwnerList',
       meta: {
+        apiUrl: '/v1/line/customer/queryLineCustomerList',
         title: 'ownerList',
         activeMenu: '/cargo/ownerlist',
         noCache: false,
-        icon: '',
-        apiUrl: 'root'
+        icon: ''
       }
     },
     {
@@ -174,7 +174,7 @@ const cargoRouter: RouteConfig = {
         activeMenu: '/cargo/linemanage',
         noCache: true,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/line/lineInfo/queryLineListByConditionsQuery'
       }
     },
     {

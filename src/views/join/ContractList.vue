@@ -454,6 +454,9 @@ export default class extends Vue {
     // 处理query方法
     private handleQuery(value: any, key: any) {
       this.listQuery[key] = value
+      if (key === 'startDate') {
+        return
+      }
       this.fetchData()
     }
 
