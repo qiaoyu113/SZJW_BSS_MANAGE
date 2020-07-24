@@ -895,7 +895,6 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any, oldValue:any) {
-    console.log(value, oldValue)
     if (value === '1') {
       if (!this.id) {
         this.ruleForm.supplier = ''
@@ -943,11 +942,13 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any, oldValue:any) {
     // console.log('supplier', value, oldValue)
+    this.ruleForm.cooperationCar = ''
+    this.ruleForm.carModel = ''
     if (!this.id) {
       this.ruleForm.cooperationCar = ''
     } else {
       if (this.editorsSupplier) {
-        this.ruleForm.cooperationCar = ''
+        //  this.ruleForm.cooperationCar = ''
       }
       this.editorsSupplier = true
     }
@@ -970,9 +971,9 @@ export default class CreatLine extends Vue {
           this.ruleForm.carModel = ''
         }
 
-        if (this.ruleForm.cooperationModel === '1') {
+        if (this.ruleForm.cooperationModel === '1' && value) {
           this.getModelByTypeAndCityAndSupplierAndCarType()
-        } else {
+        } else if (this.ruleForm.cooperationModel === '2') {
           this.getPrice()
         }
       }
@@ -980,7 +981,9 @@ export default class CreatLine extends Vue {
   }
   @Watch('ruleForm.carModel')
   private changeCarModel(val:any) {
-    this.getBuyCarPrice() // 购车
+    if (val) {
+      this.getBuyCarPrice() // 购车
+    }
   }
   @Watch('ruleForm.goodsAmount', { deep: true })
   private changeGoodsAmount(value:any) {

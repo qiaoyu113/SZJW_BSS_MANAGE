@@ -196,7 +196,7 @@ export const asyncRoutes: RouteConfig[] = [
   systemRouter,
   {
     path: '*',
-    redirect: '/404',
+    redirect: '/401',
     meta: {
       hidden: true,
       apiUrl: 'root'
