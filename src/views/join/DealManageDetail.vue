@@ -136,7 +136,6 @@
     </SectionContainer>
 
     <SectionContainer
-      v-if="gpsShow"
       title="运营交付"
       :md="true"
     >
@@ -280,6 +279,7 @@
     </SectionContainer>
 
     <SectionContainer
+      v-if="gpsShow"
       title="GPS交付"
       :md="true"
     >
@@ -570,6 +570,7 @@ export default class extends Vue {
       if (data.success) {
         let datas = data.data
         this.ContractDetail = datas
+        this.getGPSRole()
       } else {
         this.$message.error(data)
       }
@@ -581,7 +582,7 @@ export default class extends Vue {
 
     // 判断GPS权限
     private async getGPSRole() {
-      const { data } = await GetGPSRoles({ cityCode: this.ContractDetail.city })
+      const { data } = await GetGPSRoles({ cityCode: this.ContractDetail.orderInfoVO.city })
       if (data.success) {
         this.gpsShow = data.data
       } else {

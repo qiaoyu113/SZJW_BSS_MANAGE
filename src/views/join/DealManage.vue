@@ -492,7 +492,7 @@ export default class extends Vue {
     }
   }
   .edit-input {
-    padding-right: 100px;
+    padding-right: 0;
   }
   .cancel-btn {
     position: absolute;
