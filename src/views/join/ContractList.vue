@@ -22,6 +22,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          v-permission="['/v1/contract/contractExport']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -239,17 +240,20 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-if="scope.row.status === 3 || scope.row.status === 4"
+                    v-permission="['/v1/order/contract/downloadContract']"
                     @click.native="Down(scope.row.contractId)"
                   >
                     下载
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.status === 3"
+                    v-permission="['/v1/order/contract/activeContract']"
                     @click.native="Activate(scope.row.contractId)"
                   >
                     激活
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/order/contract/contractDetail']"
                     @click.native="goDetail(scope.row.contractId)"
                   >
                     详情
