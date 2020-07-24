@@ -80,6 +80,7 @@
           :show-checkbox="true"
           :indent="0"
           :check-strictly="true"
+          @check-change="changeCheck"
         >
           <template slot-scope="{node,data}">
             <span>{{ node.label }}</span>
@@ -318,6 +319,17 @@ export default class extends Vue {
     }
     setChecked(data)
     return data
+  }
+  // 选中事件
+  private changeCheck(data: any, checked: any) {
+    const id = data.id
+    const nodes = (this.$refs['tree'] as any).$refs['roleTree'].store._getAllNodes()
+    for (let i = 0; i < nodes.length; i++) {
+      const listIds = nodes[i].data.parentsId.split(',').map((p: any) => Number(p))
+      if (listIds.includes(id)) {
+        nodes[i].checked = checked
+      }
+    }
   }
   mounted() {
     this.id = this.$route.query.id
