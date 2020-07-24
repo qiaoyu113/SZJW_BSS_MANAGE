@@ -227,7 +227,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[1,2,3,4].includes(scope.row.shelvesState)"
-                  v-permission="['/v1/line/create']"
+                  v-permission="['/v1/line/copy']"
                   command="copy"
                 >
                   <template>
