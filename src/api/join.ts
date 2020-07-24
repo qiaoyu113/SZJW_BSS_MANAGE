@@ -233,7 +233,7 @@ export const OrderExport = (params: any) =>
   request({
     url: `/business_center/v1/order/orderExport`,
     method: 'post',
-    responseType: 'blob',
+    // responseType: 'blob',
     data: params
   })
 
