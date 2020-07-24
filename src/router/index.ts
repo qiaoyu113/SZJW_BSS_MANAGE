@@ -197,7 +197,10 @@ export const asyncRoutes: RouteConfig[] = [
   {
     path: '*',
     redirect: '/404',
-    meta: { hidden: true }
+    meta: {
+      hidden: true,
+      apiUrl: 'root'
+    }
   }
   // {
   //   path: '/permission',

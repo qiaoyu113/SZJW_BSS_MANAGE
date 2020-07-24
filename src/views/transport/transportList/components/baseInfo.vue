@@ -131,7 +131,7 @@ export default class extends Vue {
     {
       type: 7,
       key: 'householdTypeName',
-      label: '城镇户口:'
+      label: '户口类型:'
     },
     {
       type: 7,

@@ -166,13 +166,13 @@
               label="运营经理"
               prop="operationId"
             >
-              <!-- <el-select
-                v-model="ruleForm.operationId"
-                :remote-method="remoteMethod"
-                :loading="loading"
-                filterable
-                remote
+              <!-- :remote-method="remoteMethod"
+              :loading="loading"
+               remote
                 reserve-keyword
+              <el-select
+                v-model="ruleForm.operationId"
+                filterable
                 placeholder="请输入运营经理"
                 @change="checkManage"
               > -->

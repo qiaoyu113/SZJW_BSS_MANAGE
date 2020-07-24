@@ -22,6 +22,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          v-permission="['/v1/order/deliever/delieverExport']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -203,12 +204,14 @@
                   <!-- v-if="(scope.row.status === 30 || scope.row.status === 35 || scope.row.status === 40) && scope.row.isDeliver === 0" -->
                   <el-dropdown-item
                     v-if="scope.row.isDeliver === 0"
+                    v-permission="['/v1/order/orderDeliver/selectOrderInfo']"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     交付
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.isDeliver === 1"
+                    v-permission="['/v1/order/orderDeliver/orderDeliverDetail']"
                     @click.native="goDetail(scope.row.orderId, 2)"
                   >
                     详情

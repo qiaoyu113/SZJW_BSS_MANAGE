@@ -5,6 +5,7 @@ export const permission: DirectiveOptions = {
   inserted(el, binding) {
     const { value } = binding
     const roles = UserModule.roles
+
     if (value && value instanceof Array && value.length > 0) {
       const permissionRoles = value
       const hasPermission = roles.some(role => {

@@ -9,6 +9,7 @@
     >
       <self-form
         ref="lineForm"
+        class="lineForm"
         :list-query="listQuery"
         :form-item="formItem"
         label-width="100px"
@@ -75,6 +76,18 @@
         <template v-slot:right>
           <div>
             <el-button
+              v-permission="['/v1/line/lineInfo/lineExport']"
+              :class="isPC ? 'btn-item' : 'btn-item-m'"
+              type="primary"
+              size="small"
+              name="LineManage_downLoad_btn"
+              @click="downLoad"
+            >
+              <i class="el-icon-download" />
+              <span v-if="isPC">导出</span>
+            </el-button>
+            <el-button
+              v-permission="['/v1/line/create']"
               :class="isPC ? 'btn-item-right' : 'btn-item-right-m'"
               type="primary"
               size="small"
@@ -123,7 +136,7 @@
           :table-data="tableData"
           :columns="columns"
           :page="page"
-          :func="chooseBox(chooseState)"
+          :func="chooseBox"
           @olclick="handleOlClick"
           @onPageSize="handlePageSize"
           @selection-change="handleChange"
@@ -161,96 +174,74 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   v-if="[3].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/edit']"
                   command="edit"
                 >
-                  <template v-if="isPC">
+                  <template>
                     编辑
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-edit"
-                  />
                 </el-dropdown-item>
-                <el-dropdown-item command="take">
-                  <template v-if="isPC">
+                <el-dropdown-item
+                  permission="['/v1/line/saveOrUpdatePicture']"
+                  command="take"
+                >
+                  <template>
                     拍照
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-camera"
-                  />
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[3].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/manualDeactivate']"
                   command="stopuse"
                 >
-                  <template v-if="isPC">
+                  <template>
                     停用
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-camera"
-                  />
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[2].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/mountGuard']"
                   command="gowork"
                 >
-                  <template v-if="isPC">
+                  <template>
                     上岗
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-camera"
-                  />
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[2].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/shelfAdjustment']"
                   command="putaway"
                 >
-                  <template v-if="isPC">
+                  <template>
                     上架调整
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-camera"
-                  />
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[2].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/shelveLine']"
                   command="getaway"
                 >
-                  <template v-if="isPC">
+                  <template>
                     下架
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-camera"
-                  />
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[1,2,3,4].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/create']"
                   command="copy"
                 >
-                  <template v-if="isPC">
+                  <template>
                     复制
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-camera"
-                  />
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[1].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/approved']"
                   command="audit"
                 >
-                  <template v-if="isPC">
+                  <template>
                     审核
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-camera"
-                  />
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -271,41 +262,37 @@
                 />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="linedetail">
-                  <template v-if="isPC">
+                <el-dropdown-item
+                  v-permission="['/v1/line/detail']"
+                  command="linedetail"
+                >
+                  <template>
                     查看线路详情
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-edit"
-                  />
                 </el-dropdown-item>
-                <el-dropdown-item command="showpic">
-                  <template v-if="isPC">
+                <el-dropdown-item
+                  v-permission="['/v1/line/pictureDetail']"
+                  command="showpic"
+                >
+                  <template>
                     查看线路照片
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-delete"
-                  />
                 </el-dropdown-item>
-                <el-dropdown-item command="showtender">
-                  <template v-if="isPC">
+                <el-dropdown-item
+                  v-permission="['/v1/line/customer/queryLineCustomerList']"
+                  command="showtender"
+                >
+                  <template>
                     查看全部标书
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-edit"
-                  />
                 </el-dropdown-item>
-                <el-dropdown-item command="showlog">
-                  <template v-if="isPC">
+                <el-dropdown-item
+                  v-permission="['/v1/line/list']"
+                  command="showlog"
+                >
+                  <template>
                     操作日志
                   </template>
-                  <i
-                    v-else
-                    class="el-icon-edit"
-                  />
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -349,7 +336,6 @@
             type="number"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
-            @blur="checkMountGuardNo"
           />
         </div>
         <p class="dioBox">
@@ -384,6 +370,36 @@
       </div>
     </SelfDialog>
 
+    <!-- 审核拒绝原因 -->
+    <SelfDialog
+      :visible.sync="passNo"
+      :title="`拒绝原因`"
+      :center="true"
+      :cancel="passCancel"
+      :confirm="passConfirm"
+    >
+      <div>
+        <div class="dioBox">
+          <el-form
+            ref="form"
+            label-width="80px"
+          >
+            <el-form-item label="原因">
+              <el-input
+                v-model="reason"
+                type="textarea"
+                placeholder="请至少输入5个字符"
+                minlength="5"
+                maxlength="100"
+                rows="5"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+    </SelfDialog>
+
     <PitchBox
       :drawer.sync="drawer"
       :drawer-list="rows"
@@ -411,7 +427,10 @@ import {
   shelveLine,
   lineListAll,
   customerCheckNames,
-  fuzzyCheckNames
+  fuzzyCheckNames,
+  lineExport,
+  batchApproved,
+  batchNoApproved
 } from '@/api/cargo'
 import Pagination from '@/components/Pagination/index.vue'
 import BettwenTitle from '@/components/TableHeader/BettwenTitle.vue'
@@ -450,7 +469,6 @@ interface IState {
   }
 })
 export default class LineManage extends Vue {
-  private chooseState: any = null;
   private rowInfo: any = {};
   private id: string = '';
   private diaUpcar: string = '';
@@ -638,7 +656,7 @@ export default class LineManage extends Vue {
       col: 12,
       label: '工作开始时间段',
       w: '130px',
-      type: 10,
+      type: 12,
       key: 'jobTime'
     }
   ];
@@ -655,7 +673,10 @@ export default class LineManage extends Vue {
     returnWarehouse: '',
     time: [],
     // jobTime: [Date.now(),Date.now()],
-    jobTime: this.getTimeArr(),
+    jobTime: {
+      jobStartDate: '',
+      jobEndDate: ''
+    },
     jobStartDate: '',
     jobEndDate: ''
   };
@@ -673,6 +694,7 @@ export default class LineManage extends Vue {
       key: 'lineId',
       label: '线路编号',
       slot: true,
+      width: '160px',
       disabled: true
     },
     {
@@ -709,6 +731,7 @@ export default class LineManage extends Vue {
     },
     {
       key: 'carTypeName',
+      width: '160px',
       label: '选择车型'
     },
     {
@@ -730,10 +753,12 @@ export default class LineManage extends Vue {
     },
     {
       key: 'warehouse',
+      width: '160px',
       label: '仓库位置'
     },
     {
       key: 'stabilityRateName',
+      width: '160px',
       label: '线路稳定性'
     },
     {
@@ -766,7 +791,7 @@ export default class LineManage extends Vue {
     },
     {
       disabled: true,
-      fixed: 'right',
+      fixed: this.isPC ? 'right' : false,
       key: 'detail',
       slot: true,
       label: '详情'
@@ -781,20 +806,24 @@ export default class LineManage extends Vue {
       )
     }
   };
+  private passNo:boolean = false
+  private reason:string = ''
 
-  private getTimeArr() {
-    // 凌晨时间：
-    let atime: any = new Date(new Date().setHours(0, 0, 0, 0))
-    // 23点时间：
-    let btime: any = new Date(
-      new Date(new Date().toLocaleDateString()).getTime() +
-        24 * 60 * 60 * 1000 -
-        1
-    )
-    let timeArr: string[] = []
-    timeArr.push(atime)
-    timeArr.push(btime)
-    return timeArr
+  private async downLoad() {
+    const postData = this.listQuery
+    // delete postData.page
+    // delete postData.limit
+    const { data } = await lineExport(postData)
+    if (data.success) {
+      this.$message({
+        type: 'success',
+        message: '导出成功!'
+      })
+      // const fileName = headers['content-disposition'].split('fileName=')[1]
+      // this.download(data, decodeURI(fileName))
+    } else {
+      this.$message.error(data.errorMsg)
+    }
   }
 
   private async remoteMethod(query: string, cb: Function) {
@@ -903,7 +932,10 @@ export default class LineManage extends Vue {
       houseAddress: [],
       returnWarehouse: '',
       time: [],
-      jobTime: this.getTimeArr(),
+      jobTime: {
+        jobStartDate: '',
+        jobEndDate: ''
+      },
       jobStartDate: '',
       jobEndDate: ''
     }
@@ -928,7 +960,6 @@ export default class LineManage extends Vue {
         })
       }
     }
-
     for (let key in this.listQuery) {
       if (
         this.listQuery[key] !== '' &&
@@ -1048,10 +1079,13 @@ export default class LineManage extends Vue {
         params.startDate = this.listQuery.time[0]
         params.endDate = this.listQuery.time[1] + 86399999
       }
-      if (this.listQuery.jobTime.length > 0) {
-        params.jobStartDate = parseTime(this.listQuery.jobTime[0], '{h}:{i}')
-        params.jobEndDate = parseTime(this.listQuery.jobTime[1], '{h}:{i}')
-      }
+      // if (this.listQuery.jobTime.length > 0) {
+      //   params.jobStartDate = parseTime(this.listQuery.jobTime[0], '{h}:{i}')
+      //   params.jobEndDate = parseTime(this.listQuery.jobTime[1], '{h}:{i}')
+      // }
+      console.log(this.listQuery)
+      params.jobEndDate = this.listQuery.jobTime.jobEndDate
+      params.jobStartDate = this.listQuery.jobTime.jobStartDate
       const { data: res } = await lineListAll(params)
       this.listLoading = false
       if (res.success) {
@@ -1122,7 +1156,6 @@ export default class LineManage extends Vue {
         break
       case 'putaway':
         this.showPutDio = true
-        console.log(row)
         this.diaUpcar = row.waitDirveValidity
         this.diaUpcarNum = row.deployNo
         break
@@ -1200,27 +1233,13 @@ export default class LineManage extends Vue {
   }
 
   // 上架操作
-  private checkMountGuardNo(val: string) {
-    if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
-      this.$message.error('可上车数要大于或等于已上岗标书数量')
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
-    }
-    // if (this.diaUpcarNum === '') {
-    //   this.diaUpcarNum = this.rowInfo.mountGuardNo
-    //   this.$message.error('可上车数不能为空')
-    // }
-  }
-
   private async putConfirm(done: any) {
-    if (this.diaUpcarNum < this.rowInfo.mountGuardNo) {
+    if (Number(this.diaUpcarNum) < Number(this.rowInfo.mountGuardNo)) {
       this.$message.error('可上车数要大于或等于已上岗标书数量')
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
       return
     }
     if (this.diaUpcarNum === '') {
-      this.diaUpcarNum = this.rowInfo.mountGuardNo
-      // this.$message.error('可上车数不能为空')
-      // return
+      this.diaUpcarNum = this.rowInfo.deployNo
     }
     if (Number(this.diaUpcarNum) >= 11 || Number(this.diaUpcarNum) <= 0) {
       this.$message.error('可上车数只能在0至11之间')
@@ -1336,27 +1355,70 @@ export default class LineManage extends Vue {
     } else if (val.name === '清空选择') {
       (this.$refs.LineManageTable as any).toggleRowSelection()
     } else if (val.name === '批量审核通过') {
-      this.chooseState = 1
+      this.allApproved(this.rows)
     } else if (val.name === '批量审核不通过') {
-      this.chooseState = 1
+      this.passNo = true
+    }
+  }
+
+  private async allApproved(params:any) {
+    if (this.rows.length === 0) {
+      return this.$message.error('请选择相应线路')
+    }
+    let lineArray = params.map((ele:any) => {
+      return ele.lineId
+    })
+    let { data } = await batchApproved(lineArray)
+    if (data.success) {
+      this.$message.success('批量审核成功')
+      setTimeout(() => {
+        this.getList()
+      }, delayTime)
+    } else {
+      this.$message.error(data.errorMsg)
+    }
+  }
+
+  private async noApproved(params:any, bodyParams:any) {
+    let { data } = await batchNoApproved(params, bodyParams)
+    if (data.success) {
+      this.$message.success('批量审核不通过成功')
+      setTimeout(() => {
+        this.getList()
+      }, delayTime)
+    } else {
+      this.$message.error(data.errorMsg)
     }
   }
 
   // 批量禁用状态处理
-  private chooseBox(state: any) {
-    return function(row: any, index: number) {
-      if (state === null) {
-        return true
-      }
-      console.log(1)
-      if (row.shelvesState !== state) {
-        console.log(2)
-        return false // 禁用状态
-      } else {
-        console.log(3)
-        return true // 非禁用状态
-      }
+  private chooseBox(row: any, index: number) {
+    if (row.shelvesState !== 1) {
+      return false // 禁用状态
+    } else {
+      return true // 非禁用状态
     }
+  }
+
+  private passCancel(done: any) {
+    done(this.reason = '')
+  }
+
+  private passConfirm(done: any) {
+    if (this.rows.length === 0) {
+      return this.$message.error('请选择相应线路')
+    }
+    if (this.reason !== '' && this.reason.length < 5) {
+      return this.$message.error('拒绝原因应大于5个字符，或不填写')
+    }
+    let lineArray = this.rows.map((ele:any) => {
+      return ele.lineId
+    })
+
+    let params = {
+      reason: this.reason
+    }
+    done(this.noApproved(params, lineArray))
   }
 
   /**
@@ -1529,6 +1591,9 @@ export default class LineManage extends Vue {
 }
 </style>
 <style scoped>
+.LineManage .lineForm >>> .timeSelect .el-input__inner{
+  width: 90%;
+}
 .LineManage >>> .el-collapse-item__wrap {
   padding: 20px 30px 0 0;
   box-sizing: border-box;
