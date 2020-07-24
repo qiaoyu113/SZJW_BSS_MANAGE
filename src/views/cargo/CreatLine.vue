@@ -402,6 +402,7 @@ export default class CreatLine extends Vue {
     { label: '周六', type: '6' },
     { label: '周日', type: '7' }
   ];
+  private isFirst = true
   private ruleForm: IState = {
     carType: '',
     // 选择车型
@@ -723,14 +724,30 @@ export default class CreatLine extends Vue {
   // 配送方式
   @Watch('ruleForm.incomeSettlementMethod')
   private changeRuleForm(value: any) {
-    if (value === 1) {
-      this.ruleForm.everyUnitPrice = ''
-      this.NoshipperOffer = true
-      this.ruleForm.shipperOffer = ''
+    if (this.pageStatus === 1) {
+      if (value === 1) {
+        this.ruleForm.everyUnitPrice = ''
+        this.NoshipperOffer = true
+        this.ruleForm.shipperOffer = ''
+      } else {
+        this.ruleForm.everyUnitPrice = ''
+        this.NoshipperOffer = false
+        this.ruleForm.shipperOffer = ''
+      }
     } else {
-      this.ruleForm.everyUnitPrice = ''
-      this.NoshipperOffer = false
-      this.ruleForm.shipperOffer = ''
+      if (this.isFirst) {
+        this.isFirst = false
+      } else {
+        if (value === 1) {
+          this.ruleForm.everyUnitPrice = ''
+          this.NoshipperOffer = true
+          this.ruleForm.shipperOffer = ''
+        } else {
+          this.ruleForm.everyUnitPrice = ''
+          this.NoshipperOffer = false
+          this.ruleForm.shipperOffer = ''
+        }
+      }
     }
   }
 
@@ -802,6 +819,7 @@ export default class CreatLine extends Vue {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         let ruleForm = { ...this.ruleForm }
+        ruleForm.waitDirveValidity = new Date(ruleForm.waitDirveValidity).getTime()
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
         }
