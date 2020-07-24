@@ -76,6 +76,7 @@
         <template v-slot:right>
           <div>
             <el-button
+              v-permission="['/v1/line/lineInfo/lineExport']"
               :class="isPC ? 'btn-item' : 'btn-item-m'"
               type="primary"
               size="small"
@@ -86,6 +87,7 @@
               <span v-if="isPC">导出</span>
             </el-button>
             <el-button
+              v-permission="['/v1/line/create']"
               :class="isPC ? 'btn-item-right' : 'btn-item-right-m'"
               type="primary"
               size="small"
@@ -172,19 +174,24 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   v-if="[3].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/edit']"
                   command="edit"
                 >
                   <template>
                     编辑
                   </template>
                 </el-dropdown-item>
-                <el-dropdown-item command="take">
+                <el-dropdown-item
+                  permission="['/v1/line/saveOrUpdatePicture']"
+                  command="take"
+                >
                   <template>
                     拍照
                   </template>
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[3].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/manualDeactivate']"
                   command="stopuse"
                 >
                   <template>
@@ -193,6 +200,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[2].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/mountGuard']"
                   command="gowork"
                 >
                   <template>
@@ -201,6 +209,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[2].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/shelfAdjustment']"
                   command="putaway"
                 >
                   <template>
@@ -209,6 +218,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[2].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/shelveLine']"
                   command="getaway"
                 >
                   <template>
@@ -217,6 +227,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[1,2,3,4].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/create']"
                   command="copy"
                 >
                   <template>
@@ -225,6 +236,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="[1].includes(scope.row.shelvesState)"
+                  v-permission="['/v1/line/approved']"
                   command="audit"
                 >
                   <template>
@@ -250,22 +262,34 @@
                 />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="linedetail">
+                <el-dropdown-item
+                  v-permission="['/v1/line/detail']"
+                  command="linedetail"
+                >
                   <template>
                     查看线路详情
                   </template>
                 </el-dropdown-item>
-                <el-dropdown-item command="showpic">
+                <el-dropdown-item
+                  v-permission="['/v1/line/pictureDetail']"
+                  command="showpic"
+                >
                   <template>
                     查看线路照片
                   </template>
                 </el-dropdown-item>
-                <el-dropdown-item command="showtender">
+                <el-dropdown-item
+                  v-permission="['/v1/line/customer/queryLineCustomerList']"
+                  command="showtender"
+                >
                   <template>
                     查看全部标书
                   </template>
                 </el-dropdown-item>
-                <el-dropdown-item command="showlog">
+                <el-dropdown-item
+                  v-permission="['/v1/line/list']"
+                  command="showlog"
+                >
                   <template>
                     操作日志
                   </template>

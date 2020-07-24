@@ -44,6 +44,7 @@
         :active-name="listQuery.status"
       >
         <el-button
+          v-permission="['/v1/carrier/saveCarrierInfo']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -86,6 +87,7 @@
         </el-dropdown>
 
         <el-button
+          v-permission="['/v1/carrier/updateGmId']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -133,6 +135,7 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item
+                v-permission="['/v1/carrier/saveCarrierInfo']"
                 command="editor"
               >
                 <template>
@@ -140,6 +143,7 @@
                 </template>
               </el-dropdown-item>
               <el-dropdown-item
+                v-permission="['/v1/carrier/getCarrierInfoByCarrierId']"
                 command="detail"
               >
                 <template>
@@ -148,6 +152,7 @@
               </el-dropdown-item>
               <el-dropdown-item
                 v-if="[0,1].includes(scope.row.status)"
+                v-permission="['/v1/carrier/updateCarrierStatus']"
                 command="stop"
               >
                 <template>
@@ -163,6 +168,7 @@
               </el-dropdown-item> -->
               <el-dropdown-item
                 v-if="[2].includes(scope.row.status) && scope.row.isRefund === 0"
+                v-permission="['/v1/carrier/updateCarrierStatus']"
                 command="alive"
               >
                 <template>
