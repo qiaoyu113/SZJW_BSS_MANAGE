@@ -29,7 +29,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
       name: 'AddClue',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/line/clue/save',
         activeMenu: '/cargo/cluelist',
         title: 'addClue',
         hidden: true,
@@ -42,7 +42,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
       name: 'EditClue',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/line/clue/lineClueEdit',
         activeMenu: '/cargo/cluelist',
         title: 'editClue',
         hidden: true,
@@ -55,7 +55,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/FollowUpClue.vue'),
       name: 'FollowUpClue',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/line/clue/followClue',
         activeMenu: '/cargo/cluelist',
         title: 'followUpClue',
         hidden: true,
@@ -68,7 +68,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ConversionClue.vue'),
       name: 'ConversionClue',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/customer/transformCustomer',
         activeMenu: '/cargo/cluelist',
         title: 'conversionClue',
         hidden: true,
@@ -81,7 +81,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ConversionClue.vue'),
       name: 'EditCustomer',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/customer/edit',
         activeMenu: '/cargo/ownerlist',
         title: 'editcustomer',
         hidden: true,
@@ -94,7 +94,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportClue.vue'),
       name: 'ImportClue',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/line/clue/importInfoList',
         activeMenu: '/cargo/cluelist',
         title: 'importClue',
         hidden: true,
@@ -107,7 +107,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ImportDetail.vue'),
       name: 'ImportDetail',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/line/clue/importDetailList',
         activeMenu: '/cargo/cluelist',
         title: 'importDetail',
         hidden: true,
@@ -120,7 +120,7 @@ const cargoRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueDetail.vue'),
       name: 'ClueDetail',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/line/clue/lineClueInfo',
         activeMenu: '/cargo/cluelist',
         title: 'clueDetail',
         hidden: true,

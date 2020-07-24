@@ -29,7 +29,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
       name: 'CreateUser',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/create',
         activeMenu: '/system/usermanage',
         title: 'createUser',
         hidden: true,
@@ -42,7 +42,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
       name: 'EditUser',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/update',
         activeMenu: '/system/usermanage',
         title: 'editUser',
         icon: '',
@@ -67,7 +67,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'CreateRole',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/role/create',
         activeMenu: '/system/rolemanage',
         title: 'createRole',
         hidden: true,
@@ -80,7 +80,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'EditRole',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/role/update',
         activeMenu: '/system/rolemanage',
         title: 'editRole',
         icon: '',
