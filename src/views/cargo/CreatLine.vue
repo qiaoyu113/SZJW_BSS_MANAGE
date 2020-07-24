@@ -1071,14 +1071,16 @@ export default class CreatLine extends Vue {
       allParams.address = []
       allParams.delivery = []
       // 仓位置
-      allParams.address.push(allParams.warehouseProvince + '')
-      allParams.address.push(allParams.warehouseCity + '')
-      allParams.address.push(allParams.warehouseCounty + '')
-      allParams.address.push(Number(allParams.warehouseTown))
-      // 配送区域
-      allParams.delivery.push(allParams.provinceArea + '')
-      allParams.delivery.push(allParams.cityArea + '')
-      allParams.delivery.push(allParams.countyArea + '')
+      setTimeout(() => {
+        allParams.address.push(allParams.warehouseProvince + '')
+        allParams.address.push(allParams.warehouseCity + '')
+        allParams.address.push(allParams.warehouseCounty + '')
+        allParams.address.push(Number(allParams.warehouseTown))
+        // 配送区域
+        allParams.delivery.push(allParams.provinceArea + '')
+        allParams.delivery.push(allParams.cityArea + '')
+        allParams.delivery.push(allParams.countyArea + '')
+      }, 50)
       allParams.waitDirveValidity = new Date(allParams.waitDirveValidity)
 
       this.customerOptions = [
