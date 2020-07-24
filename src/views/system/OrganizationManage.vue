@@ -27,6 +27,7 @@
           <div class="right-btn">
             <el-button
               v-if="data.type !== 5"
+              v-permission="['/v1/base/office/create']"
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
@@ -36,6 +37,7 @@
             />
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v1/base/office/delete']"
               circle
               size="mini"
               class="delete"
@@ -46,6 +48,7 @@
             />
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v1/base/office/update']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -55,6 +58,7 @@
             />
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-top"
@@ -64,6 +68,7 @@
             />
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-bottom"

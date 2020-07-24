@@ -343,6 +343,7 @@ export default class extends Vue {
       }
       data.page = await HandlePages(page)
       this.total = page.total
+      this.tab[0].num = page.total
     } else {
       this.$message.error(data)
     }
@@ -426,9 +427,5 @@ export default class extends Vue {
 }
 .upload-demo{
   display: inline-block;
-}
-.ImportClue >>> .tab_num,
-.ImportClue-m >>> .tab_num {
-  display: none
 }
 </style>
