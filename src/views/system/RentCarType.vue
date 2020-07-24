@@ -286,7 +286,6 @@
             v-model="dialogForm.city"
             placeholder="请选择"
             multiple
-            collapse-tags
             clearable
             :disabled="!isAdd"
           >
