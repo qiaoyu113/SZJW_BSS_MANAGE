@@ -139,7 +139,7 @@
             </el-form-item>
           </el-col>
           <el-col
-            v-if="ruleForm.busiType === '0'"
+            v-if="ruleForm.busiType === '1'"
             :span="isPC ? 6 : 24"
           >
             <el-form-item
