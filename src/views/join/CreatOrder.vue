@@ -735,7 +735,7 @@ export default class CreatLine extends Vue {
     'busiType': '',
     'describe': '',
     'buyCarCompany': '',
-    'capacityQuota': '',
+    'capacityQuota': '1',
     'carPrice': '',
     'city': '',
     'confirmId': '',
@@ -984,6 +984,9 @@ export default class CreatLine extends Vue {
       this.orderPrice = value
       this.notPay = this.getNotPay()
       this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+    }
+    if (!this.id) {
+      this.payNumber = value
     }
   }
 
