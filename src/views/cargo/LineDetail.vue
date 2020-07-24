@@ -663,6 +663,16 @@ export default class extends Vue {
   .steps {
     margin: 30px 0 20px 0;
   }
+  .btnBox {
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button {
+      width: 100%;
+    }
+    .el-button {
+      margin: 0 0 20px 0;
+    }
+  }
 }
 </style>
 <style>

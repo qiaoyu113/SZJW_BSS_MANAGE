@@ -527,9 +527,7 @@ export default class LineManage extends Vue {
   private DateValue: any[] = [];
   private operationList: any[] = [
     { icon: 'el-icon-edit-outline', name: '查看选中', color: '#999' },
-    { icon: 'el-icon-edit', name: '清空选择', color: '#978374' },
-    { icon: 'el-icon-view', name: '批量审核通过', color: '#978374' },
-    { icon: 'el-icon-view', name: '批量审核不通过', color: '#978374' }
+    { icon: 'el-icon-edit', name: '清空选择', color: '#978374' }
   ];
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
@@ -999,16 +997,10 @@ export default class LineManage extends Vue {
       let cartype = Intentional_compartment.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      // let state = line_audit_state.map(function(ele:any) {
-      //   return { value: Number(ele.dictValue), label: ele.dictLabel }
-      // })
       this.formItem.map(ele => {
         if (ele.key === 'carType') {
           ele.options = cartype
         }
-        // if (ele.key === 'auditState') {
-        //   ele.options = state
-        // }
       })
     } else {
       this.$message.error(res.errorMsg)
@@ -1036,6 +1028,10 @@ export default class LineManage extends Vue {
       }
       let { data: res } = await GetManagerLists(paramsUrl)
       if (res.success) {
+        if (res.data.length > 1) {
+          this.operationList.push({ icon: 'el-icon-view', name: '批量审核通过', color: '#978374' })
+          this.operationList.push({ icon: 'el-icon-view', name: '批量审核不通过', color: '#978374' })
+        }
         this.formItem.map(ele => {
           if (ele.key === 'lineSaleId') {
             ele.options = res.data.map(function(ele: any) {
@@ -1516,7 +1512,7 @@ export default class LineManage extends Vue {
   .btn-item-left-m {
     border-radius: 4px;
     border: none;
-    margin-left: 10px;
+    // margin-left: 10px;
   }
   .btn-item-filtrate-m {
     background: #ffa000;
@@ -1585,10 +1581,13 @@ export default class LineManage extends Vue {
   justify-content: flex-end;
 }
 .btnMobile {
-  margin-left: 0;
+  margin-left: 0px!important;
   margin-top: 10px;
   width: 100%;
 }
+.el-button+.el-button{
+    margin-left: 0px!important;
+  }
 </style>
 <style scoped>
 .LineManage .lineForm >>> .timeSelect .el-input__inner{

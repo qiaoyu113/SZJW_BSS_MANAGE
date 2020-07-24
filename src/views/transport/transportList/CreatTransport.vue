@@ -52,11 +52,13 @@
             v-if="chooseOrderState"
             class="orderBox"
           >
-            <el-row style="width:100%">
+            <el-row
+              style="width:100%"
+            >
               <el-col
                 v-for="(item, index) in orderList"
                 :key="index"
-                :span="6"
+                :span="isPC ? 6 : 24"
               >
                 <div
                   class="boxItem"
@@ -993,6 +995,135 @@ export default class extends Vue {
     width: 100%;
     display: flex;
     justify-content: flex-start;
+  }
+  .creatOver{
+    width: 100%;
+    height: calc( 100vh - 400px );
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .successText{
+      font-weight: bold;
+      font-size: 24px;
+      margin: 40px 0;
+    }
+    .icon{
+      font-size: 60px;
+      color: #52c41a;
+    }
+  }
+}
+</style>
+<style lang="scss" scoped>
+.CreatTransport-m{
+  .pageTitle{
+    padding: 0 20px;
+    font-size: 16px;
+  }
+  .pageWord{
+    padding: 0 20px;
+    font-size: 14px;
+    line-height: 16px;
+  }
+  .creatInfo{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    .stepsBox{
+      font-size: 12px;
+    }
+    .creatPhone{
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      font-size: 12px;
+      margin:20px 0;
+      .el-select{
+        flex: .6;
+      }
+      span{
+        flex: .4;
+      }
+    }
+    .orderBox .el-row{
+      max-height: 40vh;
+      overflow-y: scroll;
+      .boxItem{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        .orderItem{
+          cursor: pointer;
+          width: 100%;
+          margin-left: 10px;
+          border: 1px solid #648be7;
+          padding: 5px 10px;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          font-size: 12px;
+          color: #140303;
+          span{
+              margin-bottom: 10px;
+            }
+          .goDetail{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .orderNum{
+              font-weight: bold;
+              color: black;
+            }
+        }
+        .orderItemNo{
+            width: 100%;
+            margin-left: 10px;
+            border: 1px solid #bdcdf1;
+            padding: 5px 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            font-size: 12px;
+            color: #c4c4c4;
+            span{
+              margin-bottom: 10px;
+            }
+            .goDetail{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .orderNum{
+              font-weight: bold;
+              color: black;
+            }
+          }
+          .orderItem:last-child{
+            margin-bottom: 0;
+          }
+          .orderItemNo:last-child{
+            margin-bottom: 0;
+          }
+      }
+    }
+  }
+.textInfo{
+    padding: 0 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  .btnGroup{
+    width: 100%;
+    .el-button + .el-button {
+        margin-left: 0px;
+    }
+    .el-button{
+      width: 100%;
+      margin-bottom: 10px;
+    }
   }
   .creatOver{
     width: 100%;
