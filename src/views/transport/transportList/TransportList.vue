@@ -44,6 +44,7 @@
         :active-name="listQuery.status"
       >
         <el-button
+          v-permission="['/v1/carrier/saveCarrierInfo']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -86,6 +87,7 @@
         </el-dropdown>
 
         <el-button
+          v-permission="['/v1/carrier/updateGmId']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -133,61 +135,45 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item
+                v-permission="['/v1/carrier/saveCarrierInfo']"
                 command="editor"
               >
-                <template v-if="isPC">
+                <template>
                   编辑
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item>
               <el-dropdown-item
+                v-permission="['/v1/carrier/getCarrierInfoByCarrierId']"
                 command="detail"
               >
-                <template v-if="isPC">
+                <template>
                   详情
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item>
               <el-dropdown-item
                 v-if="[0,1].includes(scope.row.status)"
+                v-permission="['/v1/carrier/updateCarrierStatus']"
                 command="stop"
               >
-                <template v-if="isPC">
+                <template>
                   停用
                 </template>
-                <i
-                  v-else
-                  class="el-icon-chat-dot-square"
-                />
               </el-dropdown-item>
               <!-- <el-dropdown-item
                 command="gowork"
               >
-                <template v-if="isPC">
+                <template>
                   上岗
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item> -->
               <el-dropdown-item
                 v-if="[2].includes(scope.row.status) && scope.row.isRefund === 0"
+                v-permission="['/v1/carrier/updateCarrierStatus']"
                 command="alive"
               >
-                <template v-if="isPC">
+                <template>
                   激活
                 </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -311,7 +297,8 @@ export default class extends Vue {
       },
       {
         key: 'name',
-        label: '运力姓名'
+        label: '运力姓名',
+        disabled: true
       },
       {
         key: 'phone',
@@ -355,7 +342,8 @@ export default class extends Vue {
       },
       {
         key: 'createName',
-        label: '创建人'
+        label: '创建人',
+        disabled: true
       },
       {
         key: 'createDate',
@@ -904,6 +892,10 @@ export default class extends Vue {
     if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
       return this.$message.error('请输入正确的手机号')
     }
+    if (this.listQuery.driverPhone && !phoneReg.test(this.listQuery.driverPhone)) {
+      return this.$message.error('请输入正确的手机号')
+    }
+
     this.listQuery.page = this.page.page
     this.listQuery.limit = this.page.limit
     this.listQuery.startDate = this.listQuery.createDate[0]
