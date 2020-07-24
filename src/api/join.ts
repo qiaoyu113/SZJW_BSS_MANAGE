@@ -215,7 +215,7 @@ export const DelieverExportDown = (params: any) =>
   request({
     url: '/business_center/v1/order/deliever/delieverExport',
     method: 'post',
-    responseType: 'blob',
+    // responseType: 'blob',
     data: params
   })
 
