@@ -44,6 +44,7 @@
             >
               <el-date-picker
                 v-model="ruleForm.contractEnd"
+                :picker-options="endDateOpt"
                 type="date"
                 placeholder="选择合同止期"
                 value-format="yyyy-MM-dd"
@@ -288,6 +289,11 @@ export default class extends Vue {
     customerCompanyName: [
       { required: true, message: '请输入货主公司简称', trigger: 'blur' }
     ]
+  }
+  private endDateOpt: any = {
+    disabledDate: (time: any) => {
+      return time.getTime() < (+new Date(2020, 0, 1))
+    }
   }
   // 上传
   private showDio:boolean = false

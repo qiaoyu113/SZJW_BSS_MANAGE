@@ -124,7 +124,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
-import { roleList, getOfficeList } from '@/api/system'
+import { roleList, getOfficeByCurrentUser } from '@/api/system'
 
 import '@/styles/common.scss'
 import { off } from 'codemirror'
@@ -230,8 +230,8 @@ export default class extends Vue {
     }
   }
   // 获取组织管理列表
-  private async getOfficeList() {
-    const { data } = await getOfficeList()
+  private async getOfficeByCurrentUser() {
+    const { data } = await getOfficeByCurrentUser()
     if (data.success) {
       this.optionsOffice = this.traverseTree(data.data)
     } else {
@@ -253,7 +253,7 @@ export default class extends Vue {
   }
   private fetchData() {
     this.getRoleList()
-    this.getOfficeList()
+    this.getOfficeByCurrentUser()
   }
   created() {
     this.fetchData()
