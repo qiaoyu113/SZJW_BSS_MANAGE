@@ -959,7 +959,7 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationCar', { deep: true })
   private changeCooperationCar(value:any, oldValue:any) {
-    // console.log('cooperationCar', value, oldValue)
+    console.log('cooperationCar', value, oldValue)
     if (this.ruleForm.cooperationModel === '1' || this.ruleForm.cooperationModel === '2') {
       if (value) {
         if (this.id) {
