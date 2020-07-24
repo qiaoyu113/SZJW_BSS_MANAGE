@@ -148,6 +148,7 @@
                 v-if="row.importState === 1"
                 :disable-transitions="false"
                 type="success"
+                size="mini"
               >
                 成功
               </el-tag>
@@ -155,6 +156,7 @@
                 v-if="row.importState === 2"
                 :disable-transitions="false"
                 type="info"
+                size="mini"
               >
                 导入中
               </el-tag>
@@ -162,6 +164,7 @@
                 v-if="row.importState === 0"
                 :disable-transitions="false"
                 type="danger"
+                size="mini"
               >
                 失败
               </el-tag>
