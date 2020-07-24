@@ -245,6 +245,13 @@ export const getLabel = (formItem:any[], listQuery:any, key:string, prop = {
           label = time.join('-')
         }
         break
+      } else if ([12].includes(item.type)) {
+        if (listQuery[key].jobStartDate && listQuery[key].jobEndDate) {
+          let jobStartDate = listQuery[key].jobStartDate
+          let jobEndDate = listQuery[key].jobEndDate
+          label = `${jobStartDate}-${jobEndDate}`
+        }
+        break
       }
     }
   }

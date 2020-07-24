@@ -118,7 +118,9 @@
           v-model="ruleForm[params.prop].workingTimeStart"
           style="margin-right:10px"
           :picker-options="{
-            step: '00:15'
+            start: '00:00',
+            step: '00:15',
+            end: '23:45'
           }"
           v-bind="params.tagAttrs || {}"
           placeholder="开始日期"
@@ -127,7 +129,9 @@
         <el-time-select
           v-model="ruleForm[params.prop].workingTimeEnd"
           :picker-options="{
-            step: '00:15'
+            start: '00:00',
+            step: '00:15',
+            end: '23:45'
           }"
           v-bind="params.tagAttrs || {}"
           placeholder="结束日期"
