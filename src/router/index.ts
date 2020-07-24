@@ -104,7 +104,7 @@ export const constantRoutes: RouteConfig[] = [
   {
     path: '/',
     component: Layout,
-    redirect: '/cargo'
+    redirect: '/profile'
   },
   {
     path: '/redirect',
