@@ -66,20 +66,19 @@
             :value="orderDetail.rake"
           />
         </el-col>
-
         <el-col
-          v-if="ruleForm.busiType === '1'"
+          v-if="orderDetail.busiType === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
-            name="收入保障"
+            name="收入保障(元)"
             :value="orderDetail.incomeGuarantee"
           />
         </el-col>
 
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
-            name="商品金额"
+            name="商品金额(元)"
             :value="orderDetail.goodsAmount"
           />
         </el-col>
