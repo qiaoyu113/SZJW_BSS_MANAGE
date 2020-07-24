@@ -944,13 +944,13 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any, oldValue:any) {
     // console.log('supplier', value, oldValue)
-    this.ruleForm.cooperationCar = ''
-    this.ruleForm.carModel = ''
+    // this.ruleForm.cooperationCar = ''
+    // this.ruleForm.carModel = ''
     if (!this.id) {
       this.ruleForm.cooperationCar = ''
     } else {
       if (this.editorsSupplier) {
-        //  this.ruleForm.cooperationCar = ''
+        this.ruleForm.cooperationCar = ''
       }
       this.editorsSupplier = true
     }
