@@ -897,7 +897,6 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any, oldValue:any) {
-    // console.log(value, oldValue)
     if (value === '1') {
       if (!this.id) {
         this.ruleForm.supplier = ''
@@ -945,11 +944,13 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any, oldValue:any) {
     // console.log('supplier', value, oldValue)
+    this.ruleForm.cooperationCar = ''
+    this.ruleForm.carModel = ''
     if (!this.id) {
       this.ruleForm.cooperationCar = ''
     } else {
       if (this.editorsSupplier) {
-        this.ruleForm.cooperationCar = ''
+        //  this.ruleForm.cooperationCar = ''
       }
       this.editorsSupplier = true
     }
@@ -972,9 +973,9 @@ export default class CreatLine extends Vue {
           this.ruleForm.carModel = ''
         }
 
-        if (this.ruleForm.cooperationModel === '1') {
+        if (this.ruleForm.cooperationModel === '1' && value) {
           this.getModelByTypeAndCityAndSupplierAndCarType()
-        } else {
+        } else if (this.ruleForm.cooperationModel === '2') {
           this.getPrice()
         }
       }
@@ -982,7 +983,9 @@ export default class CreatLine extends Vue {
   }
   @Watch('ruleForm.carModel')
   private changeCarModel(val:any) {
-    this.getBuyCarPrice() // 购车
+    if (val) {
+      this.getBuyCarPrice() // 购车
+    }
   }
   @Watch('ruleForm.goodsAmount', { deep: true })
   private changeGoodsAmount(value:any) {
@@ -1322,7 +1325,11 @@ export default class CreatLine extends Vue {
           RepayOrder(this.ruleForm
           ).then((data: any) => {
             if (data.data.success) {
-              this.$message.success('创建订单成功！')
+              if (!this.id) {
+                this.$message.success('创建订单成功！')
+              } else {
+                this.$message.success('提交审核成功！')
+              }
               setTimeout(() => {
                 (TagsViewModule as any).delView(this.$route); // 关闭当前页面
                 (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）

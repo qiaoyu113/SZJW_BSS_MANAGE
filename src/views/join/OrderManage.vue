@@ -796,19 +796,23 @@ export default class extends Vue {
 
     // 导出
     private async downLoad() {
-      const postData = this.listQuery
-      // delete postData.page
-      // delete postData.limit
-      const { data } = await OrderExport(postData)
-      if (data.success) {
-        this.$message({
-          type: 'success',
-          message: '导出成功!'
-        })
+      if (this.listQuery.startDate) {
+        const postData = this.listQuery
+        // delete postData.page
+        // delete postData.limit
+        const { data } = await OrderExport(postData)
+        if (data.success) {
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
         // const fileName = headers['content-disposition'].split('fileName=')[1]
         // this.download(data, decodeURI(fileName))
+        } else {
+          this.$message.error(data.errorMsg)
+        }
       } else {
-        this.$message.error(data.errorMsg)
+        this.$message.error('请选择订单创建时间')
       }
     }
 

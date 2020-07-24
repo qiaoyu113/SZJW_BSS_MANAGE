@@ -405,6 +405,8 @@ export default class CreatLine extends Vue {
   ];
   private isFirst = true
   private ruleForm: IState = {
+    addressShow: false,
+    deliveryShow: false,
     carType: '',
     // 选择车型
     cargoType: '',
@@ -1156,6 +1158,8 @@ export default class CreatLine extends Vue {
     let routeArr = this.$route.path.split('/')
     if (routeArr[2] === 'creatline') {
       this.pageStatus = 1
+      this.ruleForm.addressShow = true
+      this.ruleForm.deliveryShow = true
     } else if (routeArr[2] === 'lineedit') {
       this.lineId = this.$route.query.id as string
       this.pageStatus = 2
