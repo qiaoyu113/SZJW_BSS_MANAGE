@@ -157,7 +157,7 @@
         </el-col>
 
         <el-col
-          v-if="orderDetail.cooperationModel !== 3"
+          v-if="orderDetail.cooperationModel === 1"
           :span="isPC ? 6 : 24"
         >
           <DetailItem
