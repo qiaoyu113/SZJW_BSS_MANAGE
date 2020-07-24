@@ -75,8 +75,10 @@
       <self-table
         ref="AccountListTable"
         v-loading="listLoading"
+        class="accountTable"
         border
         row-key="id"
+        :index="false"
         :operation-list="operationList"
         :table-data="tableData"
         :columns="columns"
@@ -648,6 +650,9 @@ export default class extends Vue {
 </style>
 
 <style>
+.accountTable >>> .operation-main{
+    display: none;
+  }
   @media screen and (max-width:700px) {
     .el-message-box__wrapper {
       top:0!important;

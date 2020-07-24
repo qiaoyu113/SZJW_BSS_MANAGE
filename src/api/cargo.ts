@@ -287,3 +287,27 @@ export const fuzzyCheckNames = (data: any) =>
     method: 'post',
     data
   })
+
+// 线路导出下载
+export const lineExport = (data: any) =>
+  request({
+    url: `/line_center/v1/line/lineInfo/lineExport`,
+    method: 'post',
+    data
+  })
+
+// 线路批量审核通过
+export const batchApproved = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/batchApproved`,
+    method: 'post',
+    data
+  })
+
+// 线路批量不审核通过
+export const batchNoApproved = (data: any, bodyParams:any) =>
+  request({
+    url: `${ptrfix}/v1/line/batchNotApproved?reason${data.reason}`,
+    method: 'post',
+    data: bodyParams
+  })
