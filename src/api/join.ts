@@ -75,17 +75,32 @@ export const SelectOrderInfo = (params: any) =>
     params
   })
 
-// 获取供应商
+// 获取购车供应商
 export const GetSupplierByTypeAndCity = (data: any) =>
   request({
-    url: '/product/v1/product/product/getSupplierByTypeAndCity',
+    url: '/product/v1/product/product/getBuyCarSupplierByTypeAndCity',
     method: 'post',
     data: data
   })
-// 合作车型
+
+// 获取租车供应商
+export const GetRentalCarSupplierByTypeAndCity = (data: any) =>
+  request({
+    url: '/product/v1/product/product/getRentalCarSupplierByTypeAndCity',
+    method: 'post',
+    data: data
+  })
+// 购车合作车型
 export const GetCarTypeByTypeAndCityAndSupplier = (params: any) =>
   request({
-    url: '/product/v1/product/product/getCarTypeByTypeAndCityAndSupplier',
+    url: '/product/v1/product/product/getBuyCarTypeByParams',
+    method: 'post',
+    data: params
+  })
+  // 租车合作车型
+export const GetRentalCarTypeByParams = (params: any) =>
+  request({
+    url: '/product/v1/product/product/getRentalCarTypeByParams',
     method: 'post',
     data: params
   })
@@ -106,10 +121,17 @@ export const GetPriceByTypeAndCityAndSupplierAndCarType = (params: any) =>
     data: params
   })
 
-// 车价
+// 租车车价
 export const GetPriceAndByTypeAndCityAndSupplierAndCarType = (params: any) =>
   request({
     url: '/product/v1/product/product/getPriceAndByTypeAndCityAndSupplierAndCarType',
+    method: 'post',
+    data: params
+  })
+  // 购车车价
+export const GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel = (params: any) =>
+  request({
+    url: '/product/v1/product/product/PriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel',
     method: 'post',
     data: params
   })
@@ -180,7 +202,7 @@ export const GetOperManagerListByUserId = (params: any) =>
     data: params
   })
 
-// 获取车型
+// 获取购车型号
 export const GetModelByTypeAndCityAndSupplierAndCarType = (data: any) =>
   request({
     url: '/product/v1/product/product/getModelByTypeAndCityAndSupplierAndCarType',
