@@ -355,6 +355,7 @@
               <el-input-number
                 v-model="ruleForm.capacityQuota"
                 v-only-number="{min: 0, max: 999}"
+                class="input-number"
                 :min="1"
                 :max="999"
                 placeholder="请输入运力配额"
@@ -961,7 +962,7 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationCar', { deep: true })
   private changeCooperationCar(value:any, oldValue:any) {
-    console.log('cooperationCar', value, oldValue)
+    // console.log('cooperationCar', value, oldValue)
     if (this.ruleForm.cooperationModel === '1' || this.ruleForm.cooperationModel === '2') {
       if (value) {
         if (this.id) {
@@ -1489,6 +1490,11 @@ export default class CreatLine extends Vue {
         display: inline-block;
         width: max-content;
     }
+  .input-number{
+    .el-input-number__increase{
+      width: 36px !important;
+    }
+  }
 }
 </style>
 <style lang="scss">
