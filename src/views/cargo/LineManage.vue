@@ -1585,9 +1585,6 @@ export default class LineManage extends Vue {
   margin-top: 10px;
   width: 100%;
 }
-.el-button+.el-button{
-    margin-left: 0px!important;
-  }
 </style>
 <style scoped>
 .LineManage .lineForm >>> .timeSelect .el-input__inner{
