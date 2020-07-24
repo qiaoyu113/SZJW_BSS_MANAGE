@@ -482,7 +482,7 @@ export default class extends Vue {
     .table_center {
       // height: calc(100vh - 340px) !important;
       padding: 0 30px;
-      padding-bottom: 0;
+      padding-bottom: 30px;
       box-sizing: border-box;
       background: #ffffff;
       overflow-y: scroll;
