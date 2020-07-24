@@ -517,15 +517,11 @@ export default class extends Vue {
       }
       this.ruleForm = { ...this.ruleForm, ...res.data }
       if (this.ruleForm.deliveryWeekCycle) {
-        let checkList = this.ruleForm.deliveryWeekCycle.split(',')
-        if (checkList.length === 7) {
+        this.checkList = this.ruleForm.deliveryWeekCycle.split(',').map(function(ele: any) {
+          return +ele
+        })
+        if (this.checkList.length === 7) {
           this.checkList.push('')
-        } else {
-          this.checkList = this.ruleForm.deliveryWeekCycle
-            .split(',')
-            .map(function(ele: any) {
-              return +ele
-            })
         }
       } else {
         this.checkList = []
