@@ -26,6 +26,7 @@
         :active-name="listQuery.status"
       >
         <el-button
+          v-permission="['/v1/product/product/buyCar/download']"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="downLoad"
@@ -34,6 +35,7 @@
           <span v-if="isPC">导出</span>
         </el-button>
         <el-button
+          v-permission="['/v1/product/product/buyCar/create']"
           type="primary"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -189,11 +191,13 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-permission="['/v1/product/product/buyCar/shelvesOrTheshelves']"
                     @click.native="shelvesOrTheshelves(row)"
                   >
                     {{ row.status === 10 ? '下架' : '上架' }}
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/product/product/buyCar/update']"
                     @click.native="showDialog(row)"
                   >
                     编辑
@@ -299,7 +303,6 @@
             v-model="dialogForm.city"
             placeholder="请选择"
             multiple
-            collapse-tags
             clearable
             :disabled="!isAdd"
           >
@@ -487,10 +490,7 @@ export default class extends Vue {
     } else {
       this.listQuery[key] = value
     }
-    if (key === 'startDate') {
-      return
-    }
-    this.search()
+    this.fetchData()
   }
   // search
   private search() {
@@ -582,7 +582,11 @@ export default class extends Vue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(async() => {
-      const { data } = await shelvesOrTheshelves({ id, status: status ^ 10 ^ 20 })
+      const { data } = await shelvesOrTheshelves({
+        id,
+        status: status ^ 10 ^ 20,
+        busiType: this.listQuery.busiType
+      })
       if (data.success) {
         this.$message.success(`${statusText}成功`)
         this.search()

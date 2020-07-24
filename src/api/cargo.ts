@@ -132,6 +132,13 @@ export const createLine = (data: any) =>
     method: 'post',
     data
   })
+  // 复制线路提交
+export const copyLine = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/copy`,
+    method: 'post',
+    data
+  })
 
 // 线路编辑
 export const editLine = (data: any) =>

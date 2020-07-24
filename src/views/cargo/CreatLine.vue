@@ -352,7 +352,8 @@ import {
   createLine,
   editLine,
   customerCheckNames,
-  GetLineDetail
+  GetLineDetail,
+  copyLine
 } from '@/api/cargo'
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -402,7 +403,10 @@ export default class CreatLine extends Vue {
     { label: '周六', type: '6' },
     { label: '周日', type: '7' }
   ];
+  private isFirst = true
   private ruleForm: IState = {
+    addressShow: false,
+    deliveryShow: false,
     carType: '',
     // 选择车型
     cargoType: '',
@@ -723,14 +727,30 @@ export default class CreatLine extends Vue {
   // 配送方式
   @Watch('ruleForm.incomeSettlementMethod')
   private changeRuleForm(value: any) {
-    if (value === 1) {
-      this.ruleForm.everyUnitPrice = ''
-      this.NoshipperOffer = true
-      this.ruleForm.shipperOffer = ''
+    if (this.pageStatus === 1) {
+      if (value === 1) {
+        this.ruleForm.everyUnitPrice = ''
+        this.NoshipperOffer = true
+        this.ruleForm.shipperOffer = ''
+      } else {
+        this.ruleForm.everyUnitPrice = ''
+        this.NoshipperOffer = false
+        this.ruleForm.shipperOffer = ''
+      }
     } else {
-      this.ruleForm.everyUnitPrice = ''
-      this.NoshipperOffer = false
-      this.ruleForm.shipperOffer = ''
+      if (this.isFirst) {
+        this.isFirst = false
+      } else {
+        if (value === 1) {
+          this.ruleForm.everyUnitPrice = ''
+          this.NoshipperOffer = true
+          this.ruleForm.shipperOffer = ''
+        } else {
+          this.ruleForm.everyUnitPrice = ''
+          this.NoshipperOffer = false
+          this.ruleForm.shipperOffer = ''
+        }
+      }
     }
   }
 
@@ -802,6 +822,7 @@ export default class CreatLine extends Vue {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         let ruleForm = { ...this.ruleForm }
+        ruleForm.waitDirveValidity = new Date(ruleForm.waitDirveValidity).getTime()
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
         }
@@ -924,12 +945,26 @@ export default class CreatLine extends Vue {
             return this.$message.error('请检查预计工作时间，不能为空')
           }
         }
-        this.createdLine(ruleForm)
+        if (type === 1) {
+          this.createdLine(ruleForm)
+        } else {
+          this.copyedLine(ruleForm)
+        }
       } else {
         console.log('error submit!!')
         return false
       }
     })
+  }
+  private async copyedLine(params: any) {
+    delete params.lineId
+    let { data } = await copyLine(params)
+    if (data.success) {
+      this.$message.success('线路复制成功')
+      this.$router.go(-1)
+    } else {
+      this.$message.error(data.errorMsg)
+    }
   }
 
   private async createdLine(params: any) {
@@ -1123,6 +1158,8 @@ export default class CreatLine extends Vue {
     let routeArr = this.$route.path.split('/')
     if (routeArr[2] === 'creatline') {
       this.pageStatus = 1
+      this.ruleForm.addressShow = true
+      this.ruleForm.deliveryShow = true
     } else if (routeArr[2] === 'lineedit') {
       this.lineId = this.$route.query.id as string
       this.pageStatus = 2
