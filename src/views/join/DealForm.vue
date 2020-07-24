@@ -166,7 +166,7 @@
               label="运营经理"
               prop="operationId"
             >
-              <el-select
+              <!-- <el-select
                 v-model="ruleForm.operationId"
                 :remote-method="remoteMethod"
                 :loading="loading"
@@ -175,6 +175,11 @@
                 reserve-keyword
                 placeholder="请输入运营经理"
                 @change="checkManage"
+              > -->
+              <el-select
+                v-model="ruleForm.operationId"
+                filterable
+                placeholder="请输入运营经理"
               >
                 <el-option
                   v-for="item in managerList"
@@ -678,6 +683,7 @@ export default class extends Vue {
       this.id = this.$route.query.id
       this.getDetail(this.id)
       this.getDictionary()
+      this.remoteMethod('')
     }
 
     mounted() {
@@ -726,26 +732,26 @@ export default class extends Vue {
 
     // 搜索加盟经理列表
     private remoteMethod(query: any) {
-      if (query !== '') {
-        this.loading = true
-        GetJoinManageList({
-          key: query
-        }).then((response:any) => {
-          if (response.data.success) {
-            let array = response.data.data
-            let newArr: any = []
-            array.forEach((i: any) => {
-              newArr.push({ value: i.id, label: i.name + i.mobile })
-            })
-            this.managerList = newArr
-            this.loading = false
-          } else {
-            this.$message.error(response.data.flag)
-          }
-        })
-      } else {
-        this.managerList = []
-      }
+      // if (query !== '') {
+      this.loading = true
+      GetJoinManageList({
+        uri: '/v1/order/deliever/getDelieverList'
+      }).then((response:any) => {
+        if (response.data.success) {
+          let array = response.data.data
+          let newArr: any = []
+          array.forEach((i: any) => {
+            newArr.push({ value: i.id, label: i.name + i.mobile })
+          })
+          this.managerList = newArr
+          this.loading = false
+        } else {
+          this.$message.error(response.data.flag)
+        }
+      })
+      // } else {
+      //   this.managerList = []
+      // }
     }
 
     // 选择运营经理
