@@ -52,7 +52,6 @@
               :offset="isPC ? 6 :0"
             >
               <el-button
-                v-permission="['/v1/driver/clue/clue/interview/basic']"
                 style="width:100%;"
                 type="primary"
                 name="interview_next_btn"
@@ -100,7 +99,6 @@
               :offset="2"
             >
               <el-button
-                v-permission="['/v1/driver/clue/clue/special/interview','/v1/driver/clue/clue/share/interview','/v1/driver/clue/clue/edit/interview']"
                 type="primary"
                 class="inter_btn"
                 name="interview_add_btn"
