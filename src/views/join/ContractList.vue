@@ -435,7 +435,9 @@ export default class extends Vue {
       const { data } = await ActiveContract({ contractId: this.ActivateId })
       if (data.success) {
         if (data.data.flag) {
-          this.$message.success('激活成功')
+          setTimeout(() => {
+            this.$message.success('激活成功')
+          }, 1500)
           this.fetchData()
         } else {
           this.$message.error(data.data.msg)
@@ -548,19 +550,23 @@ export default class extends Vue {
 
     // 导出
     private async downLoad() {
-      const postData = this.listQuery
-      // delete postData.page
-      // delete postData.limit
-      const { data } = await ContractExport(postData)
-      if (data.success) {
-        this.$message({
-          type: 'success',
-          message: '导出成功!'
-        })
+      if (this.listQuery.startDate) {
+        const postData = this.listQuery
+        // delete postData.page
+        // delete postData.limit
+        const { data } = await ContractExport(postData)
+        if (data.success) {
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
         // const fileName = headers['content-disposition'].split('fileName=')[1]
         // this.download(data, decodeURI(fileName))
+        } else {
+          this.$message.error(data.errorMsg)
+        }
       } else {
-        this.$message.error(data.errorMsg)
+        this.$message.error('请选择合同生成时间')
       }
     }
     private download(data: any, name: any) {

@@ -166,13 +166,13 @@
               label="运营经理"
               prop="operationId"
             >
+              <!-- :remote-method="remoteMethod"
+              :loading="loading"
+               remote
+                reserve-keyword -->
               <el-select
                 v-model="ruleForm.operationId"
-                :remote-method="remoteMethod"
-                :loading="loading"
                 filterable
-                remote
-                reserve-keyword
                 placeholder="请输入运营经理"
                 @change="checkManage"
               >
@@ -678,6 +678,7 @@ export default class extends Vue {
       this.id = this.$route.query.id
       this.getDetail(this.id)
       this.getDictionary()
+      this.remoteMethod('')
     }
 
     mounted() {
@@ -726,8 +727,9 @@ export default class extends Vue {
 
     // 搜索加盟经理列表
     private remoteMethod(query: any) {
+      query = '/v1/order/deliever/getDelieverList'
       if (query !== '') {
-        this.loading = true
+        // this.loading = true
         GetJoinManageList({
           key: query
         }).then((response:any) => {
@@ -738,7 +740,7 @@ export default class extends Vue {
               newArr.push({ value: i.id, label: i.name + i.mobile })
             })
             this.managerList = newArr
-            this.loading = false
+            // this.loading = false
           } else {
             this.$message.error(response.data.flag)
           }
