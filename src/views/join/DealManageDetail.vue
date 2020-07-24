@@ -136,6 +136,7 @@
     </SectionContainer>
 
     <SectionContainer
+      v-if="gpsShow"
       title="运营交付"
       :md="true"
     >
@@ -340,7 +341,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetOrderDeliverDetail } from '@/api/join'
+import { GetOrderDeliverDetail, GetGPSRoles } from '@/api/join'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -358,6 +359,7 @@ export default class extends Vue {
     private id: any = ''
     private tabVal: any = '1'
     private list: any = [{ name: '12', a: '2', a1: '3', a2: '4' }];
+    private gpsShow: any = false
     private ContractDetail: any = {
       'cooperationModel': 1,
       'dealId': '',
@@ -575,6 +577,16 @@ export default class extends Vue {
 
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
+    }
+
+    // 判断GPS权限
+    private async getGPSRole() {
+      const { data } = await GetGPSRoles({ cityCode: this.ContractDetail.city })
+      if (data.success) {
+        this.gpsShow = data.data
+      } else {
+        this.$message.error(data.errorMsg)
+      }
     }
 }
 </script>
