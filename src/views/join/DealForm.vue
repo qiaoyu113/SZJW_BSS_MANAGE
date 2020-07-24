@@ -728,10 +728,11 @@ export default class extends Vue {
     // 搜索加盟经理列表
     private remoteMethod(query: any) {
       query = '/v1/order/deliever/getDelieverList'
+
       if (query !== '') {
         // this.loading = true
         GetJoinManageList({
-          key: query
+          uri: query
         }).then((response:any) => {
           if (response.data.success) {
             let array = response.data.data

@@ -22,6 +22,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          v-permission="['/v1/order/orderExport']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -33,6 +34,7 @@
         </el-button>
 
         <el-button
+          v-permission="['/v1/order/createNewOrder']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -248,24 +250,28 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
+                    v-permission="['/v1/order/createNewOrder']"
                     @click.native="goCreat(scope.row, true)"
                   >
                     提交
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
+                    v-permission="['/v1/order/cancelOrder']"
                     @click.native="cancelHandle(scope.row)"
                   >
                     取消
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.status === 15 && scope.row.payType !== 1"
+                    v-permission="['/v1/order/orderDetail']"
                     @click.native="goCheck(scope.row.orderId, 1)"
                   >
                     确认
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.status === 20"
+                    v-permission="['/v1/order/orderDetail']"
                     @click.native="goCheck(scope.row.orderId, 0)"
                   >
                     审核
@@ -277,16 +283,19 @@
                   </el-dropdown-item> -->
                   <el-dropdown-item
                     v-if="scope.row.status === 25"
+                    v-permission="['/v1/order/orderDetail','/v1/order/createNewOrder']"
                     @click.native="goCreat(scope.row, false)"
                   >
                     重新提交审核
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/order/orderDetail']"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/vl/order/getOrderStatusLogById']"
                     @click.native="goDetail(scope.row.orderId, 0)"
                   >
                     日志
