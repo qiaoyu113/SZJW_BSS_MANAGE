@@ -1267,7 +1267,11 @@ export default class CreatLine extends Vue {
           RepayOrder(this.ruleForm
           ).then((data: any) => {
             if (data.data.success) {
-              this.$message.success('创建订单成功！')
+              if (!this.id) {
+                this.$message.success('创建订单成功！')
+              } else {
+                this.$message.success('提交审核成功！')
+              }
               setTimeout(() => {
                 (TagsViewModule as any).delView(this.$route); // 关闭当前页面
                 (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
