@@ -833,11 +833,13 @@ export default class extends Vue {
     let page: number, limit: number
     if (type === 'listQuery') {
       ({ page, limit } = this.listQuery)
+      return (index: number) => {
+        return index + 1 + (page - 1) * limit
+      }
     } else if (type === 'dialogListQuery') {
-      ({ page, limit } = this.listQuery)
-    }
-    return (index: number) => {
-      return index + 1 + (page - 1) * limit
+      return (index: number) => {
+        return index + 1
+      }
     }
   }
   // 弹窗操作
