@@ -352,7 +352,8 @@ import {
   createLine,
   editLine,
   customerCheckNames,
-  GetLineDetail
+  GetLineDetail,
+  copyLine
 } from '@/api/cargo'
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -944,12 +945,26 @@ export default class CreatLine extends Vue {
             return this.$message.error('请检查预计工作时间，不能为空')
           }
         }
-        this.createdLine(ruleForm)
+        if (type === 1) {
+          this.createdLine(ruleForm)
+        } else {
+          this.copyedLine(ruleForm)
+        }
       } else {
         console.log('error submit!!')
         return false
       }
     })
+  }
+  private async copyedLine(params: any) {
+    delete params.lineId
+    let { data } = await copyLine(params)
+    if (data.success) {
+      this.$message.success('线路复制成功')
+      this.$router.go(-1)
+    } else {
+      this.$message.error(data.errorMsg)
+    }
   }
 
   private async createdLine(params: any) {
