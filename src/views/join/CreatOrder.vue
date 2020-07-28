@@ -1494,6 +1494,9 @@ export default class CreatLine extends Vue {
     .el-input-number__increase{
       width: 36px !important;
     }
+    .el-input{
+      width: 100%;
+    }
   }
 }
 </style>
