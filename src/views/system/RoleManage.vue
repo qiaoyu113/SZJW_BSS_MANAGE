@@ -7,6 +7,7 @@
         :active-name="'0'"
       >
         <el-button
+          v-permission="['/v1/base/role/create']"
           size="small"
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -105,11 +106,13 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-permission="['/v1/base/role/delete']"
                     @click.native="deleteRole(row)"
                   >
                     删除
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/base/role/update']"
                     @click.native="editRole(row)"
                   >
                     编辑

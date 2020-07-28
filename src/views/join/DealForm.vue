@@ -166,15 +166,20 @@
               label="运营经理"
               prop="operationId"
             >
+              <!-- :remote-method="remoteMethod"
+              :loading="loading"
+               remote
+                reserve-keyword
               <el-select
                 v-model="ruleForm.operationId"
-                :remote-method="remoteMethod"
-                :loading="loading"
                 filterable
-                remote
-                reserve-keyword
                 placeholder="请输入运营经理"
                 @change="checkManage"
+              > -->
+              <el-select
+                v-model="ruleForm.operationId"
+                filterable
+                placeholder="请输入运营经理"
               >
                 <el-option
                   v-for="item in managerList"
@@ -277,7 +282,8 @@
                     >
                       <el-input
                         v-model="scope.row.chassis"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
@@ -296,7 +302,8 @@
                     >
                       <el-input
                         v-model="scope.row.vehicle"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
@@ -315,7 +322,8 @@
                     >
                       <el-input
                         v-model="scope.row.gps"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
@@ -334,7 +342,8 @@
                     >
                       <el-input
                         v-model="scope.row.tailgate"
-                        v-only-number="{min: 0, precision: 2}"
+                        v-only-number="{min: 0, max: 1000000, precision: 2}"
+                        type="number"
                         size="mini"
                         class="edit-cell"
                       />
@@ -678,6 +687,7 @@ export default class extends Vue {
       this.id = this.$route.query.id
       this.getDetail(this.id)
       this.getDictionary()
+      this.remoteMethod('')
     }
 
     mounted() {
@@ -726,26 +736,26 @@ export default class extends Vue {
 
     // 搜索加盟经理列表
     private remoteMethod(query: any) {
-      if (query !== '') {
-        this.loading = true
-        GetJoinManageList({
-          key: query
-        }).then((response:any) => {
-          if (response.data.success) {
-            let array = response.data.data
-            let newArr: any = []
-            array.forEach((i: any) => {
-              newArr.push({ value: i.id, label: i.name + i.mobile })
-            })
-            this.managerList = newArr
-            this.loading = false
-          } else {
-            this.$message.error(response.data.flag)
-          }
-        })
-      } else {
-        this.managerList = []
-      }
+      // if (query !== '') {
+      this.loading = true
+      GetJoinManageList({
+        uri: '/v1/order/deliever/getDelieverList'
+      }).then((response:any) => {
+        if (response.data.success) {
+          let array = response.data.data
+          let newArr: any = []
+          array.forEach((i: any) => {
+            newArr.push({ value: i.id, label: i.name + i.mobile })
+          })
+          this.managerList = newArr
+          this.loading = false
+        } else {
+          this.$message.error(response.data.flag)
+        }
+      })
+      // } else {
+      //   this.managerList = []
+      // }
     }
 
     // 选择运营经理

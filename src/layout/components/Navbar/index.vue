@@ -23,6 +23,7 @@
           <setting class="right-menu-item hover-effect" />
         </el-tooltip>
         <el-tooltip
+          v-if="isPC"
           :content="$t('navbar.down')"
           effect="dark"
           placement="bottom"
@@ -98,6 +99,12 @@
           >
             <el-dropdown-item>Docs</el-dropdown-item>
           </a> -->
+          <el-dropdown-item>
+            <span
+              style="display:block;"
+            >{{ userName }}</span>
+          </el-dropdown-item>
+
           <el-dropdown-item divided>
             <span
               style="display:block;"
@@ -142,6 +149,9 @@ import { SettingsModule } from '@/store/modules/settings'
   }
 })
 export default class extends Vue {
+  get userName() {
+    return UserModule.name
+  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC

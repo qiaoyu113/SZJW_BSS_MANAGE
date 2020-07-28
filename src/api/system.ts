@@ -39,10 +39,18 @@ export const updateUser = (data: any) =>
 // 用户管理-用户详情
 export const userDetail = (id: number) =>
   request({
-    url: `${baseURL}/v1/base/user/${id}`,
+    url: `${baseURL}/v1/base/user/getUserById`,
+    method: 'get',
+    params: {
+      userId: id
+    }
+  })
+//
+export const getOfficeByCurrentUser = () =>
+  request({
+    url: `${baseURL}/v1/base/office/list/getOfficeByCurrentUser`,
     method: 'get'
   })
-
 // 组织管理-组织列表
 export const getOfficeList2 = (params: any) =>
   request({
@@ -54,8 +62,11 @@ export const getOfficeList2 = (params: any) =>
 // 组织管理-组织列表
 export const getOfficeList = (num: number = 0) =>
   request({
-    url: `${baseURL}/v1/base/office/list/${num}`,
-    method: 'get'
+    url: `${baseURL}/v1/base/office/list/getOfficeByParentId`,
+    method: 'get',
+    params: {
+      parentId: num
+    }
   })
 // 组织管理-创建组织
 export const createOffice = (data: any = {}) =>
@@ -109,14 +120,20 @@ export const updateRole = (data: any = {}) =>
 // 角色管理-角色删除
 export const deleteRole = (id:number) =>
   request({
-    url: `${baseURL}/v1/base/role/delete/${id}`,
-    method: 'get'
+    url: `${baseURL}/v1/base/role/deleteByRoleId`,
+    method: 'get',
+    params: {
+      roleId: id
+    }
   })
 // 角色管理-获取角色详情
 export const getRoleDetail = (id:number) =>
   request({
-    url: `${baseURL}/v1/base/role/get/${id}`,
-    method: 'get'
+    url: `${baseURL}/v1/base/role/getByRoleId`,
+    method: 'get',
+    params: {
+      roleId: id
+    }
   })
 
 // 权限管理-权限列表
@@ -139,9 +156,12 @@ export const updateAuthority = (data: any = {}) =>
     method: 'post',
     data
   })
-// 权限管理-修改权限
+// 权限管理-删除权限
 export const deleteAuthority = (id: number) =>
   request({
-    url: `${baseURL}/v1/base/authority/${id}`,
-    method: 'get'
+    url: `${baseURL}/v1/base/authority/deleteByAuthId`,
+    method: 'get',
+    params: {
+      authId: id
+    }
   })

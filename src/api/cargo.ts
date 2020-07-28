@@ -132,6 +132,13 @@ export const createLine = (data: any) =>
     method: 'post',
     data
   })
+  // 复制线路提交
+export const copyLine = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/copy`,
+    method: 'post',
+    data
+  })
 
 // 线路编辑
 export const editLine = (data: any) =>
@@ -286,4 +293,28 @@ export const fuzzyCheckNames = (data: any) =>
     url: `/line_center/v1/line/lineInfo/fuzzyCheckNames`,
     method: 'post',
     data
+  })
+
+// 线路导出下载
+export const lineExport = (data: any) =>
+  request({
+    url: `/line_center/v1/line/lineInfo/lineExport`,
+    method: 'post',
+    data
+  })
+
+// 线路批量审核通过
+export const batchApproved = (data: any) =>
+  request({
+    url: `${ptrfix}/v1/line/batchApproved`,
+    method: 'post',
+    data
+  })
+
+// 线路批量不审核通过
+export const batchNoApproved = (data: any, bodyParams:any) =>
+  request({
+    url: `${ptrfix}/v1/line/batchNotApproved?reason${data.reason}`,
+    method: 'post',
+    data: bodyParams
   })

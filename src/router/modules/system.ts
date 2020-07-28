@@ -17,7 +17,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/UserManage.vue'),
       name: 'UserManage',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/page/list',
         activeMenu: '/system/usermanage',
         title: 'userManage',
         icon: '',
@@ -29,7 +29,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
       name: 'CreateUser',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/create',
         activeMenu: '/system/usermanage',
         title: 'createUser',
         hidden: true,
@@ -42,7 +42,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
       name: 'EditUser',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/update',
         activeMenu: '/system/usermanage',
         title: 'editUser',
         icon: '',
@@ -59,7 +59,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/rolemanage',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/base/role/list'
       }
     },
     {
@@ -67,7 +67,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'CreateRole',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/role/create',
         activeMenu: '/system/rolemanage',
         title: 'createRole',
         hidden: true,
@@ -80,7 +80,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'EditRole',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/role/update',
         activeMenu: '/system/rolemanage',
         title: 'editRole',
         icon: '',
@@ -97,7 +97,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/organizationmanage',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/base/office/list'
       }
     },
     {
@@ -109,7 +109,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/permissionmanage',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/base/authority/list'
       }
     },
     {
@@ -121,7 +121,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/systemsetting',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/product/product/system/setting'
       }
     },
     {
@@ -133,7 +133,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/buycartype',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/product/product/list/page'
       }
     },
     {
@@ -145,7 +145,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/rentcartype',
         noCache: false,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/product/product/list/page'
       }
     }
   ]

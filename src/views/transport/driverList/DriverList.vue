@@ -34,6 +34,7 @@
             重置
           </el-button>
           <el-button
+            v-permission="['/v1/driver/updateDriverBDManager']"
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
             name="driverlist_manager_btn"
@@ -117,99 +118,58 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
               v-if="[4].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverDownToGm']"
               command="distribution"
             >
-              <template v-if="isPC">
-                分配
-              </template>
-              <i
-                v-else
-                class="el-icon-turn-off"
-              />
+              分配
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverFollowSave']"
               command="follow"
             >
-              <template v-if="isPC">
-                跟进
-              </template>
-              <i
-                v-else
-                class="el-icon-right"
-              />
+              跟进
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[2].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverFollowUpToDown']"
               command="giveup"
             >
-              <template v-if="isPC">
-                放弃
-              </template>
-              <i
-                v-else
-                class="el-icon-s-release"
-              />
+              放弃
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3,4].includes(scope.row.status)"
+              v-permission="['/v1/driver/updateDriver']"
               command="edit"
             >
-              <template v-if="isPC">
-                编辑
-              </template>
-              <i
-                v-else
-                class="el-icon-edit"
-              />
+              编辑
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3,4].includes(scope.row.status)"
+              v-permission="['/v1/driver/driverDetailByInview']"
               command="detail"
             >
-              <template v-if="isPC">
-                详情
-              </template>
-              <i
-                v-else
-                class="el-icon-view"
-              />
+              详情
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[3].includes(scope.row.status)"
               command="account"
             >
-              <template v-if="isPC">
-                账户
-              </template>
-              <i
-                v-else
-                class="el-icon-user"
-              />
+              账户
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[1,2,3].includes(scope.row.status)"
+              v-permission="['/v1/order/createNewOrder']"
               command="order"
             >
-              <template v-if="isPC">
-                创建订单
-              </template>
-              <i
-                v-else
-                class="el-icon-s-order"
-              />
+              创建订单
             </el-dropdown-item>
             <el-dropdown-item
               v-if="[3].includes(scope.row.status)"
+              v-permission="['/v1/carrier/saveCarrierInfo']"
               command="transport"
             >
-              <template v-if="isPC">
-                创建运力
-              </template>
-              <i
-                v-else
-                class="el-icon-s-custom"
-              />
+              创建运力
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -374,11 +334,15 @@ export default class extends Vue {
     {
       type: 2,
       key: 'busiType',
-      label: '业绩线',
+      label: '业务线',
       tagAttrs: {
-        placeholder: '请选择业绩线'
+        placeholder: '请选择业务线'
       },
       options: [
+        {
+          label: '全部',
+          value: ''
+        },
         {
           label: '专车',
           value: 0

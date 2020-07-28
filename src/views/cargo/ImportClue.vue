@@ -148,6 +148,7 @@
                 v-if="row.importState === 1"
                 :disable-transitions="false"
                 type="success"
+                size="mini"
               >
                 成功
               </el-tag>
@@ -155,6 +156,7 @@
                 v-if="row.importState === 2"
                 :disable-transitions="false"
                 type="info"
+                size="mini"
               >
                 导入中
               </el-tag>
@@ -162,6 +164,7 @@
                 v-if="row.importState === 0"
                 :disable-transitions="false"
                 type="danger"
+                size="mini"
               >
                 失败
               </el-tag>
@@ -314,7 +317,10 @@ export default class extends Vue {
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
-    // this.listQuery[key] = value
+    this.listQuery[key] = value
+    if (key === 'startDate') {
+      return
+    }
     this.fetchData()
   }
   // 处理选择日期方法
@@ -340,6 +346,7 @@ export default class extends Vue {
       }
       data.page = await HandlePages(page)
       this.total = page.total
+      this.tab[0].num = page.total
     } else {
       this.$message.error(data)
     }
@@ -423,9 +430,5 @@ export default class extends Vue {
 }
 .upload-demo{
   display: inline-block;
-}
-.ImportClue >>> .tab_num,
-.ImportClue-m >>> .tab_num {
-  display: none
 }
 </style>

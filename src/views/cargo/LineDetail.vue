@@ -517,15 +517,11 @@ export default class extends Vue {
       }
       this.ruleForm = { ...this.ruleForm, ...res.data }
       if (this.ruleForm.deliveryWeekCycle) {
-        let checkList = this.ruleForm.deliveryWeekCycle.split(',')
-        if (checkList.length === 7) {
+        this.checkList = this.ruleForm.deliveryWeekCycle.split(',').map(function(ele: any) {
+          return +ele
+        })
+        if (this.checkList.length === 7) {
           this.checkList.push('')
-        } else {
-          this.checkList = this.ruleForm.deliveryWeekCycle
-            .split(',')
-            .map(function(ele: any) {
-              return +ele
-            })
         }
       } else {
         this.checkList = []
@@ -666,6 +662,16 @@ export default class extends Vue {
   }
   .steps {
     margin: 30px 0 20px 0;
+  }
+  .btnBox {
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button {
+      width: 100%;
+    }
+    .el-button {
+      margin: 0 0 20px 0;
+    }
   }
 }
 </style>

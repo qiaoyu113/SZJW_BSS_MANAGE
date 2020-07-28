@@ -22,6 +22,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          v-permission="['/v1/order/deliever/delieverExport']"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
@@ -203,12 +204,14 @@
                   <!-- v-if="(scope.row.status === 30 || scope.row.status === 35 || scope.row.status === 40) && scope.row.isDeliver === 0" -->
                   <el-dropdown-item
                     v-if="scope.row.isDeliver === 0"
+                    v-permission="['/v1/order/orderDeliver/selectOrderInfo']"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     交付
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.isDeliver === 1"
+                    v-permission="['/v1/order/orderDeliver/orderDeliverDetail']"
                     @click.native="goDetail(scope.row.orderId, 2)"
                   >
                     详情
@@ -424,19 +427,23 @@ export default class extends Vue {
     // }
     // 导出
     private async downLoad() {
-      const postData = this.listQuery
-      // delete postData.page
-      // delete postData.limit
-      const { data } = await DelieverExportDown(postData)
-      if (data.success) {
-        this.$message({
-          type: 'success',
-          message: '导出成功!'
-        })
+      if (this.listQuery.startDate) {
+        const postData = this.listQuery
+        // delete postData.page
+        // delete postData.limit
+        const { data } = await DelieverExportDown(postData)
+        if (data.success) {
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
         // const fileName = headers['content-disposition'].split('fileName=')[1]
         // this.download(data, decodeURI(fileName))
+        } else {
+          this.$message.error(data.errorMsg)
+        }
       } else {
-        this.$message.error(data.errorMsg)
+        this.$message.error('请选择交付生成时间')
       }
     }
     private download(data: any, name: any) {
@@ -482,14 +489,14 @@ export default class extends Vue {
     .table_center {
       // height: calc(100vh - 340px) !important;
       padding: 0 30px;
-      padding-bottom: 0;
+      padding-bottom: 30px;
       box-sizing: border-box;
       background: #ffffff;
       overflow-y: scroll;
     }
   }
   .edit-input {
-    padding-right: 100px;
+    padding-right: 0;
   }
   .cancel-btn {
     position: absolute;

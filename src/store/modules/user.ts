@@ -1,6 +1,6 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
 import { login, logout, getUserInfo, resetPwd } from '@/api/users'
-import { getToken, setToken, removeToken, setUser } from '@/utils/cookies'
+import { getToken, setToken, removeToken, setUser, getPermission } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
 import { PermissionModule } from './permission'
 import { TagsViewModule } from './tags-view'
@@ -85,8 +85,9 @@ class User extends VuexModule implements IUserState {
         this.SET_EMAIL(roleName)
         this.SET_TOKEN(data.data.token)
         this.SET_UUID(data.data.uuid)
+
         this.SET_NAME(data.data.bssLoginName ? data.data.bssLoginName : '暂无名称')
-        this.SET_ROLES(['admin'])
+        this.SET_ROLES(data.data.stringPermissions)
         PermissionModule.GenerateRoutes(this.roles)
         // Add generated routes
         router.addRoutes(PermissionModule.dynamicRoutes)
@@ -118,17 +119,19 @@ class User extends VuexModule implements IUserState {
     if (this.token === '') {
       throw Error('GetUserInfo: token is undefined!')
     }
-    this.SET_ROLES(['admin'])
+    this.SET_ROLES(getPermission())
     this.SET_AVATAR('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0')
     let roleName = ''
     let bssLoginName = (localStorage.getItem('bssLoginName') as any)
     let busiPermission = (localStorage.getItem('role') as any).split(',')
+    let uuid = (localStorage.getItem('uuid') as any)
     busiPermission.forEach((Item:any) => {
       if (Item === '0') roleName = '梧桐专车 '
       if (Item === '1') roleName = roleName + ' 梧桐共享'
     })
     this.SET_EMAIL(roleName)
     this.SET_NAME(bssLoginName)
+    this.SET_UUID(uuid)
     // const { data } = await getUserInfo({ /* Your params here */ })
     // if (!data) {
     //   throw Error('Verification failed, please Login again.')

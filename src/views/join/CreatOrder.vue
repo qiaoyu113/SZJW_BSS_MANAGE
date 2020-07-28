@@ -352,9 +352,12 @@
               label="运力配额"
               prop="capacityQuota"
             >
-              <el-input
+              <el-input-number
                 v-model="ruleForm.capacityQuota"
-                v-only-number="{min: 1, max: 99}"
+                v-only-number="{min: 0, max: 999}"
+                class="input-number"
+                :min="1"
+                :max="999"
                 placeholder="请输入运力配额"
                 maxlength="10"
               />
@@ -688,7 +691,8 @@
 import { Form as ElForm, Input } from 'element-ui'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetDictionaryList, Upload, GetPayList } from '@/api/common'
-import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder } from '@/api/join'
+import { CreateNewOrder, GetDriverDetail, GetDriverList, GetSupplierByTypeAndCity, GetCarTypeByTypeAndCityAndSupplier, GetPriceAndByTypeAndCityAndSupplierAndCarType, GetOrderDetail, GetModelByTypeAndCityAndSupplierAndCarType, RepayOrder, GetRentalCarSupplierByTypeAndCity, GetRentalCarTypeByParams,
+  GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel } from '@/api/join'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
@@ -735,7 +739,7 @@ export default class CreatLine extends Vue {
     'busiType': '',
     'describe': '',
     'buyCarCompany': '',
-    'capacityQuota': '',
+    'capacityQuota': '1',
     'carPrice': '',
     'city': '',
     'confirmId': '',
@@ -894,7 +898,6 @@ export default class CreatLine extends Vue {
 
   @Watch('ruleForm.cooperationModel', { deep: true })
   private changecooperationModel(value:any, oldValue:any) {
-    console.log(value, oldValue)
     if (value === '1') {
       if (!this.id) {
         this.ruleForm.supplier = ''
@@ -906,7 +909,7 @@ export default class CreatLine extends Vue {
         }
         this.editors = true
       }
-      this.getCompany()
+      this.getCompany('1')
     } else if (value === '2') {
       if (!this.id) {
         this.ruleForm.supplier = ''
@@ -918,7 +921,7 @@ export default class CreatLine extends Vue {
         }
         this.editors = true
       }
-      this.getCompany()
+      this.getCompany('2')
     } else {
       if (!this.id) {
         this.ruleForm.cooperationCar = ''
@@ -935,13 +938,15 @@ export default class CreatLine extends Vue {
   private changeCarCompany(value:any) {
     // this.ruleForm.cooperationCar = ''
     if (value) {
-      this.getCar()
+      // this.getCar()
     }
   }
 
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any, oldValue:any) {
     // console.log('supplier', value, oldValue)
+    // this.ruleForm.cooperationCar = ''
+    // this.ruleForm.carModel = ''
     if (!this.id) {
       this.ruleForm.cooperationCar = ''
     } else {
@@ -968,12 +973,21 @@ export default class CreatLine extends Vue {
         } else {
           this.ruleForm.carModel = ''
         }
-        this.getModelByTypeAndCityAndSupplierAndCarType()
-        this.getPrice()
+
+        if (this.ruleForm.cooperationModel === '1' && value) {
+          this.getModelByTypeAndCityAndSupplierAndCarType()
+        } else if (this.ruleForm.cooperationModel === '2') {
+          this.getPrice()
+        }
       }
     }
   }
-
+  @Watch('ruleForm.carModel')
+  private changeCarModel(val:any) {
+    if (val) {
+      this.getBuyCarPrice() // 购车
+    }
+  }
   @Watch('ruleForm.goodsAmount', { deep: true })
   private changeGoodsAmount(value:any) {
     if (value <= (Number(this.readyPay) + Number(this.notPay))) {
@@ -984,6 +998,9 @@ export default class CreatLine extends Vue {
       this.orderPrice = value
       this.notPay = this.getNotPay()
       this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+    }
+    if (!this.id) {
+      this.payNumber = value
     }
   }
 
@@ -1011,31 +1028,78 @@ export default class CreatLine extends Vue {
   //   }
   // }
   // 查供应商
-  private async getCompany() {
-    let { data } = await GetSupplierByTypeAndCity(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity }
-    )
-    if (data.success) {
-      this.optionsCompany = data.data
+  private async getCompany(str:string) {
+    let res:any = ''
+    if (str === '1') {
+      let { data } = await GetSupplierByTypeAndCity(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity }
+      )
+      res = data
+    } else if (str === '2') {
+      let { data } = await GetRentalCarSupplierByTypeAndCity(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity }
+      )
+      res = data
+    }
+
+    if (res.success) {
+      this.optionsCompany = res.data
     } else {
-      this.$message.error(data)
+      this.$message.error(res.errorMsg)
     }
   }
   // 查看车型
   private async getCar() {
-    let { data } = await GetCarTypeByTypeAndCityAndSupplier(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier }
+    let res:any = ''
+
+    if (this.ruleForm.cooperationModel === '1') {
+      // 购车
+      let { data } = await GetCarTypeByTypeAndCityAndSupplier(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier }
+      )
+      res = data
+    } else if (this.ruleForm.cooperationModel === '2') {
+      // 租车
+      let { data } = await GetRentalCarTypeByParams(
+        { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier }
+      )
+      res = data
+    }
+
+    if (res.success) {
+      this.optionsCar = res.data
+    } else {
+      this.$message.error(res.errorMsg)
+    }
+  }
+  // 查看无税车价-购车车
+  private async getBuyCarPrice() {
+    let { data } = await GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel(
+      {
+        busType: this.ruleForm.cooperationModel,
+        city: this.ruleForm.driverInfoFORM.workCity,
+        supplier: this.ruleForm.supplier,
+        carType: this.ruleForm.cooperationCar,
+        model: this.ruleForm.carModel
+      }
     )
     if (data.success) {
-      this.optionsCar = data.data
+      this.ruleForm.carPrice = data.data.price
+      this.ruleForm.describe = data.data.describe
+      this.ruleForm.productId = data.data.productCode
     } else {
       this.$message.error(data)
     }
   }
-  // 查看无税车价
+  // 查看无税车价-租车
   private async getPrice() {
     let { data } = await GetPriceAndByTypeAndCityAndSupplierAndCarType(
-      { busType: this.ruleForm.cooperationModel, city: this.ruleForm.driverInfoFORM.workCity, supplier: this.ruleForm.supplier, carType: this.ruleForm.cooperationCar }
+      {
+        busType: this.ruleForm.cooperationModel,
+        city: this.ruleForm.driverInfoFORM.workCity,
+        supplier: this.ruleForm.supplier,
+        carType: this.ruleForm.cooperationCar
+      }
     )
     if (data.success) {
       this.ruleForm.carPrice = data.data.price
@@ -1262,7 +1326,11 @@ export default class CreatLine extends Vue {
           RepayOrder(this.ruleForm
           ).then((data: any) => {
             if (data.data.success) {
-              this.$message.success('创建订单成功！')
+              if (!this.id) {
+                this.$message.success('创建订单成功！')
+              } else {
+                this.$message.success('提交审核成功！')
+              }
               setTimeout(() => {
                 (TagsViewModule as any).delView(this.$route); // 关闭当前页面
                 (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
@@ -1422,6 +1490,11 @@ export default class CreatLine extends Vue {
         display: inline-block;
         width: max-content;
     }
+  .input-number{
+    .el-input-number__increase{
+      width: 36px !important;
+    }
+  }
 }
 </style>
 <style lang="scss">

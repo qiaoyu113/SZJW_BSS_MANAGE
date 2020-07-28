@@ -28,6 +28,7 @@
         :active-name="listQuery.state"
       >
         <el-button
+          v-permission="['/v1/line/clue/save']"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
@@ -38,6 +39,7 @@
           <span v-if="isPC">新增线索</span>
         </el-button>
         <el-button
+          v-permission="['/v1/line/clue/importInfoList']"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
@@ -94,6 +96,7 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column
+            v-if="isShowDistribution"
             :key="checkList.length + 'selection'"
             type="selection"
             width="55"
@@ -264,6 +267,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-permission="['/v1/line/clue/lineClueInfo']"
                     @click.native="goDetail(row.clueId)"
                   >
                     详情
@@ -274,17 +278,20 @@
                    -->
                   <el-dropdown-item
                     v-if="row.distributionState === 1 && (row.clueState === 0 || row.clueState === 1) && row.isTransform !== '2'"
+                    v-permission="['/v1/line/clue/followClue']"
                     @click.native="goFollow(row)"
                   >
                     跟进
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="row.isTransform !== '1' && row.clueState !== 2"
+                    v-permission="['/v1/customer/transformCustomer']"
                     @click.native="goConversion(row.clueId)"
                   >
                     转化
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v1/line/clue/lineClueEdit']"
                     @click.native="goEdit(row)"
                   >
                     编辑
@@ -449,32 +456,14 @@ import PitchBox from '@/components/PitchBox/index.vue'
 import { GetDictionaryList, GetManagerLists } from '@/api/common'
 import { GetClueList, Distribution, ExpiredClue, ActivationClue, GetCustomerOff, GetSaleList, ShowPhone } from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
-
+import { UserModule } from '@/store/modules/user'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 
 interface IState {
   [key: string]: any;
 }
-const optionsClue: any = [
-  // （0：待跟进 1：已跟进 2：已转化 3：无效）
-  {
-    value: 0,
-    label: '待跟进'
-  },
-  {
-    value: 1,
-    label: '已跟进'
-  },
-  {
-    value: 2,
-    label: '已转化'
-  },
-  {
-    value: 3,
-    label: '无效'
-  }
-] // 线索状态
+let optionsClue: any = [] // 线索状态
 const optionsDistribution: any = [
   {
     value: 0,
@@ -515,6 +504,7 @@ const optionsDistribution: any = [
   }
 })
 export default class extends Vue {
+  private isShowDistribution: boolean = false;
   private tags: any[] = [];
   private tab: any[] = [
     {
@@ -629,7 +619,12 @@ export default class extends Vue {
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
-    // this.listQuery[key] = value
+    if (key !== 'state') {
+      this.listQuery[key] = value
+    }
+    if (key === 'startDate') {
+      return
+    }
     this.getList(this.listQuery)
   }
   // 处理query方法
@@ -676,6 +671,7 @@ export default class extends Vue {
       this.list = data.data
       data.page = await HandlePages(data.page)
       this.total = data.page.total
+      this.tab[0].num = data.page.total
     } else {
       this.$message.error(data)
     }
@@ -689,9 +685,16 @@ export default class extends Vue {
   }
   // 获取字典
   private async getDictionary() {
-    const { data } = await GetDictionaryList(['line_clue_source'])
+    const { data } = await GetDictionaryList(['line_clue_source', 'line_clue_state'])
     if (data.success) {
       this.optionsLineSource = data.data.line_clue_source
+      this.optionsClue = data.data.line_clue_state.map((item: any) => {
+        return {
+          value: Number(item.dictValue),
+          label: item.dictLabel
+        }
+      })
+      optionsClue = this.optionsClue.slice()
     } else {
       this.$message.error(data)
     }
@@ -907,8 +910,15 @@ export default class extends Vue {
   private changeDrawer(val: any) {
     this.drawer = val
   }
-
+  private setRoles() {
+    const roles = UserModule.roles
+    this.isShowDistribution = roles.includes('/v1/line/clue/distribution')
+    if (!this.isShowDistribution) {
+      this.operationList = []
+    }
+  }
   created() {
+    this.setRoles()
     this.fetchData()
   }
   activated() {
@@ -968,11 +978,5 @@ export default class extends Vue {
 .btn-item-filtrate-m {
   background-color: $assist-btn;
   border-color: $assist-btn;
-}
-</style>
-<style scoped>
-.ClueList >>> .tab_num,
-.ClueList-m >>> .tab_num {
-  display: none
 }
 </style>

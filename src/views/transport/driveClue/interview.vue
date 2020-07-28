@@ -135,6 +135,7 @@
               :offset="isPC ? 2 :1"
             >
               <el-button
+                v-permission="['/v1/order/createNewOrder']"
                 type="primary"
                 class="finish_btn"
                 name="interview_createOrder_btn"

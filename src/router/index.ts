@@ -104,7 +104,7 @@ export const constantRoutes: RouteConfig[] = [
   {
     path: '/',
     component: Layout,
-    redirect: '/cargo'
+    redirect: '/profile'
   },
   {
     path: '/redirect',
@@ -196,8 +196,11 @@ export const asyncRoutes: RouteConfig[] = [
   systemRouter,
   {
     path: '*',
-    redirect: '/404',
-    meta: { hidden: true }
+    redirect: '/401',
+    meta: {
+      hidden: true,
+      apiUrl: 'root'
+    }
   }
   // {
   //   path: '/permission',
