@@ -2,6 +2,7 @@
   <el-row
     :gutter="20"
     class="selfForm"
+    :class="isPC ? 'pc' : isBlock ? 'mobile' : ''"
   >
     <el-form
       ref="ruleForm"
@@ -188,6 +189,7 @@ export default class extends Vue {
     @Prop({ default: () => [] }) formItem!:any[]
     @Prop({ default: 6 }) pcCol!:Number
     @Prop({ default: () => {} }) rules!:IState
+    @Prop({ default: false }) isBlock!:boolean
     get isPC() {
       return SettingsModule.isPC
     }
@@ -253,6 +255,21 @@ export default class extends Vue {
   .selfForm >>> .el-radio {
     height:36px;
     line-height: 36px;
+  }
+
+  @media screen and (max-width: 700px){
+    .mobile >>> .el-form-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile >>> .el-form-item__label {
+      text-align: left;
+    }
+
+    .mobile >>> .el-form-item__content {
+      margin-left: 0px!important;
+    }
   }
 </style>
 

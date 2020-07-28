@@ -9,6 +9,7 @@
           class="base"
           :list-query="listQuery"
           :form-item="formItem"
+          :is-block="true"
           label-width="80px"
         >
           <template v-slot:intentCargoType="{row}">
@@ -86,6 +87,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
+
 @Component({
   name: 'CarInfo',
   components: {

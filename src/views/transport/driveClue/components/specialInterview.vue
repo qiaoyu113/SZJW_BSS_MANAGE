@@ -7,6 +7,7 @@
       label-width="100px"
       :pc-col="12"
       :rules="rules"
+      :is-block="true"
       @onPass="handlePassClick"
     />
   </div>
@@ -701,6 +702,7 @@ export default class extends Vue {
             value: 0
           }
         ]
+        this.listQuery.ownCarNum = 0
       }
     }
 
