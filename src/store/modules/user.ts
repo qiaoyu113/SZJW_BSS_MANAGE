@@ -120,7 +120,6 @@ class User extends VuexModule implements IUserState {
       throw Error('GetUserInfo: token is undefined!')
     }
     this.SET_ROLES(getPermission())
-    this.SET_AVATAR('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0')
     let roleName = ''
     let bssLoginName = (localStorage.getItem('bssLoginName') as any)
     let busiPermission = (localStorage.getItem('role') as any).split(',')
@@ -132,6 +131,7 @@ class User extends VuexModule implements IUserState {
     this.SET_EMAIL(roleName)
     this.SET_NAME(bssLoginName)
     this.SET_UUID(uuid)
+    this.SET_AVATAR('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0')
     // const { data } = await getUserInfo({ /* Your params here */ })
     // if (!data) {
     //   throw Error('Verification failed, please Login again.')
