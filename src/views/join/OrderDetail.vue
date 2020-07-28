@@ -67,7 +67,7 @@
           />
         </el-col>
         <el-col
-          v-if="orderDetail.busiType === 0"
+          v-if="Number(orderDetail.busiType) === 0"
           :span="isPC ? 6 : 24"
         >
           <DetailItem

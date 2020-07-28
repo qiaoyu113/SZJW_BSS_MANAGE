@@ -67,7 +67,10 @@
           />
         </el-col>
 
-        <el-col :span="isPC ? 6 : 24">
+        <el-col
+          v-if="Number(ruleForm.busiType) === 0"
+          :span="isPC ? 6 : 24"
+        >
           <DetailItem
             name="收入保障"
             :value="orderDetail.incomeGuarantee"
