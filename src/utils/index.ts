@@ -53,17 +53,31 @@ export const Timestamp = (timestamp: any) => {
       return t
     }
   }
-  if (timestamp) {
-    var date = new Date(timestamp)
-    const Y = date.getFullYear() + '-'
-    const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
-    const D = change(date.getDate()) + ' '
-    const h = change(date.getHours()) + ':'
-    const m = change(date.getMinutes()) + ':'
-    const s = change(date.getSeconds())
-    return Y + M + D + h + m + s
+  const isRealNum = (val: any) => {
+    if (val === '' || val == null) {
+      return false
+    }
+    if (!isNaN(val)) {
+      return true
+    } else {
+      return false
+    }
+  }
+  if (isRealNum(timestamp)) {
+    if (timestamp) {
+      var date = new Date(timestamp)
+      const Y = date.getFullYear() + '-'
+      const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+      const D = change(date.getDate()) + ' '
+      const h = change(date.getHours()) + ':'
+      const m = change(date.getMinutes()) + ':'
+      const s = change(date.getSeconds())
+      return Y + M + D + h + m + s
+    } else {
+      return '暂无数据'
+    }
   } else {
-    return '暂无数据'
+    return timestamp
   }
 }
 
@@ -75,17 +89,31 @@ export const TimestampYMD = (timestamp: any) => {
       return t
     }
   }
-  if (timestamp) {
-    var date = new Date(timestamp)
-    const Y = date.getFullYear() + '-'
-    const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
-    const D = change(date.getDate()) + ' '
-    const h = change(date.getHours()) + ':'
-    const m = change(date.getMinutes()) + ':'
-    const s = change(date.getSeconds())
-    return Y + M + D
+  const isRealNum = (val: any) => {
+    if (val === '' || val == null) {
+      return false
+    }
+    if (!isNaN(val)) {
+      return true
+    } else {
+      return false
+    }
+  }
+  if (isRealNum(timestamp)) {
+    if (timestamp) {
+      var date = new Date(timestamp)
+      const Y = date.getFullYear() + '-'
+      const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+      const D = change(date.getDate()) + ' '
+      const h = change(date.getHours()) + ':'
+      const m = change(date.getMinutes()) + ':'
+      const s = change(date.getSeconds())
+      return Y + M + D
+    } else {
+      return '暂无数据'
+    }
   } else {
-    return '暂无数据'
+    return timestamp
   }
 }
 

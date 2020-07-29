@@ -175,7 +175,6 @@ export default class extends Vue {
   box-sizing: border-box;
   text-align: center;
   display: flex;
-  overflow-x: auto;
   .operation{
     flex: 1;
     text-align: left;
@@ -255,4 +254,14 @@ export default class extends Vue {
 .pagination-container.hidden {
   display: none;
 }
+</style>
+
+<style scoped>
+
+  @media screen and (max-width: 700px){
+    .pagination-container-m >>> .el-pagination {
+      overflow-x: auto;
+    }
+  }
+
 </style>
