@@ -169,10 +169,8 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .selfTable{
-    /*height:calc(100vh - 330px);*/
     background: #FFFFFF;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     overflow: hidden;
-
   }
 </style>
