@@ -83,11 +83,13 @@
             :key="checkList.length + 'right'"
             label="操作"
             fixed="right"
-            :width="isPC ? 'auto' : '50'"
+            :width="isPC ? '100' : '50'"
             show-overflow-tooltip
           >
             <template slot-scope="{row}">
-              <el-dropdown>
+              <el-dropdown
+                :trigger="isPC ? 'hover' : 'click'"
+              >
                 <span
                   v-if="isPC"
                   class="el-dropdown-link"

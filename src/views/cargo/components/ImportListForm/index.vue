@@ -14,6 +14,7 @@
                     value-format="timestamp"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
+                    :editable="false"
                     @change="changData()"
                   />
                 </el-form-item>
