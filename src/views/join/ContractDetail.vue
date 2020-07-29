@@ -97,7 +97,7 @@
             <el-col :span="24">
               <DetailItem
                 name="合同生成时间"
-                :value="ContractDetail.createDate | Timestamp"
+                :value="ContractDetail.createDate"
               >
                 <template>
                   <span>{{ (ContractDetail.remark) }}</span>
@@ -110,7 +110,7 @@
             >
               <DetailItem
                 name="合同签约时间"
-                :value="ContractDetail.signTime | Timestamp"
+                :value="ContractDetail.signTime"
               >
                 <template>
                   <span>{{ ' 由' + ContractDetail.driverInfoBusiVO.name + (ContractDetail.driverInfoBusiVO.phone) + '签署成功;' }}</span>
@@ -123,7 +123,7 @@
             >
               <DetailItem
                 name="合同过期时间"
-                :value="ContractDetail.signTime | Timestamp"
+                :value="ContractDetail.signTime"
               >
                 <template>
                   <span> 由系统到期自动失效</span>
