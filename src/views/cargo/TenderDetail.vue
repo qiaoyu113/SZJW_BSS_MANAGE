@@ -558,4 +558,11 @@ export default class extends Vue {
     align-items: center;
   }
 
+  @media screen and (max-width:700px){
+    .tenderDetail >>> .selfForm {
+      margin-left:0px!important;
+      margin-right:0px!important;
+    }
+  }
+
 </style>
