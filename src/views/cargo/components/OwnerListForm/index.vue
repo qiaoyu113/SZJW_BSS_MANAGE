@@ -92,6 +92,7 @@
                   <el-date-picker
                     v-model="DateValueChild2"
                     :class="isPC ? '' : 'el-date-m'"
+                    :editable="false"
                     type="daterange"
                     value-format="timestamp"
                     start-placeholder="开始日期"
@@ -105,6 +106,7 @@
                   <el-date-picker
                     v-model="DateValueChild"
                     :class="isPC ? '' : 'el-date-m'"
+                    :editable="false"
                     type="daterange"
                     value-format="timestamp"
                     start-placeholder="开始日期"
