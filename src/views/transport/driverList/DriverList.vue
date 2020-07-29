@@ -103,7 +103,10 @@
         {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
       </template>
       <template v-slot:op="scope">
-        <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+        <el-dropdown
+          :trigger="isPC ? 'hover' : 'click'"
+          @command="(e) => handleCommandChange(e,scope.row)"
+        >
           <span
             v-if="isPC"
             class="el-dropdown-link"
@@ -517,20 +520,21 @@ export default class extends Vue {
       label: '操作',
       disabled: true,
       slot: true,
-      fixed: 'right'
+      fixed: 'right',
+      width: this.isPC ? '100px' : '50px'
     }
   ]
 
   private operationList = [
     {
-      icon: 'el-icon-view',
+      icon: 'el-icon-finished',
       name: '查看选中',
-      color: '#673BB8'
+      color: '#F2A33A'
     },
     {
       icon: 'el-icon-circle-close',
       name: '清空选择',
-      color: '#F54436'
+      color: '#5E7BBB'
     }
   ]
 

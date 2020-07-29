@@ -46,6 +46,7 @@
           <el-date-picker
             v-else-if="item.type ===3"
             v-model="listQuery[item.key]"
+            :editable="false"
             v-bind="item.tagAttrs || {}"
             type="daterange"
             range-separator="至"
@@ -87,6 +88,7 @@
           <el-date-picker
             v-else-if="item.type ===6"
             v-model="listQuery[item.key]"
+            :editable="false"
             type="date"
             value-format="timestamp"
             placeholder="选择日期"
@@ -109,6 +111,7 @@
           <el-date-picker
             v-else-if="item.type ===9"
             v-model="listQuery[item.key]"
+            :editable="false"
             type="datetime"
             placeholder="选择日期"
             value-format="timestamp"
@@ -118,6 +121,7 @@
           <el-time-picker
             v-else-if="item.type ===10"
             v-model="listQuery[item.key]"
+            :editable="false"
             is-range
             range-separator="至"
             start-placeholder="开始时间"

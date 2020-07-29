@@ -1,5 +1,10 @@
 <template>
-  <div class="tenderManage">
+  <div
+    class="tenderManage"
+    :style="{
+      padding: isPC ? '15px' :'0px'
+    }"
+  >
     <suggest-container
       :tab="tab"
       :tags="tags"
@@ -14,7 +19,7 @@
       >
         <div
           slot="btn1"
-          :class="isPC ? 'btnPc' : ''"
+          :class="isPC ? 'btnPc' : 'mobile'"
         >
           <el-button
             type="primary"
@@ -104,64 +109,46 @@
         <span>{{ scope.row.u | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
       </template>
       <template v-slot:op="scope">
-        <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
-          <span class="el-dropdown-link">
-            <el-button
+        <el-dropdown
+          :trigger="isPC ? 'hover' : 'click'"
+          @command="(e) => handleCommandChange(e,scope.row)"
+        >
+          <span
+            v-if="isPC"
+            class="el-dropdown-link"
+          >
+            更多操作<i
               v-if="isPC"
-              :a="scope"
-              type="text"
-            >
-              更多操作
-            </el-button>
-            <i
-              v-else
-              class="el-icon-setting"
+              class="el-icon-arrow-down el-icon--right"
             />
+          </span>
+          <span
+            v-else
+            style="font-size: 18px;"
+            class="el-dropdown-link"
+          >
+            <i class="el-icon-setting el-icon--right" />
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
               command="downLine"
             >
-              <template v-if="isPC">
-                下线
-              </template>
-              <i
-                v-else
-                class="el-icon-edit"
-              />
+              下线
             </el-dropdown-item>
             <el-dropdown-item
               command="tenderDetail"
             >
-              <template v-if="isPC">
-                查看标书详情
-              </template>
-              <i
-                v-else
-                class="el-icon-edit"
-              />
+              查看标书详情
             </el-dropdown-item>
             <el-dropdown-item
               command="log"
             >
-              <template v-if="isPC">
-                查看操作日志
-              </template>
-              <i
-                v-else
-                class="el-icon-edit"
-              />
+              查看操作日志
             </el-dropdown-item>
             <el-dropdown-item
               command="edit"
             >
-              <template v-if="isPC">
-                编辑
-              </template>
-              <i
-                v-else
-                class="el-icon-edit"
-              />
+              编辑
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -706,20 +693,21 @@ export default class extends Vue {
       label: '操作',
       fixed: 'right',
       disabled: true,
-      slot: true
+      slot: true,
+      width: this.isPC ? '100px' : '50px'
     }
   ]
 
   private operationList = [
     {
-      icon: 'el-icon-view',
+      icon: 'el-icon-finished',
       name: '查看选中',
-      color: '#673BB8'
+      color: '#F2A33A'
     },
     {
       icon: 'el-icon-circle-close',
       name: '清空选择',
-      color: '#F54436'
+      color: '#5E7BBB'
     }
   ]
 
@@ -922,17 +910,37 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .tenderManage {
-    padding: 20px;
     .btnPc {
       display: flex;
       flex-flow: row nowrap;
       justify-content: flex-end;
       width: 100%;
     }
-    .btnMobile {
-      margin-left: 0;
-      margin-top: 10px;
+    .mobile {
       width:100%;
+      .btnMobile {
+        margin-left: 0;
+        margin-top: 10px;
+        width:100%;
+      }
+    }
+  }
+</style>
+
+<style scoped>
+  @media screen and (min-width: 700px) {
+    .tenderManage >>> .el-collapse-item__wrap {
+      padding: 20px 30px 0px 0px;
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 1000;
+      background: #fff;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
+      right: 15px;
+      left: 15px;
+    }
+    .tenderManage >>> .el-collapse-item__content {
+      padding-bottom: 0px;
     }
   }
 </style>

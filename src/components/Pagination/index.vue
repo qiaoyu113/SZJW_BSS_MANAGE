@@ -175,6 +175,7 @@ export default class extends Vue {
   box-sizing: border-box;
   text-align: center;
   display: flex;
+  overflow-x: auto;
   .operation{
     flex: 1;
     text-align: left;

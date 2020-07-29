@@ -71,14 +71,14 @@
       <!-- 面试信息 -->
       <template v-else-if="active ===1">
         <special-interview
-          v-if="String(listQuery.busiType) ==='0' && Object.keys(form).length > 0"
+          v-if="String(listQuery.busiType) ==='0' && isShow"
           ref="specialInterview"
           :form="listQuery"
           :obj="form"
           @onFinish="handleStepFinish"
         />
         <share-interview
-          v-else-if="String(listQuery.busiType) ==='1' && Object.keys(form).length > 0"
+          v-else-if="String(listQuery.busiType) ==='1' && isShow"
           ref="shareInterview"
           :form="listQuery"
           :obj="form"
@@ -263,6 +263,14 @@ export default class extends Vue {
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+
+  get isShow() {
+    if (this.active === 1 || Object.keys(this.form).length > 0) {
+      return true
+    } else {
+      return false
+    }
   }
 
   mounted() {
