@@ -93,7 +93,7 @@ export default class ShowLog extends Vue {
   private listLoading = true
   private list: CargoListData[] = []
   private total = 0;
-  private operationList: any[] = [{}]
+  private operationList: any[] = []
   private listQuery: IState = {
     key: '',
     city: '',
