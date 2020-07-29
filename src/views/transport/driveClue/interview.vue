@@ -189,6 +189,7 @@ export default class extends Vue {
     busiType: '',
     clueId: ''
   }
+  private driverId = ''
   private form:any = {} // 编辑面试表单的时候获取的信息
 
   private formItem:any[] = [
@@ -430,8 +431,9 @@ export default class extends Vue {
   /**
    *填写金数据，提交成功
    */
-  handleStepFinish() {
+  handleStepFinish(driverId:string) {
     this.active = 2
+    this.driverId = driverId
   }
   /**
    *完成按钮
@@ -448,7 +450,10 @@ export default class extends Vue {
    */
   handleCreateOeder() {
     this.$router.push({
-      path: '/join/creatorder'
+      path: '/join/creatorder',
+      query: {
+        driverId: this.driverId
+      }
     })
   }
 }

@@ -24,7 +24,7 @@
           {{ user.name }}
         </div>
         <div class="user-role text-center text-muted">
-          账户角色：{{ user.email | DataIsNull }}
+          账户角色：{{ user.email || '暂无角色' }}
         </div>
       </div>
     </div>

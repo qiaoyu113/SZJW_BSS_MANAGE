@@ -71,20 +71,15 @@ class User extends VuexModule implements IUserState {
         if (!data.data.settingFlag) {
           return data.data
         }
+        data.data.avatar = 'https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0'
         setToken(data.data.token)
         setUser(data.data)
-        let roleName = ''
-        if (data.data.busiPermission && data.data.busiPermission.length > 0) {
-          data.data.busiPermission.forEach((Item:any) => {
-            if (Item === '0') roleName = '梧桐专车 '
-            if (Item === '1') roleName = roleName + ' 梧桐共享'
-          })
-        } else {
-          roleName = '暂无角色'
-        }
+        let roleName = data.data.roleName
+
         this.SET_EMAIL(roleName)
         this.SET_TOKEN(data.data.token)
         this.SET_UUID(data.data.uuid)
+        this.SET_AVATAR(data.data.avatar)
 
         this.SET_NAME(data.data.bssLoginName ? data.data.bssLoginName : '暂无名称')
         this.SET_ROLES(data.data.stringPermissions)
@@ -120,18 +115,17 @@ class User extends VuexModule implements IUserState {
       throw Error('GetUserInfo: token is undefined!')
     }
     this.SET_ROLES(getPermission())
-    let roleName = ''
+
     let bssLoginName = (localStorage.getItem('bssLoginName') as any)
-    let busiPermission = (localStorage.getItem('role') as any).split(',')
+    // let busiPermission = (localStorage.getItem('role') as any).split(',')
     let uuid = (localStorage.getItem('uuid') as any)
-    busiPermission.forEach((Item:any) => {
-      if (Item === '0') roleName = '梧桐专车 '
-      if (Item === '1') roleName = roleName + ' 梧桐共享'
-    })
+    let roleName = (localStorage.getItem('roleName') as any)
+
+    let avatar = (localStorage.getItem('avatar') as any)
     this.SET_EMAIL(roleName)
     this.SET_NAME(bssLoginName)
     this.SET_UUID(uuid)
-    this.SET_AVATAR('https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0')
+    this.SET_AVATAR(avatar)
     // const { data } = await getUserInfo({ /* Your params here */ })
     // if (!data) {
     //   throw Error('Verification failed, please Login again.')
@@ -171,6 +165,7 @@ class User extends VuexModule implements IUserState {
     resetRouter()
     this.SET_TOKEN('')
     this.SET_ROLES([])
+    localStorage.clear()
   }
 }
 
