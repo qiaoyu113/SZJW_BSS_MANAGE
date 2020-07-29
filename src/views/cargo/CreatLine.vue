@@ -406,6 +406,8 @@ export default class CreatLine extends Vue {
   private isFirst = true
   private ruleForm: IState = {
     addressShow: false,
+    // 仓位置
+    address: [],
     deliveryShow: false,
     carType: '',
     // 选择车型
@@ -423,8 +425,6 @@ export default class CreatLine extends Vue {
     // 货主编号id
     // 配送位置
     delivery: [],
-    // 仓位置
-    address: [],
     dayNo: '',
     // 每日配送趟数
     deliveryNo: '',
@@ -594,9 +594,11 @@ export default class CreatLine extends Vue {
 
   private async loadAddress(node: any, resolve: any) {
     let params: string[] = []
+    // params是省市区的接口请求参数
     let query: any = {
       countryCode: ''
     }
+    // query是区详细信息的接口请求参数
     if (node.level === 0) {
       params = ['100000']
     } else if (node.level === 1) {

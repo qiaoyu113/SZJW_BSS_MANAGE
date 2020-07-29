@@ -114,6 +114,7 @@
               :md="true"
             >
               <self-form
+                v-if="showAddress"
                 :list-query="orderInfo"
                 :form-item="formItemOther"
                 label-width="140px"
@@ -341,6 +342,7 @@ export default class extends Vue {
       options: []
     }
   ]
+
   private async loadhouseAddress(node:any, resolve:any) {
     let params:string[] = []
     if (node.level === 0) {
@@ -358,6 +360,19 @@ export default class extends Vue {
       resolve(nodes)
     } catch (err) {
       resolve([])
+    }
+  }
+
+  // 地址级联选择器 回显问题
+  get showAddress() {
+    if (this.carrierId) {
+      if (this.orderInfo.address.length > 0) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return true
     }
   }
 

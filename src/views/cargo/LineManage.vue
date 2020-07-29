@@ -1531,7 +1531,7 @@ export default class LineManage extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 360px) !important;
+      // height: calc(100vh - 360px) !important;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
