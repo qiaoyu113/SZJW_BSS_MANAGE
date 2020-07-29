@@ -43,6 +43,8 @@ export const setUser = (user: any) => {
   localStorage.setItem('permission', user.stringPermissions)
   localStorage.setItem('bssLoginName', user.bssLoginName)
   localStorage.setItem('uuid', user.uuid)
+  localStorage.setItem('roleName', user.roleName)
+  localStorage.setItem('avatar', user.avatar)
 }
 export const removeToken = () => Cookies.remove(tokenKey)
 
