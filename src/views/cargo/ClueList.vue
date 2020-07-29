@@ -92,7 +92,6 @@
           style="width: 100%"
           align="left"
           row-key="clueId"
-          @cell-click="tableClick"
           @selection-change="handleSelectionChange"
         >
           <el-table-column
@@ -244,11 +243,13 @@
             :key="checkList.length"
             label="操作"
             fixed="right"
-            :width="isPC ? 'auto' : '50'"
+            :width="isPC ? '100' : '50'"
             show-overflow-tooltip
           >
             <template slot-scope="{row}">
-              <el-dropdown>
+              <el-dropdown
+                :trigger="isPC ? 'hover' : 'click'"
+              >
                 <span
                   v-if="isPC"
                   class="el-dropdown-link"
@@ -965,6 +966,9 @@ export default class extends Vue {
       box-sizing: border-box;
       background: #ffffff;
     }
+  }
+  .el-table th.gutter {
+    display: table-cell !important
   }
 }
 </style>

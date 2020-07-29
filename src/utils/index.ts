@@ -46,6 +46,9 @@ export const parseTime = (
 }
 
 export const Timestamp = (timestamp: any) => {
+  if (typeof timestamp === 'string') {
+    timestamp = (+new Date(timestamp)) || (+new Date(timestamp.replace(/-/g, '/')))
+  }
   const change = (t: any) => {
     if (t < 10) {
       return '0' + t
@@ -82,6 +85,9 @@ export const Timestamp = (timestamp: any) => {
 }
 
 export const TimestampYMD = (timestamp: any) => {
+  if (typeof timestamp === 'string') {
+    timestamp = (+new Date(timestamp)) || (+new Date(timestamp.replace(/-/g, '/')))
+  }
   const change = (t: any) => {
     if (t < 10) {
       return '0' + t
