@@ -55,7 +55,14 @@ export default class extends Vue {
     } else {
       otherHeight = 300 // 移动端计算后的高度
     }
-    this.tableHeight = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+    this.tableHeight = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight;
+    /**
+     * 处理iOS 微信客户端6.7.4 键盘收起页面未下移bug
+     */
+    (/iphone|ipod|ipad/i.test(navigator.appVersion)) && document.addEventListener('blur', (e:any) => {
+    // 这里加了个类型判断，因为a等元素也会触发blur事件
+      ['input', 'textarea'].includes(e.target.localName) && document.body.scrollIntoView(false)
+    }, true)
   }
 }
 </script>

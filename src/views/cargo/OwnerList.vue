@@ -79,7 +79,7 @@
             label="序号"
             :index="indexMethod('listQuery')"
             align="center"
-            :fixed="isPC"
+            fixed
           />
           <el-table-column
             v-if="checkList.indexOf('货主编号') > -1"
