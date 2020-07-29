@@ -14,17 +14,8 @@
       >
         <div
           slot="btn1"
-          :class="isPC ? 'btnPc' : ''"
+          :class="isPC ? 'btnPc' : 'btnPc-m'"
         >
-          <el-button
-            type="primary"
-            :class="isPC ? '' : 'btnMobile'"
-            name="transportList_query_btn"
-            size="small"
-            @click="handleQueryClick"
-          >
-            查询
-          </el-button>
           <el-button
             :class="isPC ? '' : 'btnMobile'"
             name="transportList_reset_btn"
@@ -32,6 +23,15 @@
             @click="handleResetClick"
           >
             重置
+          </el-button>
+          <el-button
+            type="primary"
+            :class="isPC ? '' : 'btnMobile'"
+            name="transportList_query_btn"
+            size="small"
+            @click="handleQueryClick"
+          >
+            筛选
           </el-button>
         </div>
       </self-form>
@@ -119,7 +119,10 @@
           {{ scope.row.createDate | Timestamp }}
         </template>
         <template v-slot:op="scope">
-          <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+          <el-dropdown
+            :trigger="isPC ? 'hover' : 'click'"
+            @command="(e) => handleCommandChange(e,scope.row)"
+          >
             <span class="el-dropdown-link">
               <el-button
                 v-if="isPC"
@@ -353,6 +356,7 @@ export default class extends Vue {
       {
         key: 'op',
         label: '操作',
+        width: this.isPC ? '100px' : '50px',
         fixed: 'right',
         disabled: true,
         slot: true
@@ -627,14 +631,14 @@ export default class extends Vue {
 
     private operationList: any[] = [
       {
-        icon: 'el-icon-view',
+        icon: 'el-icon-finished',
         name: '查看选中',
-        color: '#673BB8'
+        color: '#F2A33A'
       },
       {
         icon: 'el-icon-circle-close',
         name: '清空选择',
-        color: '#F54436'
+        color: '#5E7BBB'
       }
     ];
 
@@ -958,11 +962,6 @@ export default class extends Vue {
       justify-content: flex-end;
       width: 100%;
     }
-    .btnMobile {
-      margin-left: 0;
-      margin-top: 10px;
-      width:100%;
-    }
     .btn-item{
       background: #649CEE;
       border-radius: 4px;
@@ -1014,6 +1013,17 @@ export default class extends Vue {
       border-radius: 4px;
       border: none;
       margin:0 10px;
+    }
+    .btnPc-m {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:80%;
     }
     .btn-item-filtrate-m{
       background: #FFA000;
