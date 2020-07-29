@@ -78,7 +78,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.orderInfoVO.passTime | Timestamp"
+            :value="ContractDetail.orderInfoVO.passTime"
           >
             <template>
               ({{ ContractDetail.orderInfoVO.passName | DataIsNull }})
@@ -158,7 +158,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交车日期"
-            :value="ContractDetail.deliveryTime | Timestamp"
+            :value="ContractDetail.deliveryTime"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
@@ -315,7 +315,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="订单成交时间"
-            :value="ContractDetail.orderInfoVO.passTime | Timestamp"
+            :value="ContractDetail.orderInfoVO.passTime"
           >
             <template>
               ({{ ContractDetail.orderInfoVO.passName | DataIsNull }})
@@ -326,7 +326,7 @@
         <el-col :span="isPC ? 6 : 24">
           <DetailItem
             name="交付完成时间"
-            :value="ContractDetail.dealTime | Timestamp"
+            :value="ContractDetail.dealTime"
           >
             <template>
               ({{ ContractDetail.dealName | DataIsNull }})

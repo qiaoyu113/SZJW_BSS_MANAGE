@@ -20,7 +20,7 @@
           label="时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.dealTime | Timestamp }}</span>
+            <span>{{ scope.row.dealTime }}</span>
           </template>
         </el-table-column>
 
