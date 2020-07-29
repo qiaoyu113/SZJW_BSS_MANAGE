@@ -205,7 +205,7 @@
               label="支付时间"
             >
               <template slot-scope="scope">
-                {{ scope.row.payDate | Timestamp }}
+                {{ scope.row.payDate }}
               </template>
             </el-table-column>
             <el-table-column
@@ -265,7 +265,7 @@
               /> -->
               <DetailItem
                 name="订单生成时间"
-                :value="orderDetail.createDate | Timestamp"
+                :value="orderDetail.createDate"
               >
                 <template>
                   ({{ orderDetail.createName }})
@@ -299,7 +299,7 @@
               /> -->
               <DetailItem
                 name="审核不通过时间"
-                :value="orderDetail.notPassTime | Timestamp"
+                :value="orderDetail.notPassTime"
               >
                 <template>
                   ({{ orderDetail.notPassName }})
@@ -316,7 +316,7 @@
               /> -->
               <DetailItem
                 name="审核通过时间"
-                :value="orderDetail.passTime | Timestamp"
+                :value="orderDetail.passTime"
               >
                 <template>
                   ({{ orderDetail.passName }})

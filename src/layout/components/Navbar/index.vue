@@ -80,11 +80,11 @@
               {{ $t('navbar.profile') }}
             </el-dropdown-item>
           </router-link>
-          <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-          </router-link>
+          </router-link> -->
           <!-- <a
             target="_blank"
             href="https://github.com/armour/vue-typescript-admin-template/"
