@@ -66,6 +66,7 @@
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     clearable
+                    :editable="false"
                     @change="changData()"
                   />
                 </el-form-item>
