@@ -378,7 +378,7 @@
               />
             </el-col>
             <el-col
-              v-if="ruleForm.supplier && ruleForm.cooperationModel !== '3'"
+              v-if="ruleForm.supplier && Number(ruleForm.cooperationModel) === 1"
               :span="isPC ? 6 : 24"
             >
               <DetailItem

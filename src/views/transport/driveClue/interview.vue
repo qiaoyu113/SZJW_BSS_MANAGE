@@ -71,14 +71,14 @@
       <!-- 面试信息 -->
       <template v-else-if="active ===1">
         <special-interview
-          v-if="String(listQuery.busiType) ==='0' && Object.keys(form).length > 0"
+          v-if="String(listQuery.busiType) ==='0' && isShow"
           ref="specialInterview"
           :form="listQuery"
           :obj="form"
           @onFinish="handleStepFinish"
         />
         <share-interview
-          v-else-if="String(listQuery.busiType) ==='1' && Object.keys(form).length > 0"
+          v-else-if="String(listQuery.busiType) ==='1' && isShow"
           ref="shareInterview"
           :form="listQuery"
           :obj="form"
@@ -189,6 +189,7 @@ export default class extends Vue {
     busiType: '',
     clueId: ''
   }
+  private driverId = ''
   private form:any = {} // 编辑面试表单的时候获取的信息
 
   private formItem:any[] = [
@@ -263,6 +264,14 @@ export default class extends Vue {
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+
+  get isShow() {
+    if (this.active === 1 || Object.keys(this.form).length > 0) {
+      return true
+    } else {
+      return false
+    }
   }
 
   mounted() {
@@ -422,8 +431,9 @@ export default class extends Vue {
   /**
    *填写金数据，提交成功
    */
-  handleStepFinish() {
+  handleStepFinish(driverId:string) {
     this.active = 2
+    this.driverId = driverId
   }
   /**
    *完成按钮
@@ -440,7 +450,10 @@ export default class extends Vue {
    */
   handleCreateOeder() {
     this.$router.push({
-      path: '/join/creatorder'
+      path: '/join/creatorder',
+      query: {
+        driverId: this.driverId
+      }
     })
   }
 }

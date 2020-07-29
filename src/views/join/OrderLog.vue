@@ -20,7 +20,7 @@
           label="时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.dealTime | Timestamp }}</span>
+            <span>{{ scope.row.dealTime }}</span>
           </template>
         </el-table-column>
 
@@ -93,7 +93,7 @@ export default class ShowLog extends Vue {
   private listLoading = true
   private list: CargoListData[] = []
   private total = 0;
-  private operationList: any[] = [{}]
+  private operationList: any[] = []
   private listQuery: IState = {
     key: '',
     city: '',

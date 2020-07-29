@@ -69,7 +69,7 @@
       >
         <div class="avatar-wrapper">
           <img
-            :src="'https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0'"
+            :src="avatar"
             class="user-avatar"
           >
           <i class="el-icon-caret-bottom" />
@@ -80,11 +80,11 @@
               {{ $t('navbar.profile') }}
             </el-dropdown-item>
           </router-link>
-          <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-          </router-link>
+          </router-link> -->
           <!-- <a
             target="_blank"
             href="https://github.com/armour/vue-typescript-admin-template/"

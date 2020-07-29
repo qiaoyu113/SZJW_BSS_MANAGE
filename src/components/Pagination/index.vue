@@ -255,3 +255,13 @@ export default class extends Vue {
   display: none;
 }
 </style>
+
+<style scoped>
+
+  @media screen and (max-width: 700px){
+    .pagination-container-m >>> .el-pagination {
+      overflow-x: auto;
+    }
+  }
+
+</style>

@@ -542,6 +542,7 @@
                 type="datetime"
                 value-format="timestamp"
                 placeholder="请选择支付时间"
+                :editable="false"
               />
             </el-form-item>
           </el-col>
@@ -699,6 +700,7 @@ import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/base/SelfItem.vue'
 import { TagsViewModule } from '@/store/modules/tags-view'
+import { Timestamp } from '@/utils/index'
 import '@/styles/common.scss'
 @Component({
   name: 'CreatOrder',
@@ -1601,7 +1603,7 @@ export default class CreatLine extends Vue {
     width: 100%;
   }
   .el-input{
-    width: 100%;
+    width: 100% !important;
   }
 }
 </style>

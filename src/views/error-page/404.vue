@@ -42,7 +42,7 @@
           请检查您输入的网址是否正确，请点击以下按钮返回主页
         </div>
         <a
-          href=""
+          href="/"
           class="text-404__return-home"
         >返回首页</a>
       </div>

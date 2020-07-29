@@ -769,7 +769,7 @@ export default class extends Vue {
       try {
         let { data: res } = await SpecialInterview(params)
         if (res.success) {
-          this.handleFinish()
+          this.handleFinish(res.data)
         } else {
           this.$message.error(res.errorMsg)
         }
@@ -784,7 +784,7 @@ export default class extends Vue {
       try {
         let { data: res } = await EditDriverInterviewEdit(params)
         if (res.success) {
-          this.handleFinish()
+          this.handleFinish(res.data)
         } else {
           this.$message.error(res.errorMsg)
         }
@@ -794,7 +794,8 @@ export default class extends Vue {
     }
 
     @Emit('onFinish')
-    handleFinish() {
+    handleFinish(driverId:string) {
+      return driverId
     }
     /**
      * 现居住地址

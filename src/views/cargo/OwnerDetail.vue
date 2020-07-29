@@ -120,14 +120,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="合同止期"
-              :value="OwnerDetail.contractEnd | Timestamp"
+              :value="OwnerDetail.contractEnd"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="创建日期"
-              :value="OwnerDetail.createDate | Timestamp"
+              :value="OwnerDetail.createDate"
             />
           </el-col>
 
@@ -225,14 +225,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="公司"
-              :value="OwnerDetail.clueInfoVO.company"
+              :value="OwnerDetail.clueInfoVO.company | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="职务"
-              :value="OwnerDetail.bussinessPosition"
+              :value="OwnerDetail.bussinessPosition | DataIsNull"
             />
           </el-col>
 
@@ -260,28 +260,28 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="创建日期"
-              :value="OwnerDetail.clueInfoVO.createDate | Timestamp"
+              :value="OwnerDetail.clueInfoVO.createDate"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="更新日期"
-              :value="OwnerDetail.clueInfoVO.createDate | Timestamp"
+              :value="OwnerDetail.clueInfoVO.createDate"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="详细地址"
-              :value="OwnerDetail.clueInfoVO.address"
+              :value="OwnerDetail.clueInfoVO.address | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="备注"
-              :value="OwnerDetail.clueInfoVO.remark"
+              :value="OwnerDetail.clueInfoVO.remark | DataIsNull"
             />
           </el-col>
         </el-row>
@@ -323,19 +323,19 @@
             <el-col :span="isPC ? 8 : 24">
               <DetailItem
                 name="拜访时间"
-                :value="item.visitDate | Timestamp"
+                :value="item.visitDate"
               />
             </el-col>
             <el-col :span="isPC ? 8 : 24">
               <DetailItem
                 name="拜访地址"
-                :value="item.visitAddress"
+                :value="item.visitAddress | DataIsNull"
               />
             </el-col>
             <el-col :span="isPC ? 8 : 24">
               <DetailItem
                 name="拜访记录"
-                :value="item.visitRecord"
+                :value="item.visitRecord | DataIsNull"
               />
             </el-col>
           </el-row>

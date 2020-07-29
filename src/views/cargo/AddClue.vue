@@ -25,6 +25,7 @@
                 placeholder="请选择"
                 clearable
                 filterable
+                :disabled="optionsSale.length === 1"
               >
                 <el-option
                   v-for="(item, index) in optionsSale"
@@ -326,6 +327,7 @@
                   type="datetime"
                   placeholder="选择日期时间"
                   clearable
+                  :editable="false"
                   value-format="yyyy-MM-dd HH:mm:ss"
                 />
               </el-form-item>
@@ -525,6 +527,9 @@ export default class extends Vue {
     })
     if (data.success) {
       this.optionsSale = data.data
+      if (this.optionsSale.length === 1) {
+        this.ruleForm.lineSaleId = Number(this.optionsSale[0].id)
+      }
     } else {
       this.$message.error(data)
     }
