@@ -230,7 +230,9 @@
             :width="isPC ? '100' : '50'"
           >
             <template slot-scope="scope">
-              <el-dropdown>
+              <el-dropdown
+                :trigger="isPC ? 'hover' : 'click'"
+              >
                 <span
                   v-if="isPC"
                   class="el-dropdown-link"

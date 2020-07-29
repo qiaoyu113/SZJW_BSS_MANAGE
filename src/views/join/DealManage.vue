@@ -35,7 +35,7 @@
 
         <el-dropdown
           :hide-on-click="false"
-          trigger="click"
+          :trigger="isPC ? 'hover' : 'click'"
         >
           <el-button
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"

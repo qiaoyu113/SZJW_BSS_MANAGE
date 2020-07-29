@@ -128,7 +128,7 @@ export default class extends mixins(ResizeMixin) {
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 9;
+  z-index: 1999;
   width: calc(100% - #{$sideBarWidth});
   transition: width 0.28s;
 }
