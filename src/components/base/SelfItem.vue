@@ -5,6 +5,7 @@
     >
       <el-form-item
         v-if="params.type === 1"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -18,6 +19,7 @@
       </el-form-item>
       <el-form-item
         v-if="params.type === 2"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -38,6 +40,7 @@
 
       <el-form-item
         v-if="params.type === 3"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -56,6 +59,7 @@
 
       <el-form-item
         v-if="params.type === 4"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -69,6 +73,7 @@
 
       <el-form-item
         v-if="params.type === 5"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -89,6 +94,7 @@
 
       <el-form-item
         v-if="params.type === 6"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -110,6 +116,7 @@
 
       <el-form-item
         v-if="params.type === 7"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -141,6 +148,7 @@
 
       <el-form-item
         v-if="params.type === 8 && params.isShow"
+        :class="isPC ? '' : 'formWarp'"
         :label-width="width+'px'"
         :label="params.label+'：'"
         :prop="params.prop"
@@ -225,4 +233,24 @@ export default class SelfItem extends Vue {
   .SelfItem >>> .el-col-8{
     float: left!important
   }
+  .formWarp{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex: auto;
+    align-content: flex-start;
+  }
+    .formWarp >>> .el-form-item__content{
+       margin-left: 0!important;
+       width: 100%;
+    }
+    .formWarp >>> .el-form-item__label{
+      text-align: left!important;
+    }
+    .formWarp >>> .el-select,.el-input,.el-cascader,.el-textarea{
+      width: 100%!important;
+    }
+    .formWarp >>> .el-radio{
+      margin-bottom: 5px;
+    }
   </style>

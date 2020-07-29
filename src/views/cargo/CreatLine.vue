@@ -12,7 +12,6 @@
     >
       <SectionContainer
         title="详情信息"
-        :md="true"
       >
         <el-row class="detail">
           <SelfItem
@@ -95,7 +94,6 @@
       </SectionContainer>
       <SectionContainer
         title="配送信息"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -153,7 +151,6 @@
       </SectionContainer>
       <SectionContainer
         title="结算信息"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -226,7 +223,6 @@
       </SectionContainer>
       <SectionContainer
         title="货物信息"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -253,7 +249,6 @@
       </SectionContainer>
       <SectionContainer
         title="线路角色"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -276,6 +271,7 @@
         <el-button
           v-if="pageStatus === 1"
           type="primary"
+          size="small"
           name="CreatLine-btn-creat"
           @click="submitForm('ruleForm')"
         >
@@ -283,6 +279,7 @@
         </el-button>
         <el-button
           v-if="pageStatus === 2"
+          size="small"
           type="primary"
           name="CreatLine-btn-creat"
           @click="againForm('ruleForm')"
@@ -291,6 +288,7 @@
         </el-button>
         <el-button
           v-if="pageStatus === 3"
+          size="small"
           type="primary"
           name="CreatLine-btn-creat"
           @click="copyForm('ruleForm')"
@@ -299,6 +297,7 @@
         </el-button>
 
         <el-button
+          size="small"
           name="CreatLine-btn-cancel"
           @click="cancelBtn"
         >
@@ -307,12 +306,14 @@
 
         <el-button
           v-if="pageStatus === 1"
+          size="small"
           name="CreatLine-btn-reset"
           @click="resetForm('ruleForm')"
         >
           重置
         </el-button>
         <!-- <el-button
+        size="small"
           v-if="pageStatus === 1"
           name="CreatLine-btn-xcxshow"
           @click="resetForm('ruleForm')"
@@ -1208,8 +1209,11 @@ export default class CreatLine extends Vue {
   .btn_box {
     padding: 30px 20px 0 20px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     .el-button {
-      width: 100%;
+      width: 80%;
     }
     .el-button {
       margin: 0 0 20px 0;

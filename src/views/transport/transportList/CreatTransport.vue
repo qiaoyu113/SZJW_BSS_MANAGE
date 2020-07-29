@@ -1062,6 +1062,7 @@ export default class extends Vue {
       }
     }
     .orderBox .el-row{
+      margin-top: 10px;
       max-height: 40vh;
       overflow-y: scroll;
       .boxItem{
@@ -1131,6 +1132,7 @@ export default class extends Vue {
     font-size: 14px;
   }
   .btnGroup{
+    margin-top: 10px;
     width: 100%;
     .el-button + .el-button {
         margin-left: 0px;
