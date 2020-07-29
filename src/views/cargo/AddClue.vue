@@ -430,11 +430,11 @@ export default class extends Vue {
       { required: true, message: '请选择线索来源', trigger: 'change' }
     ],
     name: [
-      { required: true, message: '请输入姓名', trigger: 'blue' }
+      { required: true, message: '请输入姓名', trigger: 'change' }
     ],
     phone: [
-      { required: true, message: '请输入手机号', trigger: 'blue' },
-      { pattern: /^1\d{10}$/, message: '请输入正确格式的手机号', trigger: 'blue' }
+      { required: true, message: '请输入手机号', trigger: 'change' },
+      { pattern: /^1\d{10}$/, message: '请输入正确格式的手机号', trigger: 'change' }
     ],
     city: [
       { required: true, message: '请选择城市', trigger: 'change' }

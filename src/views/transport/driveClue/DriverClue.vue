@@ -1,5 +1,10 @@
 <template>
-  <div class="DriverClue">
+  <div
+    class="DriverClue"
+    :style="{
+      padding: isPC ? '15px' : '0px'
+    }"
+  >
     <suggest-container
       :tab="tab"
       :tags="tags"
@@ -14,7 +19,7 @@
       >
         <div
           slot="btn"
-          :class="isPC ? 'btnPc' : ''"
+          :class="isPC ? 'btnPc' : 'mobile'"
         >
           <el-button
             size="small"
@@ -787,7 +792,6 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import '@/styles/element-variables.scss';
   .DriverClue {
-    padding: 15px;
     .round {
       display: inline-block;
       padding: 1px 8px;
@@ -808,10 +812,14 @@ export default class extends Vue {
       flex-flow: row nowrap;
       justify-content: flex-end;
     }
-    .btnMobile {
-      margin-left: 0;
-      margin-top: 10px;
+    .mobile {
       width:100%;
+      text-align: center;
+      .btnMobile {
+        margin-left: 0;
+        margin-top: 10px;
+        width:80%;
+      }
     }
   }
 </style>

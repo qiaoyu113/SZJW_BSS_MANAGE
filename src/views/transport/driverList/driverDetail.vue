@@ -2,6 +2,9 @@
   <div class="driverDetail">
     <el-card
       class="baseInfo"
+      :style="{
+        margin: isPC ? '15px' :'0px'
+      }"
       shadow="never"
     >
       <self-form
@@ -67,7 +70,7 @@ import TransportInfo from './components/transportInfo.vue'
 import bidInfo from './components/bidInfo.vue'
 import AccountInfo from './components/accountInfo.vue'
 import { GetDriverDetail, DriverFollowFormation, driverDetailToCarrierInfo, driverDetailToOrderInfo } from '@/api/driver'
-import { Location, Route } from 'vue-router'
+import { SettingsModule } from '@/store/modules/settings'
 
 interface IState {
     [key: string]: any;
@@ -251,12 +254,13 @@ export default class extends Vue {
       console.log(`orderInfo info fail:${err}`)
     }
   }
+  get isPC() {
+    return SettingsModule.isPC
+  }
 }
 </script>
 <style lang="scss" scoped>
-  .baseInfo {
-    margin: 20px;
-  }
+
 </style>
 
 <style scoped>
@@ -267,6 +271,6 @@ export default class extends Vue {
   .baseInfo >>> .el-form-item__label {
     color: #303133;
     font-size:14px;
-    font-weight: 400;
+    /* font-weight: 400; */
   }
 </style>

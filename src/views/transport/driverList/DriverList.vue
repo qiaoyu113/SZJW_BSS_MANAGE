@@ -1,5 +1,10 @@
 <template>
-  <div class="DriverList">
+  <div
+    class="DriverList"
+    :style="{
+      padding: isPC ? '15px' : '0px'
+    }"
+  >
     <suggest-container
       :tab="tab"
       :tags="tags"
@@ -14,7 +19,7 @@
       >
         <div
           slot="btn1"
-          :class="isPC ? 'btnPc' : ''"
+          :class="isPC ? 'btnPc' : 'mobile'"
         >
           <el-button
             type="primary"
@@ -864,17 +869,20 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .DriverList {
-    padding: 15px;
     .btnPc {
       display: flex;
       flex-flow: row nowrap;
       justify-content: flex-end;
       width: 100%;
     }
-    .btnMobile {
-      margin-left: 0;
-      margin-top: 10px;
+    .mobile {
       width:100%;
+      text-align: center;
+    }
+    .btnMobile {
+       margin-left: 0;
+       margin-top: 10px;
+       width:80%;
     }
   }
 </style>

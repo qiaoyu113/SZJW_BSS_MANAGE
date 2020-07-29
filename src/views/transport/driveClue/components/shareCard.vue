@@ -5,6 +5,7 @@
       :list-query="listQuery"
       :form-item="formItem"
       label-width="100px"
+      :is-block="true"
       :pc-col="12"
     >
       <template v-slot:interviewAddress="{row}">

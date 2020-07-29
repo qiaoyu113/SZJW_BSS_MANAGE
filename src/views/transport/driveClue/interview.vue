@@ -1,5 +1,10 @@
 <template>
-  <div class="interview">
+  <div
+    class="interview"
+    :style="{
+      padding: isPC ? '15px' :'0px'
+    }"
+  >
     <el-card shadow="never">
       <div
         slot="header"
@@ -66,14 +71,14 @@
       <!-- 面试信息 -->
       <template v-else-if="active ===1">
         <special-interview
-          v-if="String(listQuery.busiType) ==='0'"
+          v-if="String(listQuery.busiType) ==='0' && Object.keys(form).length > 0"
           ref="specialInterview"
           :form="listQuery"
           :obj="form"
           @onFinish="handleStepFinish"
         />
         <share-interview
-          v-else-if="String(listQuery.busiType) ==='1'"
+          v-else-if="String(listQuery.busiType) ==='1' && Object.keys(form).length > 0"
           ref="shareInterview"
           :form="listQuery"
           :obj="form"
@@ -442,7 +447,6 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .interview {
-    padding: 20px;
    .header {
      .name {
        font-weight: bold;

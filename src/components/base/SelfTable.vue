@@ -1,5 +1,10 @@
 <template>
-  <div class="selfTable">
+  <div
+    class="selfTable"
+    :style="{
+      padding: isPC ? '0px 30px' :'0px'
+    }"
+  >
     <el-table
       ref="multipleTable"
       :row-style="{height: '20px'}"
@@ -164,7 +169,6 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .selfTable{
-    padding: 0px 30px;
     /*height:calc(100vh - 330px);*/
     background: #FFFFFF;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
