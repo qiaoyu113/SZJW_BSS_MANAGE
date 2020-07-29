@@ -544,7 +544,17 @@ $color: #2194e0;
   -webkit-background-size: cover;
   background-size: cover;
   overflow: hidden;
+  .logo {
+    width: 100%;
+    height: 28vh;
+    background: url("https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/a6ce085a5d6e425295ab487097e9cd3a")
+      no-repeat;
+    -webkit-background-size: cover;
+    background-size: cover;
+  }
   .login-form {
+    padding: 0 20px;
+    box-sizing: border-box;
     .wrapper {
       display: block;
       position: relative;
@@ -564,15 +574,6 @@ $color: #2194e0;
       margin: auto;
       background: #2f448a;
       border-radius: 10px;
-    }
-    .logo {
-      width: 100%;
-      height: 28vh;
-      background: url("https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/a6ce085a5d6e425295ab487097e9cd3a")
-        no-repeat;
-      -webkit-background-size: cover;
-      background-size: cover;
-      overflow: hidden;
     }
     .login-form {
       width: 100%;

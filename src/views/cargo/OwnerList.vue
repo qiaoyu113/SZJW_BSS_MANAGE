@@ -79,13 +79,13 @@
             label="序号"
             :index="indexMethod('listQuery')"
             align="center"
-            fixed
+            :fixed="isPC"
           />
           <el-table-column
             v-if="checkList.indexOf('货主编号') > -1"
             :key="checkList.length + 'a'"
+            :fixed="isPC"
             align="left"
-            fixed
             label="货主编号"
           >
             <template slot-scope="scope">
@@ -234,7 +234,7 @@
             :width="isPC ? 'auto' : '50'"
           >
             <template slot-scope="scope">
-              <el-dropdown>
+              <el-dropdown :trigger="isPC ? 'hover' : 'click'">
                 <span
                   v-if="isPC"
                   class="el-dropdown-link"
