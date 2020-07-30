@@ -1,8 +1,13 @@
 <template>
-  <div class="editDriver">
-    <el-card
-      header="基础信息"
-      shadow="never"
+  <div
+    class="editDriver"
+    :class="{
+      p15: isPC
+    }"
+  >
+    <SectionContainer
+      title="基础信息"
+      :md="true"
     >
       <self-form
         ref="editDriver"
@@ -33,14 +38,14 @@
           </el-button>
         </div>
       </self-form>
-    </el-card>
+    </SectionContainer>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
-
+import SectionContainer from '@/components/SectionContainer/index.vue'
 import { EditDriverInfo, driverDetailByDriverId } from '@/api/driver'
 import { phoneReg } from '@/utils/index.ts'
 
@@ -51,11 +56,14 @@ interface IState {
 @Component({
   name: 'EditDriver',
   components: {
-    SelfForm
+    SelfForm,
+    SectionContainer
   }
 })
 export default class extends Vue {
+  // 司机id
   private driverId:string = ''
+  // 表单对象
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -65,7 +73,7 @@ export default class extends Vue {
     workCity: '',
     workCityName: ''
   }
-
+  // 表单数组
   private formItem:any[] = [
     {
       type: 1,
@@ -133,6 +141,10 @@ export default class extends Vue {
       type: 'btn1'
     }
   ]
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
   /**
    * 校验手机号
    */
@@ -142,6 +154,7 @@ export default class extends Vue {
     }
     callback()
   }
+  // 校验规则
   private rules:IState = {
     name: [
       { required: true, message: '请输入姓名', trigger: 'blur' }
@@ -155,15 +168,6 @@ export default class extends Vue {
     ]
   }
 
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
-  mounted() {
-    this.driverId = (this.$route as any).query.id
-    this.getDriverInfoByDriverId()
-  }
   /**
    *获取司机信息
    */
@@ -229,16 +233,20 @@ export default class extends Vue {
       console.log('edit save fail:', err)
     }
   }
+  mounted() {
+    this.driverId = (this.$route as any).query.id
+    this.getDriverInfoByDriverId()
+  }
 }
 </script>
 <style lang="scss" scoped>
   .editDriver {
-    padding: 20px;
     .btnPc {
       margin-top:200px;
       display: flex;
       flex-flow: row nowrap;
       width: 100%;
+      justify-content: flex-end;
     }
     .btnMobile {
       margin-left: 0;
@@ -246,10 +254,17 @@ export default class extends Vue {
       width:100%;
     }
   }
+
 </style>
 
 <style scoped>
   .editDriver >>> .el-card__header {
     font-weight:bold;
+  }
+  @media screen and (max-width: 700px){
+    .editDriver >>> .selfForm {
+      margin-left:0px!important;
+      margin-right:0px!important;
+    }
   }
 </style>

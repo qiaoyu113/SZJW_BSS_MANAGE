@@ -168,11 +168,13 @@
             :key="checkList.length+ 'right'"
             label="操作"
             fixed="right"
-            :width="isPC ? 'auto' : '50'"
+            :width="isPC ? '100' : '50'"
             show-overflow-tooltip
           >
             <template slot-scope="{row}">
-              <el-dropdown>
+              <el-dropdown
+                :trigger="isPC ? 'hover' : 'click'"
+              >
                 <span
                   v-if="isPC"
                   class="el-dropdown-link"
@@ -703,16 +705,16 @@ export default class extends Vue {
     }
   }
 }
-.btn-item,
-.btn-item-m {
-  margin: 0 10px;
+.BuyCarType,
+.BuyCarType-m{
+  .btn-item,
+  .btn-item-m {
+    margin: 0 10px;
+  }
+  .btn-item-filtrate,
+  .btn-item-filtrate-m {
+    background-color: $assist-btn;
+    border-color: $assist-btn;
+  }
 }
-.btn-item-filtrate,
-.btn-item-filtrate-m {
-  background-color: $assist-btn;
-  border-color: $assist-btn;
-}
-</style>
-<style scoped>
-
 </style>

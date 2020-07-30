@@ -253,7 +253,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    v-permission="['/v1/customer/customerInfo']"
+                    v-permission="['/v1/customer/onlyCustomerInfo']"
                     @click.native="goDetail(scope.row.customerId)"
                   >
                     详情
@@ -384,7 +384,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfTable from '@/components/base/SelfTable.vue'
+import SelfTable from '@/components/Base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { OwnerListForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
@@ -492,23 +492,16 @@ export default class extends Vue {
       })
     }
 
-    created() {
-      this.fetchData()
-    }
-
-    mounted() {}
-
-    activated() {
-    // this.handleScroll()
-    }
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
     }
+
+    // table列表高度适配
     get tableHeight() {
       return SettingsModule.tableHeight
     }
+
     // 确认清除
     private confirm(done:any) {
       if (this.showDialog.name === '1') {
@@ -520,6 +513,7 @@ export default class extends Vue {
       }
       done()
     }
+
     // 所有请求方法
     private fetchData() {
       this.getList(this.listQuery)
@@ -596,7 +590,7 @@ export default class extends Vue {
 
     // 跳转线索
     private goClue(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'EditCustomer', query: { id: id, info: 'edit' } })
+      this.$router.push({ name: 'EditCustomer', query: { id: id } })
     }
 
     // 批量操作
@@ -635,7 +629,7 @@ export default class extends Vue {
     }
 
     // table选择框
-    handleSelectionChange(val: any) {
+    private handleSelectionChange(val: any) {
       this.multipleSelection = val
     }
 
@@ -673,12 +667,14 @@ export default class extends Vue {
           message: '请先选择货主再进行操作！'
         })
       }
-    // done()
+      done()
     }
+
     // 弹窗表格选中
     private handleSelectionDialog(val: any) {
       this.saleId = val
     }
+
     // table index
     private indexMethod(type: string) {
       let page: number, limit: number
@@ -705,6 +701,17 @@ export default class extends Vue {
     // 截取备注
     private splice(value: any) {
       return value.slice(0, 16)
+    }
+
+    // 生命周期
+    created() {
+      this.fetchData()
+    }
+
+    activated() {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
     }
 }
 </script>

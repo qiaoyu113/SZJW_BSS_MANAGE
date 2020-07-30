@@ -1,5 +1,5 @@
 <template>
-  <div class="followClue">
+  <div :class="isPC ? 'followClue' : 'followClue-m'">
     <!-- 基本信息 -->
     <el-card shadow="never">
       <div
@@ -7,6 +7,7 @@
         class="card_header"
       >
         <div class="left">
+          <span class="title_left_border" />
           <span class="text">基本信息</span>
           <span class="status">{{ baseForm.busiType === 1 ? '共享':'专车' }}</span>
         </div>
@@ -31,79 +32,59 @@
       <el-row class="card_body">
         <el-col
           :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
         >
-          <p class="title">
-            姓名
-          </p>
-          <p class="text">
-            {{ baseForm.name | DataIsNull }}
-          </p>
+          <DetailItem
+            name="姓名"
+            :value="baseForm.name | DataIsNull"
+          />
         </el-col>
         <el-col
           :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
         >
-          <p class="title">
-            电话
-          </p>
-          <p class="text">
-            {{ baseForm.phone | DataIsNull }}
-          </p>
+          <DetailItem
+            name="电话"
+            :value="baseForm.phone | DataIsNull"
+          />
         </el-col>
         <el-col
           :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
         >
-          <p class="title">
-            城市
-          </p>
-          <p class="text">
-            {{ baseForm.workCityName | DataIsNull }}
-          </p>
+          <DetailItem
+            name="城市"
+            :value="baseForm.workCityName | DataIsNull"
+          />
         </el-col>
         <el-col
           :span="isPC ? 6 :24"
-          :class="isPC ? 'borderBottom' :''"
         >
-          <p class="title">
-            车型
-          </p>
-          <p class="text">
-            {{ baseForm.carTypeName | DataIsNull }}
-          </p>
+          <DetailItem
+            name="车型"
+            :value="baseForm.carTypeName | DataIsNull"
+          />
         </el-col>
         <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            来源
-          </p>
-          <p class="text">
-            {{ baseForm.sourceChannelName | DataIsNull }}
-          </p>
+          <DetailItem
+            name="来源"
+            :value="baseForm.sourceChannelName | DataIsNull"
+          />
         </el-col>
         <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            微信号
-          </p>
-          <p class="text">
-            {{ baseForm.wechatNo | DataIsNull }}
-          </p>
+          <DetailItem
+            name="微信号"
+            :value="baseForm.wechatNo | DataIsNull"
+          />
         </el-col>
         <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            业务线
-          </p>
-          <p class="text">
-            {{ baseForm.busiType === 0 ? '专车' : baseForm.busiType === 1? '共享':'暂无数据' }}
-          </p>
+          <DetailItem
+            name="业务线"
+            :value="baseForm.busiType === 0 ? '专车' : baseForm.busiType === 1? '共享':'暂无数据'"
+          />
         </el-col>
         <el-col :span="isPC ? 6 :24">
-          <p class="title">
-            当前跟进人
-          </p>
-          <p class="text">
-            {{ baseForm.gmName | DataIsNull }}
-          </p>
+          <DetailItem
+            name="当前跟进人"
+            :value="baseForm.gmName | DataIsNull"
+          />
         </el-col>
       </el-row>
     </el-card>
@@ -122,6 +103,7 @@
         class="card_header"
       >
         <div class="left">
+          <span class="title_left_border" />
           <span class="text">跟进记录</span>
         </div>
         <div class="right">
@@ -190,7 +172,9 @@
           v-for="(item,idx) in followLists"
           :key="idx"
           class="item"
-          :style="{borderBottom: idx !== (followLists.length -1) ? '1px solid #E8E8E8' :''}"
+          :class="{
+            borderBottom: idx !== (followLists.length -1)
+          }"
         >
           <div class="left">
             <h4 class="title">
@@ -231,10 +215,11 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import ClueDistribution from './components/clueDistribution.vue'
-import InterviewCard from './components/interviewCard.vue'
-import FollowByPhoneOrWechat from './components/followByPhoneOrWechat.vue'
-import InviteInterview from './components/inviteInterview.vue'
+import ClueDistribution from './components/ClueDistribution.vue'
+import InterviewCard from './components/InterviewCard.vue'
+import FollowByPhoneOrWechat from './components/FollowByPhoneOrWechat.vue'
+import InviteInterview from './components/InviteInterview.vue'
+import DetailItem from '@/components/DetailItem/index.vue'
 import { ClueFollowList, GetClueDetailByClueId, GetInterviewDetail } from '@/api/driver'
 @Component({
   name: 'FollowClue',
@@ -242,13 +227,17 @@ import { ClueFollowList, GetClueDetailByClueId, GetInterviewDetail } from '@/api
     ClueDistribution,
     InterviewCard,
     FollowByPhoneOrWechat,
-    InviteInterview
+    InviteInterview,
+    DetailItem
   }
 })
 export default class extends Vue {
+  // 线索id
   private id:string|number = ''
-  private type:number = 0
-  private followLists:any[] = []
+  private type:number = 0 // 线索跟进的类型
+  private followLists:any[] = [] // 线索跟进记录列表
+
+  // 司机线索信息表单
   private baseForm:any = {
     name: '',
     phone: '',
@@ -261,18 +250,12 @@ export default class extends Vue {
     statusName: '',
     existInterviewData: false
   }
+
+  // 面试表信息
   private interviewObj:any = {}
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
-  }
-
-  mounted() {
-    this.id = (this.$route.query.id) as string | number
-    if (this.id) {
-      this.getClueRecords()
-      this.getClueDetailByClueId()
-    }
   }
 
   /**
@@ -360,12 +343,110 @@ export default class extends Vue {
       }
     })
   }
+  mounted() {
+    this.id = (this.$route.query.id) as string | number
+    if (this.id) {
+      this.getClueRecords()
+      this.getClueDetailByClueId()
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
   $bgColor:#649CEE;
+  .borderBottom {
+    border-bottom:1px solid #E8E8E8;
+  }
   .followClue {
     padding: 20px;
+    .card_header {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      align-items: center;
+      .left {
+        .text {
+          font-weight:500;
+          font-size: 16px;
+          color: #4A4A4A;
+        }
+        .status {
+          margin-left:10px;
+          background: $bgColor;
+          color:#fff;
+          padding: 3px;
+          font-size:12px;
+          border-radius: 5px;
+        }
+      }
+    }
+    .card_body {
+      .title {
+        margin:3px;
+        font-size:12px;
+        color:#999;
+      }
+      .text {
+        margin:3px;
+        font-size:14px;
+        color:#000;
+        font-weight:bold;
+      }
+      .borderBottom {
+        margin-bottom:5px;
+        padding-bottom: 5px;
+        border-bottom:1px solid #E0E0E0;
+      }
+    }
+    ul {
+      margin: 0px;
+      list-style: none;
+      padding-left: 0px;
+      .item {
+        margin: 10px 0px;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        .left {
+          padding: 0px 10px;
+          h4 {
+            margin: 0px;
+            .tag {
+              padding: 2px 8px;
+              border-radius: 12px;
+              background: $bgColor;
+              color:#fff;
+              font-size:12px;
+            }
+            .time {
+              margin-left:10px;
+              color:#999;
+              font-size:12px;
+            }
+          }
+          .content {
+            margin: 15px 0px;
+            font-size:14px;
+            color:#000;
+            font-weight: bold;
+          }
+        }
+        .right {
+          .name {
+            color:#999;
+            font-size:12px;
+          }
+        }
+      }
+    }
+
+  }
+</style>
+
+<style lang="scss" scoped>
+  $bgColor:#649CEE;
+  .followClue-m {
     .card_header {
       display: flex;
       flex-flow: row nowrap;
@@ -411,12 +492,14 @@ export default class extends Vue {
       padding-left: 0px;
       .item {
         margin: 10px 0px;
+        padding:0 15px;
+        box-sizing: border-box;
         display: flex;
         flex-flow: row nowrap;
         justify-content: space-between;
         align-items: center;
         .left {
-          padding: 0px 10px;
+          padding: 0px;
           h4 {
             margin: 0px;
             .tag {
@@ -433,7 +516,7 @@ export default class extends Vue {
             }
           }
           .content {
-            margin: 5px 0px;
+            margin: 10px 0px;
             font-size:14px;
             color:#000;
             font-weight: bold;
@@ -462,5 +545,27 @@ export default class extends Vue {
   .followClue >>> .el-card__header,
   .followClue >>> .el-card__body {
     padding: 10px;
+    border: none;
+    border-bottom: 2px solid #F8F9FA;
+  }
+  .followClue >>> .el-card{
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    margin-bottom: 6px;
+    width: 100%;
+    background: #FFFFFF;
+    border: none;
+  }
+  .followClue-m >>> .el-card{
+    border: none;
+  }
+  .followClue-m >>> .el-card__header{
+    padding: 6px 10px;
+    border: none;
+    border-bottom: 2px solid #F8F9FA;
+  }
+  .followClue-m >>> .el-card__body {
+    padding: 0;
+    border: none;
+    border-bottom: 2px solid #F8F9FA;
   }
 </style>

@@ -114,6 +114,7 @@
               :md="true"
             >
               <self-form
+                v-if="showAddress"
                 :list-query="orderInfo"
                 :form-item="formItemOther"
                 label-width="140px"
@@ -191,7 +192,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { saveCarrierInfo, transportOrderList, transportOrderDetail, driverList } from '@/api/transport'
 import { GetDictionary, GetDictionaryList, GetOpenCityData, GetManagerLists, GetCityByCode } from '@/api/common'
 import '@/styles/common.scss'
@@ -341,6 +342,7 @@ export default class extends Vue {
       options: []
     }
   ]
+
   private async loadhouseAddress(node:any, resolve:any) {
     let params:string[] = []
     if (node.level === 0) {
@@ -358,6 +360,19 @@ export default class extends Vue {
       resolve(nodes)
     } catch (err) {
       resolve([])
+    }
+  }
+
+  // 地址级联选择器 回显问题
+  get showAddress() {
+    if (this.carrierId) {
+      if (this.orderInfo.address.length > 0) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return true
     }
   }
 
@@ -1047,6 +1062,7 @@ export default class extends Vue {
       }
     }
     .orderBox .el-row{
+      margin-top: 10px;
       max-height: 40vh;
       overflow-y: scroll;
       .boxItem{
@@ -1116,6 +1132,7 @@ export default class extends Vue {
     font-size: 14px;
   }
   .btnGroup{
+    margin-top: 10px;
     width: 100%;
     .el-button + .el-button {
         margin-left: 0px;

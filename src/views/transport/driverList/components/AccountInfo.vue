@@ -1,7 +1,10 @@
 <template>
   <div class="accountInfo">
     <dl v-if="Object.keys(listQuery).length > 0">
-      <dt>{{ listQuery.name }}</dt>
+      <dt>
+        <span class="title_left_border" />
+        {{ listQuery.name }}
+      </dt>
       <dd>
         <el-row :class="isPC ? 'flex' :''">
           <el-col :span="isPC ? 11 : 24">
@@ -51,7 +54,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 interface IState {
     [key: string]: any;
@@ -97,7 +100,7 @@ export default class extends Vue {
        type: 'detail'
      }
    ]
-
+   // 区分设备
    get isPC() {
      return SettingsModule.isPC
    }
@@ -153,4 +156,52 @@ export default class extends Vue {
       height:100px;
     }
   }
+</style>
+<style scoped>
+ @media screen and (max-width:700px) {
+    .accountInfo >>> .selfForm {
+      padding: 0px;
+    }
+    .accountInfo >>> .el-form-item {
+      width: 100%;
+      padding: 10px 14px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      border-bottom: 1px solid #F8F9FA;
+    }
+    .accountInfo >>> .el-form-item__label {
+      width: 100%!important;
+      font-size: 12px!important;
+      line-height: 13px;
+      color: #666;
+      font-weight: 400;
+      text-align: left;
+      padding-right: 15px;
+      padding-bottom: 10px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .accountInfo >>> .el-form-item__content {
+      width: 100%;
+      font-size: 14px;
+      font-weight: 400;
+      color: #252525;
+      line-height: 16px;
+    }
+    .accountInfo >>> dl {
+      margin: 0px;
+    }
+    .accountInfo >>> dt {
+      width: 100%;
+      height: 45px!important;
+      line-height: 40px;
+      font-size: 15px;
+      color: #4A4A4A;
+      font-weight: 500;
+      position: relative;
+      padding: 0 20px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+ }
 </style>

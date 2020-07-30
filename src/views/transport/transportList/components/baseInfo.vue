@@ -27,7 +27,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 
 @Component({
   name: 'baseInfo',

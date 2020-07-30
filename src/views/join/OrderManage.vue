@@ -448,7 +448,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfTable from '@/components/base/SelfTable.vue'
+import SelfTable from '@/components/Base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { OrderManageForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
@@ -600,18 +600,6 @@ export default class extends Vue {
 
     @Watch('checkList', { deep: true })
     private checkListChange(val:any) {
-      this.$nextTick(() => {
-        ((this.$refs['multipleTable']) as any).doLayout()
-      })
-    }
-
-    created() {
-      this.fetchData()
-    }
-
-    mounted() {}
-
-    activated() {
       this.$nextTick(() => {
         ((this.$refs['multipleTable']) as any).doLayout()
       })
@@ -818,6 +806,7 @@ export default class extends Vue {
       }
     }
 
+    // 下载
     private download(data: any, name: any) {
       if (!data) {
         return
@@ -829,6 +818,17 @@ export default class extends Vue {
       link.setAttribute('download', name)
       document.body.appendChild(link)
       link.click()
+    }
+
+    // 生命周期
+    created() {
+      this.fetchData()
+    }
+
+    activated() {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
     }
 }
 </script>

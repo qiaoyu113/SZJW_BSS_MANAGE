@@ -6,6 +6,7 @@
         :key="item.orderId"
       >
         <dt class="title">
+          <span class="title_left_border" />
           订单编号:{{ item.orderId | DataIsNull }}
         </dt>
         <dd>
@@ -14,6 +15,8 @@
             :list-query="item"
             :form-item="formItem"
             label-width="80px"
+            :m-block="true"
+            :pc-block="true"
           >
             <template v-slot:cooperationModel="{row}">
               <span v-if="row.cooperationModel ===1">购车</span>
@@ -51,7 +54,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 
 interface IState {
     [key: string]: any;
@@ -65,45 +68,44 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => [] }) lists!:IState[]
 
+  /**
+   *表单数组
+   */
   private formItem:any[] = [
     {
       type: 7,
       key: 'busiTypeName',
-      label: '商品分类:'
+      label: '商品分类'
     },
     {
       type: 'cooperationModel',
       slot: true,
-      label: '合作模式:'
+      label: '合作模式'
     },
     {
       type: 7,
       key: 'cooperationCarName',
-      label: '合作车型:'
+      label: '合作车型'
     },
     {
-      key: 'cooperationTime',
       type: 'cooperationTime',
-      label: '合作期限:',
+      label: '合作期限',
       slot: true
     },
     {
-      key: 'goodsAmount',
       type: 'goodsAmount',
-      label: '订单金额:',
+      label: '订单金额',
       slot: true
     },
     {
-      key: 'rake',
       type: 'rake',
-      label: '抽佣比列:',
+      label: '抽佣比列',
       slot: true
     },
     {
-      key: 'payCompleteTime',
       type: 'payCompleteTime',
       slot: true,
-      label: '支付时间:'
+      label: '支付时间'
     },
     {
       slot: true,
@@ -135,4 +137,67 @@ export default class extends Vue {
       height:100px;
     }
   }
+</style>
+
+<style scoped>
+ @media screen and (max-width:700px) {
+    .orderInfo >>> .selfForm {
+      padding: 0px;
+    }
+    .orderInfo >>> .el-form-item {
+      width: 100%;
+      padding: 10px 14px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      border-bottom: 1px solid #F8F9FA;
+    }
+    .orderInfo >>> .el-form-item__label {
+      width: 100%!important;
+      font-size: 12px!important;
+      line-height: 13px;
+      color: #666;
+      font-weight: 400;
+      text-align: left;
+      padding-right: 15px;
+      padding-bottom: 10px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .orderInfo >>> .el-form-item__content {
+      width: 100%;
+      font-size: 14px;
+      font-weight: 400;
+      color: #252525;
+      line-height: 16px;
+    }
+    .orderInfo >>> dl {
+      margin: 0px;
+    }
+    .orderInfo >>> dt {
+      width: 100%;
+      height: 45px!important;
+      line-height: 40px;
+      font-size: 15px;
+      color: #4A4A4A;
+      font-weight: 500;
+      position: relative;
+      padding: 0 20px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+ }
+ @media screen and (min-width: 700px){
+   .orderInfo >>> .el-form-item__label {
+    font-size: 13px!important;
+    color: #9e9e9e!important;
+    font-weight: 400;
+    padding-right: 16px;
+  }
+  .orderInfo >>> .el-form-item__content span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 700;
+      overflow-wrap: break-word;
+  }
+ }
 </style>

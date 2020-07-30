@@ -1,20 +1,20 @@
 import request from '@/utils/request'
 const ptrfix = '/line'
 
+// 获取司机详情
 export const GetDriverDetail = (id: number, params: any) =>
   request({
     url: '/api/driver/driver/detail',
     method: 'get',
     params
   })
-
+// 获取司机列表
 export const GetDriverList = (data: any) =>
   request({
     url: '/api/bss/v1/bss/driver/selectListByKey',
     method: 'post',
     data
   })
-
 // 线索列表
 export const GetClueList = (data: any) =>
   request({
@@ -70,6 +70,7 @@ export const IsFollowClue = (data: any) =>
     method: 'post',
     data
   })
+// 获取线路详情
 export const GetLineDetail = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/detail`,
@@ -223,6 +224,14 @@ export const pictureDetail = (params: any) =>
 export const GetOwnerDetail = (params: any) =>
   request({
     url: '/line/v1/customer/customerInfo',
+    method: 'get',
+    params
+  })
+
+// 获取线索详情
+export const GetLineClueInfo = (params: any) =>
+  request({
+    url: '/line/v1/line/clue/lineClueInfo',
     method: 'get',
     params
   })

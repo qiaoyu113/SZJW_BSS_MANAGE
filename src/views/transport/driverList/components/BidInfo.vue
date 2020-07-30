@@ -6,6 +6,7 @@
         :key="item.code"
       >
         <dt class="title">
+          <span class="title_left_border" />
           标书编号:{{ item.code }}
         </dt>
         <dd>
@@ -37,7 +38,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 
 interface IState {
     [key: string]: any;
@@ -77,4 +78,52 @@ export default class extends Vue {
       height:100px;
     }
   }
+</style>
+<style scoped>
+ @media screen and (max-width:700px) {
+    .bidInfo >>> .selfForm {
+      padding: 0px;
+    }
+    .bidInfo >>> .el-form-item {
+      width: 100%;
+      padding: 10px 14px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      border-bottom: 1px solid #F8F9FA;
+    }
+    .bidInfo >>> .el-form-item__label {
+      width: 100%!important;
+      font-size: 12px!important;
+      line-height: 13px;
+      color: #666;
+      font-weight: 400;
+      text-align: left;
+      padding-right: 15px;
+      padding-bottom: 10px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .bidInfo >>> .el-form-item__content {
+      width: 100%;
+      font-size: 14px;
+      font-weight: 400;
+      color: #252525;
+      line-height: 16px;
+    }
+    .bidInfo >>> dl {
+      margin: 0px;
+    }
+    .bidInfo >>> dt {
+      width: 100%;
+      height: 45px!important;
+      line-height: 40px;
+      font-size: 15px;
+      color: #4A4A4A;
+      font-weight: 500;
+      position: relative;
+      padding: 0 20px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+ }
 </style>

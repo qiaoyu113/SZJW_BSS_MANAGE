@@ -20,7 +20,10 @@
         slot="header"
         class="header"
       >
-        <div>跟进记录</div>
+        <div>
+          <span class="title_left_border" />
+          跟进记录
+        </div>
         <div>
           <el-dropdown @command="handleCommand">
             <el-button type="primary">
@@ -55,9 +58,9 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
-import FollowDialog from './components/followDialog.vue'
-import FollowItem from './components/followItem.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
+import FollowDialog from './components/FollowDialog.vue'
+import FollowItem from './components/FollowItem.vue'
 import { DriverFollowFormation } from '@/api/driver'
 interface IState {
     [key: string]: any;
@@ -71,7 +74,9 @@ interface IState {
   }
 })
 export default class extends Vue {
+  // 司机id
   private driverId:number|string = ''
+  // 表单对象
   private listQuery:IState = {
     name: '',
     code: '',
@@ -81,7 +86,7 @@ export default class extends Vue {
     group: '',
     manager: ''
   }
-
+  // 表单数组
   private formItem:any[] = [
     {
       type: 7,
@@ -133,13 +138,11 @@ export default class extends Vue {
     }
 
   ]
+  // 跟进列表信息
   lists:any[] = []
+  // 司机跟进类型
   private type:string = ''
 
-  mounted() {
-    this.driverId = (this.$route as any).query.id
-    this.getDriverFollow()
-  }
   /**
    *司机跟进信息
    */
@@ -165,6 +168,10 @@ export default class extends Vue {
     this.type = val;
     (this.$refs.followDialog as any).openDialog()
   }
+  mounted() {
+    this.driverId = (this.$route as any).query.id
+    this.getDriverFollow()
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -185,6 +192,11 @@ export default class extends Vue {
 </style>
 
 <style scoped>
+  @media screen and (max-width: 700px){
+    .followDriver >>> .el-card  {
+      margin: 0px;
+    }
+  }
   .followDriver >>> .el-form-item {
     margin-bottom: 0px;
   }

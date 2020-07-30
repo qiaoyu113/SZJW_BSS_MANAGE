@@ -299,7 +299,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfTable from '@/components/base/SelfTable.vue'
+import SelfTable from '@/components/Base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { ContractListForm } from './components'
 import { SettingsModule } from '@/store/modules/settings'
@@ -412,26 +412,16 @@ export default class extends Vue {
       })
     }
 
-    created() {
-      this.fetchData()
-    }
-
-    mounted() {}
-
-    activated() {
-      this.$nextTick(() => {
-        ((this.$refs['multipleTable']) as any).doLayout()
-      })
-    }
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
     }
 
+    // 获取table高度
     get tableHeight() {
       return SettingsModule.tableHeight
     }
+
     // 确认激活
     private async confirm(done:any) {
       const { data } = await ActiveContract({ contractId: this.ActivateId })
@@ -571,6 +561,8 @@ export default class extends Vue {
         this.$message.error('请选择合同生成时间')
       }
     }
+
+    // 下载
     private download(data: any, name: any) {
       if (!data) {
         return
@@ -582,6 +574,17 @@ export default class extends Vue {
       link.setAttribute('download', name)
       document.body.appendChild(link)
       link.click()
+    }
+
+    // 生命周期
+    created() {
+      this.fetchData()
+    }
+
+    activated() {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
     }
 }
 </script>

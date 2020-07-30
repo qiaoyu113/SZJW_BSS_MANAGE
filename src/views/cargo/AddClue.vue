@@ -1,4 +1,3 @@
-
 <template>
   <div
     v-loading="loading"
@@ -25,6 +24,7 @@
                 placeholder="请选择"
                 clearable
                 filterable
+                :disabled="optionsSale.length === 1"
               >
                 <el-option
                   v-for="(item, index) in optionsSale"
@@ -94,6 +94,7 @@
                 placeholder="请选择"
                 clearable
                 filterable
+                :disabled="optionsCity.length === 1"
               >
                 <el-option
                   v-for="(item, index) in optionsCity"
@@ -160,19 +161,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item v-if="!isEdit || (isEdit && details.clueState === 0)">
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
       </SectionContainer>
       <SectionContainer
         v-if="isEdit && details.clueState !== 0"
@@ -188,14 +176,10 @@
                 v-model="ruleForm.isFollowUp"
                 :disabled="details.clueState === 2"
               >
-                <el-radio
-                  :label="1"
-                >
+                <el-radio :label="1">
                   是
                 </el-radio>
-                <el-radio
-                  :label="2"
-                >
+                <el-radio :label="2">
                   否
                 </el-radio>
               </el-radio-group>
@@ -208,22 +192,20 @@
               :label="index === 0 ? '需求车型' : ''"
               :prop="'lineClueDemandForms.' + index + '.demandCarType'"
               :rules="{
-                required: true, validator: validateCar, trigger: 'blur'
+                required: true,
+                validator: validateCar,
+                trigger: 'blur'
               }"
             >
               <div
                 v-if="index === 0 && ruleForm.lineClueDemandForms.length < 4"
                 class="mb10"
               >
-                <el-button
-                  @click="addCar"
-                >
+                <el-button @click="addCar">
                   添加+
                 </el-button>
               </div>
-              <el-col
-                :span="isPC ? 6 : 18"
-              >
+              <el-col :span="isPC ? 6 : 18">
                 <el-select
                   v-model="item.demandCarType"
                   placeholder="请选择"
@@ -280,7 +262,10 @@
         >
           <el-col :span="12">
             <el-button
-              v-if="ruleForm.lineClueFollowForms.length < 10 && details.clueState !== 2"
+              v-if="
+                ruleForm.lineClueFollowForms.length < 10 &&
+                  details.clueState !== 2
+              "
               @click="addFollow"
             >
               添加跟进记录
@@ -317,7 +302,9 @@
                 :prop="'lineClueFollowForms.' + index + '.visitDate'"
                 label-width="80px"
                 :rules="{
-                  required: true, message: '请选择拜访时间', trigger: 'change'
+                  required: true,
+                  message: '请选择拜访时间',
+                  trigger: 'change'
                 }"
               >
                 <el-date-picker
@@ -326,6 +313,7 @@
                   type="datetime"
                   placeholder="选择日期时间"
                   clearable
+                  :editable="false"
                   value-format="yyyy-MM-dd HH:mm:ss"
                 />
               </el-form-item>
@@ -334,7 +322,9 @@
                 label-width="80px"
                 :prop="'lineClueFollowForms.' + index + '.visitAddress'"
                 :rules="{
-                  required: true, message: '请输入拜访地址', trigger: 'change'
+                  required: true,
+                  message: '请输入拜访地址',
+                  trigger: 'change'
                 }"
               >
                 <el-input
@@ -350,7 +340,9 @@
                 label-width="80px"
                 :prop="'lineClueFollowForms.' + index + '.visitRecord'"
                 :rules="{
-                  required: true, message: '请输入拜访记录', trigger: 'change'
+                  required: true,
+                  message: '请输入拜访记录',
+                  trigger: 'change'
                 }"
               >
                 <el-input
@@ -364,20 +356,18 @@
             </div>
           </el-col>
         </el-row>
-        <el-form-item>
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
       </SectionContainer>
+      <div class="btn_box">
+        <el-button
+          type="primary"
+          @click="submitForm('ruleForm')"
+        >
+          提交
+        </el-button>
+        <el-button @click="resetForm('ruleForm')">
+          重置
+        </el-button>
+      </div>
     </el-form>
   </div>
 </template>
@@ -389,7 +379,12 @@ import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 
 import { GetDictionaryList, GetManagerLists } from '@/api/common'
-import { GetLineClueDetail, SaveLineClue, EditLineClue, GetCustomerOff } from '@/api/cargo'
+import {
+  GetLineClueDetail,
+  SaveLineClue,
+  EditLineClue,
+  GetCustomerOff
+} from '@/api/cargo'
 
 import '@/styles/common.scss'
 @Component({
@@ -401,52 +396,52 @@ import '@/styles/common.scss'
 export default class extends Vue {
   private details: any = {};
   private loading: boolean = false;
-  private id: any = ''
+  private id: any = '';
   private isEdit: boolean = false; // 是否是编辑页面
-  private optionsCity: any = []
-  private optionsCar: any = []
-  private optionsSale: any = []
-  private optionsLineSource: any = []
-  private ruleForm:any = {
-    'address': '',
-    'city': '',
-    'clueId': '',
-    'clueSource': '',
-    'company': '',
-    'isFollowUp': '',
-    'lineClueDemandForms': [],
-    'lineClueFollowForms': [],
-    'lineSaleId': '',
-    'name': '',
-    'phone': '',
-    'position': '',
-    'remark': ''
-  }
-  private rules:any = {
+  private optionsCity: any = [];
+  private optionsCar: any = [];
+  private optionsSale: any = [];
+  private optionsLineSource: any = [];
+  private ruleForm: any = {
+    address: '',
+    city: '',
+    clueId: '',
+    clueSource: '',
+    company: '',
+    isFollowUp: '',
+    lineClueDemandForms: [],
+    lineClueFollowForms: [],
+    lineSaleId: '',
+    name: '',
+    phone: '',
+    position: '',
+    remark: ''
+  };
+  private rules: any = {
     isFollowUp: [
       { required: true, message: '请选择是否继续跟进', trigger: 'change' }
     ],
     clueSource: [
       { required: true, message: '请选择线索来源', trigger: 'change' }
     ],
-    name: [
-      { required: true, message: '请输入姓名', trigger: 'change' }
-    ],
+    name: [{ required: true, message: '请输入姓名', trigger: 'change' }],
     phone: [
       { required: true, message: '请输入手机号', trigger: 'change' },
-      { pattern: /^1\d{10}$/, message: '请输入正确格式的手机号', trigger: 'change' }
+      {
+        pattern: /^1\d{10}$/,
+        message: '请输入正确格式的手机号',
+        trigger: 'change'
+      }
     ],
-    city: [
-      { required: true, message: '请选择城市', trigger: 'change' }
-    ]
-  }
+    city: [{ required: true, message: '请选择城市', trigger: 'change' }]
+  };
 
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
-
-  private validateCar(rule:any, value:any, callback:any) {
+  // 车型&车型数量表单验证
+  private validateCar(rule: any, value: any, callback: any) {
     const index = rule.field.split('.')[1]
     const item = this.ruleForm.lineClueDemandForms[index]
     if (!item.demandCarType) {
@@ -459,7 +454,8 @@ export default class extends Vue {
     }
     callback()
   }
-  private submitForm(formName:any) {
+  // 提交表单
+  private submitForm(formName: any) {
     (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
         this.loading = true
@@ -481,7 +477,8 @@ export default class extends Vue {
         if (data.success) {
           this.$message.success(successMsg);
           (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-          (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+          (TagsViewModule as any).delCachedView({
+            // 删除指定页面缓存（进行刷新操作）
             name: 'ClueList'
           })
           this.$nextTick(() => {
@@ -494,28 +491,31 @@ export default class extends Vue {
     })
   }
 
-  private resetForm(formName:any) {
+  private resetForm(formName: any) {
     (this.$refs[formName] as any).resetFields()
-    this.ruleForm['lineClueDemandForms'] = this.details.clueState !== 0 ? [
-      {
-        'demandCarType': '',
-        'demandNo': ''
-      }
-    ] : []
+    this.ruleForm['lineClueDemandForms'] =
+      this.details.clueState !== 0
+        ? [
+          {
+            demandCarType: '',
+            demandNo: ''
+          }
+        ]
+        : []
     const list = this.ruleForm['lineClueFollowForms'].filter((a: any) => a.id)
     if (list.length > 0) {
       this.ruleForm['lineClueFollowForms'] = list
     } else if (this.details.clueState !== 0) {
       this.ruleForm['lineClueFollowForms'] = [
         {
-          'visitAddress': '',
-          'visitDate': '',
-          'visitRecord': ''
+          visitAddress: '',
+          visitDate: '',
+          visitRecord: ''
         }
       ]
     }
   }
-  private removeCar(index:number) {
+  private removeCar(index: number) {
     this.ruleForm.lineClueDemandForms.splice(index, 1)
   }
   // 获取销售
@@ -525,6 +525,9 @@ export default class extends Vue {
     })
     if (data.success) {
       this.optionsSale = data.data
+      if (this.optionsSale.length === 1) {
+        this.ruleForm.lineSaleId = Number(this.optionsSale[0].id)
+      }
     } else {
       this.$message.error(data)
     }
@@ -535,6 +538,9 @@ export default class extends Vue {
       // console.log(data.data)
       const list = data.data
       this.optionsCity = list
+      if (this.optionsCity.length === 1) {
+        this.ruleForm.city = Number(this.optionsCity[0].code)
+      }
     } else {
       this.$message.error(data)
     }
@@ -542,19 +548,19 @@ export default class extends Vue {
   private addCar() {
     // console.log('添加车型')
     this.ruleForm.lineClueDemandForms.push({
-      'demandCarType': '',
-      'demandNo': ''
+      demandCarType: '',
+      demandNo: ''
     })
   }
-  private removeFollow(index:number) {
+  private removeFollow(index: number) {
     this.ruleForm.lineClueFollowForms.splice(index, 1)
   }
   private addFollow() {
     // console.log('添加车型')
     this.ruleForm.lineClueFollowForms.push({
-      'visitAddress': '',
-      'visitDate': '',
-      'visitRecord': ''
+      visitAddress: '',
+      visitDate: '',
+      visitRecord: ''
     })
   }
 
@@ -569,7 +575,19 @@ export default class extends Vue {
       const detail = data.data
       this.details = data.data
       const {
-        address, city, clueId, clueSource, company, lineClueFollowVos, lineClueDemandVos, isTransform, lineSaleId, name, phone, position, remark
+        address,
+        city,
+        clueId,
+        clueSource,
+        company,
+        lineClueFollowVos,
+        lineClueDemandVos,
+        isTransform,
+        lineSaleId,
+        name,
+        phone,
+        position,
+        remark
       } = detail
 
       if (lineClueFollowVos && lineClueFollowVos.length > 0) {
@@ -577,8 +595,8 @@ export default class extends Vue {
       } else if (this.details.clueState !== 0) {
         this.ruleForm.lineClueFollowForms = [
           {
-            'demandCarType': '',
-            'demandNo': ''
+            demandCarType: '',
+            demandNo: ''
           }
         ]
       }
@@ -587,9 +605,9 @@ export default class extends Vue {
       } else if (this.details.clueState !== 0) {
         this.ruleForm.lineClueDemandForms = [
           {
-            'visitAddress': '',
-            'visitDate': '',
-            'visitRecord': ''
+            visitAddress: '',
+            visitDate: '',
+            visitRecord: ''
           }
         ]
       }
@@ -609,7 +627,10 @@ export default class extends Vue {
     }
   }
   private async getDictionaryList() {
-    const { data } = await GetDictionaryList(['Intentional_compartment', 'line_clue_source'])
+    const { data } = await GetDictionaryList([
+      'Intentional_compartment',
+      'line_clue_source'
+    ])
     if (data.success) {
       this.optionsCar = data.data.Intentional_compartment
       this.optionsLineSource = data.data.line_clue_source
@@ -635,76 +656,88 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.el-select,
-.el-date-editor{
-  width: auto;
-  display: block;
+.AddClue {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  .btn_box {
+    padding-top: 20px;
+    box-sizing: border-box;
+  }
 }
-.wrap{
-  flex-wrap: wrap;
-}
-.mb10{
-  margin-bottom: 10px;
-}
-.mr10{
-  margin-right: 10px;
-}
-.ml10{
-  margin-left: 10px;
-}
-.add-car:not(:nth-last-of-type(1)){
-  margin-bottom: 20px;
-}
-.posr{
-  position: relative;
-  .add-follow{
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 58px;
-    text-align: center;
+.AddClue-m {
+  .add-follow {
+    height: 45px;
+  }
+  .btn_box {
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button {
+      width: 100%;
+    }
+    .el-button {
+      margin: 0 0 20px 0;
+    }
   }
 }
 .SectionContainer,
-.SectionContainer-m{
-  .follow-card{
+.SectionContainer-m {
+  .follow-card {
     margin-bottom: 20px;
     border-radius: 4px;
-    border: 1px solid #DDE2EE;
-    background: #FAFBFC;
-    .card-tit{
+    border: 1px solid #dde2ee;
+    background: #fafbfc;
+    .card-tit {
       position: relative;
       height: 32px;
       line-height: 32px;
-      background: #DDE2EE;
+      background: #dde2ee;
       font-size: 14px;
-      color: #838A9D;
+      color: #838a9d;
       text-align: center;
       border-radius: 4px 4px 0 0;
     }
-    .card-del{
+    .card-del {
       position: absolute;
       top: 0;
       right: 0;
       transform: translate(50%, -50%);
     }
-    .card-box{
+    .card-box {
       padding: 24px 30px;
     }
   }
-}
-.SectionContainer-m{
-  .add-follow{
-    height: 45px;
+  .el-select,
+  .el-date-editor {
+    width: auto;
+    display: block;
+  }
+  .wrap {
+    flex-wrap: wrap;
+  }
+  .mb10 {
+    margin-bottom: 10px;
+  }
+  .mr10 {
+    margin-right: 10px;
+  }
+  .ml10 {
+    margin-left: 10px;
+  }
+  .add-car:not(:nth-last-of-type(1)) {
+    margin-bottom: 20px;
+  }
+  &.posr {
+    position: relative;
+    .add-follow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 58px;
+      text-align: center;
+    }
   }
 }
-</style>
-<style lang="scss" scope>
-.el-collapse-item__content {
-  padding-bottom: 0;
-}
-.el-form-item__label {
-  color: #999999;
-}
+
 </style>

@@ -121,6 +121,7 @@
                     value-format="yyyy-MM-dd"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
+                    :editable="false"
                     @change="changData()"
                   />
                 </el-form-item>
@@ -142,7 +143,7 @@
                   type="primary"
                   @click="search"
                 >
-                  查询
+                  筛选
                 </el-button>
               </el-col>
             </el-form>

@@ -22,7 +22,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { DriverFollowOp } from '@/api/driver'
 interface IState {
   [key: string]: any;
@@ -37,12 +37,13 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: '' }) type!:number
   @Prop({ default: '' }) driverId!:string
-  private showAlert = false
-  private title:string = ''
+  private showAlert = false // 控制弹窗
+  private title:string = '' // 标题
+  // 表单对象
   private dialogForm:IState = {
     remarks: ''
   }
-
+  // 表单数组
   private dialogItems:any[] = [
     {
       type: 1,
@@ -70,6 +71,10 @@ export default class extends Vue {
       this.title = '其他'
     }
   }
+
+  @Emit('onRefresh')
+  handleRefresh() {
+  }
   /**
    *发开模态框
    */
@@ -82,13 +87,21 @@ export default class extends Vue {
   beforeClose() {
     this.showAlert = false
   }
+  /**
+   *关闭弹窗后
+   */
   handleClosed() {
     this.dialogForm.remarks = ''
   }
-
+  /**
+   * 取消按钮
+   */
   cancel() {
     this.showAlert = false
   }
+  /**
+   * 确定按钮
+   */
   async confirm() {
     try {
       if (!this.dialogForm.remarks) {
@@ -110,9 +123,6 @@ export default class extends Vue {
     } catch (err) {
       console.log(`confirm fail:${err}`)
     }
-  }
-  @Emit('onRefresh')
-  handleRefresh() {
   }
 }
 </script>

@@ -1,19 +1,22 @@
 <template>
-  <div class="followByPhoneOrWechat">
+  <div class="inviteInterview">
     <SelfDialog
       :visible.sync="showAlert"
-      :title="title"
-      width="30%"
+      title="邀请面试"
+      width="40%"
       :before-close="beforeClose"
       :cancel="cancel"
       :confirm="confirm"
       @closed="handleClosed"
     >
       <self-form
+        ref="invite"
+        :rules="rules"
         :list-query="dialogForm"
         :form-item="dialogItems"
         :pc-col="24"
-        label-width="0px"
+        label-width="100px"
+        @onPass="handlePass"
       />
     </SelfDialog>
   </div>
@@ -21,53 +24,83 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { ClueFollow } from '@/api/driver'
 interface IState {
   [key: string]: any;
 }
 @Component({
-  name: 'FollowByPhoneOrWechat',
+  name: 'InviteInterview',
   components: {
     SelfDialog,
     SelfForm
   }
 })
 export default class extends Vue {
-  @Prop({ default: 0 }) type!:number
   @Prop({ default: '' }) clueId!:string|number
-  private showAlert = false
+  private showAlert = false // 控制弹框
+  // 表单对象
   private dialogForm:IState = {
+    interviewDate: '',
+    isNeedSendsms: true,
     remarks: ''
   }
-  private title:string = ''
-
+  // 表单数组
   private dialogItems:any[] = [
+    {
+      type: 6,
+      key: 'interviewDate',
+      label: '面试时间',
+      tagAttrs: {
+        placeholder: '面试时间'
+      }
+    },
+    {
+      type: 2,
+      key: 'isNeedSendsms',
+      label: '是否发短信',
+      tagAttrs: {
+        placeholder: '是否发短信'
+      },
+      options: [
+        {
+          label: '是',
+          value: true
+        },
+        {
+          label: '否',
+          value: false
+        }
+      ]
+    },
     {
       type: 1,
       key: 'remarks',
+      label: '描述',
       tagAttrs: {
         placeholder: '跟进情况描述',
         type: 'textarea',
-        rows: 3,
+        rows: 4,
+        'show-word-limit': true,
         maxlength: 100,
-        'show-word-limit': 100,
         clearable: true
       }
     }
   ]
-
-  @Watch('type')
-  onTypeChange(val:number) {
-    if (val === 1) {
-      this.title = '电话跟进'
-    } else if (val === 2) {
-      this.title = '微信跟进'
-    } else if (val === 4) {
-      this.title = '无效线索'
-    } else if (val === 5) {
-      this.title = '无法跟进'
-    }
+  // 校验规则
+  private rules:IState = {
+    interviewDate: [
+      { required: true, message: '请选择面试时间', trigger: 'blur' }
+    ],
+    isNeedSendsms: [
+      { required: true, message: '请选择是否发短信', trigger: 'change' }
+    ],
+    remarks: [
+      { required: true, message: '请输入跟进情况描述', trigger: 'blur' }
+    ]
+  }
+  @Emit('getRecord')
+  getRecord() {
   }
   /**
    *发开模态框
@@ -81,21 +114,31 @@ export default class extends Vue {
   beforeClose() {
     this.showAlert = false
   }
+  /**
+   *弹框关闭
+   */
   handleClosed() {
+    this.dialogForm.interviewDate = ''
+    this.dialogForm.isNeedSendsms = true
     this.dialogForm.remarks = ''
   }
+  /**
+   * 取消按钮
+   */
   cancel() {
     this.showAlert = false
   }
+  /**
+   * 确定按钮
+   */
   async confirm() {
     try {
-      if (!this.dialogForm.remarks) {
-        return this.$message.error('请输入跟进情况描述')
-      }
       let params = {
         clueId: this.clueId,
+        interviewDate: this.dialogForm.interviewDate,
+        isNeedSendsms: this.dialogForm.isNeedSendsms,
         remarks: this.dialogForm.remarks,
-        type: this.type
+        type: 3
       }
       let { data: res } = await ClueFollow(params)
       if (res.success) {
@@ -108,9 +151,13 @@ export default class extends Vue {
     } catch (err) {
       console.log(`confirm fail:${err}`)
     }
+    (this.$refs.invite as any).submitForm()
   }
-  @Emit('getRecord')
-  getRecord() {
+  /**
+   * 校验通过
+   */
+  handlePass() {
+    this.showAlert = false
   }
 }
 </script>

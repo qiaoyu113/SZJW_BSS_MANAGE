@@ -2,7 +2,10 @@
   <el-row
     :gutter="20"
     class="selfForm"
-    :class="isPC ? 'pc' : isBlock ? 'mobile' : ''"
+    :class="{
+      pc: pcBlock,
+      mobile: mBlock
+    }"
   >
     <el-form
       ref="ruleForm"
@@ -49,7 +52,6 @@
             :editable="false"
             v-bind="item.tagAttrs || {}"
             type="daterange"
-            range-separator="至"
             value-format="timestamp"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -123,7 +125,6 @@
             v-model="listQuery[item.key]"
             :editable="false"
             is-range
-            range-separator="至"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
             placeholder="选择时间范围"
@@ -193,7 +194,8 @@ export default class extends Vue {
     @Prop({ default: () => [] }) formItem!:any[]
     @Prop({ default: 6 }) pcCol!:Number
     @Prop({ default: () => {} }) rules!:IState
-    @Prop({ default: false }) isBlock!:boolean
+    @Prop({ default: false }) mBlock!:boolean
+    @Prop({ default: false }) pcBlock!:boolean
     get isPC() {
       return SettingsModule.isPC
     }
@@ -230,6 +232,12 @@ export default class extends Vue {
 </style>
 
 <style scoped>
+  .selfForm >>> .el-form-item__label {
+    font-family: PingFangSC-Regular;
+    font-size: 14px;
+    color: #4A4A4A;
+    text-align: center;
+  }
   .selfForm >>> .el-form-item__content {
     display: flex;
     flex: 1;
@@ -272,6 +280,20 @@ export default class extends Vue {
     }
 
     .mobile >>> .el-form-item__content {
+      margin-left: 0px!important;
+    }
+  }
+  @media screen and (min-width: 700px){
+    .pc >>> .el-form-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pc >>> .el-form-item__label {
+      text-align: left;
+    }
+
+    .pc >>> .el-form-item__content {
       margin-left: 0px!important;
     }
   }

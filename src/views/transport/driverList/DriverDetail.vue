@@ -2,8 +2,8 @@
   <div class="driverDetail">
     <el-card
       class="baseInfo"
-      :style="{
-        margin: isPC ? '15px' :'0px'
+      :class="{
+        p15: isPC
       }"
       shadow="never"
     >
@@ -62,13 +62,13 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
-import FollowItem from './components/followItem.vue'
-import BaseInfo from './components/baseInfo.vue'
-import OrderInfo from './components/orderInfo.vue'
-import TransportInfo from './components/transportInfo.vue'
-import bidInfo from './components/bidInfo.vue'
-import AccountInfo from './components/accountInfo.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
+import FollowItem from './components/FollowItem.vue'
+import BaseInfo from './components/BaseInfo.vue'
+import OrderInfo from './components/OrderInfo.vue'
+import TransportInfo from './components/TransportInfo.vue'
+import bidInfo from './components/BidInfo.vue'
+import AccountInfo from './components/AccountInfo.vue'
 import { GetDriverDetail, DriverFollowFormation, driverDetailToCarrierInfo, driverDetailToOrderInfo } from '@/api/driver'
 import { SettingsModule } from '@/store/modules/settings'
 
@@ -88,7 +88,9 @@ interface IState {
   }
 })
 export default class extends Vue {
-  private driverId:string | number = ''
+  private driverId:string | number = '' // 司机id
+
+  // 司机信息对象
   private listQuery:IState = {
     name: '',
     driverId: '',
@@ -97,8 +99,8 @@ export default class extends Vue {
     busiTypeName: '',
     gmTeam: '',
     gmIdName: ''
-  } // 司机信息
-
+  }
+  // 司机信息表单数组
   private formItem:any[] = [
     {
       type: 7,
@@ -150,25 +152,25 @@ export default class extends Vue {
     }
 
   ]
-
+  // 当前激活的状态tab
   private activeName:string = 'f1'
-
+  // 订单信息
   private orderLists = []
-
+  // 运力信息
   private transportLists = []
+  // 标书信息
   private bidLists = []
-
+  // 账户信息
   private accountObj = {}
-
+  // 基础信息
   private baseObj = {}
-
+  // 跟进信息
   private followLists:any[] = []
 
-  mounted() {
-    this.driverId = (this.$route as any).query.id
-    this.getDriverDetail()
+  // 区分设备
+  get isPC() {
+    return SettingsModule.isPC
   }
-
   /**
    *获取司机详情
    */
@@ -254,8 +256,10 @@ export default class extends Vue {
       console.log(`orderInfo info fail:${err}`)
     }
   }
-  get isPC() {
-    return SettingsModule.isPC
+
+  mounted() {
+    this.driverId = (this.$route as any).query.id
+    this.getDriverDetail()
   }
 }
 </script>
@@ -271,6 +275,11 @@ export default class extends Vue {
   .baseInfo >>> .el-form-item__label {
     color: #303133;
     font-size:14px;
-    /* font-weight: 400; */
+  }
+
+  @media screen and (max-width: 700px){
+    .baseInfo >>> .el-card__body {
+      padding: 0px;
+    }
   }
 </style>

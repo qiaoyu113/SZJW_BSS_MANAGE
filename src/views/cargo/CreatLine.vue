@@ -12,7 +12,6 @@
     >
       <SectionContainer
         title="详情信息"
-        :md="true"
       >
         <el-row class="detail">
           <SelfItem
@@ -95,7 +94,6 @@
       </SectionContainer>
       <SectionContainer
         title="配送信息"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -153,7 +151,6 @@
       </SectionContainer>
       <SectionContainer
         title="结算信息"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -226,7 +223,6 @@
       </SectionContainer>
       <SectionContainer
         title="货物信息"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -253,7 +249,6 @@
       </SectionContainer>
       <SectionContainer
         title="线路角色"
-        :md="true"
       >
         <el-row>
           <SelfItem
@@ -276,6 +271,7 @@
         <el-button
           v-if="pageStatus === 1"
           type="primary"
+          size="small"
           name="CreatLine-btn-creat"
           @click="submitForm('ruleForm')"
         >
@@ -283,6 +279,7 @@
         </el-button>
         <el-button
           v-if="pageStatus === 2"
+          size="small"
           type="primary"
           name="CreatLine-btn-creat"
           @click="againForm('ruleForm')"
@@ -291,6 +288,7 @@
         </el-button>
         <el-button
           v-if="pageStatus === 3"
+          size="small"
           type="primary"
           name="CreatLine-btn-creat"
           @click="copyForm('ruleForm')"
@@ -299,6 +297,7 @@
         </el-button>
 
         <el-button
+          size="small"
           name="CreatLine-btn-cancel"
           @click="cancelBtn"
         >
@@ -307,12 +306,14 @@
 
         <el-button
           v-if="pageStatus === 1"
+          size="small"
           name="CreatLine-btn-reset"
           @click="resetForm('ruleForm')"
         >
           重置
         </el-button>
         <!-- <el-button
+        size="small"
           v-if="pageStatus === 1"
           name="CreatLine-btn-xcxshow"
           @click="resetForm('ruleForm')"
@@ -358,7 +359,7 @@ import {
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
-import SelfItem from '@/components/base/SelfItem.vue'
+import SelfItem from '@/components/Base/SelfItem.vue'
 import '@/styles/common.scss'
 import { validatorNumberRange } from '@/utils/index.ts'
 import { registerTheme } from 'echarts'
@@ -406,6 +407,8 @@ export default class CreatLine extends Vue {
   private isFirst = true
   private ruleForm: IState = {
     addressShow: false,
+    // 仓位置
+    address: [],
     deliveryShow: false,
     carType: '',
     // 选择车型
@@ -423,8 +426,6 @@ export default class CreatLine extends Vue {
     // 货主编号id
     // 配送位置
     delivery: [],
-    // 仓位置
-    address: [],
     dayNo: '',
     // 每日配送趟数
     deliveryNo: '',
@@ -594,9 +595,11 @@ export default class CreatLine extends Vue {
 
   private async loadAddress(node: any, resolve: any) {
     let params: string[] = []
+    // params是省市区的接口请求参数
     let query: any = {
       countryCode: ''
     }
+    // query是区详细信息的接口请求参数
     if (node.level === 0) {
       params = ['100000']
     } else if (node.level === 1) {
@@ -1206,8 +1209,11 @@ export default class CreatLine extends Vue {
   .btn_box {
     padding: 30px 20px 0 20px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     .el-button {
-      width: 100%;
+      width: 80%;
     }
     .el-button {
       margin: 0 0 20px 0;

@@ -108,20 +108,18 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item>
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
       </SectionContainer>
+      <div class="btn_box">
+        <el-button
+          type="primary"
+          @click="submitForm('ruleForm')"
+        >
+          提交
+        </el-button>
+        <el-button @click="resetForm('ruleForm')">
+          重置
+        </el-button>
+      </div>
     </el-form>
   </div>
 </template>
@@ -131,7 +129,13 @@ import { Component, Vue } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
-import { roleList, getOfficeByCurrentUser, createUser, updateUser, userDetail } from '@/api/system'
+import {
+  roleList,
+  getOfficeByCurrentUser,
+  createUser,
+  updateUser,
+  userDetail
+} from '@/api/system'
 import '@/styles/common.scss'
 import { off } from 'codemirror'
 @Component({
@@ -143,48 +147,51 @@ import { off } from 'codemirror'
 export default class extends Vue {
   private loading: boolean = false;
   private isEdit: boolean = false; // 是否是编辑页面
-  private id: any = ''
-  private ruleForm:any = {
-    'mobile': '',
-    'nickName': '',
-    'officeId': '',
-    'passwd': '',
-    'checkPass': '',
-    'roleId': '',
-    'userName': ''
-  }
-  private details: any = {}
-  private rules:any = {
+  private id: any = '';
+  private ruleForm: any = {
+    mobile: '',
+    nickName: '',
+    officeId: '',
+    passwd: '',
+    checkPass: '',
+    roleId: '',
+    userName: ''
+  };
+  private details: any = {};
+  private rules: any = {
     userName: [
       { required: true, message: '请输入姓名', trigger: 'blur' },
-      { pattern: /^(?:[\u4e00-\u9fa5·]{2,5})$/, message: '请输入2-5个中文', trigger: 'blur' }
+      {
+        pattern: /^(?:[\u4e00-\u9fa5·]{2,5})$/,
+        message: '请输入2-5个中文',
+        trigger: 'blur'
+      }
     ],
     mobile: [
       { required: true, message: '请输入手机号', trigger: 'blur' },
       { pattern: /^1\d{10}$/, message: '请输入正确格式手机号', trigger: 'blur' }
     ],
-    roleId: [
-      { required: true, message: '请选择角色', trigger: 'change' }
-    ],
+    roleId: [{ required: true, message: '请选择角色', trigger: 'change' }],
     officeId: [
-      { type: 'date', required: true, message: '请选择组织机构', trigger: 'change' }
+      {
+        type: 'date',
+        required: true,
+        message: '请选择组织机构',
+        trigger: 'change'
+      }
     ],
-    passwd: [
-      { validator: this.validatePasswd, trigger: 'blur' }
-    ],
-    checkPass: [
-      { validator: this.validateCheckPass, trigger: 'blur' }
-    ]
-  }
-  private optionsRoles: any[] = []
-  private optionsOffice: any[] = []
-  private officeList: any[] = []
+    passwd: [{ validator: this.validatePasswd, trigger: 'blur' }],
+    checkPass: [{ validator: this.validateCheckPass, trigger: 'blur' }]
+  };
+  private optionsRoles: any[] = [];
+  private optionsOffice: any[] = [];
+  private officeList: any[] = [];
 
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
-  private validatePasswd(rule:any, value:any, callback:any) {
+  private validatePasswd(rule: any, value: any, callback: any) {
     if (value === '') {
       callback()
     } else {
@@ -196,7 +203,7 @@ export default class extends Vue {
       }
     }
   }
-  private validateCheckPass(rule:any, value:any, callback:any) {
+  private validateCheckPass(rule: any, value: any, callback: any) {
     if (this.ruleForm.passwd !== '' && this.ruleForm.checkPass === '') {
       callback(new Error('请再次输入密码'))
     } else if (this.ruleForm.passwd !== this.ruleForm.checkPass) {
@@ -205,7 +212,7 @@ export default class extends Vue {
       callback()
     }
   }
-  private submitForm(formName:any) {
+  private submitForm(formName: any) {
     (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
         if (this.isEdit) {
@@ -231,7 +238,8 @@ export default class extends Vue {
       this.$message.success(`创建成功`)
       setTimeout(() => {
         (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-        (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+        (TagsViewModule as any).delCachedView({
+          // 删除指定页面缓存（进行刷新操作）
           name: 'UserManage'
         })
         this.$nextTick(() => {
@@ -255,7 +263,8 @@ export default class extends Vue {
       this.$message.success(`编辑成功`)
       setTimeout(() => {
         (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-        (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+        (TagsViewModule as any).delCachedView({
+          // 删除指定页面缓存（进行刷新操作）
           name: 'UserManage'
         })
         this.$nextTick(() => {
@@ -279,7 +288,7 @@ export default class extends Vue {
       (this.$refs[formName] as any).clearValidate()
     })
   }
-  private handleChange(value:any) {
+  private handleChange(value: any) {
     this.ruleForm.officeId = value.slice().pop() || ''
   }
   // 获取角色
@@ -304,7 +313,7 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-  private traverseTree(data:any) {
+  private traverseTree(data: any) {
     let arr: any[] = []
     var setChecked = (list: any) => {
       for (var i in list) {
@@ -354,30 +363,46 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.el-select,
-.el-cascader,
-.el-date-editor{
-  width: auto;
-  display: block;
+.CreateUser {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  .btn_box {
+    padding-top: 20px;
+    box-sizing: border-box;
+  }
 }
-.wrap{
-  flex-wrap: wrap;
+.CreateUser-m {
+  .btn_box {
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button {
+      width: 100%;
+    }
+    .el-button {
+      margin: 0 0 20px 0;
+    }
+  }
 }
-.mb10{
-  margin-bottom: 10px;
-}
-.mr10{
-  margin-right: 10px;
-}
-.ml10{
-  margin-left: 10px;
-}
-</style>
-<style lang="scss" scope>
-.el-collapse-item__content {
-  padding-bottom: 0;
-}
-.el-form-item__label {
-  color: #999999;
+.CreateUser,
+.CreateUser-m {
+  .el-select,
+  .el-cascader,
+  .el-date-editor {
+    width: auto;
+    display: block;
+  }
+  .wrap {
+    flex-wrap: wrap;
+  }
+  .mb10 {
+    margin-bottom: 10px;
+  }
+  .mr10 {
+    margin-right: 10px;
+  }
+  .ml10 {
+    margin-left: 10px;
+  }
 }
 </style>

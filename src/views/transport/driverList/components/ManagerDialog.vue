@@ -22,7 +22,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { UpdateDriverBDManager, driverDownToGm } from '@/api/driver'
 import { GetManagerLists } from '@/api/common'
 import { delayTime } from '@/settings'
@@ -39,12 +39,13 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => [] }) rows!:any
   @Prop({ default: '' }) type!:string
-  private showAlert = false
-  private title:string = ''
+  private showAlert = false // 是否显示弹窗
+  private title:string = '' // 标题
+  // 表单对象
   private dialogForm:IState = {
     gmId: ''
   }
-
+  // 表单数组
   private dialogItems:any[] = [
     {
       type: 2,
@@ -66,6 +67,12 @@ export default class extends Vue {
     } else if (this.type === 'distribution') {
       this.title = '分配加盟经理'
     }
+  }
+  @Emit('onRows')
+  setEmptyRows(a:any) {
+  }
+  @Emit('onRefresh')
+  getList() {
   }
 
   /**
@@ -103,16 +110,22 @@ export default class extends Vue {
   beforeClose() {
     this.showAlert = false
   }
+  /**
+   * 弹窗关闭后
+   */
   handleClosed() {
     this.dialogForm.gmId = ''
     this.setEmptyRows([])
   }
-  @Emit('onRows')
-  setEmptyRows(a:any) {
-  }
+  /**
+   * 取消
+   */
   cancel() {
     this.showAlert = false
   }
+  /**
+   * 确定
+   */
   async confirm() {
     try {
       if (!this.dialogForm.gmId) {
@@ -177,9 +190,6 @@ export default class extends Vue {
     } catch (err) {
       console.log(`modify manager fail:${err}`)
     }
-  }
-  @Emit('onRefresh')
-  getList() {
   }
 }
 </script>
