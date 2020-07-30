@@ -16,10 +16,9 @@
       >
         <div
           slot="btn"
-          :class="isPC ? 'btnPc' : ''"
+          :class="isPC ? 'btnPc' : 'btnPc-m'"
         >
           <el-button
-            type="warning"
             :class="isPC ? '' : 'btnMobile'"
             size="small"
             name="linemanage_reset_btn"
@@ -157,7 +156,11 @@
             {{ scope.row.mountGuardNo }}/{{ scope.row.deployNo }}
           </template>
           <template v-slot:operate="scope">
-            <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+            <el-dropdown
+              :trigger="isPC ? 'hover' : 'click'"
+              @command="(e) =>
+                handleCommandChange(e,scope.row)"
+            >
               <span class="el-dropdown-link">
                 <el-button
                   v-if="isPC"
@@ -247,7 +250,10 @@
             </el-dropdown>
           </template>
           <template v-slot:detail="scope">
-            <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
+            <el-dropdown
+              :trigger="isPC ? 'hover' : 'click'"
+              @command="(e) => handleCommandChange(e,scope.row)"
+            >
               <span class="el-dropdown-link">
                 <el-button
                   v-if="isPC"
@@ -258,7 +264,7 @@
                 </el-button>
                 <i
                   v-else
-                  class="el-icon-setting"
+                  class="el-icon-view"
                 />
               </span>
               <el-dropdown-menu slot="dropdown">
@@ -526,8 +532,8 @@ export default class LineManage extends Vue {
   private tags: any[] = [];
   private DateValue: any[] = [];
   private operationList: any[] = [
-    { icon: 'el-icon-edit-outline', name: '查看选中', color: '#999' },
-    { icon: 'el-icon-edit', name: '清空选择', color: '#978374' }
+    { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A' },
+    { icon: 'el-icon-circle-close', name: '清空选择', color: '#5E7BBB' }
   ];
   private dropdownList: any[] = [];
   private checkList: any[] = this.dropdownList;
@@ -784,12 +790,14 @@ export default class LineManage extends Vue {
       fixed: 'right',
       key: 'operate',
       label: '操作',
+      width: this.isPC ? '100px' : '50px',
       slot: true,
       disabled: true
     },
     {
       disabled: true,
-      fixed: this.isPC ? 'right' : false,
+      fixed: 'right',
+      width: this.isPC ? '100px' : '50px',
       key: 'detail',
       slot: true,
       label: '详情'
@@ -1504,6 +1512,11 @@ export default class LineManage extends Vue {
 .LineManage-m {
   padding-bottom: 0;
   box-sizing: border-box;
+  .btnPc-m {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   .btn-item-right-m {
     border-radius: 4px;
     border: none;
@@ -1531,7 +1544,7 @@ export default class LineManage extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
-      height: calc(100vh - 360px) !important;
+      // height: calc(100vh - 360px) !important;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
@@ -1583,7 +1596,7 @@ export default class LineManage extends Vue {
 .btnMobile {
   margin-left: 0px!important;
   margin-top: 10px;
-  width: 100%;
+  width: 80%;
 }
 </style>
 <style scoped>

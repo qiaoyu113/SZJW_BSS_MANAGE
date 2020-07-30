@@ -95,6 +95,7 @@
                 placeholder="请选择"
                 clearable
                 filterable
+                :disabled="optionsCity.length === 1"
               >
                 <el-option
                   v-for="(item, index) in optionsCity"
@@ -540,6 +541,9 @@ export default class extends Vue {
       // console.log(data.data)
       const list = data.data
       this.optionsCity = list
+      if (this.optionsCity.length === 1) {
+        this.ruleForm.city = Number(this.optionsCity[0].code)
+      }
     } else {
       this.$message.error(data)
     }
