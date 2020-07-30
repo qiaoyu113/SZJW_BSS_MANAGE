@@ -43,6 +43,7 @@ export default class extends Vue {
     private strategyRightOptions:any[] = [] // 投资决策权列表
     private cooperateFocusPointOptions:any[] = [] // 如果有机会跟云鸟合作，你看中的是什么列表
     private cooperateKeyFactorOptions:any[] = [] // 最终决定你是否与云鸟合作的关键因素是什么列表
+    private carNumOptions:any[] = [] // 有几辆列表
 
     // 表单对象
     private listQuery:IState = {
@@ -385,9 +386,7 @@ export default class extends Vue {
         key: 'ownCarNum',
         w: '0px',
         col: 4,
-        options: [
-
-        ]
+        options: this.carNumOptions
       },
       {
         type: 2,
@@ -623,7 +622,7 @@ export default class extends Vue {
     onOwnCar(val:boolean) {
       this.listQuery.ownCarNum = ''
       if (val) {
-        this.formItem[24].options = [
+        let carNums = [
           {
             label: 1,
             value: 1
@@ -637,13 +636,12 @@ export default class extends Vue {
             value: 3
           }
         ]
+        this.carNumOptions.push(...carNums)
       } else {
-        this.formItem[24].options = [
-          {
-            label: 0,
-            value: 0
-          }
-        ]
+        this.carNumOptions.push({
+          label: 0,
+          value: 0
+        })
         this.listQuery.ownCarNum = 0
       }
     }
