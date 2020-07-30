@@ -86,6 +86,7 @@
             :params="{prop: 'stabilityRate',type: 3,label: '线路稳定性',radio: linetask}"
           />
           <SelfItem
+            :pccol="24"
             :rule-form="ruleForm"
             :params="{prop: 'remark',type: 1,label: '备注信息/线路描述',kind: 'textarea',tagAttrs: {maxlength:
               500, row: 6, showWordLimit: true,placeholder: '请输入备注信息或线路描述'}}"

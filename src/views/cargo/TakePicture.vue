@@ -12,22 +12,17 @@
           v-if="isPC"
           class="picInfo"
         >
-          <span>线路编号:</span>
+          <span>线路编号:&#8194; </span>
           <span>{{ postForm.lineId | DataIsNull }}</span>
-          <span>所属销售:{{ postForm.lineSaleName | DataIsNull }}</span>
-          <span>创建时间:{{ postForm.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span>所属销售:&#8194; {{ postForm.lineSaleName | DataIsNull }}</span>
+          <span>创建时间:&#8194; {{ postForm.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </p>
         <div v-else>
           <el-col>
             <p class="picInfo">
-              <span>线路编号:</span>
-              <span>{{ postForm.lineId | DataIsNull }}</span>
-            </p>
-          </el-col>
-          <el-col>
-            <p class="picInfo">
-              <span>所属销售:{{ postForm.lineSaleName | DataIsNull }}</span>
-              <span>创建时间:{{ postForm.createDate | DataIsNull }}</span>
+              <span>线路编号:&#8194; {{ postForm.lineId | DataIsNull }}</span>
+              <span>所属销售:&#8194; {{ postForm.lineSaleName | DataIsNull }}</span>
+              <span>创建时间:&#8194; {{ postForm.createDate | DataIsNull }}</span>
             </p>
           </el-col>
         </div>
@@ -95,9 +90,10 @@
           >
             <div class="postInfo-container">
               <el-row>
-                <el-col :span="isPC ? 8 : 24">
+                <el-col>
                   <el-form-item
-                    label-width="150px"
+                    :class="isPC ? '' : 'btnGroup-m'"
+                    :label-width="isPC ? '150px' : '0'"
                     label=""
                   >
                     <el-button @click="showDio = true">
@@ -390,10 +386,35 @@ export default class TakePicture extends Vue {
 <style lang="scss" scoped>
 .TakePicture-m {
   width: 100%;
+    p {
+    margin-bottom: 10px;
+  }
+  .picName {
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 15px;
+  }
+  .picName_value {
+    font-weight: bold;
+    font-size: 12px;
+  }
+  .picInfo{
+    display: flex;
+    flex-direction: column;
+  }
+  .picInfo span {
+    margin-right: 10px;
+    font-size: 12px;
+    line-height: 24px;
+  }
+  .el-image {
+    width: 74px;
+    height: 74px;
+  }
   .infoLine {
     p {
       font-size: 12px;
-      padding: 0px 60px;
+      padding: 0px 30px;
       box-sizing: border-box;
     }
   }
@@ -406,9 +427,29 @@ export default class TakePicture extends Vue {
     width: 90px;
     height: 90px;
   }
+  .btnGroup-m{
+    .el-form-item__content{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .el-button{
+      width: 80%;
+      text-align: center;
+    }
+    .el-button + .el-button {
+      margin-left: 0px;
+      margin-top: 10px;
+    }
+  }
 }
 </style>
 <style scoped>
+.btnGroup-m >>> .el-form-item__content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .hide >>> .el-upload--picture-card {
   display: none;
 }

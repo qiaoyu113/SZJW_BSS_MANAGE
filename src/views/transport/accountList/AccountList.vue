@@ -1,124 +1,121 @@
 <template>
-  <div class="AccountList">
-    <el-card>
-      <suggest-container
-        :tab="tab"
-        :tags="tags"
-        :active-name="listQuery.state"
-        @handle-query="handleQuery"
+  <div :class="isPC ? 'AccountList' : 'AccountList-m' ">
+    <suggest-container
+      :tab="tab"
+      :tags="tags"
+      :active-name="listQuery.state"
+      @handle-query="handleQuery"
+    >
+      <!-- 查询表单 -->
+      <self-form
+        :list-query="listQuery"
+        :form-item="formItem"
+        label-width="80px"
       >
-        <!-- 查询表单 -->
-        <self-form
-          :list-query="listQuery"
-          :form-item="formItem"
-          label-width="80px"
-        >
-          <div
-            slot="btn1"
-            :class="isPC ? 'btnPc' : ''"
-          >
-            <el-button
-              type="primary"
-              :class="isPC ? '' : 'btnMobile'"
-              name="AccountList_query_btn"
-              size="small"
-              @click="handleQueryClick"
-            >
-              查询
-            </el-button>
-            <el-button
-              :class="isPC ? '' : 'btnMobile'"
-              name="AccountList_reset_btn"
-              size="small"
-              @click="handleResetClick"
-            >
-              重置
-            </el-button>
-          </div>
-        </self-form>
-      </suggest-container>
-      <!-- 表格顶部的按钮 -->
-      <table-header
-        :tab="[]"
-        active-name=""
-      >
-        <el-dropdown
-          :hide-on-click="false"
-          trigger="click"
+        <div
+          slot="btn1"
+          :class="isPC ? 'btnPc' : 'btnPc-m'"
         >
           <el-button
             type="primary"
+            :class="isPC ? '' : 'btnMobile'"
+            name="AccountList_query_btn"
             size="small"
-            style="margin-left:10px"
-            name="driverclue_column_btn"
+            @click="handleQueryClick"
           >
-            <i
-              class="el-icon-s-operation"
-            />
+            查询
           </el-button>
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
+            name="AccountList_reset_btn"
+            size="small"
+            @click="handleResetClick"
+          >
+            重置
+          </el-button>
+        </div>
+      </self-form>
+    </suggest-container>
+    <!-- 表格顶部的按钮 -->
+    <table-header
+      :tab="[]"
+      active-name=""
+    >
+      <el-dropdown
+        :hide-on-click="false"
+        trigger="click"
+      >
+        <el-button
+          type="primary"
+          size="small"
+          style="margin-left:10px"
+          name="driverclue_column_btn"
+        >
+          <i
+            class="el-icon-s-operation"
+          />
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-checkbox-group v-model="checkList">
+            <el-dropdown-item
+              v-for="item in dropdownList"
+              :key="item.label"
+            >
+              <el-checkbox
+                :label="item.label"
+                :disabled="item.disabled"
+              />
+            </el-dropdown-item>
+          </el-checkbox-group>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </table-header>
+    <!-- 表格 -->
+    <self-table
+      ref="AccountListTable"
+      v-loading="listLoading"
+      class="accountTable"
+      border
+      row-key="id"
+      :index="false"
+      :operation-list="operationList"
+      :table-data="tableData"
+      :columns="columns"
+      :page="page"
+      @olclick="handleOlClick"
+      @onPageSize="handlePageSize"
+      @selection-change="handleChange"
+    >
+      <template v-slot:op="scope">
+        <el-dropdown
+          :trigger="isPC ? 'hover' : 'click'"
+          @command="(e) => handleCommandChange(e,scope.row)"
+        >
+          <span class="el-dropdown-link">
+            <el-button
+              v-if="isPC"
+              :a="scope"
+              type="text"
+            >
+              更多操作
+            </el-button>
+            <i
+              v-else
+              class="el-icon-setting"
+            />
+          </span>
           <el-dropdown-menu slot="dropdown">
-            <el-checkbox-group v-model="checkList">
-              <el-dropdown-item
-                v-for="item in dropdownList"
-                :key="item.label"
-              >
-                <el-checkbox
-                  :label="item.label"
-                  :disabled="item.disabled"
-                />
-              </el-dropdown-item>
-            </el-checkbox-group>
+            <el-dropdown-item
+              command="detail"
+            >
+              <template>
+                详情
+              </template>
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-      </table-header>
-      <!-- 表格 -->
-      <self-table
-        ref="AccountListTable"
-        v-loading="listLoading"
-        class="accountTable"
-        border
-        row-key="id"
-        :index="false"
-        :operation-list="operationList"
-        :table-data="tableData"
-        :columns="columns"
-        :page="page"
-        @olclick="handleOlClick"
-        @onPageSize="handlePageSize"
-        @selection-change="handleChange"
-      >
-        <template v-slot:op="scope">
-          <el-dropdown @command="(e) => handleCommandChange(e,scope.row)">
-            <span class="el-dropdown-link">
-              <el-button
-                v-if="isPC"
-                :a="scope"
-                type="text"
-              >
-                更多操作
-              </el-button>
-              <i
-                v-else
-                class="el-icon-setting"
-              />
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                command="detail"
-              >
-                <template v-if="isPC">
-                  详情
-                </template>
-                <i
-                  v-else
-                  class="el-icon-edit"
-                />
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </self-table>
-    </el-card>
+      </template>
+    </self-table>
 
     <PitchBox
       :drawer.sync="drawer"
@@ -352,7 +349,6 @@ export default class extends Vue {
           }]
         }
       }
-
     },
     {
       slot: true,
@@ -477,6 +473,7 @@ export default class extends Vue {
     {
       key: 'op',
       label: '操作',
+      width: this.isPC ? '100px' : '50px',
       fixed: 'right',
       disabled: true,
       slot: true
@@ -641,14 +638,23 @@ export default class extends Vue {
       justify-content: flex-end;
       width: 100%;
     }
-    .btnMobile {
-      margin-left: 0;
-      margin-top: 10px;
-      width:100%;
-    }
   }
 </style>
-
+<style lang="scss" scoped>
+.AccountList-m{
+    .btnPc-m {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:80%;
+    }
+}
+</style>
 <style>
 .accountTable >>> .operation-main{
     display: none;

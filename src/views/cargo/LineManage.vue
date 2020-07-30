@@ -47,7 +47,8 @@
       >
         <template v-slot:left>
           <div>
-            <span>统计：已查询到
+            <span>
+              统计：已查询到
               <span
                 class="numCol"
                 v-text="title.all"
@@ -1544,6 +1545,9 @@ export default class LineManage extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
+      .linkTo {
+        color: #649cee;
+      }
       // height: calc(100vh - 360px) !important;
       padding-bottom: 0;
       box-sizing: border-box;
