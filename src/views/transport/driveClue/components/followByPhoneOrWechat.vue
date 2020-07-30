@@ -51,7 +51,7 @@ export default class extends Vue {
         type: 'textarea',
         rows: 3,
         maxlength: 100,
-        'show-word-limit': 100,
+        'show-word-limit': true,
         clearable: true
       }
     }
