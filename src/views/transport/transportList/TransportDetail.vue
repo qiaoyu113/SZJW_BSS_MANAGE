@@ -274,7 +274,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .TransportDetail {
   width: 100%;
   padding: 20px;
@@ -298,15 +298,15 @@ export default class extends Vue {
     .steps{
       margin: 60px 0 30px 0;
       }
-       .detail-title {
-    font-size: 13px;
-    color: #9e9e9e;
-    font-weight: 400;
-    padding-right: 16px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    padding-bottom: 6px;
-}
+    .detail-title {
+      font-size: 13px;
+      color: #9e9e9e;
+      font-weight: 400;
+      padding-right: 16px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      padding-bottom: 6px;
+    }
 }
 </style>
 
@@ -326,8 +326,8 @@ export default class extends Vue {
   }
 }
 </style>
-<style scope>
-/* @media screen and (min-width: 701px) {
+<style scoped>
+@media screen and (min-width: 701px) {
   .el-select {
     width: 100%;
   }
@@ -343,5 +343,5 @@ export default class extends Vue {
   .el-input{
     width: 90%;
   }
-} */
+}
 </style>
