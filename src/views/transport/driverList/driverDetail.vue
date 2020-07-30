@@ -271,6 +271,11 @@ export default class extends Vue {
   .baseInfo >>> .el-form-item__label {
     color: #303133;
     font-size:14px;
-    /* font-weight: 400; */
+  }
+
+  @media screen and (max-width: 700px){
+    .baseInfo >>> .el-card__body {
+      padding: 0px;
+    }
   }
 </style>
