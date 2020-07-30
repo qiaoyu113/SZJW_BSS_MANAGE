@@ -164,20 +164,9 @@ export default class extends Vue {
     this.$emit('handle-tags', tags)
   }
 
+  // 判断PC
   get isPC() {
     return SettingsModule.isPC
-  }
-
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
-  created() {
-    this.getDictionary()
   }
 
   // 匹配创建tags标签
@@ -222,6 +211,7 @@ export default class extends Vue {
     }
   }
 
+  // 获取字典
   private async getDictionary() {
     try {
       let { data: res } = await GetOpenCityData()
@@ -240,6 +230,7 @@ export default class extends Vue {
     }
   }
 
+  // 更改时间
   private changData() {
     if (this.DateValueChild) {
       this.listQuery.startDate = this.DateValueChild[0]
@@ -250,15 +241,22 @@ export default class extends Vue {
     }
   }
 
+  // 搜索
   private research() {
     this.$emit('handle-query', this.listQuery)
   }
 
+  // 重置
   private reset() {
     for (let key in this.listQuery) {
       this.listQuery[key] = ''
     }
     this.DateValueChild = []
+  }
+
+  // 生命周期
+  created() {
+    this.getDictionary()
   }
 }
 </script>

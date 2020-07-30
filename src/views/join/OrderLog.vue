@@ -104,9 +104,10 @@ export default class ShowLog extends Vue {
     state: '',
     orderId: ''
   }
-  created() {
-    this.listQuery.orderId = this.$route.query.id
-    this.fetchData()
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   // 所有请求方法
@@ -134,9 +135,11 @@ export default class ShowLog extends Vue {
       }, 0.5 * 1000)
     }
   }
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
+
+  // 生命周期
+  created() {
+    this.listQuery.orderId = this.$route.query.id
+    this.fetchData()
   }
 }
 </script>

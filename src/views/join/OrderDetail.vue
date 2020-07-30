@@ -464,15 +464,6 @@ export default class extends Vue {
       desc: [{ required: true, message: '请填写活动形式', trigger: 'blur' }]
     };
 
-    created() {}
-
-    mounted() {
-      this.id = this.$route.query.id
-      this.getDetail(this.id)
-    }
-
-    activated() {}
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
@@ -487,6 +478,12 @@ export default class extends Vue {
       } else {
         this.$message.error(data)
       }
+    }
+
+    // 生命周期
+    mounted() {
+      this.id = this.$route.query.id
+      this.getDetail(this.id)
     }
 }
 </script>
@@ -546,43 +543,69 @@ export default class extends Vue {
 </style>
 
 <style lang="scss" scope>
-.wrap {
-  flex-wrap: wrap;
-}
-.follow-card {
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border: 1px solid #dde2ee;
-  background: #fafbfc;
-  .card-tit {
-    position: relative;
-    height: 32px;
-    line-height: 32px;
-    background: #dde2ee;
-    font-size: 14px;
-    color: #838a9d;
-    text-align: center;
-    border-radius: 4px 4px 0 0;
-  }
-  .card-box {
-    padding: 24px 30px;
-  }
-}
 @media screen and (min-width: 701px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input {
-    width: 75%;
+  .OrderDetail{
+    .el-select {
+      width: 100%;
+    }
+    .el-input {
+      width: 75%;
+    }
+    .wrap {
+      flex-wrap: wrap;
+    }
+    .follow-card {
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #dde2ee;
+      background: #fafbfc;
+      .card-tit {
+        position: relative;
+        height: 32px;
+        line-height: 32px;
+        background: #dde2ee;
+        font-size: 14px;
+        color: #838a9d;
+        text-align: center;
+        border-radius: 4px 4px 0 0;
+      }
+      .card-box {
+        padding: 24px 30px;
+      }
+    }
   }
 }
 
 @media screen and (max-width: 700px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input {
-    width: 90%;
+  .OrderDetail-m{
+    .el-select {
+      width: 100%;
+    }
+    .el-input {
+      width: 90%;
+    }
+    .wrap {
+      flex-wrap: wrap;
+    }
+    .follow-card {
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #dde2ee;
+      background: #fafbfc;
+      .card-tit {
+        position: relative;
+        height: 32px;
+        line-height: 32px;
+        background: #dde2ee;
+        font-size: 14px;
+        color: #838a9d;
+        text-align: center;
+        border-radius: 4px 4px 0 0;
+      }
+      .card-box {
+        padding: 24px 30px;
+      }
+    }
   }
 }
 </style>

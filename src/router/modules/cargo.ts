@@ -153,7 +153,7 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
-      path: 'ownerdetail', /* 货主列表 */
+      path: 'ownerdetail', /* 货主详情 */
       component: () => import(/* webpackChunkName: "cargo" */ '@/views/cargo/OwnerDetail.vue'),
       name: 'OwnerDetail',
       meta: {

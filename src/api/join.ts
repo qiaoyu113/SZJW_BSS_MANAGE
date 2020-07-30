@@ -1,33 +1,34 @@
 import request from '@/utils/request'
 
+// 创建订单
 export const CreateNewOrder = (params: any) =>
   request({
     url: '/order/v1/order/createNewOrder',
     method: 'post',
     data: params
   })
-
+// 重新支付订单
 export const RepayOrder = (params: any) =>
   request({
     url: '/order/v1/order/rePay',
     method: 'post',
     data: params
   })
-
+// 获取订单详情
 export const GetOrderDetail = (params: any) =>
   request({
     url: '/order/v1/order/orderDetail',
     method: 'get',
     params
   })
-
+// 详情日志
 export const GetOrderLog = (params: any) =>
   request({
     url: '/order/v1/order/getOrderStatusLogById',
     method: 'get',
     params
   })
-
+// 获取司机列表
 export const GetDriverList = (params: any) =>
   request({
     // url: '/driver/v1/driver/getDriverAll',
@@ -35,14 +36,13 @@ export const GetDriverList = (params: any) =>
     method: 'post',
     data: params
   })
-
+// 获取司机详情
 export const GetDriverDetail = (params: any) =>
   request({
     url: '/transactions',
     method: 'get',
     params
   })
-
 // 合同详情
 export const GetContractDetail = (params: any) =>
   request({
@@ -50,7 +50,6 @@ export const GetContractDetail = (params: any) =>
     method: 'get',
     params
   })
-
 // 交付详情
 export const GetOrderDeliverDetail = (params: any) =>
   request({
@@ -58,7 +57,6 @@ export const GetOrderDeliverDetail = (params: any) =>
     method: 'get',
     params
   })
-
 // 提交交付信息
 export const SubmitOrderDeliver = (params: any) =>
   request({
@@ -66,7 +64,6 @@ export const SubmitOrderDeliver = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 交付详情
 export const SelectOrderInfo = (params: any) =>
   request({
@@ -74,7 +71,6 @@ export const SelectOrderInfo = (params: any) =>
     method: 'get',
     params
   })
-
 // 获取购车供应商
 export const GetSupplierByTypeAndCity = (data: any) =>
   request({
@@ -82,7 +78,6 @@ export const GetSupplierByTypeAndCity = (data: any) =>
     method: 'post',
     data: data
   })
-
 // 获取租车供应商
 export const GetRentalCarSupplierByTypeAndCity = (data: any) =>
   request({
@@ -97,7 +92,7 @@ export const GetCarTypeByTypeAndCityAndSupplier = (params: any) =>
     method: 'post',
     data: params
   })
-  // 租车合作车型
+// 租车合作车型
 export const GetRentalCarTypeByParams = (params: any) =>
   request({
     url: '/product/v1/product/product/getRentalCarTypeByParams',
@@ -105,7 +100,6 @@ export const GetRentalCarTypeByParams = (params: any) =>
     data: params
   })
 // 合同列表
-
 export const GetContractList = (params: any) =>
   request({
     url: '/business_center/v1/contract/getContractList',
@@ -120,7 +114,6 @@ export const GetPriceByTypeAndCityAndSupplierAndCarType = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 租车车价
 export const GetPriceAndByTypeAndCityAndSupplierAndCarType = (params: any) =>
   request({
@@ -128,16 +121,14 @@ export const GetPriceAndByTypeAndCityAndSupplierAndCarType = (params: any) =>
     method: 'post',
     data: params
   })
-  // 购车车价
+// 购车车价
 export const GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel = (params: any) =>
   request({
     url: '/product/v1/product/product/PriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel',
     method: 'post',
     data: params
   })
-
 // 激活
-
 export const ActiveContract = (params: any) =>
   request({
     url: '/order/v1/order/contract/activeContract',
@@ -145,14 +136,12 @@ export const ActiveContract = (params: any) =>
     params
   })
 // 下载合同
-
 export const DownloadContract = (params: any) =>
   request({
     url: '/order/v1/order/contract/downloadContract',
     method: 'get',
     params
   })
-
 // 订单列表
 export const GetOrderInfoList = (params: any) =>
   request({
@@ -160,7 +149,6 @@ export const GetOrderInfoList = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 取消订单
 export const CancelOrder = (params: any) =>
   request({
@@ -168,7 +156,6 @@ export const CancelOrder = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 订单审核
 export const PostAuditOrder = (params: any) =>
   request({
@@ -176,7 +163,6 @@ export const PostAuditOrder = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 订单确认
 export const PostConfirmOrder = (params: any) =>
   request({
@@ -184,7 +170,6 @@ export const PostConfirmOrder = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 交付列表
 export const GetDelieverList = (params: any) =>
   request({
@@ -193,7 +178,6 @@ export const GetDelieverList = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 交付列表
 export const GetOperManagerListByUserId = (params: any) =>
   request({
@@ -201,7 +185,6 @@ export const GetOperManagerListByUserId = (params: any) =>
     method: 'post',
     data: params
   })
-
 // 获取购车型号
 export const GetModelByTypeAndCityAndSupplierAndCarType = (data: any) =>
   request({
@@ -209,7 +192,6 @@ export const GetModelByTypeAndCityAndSupplierAndCarType = (data: any) =>
     method: 'post',
     data
   })
-
 // 交付导出
 export const DelieverExportDown = (params: any) =>
   request({
@@ -218,7 +200,6 @@ export const DelieverExportDown = (params: any) =>
     // responseType: 'blob',
     data: params
   })
-
 // 合同导出
 export const ContractExport = (params: any) =>
   request({
@@ -227,7 +208,6 @@ export const ContractExport = (params: any) =>
     // responseType: 'blob',
     data: params
   })
-
 // 订单导出
 export const OrderExport = (params: any) =>
   request({
@@ -236,7 +216,6 @@ export const OrderExport = (params: any) =>
     // responseType: 'blob',
     data: params
   })
-
 // GPS权限
 export const GetGPSRoles = (params: any) =>
   request({

@@ -1010,6 +1010,8 @@ export default class CreatLine extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+
+  // 字典查询
   private async getDictionary() {
     const { data } = await GetDictionaryList(['Intentional_compartment', 'busi_type', 'pay_type'])
     if (data.success) {
@@ -1020,6 +1022,7 @@ export default class CreatLine extends Vue {
       this.$message.error(data)
     }
   }
+
   // 支付查询
   // private async getPayList() {
   //   const { data } = await GetPayList({})
@@ -1029,6 +1032,7 @@ export default class CreatLine extends Vue {
   //     this.$message.error(data)
   //   }
   // }
+
   // 查供应商
   private async getCompany(str:string) {
     let res:any = ''
@@ -1050,6 +1054,7 @@ export default class CreatLine extends Vue {
       this.$message.error(res.errorMsg)
     }
   }
+
   // 查看车型
   private async getCar() {
     let res:any = ''
@@ -1074,6 +1079,7 @@ export default class CreatLine extends Vue {
       this.$message.error(res.errorMsg)
     }
   }
+
   // 查看无税车价-购车车
   private async getBuyCarPrice() {
     let { data } = await GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel(
@@ -1128,20 +1134,6 @@ export default class CreatLine extends Vue {
   private async fetchData() {
     this.getDictionary()
     // this.getPayList()
-  }
-
-  mounted() {
-    this.fetchData()
-    let id = this.$route.query.id
-    this.id = id
-    if (id) {
-      this.getDetail(id)
-    }
-    let driverId = this.$route.query.driverId
-    if (driverId) {
-      this.ruleForm.driverId = driverId
-      this.remoteMethod(this.ruleForm.driverId, true)
-    }
   }
 
   // 获取订单详情
@@ -1209,13 +1201,15 @@ export default class CreatLine extends Vue {
     this.payForm = Object.assign(this.payForm, res)
     this.showMessage = true
   }
-  // 删除
+
+  // 删除订单
   private delClick(res: any, index: any) {
     let money = this.ruleForm.orderPayRecordInfoFORMList[index].money
     this.remain = Number(this.remain) + Number(money)
     this.ruleForm.orderPayRecordInfoFORMList.splice(index, 1)
     this.notPay = this.getNotPay()
   }
+
   // 立即支付
   private goBill(res: any, index: any) {
     this.orderIndex = index
@@ -1226,6 +1220,8 @@ export default class CreatLine extends Vue {
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
   }
+
+  // 图片格式校验
   private beforeAvatarUpload(file:any) {
     const isImage = file.type.includes('image')
     const is5M = file.size / 1024 / 1024 < 5
@@ -1239,6 +1235,7 @@ export default class CreatLine extends Vue {
     }
     return isImage
   }
+
   // 选择图片
   private async handleChange(file: any, fileList: any) {
     if (!this.beforeAvatarUpload(file.raw)) {
@@ -1279,6 +1276,7 @@ export default class CreatLine extends Vue {
       }
     })
   }
+
   // 搜索司机列表
   private remoteMethod(query: any, type: boolean) {
     if (query !== '') {
@@ -1305,6 +1303,7 @@ export default class CreatLine extends Vue {
       this.driverList = []
     }
   }
+
   // 选择司机
   private checkDiver(driverId: any) {
     this.driverList.forEach(i => {
@@ -1318,6 +1317,7 @@ export default class CreatLine extends Vue {
       }
     })
   }
+
   // 提交
   private submitForm(formName:any) {
     this.fullscreenLoading = true;
@@ -1389,12 +1389,28 @@ export default class CreatLine extends Vue {
     })
     return num
   }
+
   // 商品金额监听
   private goodBlur() {
     if (Number(this.ruleForm.goodsAmount) <= (Number(this.readyPay) + Number(this.notPay))) {
       this.ruleForm.goodsAmount = Number(this.readyPay) + Number(this.notPay)
       // this.orderPrice = Number(this.readyPay) + Number(this.notPay)
       // this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+    }
+  }
+
+  // 生命周期
+  mounted() {
+    this.fetchData()
+    let id = this.$route.query.id
+    this.id = id
+    if (id) {
+      this.getDetail(id)
+    }
+    let driverId = this.$route.query.driverId
+    if (driverId) {
+      this.ruleForm.driverId = driverId
+      this.remoteMethod(this.ruleForm.driverId, true)
     }
   }
 }
@@ -1587,23 +1603,27 @@ export default class CreatLine extends Vue {
 </style>
 <style lang="scss" scoped>
 @media screen and (min-width: 701px) {
-  .SelfItem .el-select {
-    width: 100%;
+  .CreatOrder{
+    .SelfItem .el-select {
+      width: 100%;
+    }
+    .SelfItem  .el-input, .el-date-editor, .el-textarea {
+      width: 100%;
+    }
+    // .el-cascader{
+    //   width: 100%;
+    // }
   }
-  .SelfItem  .el-input, .el-date-editor, .el-textarea {
-    width: 100%;
-  }
-  // .el-cascader{
-  //   width: 100%;
-  // }
 }
 
 @media screen and (max-width: 700px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input{
-    width: 100% !important;
+  .CreatOrder-m{
+    .el-select {
+      width: 100%;
+    }
+    .el-input{
+      width: 100% !important;
+    }
   }
 }
 </style>

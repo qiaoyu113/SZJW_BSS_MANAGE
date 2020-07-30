@@ -316,11 +316,6 @@ export default class extends Vue {
     }
 }
 </script>
-<style lang="scss" scoped>
-  .specialCard {
-
-  }
-</style>
 
 <style scoped>
   .specialCard >>> .el-form-item {
