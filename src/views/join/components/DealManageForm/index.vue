@@ -154,19 +154,6 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
-  created() {
-    this.getDictionary()
-    this.getJoinManageList()
-  }
-
   // 匹配创建tags标签
   private matchName(key: any, value: any) {
     let vodeName = ''
@@ -211,6 +198,7 @@ export default class extends Vue {
     }
   }
 
+  // 字典获取
   private async getDictionary() {
     try {
       let { data: res } = await GetOpenCityData()
@@ -225,10 +213,11 @@ export default class extends Vue {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
-      console.log(`get `)
+      console.log(err)
     }
   }
 
+  // 时间选择
   private changData() {
     if (this.DateValueChild) {
       this.listQuery.startDate = this.DateValueChild[0]
@@ -239,10 +228,12 @@ export default class extends Vue {
     }
   }
 
+  // 搜索
   private research() {
     this.$emit('handle-query', this.listQuery)
   }
 
+  // 重置
   private reset() {
     for (let key in this.listQuery) {
       if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
@@ -251,6 +242,12 @@ export default class extends Vue {
       if (key !== 'state') this.listQuery['state'] = 'all'
     }
     this.DateValueChild = []
+  }
+
+  // 生命周期
+  created() {
+    this.getDictionary()
+    this.getJoinManageList()
   }
 }
 </script>

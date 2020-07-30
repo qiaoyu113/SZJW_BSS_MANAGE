@@ -386,15 +386,6 @@ export default class extends Vue {
       desc: [{ required: true, message: '请填写活动形式', trigger: 'blur' }]
     };
 
-    created() {}
-
-    mounted() {
-      this.id = this.$route.query.id
-      this.getDetail(this.id)
-    }
-
-    activated() {}
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
@@ -462,6 +453,12 @@ export default class extends Vue {
         this.fullscreenLoading = false
         this.$message.error(data.errorMsg)
       }
+    }
+
+    // 生命周期
+    mounted() {
+      this.id = this.$route.query.id
+      this.getDetail(this.id)
     }
 }
 </script>
@@ -560,20 +557,24 @@ export default class extends Vue {
   }
 }
 @media screen and (min-width: 701px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input {
-    width: 75%;
+  .OrderAudit{
+    .el-select {
+      width: 100%;
+    }
+    .el-input {
+      width: 75%;
+    }
   }
 }
 
 @media screen and (max-width: 700px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input {
-    width: 90%;
+  .OrderAudit-m{
+    .el-select {
+      width: 100%;
+    }
+    .el-input {
+      width: 90%;
+    }
   }
 }
 </style>

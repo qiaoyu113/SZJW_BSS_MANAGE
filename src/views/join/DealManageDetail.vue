@@ -537,22 +537,12 @@ export default class extends Vue {
       ]
     }
 
-    created() {
-      this.id = this.$route.query.id
-      this.getDetail(this.id)
-    }
-
-    mounted() {
-    }
-
-    activated() {
-    }
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
     }
 
+    // 提交表单
     private submitForm(formName:any) {
       (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
         if (valid) {
@@ -576,6 +566,7 @@ export default class extends Vue {
       }
     }
 
+    // 重置表单
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
     }
@@ -588,6 +579,12 @@ export default class extends Vue {
       } else {
         this.$message.error(data.errorMsg)
       }
+    }
+
+    // 生命周期
+    created() {
+      this.id = this.$route.query.id
+      this.getDetail(this.id)
     }
 }
 </script>
