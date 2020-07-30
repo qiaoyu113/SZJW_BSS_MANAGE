@@ -38,11 +38,12 @@ interface IState {
 })
 export default class extends Vue {
   @Prop({ default: () => [] }) rows!:any[]
-  private showAlert = false
+  private showAlert = false // 控制弹窗
+  // 表单对象
   private dialogForm:IState = {
     userId: ''
   }
-
+  // 表单数组
   private dialogItems:any[] = [
     {
       type: 2,
@@ -60,6 +61,9 @@ export default class extends Vue {
     if (val) {
       this.getManagers()
     }
+  }
+  @Emit('onRefresh')
+  handleRefresh() {
   }
   /**
    *获取加盟经理列表
@@ -96,12 +100,21 @@ export default class extends Vue {
   beforeClose() {
     this.showAlert = false
   }
+  /**
+   * 弹窗关闭后
+   */
   handleClosed() {
     this.dialogForm.userId = ''
   }
+  /**
+   * 取消按钮
+   */
   cancel() {
     this.showAlert = false
   }
+  /**
+   * 确定按钮
+   */
   async confirm() {
     try {
       if (!this.dialogForm.userId) {
@@ -127,9 +140,6 @@ export default class extends Vue {
     } catch (err) {
       console.log(`confirm fail:${err}`)
     }
-  }
-  @Emit('onRefresh')
-  handleRefresh() {
   }
 }
 </script>

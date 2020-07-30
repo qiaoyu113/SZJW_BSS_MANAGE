@@ -1,8 +1,8 @@
 <template>
   <div
     class="DriverList"
-    :style="{
-      padding: isPC ? '15px' : '0px'
+    :class="{
+      p15: isPC
     }"
   >
     <suggest-container
@@ -247,7 +247,7 @@ interface Tab {
   }
 })
 export default class extends Vue {
-  private listLoading:boolean = false
+  private listLoading:boolean = false // loading
   private tab:Tab[] = [
     {
       label: '全部',
@@ -279,12 +279,13 @@ export default class extends Vue {
       id: 4,
       num: 0
     }
-  ]
-  private tags:any[] = []
-  private type:string = ''
+  ] // 顶部状态
+  private tags:any[] = [] // 回显label
+  private type:string = '' // 修改加盟经理or分配加盟经理
 
-  private dropdownList:any[] = []
-  private checkList:any[] =[]
+  private dropdownList:any[] = [] // 表格筛选下拉
+  private checkList:any[] =[] // 表格筛选checkbox
+  // 表单对象
   private listQuery:IState = {
     status: '',
     workCity: '',
@@ -297,7 +298,7 @@ export default class extends Vue {
     carrierStatus: '',
     time: []
   }
-
+  // 表单数组
   private formItem:any[] = [
     {
       type: 2,
@@ -458,9 +459,9 @@ export default class extends Vue {
       type: 'btn1'
     }
   ]
-
+  // 表格
   private tableData:any[] = []
-
+  // 列数组
   private columns:any[] = [
     {
       key: 'driverId',
@@ -524,7 +525,7 @@ export default class extends Vue {
       width: this.isPC ? '100px' : '50px'
     }
   ]
-
+  // 批量操作
   private operationList = [
     {
       icon: 'el-icon-finished',
@@ -545,14 +546,6 @@ export default class extends Vue {
     page: 1,
     limit: 20,
     total: 0
-  }
-
-  mounted() {
-    this.dropdownList = [...this.columns]
-    this.checkList = this.dropdownList.map(item => item.label)
-    this.getList()
-    this.getManagers()
-    this.getOpenCitys()
   }
 
   /**
@@ -867,6 +860,13 @@ export default class extends Vue {
     setTimeout(() => {
       this.getList()
     }, delayTime)
+  }
+  mounted() {
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+    this.getList()
+    this.getManagers()
+    this.getOpenCitys()
   }
 }
 

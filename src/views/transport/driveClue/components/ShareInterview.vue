@@ -5,7 +5,7 @@
       :list-query="listQuery"
       :form-item="formItem"
       label-width="100px"
-      :is-block="true"
+      :m-block="true"
       :pc-col="12"
       :rules="rules"
       @onPass="handlePassClick"
@@ -30,6 +30,7 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => {} }) form!:any
   @Prop({ default: () => {} }) obj!:any
+  // 表单对象
   private listQuery:IState = {
     interviewDate: '',
     interviewAddress: [],
@@ -47,6 +48,7 @@ export default class extends Vue {
     isNewEnergy: '',
     age: ''
   }
+  // 表单数组
   private formItem:any[] = [
     {
       type: 6,
@@ -235,7 +237,7 @@ export default class extends Vue {
       ]
     }
   ]
-
+  // 校验规则
   private rules = {
     interviewDate: [
       { required: true, message: '请输入活动名称', trigger: 'blur' }
@@ -290,11 +292,22 @@ export default class extends Vue {
     ]
   }
 
-  mounted() {
-    this.getManagers()
-    this.getBaseInfo()
+  @Watch('obj', { deep: true, immediate: true })
+  handleObjChange(val:any) {
+    this.listQuery = { ...this.listQuery, ...val }
+    this.listQuery.interviewAddress.push(val.interviewProvince + '')
+    this.listQuery.interviewAddress.push(val.interviewCity + '')
+    this.listQuery.interviewAddress.push(val.interviewCounty + '')
+    this.listQuery.home.push(val.liveProvince + '')
+    this.listQuery.home.push(val.liveCity + '')
+    this.listQuery.home.push(val.liveCounty + '')
+    this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
   }
 
+  @Emit('onFinish')
+  handleFinish(driverId:string) {
+    return driverId
+  }
   /**
    *获取加盟经理列表
    */
@@ -339,21 +352,10 @@ export default class extends Vue {
       console.log(`get base info fail:${err}`)
     }
   }
-  @Watch('obj', { deep: true, immediate: true })
-  handleObjChange(val:any) {
-    this.listQuery = { ...this.listQuery, ...val }
-    this.listQuery.interviewAddress.push(val.interviewProvince + '')
-    this.listQuery.interviewAddress.push(val.interviewCity + '')
-    this.listQuery.interviewAddress.push(val.interviewCounty + '')
-    this.listQuery.home.push(val.liveProvince + '')
-    this.listQuery.home.push(val.liveCity + '')
-    this.listQuery.home.push(val.liveCounty + '')
-    this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
-  }
 
   /**
-     * 加载城市
-     */
+   * 加载城市
+   */
   async loadCityByCode(params:string[]) {
     try {
       let { data: res } = await GetCityByCode(params)
@@ -395,7 +397,7 @@ export default class extends Vue {
   }
   /**
    *面试地址
-  */
+   */
   async loadinterviewAddress(node:any, resolve:any) {
     let params:string[] = []
     if (node.level === 0) {
@@ -467,8 +469,8 @@ export default class extends Vue {
   }
 
   /**
-     * 编辑面试表
-     */
+    * 编辑面试表
+    */
   async edit(params:any) {
     try {
       let { data: res } = await EditDriverInterviewEdit(params)
@@ -482,9 +484,9 @@ export default class extends Vue {
     }
   }
 
-  @Emit('onFinish')
-  handleFinish(driverId:string) {
-    return driverId
+  mounted() {
+    this.getManagers()
+    this.getBaseInfo()
   }
 }
 </script>

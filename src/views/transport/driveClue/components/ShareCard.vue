@@ -5,8 +5,8 @@
       :list-query="listQuery"
       :form-item="formItem"
       label-width="100px"
-      :is-block="true"
-      :pc-col="12"
+      :m-block="true"
+      :pc-block="true"
     >
       <template v-slot:interviewAddress="{row}">
         <span>{{ row.interviewProvinceName }}{{ row.interviewCityName }}{{ row.interviewCountyName }}</span>
@@ -39,6 +39,8 @@ interface IState {
 })
 export default class extends Vue {
   @Prop({ default: () => {} }) form!:any
+
+  // 表单对象
   private listQuery:IState = {
     interviewDate: '',
     interviewProvinceName: '',
@@ -60,87 +62,88 @@ export default class extends Vue {
     scatteredJobRate: '',
     isNewEnergy: ''
   }
+  // 表单数组
   private formItem:any[] = [
     {
       type: 7,
       key: 'interviewDate',
-      label: '面试日期:'
+      label: '面试日期'
     },
     {
       slot: true,
       type: 'interviewAddress',
-      label: '面试地址:'
+      label: '面试地址'
     },
     {
       type: 7,
       key: 'interviewDistrict',
-      label: '详细面试地址:',
+      label: '详细面试地址',
       w: '150px'
     },
     {
       type: 7,
       key: 'age',
-      label: '司机年龄:'
+      label: '司机年龄'
     },
     {
       type: 7,
       key: 'gmName',
-      label: '加盟经理:'
+      label: '加盟经理'
     },
     {
       type: 'home',
       slot: true,
-      label: '现住址:'
+      label: '现住址'
     },
     {
       type: 7,
       key: 'liveDistrict',
-      label: '详细住址:'
+      label: '详细住址'
     },
     {
       type: 7,
       key: 'sourceChannelName',
-      label: '邀约渠道:'
+      label: '邀约渠道'
     },
     {
       type: 7,
       key: 'drivingLicenceTypeName',
-      label: '驾照类型:'
+      label: '驾照类型'
     },
     {
       type: 'isLocalPlate',
-      label: '是否工作地车牌:',
+      label: '是否工作地车牌',
       w: '130px',
       slot: true
     },
     {
       type: 7,
       key: 'originIncomeAvg',
-      label: '原收入(去油)(元/月):',
+      label: '原收入(去油)(元/月)',
       w: '160px'
     },
     {
       type: 7,
       key: 'expIncomeAvg',
-      label: '期望收入(去油)(元/月):',
+      label: '期望收入(去油)(元/月)',
       w: '170px'
     },
     {
       type: 7,
       key: 'workDuration',
-      label: '从业时间(月):',
+      label: '从业时间(月)',
       w: '130px'
     },
     {
       type: 7,
       key: 'scatteredJobRate',
-      label: '零散活占比(%):',
+      label: '零散活占比(%)',
       w: '130px'
     },
     {
       slot: true,
       type: 'isNewEnergy',
-      label: '是否新能源:'
+      label: '是否新能源'
     }
   ]
 
@@ -150,14 +153,51 @@ export default class extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped>
-  .shareCard {
-
-  }
-</style>
 
 <style scoped>
   .shareCard >>> .el-form-item {
     margin-bottom:0px;
+  }
+  @media screen and (max-width: 700px){
+    .shareCard >>> .el-form-item {
+      width: 100%;
+      padding: 10px 14px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      border-bottom: 1px solid #F8F9FA;
+    }
+    .shareCard >>> .el-form-item__label {
+      width: 100%!important;
+      font-size: 12px!important;
+      line-height: 13px;
+      color: #666;
+      font-weight: 400;
+      text-align: left;
+      padding-right: 15px;
+      padding-bottom: 10px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .shareCard >>> .el-form-item__content span{
+      width: 100%;
+      font-size: 14px;
+      font-weight: 400;
+      color: #252525;
+      line-height: 16px;
+    }
+  }
+  @media screen and (min-width: 700px){
+   .shareCard >>> .el-form-item__label {
+      font-size: 13px!important;
+      color: #9e9e9e!important;
+      font-weight: 400;
+      padding-right: 16px;
+    }
+    .shareCard >>> .el-form-item__content span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 700;
+      overflow-wrap: break-word;
+    }
   }
 </style>

@@ -15,6 +15,8 @@
             :list-query="item"
             :form-item="formItem"
             label-width="80px"
+            :m-block="true"
+            :pc-block="true"
           >
             <template v-slot:createDate="{row}">
               {{ row.createDate | Timestamp }}
@@ -52,42 +54,43 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => [] }) lists!:IState[]
 
+  // 表单数组
   private formItem:any[] = [
     {
       type: 7,
       key: 'name',
-      label: '姓名:'
+      label: '姓名'
     },
     {
       type: 7,
       key: 'phone',
-      label: '联系电话:'
+      label: '联系电话'
     },
     {
       type: 7,
       key: 'workCityName',
-      label: '工作城市:'
+      label: '工作城市'
     },
     {
       key: 'plateNo',
       type: 7,
-      label: '车牌号:'
+      label: '车牌号'
     },
     {
       key: 'carTypeName',
       type: 7,
-      label: '车型:'
+      label: '车型'
     },
     {
       key: 'statusName',
       type: 7,
-      label: '状态:'
+      label: '状态'
     },
     {
       key: 'createDate',
       type: 'createDate',
       slot: true,
-      label: '创建时间:'
+      label: '创建时间'
     },
     {
       slot: true,
@@ -169,5 +172,19 @@ export default class extends Vue {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
     }
+ }
+ @media screen and (min-width: 700px){
+   .transportInfo >>> .el-form-item__label {
+    font-size: 13px!important;
+    color: #9e9e9e!important;
+    font-weight: 400;
+    padding-right: 16px;
+  }
+  .transportInfo >>> .el-form-item__content span {
+    font-size: 14px;
+    color: #333;
+    font-weight: 700;
+    overflow-wrap: break-word;
+  }
  }
 </style>

@@ -38,13 +38,14 @@ interface IState {
 })
 export default class extends Vue {
   @Prop({ default: '' }) clueId!:string|number
-  private showAlert = false
+  private showAlert = false // 控制弹框
+  // 表单对象
   private dialogForm:IState = {
     interviewDate: '',
     isNeedSendsms: true,
     remarks: ''
   }
-
+  // 表单数组
   private dialogItems:any[] = [
     {
       type: 6,
@@ -86,6 +87,7 @@ export default class extends Vue {
       }
     }
   ]
+  // 校验规则
   private rules:IState = {
     interviewDate: [
       { required: true, message: '请选择面试时间', trigger: 'blur' }
@@ -97,7 +99,9 @@ export default class extends Vue {
       { required: true, message: '请输入跟进情况描述', trigger: 'blur' }
     ]
   }
-
+  @Emit('getRecord')
+  getRecord() {
+  }
   /**
    *发开模态框
    */
@@ -110,14 +114,23 @@ export default class extends Vue {
   beforeClose() {
     this.showAlert = false
   }
+  /**
+   *弹框关闭
+   */
   handleClosed() {
     this.dialogForm.interviewDate = ''
     this.dialogForm.isNeedSendsms = true
     this.dialogForm.remarks = ''
   }
+  /**
+   * 取消按钮
+   */
   cancel() {
     this.showAlert = false
   }
+  /**
+   * 确定按钮
+   */
   async confirm() {
     try {
       let params = {
@@ -140,11 +153,11 @@ export default class extends Vue {
     }
     (this.$refs.invite as any).submitForm()
   }
+  /**
+   * 校验通过
+   */
   handlePass() {
     this.showAlert = false
-  }
-  @Emit('getRecord')
-  getRecord() {
   }
 }
 </script>

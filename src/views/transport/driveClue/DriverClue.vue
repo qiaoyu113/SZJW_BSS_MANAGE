@@ -1,8 +1,8 @@
 <template>
   <div
     class="DriverClue"
-    :style="{
-      padding: isPC ? '15px' : '0px'
+    :class="{
+      p15: isPC
     }"
   >
     <suggest-container
@@ -338,10 +338,10 @@ export default class extends Vue {
     }
   ] // 左下角表格批量操作数组
 
-  private carOptions:any[] = [] // 车型选项列表
-  private sourceOptions:any[] = [] // 来源渠道选项列表
-  private workCityOptions:any[] = [] // 城市选项列表
-  private gmOptions:any[] = [] // 跟进人选项列表
+  private carOptions:any[] = [] // 车型列表
+  private sourceOptions:any[] = [] // 来源渠道列表
+  private workCityOptions:any[] = [] // 城市列表
+  private gmOptions:any[] = [] // 跟进人列表
   /**
    *表单对象
    */

@@ -10,7 +10,8 @@
           class="base"
           :list-query="listQuery"
           :form-item="formItem"
-          :is-block="true"
+          :m-block="true"
+          :pc-block="true"
           label-width="80px"
         >
           <template v-slot:intentCargoType="{row}">
@@ -98,13 +99,13 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 export default class extends Vue {
   @Prop({ default: '' }) busiTypeName!:string
   @Prop({ default: () => {} }) obj!:any
-
+  // 表单对象
   private listQuery = {
 
   }
-
+  // 表单数组
   private formItem = []
-
+  // 专车对象
   private specialForm = {
     gmName: '',
     name: '',
@@ -147,209 +148,209 @@ export default class extends Vue {
     isAdvancedIntention: '',
     remarks: ''
   }
-
+  // 专车数组
   private specialItem = [
     {
       type: 7,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmName'
     },
     {
       type: 7,
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'name'
     },
     {
       type: 7,
-      label: '城市:',
+      label: '城市',
       key: 'workCityName'
     },
     {
       type: 7,
-      label: '来源渠道:',
+      label: '来源渠道',
       key: 'sourceChannelName'
     },
 
     {
       type: 7,
-      label: '您是从哪里了解我们的加盟信息:',
+      label: '您是从哪里了解我们的加盟信息',
       col: 24,
       w: '220px',
       key: 'whereKnow'
     },
     {
       type: 7,
-      label: '重代理姓名:',
+      label: '重代理姓名',
       w: '110px',
       key: 'heavyAgentName'
     },
     {
       type: 7,
-      label: '司机手机号:',
+      label: '司机手机号',
       w: '110px',
       key: 'phone'
     },
     {
       type: 7,
-      label: '年龄:',
+      label: '年龄',
       key: 'age'
     },
     {
       type: 'live',
-      label: '居住地址:',
+      label: '居住地址',
       slot: true
     },
     {
       type: 'intentWork',
-      label: '意向工作区域:',
+      label: '意向工作区域',
       w: '120px',
       col: 12,
       slot: true
     },
     {
       type: 7,
-      label: '意向配送模式:',
+      label: '意向配送模式',
       w: '130px',
       key: 'intentDeliveryModeName'
     },
     {
-      label: '意向货物类型:',
+      label: '意向货物类型',
       w: '130px',
       type: 'intentCargoType',
       slot: true
     },
     {
       type: 7,
-      label: '意向工作时间段:',
+      label: '意向工作时间段',
       w: '130px',
       key: 'intentWorkDurationName'
     },
     {
       type: 7,
-      label: '原职业月均收入:',
+      label: '原职业月均收入',
       w: '130px',
       key: 'originIncomeAvg'
     },
     {
       type: 7,
-      label: '期望月均净收入:',
+      label: '期望月均净收入',
       w: '130px',
       key: 'expIncomeAvg'
     },
     {
       type: 'householdType',
-      label: '户口性质:',
+      label: '户口性质',
       slot: true
     },
     {
       type: 'household',
-      label: '户籍地址:',
+      label: '户籍地址',
       col: 12,
       slot: true
     },
     {
       type: 7,
-      label: '户籍地址具体区域:',
+      label: '户籍地址具体区域',
       w: '150px',
       key: 'householdDistrict'
     },
     {
       type: 7,
-      label: '子女数:',
+      label: '子女数',
       key: 'childNum'
     },
     {
       type: 'experience',
-      label: '货物运输经验:',
+      label: '货物运输经验',
       w: '130px',
       slot: true
     },
     {
       type: 'drivingAge',
-      label: '实际货车驾龄:',
+      label: '实际货车驾龄',
       w: '130px',
       slot: true
     },
     {
       type: 'livingAge',
-      label: '本城市居住时长:',
+      label: '本城市居住时长',
       w: '150px',
       slot: true
     },
     {
       type: 7,
-      label: '驾照类型:',
+      label: '驾照类型',
       key: 'drivingLicenceTypeName'
     },
     {
       type: 7,
-      label: '意向驾驶车型:',
+      label: '意向驾驶车型',
       w: '130px',
       key: 'intentDrivingCarTypeName'
     },
     {
       type: 'hasOwnCar',
-      label: '是否有自己的货车:',
+      label: '是否有自己的货车',
       w: '150px',
       slot: true
     },
     {
       type: 7,
-      label: '自己的货车数量:',
+      label: '自己的货车数量',
       key: 'ownCarNum',
       w: '150px'
     },
     {
       type: 'maxAdvancePayment',
-      label: '最大可支付首付款:',
+      label: '最大可支付首付款',
       w: '150px',
       slot: true
     },
     {
       type: 'heavyLifting',
-      label: '是否能承担较重搬运:',
+      label: '是否能承担较重搬运',
       w: '150px',
       slot: true
     },
     {
       type: 'providePersonalCredit',
-      label: '能否提供个人征信:',
+      label: '能否提供个人征信',
       w: '150px',
       slot: true
     },
     {
       type: 7,
-      label: '投资决策权:',
+      label: '投资决策权',
       w: '110px',
       key: 'strategyRightName'
     },
     {
       type: 7,
-      label: '如果有机会跟云鸟合作，你看中的是什么:',
+      label: '如果有机会跟云鸟合作，你看中的是什么',
       col: 24,
       key: 'cooperateFocusPointName',
       w: '290px'
     },
     {
       type: 7,
-      label: '最终决定你是否与云鸟合作的关键因素是什么:',
+      label: '最终决定你是否与云鸟合作的关键因素是什么',
       col: 24,
       key: 'cooperateKeyFactorName',
       w: '320px'
     },
     {
-      label: '是否是高意向司机:',
+      label: '是否是高意向司机',
       type: 'isAdvancedIntention',
       slot: true,
       w: '150px'
     },
     {
       type: 7,
-      label: '备注:',
+      label: '备注',
       key: 'remarks'
     }
   ]
-
+  // 共享对象
   private shareForm = {
     interviewDate: '',
     interviewDistrict: '',
@@ -371,99 +372,98 @@ export default class extends Vue {
     scatteredJobRate: '',
     isNewEnergy: ''
   }
-
+  // 共享数组
   private shareItem = [
     {
       type: 'interviewDate',
-      label: '面试日期:',
+      label: '面试日期',
       slot: true
     },
     {
       type: 7,
-      label: '面试地址:',
+      label: '面试地址',
       key: 'interviewDistrict'
     },
     {
       type: 7,
-      label: '司机年龄:',
+      label: '司机年龄',
       key: 'age'
     },
     {
       type: 7,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmName'
     },
     {
       type: 'live',
-      label: '居住地址:',
+      label: '居住地址',
       slot: true
     },
     {
       type: 7,
-      label: '邀约渠道:',
+      label: '邀约渠道',
       key: 'sourceChannelName'
     },
     {
       type: 7,
-      label: '工作城市:',
+      label: '工作城市',
       key: 'workCityName'
     },
     {
       type: 7,
-      label: '驾照类型:',
+      label: '驾照类型',
       key: 'drivingLicenceTypeName'
     },
     {
-      label: '是否工作地车牌:',
+      label: '是否工作地车牌',
       w: '120px',
       type: 'isLocalPlate',
       slot: true
     },
     {
       type: 7,
-      label: '原收入:',
+      label: '原收入',
       key: 'originIncomeAvg'
     },
     {
       type: 7,
-      label: '期望月均净收入:',
+      label: '期望月均净收入',
       w: '120px',
       key: 'expIncomeAvg'
     },
     {
       type: 7,
-      label: '从业时间:',
+      label: '从业时间',
       key: 'workDuration'
     },
     {
       type: 'scatteredJobRate',
-      label: '零散活占比（%):',
+      label: '零散活占比（%)',
       w: '120px',
       slot: true
     },
     {
       type: 'isNewEnergy',
-      label: '是否新能源:',
+      label: '是否新能源',
       w: '100px',
       slot: true
     },
     {
       type: 7,
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'name'
     },
     {
       type: 7,
-      label: '司机手机号:',
+      label: '司机手机号',
       w: '100px',
       key: 'phone'
     },
     {
       type: 7,
-      label: '车型:',
+      label: '车型',
       key: 'intentDrivingCarTypeName'
     }
-
   ]
 
   @Watch('busiTypeName')
@@ -551,5 +551,20 @@ export default class extends Vue {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
     }
+ }
+
+ @media screen and (min-width: 700px){
+   .carInfo >>> .el-form-item__label {
+    font-size: 13px!important;
+    color: #9e9e9e!important;
+    font-weight: 400;
+    padding-right: 16px;
+  }
+  .carInfo >>> .el-form-item__content span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 700;
+      overflow-wrap: break-word;
+  }
  }
 </style>

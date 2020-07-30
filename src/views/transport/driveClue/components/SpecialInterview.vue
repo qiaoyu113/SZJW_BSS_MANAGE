@@ -7,7 +7,7 @@
       label-width="100px"
       :pc-col="12"
       :rules="rules"
-      :is-block="true"
+      :m-block="true"
       @onPass="handlePassClick"
     />
   </div>
@@ -655,8 +655,8 @@ export default class extends Vue {
     }
 
     /**
-   *获取基础信息
-   */
+     *获取基础信息
+     */
     async getBaseInfo() {
       try {
         let params = ['source_channel', 'intent_cargo_type', 'accep_payment_range', 'driving_licence_type', 'invite_type', 'intent_delivery_mode', 'strategy_right', 'cooperate_focus_point', 'cooperate_key_factor', 'intent_work_duration']
@@ -712,8 +712,8 @@ export default class extends Vue {
       }
     }
     /**
-   *获取加盟经理列表
-   */
+     *获取加盟经理列表
+     */
     async getManagers() {
       try {
         let params = {
@@ -735,7 +735,9 @@ export default class extends Vue {
         console.log(`get manager fail:${err}`)
       }
     }
-
+    /**
+     *表单验证通过
+     */
     async handlePassClick() {
       let params = {
         gmId: this.listQuery.gmId,
@@ -916,8 +918,3 @@ export default class extends Vue {
     }
 }
 </script>
-<style lang="scss" scoped>
-  .specialInterview {
-
-  }
-</style>

@@ -100,7 +100,7 @@ export default class extends Vue {
        type: 'detail'
      }
    ]
-
+   // 区分设备
    get isPC() {
      return SettingsModule.isPC
    }
