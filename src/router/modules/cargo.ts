@@ -25,6 +25,18 @@ const cargoRouter: RouteConfig = {
       }
     },
     {
+      path: 'cluelista', /* 线索列表a */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/ClueLista.vue'),
+      name: 'ClueLista',
+      meta: {
+        apiUrl: '/v1/line/clue/queryLineClueList',
+        activeMenu: '/cargo/cluelist',
+        title: 'clueLista',
+        icon: '',
+        noCache: false
+      }
+    },
+    {
       path: 'addclue', /* 新增线索 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/cargo/AddClue.vue'),
       name: 'AddClue',
