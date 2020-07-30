@@ -29,7 +29,7 @@
             size="mini"
             @click="showPhone"
           >
-            {{ '查看' }}
+            {{ "查看" }}
           </el-button>
         </el-col>
 
@@ -116,7 +116,7 @@
       </el-row>
     </SectionContainer>
     <SectionContainer
-      v-if="details.clueState===3"
+      v-if="details.clueState === 3"
       title="无效信息"
       :md="true"
     >
@@ -130,7 +130,7 @@
       </el-row>
     </SectionContainer>
     <SectionContainer
-      v-if="details.clueState !==3 && details.clueState !== 0"
+      v-if="details.clueState !== 3 && details.clueState !== 0"
       title="跟进信息"
       :md="true"
     >
@@ -148,7 +148,7 @@
         >
           <DetailItem
             v-if="item"
-            :name="`需求车型${index+1}`"
+            :name="`需求车型${index + 1}`"
             :value="`${item.demandCarTypeName}/${item.demandNo}辆`"
           />
         </el-col>
@@ -166,7 +166,7 @@
         >
           <div class="card-tit">
             <div class="card-t">
-              跟进记录{{ index+1 }}
+              跟进记录{{ index + 1 }}
             </div>
           </div>
           <div class="card-box clearfix">
@@ -242,11 +242,13 @@ const optionsDistribution: any = [
   },
   filters: {
     findDistribution(status: string) {
-      const item = optionsDistribution.find(({ value }:any) => value === status)
+      const item = optionsDistribution.find(
+        ({ value }: any) => value === status
+      )
       return item ? item['label'] : status
     },
     findClue(status: string) {
-      const item = optionsClue.find(({ value }:any) => value === status)
+      const item = optionsClue.find(({ value }: any) => value === status)
       return item ? item['label'] : status
     }
   }
@@ -254,7 +256,7 @@ const optionsDistribution: any = [
 export default class extends Vue {
   private details: any = {};
   private loading: boolean = false;
-  private id: any = ''
+  private id: any = '';
   private optionsClue: any = optionsClue; // 线索状态
   private optionsDistribution: any = optionsDistribution; //
   private async getDetail() {
@@ -318,46 +320,48 @@ export default class extends Vue {
     color: #4a4a4a;
     font-weight: 400;
   }
-  .follow-card{
+  .follow-card {
     margin-left: 10px;
     margin-right: 10px;
   }
-  .card-box{
+  .card-box {
     padding: 10px;
   }
 }
 </style>
 
 <style lang="scss" scope>
-.posr{
-  position: relative;
-}
-.wrap {
-  flex-wrap: wrap;
-}
-.showPhone{
-  position: absolute;
-  left: 120px;
-  bottom: 3px;
-}
-.follow-card {
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border: 1px solid #dde2ee;
-  background: #fafbfc;
-  .card-tit {
+.ClueDetail,
+.ClueDetail-m {
+  .posr {
     position: relative;
-    height: 32px;
-    line-height: 32px;
-    background: #dde2ee;
-    font-size: 14px;
-    color: #838a9d;
-    text-align: center;
-    border-radius: 4px 4px 0 0;
   }
-  .card-box {
-    padding: 24px 30px;
+  .wrap {
+    flex-wrap: wrap;
+  }
+  .showPhone {
+    position: absolute;
+    left: 120px;
+    bottom: 3px;
+  }
+  .follow-card {
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #dde2ee;
+    background: #fafbfc;
+    .card-tit {
+      position: relative;
+      height: 32px;
+      line-height: 32px;
+      background: #dde2ee;
+      font-size: 14px;
+      color: #838a9d;
+      text-align: center;
+      border-radius: 4px 4px 0 0;
+    }
+    .card-box {
+      padding: 24px 30px;
+    }
   }
 }
-
 </style>

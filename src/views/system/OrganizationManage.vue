@@ -1,5 +1,5 @@
 <template>
-  <div class="OrganizationManagement">
+  <div :class="isPC ? 'OrganizationManagement' : 'OrganizationManagement-m'">
     <SectionContainer
       v-loading="loading"
       title="组织管理"
@@ -11,14 +11,12 @@
         node-key="id"
         :default-expand-all="false"
       >
-        <template slot-scope="{node,data}">
+        <template slot-scope="{node, data}">
           <svg-icon
             class="tree-icon"
-            :name="'type_'+data.type"
+            :name="'type_' + data.type"
           />
-          <span
-            class="mr10"
-          >{{ node.label }}</span>
+          <span class="mr10">{{ node.label }}</span>
           <el-badge
             type="warning"
             :value="data.userCount"
@@ -31,9 +29,11 @@
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
-              @click.stop="() => {
-                appendOffice(node,data)
-              }"
+              @click.stop="
+                () => {
+                  appendOffice(node, data);
+                }
+              "
             />
             <el-button
               v-if="data.type !== 1"
@@ -42,9 +42,11 @@
               size="mini"
               class="delete"
               icon="el-icon-remove-outline"
-              @click.stop="() => {
-                deleteOffice(node,data)
-              }"
+              @click.stop="
+                () => {
+                  deleteOffice(node, data);
+                }
+              "
             />
             <el-button
               v-if="data.type !== 1"
@@ -52,9 +54,11 @@
               circle
               size="mini"
               icon="el-icon-edit"
-              @click.stop="() => {
-                updateOffice(node,data)
-              }"
+              @click.stop="
+                () => {
+                  updateOffice(node, data);
+                }
+              "
             />
             <el-button
               v-if="data.type !== 1"
@@ -62,9 +66,11 @@
               circle
               size="mini"
               icon="el-icon-top"
-              @click.stop="() => {
-                upOffice(node,data)
-              }"
+              @click.stop="
+                () => {
+                  upOffice(node, data);
+                }
+              "
             />
             <el-button
               v-if="data.type !== 1"
@@ -72,9 +78,11 @@
               circle
               size="mini"
               icon="el-icon-bottom"
-              @click.stop="() => {
-                downOffice(node,data)
-              }"
+              @click.stop="
+                () => {
+                  downOffice(node, data);
+                }
+              "
             />
           </div>
         </template>
@@ -221,7 +229,13 @@ import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetArea } from '@/api/common'
-import { getOfficeList, createOffice, deleteOffice, sortOffice, updateOffice } from '@/api/system'
+import {
+  getOfficeList,
+  createOffice,
+  deleteOffice,
+  sortOffice,
+  updateOffice
+} from '@/api/system'
 
 import '@/styles/common.scss'
 
@@ -247,16 +261,16 @@ export default class extends Vue {
   // 弹窗
   private showDialog: boolean = false;
   private activeName: string = 'first';
-  private dialogTit: string = '新建组织'
+  private dialogTit: string = '新建组织';
   private dialogForm: any = {
-    'name': '',
-    'parentId': 0,
-    'parentIds': '',
-    'areaCode': '', // 区域编码
-    'type': 0
-  }
-  private optionsArea: any = []
-  private props :any = {
+    name: '',
+    parentId: 0,
+    parentIds: '',
+    areaCode: '', // 区域编码
+    type: 0
+  };
+  private optionsArea: any = [];
+  private props: any = {
     label: 'name',
     value: 'code',
     lazy: true,
@@ -266,35 +280,36 @@ export default class extends Vue {
         resolve(node.children)
         return
       }
-      GetArea(['100000', value])
-        .then(({ data }) => {
-          if (data.success) {
-            const nodes = data.data.map((item: any) => {
-              item.leaf = 2
-              return item
-            })
-            resolve(nodes)
-          } else {
-            this.$message.error(data)
-          }
-        })
+      GetArea(['100000', value]).then(({ data }) => {
+        if (data.success) {
+          const nodes = data.data.map((item: any) => {
+            item.leaf = 2
+            return item
+          })
+          resolve(nodes)
+        } else {
+          this.$message.error(data)
+        }
+      })
     }
-  }
-  private areaList: any = []
+  };
+  private areaList: any = [];
   private rules: any = {
     name: [
       { required: true, message: '请输入组织名称', trigger: 'blur' },
-      { pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/, message: '请输入2-10个中文', trigger: 'blur' }
+      {
+        pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/,
+        message: '请输入2-10个中文',
+        trigger: 'blur'
+      }
     ],
-    areaCode: [
-      { required: true, message: '请选择城市', trigger: 'change' }
-    ]
-  }
+    areaCode: [{ required: true, message: '请选择城市', trigger: 'change' }]
+  };
   private isAdd: boolean = false;
   private disabled: boolean = false;
 
   @Watch('dialogForm.areaCode')
-  private onval(value:any) {
+  private onval(value: any) {
     if (value === '') {
       this.dialogForm.name = ''
     }
@@ -303,14 +318,14 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
-  private appendOffice(node: any, data:any) {
+  private appendOffice(node: any, data: any) {
     this.addNode = node
     this.addData = data
     this.dialogTit = '新建组织'
     this.isAdd = true
     this.showDialog = true
   }
-  private updateOffice(node: any, data:any) {
+  private updateOffice(node: any, data: any) {
     this.addNode = node
     this.addData = data
     this.dialogTit = '编辑组织'
@@ -319,7 +334,7 @@ export default class extends Vue {
     this.dialogForm.areaCode = data.areaCode
     this.showDialog = true
   }
-  private async upOffice(node:any, item: any) {
+  private async upOffice(node: any, item: any) {
     // 向上
     if (this.disabled) {
       return
@@ -333,24 +348,36 @@ export default class extends Vue {
     const nodeExpaned = node.expanded
     const prevExpaned = prev.expanded
     this.disabled = true
-    this.sortOffice({
-      fromId: node.data.id,
-      toId: prev.data.id
-    }, () => {
-      const children = parent.data.officeVOs || parent.data
-      const index = children.findIndex((item: any) => {
-        return prev.data.id === item.id
-      })
-      children.splice(index, 2, JSON.parse(JSON.stringify(node.data)), JSON.parse(JSON.stringify(prev.data)))
-      this.$nextTick(() => {
-        let node1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(node.data.id)
-        node1.expanded = nodeExpaned
-        let prev1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(prev.data.id)
-        prev1.expanded = prevExpaned
-      })
-    })
+    this.sortOffice(
+      {
+        fromId: node.data.id,
+        toId: prev.data.id
+      },
+      () => {
+        const children = parent.data.officeVOs || parent.data
+        const index = children.findIndex((item: any) => {
+          return prev.data.id === item.id
+        })
+        children.splice(
+          index,
+          2,
+          JSON.parse(JSON.stringify(node.data)),
+          JSON.parse(JSON.stringify(prev.data))
+        )
+        this.$nextTick(() => {
+          let node1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(
+            node.data.id
+          )
+          node1.expanded = nodeExpaned
+          let prev1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(
+            prev.data.id
+          )
+          prev1.expanded = prevExpaned
+        })
+      }
+    )
   }
-  private async downOffice(node:any, item: any) {
+  private async downOffice(node: any, item: any) {
     // 下
     if (this.disabled) {
       return
@@ -365,24 +392,36 @@ export default class extends Vue {
     const nextExpaned = next.expanded
 
     this.disabled = true
-    this.sortOffice({
-      fromId: node.data.id,
-      toId: next.data.id
-    }, () => {
-      const children = parent.data.officeVOs || parent.data
-      const index = children.findIndex((item: any) => {
-        return node.data.id === item.id
-      })
-      children.splice(index, 2, JSON.parse(JSON.stringify(next.data)), JSON.parse(JSON.stringify(node.data)))
-      this.$nextTick(() => {
-        let node1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(node.data.id)
-        node1.expanded = nodeExpaned
-        let next1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(next.data.id)
-        next1.expanded = nextExpaned
-      })
-    })
+    this.sortOffice(
+      {
+        fromId: node.data.id,
+        toId: next.data.id
+      },
+      () => {
+        const children = parent.data.officeVOs || parent.data
+        const index = children.findIndex((item: any) => {
+          return node.data.id === item.id
+        })
+        children.splice(
+          index,
+          2,
+          JSON.parse(JSON.stringify(next.data)),
+          JSON.parse(JSON.stringify(node.data))
+        )
+        this.$nextTick(() => {
+          let node1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(
+            node.data.id
+          )
+          node1.expanded = nodeExpaned
+          let next1 = (this.$refs['tree'] as any).$refs['roleTree'].getNode(
+            next.data.id
+          )
+          next1.expanded = nextExpaned
+        })
+      }
+    )
   }
-  private async sortOffice(postData: any, callback:any) {
+  private async sortOffice(postData: any, callback: any) {
     const { data } = await sortOffice(postData)
     this.disabled = false
     if (data.success) {
@@ -392,10 +431,11 @@ export default class extends Vue {
     }
   }
   private async confirm(done: any) {
-    ((this.$refs['dialogForm']) as any).validate(async(valid:boolean) => {
+    (this.$refs['dialogForm'] as any).validate(async(valid: boolean) => {
       if (valid) {
         this.dialogForm.parentId = this.addData.id
-        this.dialogForm.parentIds = this.addData.parentIds + ',' + this.addData.id
+        this.dialogForm.parentIds =
+          this.addData.parentIds + ',' + this.addData.id
         if (this.addData.type === 3) {
           this.dialogForm.type = this.activeName === 'first' ? 4 : 5
         } else {
@@ -441,7 +481,7 @@ export default class extends Vue {
       (this.$refs.dialogForm as any).clearValidate()
     })
   }
-  private handleChange(value:any) {
+  private handleChange(value: any) {
     this.dialogForm.areaCode = value.slice().pop() || ''
     const node = (this.$refs.cascader as any).getCheckedNodes()
     if (node && node[0]) {
@@ -471,21 +511,22 @@ export default class extends Vue {
     }
   }
   // 删除
-  private async deleteOffice(node:any, item: any) {
+  private async deleteOffice(node: any, item: any) {
     this.$confirm(`您确定要删除“${item.name}”吗？`, '删除组织', {
       type: 'warning'
-    }).then(async() => {
-      const { data } = await deleteOffice({
-        id: item.id
-      })
-      if (data.success) {
-        this.$message.success(`删除成功`)
-        this.remove(node, item)
-      } else {
-        this.$message.error(data)
-      }
-    }).catch(() => {
     })
+      .then(async() => {
+        const { data } = await deleteOffice({
+          id: item.id
+        })
+        if (data.success) {
+          this.$message.success(`删除成功`)
+          this.remove(node, item)
+        } else {
+          this.$message.error(data)
+        }
+      })
+      .catch(() => {})
   }
   // 删除tree 节点
   private remove(node: any, data: any) {
@@ -528,54 +569,63 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.OrganizationManagement{
-  .el-cascader{
+.OrganizationManagement {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.OrganizationManagement,
+.OrganizationManagement-m{
+  .el-cascader {
     position: absolute;
     left: 0;
     right: 0;
     z-index: 1;
-    color:rgba(0, 0, 0,0);
+    color: rgba(0, 0, 0, 0);
     display: block;
   }
-}
-.mr10 {
-  margin-right: 10px;
-}
-.ml10 {
-  margin-left: 10px;
-}
-.tree-icon{
-  font-size: 16px;
-  color: $--color-text-regular;
-  margin-right: 10px;
-}
-.right-btn{
-  display: inline-block;
-  .el-button{
-    padding: 0;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
-    background: rgba(0, 0, 0,0);
-    font-size: 20px;
-    border-color: rgba(0,0,0,0);
-    &.delete{
-      &:hover {
-        color: $--color-danger;
+  .mr10 {
+    margin-right: 10px;
+  }
+  .ml10 {
+    margin-left: 10px;
+  }
+  .tree-icon {
+    font-size: 16px;
+    color: $--color-text-regular;
+    margin-right: 10px;
+  }
+  .right-btn {
+    display: inline-block;
+    .el-button {
+      padding: 0;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0);
+      font-size: 20px;
+      border-color: rgba(0, 0, 0, 0);
+      &.delete {
+        &:hover {
+          color: $--color-danger;
+        }
       }
     }
   }
 }
 </style>
 <style scoped>
-.OrganizationManagement .el-badge >>> sup{
-  transform: translateY(6px)
+.OrganizationManagement .el-badge >>> sup,
+.OrganizationManagement-m .el-badge >>> sup {
+  transform: translateY(6px);
 }
-.OrganizationManagement .el-cascader >>> input{
+.OrganizationManagement .el-cascader >>> input,
+.OrganizationManagement-m .el-cascader >>> input {
   background-color: rgba(0, 0, 0, 0);
   color: rgba(0, 0, 0, 0);
 }
-.OrganizationManagement .opacity >>> input {
+.OrganizationManagement .opacity >>> input,
+.OrganizationManagement-m .opacity >>> input {
   border-color: rgba(0, 0, 0, 0);
 }
 </style>

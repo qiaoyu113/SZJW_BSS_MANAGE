@@ -153,7 +153,6 @@ export default class extends Vue {
       background: #649CEE;
       box-shadow: 0 2px 4px 0 rgb(99, 154, 238,0.5);
       border-radius: 24px;
-      border-radius: 24px;
       font-size: 12px;
       color: #FFFFFF;
       border:none;

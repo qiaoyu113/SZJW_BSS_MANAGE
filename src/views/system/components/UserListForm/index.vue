@@ -109,7 +109,7 @@
                   type="primary"
                   @click="searchForm"
                 >
-                  查询
+                  筛选
                 </el-button>
               </el-col>
             </el-form>
