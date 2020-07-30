@@ -1,7 +1,7 @@
 <template>
   <div
     v-loading="loading"
-    class="ConversionClue"
+    :class="isPC ? 'ConversionClue' : 'ConversionClue-m'"
   >
     <el-form
       ref="ruleForm"
@@ -163,7 +163,7 @@
               <el-upload
                 action="/api/base/v1/upload/uploadOSS/img/true/-1"
                 :headers="myHeaders"
-                :class="{'hide': fileList.length === 1}"
+                :class="{hide: fileList.length === 1}"
                 :on-preview="handlePictureCardPreview"
                 :on-remove="handleRemove"
                 :on-success="handleUpSuccess"
@@ -194,20 +194,18 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item>
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
       </SectionContainer>
+      <div class="btn_box">
+        <el-button
+          type="primary"
+          @click="submitForm('ruleForm')"
+        >
+          提交
+        </el-button>
+        <el-button @click="resetForm('ruleForm')">
+          重置
+        </el-button>
+      </div>
     </el-form>
     <el-image-viewer
       v-if="showViewer"
@@ -224,7 +222,13 @@ import { Form as ElForm, Input } from 'element-ui'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
-import { TransformCustomer, GetCustomerOff, GetLineClueDetail, GetCustomerDetails, EditCustomer } from '@/api/cargo'
+import {
+  TransformCustomer,
+  GetCustomerOff,
+  GetLineClueDetail,
+  GetCustomerDetails,
+  EditCustomer
+} from '@/api/cargo'
 import { GetDictionaryList, Upload } from '@/api/common'
 import { UserModule } from '@/store/modules/user'
 
@@ -238,34 +242,36 @@ import '@/styles/common.scss'
 })
 export default class extends Vue {
   private loading: boolean = false;
-  private id: any = ''
+  private id: any = '';
   private isEdit: boolean = false;
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
-  private optionsCustCategory: any[] = []
-  private ruleForm:any = {
-    'address': '', // 详细地址
-    'businessLicenseUrl': '', // 图片url
-    'bussinessCard': '', // 身份证
-    'bussinessName': '', // 业务对接人姓名
-    'bussinessPhone': '', // 业务对接人联系电话
-    'bussinessPosition': '', // 业务对接人职务
-    'city': '', // 城市（开通业务）
-    'classification': '', // 分类
-    'clueId': '', // 线索编号id
-    'contractEnd': '', // 合同截止时间
-    'customerCompanyMain': '', // 货主公司主体
-    'customerCompanyName': '', // 货主公司简称
-    'customerId': '', // 货主编号id
-    'lineSaleId': '', // 销售id
-    'remark': ''// 备注
-  }
-  private rules:any = {
-    address: [
-      { required: true, message: '请输入详细地址', trigger: 'blur' }
-    ],
+  private optionsCustCategory: any[] = [];
+  private ruleForm: any = {
+    address: '', // 详细地址
+    businessLicenseUrl: '', // 图片url
+    bussinessCard: '', // 身份证
+    bussinessName: '', // 业务对接人姓名
+    bussinessPhone: '', // 业务对接人联系电话
+    bussinessPosition: '', // 业务对接人职务
+    city: '', // 城市（开通业务）
+    classification: '', // 分类
+    clueId: '', // 线索编号id
+    contractEnd: '', // 合同截止时间
+    customerCompanyMain: '', // 货主公司主体
+    customerCompanyName: '', // 货主公司简称
+    customerId: '', // 货主编号id
+    lineSaleId: '', // 销售id
+    remark: '' // 备注
+  };
+  private rules: any = {
+    address: [{ required: true, message: '请输入详细地址', trigger: 'blur' }],
     bussinessCard: [
       { required: false, message: '请输入身份证', trigger: 'blur' },
-      { pattern: /(^\d{8}(0\d|10|11|12)([0-2]\d|30|31)\d{3}$)|(^\d{6}(18|19|20)\d{2}(0[1-9]|10|11|12)([0-2]\d|30|31)\d{3}(\d|X|x)$)/, message: '请输入正确格式身份证', trigger: 'blur' }
+      {
+        pattern: /(^\d{8}(0\d|10|11|12)([0-2]\d|30|31)\d{3}$)|(^\d{6}(18|19|20)\d{2}(0[1-9]|10|11|12)([0-2]\d|30|31)\d{3}(\d|X|x)$)/,
+        message: '请输入正确格式身份证',
+        trigger: 'blur'
+      }
     ],
     bussinessName: [
       { required: true, message: '请输入业务对接人姓名', trigger: 'blur' }
@@ -274,40 +280,36 @@ export default class extends Vue {
       { required: true, message: '请输入业务对接人联系电话', trigger: 'blur' },
       { pattern: /^1\d{10}$/, message: '请输入正确格式手机号', trigger: 'blur' }
     ],
-    city: [
-      { required: true, message: '请选择城市', trigger: 'change' }
-    ],
+    city: [{ required: true, message: '请选择城市', trigger: 'change' }],
     classification: [
       { required: true, message: '请选择分类', trigger: 'change' }
     ],
-    contractEnd: [
-      { required: true, message: '请选择日期', trigger: 'change' }
-    ],
+    contractEnd: [{ required: true, message: '请选择日期', trigger: 'change' }],
     customerCompanyMain: [
       { required: true, message: '请输入货主公司主体', trigger: 'blur' }
     ],
     customerCompanyName: [
       { required: true, message: '请输入货主公司简称', trigger: 'blur' }
     ]
-  }
+  };
   private endDateOpt: any = {
     disabledDate: (time: any) => {
-      return time.getTime() < (+new Date(2020, 0, 1))
+      return time.getTime() < +new Date(2020, 0, 1)
     }
-  }
+  };
   // 上传
-  private showDio:boolean = false
-  private isloading:boolean = false
-  private imageList:any[] = [];
-  private fileList: any[] = []
-  private showViewer:boolean = false
-  private myHeaders:any = { Authorization: UserModule.token }
+  private showDio: boolean = false;
+  private isloading: boolean = false;
+  private imageList: any[] = [];
+  private fileList: any[] = [];
+  private showViewer: boolean = false;
+  private myHeaders: any = { Authorization: UserModule.token };
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
 
-  private submitForm(formName:any) {
+  private submitForm(formName: any) {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         // alert('submit!')
@@ -321,7 +323,8 @@ export default class extends Vue {
         if (data.success) {
           this.$message.success(`转化成功`);
           (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-          (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+          (TagsViewModule as any).delCachedView({
+            // 删除指定页面缓存（进行刷新操作）
             name: 'ClueList'
           })
           this.$nextTick(() => {
@@ -343,7 +346,8 @@ export default class extends Vue {
     if (data.success) {
       this.$message.success(`编辑成功`);
       (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-      (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+      (TagsViewModule as any).delCachedView({
+        // 删除指定页面缓存（进行刷新操作）
         name: 'OwnerList'
       })
       this.$nextTick(() => {
@@ -353,14 +357,14 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-  private resetForm(formName:any) {
+  private resetForm(formName: any) {
     (this.$refs[formName] as ElForm).resetFields()
     this.fileList = []
   }
   /**
    *上传前的校验
    */
-  private beforeAvatarUpload(file:any) {
+  private beforeAvatarUpload(file: any) {
     const isImage = file.type.includes('image')
     const isLt10M = file.size / 1024 / 1024 < 10
     if (!isImage) {
@@ -374,7 +378,7 @@ export default class extends Vue {
   /**
    * 预览
    */
-  private handlePictureCardPreview(file:any) {
+  private handlePictureCardPreview(file: any) {
     this.imageList = [file.url]
     if (this.imageList.length > 0) {
       this.showViewer = true
@@ -383,14 +387,14 @@ export default class extends Vue {
   /**
    * 删除
    */
-  private handleRemove(file:any, fileList:any[]) {
+  private handleRemove(file: any, fileList: any[]) {
     this.ruleForm.businessLicenseUrl = ''
     this.fileList = []
   }
   /**
    * 上传成功
    */
-  private handleUpSuccess(res:any, file: any) {
+  private handleUpSuccess(res: any, file: any) {
     if (res.success) {
       this.ruleForm.businessLicenseUrl = res.data.url
       this.fileList = [file]
@@ -409,12 +413,14 @@ export default class extends Vue {
     }
     let formData = new FormData() // 创建form对象
     formData.append('file', file.raw)
-    let { data } = await Upload({
-      expire: 0,
-      folder: 'img',
-      isEncode: true
-    },
-    formData)
+    let { data } = await Upload(
+      {
+        expire: 0,
+        folder: 'img',
+        isEncode: true
+      },
+      formData
+    )
     if (data.success) {
       this.ruleForm.businessLicenseUrl = data.data.url
       this.fileList = [file]
@@ -522,24 +528,45 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.el-select{
-  display: block;
+.ConversionClue {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+    .btn_box {
+    padding-top: 20px;
+    box-sizing: border-box;
+  }
 }
-.el-date-editor{
-  display: block;
-  width: auto;
+.ConversionClue-m {
+  .btn_box {
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button {
+      width: 100%;
+    }
+    .el-button {
+      margin: 0 0 20px 0;
+    }
+  }
+}
+.ConversionClue,
+.ConversionClue-m {
+  .el-select {
+    display: block;
+  }
+  .el-date-editor {
+    display: block;
+    width: auto;
+  }
 }
 </style>
 <style lang="scss" scope>
-.el-collapse-item__content {
-  padding-bottom: 0;
-}
-.el-form-item__label {
-  color: #999999;
-}
-.hide{
-  .el-upload--picture-card {
-    display: none;
+.ConversionClue,
+.ConversionClue-m {
+  .hide {
+    .el-upload--picture-card {
+      display: none;
+    }
   }
 }
 </style>

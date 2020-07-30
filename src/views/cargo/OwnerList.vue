@@ -253,7 +253,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    v-permission="['/v1/customer/customerInfo']"
+                    v-permission="['/v1/customer/onlyCustomerInfo']"
                     @click.native="goDetail(scope.row.customerId)"
                   >
                     详情
@@ -590,7 +590,7 @@ export default class extends Vue {
 
     // 跳转线索
     private goClue(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({ name: 'EditCustomer', query: { id: id, info: 'edit' } })
+      this.$router.push({ name: 'EditCustomer', query: { id: id } })
     }
 
     // 批量操作

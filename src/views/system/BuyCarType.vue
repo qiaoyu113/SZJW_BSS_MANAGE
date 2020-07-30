@@ -705,16 +705,16 @@ export default class extends Vue {
     }
   }
 }
-.btn-item,
-.btn-item-m {
-  margin: 0 10px;
+.BuyCarType,
+.BuyCarType-m{
+  .btn-item,
+  .btn-item-m {
+    margin: 0 10px;
+  }
+  .btn-item-filtrate,
+  .btn-item-filtrate-m {
+    background-color: $assist-btn;
+    border-color: $assist-btn;
+  }
 }
-.btn-item-filtrate,
-.btn-item-filtrate-m {
-  background-color: $assist-btn;
-  border-color: $assist-btn;
-}
-</style>
-<style scoped>
-
 </style>

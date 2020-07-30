@@ -58,20 +58,18 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item>
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
       </SectionContainer>
+      <div class="btn_box">
+        <el-button
+          type="primary"
+          @click="submitForm('ruleForm')"
+        >
+          提交
+        </el-button>
+        <el-button @click="resetForm('ruleForm')">
+          重置
+        </el-button>
+      </div>
     </el-form>
   </div>
 </template>
@@ -124,7 +122,6 @@ export default class extends Vue {
     this.isIndeterminate = false
   }
   private handleCheckedCitiesChange(value: any) {
-    console.log(value, this.optionsCity)
     let checkedCount = value.length
     this.checkAll = checkedCount === this.optionsCity.length
     this.isIndeterminate = checkedCount > 0 && checkedCount < this.optionsCity.length
@@ -186,18 +183,37 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.el-radio{
-  line-height: 32px
+.SystemSetting {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  .btn_box {
+    padding-top: 20px;
+    box-sizing: border-box;
+  }
+}
+.SystemSetting-m {
+  .btn_box {
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button {
+      width: 100%;
+    }
+    .el-button {
+      margin: 0 0 20px 0;
+    }
+  }
+}
+.SystemSetting,
+.SystemSetting-m{
+  .el-radio{
+    line-height: 32px
+  }
 }
 </style>
 <style lang="scss" scope>
-.SystemSetting >>> .el-form-item__content{
+.SystemSetting >>> .el-form-item__content,
+.SystemSetting-m >>> .el-form-item__content{
   line-height: 32px
-}
-.el-collapse-item__content {
-  padding-bottom: 0;
-}
-.el-form-item__label {
-  color: #999999;
 }
 </style>

@@ -212,7 +212,6 @@
           </el-table-column>
           <el-table-column
             v-if="checkList.indexOf('创建日期') > -1"
-
             :key="checkList.length + 'createDate'"
             label="创建日期"
           >
@@ -247,9 +246,7 @@
             show-overflow-tooltip
           >
             <template slot-scope="{row}">
-              <el-dropdown
-                :trigger="isPC ? 'hover' : 'click'"
-              >
+              <el-dropdown :trigger="isPC ? 'hover' : 'click'">
                 <span
                   v-if="isPC"
                   class="el-dropdown-link"
@@ -278,7 +275,11 @@
                     已分配，已跟进
                    -->
                   <el-dropdown-item
-                    v-if="row.distributionState === 1 && (row.clueState === 0 || row.clueState === 1) && row.isTransform !== '2'"
+                    v-if="
+                      row.distributionState === 1 &&
+                        (row.clueState === 0 || row.clueState === 1) &&
+                        row.isTransform !== '2'
+                    "
                     v-permission="['/v1/line/clue/followClue']"
                     @click.native="goFollow(row)"
                   >
@@ -455,7 +456,15 @@ import SelfDialog from '@/components/SelfDialog/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 
 import { GetDictionaryList, GetManagerLists } from '@/api/common'
-import { GetClueList, Distribution, ExpiredClue, ActivationClue, GetCustomerOff, GetSaleList, ShowPhone } from '@/api/cargo'
+import {
+  GetClueList,
+  Distribution,
+  ExpiredClue,
+  ActivationClue,
+  GetCustomerOff,
+  GetSaleList,
+  ShowPhone
+} from '@/api/cargo'
 import { HandlePages } from '@/utils/index'
 import { UserModule } from '@/store/modules/user'
 import { SettingsModule } from '@/store/modules/settings'
@@ -474,7 +483,7 @@ const optionsDistribution: any = [
     value: 1,
     label: '已分配'
   }
-] //
+]
 @Component({
   name: 'ClueList',
   components: {
@@ -488,11 +497,13 @@ const optionsDistribution: any = [
   },
   filters: {
     findDistribution(status: string) {
-      const item = optionsDistribution.find(({ value }:any) => value === status)
+      const item = optionsDistribution.find(
+        ({ value }: any) => value === status
+      )
       return item ? item['label'] : status
     },
     findClue(status: string) {
-      const item = optionsClue.find(({ value }:any) => value === status)
+      const item = optionsClue.find(({ value }: any) => value === status)
       return item ? item['label'] : status
     },
     subString(str: string, num: number) {
@@ -517,19 +528,19 @@ export default class extends Vue {
 
   private DateValue: any[] = [];
   private listQuery: IState = {
-    'city': '', // 城市编码
-    'clueId': '', // 线索编号id
-    'clueSource': '', // 线索来源编码
-    'clueState': '', // 线索状态（0：待跟进 1：已跟进 2：已转化 3：无效）
-    'distributionState': '', // 分配状态（0：待分配 1：已分配）
-    'lineSaleId': '', // 销售id
-    'name': '', // 姓名
-    'phone': '', // 手机号
-    'startDate': '',
-    'endDate': '',
-    'page': 1,
-    'limit': 20
-  }
+    city: '', // 城市编码
+    clueId: '', // 线索编号id
+    clueSource: '', // 线索来源编码
+    clueState: '', // 线索状态（0：待跟进 1：已跟进 2：已转化 3：无效）
+    distributionState: '', // 分配状态（0：待分配 1：已分配）
+    lineSaleId: '', // 销售id
+    name: '', // 姓名
+    phone: '', // 手机号
+    startDate: '',
+    endDate: '',
+    page: 1,
+    limit: 20
+  };
 
   private dropdownList: any[] = [
     '线索编号',
@@ -550,9 +561,9 @@ export default class extends Vue {
   private optionsCity: any = []; // 下拉
   private optionsClue: any = optionsClue; // 线索状态
   private optionsDistribution: any = optionsDistribution; //
-  private optionsLineSource: any = []
-  private optionsSale: any = []
-  private optionsDialogSale: any = [] // 弹窗销售列表
+  private optionsLineSource: any = [];
+  private optionsSale: any = [];
+  private optionsDialogSale: any = []; // 弹窗销售列表
   // table
   private total = 0;
   private list: any[] = [];
@@ -569,22 +580,22 @@ export default class extends Vue {
   private dialogLoading: boolean = false;
   private showDialog: boolean = false;
   private dialogList: any[] = [];
-  private dialogValue: any = ''
+  private dialogValue: any = '';
   // 跟进弹窗
   private followDialog: boolean = false;
-  private ruleForm: any ={
+  private ruleForm: any = {
     clueId: '',
     value: '',
     invalidDescription: ''
-  }
-  private rules:any = {
+  };
+  private rules: any = {
     value: [
       { required: true, message: '请选择线索是否有效', trigger: 'change' }
     ],
     invalidDescription: [
       { required: true, message: '请输入无效描述', trigger: 'change' }
     ]
-  }
+  };
   // 侧边栏
   private drawer: boolean = false;
 
@@ -592,7 +603,7 @@ export default class extends Vue {
   @Watch('checkList', { deep: true })
   private onval(value: any) {
     this.$nextTick(() => {
-      ((this.$refs['multipleTable']) as any).doLayout()
+      (this.$refs['multipleTable'] as any).doLayout()
     })
   }
   // 计算属性
@@ -613,10 +624,9 @@ export default class extends Vue {
     this.getDictionary()
     this.getSaleList()
 
-    Promise.all([this.getCity(), this.getJoinManageList()])
-      .then(() => {
-        this.getList(this.listQuery)
-      })
+    Promise.all([this.getCity(), this.getJoinManageList()]).then(() => {
+      this.getList(this.listQuery)
+    })
   }
   // 处理query方法
   private handleQuery(value: any, key: any) {
@@ -638,8 +648,7 @@ export default class extends Vue {
   }
   // button
   // 添加明细原因 row 当前行 column 当前列
-  private tableClick(row: any, column: any, cell: any, event: any) {
-  }
+  private tableClick(row: any, column: any, cell: any, event: any) {}
   // 选中
   private handleSelectionChange(val: any) {
     this.multipleSelection = val
@@ -663,8 +672,14 @@ export default class extends Vue {
     const postData = {
       ...this.listQuery
     }
-    postData.citys = postData.city === '' ? this.optionsCity.map((item: any) => item.code) : [postData.city]
-    postData.lineSaleIds = postData.lineSaleId === '' ? this.optionsSale.map((item: any) => item.id) : [postData.lineSaleId]
+    postData.citys =
+      postData.city === ''
+        ? this.optionsCity.map((item: any) => item.code)
+        : [postData.city]
+    postData.lineSaleIds =
+      postData.lineSaleId === ''
+        ? this.optionsSale.map((item: any) => item.id)
+        : [postData.lineSaleId]
     delete postData.city
     delete postData.lineSaleId
     const { data } = await GetClueList(postData)
@@ -686,7 +701,10 @@ export default class extends Vue {
   }
   // 获取字典
   private async getDictionary() {
-    const { data } = await GetDictionaryList(['line_clue_source', 'line_clue_state'])
+    const { data } = await GetDictionaryList([
+      'line_clue_source',
+      'line_clue_state'
+    ])
     if (data.success) {
       this.optionsLineSource = data.data.line_clue_source
       this.optionsClue = data.data.line_clue_state.map((item: any) => {
@@ -700,6 +718,7 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+  // 获取加盟经理列表
   private async getJoinManageList() {
     return new Promise((resolve, reject) => {
       GetManagerLists({
@@ -712,7 +731,8 @@ export default class extends Vue {
             this.$message.error(data)
           }
           resolve(data)
-        }).catch((err: any) => {
+        })
+        .catch((err: any) => {
           reject(err)
         })
     })
@@ -737,7 +757,8 @@ export default class extends Vue {
             this.$message.error(data)
           }
           resolve(data)
-        }).catch((err: any) => {
+        })
+        .catch((err: any) => {
           reject(err)
         })
     })
@@ -752,9 +773,13 @@ export default class extends Vue {
     const id = row.clueId
     if (row.clueState === 3) {
       // 失效状态弹窗
-      this.$confirm(`该线索是无效线索！若想编辑请确定设置为有效线索，且线索状态为待跟进！`, `提示`, {
-        type: 'warning'
-      })
+      this.$confirm(
+        `该线索是无效线索！若想编辑请确定设置为有效线索，且线索状态为待跟进！`,
+        `提示`,
+        {
+          type: 'warning'
+        }
+      )
         .then(async() => {
           const { data } = await ActivationClue({ clueId: id })
           if (data.success) {
@@ -764,8 +789,8 @@ export default class extends Vue {
           } else {
             this.$message.error(data)
           }
-        }).catch(() => {
         })
+        .catch(() => {})
     } else {
       this.$router.push({ name: 'EditClue', query: { id: id } })
     }
@@ -800,18 +825,28 @@ export default class extends Vue {
       this.$message.warning(`请先选择线索`)
       return
     }
-    const len = this.multipleSelection.filter((item: any) => !!item.distributionState)
+    const len = this.multipleSelection.filter(
+      (item: any) => !!item.distributionState
+    )
     switch (key) {
       case 1: // 查看选中
         this.drawer = true
         break
       case 2: // 批量分配线索
         if (len.length > 0) {
-          this.$confirm(`已选线索中包含已分配状态线索${len.length}条，请确认要对这些线索重新分配！`, '提示', {
-            type: 'warning'
-          }).then(() => {
-            this.showDialog = true
-          }).catch(() => {})
+          this.$confirm(
+            `已选线索中包含已分配状态线索${
+              len.length
+            }条，请确认要对这些线索重新分配！`,
+            '提示',
+            {
+              type: 'warning'
+            }
+          )
+            .then(() => {
+              this.showDialog = true
+            })
+            .catch(() => {})
         } else {
           this.showDialog = true
         }
@@ -819,10 +854,12 @@ export default class extends Vue {
       case 3: // 取消选中
         this.$confirm('确认清空所有选择吗？', '确认清空', {
           type: 'warning'
-        }).then(() => {
-          (this.$refs.multipleTable as any).clearSelection()
-          this.multipleSelection = []
-        }).catch(() => {})
+        })
+          .then(() => {
+            (this.$refs.multipleTable as any).clearSelection()
+            this.multipleSelection = []
+          })
+          .catch(() => {})
         break
       default:
         break
@@ -850,11 +887,11 @@ export default class extends Vue {
       return
     }
     const postData = {
-      'linesIds': this.multipleSelection.map(item => item.clueId),
-      'saleId': this.dialogValue
+      linesIds: this.multipleSelection.map(item => item.clueId),
+      saleId: this.dialogValue
     }
     const loading = this.$loading({
-      target: (document.querySelector('.distributionDialog .el-dialog') as any)
+      target: document.querySelector('.distributionDialog .el-dialog') as any
     })
     const { data } = await Distribution(postData)
     loading.close()
@@ -866,6 +903,7 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+  // 跟进弹窗
   private async confirmFollow(done: any) {
     (this.$refs.ruleForm as any).validate(async(valid: boolean) => {
       if (valid) {
@@ -892,6 +930,7 @@ export default class extends Vue {
       }
     })
   }
+  // 关闭弹窗清除数据
   private handleClosedFollow() {
     this.ruleForm.value = ''
     this.ruleForm.clueId = ''
@@ -900,6 +939,7 @@ export default class extends Vue {
       (this.$refs.ruleForm as any).clearValidate()
     })
   }
+  // 关闭弹窗清除数据
   private handleClosed() {
     this.dialogValue = ''
   }
@@ -913,6 +953,7 @@ export default class extends Vue {
   private changeDrawer(val: any) {
     this.drawer = val
   }
+  // 判断是否有批量分配权限
   private setRoles() {
     const roles = UserModule.roles
     this.isShowDistribution = roles.includes('/v1/line/clue/distribution')
@@ -926,7 +967,7 @@ export default class extends Vue {
   }
   activated() {
     this.$nextTick(() => {
-      ((this.$refs['multipleTable']) as any).doLayout()
+      (this.$refs['multipleTable'] as any).doLayout()
     })
   }
 }
@@ -968,21 +1009,24 @@ export default class extends Vue {
     }
   }
   .el-table th.gutter {
-    display: table-cell !important
+    display: table-cell !important;
   }
 }
 </style>
 <style lang="scss" scoped>
-.mb10 {
-  margin-bottom: 10px;
-}
-.btn-item,
-.btn-item-m {
-  margin: 0 10px;
-}
-.btn-item-filtrate,
-.btn-item-filtrate-m {
-  background-color: $assist-btn;
-  border-color: $assist-btn;
+.ClueList,
+.ClueList-m {
+  .mb10 {
+    margin-bottom: 10px;
+  }
+  .btn-item,
+  .btn-item-m {
+    margin: 0 10px;
+  }
+  .btn-item-filtrate,
+  .btn-item-filtrate-m {
+    background-color: $assist-btn;
+    border-color: $assist-btn;
+  }
 }
 </style>
