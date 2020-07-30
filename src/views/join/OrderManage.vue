@@ -605,18 +605,6 @@ export default class extends Vue {
       })
     }
 
-    created() {
-      this.fetchData()
-    }
-
-    mounted() {}
-
-    activated() {
-      this.$nextTick(() => {
-        ((this.$refs['multipleTable']) as any).doLayout()
-      })
-    }
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
@@ -818,6 +806,7 @@ export default class extends Vue {
       }
     }
 
+    // 下载
     private download(data: any, name: any) {
       if (!data) {
         return
@@ -829,6 +818,17 @@ export default class extends Vue {
       link.setAttribute('download', name)
       document.body.appendChild(link)
       link.click()
+    }
+
+    // 生命周期
+    created() {
+      this.fetchData()
+    }
+
+    activated() {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
     }
 }
 </script>

@@ -270,16 +270,6 @@ export default class extends Vue {
       lineSaleId: ''
     };
 
-    created() {
-      this.fetchData()
-    }
-
-    mounted() {}
-
-    activated() {
-    // this.handleScroll()
-    }
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
@@ -334,6 +324,17 @@ export default class extends Vue {
       } else {
         this.$router.push({ name: 'DealManageDetail', query: { id: id } })
       }
+    }
+
+    // 生命周期
+    created() {
+      this.fetchData()
+    }
+
+    activated() {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
     }
 }
 </script>

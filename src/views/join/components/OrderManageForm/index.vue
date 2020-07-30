@@ -237,18 +237,7 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
-  created() {
-    this.fetchData()
-  }
-
+  // 汇总请求
   private fetchData() {
     this.getDictionary()
     this.getJoinManageList()
@@ -320,6 +309,7 @@ export default class extends Vue {
     return vodeName
   }
 
+  // 获取字典
   private async getDictionary() {
     const { data } = await GetDictionaryList(['busi_type', 'pay_type'])
     if (data.success) {
@@ -329,6 +319,8 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+
+  // 获取支付字典
   private async getPayList() {
     const { data } = await GetPayList({})
     if (data.success) {
@@ -337,6 +329,8 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+
+  // 获取城市字典
   async getCity() {
     try {
       let { data: res } = await GetOpenCityData()
@@ -367,6 +361,7 @@ export default class extends Vue {
     }
   }
 
+  // 时间选择
   private changData() {
     if (this.DateValueChild) {
       this.listQuery.startDate = this.DateValueChild[0]
@@ -377,10 +372,12 @@ export default class extends Vue {
     }
   }
 
+  // 搜索
   private research() {
     this.$emit('handle-query', this.listQuery)
   }
 
+  // 重置
   private reset() {
     for (let key in this.listQuery) {
       if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
@@ -388,6 +385,11 @@ export default class extends Vue {
       }
     }
     this.DateValueChild = []
+  }
+
+  // 生命周期
+  created() {
+    this.fetchData()
   }
 }
 </script>

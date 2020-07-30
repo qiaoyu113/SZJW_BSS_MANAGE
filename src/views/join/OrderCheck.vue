@@ -905,6 +905,8 @@ export default class CreatLine extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+
+  // 获取字典
   private async getDictionary() {
     const { data } = await GetDictionaryList(['Intentional_compartment', 'busi_type'])
     if (data.success) {
@@ -936,6 +938,7 @@ export default class CreatLine extends Vue {
       this.$message.error(data)
     }
   }
+
   // 查看无税车价
   private async getPrice() {
     let { data } = await GetPriceAndByTypeAndCityAndSupplierAndCarType(
@@ -965,15 +968,6 @@ export default class CreatLine extends Vue {
   // 所有请求
   private async fetchData() {
     this.getDictionary()
-  }
-
-  mounted() {
-    this.fetchData()
-    let id = this.$route.query.id
-    this.id = id
-    if (id) {
-      this.getDetail(id)
-    }
   }
 
   // 获取订单详情
@@ -1029,16 +1023,19 @@ export default class CreatLine extends Vue {
     this.payForm = Object.assign(this.payForm, res)
     this.showMessage = true
   }
+
   // 删除
   private delClick(res: any, index: any) {
     this.ruleForm.orderPayRecordInfoFORMList.splice(index, 1)
   }
+
   // 立即支付
   private goBill(res: any, index: any) {
     this.orderIndex = index
     this.payForm = Object.assign(this.payForm, res)
     this.showMessageBill = true
   }
+
   private beforeAvatarUpload(file:any) {
     const isImage = file.type.includes('image')
     const is5M = file.size / 1024 / 1024 < 5
@@ -1052,6 +1049,7 @@ export default class CreatLine extends Vue {
     }
     return isImage
   }
+
   // 选择图片
   private async handleChange(file: any, fileList: any) {
     if (!this.beforeAvatarUpload(file.raw)) {
@@ -1092,6 +1090,7 @@ export default class CreatLine extends Vue {
       }
     })
   }
+
   // 搜索司机列表
   private remoteMethod(query: any) {
     if (query !== '') {
@@ -1115,6 +1114,7 @@ export default class CreatLine extends Vue {
       this.driverList = []
     }
   }
+
   // 选择司机
   private checkDiver(driverId: any) {
     this.driverList.forEach(i => {
@@ -1127,6 +1127,7 @@ export default class CreatLine extends Vue {
       }
     })
   }
+
   // 提交
   private async submitForm(formName:any) {
     this.fullscreenLoading = true;
@@ -1160,6 +1161,16 @@ export default class CreatLine extends Vue {
   // 重置
   private resetForm(formName:any) {
     (this.$refs[formName] as ElForm).resetFields()
+  }
+
+  // 生命周期
+  mounted() {
+    this.fetchData()
+    let id = this.$route.query.id
+    this.id = id
+    if (id) {
+      this.getDetail(id)
+    }
   }
 }
 </script>
