@@ -72,8 +72,8 @@ export default class extends Vue {
       .lTitle {
         .interTitle {
           margin-right:10px;
-          color:#000;
-          font-size:14px;
+          font-size: 16px;
+          color: #4A4A4A;
           font-weight:bold;
         }
         .interTag {

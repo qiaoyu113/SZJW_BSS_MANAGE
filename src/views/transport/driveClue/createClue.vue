@@ -1,5 +1,5 @@
 <template>
-  <div class="CreateClue">
+  <div :class="isPC ? 'CreateClue' : 'CreateClue-m'">
     <SectionContainer
       title="人工线索录入"
       :md="true"
@@ -377,6 +377,23 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .CreateClue {
     padding: 20px;
+    .btnPc {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:100%;
+    }
+  }
+</style>
+<style lang="scss" scoped>
+  .CreateClue-m {
+    .selfForm{
+      padding: 20px 40px;
+    }
     .btnPc {
       display: flex;
       flex-flow: row nowrap;
