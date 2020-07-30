@@ -28,7 +28,7 @@
             size="small"
             @click="handleQueryClick"
           >
-            查询
+            筛选
           </el-button>
           <el-button
             :class="isPC ? '' : 'btnMobile'"

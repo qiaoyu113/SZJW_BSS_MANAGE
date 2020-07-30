@@ -1,5 +1,8 @@
 <template>
-  <section class="app-main">
+  <section
+    :class="isPC ? 'AppMain' : 'AppMain-m'"
+    class="app-main"
+  >
     <transition
       name="fade-transform"
       mode="out-in"
@@ -91,6 +94,20 @@ export default class extends Vue {
 
   .fixed-header+.app-main {
     padding-top: 84px;
+  }
+}
+</style>
+<style lang="scss">
+.AppMain{
+  .el-form-item__label{
+    color: #9e9e9e !important;
+    font-weight: 400;
+  }
+}
+.AppMain-m{
+  .el-form-item__label {
+    color: #4a4a4a!important;
+    font-weight: 400;
   }
 }
 </style>

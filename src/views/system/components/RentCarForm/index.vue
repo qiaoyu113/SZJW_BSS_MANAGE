@@ -88,7 +88,7 @@
                   type="primary"
                   @click="search"
                 >
-                  查询
+                  筛选
                 </el-button>
               </el-col>
             </el-form>
