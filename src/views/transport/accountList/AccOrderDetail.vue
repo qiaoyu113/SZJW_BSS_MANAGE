@@ -16,200 +16,194 @@
           name="f1"
         >
           <!--table表单-->
-          <el-card>
-            <div class="table_center">
-              <el-table
-                v-loading="listLoading"
-                :data="list"
-                :row-style="{height: '20px'}"
-                :cell-style="{padding: '5px 0'}"
-                size="mini"
-                :height="isPC ? 'calc(100vh - 550px)' : 'calc(100vh - 140px)'"
-                fit
-                :border="isPC"
-                stripe
-                highlight-current-row
-                style="width: 100%"
+          <div class="table_center">
+            <el-table
+              v-loading="listLoading"
+              :data="list"
+              :row-style="{height: '20px'}"
+              :cell-style="{padding: '5px 0'}"
+              size="mini"
+              :height="isPC ? 'calc(100vh - 550px)' : 'calc(100vh - 140px)'"
+              fit
+              :border="isPC"
+              stripe
+              highlight-current-row
+              style="width: 100%"
+            >
+              <el-table-column
+                fixed
+                align="left"
+                label="货主编号"
               >
-                <el-table-column
-                  fixed
-                  align="left"
-                  label="货主编号"
-                >
-                  <template slot-scope="scope">
-                    <span>{{ scope.row.customerId }}</span>
-                  </template>
-                </el-table-column>
+                <template slot-scope="scope">
+                  <span>{{ scope.row.customerId }}</span>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  label="货主"
-                >
-                  <template slot-scope="scope">
-                    <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                label="货主"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  class-name="status-col"
-                  label="类型"
-                >
-                  <template slot-scope="{row}">
-                    <el-tag :type="row.status | articleStatusFilter">
-                      {{ row.primaryClassificationName
-                      }}<span
-                        v-if="row.secondaryClassificationName"
-                      >/{{ row.secondaryClassificationName }}</span>
-                    </el-tag>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                class-name="status-col"
+                label="类型"
+              >
+                <template slot-scope="{row}">
+                  <el-tag :type="row.status | articleStatusFilter">
+                    {{ row.primaryClassificationName
+                    }}<span
+                      v-if="row.secondaryClassificationName"
+                    >/{{ row.secondaryClassificationName }}</span>
+                  </el-tag>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="合同状态"
-                >
-                  <template slot-scope="{row}">
-                    {{ row.contractEffectiveness }}
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="合同状态"
+              >
+                <template slot-scope="{row}">
+                  {{ row.contractEffectiveness }}
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="创建时间"
-                >
-                  <template slot-scope="scope">
-                    <p>{{ scope.row.createDate | Timestamp }}</p>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="创建时间"
+              >
+                <template slot-scope="scope">
+                  <p>{{ scope.row.createDate | Timestamp }}</p>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="创建人"
-                >
-                  <template slot-scope="scope">
-                    <p>
-                      <span
-                        v-if="scope.row.creatorName"
-                      >({{ scope.row.creatorName }})</span>
-                    </p>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="创建人"
+              >
+                <template slot-scope="scope">
+                  <p>
+                    <span
+                      v-if="scope.row.creatorName"
+                    >({{ scope.row.creatorName }})</span>
+                  </p>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="合同止期"
-                >
-                  <template slot-scope="scope">
-                    <span>{{ scope.row.contractEnd | Timestamp }}</span>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="合同止期"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.contractEnd | Timestamp }}</span>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="线路销售"
-                >
-                  <template slot-scope="{row}">
-                    {{ row.lineSaleName | DataIsNull }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-            <pagination
-              v-show="total > 0"
-              :total="total"
-              :page.sync="listQuery.page"
-              :limit.sync="listQuery.limit"
-              :operation-list="operationList"
-              @pagination="getList"
-            />
-          </el-card>
+              <el-table-column
+                align="left"
+                label="线路销售"
+              >
+                <template slot-scope="{row}">
+                  {{ row.lineSaleName | DataIsNull }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <pagination
+            v-show="total > 0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            :operation-list="operationList"
+            @pagination="getList"
+          />
         </el-tab-pane>
         <el-tab-pane
           label="缴费明细"
           name="f2"
         >
-          <el-card>
-            <div class="table_center">
-              <el-table
-                v-loading="payLoading"
-                :data="payData"
-                style="width: 100%"
-                :row-style="{height: '20px'}"
-                :cell-style="{padding: '5px 0'}"
-                size="mini"
-                fit
-                :border="isPC"
-                stripe
-                highlight-current-row
-              >
-                <el-table-column
-                  prop="date"
-                  label="缴费渠道"
-                  width="180"
-                />
-                <el-table-column
-                  prop="name"
-                  label="交易编号（只有小程序有）"
-                  width="180"
-                />
-                <el-table-column
-                  prop="address"
-                  label="交易截图（只有线下有）"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费时间"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费金额"
-                />
-              </el-table>
-            </div>
-          </el-card>
+          <div class="table_center">
+            <el-table
+              v-loading="payLoading"
+              :data="payData"
+              style="width: 100%"
+              :row-style="{height: '20px'}"
+              :cell-style="{padding: '5px 0'}"
+              size="mini"
+              fit
+              :border="isPC"
+              stripe
+              highlight-current-row
+            >
+              <el-table-column
+                prop="date"
+                label="缴费渠道"
+                width="180"
+              />
+              <el-table-column
+                prop="name"
+                label="交易编号（只有小程序有）"
+                width="180"
+              />
+              <el-table-column
+                prop="address"
+                label="交易截图（只有线下有）"
+              />
+              <el-table-column
+                prop="address"
+                label="缴费时间"
+              />
+              <el-table-column
+                prop="address"
+                label="缴费金额"
+              />
+            </el-table>
+          </div>
         </el-tab-pane>
         <el-tab-pane
           label="退款明细"
           name="f3"
         >
-          <el-card>
-            <div class="table_center">
-              <el-table
-                v-loading="outLoading"
-                :data="outData"
-                style="width: 100%"
-                :row-style="{height: '20px'}"
-                :cell-style="{padding: '5px 0'}"
-                size="mini"
-                fit
-                :border="isPC"
-                stripe
-                highlight-current-row
-              >
-                <el-table-column
-                  prop="date"
-                  label="缴费渠道"
-                  width="180"
-                />
-                <el-table-column
-                  prop="name"
-                  label="交易编号（只有小程序有）"
-                  width="180"
-                />
-                <el-table-column
-                  prop="address"
-                  label="交易截图（只有线下有）"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费时间"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费金额"
-                />
-              </el-table>
-            </div>
-          </el-card>
+          <div class="table_center">
+            <el-table
+              v-loading="outLoading"
+              :data="outData"
+              style="width: 100%"
+              :row-style="{height: '20px'}"
+              :cell-style="{padding: '5px 0'}"
+              size="mini"
+              fit
+              :border="isPC"
+              stripe
+              highlight-current-row
+            >
+              <el-table-column
+                prop="date"
+                label="缴费渠道"
+                width="180"
+              />
+              <el-table-column
+                prop="name"
+                label="交易编号（只有小程序有）"
+                width="180"
+              />
+              <el-table-column
+                prop="address"
+                label="交易截图（只有线下有）"
+              />
+              <el-table-column
+                prop="address"
+                label="缴费时间"
+              />
+              <el-table-column
+                prop="address"
+                label="缴费金额"
+              />
+            </el-table>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>

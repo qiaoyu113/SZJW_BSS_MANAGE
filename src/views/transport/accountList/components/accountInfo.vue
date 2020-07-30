@@ -1,8 +1,8 @@
 <template>
-  <div class="accountInfo">
+  <div :class="isPC ? 'accountInfo' : 'accountInfo-m'">
     <dl>
       <!-- <dt>姓名：{{ listQuery.name }}</dt> -->
-      <dd>
+      <dd style="margin-left:0px">
         <el-row :class="isPC ? 'flex' :''">
           <el-col :span="isPC ? 16 : 24">
             <self-form
@@ -26,7 +26,7 @@
             </self-form>
           </el-col>
           <el-col :span="isPC ? 8 : 24">
-            <div class="fee">
+            <div :class="isPC ? 'fee' : 'fee-m'">
               <span class="item">
                 <h4>总运费</h4>
                 <p>￥{{ listQuery.all }}</p>
@@ -113,6 +113,15 @@ export default class extends Vue {
       }
     }
   }
+</style>
+<style lang="scss" scoped>
+.accountInfo-m{
+  .fee-m{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+}
 </style>
 <style scoped>
 .accountInfo >>> .selfForm{

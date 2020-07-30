@@ -65,8 +65,8 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import bidInfo from '../driverList/components/BidInfo.vue'
-import baseInfo from './components/baseInfo.vue'
+import BidInfo from '../driverList/components/BidInfo.vue'
+import BaseInfo from './components/BaseInfo.vue'
 import '@/styles/common.scss'
 interface IState {
     [key: string]: any;
@@ -78,8 +78,8 @@ interface IState {
         DetailItem,
         SectionContainer,
         SelfForm,
-        bidInfo,
-        baseInfo
+        BidInfo,
+        BaseInfo
       }
     })
 
@@ -252,6 +252,12 @@ export default class extends Vue {
   private fetchData() {
     this.carrierDetail()
   }
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
   created() {
     let carrierId = (this.$route.query.carrierId as string)
     if (carrierId) {
@@ -265,15 +271,10 @@ export default class extends Vue {
 
   activated() {
   }
-
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .TransportDetail {
   width: 100%;
   padding: 20px;
@@ -297,15 +298,15 @@ export default class extends Vue {
     .steps{
       margin: 60px 0 30px 0;
       }
-       .detail-title {
-    font-size: 13px;
-    color: #9e9e9e;
-    font-weight: 400;
-    padding-right: 16px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    padding-bottom: 6px;
-}
+    .detail-title {
+      font-size: 13px;
+      color: #9e9e9e;
+      font-weight: 400;
+      padding-right: 16px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      padding-bottom: 6px;
+    }
 }
 </style>
 
@@ -325,8 +326,8 @@ export default class extends Vue {
   }
 }
 </style>
-<style scope>
-/* @media screen and (min-width: 701px) {
+<style scoped>
+@media screen and (min-width: 701px) {
   .el-select {
     width: 100%;
   }
@@ -342,5 +343,5 @@ export default class extends Vue {
   .el-input{
     width: 90%;
   }
-} */
+}
 </style>
