@@ -65,8 +65,8 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/base/SelfForm.vue'
-import bidInfo from '../driverList/components/bidInfo.vue'
-import baseInfo from './components/baseInfo.vue'
+import BidInfo from '../driverList/components/bidInfo.vue'
+import BaseInfo from './components/BaseInfo.vue'
 import '@/styles/common.scss'
 interface IState {
     [key: string]: any;
@@ -78,8 +78,8 @@ interface IState {
         DetailItem,
         SectionContainer,
         SelfForm,
-        bidInfo,
-        baseInfo
+        BidInfo,
+        BaseInfo
       }
     })
 
@@ -252,6 +252,12 @@ export default class extends Vue {
   private fetchData() {
     this.carrierDetail()
   }
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
   created() {
     let carrierId = (this.$route.query.carrierId as string)
     if (carrierId) {
@@ -264,11 +270,6 @@ export default class extends Vue {
   }
 
   activated() {
-  }
-
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
   }
 }
 </script>
