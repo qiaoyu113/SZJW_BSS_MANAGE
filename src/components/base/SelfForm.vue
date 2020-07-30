@@ -49,7 +49,6 @@
             :editable="false"
             v-bind="item.tagAttrs || {}"
             type="daterange"
-            range-separator="至"
             value-format="timestamp"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -123,7 +122,6 @@
             v-model="listQuery[item.key]"
             :editable="false"
             is-range
-            range-separator="至"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
             placeholder="选择时间范围"
