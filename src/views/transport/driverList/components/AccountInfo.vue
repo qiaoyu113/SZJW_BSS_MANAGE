@@ -2,8 +2,8 @@
   <div class="accountInfo">
     <dl v-if="Object.keys(listQuery).length > 0">
       <dt>
+        <span class="title_left_border" />
         {{ listQuery.name }}
-        <span class="border" />
       </dt>
       <dd>
         <el-row :class="isPC ? 'flex' :''">
@@ -54,7 +54,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 interface IState {
     [key: string]: any;
@@ -202,20 +202,6 @@ export default class extends Vue {
       padding: 0 20px;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-    }
-    .accountInfo >>> .border {
-      width: 4px;
-      height: 14px;
-      position: absolute;
-      left: 10px;
-      top: -1px;
-      bottom: 0;
-      margin: auto;
-      background-image: -webkit-gradient(linear, right top, left top, from(#FF9600), to(#FFB400));
-      background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);
-      border-radius: 2.5px;
-      border-radius: 2.5px;
-      display: inline-block;
     }
  }
 </style>

@@ -62,13 +62,13 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
-import FollowItem from './components/followItem.vue'
-import BaseInfo from './components/baseInfo.vue'
-import OrderInfo from './components/orderInfo.vue'
-import TransportInfo from './components/transportInfo.vue'
-import bidInfo from './components/bidInfo.vue'
-import AccountInfo from './components/accountInfo.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
+import FollowItem from './components/FollowItem.vue'
+import BaseInfo from './components/BaseInfo.vue'
+import OrderInfo from './components/OrderInfo.vue'
+import TransportInfo from './components/TransportInfo.vue'
+import bidInfo from './components/BidInfo.vue'
+import AccountInfo from './components/AccountInfo.vue'
 import { GetDriverDetail, DriverFollowFormation, driverDetailToCarrierInfo, driverDetailToOrderInfo } from '@/api/driver'
 import { SettingsModule } from '@/store/modules/settings'
 

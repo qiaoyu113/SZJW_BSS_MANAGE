@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <!-- 司机跟进 -->
+  <div class="followByPhoneOrWechat">
     <SelfDialog
       :visible.sync="showAlert"
       :title="title"
@@ -22,36 +21,36 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
-import { DriverFollowOp } from '@/api/driver'
+import SelfForm from '@/components/Base/SelfForm.vue'
+import { ClueFollow } from '@/api/driver'
 interface IState {
   [key: string]: any;
 }
 @Component({
-  name: 'FollowDialog',
+  name: 'FollowByPhoneOrWechat',
   components: {
     SelfDialog,
     SelfForm
   }
 })
 export default class extends Vue {
-  @Prop({ default: '' }) type!:number
-  @Prop({ default: '' }) driverId!:string
+  @Prop({ default: 0 }) type!:number
+  @Prop({ default: '' }) clueId!:string|number
   private showAlert = false
-  private title:string = ''
   private dialogForm:IState = {
     remarks: ''
   }
+  private title:string = ''
 
   private dialogItems:any[] = [
     {
       type: 1,
       key: 'remarks',
       tagAttrs: {
-        placeholder: '描述跟进情况(50字以内)',
+        placeholder: '跟进情况描述',
         type: 'textarea',
         rows: 3,
-        maxlength: 50,
+        maxlength: 100,
         'show-word-limit': true,
         clearable: true
       }
@@ -60,14 +59,14 @@ export default class extends Vue {
 
   @Watch('type')
   onTypeChange(val:number) {
-    if (val === 5) {
-      this.title = '成交意向'
-    } else if (val === 6) {
-      this.title = '征信通过情况'
-    } else if (val === 7) {
-      this.title = '跟车情况'
-    } else if (val === 8) {
-      this.title = '其他'
+    if (val === 1) {
+      this.title = '电话跟进'
+    } else if (val === 2) {
+      this.title = '微信跟进'
+    } else if (val === 4) {
+      this.title = '无效线索'
+    } else if (val === 5) {
+      this.title = '无法跟进'
     }
   }
   /**
@@ -85,36 +84,40 @@ export default class extends Vue {
   handleClosed() {
     this.dialogForm.remarks = ''
   }
-
   cancel() {
     this.showAlert = false
   }
   async confirm() {
     try {
       if (!this.dialogForm.remarks) {
-        return this.$message.error('请输入跟进情况')
+        return this.$message.error('请输入跟进情况描述')
       }
       let params = {
-        createId: 0,
-        driverId: this.driverId,
+        clueId: this.clueId,
         remarks: this.dialogForm.remarks,
         type: this.type
       }
-
-      let { data: res } = await DriverFollowOp(params)
+      let { data: res } = await ClueFollow(params)
       if (res.success) {
         this.showAlert = false
-        this.$message.success('操作成功')
-        this.handleRefresh()
+        this.$message.success(`操作成功`)
+        this.getRecord()
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`confirm fail:${err}`)
     }
   }
-  @Emit('onRefresh')
-  handleRefresh() {
+  @Emit('getRecord')
+  getRecord() {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style scoped>
+  @media screen and (max-width: 700px) {
+    .followByPhoneOrWechat >>> .el-col {
+      border-bottom:none!important;
+    }
+  }
 </style>

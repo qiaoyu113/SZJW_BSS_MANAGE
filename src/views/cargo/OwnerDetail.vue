@@ -160,6 +160,7 @@
         </el-row>
       </SectionContainer>
     </div>
+    <!--线索详情-->
     <div
       v-show="tabVal === '2'"
       class="clueDetail"
@@ -348,7 +349,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetOwnerDetail, GetFindBusinessPhone, GetShowPhone } from '@/api/cargo'
+import { GetOwnerDetail, GetFindBusinessPhone, GetShowPhone, GetLineClueInfo } from '@/api/cargo'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -426,32 +427,33 @@ export default class extends Vue {
       'salePhone': ''
     }
 
-    created() {
-      this.id = this.$route.query.id
-      this.fetchData(this.id)
-    }
-
-    mounted() {
-    }
-
-    activated() {
-    }
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
     }
 
-    // 请求详情
+    // 请求货主详情
     private async fetchData(value: any) {
       const { data } = await GetOwnerDetail({ customerId: value, info: 'info' })
       if (data.success) {
         this.OwnerDetail = data.data
+        this.getClueData(this.OwnerDetail.clueId)
       } else {
         this.$message.error(data.errorMsg)
       }
     }
 
+    // 请求线索详情
+    private async getClueData(value: any) {
+      const { data } = await GetLineClueInfo({ clueId: value, info: 'info' })
+      if (data.success) {
+        this.OwnerDetail.clueInfoVO = data.data
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+
+    // 提交表单
     private submitForm(formName:any) {
       (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
         if (valid) {
@@ -463,6 +465,7 @@ export default class extends Vue {
       })
     }
 
+    // 重置
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
     }
@@ -485,6 +488,12 @@ export default class extends Vue {
           this.$message.error(data)
         }
       }
+    }
+
+    // 生命周期
+    created() {
+      this.id = this.$route.query.id
+      this.fetchData(this.id)
     }
 }
 </script>
@@ -547,41 +556,45 @@ export default class extends Vue {
 
 <style lang="scss" scope>
 @media screen and (min-width: 701px) {
-  .el-select {
-    width: 100%;
+  .OwnerDetail {
+    .el-select {
+        width: 100%;
+      }
+      .el-input{
+        width: 75%;
+      }
+    //   .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+    //       background: $assist-btn;
+    //       -webkit-box-shadow: -1px 0 0 0 $assist-btn;
+    //       box-shadow: -1px 0 0 0 $assist-btn;
+    //       border-color: $assist-btn;
+    //   }
+    //   .el-radio-button__inner:hover{
+    //       color: $assist-btn;
+    //   }
   }
-  .el-input{
-    width: 75%;
-  }
-//   .el-radio-button__orig-radio:checked + .el-radio-button__inner{
-//       background: $assist-btn;
-//       -webkit-box-shadow: -1px 0 0 0 $assist-btn;
-//       box-shadow: -1px 0 0 0 $assist-btn;
-//       border-color: $assist-btn;
-//   }
-//   .el-radio-button__inner:hover{
-//       color: $assist-btn;
-//   }
 }
 
 @media screen and (max-width: 700px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input{
-    width: 90%;
-  }
-  .el-radio-group{
-      width:100%;
-      text-align: center;
-      margin: auto;
-  }
-  .el-radio-group{
-      margin-bottom: 10px !important;
-      margin-top: 10px !important;
-  }
-  .el-radio-button__orig-radio + .el-radio-button__inner{
-      font-size: 12px;
+  .OwnerDetail-m {
+    .el-select {
+      width: 100%;
+    }
+    .el-input{
+      width: 90%;
+    }
+    .el-radio-group{
+        width:100%;
+        text-align: center;
+        margin: auto;
+    }
+    .el-radio-group{
+        margin-bottom: 10px !important;
+        margin-top: 10px !important;
+    }
+    .el-radio-button__orig-radio + .el-radio-button__inner{
+        font-size: 12px;
+    }
   }
 }
 </style>

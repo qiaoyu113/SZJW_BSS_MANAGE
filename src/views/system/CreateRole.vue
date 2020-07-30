@@ -4,7 +4,7 @@
       ref="ruleForm"
       :model="ruleForm"
       :rules="rules"
-      :label-width="isPC ? '160px' : '80px'"
+      :label-width="isPC ? '120px' : '80px'"
     >
       <SectionContainer title="基本信息">
         <el-row>
@@ -82,10 +82,13 @@
           :check-strictly="true"
           @check-change="changeCheck"
         >
-          <template slot-scope="{node,data}">
+          <template slot-scope="{node, data}">
             <span>{{ node.label }}</span>
             <el-radio-group
-              v-show="node.checked && ((node.level !== 1 && data.controlType) || node.level === 3)"
+              v-show="
+                node.checked &&
+                  ((node.level !== 1 && data.controlType) || node.level === 3)
+              "
               v-model="data.checked"
               class="ml10"
               size="mini"
@@ -101,20 +104,18 @@
             </el-radio-group>
           </template>
         </RoleTree>
-        <el-form-item>
-          <div class="btn_box">
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-            >
-              提交
-            </el-button>
-            <el-button @click="resetForm('ruleForm')">
-              重置
-            </el-button>
-          </div>
-        </el-form-item>
       </SectionContainer>
+      <div class="btn_box">
+        <el-button
+          type="primary"
+          @click="submitForm('ruleForm')"
+        >
+          提交
+        </el-button>
+        <el-button @click="resetForm('ruleForm')">
+          重置
+        </el-button>
+      </div>
     </el-form>
   </div>
 </template>
@@ -126,7 +127,12 @@ import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { RoleTree } from './components'
 import { GetDictionaryList } from '@/api/common'
-import { authorityList, createRole, getRoleDetail, updateRole } from '@/api/system'
+import {
+  authorityList,
+  createRole,
+  getRoleDetail,
+  updateRole
+} from '@/api/system'
 
 import '@/styles/common.scss'
 import '@/styles/tree-line.scss'
@@ -138,23 +144,22 @@ import '@/styles/tree-line.scss'
     RoleTree
   }
 })
-
 export default class extends Vue {
   private isEdit: boolean = false; // 是否是编辑页面
-  private id: any = ''
-  private ruleForm:any = {
+  private id: any = '';
+  private ruleForm: any = {
     name: '',
     nick: '',
     productLine: '',
     description: ''
-  }
+  };
   private defaultProps: any = {
     children: 'childAuth',
     label: 'authName'
   };
-  private authorityList: any = []
-  private data:any = []
-  private productList: any = []
+  private authorityList: any = [];
+  private data: any = [];
+  private productList: any = [];
   private scopeList: any = [
     {
       dictValue: 4,
@@ -176,11 +181,15 @@ export default class extends Vue {
       dictValue: 0,
       dictLabel: '全部数据'
     }
-  ]
-  private rules:any = {
+  ];
+  private rules: any = {
     nick: [
       { required: true, message: '请输入角色中文名称', trigger: 'blur' },
-      { pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/, message: '请输入2-10个中文', trigger: 'blur' }
+      {
+        pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/,
+        message: '请输入2-10个中文',
+        trigger: 'blur'
+      }
     ],
     name: [
       { required: true, message: '请输入角色英文名称', trigger: 'blur' },
@@ -189,16 +198,14 @@ export default class extends Vue {
     productLine: [
       { required: true, message: '请选择产品线', trigger: 'change' }
     ],
-    description: [
-      { required: true, message: '请输入描述', trigger: 'blur' }
-    ]
-  }
+    description: [{ required: true, message: '请输入描述', trigger: 'blur' }]
+  };
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
 
-  private submitForm(formName:any) {
+  private submitForm(formName: any) {
     (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
         if (this.isEdit) {
@@ -214,7 +221,8 @@ export default class extends Vue {
           this.$message.success(`创建成功`)
           setTimeout(() => {
             (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-            (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+            (TagsViewModule as any).delCachedView({
+              // 删除指定页面缓存（进行刷新操作）
               name: 'RoleManage'
             })
             this.$nextTick(() => {
@@ -239,7 +247,8 @@ export default class extends Vue {
       this.$message.success(`编辑成功`)
       setTimeout(() => {
         (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-        (TagsViewModule as any).delCachedView({ // 删除指定页面缓存（进行刷新操作）
+        (TagsViewModule as any).delCachedView({
+          // 删除指定页面缓存（进行刷新操作）
           name: 'RoleManage'
         })
         this.$nextTick(() => {
@@ -250,7 +259,7 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
-  private resetForm(formName:any) {
+  private resetForm(formName: any) {
     this.resetChecked();
     (this.$refs[formName] as any).resetFields()
   }
@@ -299,12 +308,18 @@ export default class extends Vue {
     this.getDictionary()
     this.getAuth()
   }
-  private traverseTree(data:any) {
+  private traverseTree(data: any) {
     var setChecked = (list: any) => {
       for (var i in list) {
         let checked = 4
-        if (this.isEdit && this.authorityList && this.authorityList.length > 0) {
-          const item = this.authorityList.find((d: any) => d.authorityId === list[i].id)
+        if (
+          this.isEdit &&
+          this.authorityList &&
+          this.authorityList.length > 0
+        ) {
+          const item = this.authorityList.find(
+            (d: any) => d.authorityId === list[i].id
+          )
           if (item) {
             checked = item.dataScope
           }
@@ -325,7 +340,9 @@ export default class extends Vue {
     const id = data.id
     const nodes = (this.$refs['tree'] as any).$refs['roleTree'].store._getAllNodes()
     for (let i = 0; i < nodes.length; i++) {
-      const listIds = nodes[i].data.parentsId.split(',').map((p: any) => Number(p))
+      const listIds = nodes[i].data.parentsId
+        .split(',')
+        .map((p: any) => Number(p))
       if (listIds.includes(id)) {
         nodes[i].checked = checked
       }
@@ -340,29 +357,45 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.el-select,
-.el-date-editor {
-  width: auto;
-  display: block;
+.CreateRole {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  .btn_box {
+    padding-top: 20px;
+    box-sizing: border-box;
+  }
 }
-.wrap {
-  flex-wrap: wrap;
+.CreateRole-m {
+  .btn_box {
+    padding: 30px 20px 0 20px;
+    box-sizing: border-box;
+    .el-button {
+      width: 100%;
+    }
+    .el-button {
+      margin: 0 0 20px 0;
+    }
+  }
 }
-.mb10 {
-  margin-bottom: 10px;
-}
-.mr10 {
-  margin-right: 10px;
-}
-.ml10 {
-  margin-left: 10px;
-}
-</style>
-<style lang="scss" scope>
-.el-collapse-item__content {
-  padding-bottom: 0;
-}
-.el-form-item__label {
-  color: #999999;
+.CreateRole,
+.CreateRole-m {
+  .el-select,
+  .el-date-editor {
+    width: auto;
+    display: block;
+  }
+  .wrap {
+    flex-wrap: wrap;
+  }
+  .mb10 {
+    margin-bottom: 10px;
+  }
+  .mr10 {
+    margin-right: 10px;
+  }
+  .ml10 {
+    margin-left: 10px;
+  }
 }
 </style>

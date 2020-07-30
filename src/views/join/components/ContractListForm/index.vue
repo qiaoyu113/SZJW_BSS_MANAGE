@@ -109,7 +109,7 @@
                   type="primary"
                   @click="research"
                 >
-                  查询
+                  筛选
                 </el-button>
               </el-col>
             </el-form>
@@ -175,21 +175,9 @@ export default class extends Vue {
     this.$emit('handle-tags', tags)
   }
 
+  // 判断是否PC
   get isPC() {
     return SettingsModule.isPC
-  }
-
-  get routes() {
-    return PermissionModule.routes
-  }
-
-  get showLogo() {
-    return SettingsModule.showSidebarLogo
-  }
-
-  created() {
-    this.getDictionary()
-    this.getJoinManageList()
   }
 
   // 匹配创建tags标签
@@ -233,6 +221,7 @@ export default class extends Vue {
     }
     return vodeName
   }
+
   // 获取加盟经理
   private async getJoinManageList() {
     const { data } = await GetJoinManageList({
@@ -244,6 +233,7 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+
   // 查询城市
   private async getDictionaryCity() {
     try {
@@ -262,6 +252,7 @@ export default class extends Vue {
       console.log(`get `)
     }
   }
+
   // 查询合同归属
   private async getDictionaryContract() {
     const { data } = await GetDictionary({ dictType: 'busi_type' })
@@ -278,6 +269,7 @@ export default class extends Vue {
     this.getDictionaryContract()
   }
 
+  // 时间选择方法
   private changData() {
     if (this.DateValueChild) {
       this.listQuery.startDate = this.DateValueChild[0]
@@ -288,10 +280,12 @@ export default class extends Vue {
     }
   }
 
+  // 搜索
   private research() {
     this.$emit('handle-query', this.listQuery)
   }
 
+  // 重置
   private reset() {
     for (let key in this.listQuery) {
       if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
@@ -299,6 +293,12 @@ export default class extends Vue {
       }
     }
     this.DateValueChild = []
+  }
+
+  // 生命周期
+  created() {
+    this.getDictionary()
+    this.getJoinManageList()
   }
 }
 </script>

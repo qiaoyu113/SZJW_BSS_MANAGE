@@ -26,7 +26,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'createClue', /* 创建司机线索 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/CreateClue.vue'),
       name: 'CreateClue',
       meta: {
         apiUrl: 'root',
@@ -39,7 +39,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'editClue', /* 编辑司机线索 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/createClue.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/CreateClue.vue'),
       name: 'EditClue',
       meta: {
         apiUrl: '/bss/v1/bss/line/customer/selectListByKey',
@@ -52,7 +52,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'interview', /* 发起面试 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/interview.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/Interview.vue'),
       name: 'Interview',
       meta: {
         apiUrl: 'root',
@@ -65,7 +65,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'followClue', /* 线索跟进 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/followClue.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driveClue/FollowClue.vue'),
       name: 'FollowClue',
       meta: {
         apiUrl: 'root',
@@ -90,7 +90,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'editDriver', /* 编辑司机 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/editDriver.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/EditDriver.vue'),
       name: 'EditDriver',
       meta: {
         apiUrl: 'root',
@@ -103,7 +103,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'followDriver', /* 跟进司机 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/followDriver.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/FollowDriver.vue'),
       name: 'FollowDriver',
       meta: {
         apiUrl: 'root',
@@ -116,7 +116,7 @@ const transportRouter: RouteConfig = {
     },
     {
       path: 'driverDetail', /* 司机详情 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/driverDetail.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/transport/driverList/DriverDetail.vue'),
       name: 'driverDetail',
       meta: {
         apiUrl: 'root',

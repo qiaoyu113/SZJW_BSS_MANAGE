@@ -1,8 +1,8 @@
 <template>
-  <div class="CreateClue">
-    <el-card
-      header="人工线索录入"
-      shadow="never"
+  <div :class="isPC ? 'CreateClue' : 'CreateClue-m'">
+    <SectionContainer
+      title="人工线索录入"
+      :md="true"
     >
       <self-form
         ref="SelfForm"
@@ -45,18 +45,19 @@
           </el-button>
         </div>
       </self-form>
-    </el-card>
+    </SectionContainer>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Watch, Emit } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { CreateActivity, EditActivity, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { phoneReg } from '@/utils/index.ts'
 import { GetOpenCityData, GetDictionaryList } from '@/api/common'
 import { delayTime } from '@/settings'
+import SectionContainer from '@/components/SectionContainer/index.vue'
 
 interface IState {
   [key: string]: any;
@@ -65,12 +66,17 @@ interface IState {
 @Component({
   name: 'CreateClue',
   components: {
-    SelfForm
+    SelfForm,
+    SectionContainer
   }
 })
 export default class extends Vue {
-  private type:string = ''
-  private id:number|string = ''
+  private type:string = '' // 表单校验通过,是保存还是保存并面试按钮
+  private id:number|string = '' // 线索id
+
+  private workCityOptions:any[] = [] // 车型列表
+  private carOptions:any[] = [] // 车型列表
+  private sourceOptions:any[] = [] // 来源渠道列表
   /**
    *表单对象
    */
@@ -124,7 +130,7 @@ export default class extends Vue {
       },
       label: '工作城市',
       key: 'workCity',
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 2,
@@ -134,7 +140,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '车型',
-      options: []
+      options: this.carOptions
     },
     {
       type: 2,
@@ -144,7 +150,7 @@ export default class extends Vue {
       },
       label: '来源渠道',
       key: 'sourceChannel',
-      options: []
+      options: this.sourceOptions
     },
     {
       type: 2,
@@ -165,6 +171,12 @@ export default class extends Vue {
       ]
     }
   ]
+  /**
+   *区分设备
+   */
+  get isPC() {
+    return SettingsModule.isPC
+  }
   /**
    * 校验手机号
    */
@@ -198,18 +210,7 @@ export default class extends Vue {
       { required: true, message: '请选择业务线', trigger: 'change' }
     ]
   }
-  get isPC() {
-    return SettingsModule.isPC
-  }
 
-  mounted() {
-    this.getBaseInfo()
-    this.getOpenCitys()
-    this.id = (this.$route.query.id) as number | string
-    if (this.id) {
-      this.getClueDetail()
-    }
-  }
   /**
    *获取开通城市
    */
@@ -217,12 +218,13 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.formItem[3].options = res.data.map(function(item:any) {
+        let workCity = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.code
           }
         })
+        this.workCityOptions.push(...workCity)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -238,12 +240,15 @@ export default class extends Vue {
       let params = ['Intentional_compartment', 'source_channel']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[4].options = res.data.Intentional_compartment.map(function(item:any) {
+        let cars = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
-        this.formItem[5].options = res.data.source_channel.map(function(item:any) {
+        let sources = res.data.source_channel.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
+
+        this.carOptions.push(...cars)
+        this.sourceOptions.push(...sources)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -370,11 +375,37 @@ export default class extends Vue {
       console.log(`edit activity fail:${err}`)
     }
   }
+
+  mounted() {
+    this.getBaseInfo()
+    this.getOpenCitys()
+    this.id = (this.$route.query.id) as number | string
+    if (this.id) {
+      this.getClueDetail()
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
   .CreateClue {
     padding: 20px;
+    .btnPc {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+    }
+    .btnMobile {
+      margin-left: 0;
+      margin-top: 10px;
+      width:100%;
+    }
+  }
+</style>
+<style lang="scss" scoped>
+  .CreateClue-m {
+    .selfForm{
+      padding: 20px 40px;
+    }
     .btnPc {
       display: flex;
       flex-flow: row nowrap;

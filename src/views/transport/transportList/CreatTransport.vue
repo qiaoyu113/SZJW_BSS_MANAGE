@@ -193,7 +193,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { saveCarrierInfo, transportOrderList, transportOrderDetail, driverList } from '@/api/transport'
 import { GetDictionary, GetDictionaryList, GetOpenCityData, GetManagerLists, GetCityByCode } from '@/api/common'
 import '@/styles/common.scss'

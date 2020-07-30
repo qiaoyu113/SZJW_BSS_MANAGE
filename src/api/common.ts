@@ -65,7 +65,7 @@ export const GetManagerLists = (params:any) =>
     url: `${baseURL}/v1/base/user/getCurrUserAuthList?url=${params.uri}`,
     method: 'post'
   })
-
+// 获取城市详情
 export const detailCity = (data:any) =>
   request({
     url: `${baseURL}/v1/base/area/getTownByCountryCode`,

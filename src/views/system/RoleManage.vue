@@ -268,13 +268,17 @@ export default class extends Vue {
     }
   }
 }
-.btn-item,
-.btn-item-m {
-  margin: 0 10px;
+.RoleManage,
+.RoleManage-m{
+  .btn-item,
+  .btn-item-m {
+    margin: 0 10px;
+  }
+  .btn-item-filtrate,
+  .btn-item-filtrate-m {
+    background-color: $assist-btn;
+    border-color: $assist-btn;
+  }
 }
-.btn-item-filtrate,
-.btn-item-filtrate-m {
-  background-color: $assist-btn;
-  border-color: $assist-btn;
-}
+
 </style>

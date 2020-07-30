@@ -23,7 +23,7 @@
             size="small"
             @click="handleQueryClick"
           >
-            查询
+            筛选
           </el-button>
           <el-button
             :class="isPC ? '' : 'btnMobile'"
@@ -133,9 +133,9 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import SelfTable from '@/components/base/SelfTable.vue'
+import SelfTable from '@/components/Base/SelfTable.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'

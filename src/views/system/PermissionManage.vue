@@ -1,7 +1,7 @@
 <template>
   <div
     v-loading="loading"
-    class="PermissionManage"
+    :class="isPC ? 'PermissionManage' : 'PermissionManage-m'"
   >
     <SectionContainer title="权限管理">
       <RoleTree
@@ -15,7 +15,7 @@
           <div class="right-btn">
             <el-button
               v-if="data.authType !== 4"
-              v-permission="['/v1/base/authority/create']"
+              v-permission="['/v1/Base/authority/create']"
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
@@ -27,7 +27,7 @@
             />
             <el-button
               v-if="node.level !== 1"
-              v-permission="['/v1/base/authority/deleteByAuthId']"
+              v-permission="['/v1/Base/authority/deleteByAuthId']"
               circle
               size="mini"
               class="delete"
@@ -40,7 +40,7 @@
             />
             <el-button
               v-if="node.level !== 1"
-              v-permission="['/v1/base/authority/update']"
+              v-permission="['/v1/Base/authority/update']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -372,32 +372,41 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.mr10 {
-  margin-right: 10px;
+.PermissionManage{
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
-.ml10 {
-  margin-left: 10px;
-}
-.right-btn {
-  display: inline-block;
-  .el-button {
-    padding: 0;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
-    background: rgba(0, 0, 0, 0);
-    font-size: 20px;
-    border-color: rgba(0, 0, 0, 0);
-    &.delete {
-      &:hover {
-        color: $--color-danger;
+.PermissionManage,
+.PermissionManage-m {
+  .mr10 {
+    margin-right: 10px;
+  }
+  .ml10 {
+    margin-left: 10px;
+  }
+  .right-btn {
+    display: inline-block;
+    .el-button {
+      padding: 0;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0);
+      font-size: 20px;
+      border-color: rgba(0, 0, 0, 0);
+      &.delete {
+        &:hover {
+          color: $--color-danger;
+        }
       }
     }
   }
 }
 </style>
 <style scoped>
-.PermissionManage .el-badge >>> sup {
+.PermissionManage .el-badge >>> sup,
+.PermissionManage-m .el-badge >>> sup {
   transform: translateY(6px);
 }
 </style>

@@ -683,19 +683,6 @@ export default class extends Vue {
       ]
     }
 
-    created() {
-      this.id = this.$route.query.id
-      this.getDetail(this.id)
-      this.getDictionary()
-      this.remoteMethod('')
-    }
-
-    mounted() {
-    }
-
-    activated() {
-    }
-
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
@@ -763,6 +750,7 @@ export default class extends Vue {
       this.ruleForm.operationId = id
     }
 
+    // 提交表单
     private async submitForm(formName:any) {
       this.fullscreenLoading = true;
       (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
@@ -795,8 +783,17 @@ export default class extends Vue {
       })
     }
 
+    // 重置
     private resetForm(formName:any) {
       (this.$refs[formName] as ElForm).resetFields()
+    }
+
+    // 生命周期
+    created() {
+      this.id = this.$route.query.id
+      this.getDetail(this.id)
+      this.getDictionary()
+      this.remoteMethod('')
     }
 }
 </script>
@@ -935,41 +932,45 @@ export default class extends Vue {
 
 <style lang="scss" scope>
 @media screen and (min-width: 701px) {
-  .el-select {
-    width: 100%;
+  .DealForm {
+    .el-select {
+        width: 100%;
+      }
+      .el-input{
+        width: 100%;
+      }
+    //   .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+    //       background: $assist-btn;
+    //       -webkit-box-shadow: -1px 0 0 0 $assist-btn;
+    //       box-shadow: -1px 0 0 0 $assist-btn;
+    //       border-color: $assist-btn;
+    //   }
+    //   .el-radio-button__inner:hover{
+    //       color: $assist-btn;
+    //   }
   }
-  .el-input{
-    width: 100%;
-  }
-//   .el-radio-button__orig-radio:checked + .el-radio-button__inner{
-//       background: $assist-btn;
-//       -webkit-box-shadow: -1px 0 0 0 $assist-btn;
-//       box-shadow: -1px 0 0 0 $assist-btn;
-//       border-color: $assist-btn;
-//   }
-//   .el-radio-button__inner:hover{
-//       color: $assist-btn;
-//   }
 }
 
 @media screen and (max-width: 700px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input{
-    width: 90%;
-  }
-  .el-radio-group{
-      width:100%;
-      text-align: center;
-      margin: auto;
-  }
-  .el-radio-group{
-      margin-bottom: 10px !important;
-      margin-top: 10px !important;
-  }
-  .el-radio-button__orig-radio + .el-radio-button__inner{
-      font-size: 12px;
+  .DealForm-m {
+    .el-select {
+      width: 100%;
+    }
+    .el-input{
+      width: 90%;
+    }
+    .el-radio-group{
+        width:100%;
+        text-align: center;
+        margin: auto;
+    }
+    .el-radio-group{
+        margin-bottom: 10px !important;
+        margin-top: 10px !important;
+    }
+    .el-radio-button__orig-radio + .el-radio-button__inner{
+        font-size: 12px;
+    }
   }
 }
 </style>

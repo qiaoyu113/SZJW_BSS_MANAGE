@@ -1,6 +1,6 @@
 <template>
   <div
-    class="interview"
+    :class="isPC ? 'interview' : 'interview-m'"
     :style="{
       padding: isPC ? '15px' :'0px'
     }"
@@ -10,15 +10,18 @@
         slot="header"
         class="header"
       >
-        <span class="name">面试信息表</span>
-        <span
-          v-if="listQuery.busiType === 0"
-          class="tag"
-        >专车</span>
-        <span
-          v-else-if="listQuery.busiType === 1"
-          class="tag"
-        >共享</span>
+        <div class="title_header">
+          <span class="title_left_border" />
+          <span class="name">面试信息表</span>
+          <span
+            v-if="listQuery.busiType === 0"
+            class="tag"
+          >专车</span>
+          <span
+            v-else-if="listQuery.busiType === 1"
+            class="tag"
+          >共享</span>
+        </div>
         <div class="step">
           <el-steps
             :active="active"
@@ -157,15 +160,16 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { InterviewBasic, GetInterviewEditDetail, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { GetOpenCityData, GetDictionaryList } from '@/api/common'
 import { phoneReg } from '@/utils/index.ts'
-import SpecialInterview from './components/specialInterview.vue'
-import ShareInterview from './components/shareInterview.vue'
+import SpecialInterview from './components/SpecialInterview.vue'
+import ShareInterview from './components/ShareInterview.vue'
 import { delayTime } from '@/settings'
+import SectionContainer from '@/components/SectionContainer/index.vue'
 
 interface IState {
   [key: string]: any;
@@ -176,11 +180,19 @@ interface IState {
   components: {
     SelfForm,
     SpecialInterview,
-    ShareInterview
+    ShareInterview,
+    SectionContainer
   }
 })
 export default class extends Vue {
-  private active:number = 0
+  private active:number = 0 // 步骤条当前处于第几步
+
+  private driverId = '' // 司机id
+  private form:any = {} // 编辑面试表单的时候获取的信息
+
+  private workCityOptions:any[] = [] // 工作城市列表
+  private carOptions:any[] = [] // 车型列表
+  // 表单对象
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -189,9 +201,7 @@ export default class extends Vue {
     busiType: '',
     clueId: ''
   }
-  private driverId = ''
-  private form:any = {} // 编辑面试表单的时候获取的信息
-
+  // 表单数组
   private formItem:any[] = [
     {
       type: 1,
@@ -220,7 +230,7 @@ export default class extends Vue {
         placeholder: '工作城市',
         filterable: true
       },
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 2,
@@ -230,9 +240,23 @@ export default class extends Vue {
         placeholder: '车型',
         filterable: true
       },
-      options: []
+      options: this.carOptions
     }
   ]
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
+  // 是否显示步骤条第二步
+  get isShow() {
+    if (this.active === 1 || Object.keys(this.form).length > 0) {
+      return true
+    } else {
+      return false
+    }
+  }
   /**
    * 校验手机号
    */
@@ -259,47 +283,6 @@ export default class extends Vue {
     busiType: [
       { required: true, message: '请选择业务类型', trigger: 'change' }
     ]
-  }
-
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
-  get isShow() {
-    if (this.active === 1 || Object.keys(this.form).length > 0) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  mounted() {
-    this.getBaseInfo()
-    this.getOpenCitys()
-    this.listQuery.clueId = (this.$route as any).query.id
-    if (this.listQuery.clueId) {
-      this.getClueDetailByClueId()
-    } else {
-      this.formItem.push({
-        type: 2,
-        tagAttrs: {
-          placeholder: '请选择业务线'
-        },
-        label: '业务线',
-        key: 'busiType',
-        options: [
-          {
-            label: '专车',
-            value: 0
-          },
-          {
-            label: '共享',
-            value: 1
-          }
-        ]
-      })
-    }
   }
 
   /**
@@ -332,12 +315,13 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.formItem[2].options = res.data.map(function(item:any) {
+        let workCitys = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.code
           }
         })
+        this.workCityOptions.push(...workCitys)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -373,9 +357,10 @@ export default class extends Vue {
       let params = ['Intentional_compartment']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[3].options = res.data.Intentional_compartment.map(function(item:any) {
+        let cars = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
+        this.carOptions.push(...cars)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -456,9 +441,37 @@ export default class extends Vue {
       }
     })
   }
+
+  mounted() {
+    this.getBaseInfo()
+    this.getOpenCitys()
+    this.listQuery.clueId = (this.$route as any).query.id
+    if (this.listQuery.clueId) {
+      this.getClueDetailByClueId()
+    } else {
+      this.formItem.push({
+        type: 2,
+        tagAttrs: {
+          placeholder: '请选择业务线'
+        },
+        label: '业务线',
+        key: 'busiType',
+        options: [
+          {
+            label: '专车',
+            value: 0
+          },
+          {
+            label: '共享',
+            value: 1
+          }
+        ]
+      })
+    }
+  }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
   .interview {
    .header {
      .name {
@@ -466,11 +479,11 @@ export default class extends Vue {
      }
      .tag {
        margin-left:10px;
-       padding: 3px;
-       background: #4051B6;
+       padding: 2px 6px;
+       background: $--color-primary;
        color:#ffffff;
-       border-radius: 5px;
-       font-size:14px;
+       border-radius: 16px;
+       font-size:12px;
     }
     .step {
       margin-top:20px;
@@ -500,5 +513,63 @@ export default class extends Vue {
         width:100%;
      }
    }
+   .el-step__title{
+     font-size: 14px !important;
+   }
+  }
+  .interview-m{
+    .title_header{
+      padding: 12px 8px;
+      box-sizing: border-box;
+      font-size: 15px;
+      color: #4A4A4A;
+    }
+    .header {
+     .name {
+       font-weight: bold;
+     }
+     .tag {
+       margin-left:10px;
+       padding: 2px 6px;
+       background: $--color-primary;
+       color:#ffffff;
+       border-radius: 16px;
+       font-size:12px;
+    }
+    .step {
+      padding: 20px 10% 10px;
+      border-top: 2px solid #F8F9FA;
+    }
+   }
+   .inter_btn {
+     margin-top:50px;
+     width: 100%;
+   }
+   .interviewFinish {
+     .content {
+       padding: 50px 0px;
+       text-align: center;
+       .el-icon-success {
+         color:#4CAF50;
+         font-size:60px;
+       }
+       h4 {
+         color:#000;
+         font-weight: bold;
+         font-size:18px;
+       }
+     }
+     .finish_btn {
+        width:100%;
+     }
+   }
+   .el-step__title{
+     font-size: 14px !important;
+   }
+  }
+</style>
+<style scoped>
+  .interview-m >>> .el-card__header{
+    padding: 0;
   }
 </style>
