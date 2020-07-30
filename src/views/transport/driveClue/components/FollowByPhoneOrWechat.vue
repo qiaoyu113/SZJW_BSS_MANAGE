@@ -36,12 +36,15 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: 0 }) type!:number
   @Prop({ default: '' }) clueId!:string|number
-  private showAlert = false
+  private showAlert = false // 控制弹窗
+  // 表单对象
   private dialogForm:IState = {
     remarks: ''
   }
-  private title:string = ''
 
+  // 标题
+  private title:string = ''
+  // 表单数组
   private dialogItems:any[] = [
     {
       type: 1,
@@ -69,6 +72,9 @@ export default class extends Vue {
       this.title = '无法跟进'
     }
   }
+  @Emit('getRecord')
+  getRecord() {
+  }
   /**
    *发开模态框
    */
@@ -81,12 +87,21 @@ export default class extends Vue {
   beforeClose() {
     this.showAlert = false
   }
+  /**
+   * 弹窗关闭后
+   */
   handleClosed() {
     this.dialogForm.remarks = ''
   }
+  /**
+   * 取消按钮
+   */
   cancel() {
     this.showAlert = false
   }
+  /**
+   * 确定按钮
+   */
   async confirm() {
     try {
       if (!this.dialogForm.remarks) {
@@ -108,9 +123,6 @@ export default class extends Vue {
     } catch (err) {
       console.log(`confirm fail:${err}`)
     }
-  }
-  @Emit('getRecord')
-  getRecord() {
   }
 }
 </script>

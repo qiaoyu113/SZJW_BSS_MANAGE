@@ -1,9 +1,6 @@
 <template>
   <div
-    :class="isPC ? 'interview' : 'interview-m'"
-    :style="{
-      padding: isPC ? '15px' :'0px'
-    }"
+    :class="isPC ? ['interview','p15'] : 'interview-m'"
   >
     <el-card shadow="never">
       <div

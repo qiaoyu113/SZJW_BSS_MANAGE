@@ -1,5 +1,10 @@
 <template>
-  <div class="editDriver">
+  <div
+    class="editDriver"
+    :class="{
+      p15: isPC
+    }"
+  >
     <SectionContainer
       title="基础信息"
       :md="true"
@@ -56,7 +61,9 @@ interface IState {
   }
 })
 export default class extends Vue {
+  // 司机id
   private driverId:string = ''
+  // 表单对象
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -66,7 +73,7 @@ export default class extends Vue {
     workCity: '',
     workCityName: ''
   }
-
+  // 表单数组
   private formItem:any[] = [
     {
       type: 1,
@@ -134,15 +141,7 @@ export default class extends Vue {
       type: 'btn1'
     }
   ]
-  /**
-   * 校验手机号
-   */
-  private validatePhone = (rule: any, value: string, callback: Function) => {
-    if (!phoneReg.test(value)) {
-      return callback(new Error('请输入正确的手机号'))
-    }
-    callback()
-  }
+  // 校验规则
   private rules:IState = {
     name: [
       { required: true, message: '请输入姓名', trigger: 'blur' }
@@ -160,10 +159,14 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
-
-  mounted() {
-    this.driverId = (this.$route as any).query.id
-    this.getDriverInfoByDriverId()
+  /**
+   * 校验手机号
+   */
+  private validatePhone = (rule: any, value: string, callback: Function) => {
+    if (!phoneReg.test(value)) {
+      return callback(new Error('请输入正确的手机号'))
+    }
+    callback()
   }
   /**
    *获取司机信息
@@ -230,16 +233,20 @@ export default class extends Vue {
       console.log('edit save fail:', err)
     }
   }
+  mounted() {
+    this.driverId = (this.$route as any).query.id
+    this.getDriverInfoByDriverId()
+  }
 }
 </script>
 <style lang="scss" scoped>
   .editDriver {
-    padding: 20px;
     .btnPc {
       margin-top:200px;
       display: flex;
       flex-flow: row nowrap;
       width: 100%;
+      justify-content: flex-end;
     }
     .btnMobile {
       margin-left: 0;
@@ -247,10 +254,17 @@ export default class extends Vue {
       width:100%;
     }
   }
+
 </style>
 
 <style scoped>
   .editDriver >>> .el-card__header {
     font-weight:bold;
+  }
+  @media screen and (max-width: 700px){
+    .editDriver >>> .selfForm {
+      margin-left:0px!important;
+      margin-right:0px!important;
+    }
   }
 </style>

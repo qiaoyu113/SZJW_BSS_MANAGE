@@ -15,6 +15,8 @@
             :list-query="item"
             :form-item="formItem"
             label-width="80px"
+            :m-block="true"
+            :pc-block="true"
           >
             <template v-slot:cooperationModel="{row}">
               <span v-if="row.cooperationModel ===1">购车</span>
@@ -66,45 +68,44 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => [] }) lists!:IState[]
 
+  /**
+   *表单数组
+   */
   private formItem:any[] = [
     {
       type: 7,
       key: 'busiTypeName',
-      label: '商品分类:'
+      label: '商品分类'
     },
     {
       type: 'cooperationModel',
       slot: true,
-      label: '合作模式:'
+      label: '合作模式'
     },
     {
       type: 7,
       key: 'cooperationCarName',
-      label: '合作车型:'
+      label: '合作车型'
     },
     {
-      key: 'cooperationTime',
       type: 'cooperationTime',
-      label: '合作期限:',
+      label: '合作期限',
       slot: true
     },
     {
-      key: 'goodsAmount',
       type: 'goodsAmount',
-      label: '订单金额:',
+      label: '订单金额',
       slot: true
     },
     {
-      key: 'rake',
       type: 'rake',
-      label: '抽佣比列:',
+      label: '抽佣比列',
       slot: true
     },
     {
-      key: 'payCompleteTime',
       type: 'payCompleteTime',
       slot: true,
-      label: '支付时间:'
+      label: '支付时间'
     },
     {
       slot: true,
@@ -184,5 +185,19 @@ export default class extends Vue {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
     }
+ }
+ @media screen and (min-width: 700px){
+   .orderInfo >>> .el-form-item__label {
+    font-size: 13px!important;
+    color: #9e9e9e!important;
+    font-weight: 400;
+    padding-right: 16px;
+  }
+  .orderInfo >>> .el-form-item__content span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 700;
+      overflow-wrap: break-word;
+  }
  }
 </style>

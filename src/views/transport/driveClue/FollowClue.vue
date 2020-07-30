@@ -172,7 +172,9 @@
           v-for="(item,idx) in followLists"
           :key="idx"
           class="item"
-          :style="{borderBottom: idx !== (followLists.length -1) ? '1px solid #E8E8E8' :''}"
+          :class="{
+            borderBottom: idx !== (followLists.length -1)
+          }"
         >
           <div class="left">
             <h4 class="title">
@@ -230,9 +232,12 @@ import { ClueFollowList, GetClueDetailByClueId, GetInterviewDetail } from '@/api
   }
 })
 export default class extends Vue {
+  // 线索id
   private id:string|number = ''
-  private type:number = 0
-  private followLists:any[] = []
+  private type:number = 0 // 线索跟进的类型
+  private followLists:any[] = [] // 线索跟进记录列表
+
+  // 司机线索信息表单
   private baseForm:any = {
     name: '',
     phone: '',
@@ -245,18 +250,12 @@ export default class extends Vue {
     statusName: '',
     existInterviewData: false
   }
+
+  // 面试表信息
   private interviewObj:any = {}
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
-  }
-
-  mounted() {
-    this.id = (this.$route.query.id) as string | number
-    if (this.id) {
-      this.getClueRecords()
-      this.getClueDetailByClueId()
-    }
   }
 
   /**
@@ -344,10 +343,20 @@ export default class extends Vue {
       }
     })
   }
+  mounted() {
+    this.id = (this.$route.query.id) as string | number
+    if (this.id) {
+      this.getClueRecords()
+      this.getClueDetailByClueId()
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
   $bgColor:#649CEE;
+  .borderBottom {
+    border-bottom:1px solid #E8E8E8;
+  }
   .followClue {
     padding: 20px;
     .card_header {

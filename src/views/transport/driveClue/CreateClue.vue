@@ -338,6 +338,7 @@ export default class extends Vue {
     }
   }
 
+  // 按钮跳转链接
   jump() {
     if (this.type === 'interview') {
       this.$router.push({
