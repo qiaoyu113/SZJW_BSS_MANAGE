@@ -166,7 +166,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import CascaderMore from '@/components/base/CascaderMore.vue'
+import CascaderMore from '@/components/Base/CascaderMore.vue'
 import '@/styles/common.scss'
 interface params {
   prop:string,

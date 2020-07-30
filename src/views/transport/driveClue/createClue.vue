@@ -1,8 +1,8 @@
 <template>
   <div class="CreateClue">
-    <el-card
-      header="人工线索录入"
-      shadow="never"
+    <SectionContainer
+      title="人工线索录入"
+      :md="true"
     >
       <self-form
         ref="SelfForm"
@@ -45,18 +45,19 @@
           </el-button>
         </div>
       </self-form>
-    </el-card>
+    </SectionContainer>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Watch, Emit } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { CreateActivity, EditActivity, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { phoneReg } from '@/utils/index.ts'
 import { GetOpenCityData, GetDictionaryList } from '@/api/common'
 import { delayTime } from '@/settings'
+import SectionContainer from '@/components/SectionContainer/index.vue'
 
 interface IState {
   [key: string]: any;
@@ -65,7 +66,8 @@ interface IState {
 @Component({
   name: 'CreateClue',
   components: {
-    SelfForm
+    SelfForm,
+    SectionContainer
   }
 })
 export default class extends Vue {

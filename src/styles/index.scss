@@ -182,3 +182,15 @@ aside {
 .el-message-box__content{
   padding: 20px;
 }
+
+
+.title_left_border{
+  display: inline-block;
+  margin-right: 10px;
+  width:5px;
+  height: 17px;
+  background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);
+  border-radius: 2.5px;
+  border-radius: 2.5px;
+  vertical-align: middle;
+}

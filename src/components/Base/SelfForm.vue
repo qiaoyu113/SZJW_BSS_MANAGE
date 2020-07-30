@@ -228,6 +228,12 @@ export default class extends Vue {
 </style>
 
 <style scoped>
+  .selfForm >>> .el-form-item__label {
+    font-family: PingFangSC-Regular;
+    font-size: 14px;
+    color: #4A4A4A;
+    text-align: center;
+  }
   .selfForm >>> .el-form-item__content {
     display: flex;
     flex: 1;

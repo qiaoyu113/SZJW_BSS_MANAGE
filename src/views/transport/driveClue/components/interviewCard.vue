@@ -6,6 +6,7 @@
         class="interHeader"
       >
         <div class="lTitle">
+          <span class="title_left_border" />
           <span class="interTitle">面试信息</span>
           <span class="interTag">{{ obj.busiType ===0 ? '专车' :'共享' }}</span>
         </div>

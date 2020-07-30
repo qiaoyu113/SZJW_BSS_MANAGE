@@ -62,7 +62,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import FollowItem from './components/followItem.vue'
 import BaseInfo from './components/baseInfo.vue'
 import OrderInfo from './components/orderInfo.vue'

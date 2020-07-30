@@ -446,8 +446,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
-import SelfTable from '@/components/base/SelfTable.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
+import SelfTable from '@/components/Base/SelfTable.vue'
 import { ClueListForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'

@@ -20,7 +20,10 @@
         slot="header"
         class="header"
       >
-        <div>跟进记录</div>
+        <div>
+          <span class="title_left_border" />
+          跟进记录
+        </div>
         <div>
           <el-dropdown @command="handleCommand">
             <el-button type="primary">
@@ -55,7 +58,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import FollowDialog from './components/followDialog.vue'
 import FollowItem from './components/followItem.vue'
 import { DriverFollowFormation } from '@/api/driver'

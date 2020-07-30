@@ -10,6 +10,7 @@
         slot="header"
         class="header"
       >
+        <span class="title_left_border" />
         <span class="name">面试信息表</span>
         <span
           v-if="listQuery.busiType === 0"
@@ -157,7 +158,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { InterviewBasic, GetInterviewEditDetail, GetClueDetailByClueId } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
@@ -166,6 +167,7 @@ import { phoneReg } from '@/utils/index.ts'
 import SpecialInterview from './components/specialInterview.vue'
 import ShareInterview from './components/shareInterview.vue'
 import { delayTime } from '@/settings'
+import SectionContainer from '@/components/SectionContainer/index.vue'
 
 interface IState {
   [key: string]: any;
@@ -176,7 +178,8 @@ interface IState {
   components: {
     SelfForm,
     SpecialInterview,
-    ShareInterview
+    ShareInterview,
+    SectionContainer
   }
 })
 export default class extends Vue {

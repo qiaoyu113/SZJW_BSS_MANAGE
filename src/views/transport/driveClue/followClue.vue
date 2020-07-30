@@ -7,6 +7,7 @@
         class="card_header"
       >
         <div class="left">
+          <span class="title_left_border" />
           <span class="text">基本信息</span>
           <span class="status">{{ baseForm.busiType === 1 ? '共享':'专车' }}</span>
         </div>
@@ -122,6 +123,7 @@
         class="card_header"
       >
         <div class="left">
+          <span class="title_left_border" />
           <span class="text">跟进记录</span>
         </div>
         <div class="right">
