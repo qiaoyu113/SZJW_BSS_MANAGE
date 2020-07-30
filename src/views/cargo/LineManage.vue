@@ -423,7 +423,7 @@
 import { delayTime } from '@/settings'
 import { getLabel } from '@/utils/index.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { HandlePages, parseTime } from '@/utils/index'
 import {
@@ -448,7 +448,7 @@ import {
   GetCityByCode,
   GetManagerLists
 } from '@/api/common'
-import SelfTable from '@/components/base/SelfTable.vue'
+import SelfTable from '@/components/Base/SelfTable.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import '@/styles/common.scss'
 

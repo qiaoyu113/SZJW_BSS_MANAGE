@@ -673,7 +673,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
-import SelfItem from '@/components/base/SelfItem.vue'
+import SelfItem from '@/components/Base/SelfItem.vue'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import '@/styles/common.scss'
 @Component({

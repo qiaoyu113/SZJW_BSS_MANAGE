@@ -14,7 +14,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { SpecialInterview, EditDriverInterviewEdit } from '@/api/driver'
 import { GetCityByCode, GetManagerLists, GetDictionaryList } from '@/api/common'
 import { validatorNumberRange } from '@/utils/index'
@@ -32,6 +32,19 @@ export default class extends Vue {
     @Prop({ default: () => {} }) form!:any
     @Prop({ default: () => {} }) obj!:any
 
+    private gmOptions:any[] = [] // 加盟经理列表
+    private inviteTypeOptions:any[] = [] // 邀约方式列表
+    private sourceOptions:any[] = [] // 来源渠道列表
+    private intentDeliveryModeOptions:any[] = [] // 意向配送模式列表
+    private intentCargoOptions:any[] = [] // 意向货物类型列表
+    private intentWorkDurationOptions:any[] = [] // 意向工作时间段列表
+    private drivingLicenceTypeOptions:any[] = [] // 驾照类型列表
+    private maxAdvancePaymentOptions:any[] = [] // 最大可支付首付款列表
+    private strategyRightOptions:any[] = [] // 投资决策权列表
+    private cooperateFocusPointOptions:any[] = [] // 如果有机会跟云鸟合作，你看中的是什么列表
+    private cooperateKeyFactorOptions:any[] = [] // 最终决定你是否与云鸟合作的关键因素是什么列表
+
+    // 表单对象
     private listQuery:IState = {
       gmId: '',
       inviteType: '',
@@ -69,6 +82,7 @@ export default class extends Vue {
       isLocalPlate: true
     }
 
+    // 表单数组
     private formItem = [
       {
         type: 2,
@@ -78,7 +92,7 @@ export default class extends Vue {
           placeholder: '加盟经理',
           filterable: true
         },
-        options: []
+        options: this.gmOptions
       },
       {
         type: 2,
@@ -88,7 +102,7 @@ export default class extends Vue {
           placeholder: '邀约方式',
           filterable: true
         },
-        options: []
+        options: this.inviteTypeOptions
       },
       {
         type: 2,
@@ -98,7 +112,7 @@ export default class extends Vue {
           placeholder: '来源渠道',
           filterable: true
         },
-        options: []
+        options: this.sourceOptions
       },
       {
         type: 1,
@@ -198,7 +212,7 @@ export default class extends Vue {
         key: 'intentDeliveryMode',
         label: '意向配送模式',
         w: '130px',
-        options: [],
+        options: this.intentDeliveryModeOptions,
         tagAttrs: {
           filterable: true
         }
@@ -211,14 +225,14 @@ export default class extends Vue {
         tagAttrs: {
           filterable: true
         },
-        options: []
+        options: this.intentCargoOptions
       },
       {
         type: 2,
         key: 'intentWorkDuration',
         label: '意向工作时间段',
         w: '140px',
-        options: [],
+        options: this.intentWorkDurationOptions,
         tagAttrs: {
           filterable: true
         }
@@ -347,7 +361,7 @@ export default class extends Vue {
         type: 2,
         key: 'drivingLicenceType',
         label: '驾照类型',
-        options: []
+        options: this.drivingLicenceTypeOptions
       },
       {
         type: 2,
@@ -380,9 +394,7 @@ export default class extends Vue {
         key: 'maxAdvancePayment',
         label: '最大可支付首付款',
         w: '150px',
-        options: [
-
-        ]
+        options: this.maxAdvancePaymentOptions
       },
       {
         type: 4,
@@ -420,21 +432,21 @@ export default class extends Vue {
         type: 2,
         key: 'strategyRight',
         label: '投资决策权',
-        options: []
+        options: this.strategyRightOptions
       },
       {
         type: 2,
         key: 'cooperateFocusPoint',
         label: '如果有机会跟云鸟合作，你看中的是什么',
         w: '280px',
-        options: []
+        options: this.cooperateFocusPointOptions
       },
       {
         type: 2,
         label: '最终决定你是否与云鸟合作的关键因素是什么?',
         key: 'cooperateKeyFactor',
         w: '330px',
-        options: []
+        options: this.cooperateKeyFactorOptions
       },
       {
         type: 4,
@@ -485,6 +497,7 @@ export default class extends Vue {
       }
     ]
 
+    // 校验规则
     private rules = {
       gmId: [
         { required: true, message: '请选择加盟经理', trigger: 'blur' }
@@ -589,80 +602,8 @@ export default class extends Vue {
         { required: true, message: '请输入备注', trigger: 'blur' }
       ]
     }
-    mounted() {
-      this.getManagers()
-      this.getBaseInfo()
-    }
 
-    /**
-   *获取基础信息
-   */
-    async getBaseInfo() {
-      try {
-        let params = ['source_channel', 'intent_cargo_type', 'accep_payment_range', 'driving_licence_type', 'invite_type', 'intent_delivery_mode', 'strategy_right', 'cooperate_focus_point', 'cooperate_key_factor', 'intent_work_duration']
-        let { data: res } = await GetDictionaryList(params)
-        if (res.success) {
-          this.formItem[1].options = res.data.invite_type.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[2].options = res.data.source_channel.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[10].options = res.data.intent_delivery_mode.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[11].options = res.data.intent_cargo_type.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[12].options = res.data.intent_work_duration.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[22].options = res.data.driving_licence_type.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[25].options = res.data.accep_payment_range.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[28].options = res.data.strategy_right.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[29].options = res.data.cooperate_focus_point.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-          this.formItem[30].options = res.data.cooperate_key_factor.map(function(item:any) {
-            return { label: item.dictLabel, value: +item.dictValue }
-          })
-        } else {
-          this.$message.error(res.errorMsg)
-        }
-      } catch (err) {
-        console.log(`get base info fail:${err}`)
-      }
-    }
-    /**
-   *获取加盟经理列表
-   */
-    async getManagers() {
-      try {
-        let params = {
-          uri: '/v1/driver/clue/clue/special/interview'
-        }
-        let { data: res } = await GetManagerLists(params)
-        if (res.success) {
-          this.formItem[0].options = res.data.map(function(item:any) {
-            return {
-              label: item.name,
-              value: item.id
-            }
-          })
-        } else {
-          this.$message.error(res.errorMsg)
-        }
-      } catch (err) {
-        console.log(`get manager fail:${err}`)
-      }
-    }
-
+    // 编辑回显专车表单
     @Watch('obj', { deep: true, immediate: true })
     handleObjChange(val:any) {
       this.listQuery = { ...this.listQuery, ...val }
@@ -677,6 +618,7 @@ export default class extends Vue {
       this.listQuery.houseAddress.push(val.householdCounty + '')
     }
 
+    // 是否有车
     @Watch('listQuery.hasOwnCar')
     onOwnCar(val:boolean) {
       this.listQuery.ownCarNum = ''
@@ -703,6 +645,94 @@ export default class extends Vue {
           }
         ]
         this.listQuery.ownCarNum = 0
+      }
+    }
+
+    // 提交表单通过验证
+    @Emit('onFinish')
+    handleFinish(driverId:string) {
+      return driverId
+    }
+
+    /**
+   *获取基础信息
+   */
+    async getBaseInfo() {
+      try {
+        let params = ['source_channel', 'intent_cargo_type', 'accep_payment_range', 'driving_licence_type', 'invite_type', 'intent_delivery_mode', 'strategy_right', 'cooperate_focus_point', 'cooperate_key_factor', 'intent_work_duration']
+        let { data: res } = await GetDictionaryList(params)
+        if (res.success) {
+          let inviteType = res.data.invite_type.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let sources = res.data.source_channel.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+
+          let intentDelivery = res.data.intent_delivery_mode.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let intentCargoType = res.data.intent_cargo_type.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let intentWorkDuration = res.data.intent_work_duration.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let drivingLicenceType = res.data.driving_licence_type.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let maxAdvancePayment = res.data.accep_payment_range.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let strategyRight = res.data.strategy_right.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let cooperateFocusPoint = res.data.cooperate_focus_point.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+          let cooperateKeyFactor = res.data.cooperate_key_factor.map(function(item:any) {
+            return { label: item.dictLabel, value: +item.dictValue }
+          })
+
+          this.inviteTypeOptions.push(...inviteType)
+          this.sourceOptions.push(...sources)
+          this.intentDeliveryModeOptions.push(...intentDelivery)
+          this.intentCargoOptions.push(...intentCargoType)
+          this.intentWorkDurationOptions.push(...intentWorkDuration)
+          this.drivingLicenceTypeOptions.push(...drivingLicenceType)
+          this.maxAdvancePaymentOptions.push(...maxAdvancePayment)
+          this.strategyRightOptions.push(...strategyRight)
+          this.cooperateFocusPointOptions.push(...cooperateFocusPoint)
+          this.cooperateKeyFactorOptions.push(...cooperateKeyFactor)
+        } else {
+          this.$message.error(res.errorMsg)
+        }
+      } catch (err) {
+        console.log(`get base info fail:${err}`)
+      }
+    }
+    /**
+   *获取加盟经理列表
+   */
+    async getManagers() {
+      try {
+        let params = {
+          uri: '/v1/driver/clue/clue/special/interview'
+        }
+        let { data: res } = await GetManagerLists(params)
+        if (res.success) {
+          let gms = res.data.map(function(item:any) {
+            return {
+              label: item.name,
+              value: item.id
+            }
+          })
+          this.gmOptions.push(...gms)
+        } else {
+          this.$message.error(res.errorMsg)
+        }
+      } catch (err) {
+        console.log(`get manager fail:${err}`)
       }
     }
 
@@ -793,10 +823,6 @@ export default class extends Vue {
       }
     }
 
-    @Emit('onFinish')
-    handleFinish(driverId:string) {
-      return driverId
-    }
     /**
      * 现居住地址
      */
@@ -883,6 +909,10 @@ export default class extends Vue {
       } catch (err) {
         resolve([])
       }
+    }
+    mounted() {
+      this.getManagers()
+      this.getBaseInfo()
     }
 }
 </script>

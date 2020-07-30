@@ -3,7 +3,7 @@
     <!-- 分配线索 -->
     <SelfDialog
       :visible.sync="showAlert"
-      :title="title"
+      title="线索分配"
       width="30%"
       :before-close="beforeClose"
       :cancel="cancel"
@@ -14,7 +14,7 @@
         :list-query="dialogForm"
         :form-item="dialogItems"
         :pc-col="24"
-        label-width="110px"
+        label-width="0px"
       />
     </SelfDialog>
   </div>
@@ -22,59 +22,52 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import SelfForm from '@/components/base/SelfForm.vue'
-import { UpdateDriverBDManager, driverDownToGm } from '@/api/driver'
+import SelfForm from '@/components/Base/SelfForm.vue'
+import { ClueDispatch } from '@/api/driver'
 import { GetManagerLists } from '@/api/common'
 import { delayTime } from '@/settings'
 interface IState {
   [key: string]: any;
 }
 @Component({
-  name: 'ManagerDialog',
+  name: 'ClueDistribution',
   components: {
     SelfDialog,
     SelfForm
   }
 })
 export default class extends Vue {
-  @Prop({ default: () => [] }) rows!:any
-  @Prop({ default: '' }) type!:string
+  @Prop({ default: () => [] }) rows!:any[]
   private showAlert = false
-  private title:string = ''
   private dialogForm:IState = {
-    gmId: ''
+    userId: ''
   }
 
   private dialogItems:any[] = [
     {
       type: 2,
-      key: 'gmId',
-      label: '请选择加盟经理',
+      key: 'userId',
       tagAttrs: {
-        placeholder: '请选择新的加盟经理',
+        placeholder: '请选择跟进人',
         filterable: true
       },
       options: []
     }
   ]
 
-  @Watch('type')
-  onTypeChange(val:string) {
-    this.getManagers()
-    if (this.type === 'modify') {
-      this.title = '修改加盟经理'
-    } else if (this.type === 'distribution') {
-      this.title = '分配加盟经理'
+  @Watch('showAlert')
+  onShowAlertChange(val:boolean) {
+    if (val) {
+      this.getManagers()
     }
   }
-
   /**
    *获取加盟经理列表
    */
   async getManagers() {
     try {
       let params = {
-        uri: '/v1/driver/driverDownToGm'
+        uri: '/v1/driver/clue/clue/follow'
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
@@ -104,82 +97,39 @@ export default class extends Vue {
     this.showAlert = false
   }
   handleClosed() {
-    this.dialogForm.gmId = ''
-    this.setEmptyRows([])
-  }
-  @Emit('onRows')
-  setEmptyRows(a:any) {
+    this.dialogForm.userId = ''
   }
   cancel() {
     this.showAlert = false
   }
   async confirm() {
     try {
-      if (!this.dialogForm.gmId) {
-        return this.$message.error('请选择加盟经理')
+      if (!this.dialogForm.userId) {
+        return this.$message.error('请选择人进人')
       }
-      if (this.type === 'modify') {
-        this.modifyManager()
-      } else if (this.type === 'distribution') {
-        this.driverDownToGm()
+      let clueIds = this.rows.map(function(item:any) {
+        return item.clueId
+      })
+      let params = {
+        clueIds,
+        userId: this.dialogForm.userId
+      }
+      let { data: res } = await ClueDispatch(params)
+      if (res.success) {
+        this.showAlert = false
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.handleRefresh()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`confirm fail:${err}`)
     }
   }
-
-  /**
- *分配加盟经理
- */
-  async driverDownToGm() {
-    try {
-      let params = {
-        driverId: this.rows[0].driverId,
-        gmId: this.dialogForm.gmId
-      }
-      let { data: res } = await driverDownToGm(params)
-      if (res.success) {
-        this.showAlert = false
-        this.$message.success('操作成功')
-        setTimeout(() => {
-          this.getList()
-        }, delayTime)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`driver to gm fail:${err}`)
-    }
-  }
-  /**
- *修改加盟经理
- */
-  async modifyManager() {
-    try {
-      let driverId = this.rows.map(function(item:any) {
-        return item.driverId
-      })
-      let params = {
-        driverId,
-        gmId: this.dialogForm.gmId
-      }
-
-      let { data: res } = await UpdateDriverBDManager(params)
-      if (res.success) {
-        this.showAlert = false
-        this.$message.success('操作成功')
-        setTimeout(() => {
-          this.getList()
-        }, delayTime)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`modify manager fail:${err}`)
-    }
-  }
   @Emit('onRefresh')
-  getList() {
+  handleRefresh() {
   }
 }
 </script>

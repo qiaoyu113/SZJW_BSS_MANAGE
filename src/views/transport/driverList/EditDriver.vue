@@ -1,8 +1,8 @@
 <template>
   <div class="editDriver">
-    <el-card
-      header="基础信息"
-      shadow="never"
+    <SectionContainer
+      title="基础信息"
+      :md="true"
     >
       <self-form
         ref="editDriver"
@@ -33,14 +33,14 @@
           </el-button>
         </div>
       </self-form>
-    </el-card>
+    </SectionContainer>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
-
+import SectionContainer from '@/components/SectionContainer/index.vue'
 import { EditDriverInfo, driverDetailByDriverId } from '@/api/driver'
 import { phoneReg } from '@/utils/index.ts'
 
@@ -51,7 +51,8 @@ interface IState {
 @Component({
   name: 'EditDriver',
   components: {
-    SelfForm
+    SelfForm,
+    SectionContainer
   }
 })
 export default class extends Vue {

@@ -1,13 +1,13 @@
 <template>
-  <div class="transportInfo">
+  <div class="bidInfo">
     <template v-if="lists.length > 0">
       <dl
         v-for="item in lists"
-        :key="item.carrierId"
+        :key="item.code"
       >
         <dt class="title">
-          运力编号:{{ item.carrierId | DataIsNull }}
-          <span class="border" />
+          <span class="title_left_border" />
+          标书编号:{{ item.code }}
         </dt>
         <dd>
           <self-form
@@ -16,12 +16,12 @@
             :form-item="formItem"
             label-width="80px"
           >
-            <template v-slot:createDate="{row}">
-              {{ row.createDate | Timestamp }}
+            <template v-slot:c="{row}">
+              {{ row.c | Timestamp }}
             </template>
             <template slot="detail">
               <router-link
-                :to="{path: '/transport/transportdetail',query: {carrierId: item.carrierId}}"
+                :to="{path: '/'}"
                 class="link"
               >
                 详情>>
@@ -38,67 +38,24 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import SelfForm from '@/components/base/SelfForm.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
 
 interface IState {
     [key: string]: any;
 }
 @Component({
-  name: 'TransportInfo',
+  name: 'BidInfo',
   components: {
     SelfForm
   }
 })
 export default class extends Vue {
   @Prop({ default: () => [] }) lists!:IState[]
-
-  private formItem:any[] = [
-    {
-      type: 7,
-      key: 'name',
-      label: '姓名:'
-    },
-    {
-      type: 7,
-      key: 'phone',
-      label: '联系电话:'
-    },
-    {
-      type: 7,
-      key: 'workCityName',
-      label: '工作城市:'
-    },
-    {
-      key: 'plateNo',
-      type: 7,
-      label: '车牌号:'
-    },
-    {
-      key: 'carTypeName',
-      type: 7,
-      label: '车型:'
-    },
-    {
-      key: 'statusName',
-      type: 7,
-      label: '状态:'
-    },
-    {
-      key: 'createDate',
-      type: 'createDate',
-      slot: true,
-      label: '创建时间:'
-    },
-    {
-      slot: true,
-      w: '10px',
-      type: 'detail'
-    }
-  ]
+  @Prop({ default: () => [] }) formItem!:any[]
 }
 </script>
 <style lang="scss" scoped>
-  .transportInfo{
+  .bidInfo{
     dl {
       .title {
         padding-bottom: 20px;
@@ -122,20 +79,19 @@ export default class extends Vue {
     }
   }
 </style>
-
 <style scoped>
  @media screen and (max-width:700px) {
-    .transportInfo >>> .selfForm {
+    .bidInfo >>> .selfForm {
       padding: 0px;
     }
-    .transportInfo >>> .el-form-item {
+    .bidInfo >>> .el-form-item {
       width: 100%;
       padding: 10px 14px;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
       border-bottom: 1px solid #F8F9FA;
     }
-    .transportInfo >>> .el-form-item__label {
+    .bidInfo >>> .el-form-item__label {
       width: 100%!important;
       font-size: 12px!important;
       line-height: 13px;
@@ -147,17 +103,17 @@ export default class extends Vue {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
     }
-    .transportInfo >>> .el-form-item__content {
+    .bidInfo >>> .el-form-item__content {
       width: 100%;
       font-size: 14px;
       font-weight: 400;
       color: #252525;
       line-height: 16px;
     }
-    .transportInfo >>> dl {
+    .bidInfo >>> dl {
       margin: 0px;
     }
-    .transportInfo >>> dt {
+    .bidInfo >>> dt {
       width: 100%;
       height: 45px!important;
       line-height: 40px;
@@ -168,20 +124,6 @@ export default class extends Vue {
       padding: 0 20px;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-    }
-    .transportInfo >>> .border {
-      width: 4px;
-      height: 14px;
-      position: absolute;
-      left: 10px;
-      top: -1px;
-      bottom: 0;
-      margin: auto;
-      background-image: -webkit-gradient(linear, right top, left top, from(#FF9600), to(#FFB400));
-      background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);
-      border-radius: 2.5px;
-      border-radius: 2.5px;
-      display: inline-block;
     }
  }
 </style>

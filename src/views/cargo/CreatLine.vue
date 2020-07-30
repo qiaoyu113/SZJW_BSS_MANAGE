@@ -359,7 +359,7 @@ import {
 import { GetReginByCityCode } from '@/api/transport'
 import DetailItem from '@/components/DetailItem/index.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
-import SelfItem from '@/components/base/SelfItem.vue'
+import SelfItem from '@/components/Base/SelfItem.vue'
 import '@/styles/common.scss'
 import { validatorNumberRange } from '@/utils/index.ts'
 import { registerTheme } from 'echarts'
