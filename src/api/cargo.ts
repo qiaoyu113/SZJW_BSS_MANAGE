@@ -70,6 +70,8 @@ export const IsFollowClue = (data: any) =>
     method: 'post',
     data
   })
+
+// 线路详情
 export const GetLineDetail = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/detail`,
@@ -165,7 +167,6 @@ export const notApprovedLine = (data: any) =>
   })
 
 // 线路操作日志列表
-
 export const GetLogList = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/list`,

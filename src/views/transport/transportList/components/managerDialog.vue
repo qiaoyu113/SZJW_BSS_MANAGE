@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- 分配线索 -->
     <SelfDialog
       :visible.sync="showAlert"
       :title="title"
@@ -24,6 +23,7 @@ import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/base/SelfForm.vue'
 import { updateGmId } from '@/api/transport'
+import { delayTime } from '@/settings'
 interface IState {
   [key: string]: any;
 }
@@ -58,44 +58,45 @@ export default class extends Vue {
   ]
 
   @Watch('options', { deep: true })
-  optionsChange(val:any[]) {
-    console.log(456)
+  private optionsChange(val:any[]) {
     this.dialogItems[0].options = val
   }
 
   @Watch('type')
-  onTypeChange(val:string) {
+  private onTypeChange(val:string) {
     if (this.type === 'modify') {
       this.title = '修改运营经理'
     } else if (this.type === 'distribution') {
       this.title = '分配运营经理'
     }
   }
-  mounted() {
+  @Emit('onRows')
+  private setEmptyRows(a:any) {
+  }
+
+  @Emit('changeSuccess')
+  private setSuccess() {
   }
   /**
    *发开模态框
    */
-  openDialog() {
+  private openDialog() {
     this.showAlert = true
   }
   /**
    * 关闭弹窗
    */
-  beforeClose() {
+  private beforeClose() {
     this.showAlert = false
   }
-  handleClosed() {
+  private handleClosed() {
     this.dialogForm.manager = ''
     this.setEmptyRows([])
   }
-  @Emit('onRows')
-  setEmptyRows(a:any) {
-  }
-  cancel() {
+  private cancel() {
     this.showAlert = false
   }
-  async confirm() {
+  private async confirm() {
     if (!this.dialogForm.manager) {
       return this.$message.error('请选择运营经理')
     }
@@ -111,12 +112,12 @@ export default class extends Vue {
     let { data } = await updateGmId(params)
     if (data.success) {
       this.$message.success('已成功分配运营经理')
-      console.log(data)
+      setTimeout(() => {
+        this.setSuccess()
+      }, delayTime)
     } else {
       this.$message.error(data)
     }
   }
 }
 </script>
-<style lang="scss" scoped>
-</style>

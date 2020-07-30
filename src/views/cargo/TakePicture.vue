@@ -196,16 +196,9 @@ export default class TakePicture extends Vue {
   private showViewer: boolean = false;
   private myHeaders: any = { Authorization: UserModule.token };
 
-  mounted() {
-    this.postForm.lineId = this.$route.query.lineId || ''
-    this.postForm.id = this.$route.query.id || ''
-    let routeArr = this.$route.path.split('/')
-    if (routeArr[2] === 'showpicture') {
-      this.isdetail = true
-    } else {
-      this.isdetail = false
-    }
-    this.getDetails()
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
   /**
    *获取上传路径
@@ -350,9 +343,16 @@ export default class TakePicture extends Vue {
     }
   }
 
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
+  mounted() {
+    this.postForm.lineId = this.$route.query.lineId || ''
+    this.postForm.id = this.$route.query.id || ''
+    let routeArr = this.$route.path.split('/')
+    if (routeArr[2] === 'showpicture') {
+      this.isdetail = true
+    } else {
+      this.isdetail = false
+    }
+    this.getDetails()
   }
 }
 </script>

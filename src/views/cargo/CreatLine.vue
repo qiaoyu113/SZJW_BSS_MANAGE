@@ -651,7 +651,7 @@ export default class CreatLine extends Vue {
     }
   }
 
-  async loadCityByCode(params: any) {
+  private async loadCityByCode(params: any) {
     try {
       let { data: res } = await GetCityByCode(params)
       if (res.success) {
@@ -669,7 +669,7 @@ export default class CreatLine extends Vue {
     }
   }
 
-  async cityDeyail(params: string[]) {
+  private async cityDeyail(params: string[]) {
     let { data: city } = await detailCity(params)
     if (city.success) {
       const nodes = city.data.map(function(item: any) {
@@ -694,6 +694,10 @@ export default class CreatLine extends Vue {
       // this.ruleForm.shipperOffer = ''
       return true
     }
+  }
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   // 每日配送次数
@@ -960,6 +964,7 @@ export default class CreatLine extends Vue {
       }
     })
   }
+
   private async copyedLine(params: any) {
     delete params.lineId
     let { data } = await copyLine(params)
@@ -993,11 +998,7 @@ export default class CreatLine extends Vue {
   private picConfirm(done: any) {
     done(this.$router.go(-1))
   }
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
+  // 字典查询
   private async GetDictionaryAll() {
     let dictArr = [
       'Intentional_compartment',
@@ -1052,6 +1053,7 @@ export default class CreatLine extends Vue {
     this.getLowerStaffInfo()
   }
 
+  // 所需销售与货主逻辑
   private async getLowerStaffInfo() {
     try {
       let paramsUrl = {
@@ -1226,25 +1228,26 @@ export default class CreatLine extends Vue {
 .CreatLine >>> .el-cascader {
   width: 100%;
 }
+
 @media screen and (min-width: 701px) {
-  .SelfItem .el-select {
+  .CreatLine .SelfItem .el-select {
     width: 100%;
   }
-  .SelfItem .el-input,
-  .el-date-editor,
-  .el-textarea {
+  .CreatLine .SelfItem .el-input,
+  .CreatLine .el-date-editor,
+  .CreatLine .el-textarea {
     width: 75%;
   }
-  .el-cascader {
+  .CreatLine .el-cascader {
     width: 100%;
   }
 }
 
 @media screen and (max-width: 700px) {
-  .el-select {
+  .CreatLine-m .el-select {
     width: 100%;
   }
-  .el-input {
+  .CreatLine-m .el-input {
     width: 90%;
   }
 }

@@ -202,6 +202,7 @@
       :type="type"
       :options="managerArr"
       @onRows="rows = []"
+      @changeSuccess="getList(listQuery)"
     />
 
     <!-- 上岗 -->
@@ -228,8 +229,8 @@ import { GetDictionaryList, GetOpenCityData, GetManagerLists } from '@/api/commo
 import { updateCarrierStatus, getCarrierInfoList } from '@/api/transport'
 import { getLabel } from '@/utils/index.ts'
 import SelfForm from '@/components/base/SelfForm.vue'
-import ManagerDialog from './components/managerDialog.vue'
-import workDialog from './components/workDialog.vue'
+import ManagerDialog from './components/ManagerDialog.vue'
+import WorkDialog from './components/WorkDialog.vue'
 import { delayTime } from '@/settings'
 
 interface IState {
@@ -252,7 +253,7 @@ interface PageObj {
       SelfTable,
       PitchBox,
       ManagerDialog,
-      workDialog
+      WorkDialog
     }
   })
 

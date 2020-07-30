@@ -665,35 +665,9 @@ export default class LineManage extends Vue {
       key: 'jobTime'
     }
   ];
-  private listQuery: IState = {
-    city: '',
-    shelvesState: '',
-    lineSaleId: '',
-    // auditState: '',
-    carType: '',
-    lineName: '',
-    lineId: '',
-    customerName: '',
-    houseAddress: [],
-    returnWarehouse: '',
-    time: [],
-    // jobTime: [Date.now(),Date.now()],
-    jobTime: {
-      jobStartDate: '',
-      jobEndDate: ''
-    },
-    jobStartDate: '',
-    jobEndDate: ''
-  };
   private showPutDio: boolean = false;
   private showGetDio: boolean = false;
-  page: PageObj = {
-    page: 1,
-    limit: 10,
-    total: 0
-  };
   private tableData: any[] = [];
-
   private columns: any[] = [
     {
       key: 'lineId',
@@ -804,7 +778,43 @@ export default class LineManage extends Vue {
       label: '详情'
     }
   ];
+  private passNo:boolean = false
+  private reason:string = ''
+  private listQuery: IState = {
+    city: '',
+    shelvesState: '',
+    lineSaleId: '',
+    // auditState: '',
+    carType: '',
+    lineName: '',
+    lineId: '',
+    customerName: '',
+    houseAddress: [],
+    returnWarehouse: '',
+    time: [],
+    // jobTime: [Date.now(),Date.now()],
+    jobTime: {
+      jobStartDate: '',
+      jobEndDate: ''
+    },
+    jobStartDate: '',
+    jobEndDate: ''
+  };
+  private page: PageObj = {
+    page: 1,
+    limit: 10,
+    total: 0
+  };
 
+  @Watch('checkList', { deep: true })
+  private checkListChange(val: any) {
+    this.columns = this.dropdownList.filter(item => val.includes(item.label))
+  }
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
+  // 时间处理方法
   private pickerOptions: any = {
     disabledDate(time: any) {
       return (
@@ -813,9 +823,8 @@ export default class LineManage extends Vue {
       )
     }
   };
-  private passNo:boolean = false
-  private reason:string = ''
 
+  // 下载方法
   private async downLoad() {
     const postData = this.listQuery
     // delete postData.page
@@ -833,6 +842,7 @@ export default class LineManage extends Vue {
     }
   }
 
+  // 货主模糊查询
   private async remoteMethod(query: string, cb: Function) {
     if (query !== '') {
       let params = {
@@ -855,6 +865,7 @@ export default class LineManage extends Vue {
     }
   }
 
+  // 线路名称模糊查询
   private async remoteMethodName(query: string, cb: Function) {
     if (query !== '') {
       let params = {
@@ -874,16 +885,10 @@ export default class LineManage extends Vue {
     }
   }
 
-  mounted() {
-    this.dropdownList = [...this.columns]
-    this.checkList = this.dropdownList.map(item => item.label)
-    this.dicList()
-    this.getList()
-  }
   /**
    * 省市县3级联动
    */
-  async getLineArea(node: any, resolve: any) {
+  private async getLineArea(node: any, resolve: any) {
     let params: string[] = []
     if (node.level === 0) {
       params = ['100000']
@@ -905,7 +910,7 @@ export default class LineManage extends Vue {
   /**
    * 加载城市
    */
-  async loadCityByCode(params: string[]) {
+  private async loadCityByCode(params: string[]) {
     try {
       let { data: res } = await GetCityByCode(params)
       if (res.success) {
@@ -925,7 +930,7 @@ export default class LineManage extends Vue {
   /**
    *重置按钮
    */
-  handleResetClick() {
+  private handleResetClick() {
     this.tags = []
     this.listQuery = {
       city: '',
@@ -951,7 +956,7 @@ export default class LineManage extends Vue {
   /**
    *筛选按钮
    */
-  handleFilterClick() {
+  private handleFilterClick() {
     let blackLists = ['shelvesState']
     this.tags = []
     if (this.listQuery.houseAddress.length !== 0) {
@@ -990,7 +995,7 @@ export default class LineManage extends Vue {
   /**
    * 分页
    */
-  handlePageSize(page: any) {
+  private handlePageSize(page: any) {
     this.page.page = page.page
     this.page.limit = page.limit
     this.getList()
@@ -1134,7 +1139,7 @@ export default class LineManage extends Vue {
   /**
    * 表格下拉菜单
    */
-  handleCommandChange(key: string | number, row: any) {
+  private handleCommandChange(key: string | number, row: any) {
     this.id = row.lineId
     this.rowInfo = row
     switch (key) {
@@ -1294,11 +1299,6 @@ export default class LineManage extends Vue {
     done()
   }
 
-  @Watch('checkList', { deep: true })
-  private checkListChange(val: any) {
-    this.columns = this.dropdownList.filter(item => val.includes(item.label))
-  }
-
   // 处理tags方法
   private handleTags(value: any) {
     this.tags = value
@@ -1324,10 +1324,6 @@ export default class LineManage extends Vue {
     this.$router.push('creatline')
   }
 
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
   // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
   private drawer: boolean = false;
   /**
@@ -1350,7 +1346,7 @@ export default class LineManage extends Vue {
   /**
    * 批量操作的按钮
    */
-  handleOlClick(val: any) {
+  private handleOlClick(val: any) {
     if (val.name === '查看选中') {
       if (this.rows.length > 0) {
         this.drawer = true
@@ -1433,6 +1429,13 @@ export default class LineManage extends Vue {
     this.rows = row
   }
   // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
+
+  mounted() {
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+    this.dicList()
+    this.getList()
+  }
 }
 </script>
 

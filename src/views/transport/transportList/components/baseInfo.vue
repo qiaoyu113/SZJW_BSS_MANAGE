@@ -1,5 +1,5 @@
 <template>
-  <div class="baseInfo">
+  <div class="BaseInfo">
     <dt class="title">
       {{ item.title }}
     </dt>
@@ -30,7 +30,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import SelfForm from '@/components/base/SelfForm.vue'
 
 @Component({
-  name: 'baseInfo',
+  name: 'BaseInfo',
   components: {
     SelfForm
   }
@@ -177,8 +177,7 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  .baseInfo{
-
+  .BaseInfo{
       .title {
         padding-bottom: 20px;
         border-bottom:1px solid #EEEEEE;
