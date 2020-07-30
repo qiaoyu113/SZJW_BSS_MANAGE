@@ -160,6 +160,7 @@
         </el-row>
       </SectionContainer>
     </div>
+    <!--线索详情-->
     <div
       v-show="tabVal === '2'"
       class="clueDetail"
@@ -348,7 +349,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetOwnerDetail, GetFindBusinessPhone, GetShowPhone } from '@/api/cargo'
+import { GetOwnerDetail, GetFindBusinessPhone, GetShowPhone, GetLineClueInfo } from '@/api/cargo'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -431,11 +432,22 @@ export default class extends Vue {
       return SettingsModule.isPC
     }
 
-    // 请求详情
+    // 请求货主详情
     private async fetchData(value: any) {
       const { data } = await GetOwnerDetail({ customerId: value, info: 'info' })
       if (data.success) {
         this.OwnerDetail = data.data
+        this.getClueData(this.OwnerDetail.clueId)
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+
+    // 请求线索详情
+    private async getClueData(value: any) {
+      const { data } = await GetLineClueInfo({ clueId: value, info: 'info' })
+      if (data.success) {
+        this.OwnerDetail.clueInfoVO = data.data
       } else {
         this.$message.error(data.errorMsg)
       }

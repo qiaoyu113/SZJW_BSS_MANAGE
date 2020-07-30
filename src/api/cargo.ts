@@ -228,6 +228,14 @@ export const GetOwnerDetail = (params: any) =>
     params
   })
 
+// 获取线索详情
+export const GetLineClueInfo = (params: any) =>
+  request({
+    url: '/line/v1/line/clue/lineClueInfo',
+    method: 'get',
+    params
+  })
+
 /**
    *保存修改线路照片
    *
