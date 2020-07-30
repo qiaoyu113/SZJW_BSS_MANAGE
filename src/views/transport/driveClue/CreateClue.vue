@@ -71,8 +71,12 @@ interface IState {
   }
 })
 export default class extends Vue {
-  private type:string = ''
-  private id:number|string = ''
+  private type:string = '' // 表单校验通过,是保存还是保存并面试按钮
+  private id:number|string = '' // 线索id
+
+  private workCityOptions:any[] = [] // 车型列表
+  private carOptions:any[] = [] // 车型列表
+  private sourceOptions:any[] = [] // 来源渠道列表
   /**
    *表单对象
    */
@@ -126,7 +130,7 @@ export default class extends Vue {
       },
       label: '工作城市',
       key: 'workCity',
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 2,
@@ -136,7 +140,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '车型',
-      options: []
+      options: this.carOptions
     },
     {
       type: 2,
@@ -146,7 +150,7 @@ export default class extends Vue {
       },
       label: '来源渠道',
       key: 'sourceChannel',
-      options: []
+      options: this.sourceOptions
     },
     {
       type: 2,
@@ -167,6 +171,12 @@ export default class extends Vue {
       ]
     }
   ]
+  /**
+   *区分设备
+   */
+  get isPC() {
+    return SettingsModule.isPC
+  }
   /**
    * 校验手机号
    */
@@ -200,18 +210,7 @@ export default class extends Vue {
       { required: true, message: '请选择业务线', trigger: 'change' }
     ]
   }
-  get isPC() {
-    return SettingsModule.isPC
-  }
 
-  mounted() {
-    this.getBaseInfo()
-    this.getOpenCitys()
-    this.id = (this.$route.query.id) as number | string
-    if (this.id) {
-      this.getClueDetail()
-    }
-  }
   /**
    *获取开通城市
    */
@@ -219,12 +218,13 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.formItem[3].options = res.data.map(function(item:any) {
+        let workCity = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.code
           }
         })
+        this.workCityOptions.push(...workCity)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -240,12 +240,15 @@ export default class extends Vue {
       let params = ['Intentional_compartment', 'source_channel']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[4].options = res.data.Intentional_compartment.map(function(item:any) {
+        let cars = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
-        this.formItem[5].options = res.data.source_channel.map(function(item:any) {
+        let sources = res.data.source_channel.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
+
+        this.carOptions.push(...cars)
+        this.sourceOptions.push(...sources)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -370,6 +373,15 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`edit activity fail:${err}`)
+    }
+  }
+
+  mounted() {
+    this.getBaseInfo()
+    this.getOpenCitys()
+    this.id = (this.$route.query.id) as number | string
+    if (this.id) {
+      this.getClueDetail()
     }
   }
 }

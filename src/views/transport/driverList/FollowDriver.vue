@@ -59,8 +59,8 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import FollowDialog from './components/followDialog.vue'
-import FollowItem from './components/followItem.vue'
+import FollowDialog from './components/FollowDialog.vue'
+import FollowItem from './components/FollowItem.vue'
 import { DriverFollowFormation } from '@/api/driver'
 interface IState {
     [key: string]: any;

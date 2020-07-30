@@ -65,7 +65,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import bidInfo from '../driverList/components/bidInfo.vue'
+import bidInfo from '../driverList/components/BidInfo.vue'
 import baseInfo from './components/baseInfo.vue'
 import '@/styles/common.scss'
 interface IState {

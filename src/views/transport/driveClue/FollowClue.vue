@@ -233,10 +233,10 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import ClueDistribution from './components/clueDistribution.vue'
-import InterviewCard from './components/interviewCard.vue'
-import FollowByPhoneOrWechat from './components/followByPhoneOrWechat.vue'
-import InviteInterview from './components/inviteInterview.vue'
+import ClueDistribution from './components/ClueDistribution.vue'
+import InterviewCard from './components/InterviewCard.vue'
+import FollowByPhoneOrWechat from './components/FollowByPhoneOrWechat.vue'
+import InviteInterview from './components/InviteInterview.vue'
 import { ClueFollowList, GetClueDetailByClueId, GetInterviewDetail } from '@/api/driver'
 @Component({
   name: 'FollowClue',

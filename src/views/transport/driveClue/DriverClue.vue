@@ -235,7 +235,7 @@ import TableHeader from '@/components/TableHeader/index.vue'
 import { GetSpecialInterviewLists } from '@/api/driver'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
-import ClueDistribution from './components/clueDistribution.vue'
+import ClueDistribution from './components/ClueDistribution.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { getLabel, phoneReg } from '@/utils/index.ts'
 import { delayTime } from '@/settings'
@@ -270,9 +270,9 @@ interface PageObj {
 })
 
 export default class extends Vue {
-  private clueId:string =''
+  private clueId:string ='' // 线索id
   private listLoading = false
-  private muls:any = []
+  private muls:any = [] // 表格多选项数组
   private tab:Tab[] = [
     {
       label: '全部',
@@ -316,10 +316,10 @@ export default class extends Vue {
       id: 6,
       num: 0
     }
-  ]
-  private tags:any[] = []
-  private dropdownList:any[] = []
-  private checkList:any[] =[]
+  ] // 顶部状态数组
+  private tags:any[] = []// 顶部查询按钮回显的数组
+  private dropdownList:any[] = [] // 表格列筛选dropdown数组
+  private checkList:any[] =[] // 表格列筛选checkbox数组
   private operationList = [
     {
       icon: 'el-icon-finished',
@@ -336,7 +336,12 @@ export default class extends Vue {
       name: '清空选择',
       color: '#5E7BBB'
     }
-  ]
+  ] // 左下角表格批量操作数组
+
+  private carOptions:any[] = [] // 车型选项列表
+  private sourceOptions:any[] = [] // 来源渠道选项列表
+  private workCityOptions:any[] = [] // 城市选项列表
+  private gmOptions:any[] = [] // 跟进人选项列表
   /**
    *表单对象
    */
@@ -383,7 +388,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '车型',
-      options: []
+      options: this.carOptions
     },
     {
       type: 2,
@@ -393,7 +398,7 @@ export default class extends Vue {
       },
       label: '来源渠道',
       key: 'sourceChannel',
-      options: []
+      options: this.sourceOptions
     },
     {
       type: 2,
@@ -403,7 +408,7 @@ export default class extends Vue {
       },
       label: '工作城市',
       key: 'workCity',
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 2,
@@ -413,7 +418,7 @@ export default class extends Vue {
       },
       label: '跟进人',
       key: 'gmId',
-      options: []
+      options: this.gmOptions
     },
     {
       type: 2,
@@ -516,13 +521,9 @@ export default class extends Vue {
     total: 0
   }
 
-  mounted() {
-    this.dropdownList = [...this.columns]
-    this.checkList = this.dropdownList.map(item => item.label)
-    this.getBaseInfo()
-    this.getOpenCitys()
-    this.getList()
-    this.getManagers()
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   @Watch('checkList', { deep: true })
@@ -539,7 +540,8 @@ export default class extends Vue {
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
-        this.formItem[5].options = res.data.map((item:any) => ({ label: item.name, value: item.id }))
+        let gms = res.data.map((item:any) => ({ label: item.name, value: item.id }))
+        this.gmOptions.push(...gms)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -555,12 +557,16 @@ export default class extends Vue {
       let params = ['Intentional_compartment', 'source_channel']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[2].options = res.data.Intentional_compartment.map(function(item:any) {
+        let cars = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
-        this.formItem[3].options = res.data.source_channel.map(function(item:any) {
+
+        let sources = res.data.source_channel.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
+
+        this.carOptions.push(...cars)
+        this.sourceOptions.push(...sources)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -575,12 +581,13 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.formItem[4].options = res.data.map(function(item:any) {
+        let workCitys = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.code
           }
         })
+        this.workCityOptions.push(...workCitys)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -693,10 +700,6 @@ export default class extends Vue {
     this.getList()
   }
 
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
   /**
    * 创建线索
    */
@@ -791,6 +794,15 @@ export default class extends Vue {
     this.rows = row
   }
   // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
+
+  mounted() {
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+    this.getBaseInfo()
+    this.getOpenCitys()
+    this.getList()
+    this.getManagers()
+  }
 }
 </script>
 <style lang="scss" scoped>

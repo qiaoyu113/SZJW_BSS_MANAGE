@@ -164,8 +164,8 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { GetOpenCityData, GetDictionaryList } from '@/api/common'
 import { phoneReg } from '@/utils/index.ts'
-import SpecialInterview from './components/specialInterview.vue'
-import ShareInterview from './components/shareInterview.vue'
+import SpecialInterview from './components/SpecialInterview.vue'
+import ShareInterview from './components/ShareInterview.vue'
 import { delayTime } from '@/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 
@@ -183,7 +183,14 @@ interface IState {
   }
 })
 export default class extends Vue {
-  private active:number = 0
+  private active:number = 0 // 步骤条当前处于第几步
+
+  private driverId = '' // 司机id
+  private form:any = {} // 编辑面试表单的时候获取的信息
+
+  private workCityOptions:any[] = [] // 工作城市列表
+  private carOptions:any[] = [] // 车型列表
+  // 表单对象
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -192,9 +199,7 @@ export default class extends Vue {
     busiType: '',
     clueId: ''
   }
-  private driverId = ''
-  private form:any = {} // 编辑面试表单的时候获取的信息
-
+  // 表单数组
   private formItem:any[] = [
     {
       type: 1,
@@ -223,7 +228,7 @@ export default class extends Vue {
         placeholder: '工作城市',
         filterable: true
       },
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 2,
@@ -233,9 +238,23 @@ export default class extends Vue {
         placeholder: '车型',
         filterable: true
       },
-      options: []
+      options: this.carOptions
     }
   ]
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
+  // 是否显示步骤条第二步
+  get isShow() {
+    if (this.active === 1 || Object.keys(this.form).length > 0) {
+      return true
+    } else {
+      return false
+    }
+  }
   /**
    * 校验手机号
    */
@@ -262,47 +281,6 @@ export default class extends Vue {
     busiType: [
       { required: true, message: '请选择业务类型', trigger: 'change' }
     ]
-  }
-
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
-  get isShow() {
-    if (this.active === 1 || Object.keys(this.form).length > 0) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  mounted() {
-    this.getBaseInfo()
-    this.getOpenCitys()
-    this.listQuery.clueId = (this.$route as any).query.id
-    if (this.listQuery.clueId) {
-      this.getClueDetailByClueId()
-    } else {
-      this.formItem.push({
-        type: 2,
-        tagAttrs: {
-          placeholder: '请选择业务线'
-        },
-        label: '业务线',
-        key: 'busiType',
-        options: [
-          {
-            label: '专车',
-            value: 0
-          },
-          {
-            label: '共享',
-            value: 1
-          }
-        ]
-      })
-    }
   }
 
   /**
@@ -335,12 +313,13 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.formItem[2].options = res.data.map(function(item:any) {
+        let workCitys = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.code
           }
         })
+        this.workCityOptions.push(...workCitys)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -376,9 +355,10 @@ export default class extends Vue {
       let params = ['Intentional_compartment']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[3].options = res.data.Intentional_compartment.map(function(item:any) {
+        let cars = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
+        this.carOptions.push(...cars)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -458,6 +438,34 @@ export default class extends Vue {
         driverId: this.driverId
       }
     })
+  }
+
+  mounted() {
+    this.getBaseInfo()
+    this.getOpenCitys()
+    this.listQuery.clueId = (this.$route as any).query.id
+    if (this.listQuery.clueId) {
+      this.getClueDetailByClueId()
+    } else {
+      this.formItem.push({
+        type: 2,
+        tagAttrs: {
+          placeholder: '请选择业务线'
+        },
+        label: '业务线',
+        key: 'busiType',
+        options: [
+          {
+            label: '专车',
+            value: 0
+          },
+          {
+            label: '共享',
+            value: 1
+          }
+        ]
+      })
+    }
   }
 }
 </script>

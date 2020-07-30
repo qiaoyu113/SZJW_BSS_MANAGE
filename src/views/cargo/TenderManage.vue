@@ -180,7 +180,7 @@ import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import PitchBox from '@/components/PitchBox/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import { getLabel } from '@/utils/index.ts'
-import DownLine from './components/TenderManage/downLine.vue'
+import DownLine from './components/TenderManage/DownLine.vue'
 
 interface IState {
     [key: string]: any;
@@ -723,11 +723,16 @@ export default class extends Vue {
     total: 100
   }
 
-  mounted() {
-    this.dropdownList = [...this.columns]
-    this.checkList = this.dropdownList.map(item => item.label)
-    this.getList()
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
+
+  @Watch('checkList', { deep: true })
+  private checkListChange(val:any) {
+    this.columns = this.dropdownList.filter(item => val.includes(item.label))
+  }
+
   getList() {
     let arr = []
     let _i:number = +this.page.page
@@ -760,14 +765,6 @@ export default class extends Vue {
       })
       this.tableData = arr
     }
-  }
-  @Watch('checkList', { deep: true })
-  private checkListChange(val:any) {
-    this.columns = this.dropdownList.filter(item => val.includes(item.label))
-  }
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
   }
 
   /**
@@ -905,6 +902,12 @@ export default class extends Vue {
    */
   handleCascaderChange(val:any, form:any, thsAreaCode:any) {
     this.cascaderLables = (this.$refs.tenderForm as any).$refs.tenderCascader.getCheckedNodes()[0].pathLabels
+  }
+
+  mounted() {
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+    this.getList()
   }
 }
 </script>

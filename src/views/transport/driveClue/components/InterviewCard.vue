@@ -38,8 +38,8 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import SpecialCard from './specialCard.vue'
-import ShareCard from './shareCard.vue'
+import SpecialCard from './SpecialCard.vue'
+import ShareCard from './ShareCard.vue'
 @Component({
   name: 'InterviewCard',
   components: {
