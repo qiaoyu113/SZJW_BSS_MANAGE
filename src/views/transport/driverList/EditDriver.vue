@@ -141,6 +141,19 @@ export default class extends Vue {
       type: 'btn1'
     }
   ]
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+  /**
+   * 校验手机号
+   */
+  private validatePhone = (rule: any, value: string, callback: Function) => {
+    if (!phoneReg.test(value)) {
+      return callback(new Error('请输入正确的手机号'))
+    }
+    callback()
+  }
   // 校验规则
   private rules:IState = {
     name: [
@@ -155,19 +168,6 @@ export default class extends Vue {
     ]
   }
 
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-  /**
-   * 校验手机号
-   */
-  private validatePhone = (rule: any, value: string, callback: Function) => {
-    if (!phoneReg.test(value)) {
-      return callback(new Error('请输入正确的手机号'))
-    }
-    callback()
-  }
   /**
    *获取司机信息
    */
