@@ -87,6 +87,7 @@
             </el-row>
           </div>
           <el-button
+            class="nextBtn"
             type="primary"
             style="margin-top:40px"
             @click="nextChoose"
@@ -342,57 +343,6 @@ export default class extends Vue {
       options: []
     }
   ]
-
-  private async loadhouseAddress(node:any, resolve:any) {
-    let params:string[] = []
-    if (node.level === 0) {
-      params = ['100000']
-    } else if (node.level === 1) {
-      params = ['100000']
-      params.push(node.value)
-    } else if (node.level === 2) {
-      params = ['100000']
-      params.push(node.parent.value)
-      params.push(node.value)
-    }
-    try {
-      let nodes = await this.loadCityByCode(params)
-      resolve(nodes)
-    } catch (err) {
-      resolve([])
-    }
-  }
-
-  // 地址级联选择器 回显问题
-  get showAddress() {
-    if (this.carrierId) {
-      if (this.orderInfo.address.length > 0) {
-        return true
-      } else {
-        return false
-      }
-    } else {
-      return true
-    }
-  }
-
-  async loadCityByCode(params:string[]) {
-    try {
-      let { data: res } = await GetCityByCode(params)
-      if (res.success) {
-        const nodes = res.data.map(function(item:any) {
-          return {
-            value: item.code,
-            label: item.name,
-            leaf: params.length > 2
-          }
-        })
-        return nodes
-      }
-    } catch (err) {
-      console.log(`load city by code fail:${err}`)
-    }
-  }
   private formItemOther:any[] = [
     {
       type: 1,
@@ -544,6 +494,7 @@ export default class extends Vue {
     ]
   }
 
+  // 自定义效验方法
   private checkAge(rule:any, value:any, callback:Function) {
     if (value < 18) {
       callback(new Error('必须年满18岁'))
@@ -571,6 +522,61 @@ export default class extends Vue {
         }
       }
     })
+  }
+
+  private async loadhouseAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.loadCityByCode(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  // 地址级联选择器 回显问题
+  get showAddress() {
+    if (this.carrierId) {
+      if (this.orderInfo.address.length > 0) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return true
+    }
+  }
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
+  private async loadCityByCode(params:string[]) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: params.length > 2
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
   }
 
   private nextChoose() {
@@ -832,11 +838,6 @@ export default class extends Vue {
     }
   }
 
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
   mounted() {
     this.fetchData()
     let carrierId = this.$route.query.carrierId as string
@@ -1044,9 +1045,19 @@ export default class extends Vue {
   .creatInfo{
     display: flex;
     flex-direction: column;
-    padding: 20px;
     .stepsBox{
       font-size: 12px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .chooseBox{
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+    .nextBtn{
+      width: 80%;
+      margin-top: 20px!important;
+      margin: 20px auto;
     }
     .creatPhone{
       display: flex;
@@ -1134,11 +1145,12 @@ export default class extends Vue {
   .btnGroup{
     margin-top: 10px;
     width: 100%;
+    text-align: center;
     .el-button + .el-button {
         margin-left: 0px;
     }
     .el-button{
-      width: 100%;
+      width: 80%;
       margin-bottom: 10px;
     }
   }

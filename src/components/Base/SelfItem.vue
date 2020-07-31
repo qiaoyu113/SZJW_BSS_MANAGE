@@ -207,6 +207,10 @@ export default class SelfItem extends Vue {
 }
 </style>
 <style scoped>
+.SelfItem >>>.el-form-item__label,.SelfItem-m >>>.el-form-item__label{
+  font-size: 14px;
+  color: #4A4A4A;
+}
 .CascaderMore{
   flex: 1;
 }

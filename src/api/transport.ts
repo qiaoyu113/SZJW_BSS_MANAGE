@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
 const ptrfix = '/carrier'
-const base = '/base'
 
 export const GetDriverDetail = (id: number, params: any) =>
   request({
@@ -37,7 +36,6 @@ export const carrierDetail = (params: any) =>
 /* 创建运力查询订单列表 */
 export const transportOrderList = (params: any) =>
   request({
-    // url: `${ptrfix}/v1/carrier/getOrderListByDriverId`,
     url: `${ptrfix}/v1/carrier/getOrderInfoByDriver`,
     method: 'get',
     params
@@ -71,6 +69,7 @@ export const updateGmId = (data: any) =>
 export const getCarrierInfoList = (data: any) =>
   request({
     url: `/carrier_center/v1/order/getCarrierInfoList`,
+    // url: `/carrier_center/v1/carrier/getCarrierInfoList`,
     method: 'post',
     data
   })
@@ -78,7 +77,6 @@ export const getCarrierInfoList = (data: any) =>
 // 查询司机列表
 export const driverList = (data:any) =>
   request({
-    // url: `/driver/v1/driver/getDriverAll`,
     url: `/carrier_center/v1/driver/getDriverList`,
     method: 'post',
     data
