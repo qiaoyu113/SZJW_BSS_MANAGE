@@ -205,7 +205,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="分配状态"
-              :value="OwnerDetail.clueInfoVO.distributionState === 1 ? '待分配' : (OwnerDetail.clueInfoVO.distributionState === 2 ? '已分配' : '暂无数据')"
+              :value="OwnerDetail.clueInfoVO.distributionState === 0 ? '待分配' : (OwnerDetail.clueInfoVO.distributionState === 1 ? '已分配' : '暂无数据')"
             />
           </el-col>
 
