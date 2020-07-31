@@ -274,7 +274,9 @@ export default class extends Vue {
 
 <style scoped>
   .driverDetail >>> .el-card {
-    padding-bottom: 0px;
+    padding-bottom: 20px;
+    background: #f8f9fa;
+    border: none;
   }
   .baseInfo >>> .el-card__body {
       padding: 0px;
@@ -344,6 +346,23 @@ export default class extends Vue {
       color: #333;
       font-weight: 700;
       overflow-wrap: break-word;
+    }
+    .driverDetail >>> .el-tabs__header{
+      padding: 0 10px;
+      box-sizing: border-box;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      background: #fff;
+      margin-bottom: 5px;
+    }
+    .driverDetail >>> .el-tabs__content{
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      background: #fff;
+    }
+    .driverDetail >>> .title_left_border{
+      margin-left: 15px;
+    }
+    .driverDetail >>> .context_d{
+      padding: 0 30px;
     }
   }
 </style>
