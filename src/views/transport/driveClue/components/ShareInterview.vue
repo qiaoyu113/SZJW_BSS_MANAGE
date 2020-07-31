@@ -30,6 +30,10 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => {} }) form!:any
   @Prop({ default: () => {} }) obj!:any
+
+  private gmOptions:any[] = [] // 加盟经理列表
+  private sourceOptions:any[] = [] // 邀约渠道列表
+  private drivingLicenceTypeOptions:any[] = [] // 驾照类型列表
   // 表单对象
   private listQuery:IState = {
     interviewDate: '',
@@ -105,7 +109,7 @@ export default class extends Vue {
         placeholder: '加盟经理',
         filterable: true
       },
-      options: []
+      options: this.gmOptions
     },
     {
       type: 8,
@@ -143,7 +147,7 @@ export default class extends Vue {
         placeholder: '邀约渠道',
         filterable: true
       },
-      options: []
+      options: this.sourceOptions
     },
     {
       type: 2,
@@ -153,7 +157,7 @@ export default class extends Vue {
         placeholder: '驾照类型',
         filterable: true
       },
-      options: []
+      options: this.drivingLicenceTypeOptions
     },
     {
       type: 4,
@@ -318,12 +322,13 @@ export default class extends Vue {
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
-        this.formItem[4].options = res.data.map(function(item:any) {
+        let gms = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
           }
         })
+        this.gmOptions.push(...gms)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -339,12 +344,14 @@ export default class extends Vue {
       let params = ['source_channel', 'driving_licence_type']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[7].options = res.data.source_channel.map(function(item:any) {
+        let sourceChannel = res.data.source_channel.map(function(item:any) {
           return { label: item.dictLabel, value: +item.dictValue }
         })
-        this.formItem[8].options = res.data.driving_licence_type.map(function(item:any) {
+        let drivingLicenceType = res.data.driving_licence_type.map(function(item:any) {
           return { label: item.dictLabel, value: +item.dictValue }
         })
+        this.sourceOptions.push(...sourceChannel)
+        this.drivingLicenceTypeOptions.push(...drivingLicenceType)
       } else {
         this.$message.error(res.errorMsg)
       }
