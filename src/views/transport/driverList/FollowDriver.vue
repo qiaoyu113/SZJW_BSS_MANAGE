@@ -184,9 +184,13 @@ export default class extends Vue {
   .followDriver {
     .baseInfo {
       margin: 20px;
+      border: none;
+      box-shadow: 4px 4px 10px 0 hsla(0,0%,85.5%,.5);
     }
     .record {
       margin: 20px;
+      border: none;
+      box-shadow: 4px 4px 10px 0 hsla(0,0%,85.5%,.5);
       .header {
         display: flex;
         flex-flow: row nowrap;
@@ -248,7 +252,20 @@ export default class extends Vue {
     font-size:14px;
     font-weight: 400;
   }
-
+  .followDriver >>> ul  {
+    margin: 0px;
+  }
+  .followDriver >>> .borderTop{
+    border: none;
+    padding:15px 20px;
+    box-sizing: border-box;
+  }
+  .followDriver >>> .el-card__header{
+    border-bottom: 2px solid #f8f9fa;
+  }
+  .followDriver >>> .el-form-item{
+    margin-bottom: 0;
+  }
   .record >>> .el-card__header {
     font-weight: bold;
   }
