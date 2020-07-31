@@ -436,7 +436,8 @@ export default class extends Vue {
     private async fetchData(value: any) {
       const { data } = await GetOwnerDetail({ customerId: value, info: 'info' })
       if (data.success) {
-        this.OwnerDetail = data.data
+        data.data.clueInfoVO = this.OwnerDetail.clueInfoVO
+        this.OwnerDetail = Object.assign(this.OwnerDetail, data.data)
         this.getClueData(this.OwnerDetail.clueId)
       } else {
         this.$message.error(data.errorMsg)
@@ -447,7 +448,7 @@ export default class extends Vue {
     private async getClueData(value: any) {
       const { data } = await GetLineClueInfo({ clueId: value, info: 'info' })
       if (data.success) {
-        this.OwnerDetail.clueInfoVO = data.data
+        this.OwnerDetail.clueInfoVO = Object.assign(this.OwnerDetail.clueInfoVO, data.data)
       } else {
         this.$message.error(data.errorMsg)
       }
