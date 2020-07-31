@@ -280,7 +280,7 @@ export default class extends Vue {
       type: 2,
       key: 'code',
       label: '线路名称/线路编号',
-      w: '130px',
+      w: '140px',
       tagAttrs: {
         placeholder: '请输入',
         filterable: true

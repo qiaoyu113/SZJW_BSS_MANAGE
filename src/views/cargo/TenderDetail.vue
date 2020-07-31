@@ -9,8 +9,8 @@
     >
       <template v-slot:title="{row}">
         <div class="header">
+          <i class="title_left_border" />
           <span class="title">{{ row.key }}</span>
-          <i class="icon" />
         </div>
       </template>
       <template v-slot:expires="{row}">
@@ -45,7 +45,44 @@ import SelfForm from '@/components/Base/SelfForm.vue'
   }
 })
 export default class extends Vue {
-  private type = ''
+  private type = '' // 详情or编辑
+
+  // 配送周期列表
+  private weekOptions = [
+    {
+      label: '全选',
+      value: 'all'
+    },
+    {
+      label: '周一',
+      value: '1'
+    },
+    {
+      label: '周二',
+      value: '2'
+    },
+    {
+      label: '周三',
+      value: '3'
+    },
+    {
+      label: '周四',
+      value: '4'
+    },
+    {
+      label: '周五',
+      value: '5'
+    },
+    {
+      label: '周六',
+      value: '6'
+    },
+    {
+      label: '周日',
+      value: '7'
+    }
+  ]
+  // 表单对象
   private listQuery = {
     name: '李小兴',
     carType: '金杯',
@@ -83,14 +120,14 @@ export default class extends Vue {
     score: 90,
     role: '梧桐专车'
   }
-
+  // 表单数组
   private formItem = [
     {
       type: 'title',
       slot: true,
       key: '司机信息',
-      class: 'bgLabel',
-      col: 24
+      col: 24,
+      w: '0px'
     },
     {
       type: 7,
@@ -121,8 +158,8 @@ export default class extends Vue {
       type: 'title',
       slot: true,
       key: '基础信息',
-      class: 'bgLabel',
-      col: 24
+      col: 24,
+      w: '0px'
     },
     {
       type: 7,
@@ -171,8 +208,8 @@ export default class extends Vue {
       type: 'title',
       slot: true,
       key: '配送信息',
-      class: 'bgLabel',
-      col: 24
+      col: 24,
+      w: '0px'
     },
     {
       type: 7,
@@ -217,8 +254,8 @@ export default class extends Vue {
       type: 'title',
       slot: true,
       key: '结算信息',
-      class: 'bgLabel',
-      col: 24
+      col: 24,
+      w: '0px'
     },
     {
       type: 7,
@@ -247,40 +284,7 @@ export default class extends Vue {
       listeners: {
         'change': this.checkBoxChange
       },
-      options: [
-        {
-          label: '全选',
-          value: 'all'
-        },
-        {
-          label: '周一',
-          value: '1'
-        },
-        {
-          label: '周二',
-          value: '2'
-        },
-        {
-          label: '周三',
-          value: '3'
-        },
-        {
-          label: '周四',
-          value: '4'
-        },
-        {
-          label: '周五',
-          value: '5'
-        },
-        {
-          label: '周六',
-          value: '6'
-        },
-        {
-          label: '周日',
-          value: '7'
-        }
-      ]
+      options: this.weekOptions
     },
     {
       type: 4,
@@ -337,8 +341,8 @@ export default class extends Vue {
       type: 'title',
       slot: true,
       key: '货物信息',
-      class: 'bgLabel',
-      col: 24
+      col: 24,
+      w: '0px'
     },
     {
       type: 7,
@@ -364,8 +368,8 @@ export default class extends Vue {
       type: 'title',
       slot: true,
       key: '线路角色',
-      class: 'bgLabel',
-      col: 24
+      col: 24,
+      w: '0px'
     },
     {
       type: 7,
@@ -384,7 +388,7 @@ export default class extends Vue {
       col: 24
     }
   ]
-
+  // 校验规则
   private rules={
     cargoName: [
       { required: true }
@@ -462,22 +466,21 @@ export default class extends Vue {
       { required: true }
     ]
   }
-
+  // 配送周期发生变化
   checkBoxChange() {
     interface Op {
       label:string,
       value:string
     }
-    if (this.listQuery.peisong && this.listQuery.peisong.includes('all')) {
-      let options:Op[] = []
-      for (let i = 0; i < this.formItem.length; i++) {
-        if (this.formItem[i].label === '配送周期:') {
-          (options as any) = this.formItem[i].options
-          break
-        }
-      }
-      this.listQuery.peisong = options.map(item => item.value)
-    }
+    console.log('xx:', this.listQuery.peisong)
+    // 包含全选并且xuan
+    // if (this.listQuery.peisong.includes('all') && this.listQuery.peisong.length === this.weekOptions.length) {
+    //   let options:Op[] = []
+    //   this.listQuery.peisong = this.weekOptions.map(item => item.value)
+    // } else if (this.listQuery.peisong.includes('all') && this.listQuery.peisong.length < this.weekOptions.length) {
+    //   let index = this.listQuery.peisong.findIndex(item => item === 'all')
+    //   this.listQuery.peisong.splice(index, 1)
+    // }
   }
 
   mounted() {
@@ -498,31 +501,6 @@ export default class extends Vue {
   .tenderDetail {
     background: #fff;
     .header {
-        width: 100%;
-        height: 58px;
-        line-height: 58px;
-        font-size: 16px;
-        color: #4A4A4A;
-        font-weight: 500;
-        border-bottom: 2px solid #F8F9FA;
-        position: relative;
-        padding: 0 30px;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-      .icon {
-        width: 5px;
-        height: 17px;
-        position: absolute;
-        left: 16px;
-        top: 4px;
-        bottom: 0;
-        margin: auto;
-        background-image: -webkit-gradient(linear, right top, left top, from(#FF9600), to(#FFB400));
-        background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);
-        border-radius: 2.5px;
-        border-radius: 2.5px;
-        display: inline-block;
-      }
       .title {
         margin-left: 3px;
         font-size:18px;
@@ -550,12 +528,6 @@ export default class extends Vue {
 <style scoped>
   .tenderDetail >>> .el-form-item  {
     margin-bottom:0px;
-  }
-
-  .tenderDetail >>> .bgLabel .el-form-item__content {
-    margin-left:0px!important;
-    display: flex;
-    align-items: center;
   }
 
   @media screen and (max-width:700px){
