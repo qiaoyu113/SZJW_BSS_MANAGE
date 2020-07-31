@@ -121,6 +121,7 @@ export default class extends Vue {
       .title {
         color:#303133;
         font-weight:bold;
+        border-bottom: 1px solid #EEEEEE;
       }
       dd {
         margin-left: 0px;
