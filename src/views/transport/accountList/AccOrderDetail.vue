@@ -213,9 +213,9 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetCustomerList } from '@/api/customer'
 import { SettingsModule } from '@/store/modules/settings'
-import AccountInfo from './components/accountInfo.vue'
+import AccountInfo from './components/AccountInfo.vue'
+import AccountOrder from './components/AccountOrder.vue'
 import { HandlePages } from '@/utils/index'
-import accountOrder from './components/accountOrder.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import '@/styles/common.scss'
 import { CargoListData } from '@/api/types'
@@ -229,7 +229,7 @@ interface IState {
     components: {
       AccountInfo,
       Pagination,
-      accountOrder
+      AccountOrder
     }
   })
 

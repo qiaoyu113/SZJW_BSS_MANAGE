@@ -34,7 +34,10 @@
               </router-link>
             </template>
 
-            <template v-slot:payTypeName="{row}">
+            <template
+              v-if="detailQuery.orderId"
+              v-slot:payTypeName="{row}"
+            >
               {{ row.payTypeName === '' ? row.orderPayRecordInfoVOList[0].payTypeName : row.payTypeName }}
             </template>
             <template v-slot:payCompleteTime="{row}">
@@ -528,4 +531,21 @@ export default class extends Vue {
   color: #649CEE;
   font-weight: bold;
 }
+  .TransportDetail-m .baseBox >>> .el-form-item__label {
+          width: 100%;
+          font-size: 12px;
+          color: #666;
+          font-weight: 400;
+          text-align: left;
+          padding-right: 15px;
+          padding-bottom: 10px;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+      }
+      .TransportDetail-m .baseBox >>> .el-form-item__content{
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            overflow-wrap: break-word;
+      }
 </style>
