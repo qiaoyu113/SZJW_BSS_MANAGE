@@ -29,7 +29,6 @@ const hasPermission = (roles: string[], route: RouteConfig) => {
 
 const isInArray = (arr: string[], value: string) => {
   for (var i = 0; i < arr.length; i++) {
-    console.log(value, arr[i], value === arr[i])
     if (value === arr[i]) {
       return true
     }
