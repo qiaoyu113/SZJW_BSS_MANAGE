@@ -420,4 +420,8 @@ export default class extends Vue {
 .AccountDetail >>> .operation-main,.AccountDetail-m >>> .operation-m{
   display: none;
 }
+.AccountDetail-m >>> .el-tabs__header{
+  padding: 0 20px;
+  box-sizing: border-box;
+}
 </style>
