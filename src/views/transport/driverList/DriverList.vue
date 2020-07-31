@@ -285,6 +285,9 @@ export default class extends Vue {
 
   private dropdownList:any[] = [] // 表格筛选下拉
   private checkList:any[] =[] // 表格筛选checkbox
+
+  private workCityOptions:any[] = [] // 工作城市列表
+  private gmOptions:any[] = [] // 加盟经理列表
   // 表单对象
   private listQuery:IState = {
     status: '',
@@ -308,7 +311,7 @@ export default class extends Vue {
         placeholder: '请选择工作城市',
         filterable: true
       },
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 1,
@@ -369,7 +372,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择加盟经理'
       },
-      options: []
+      options: this.gmOptions
     },
     {
       type: 2,
@@ -558,12 +561,13 @@ export default class extends Vue {
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
-        this.formItem[5].options = res.data.map(function(item:any) {
+        let gms = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
           }
         })
+        this.gmOptions.push(...gms)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -579,12 +583,13 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.formItem[0].options = res.data.map(function(item:any) {
+        let workCity = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.code
           }
         })
+        this.workCityOptions.push(...workCity)
       } else {
         this.$message.error(res.errorMsg)
       }
