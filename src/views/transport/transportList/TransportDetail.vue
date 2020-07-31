@@ -18,7 +18,7 @@
         v-show="tabVal === '1'"
         class="ownerDetail"
       >
-        <div class="baseBox">
+        <!-- <div class="baseBox">
           <self-form
             class="base"
             :list-query="detailQuery"
@@ -44,7 +44,79 @@
               {{ row.payCompleteTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
             </template>
           </self-form>
-        </div>
+        </div> -->
+        <SectionContainer
+          :title="'订单编号'+detailQuery.orderId"
+          :md="true"
+        >
+          <el-row>
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="商品分类"
+                :value="detailQuery.busiTypeName"
+              />
+            </el-col>
+
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="合作模式"
+                :value="detailQuery.cooperationModelName"
+              />
+            </el-col>
+
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="合作车型"
+                :value="detailQuery.cooperationCarName"
+              />
+            </el-col>
+
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="合作期限"
+                :value="detailQuery.cooperationTime"
+              />
+            </el-col>
+
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="订单金额"
+                :value="detailQuery.goodsAmount"
+              />
+            </el-col>
+
+            <el-col
+              v-if="detailQuery.orderId"
+              :span="isPC ? 6 : 24"
+            >
+              <DetailItem
+                name="支付方式"
+                :value="detailQuery.payTypeName === '' ? detailQuery.orderPayRecordInfoVOList[0].payTypeName : detailQuery.payTypeName"
+              />
+            </el-col>
+
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name="支付时间"
+                :value="detailQuery.payCompleteTime"
+              />
+            </el-col>
+
+            <el-col :span="isPC ? 6 : 24">
+              <DetailItem
+                name=""
+                value=""
+              >
+                <router-link
+                  :to="{path: '/join/orderdetail',query: {id: detailQuery.orderId}}"
+                  class="linkTo"
+                >
+                  详情>>
+                </router-link>
+              </DetailItem>
+            </el-col>
+          </el-row>
+        </SectionContainer>
         <SectionContainer
           title="基本信息"
           :md="true"
@@ -113,7 +185,7 @@
               >
                 <router-link
                   class="linkTo"
-                  :to="{path: '/join/orderdetail',query: {id: baseObj.driverId}}"
+                  :to="{path: '/transport/driverDetail',query: {id: baseObj.driverId}}"
                 >
                   {{ baseObj.driverId | DataIsNull }}
                 </router-link>
@@ -514,7 +586,7 @@ export default class extends Vue {
           width: 100vw;
           text-align: center;
           margin-top: 20px;
-          margin-bottom: 0px!important;
+          margin-bottom: 20px!important;
       }
 }
 </style>
@@ -531,21 +603,4 @@ export default class extends Vue {
   color: #649CEE;
   font-weight: bold;
 }
-  .TransportDetail-m .baseBox >>> .el-form-item__label {
-          width: 100%;
-          font-size: 12px;
-          color: #666;
-          font-weight: 400;
-          text-align: left;
-          padding-right: 15px;
-          padding-bottom: 10px;
-          -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-      }
-      .TransportDetail-m .baseBox >>> .el-form-item__content{
-            font-size: 14px;
-            color: #333;
-            font-weight: 500;
-            overflow-wrap: break-word;
-      }
 </style>
