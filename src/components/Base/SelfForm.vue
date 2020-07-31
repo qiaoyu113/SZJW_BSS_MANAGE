@@ -4,7 +4,8 @@
     class="selfForm"
     :class="{
       pc: pcBlock,
-      mobile: mBlock
+      mobile: mBlock,
+      p15: isPC
     }"
   >
     <el-form
@@ -221,7 +222,6 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
   .selfForm {
-   padding:20px;
    .clearfix {
      display: block;
      content:'';
