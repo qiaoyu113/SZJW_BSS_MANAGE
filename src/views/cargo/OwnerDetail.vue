@@ -233,7 +233,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="职务"
-              :value="OwnerDetail.bussinessPosition | DataIsNull"
+              :value="OwnerDetail.clueInfoVO.position | DataIsNull"
             />
           </el-col>
 
