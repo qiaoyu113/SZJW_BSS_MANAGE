@@ -16,7 +16,6 @@
 
       <div
         v-show="tabVal === '1'"
-        class="ownerDetail"
       >
         <!-- <div class="baseBox">
           <self-form
@@ -109,7 +108,7 @@
               >
                 <router-link
                   :to="{path: '/join/orderdetail',query: {id: detailQuery.orderId}}"
-                  class="linkTo"
+                  class="linkTo goDetail"
                 >
                   详情>>
                 </router-link>
@@ -334,7 +333,6 @@
       </div>
       <div
         v-show="tabVal === '2'"
-        class="clueDetail"
       >
         <div class="bidBox">
           <bid-info
@@ -374,7 +372,6 @@ interface IState {
     })
 
 export default class extends Vue {
-  private activeName:string = 'first'
   private tabVal: any = '1'
   private carrierId:string = ''
 
@@ -571,6 +568,10 @@ export default class extends Vue {
     padding: 20px;
     background-color: white;
     box-sizing: border-box;
+    .goDetail{
+      height: 40px;
+      line-height: 40px;
+    }
 }
 </style>
 

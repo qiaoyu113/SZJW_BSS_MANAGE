@@ -78,6 +78,8 @@ export default class extends Vue {
       justify-content: center;
       align-items: center;
       height:100px;
+      color:#666;
+      font-size:13px;
     }
   }
 </style>
