@@ -84,32 +84,32 @@
       <h1>订单编号:订单编号：DDDDDDDDDDD</h1>
       <div class="contentBox">
         <el-row>
-          <el-col span="12">
+          <el-col :span="12">
             <span class="contentText">
               商品分类：梧桐共享
             </span>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <span class="contentText">
               合作模式：带车
             </span>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <span class="contentText">
               合作车型：4.2米厢货
             </span>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <span class="contentText">
               合作期限：3个月
             </span>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <span class="contentText">
               抽佣比例：6.5%
             </span>
           </el-col>
-          <el-col span="12">
+          <el-col :span="12">
             <span class="contentText">
               支付时间：2020-07-01
             </span>
@@ -118,7 +118,7 @@
         <dd class="acountTitle">
           <el-row>
             <el-col
-              span="8"
+              :span="8"
               class="afterBorder"
             >
               <div>
@@ -127,7 +127,7 @@
               </div>
             </el-col>
             <el-col
-              span="8"
+              :span="8"
               class="afterBorder"
             >
               <div>
@@ -136,7 +136,7 @@
               </div>
             </el-col>
             <el-col
-              span="8"
+              :span="8"
               class="afterBox"
             >
               <div>
