@@ -136,7 +136,7 @@
             :span="isPC ? 6 : 24"
           >
             <DetailItem
-              name="无税报价"
+              name="无税车价"
               :value="ContractDetail.carPrice"
             />
           </el-col>
