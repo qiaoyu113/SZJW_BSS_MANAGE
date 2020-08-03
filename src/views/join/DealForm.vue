@@ -409,14 +409,14 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="供应商"
-              prop="cooperationCar"
+              prop="gpsSupplier"
             >
               <el-select
                 v-model="ruleForm.gpsSupplier"
                 placeholder="请选择供应商"
               >
                 <el-option
-                  v-for="item in gpsSupplier"
+                  v-for="item in gpsSupplierList"
                   :key="item.dictValue"
                   :label="item.dictLabel"
                   :value="item.dictValue"
@@ -493,7 +493,7 @@ export default class extends Vue {
     private loading: any = false
     private gpsShow: any = false
     private managerList: any[] = []
-    private gpsSupplier: any[] = []
+    private gpsSupplierList: any[] = []
     private ContractDetail: any = {
       'busiType': '',
       'busiTypeName': '',
@@ -715,7 +715,7 @@ export default class extends Vue {
     private async getDictionary() {
       const { data } = await GetDictionaryList(['gps_supplier'])
       if (data.success) {
-        this.gpsSupplier = data.data.gps_supplier
+        this.gpsSupplierList = data.data.gps_supplier
       } else {
         this.$message.error(data)
       }
