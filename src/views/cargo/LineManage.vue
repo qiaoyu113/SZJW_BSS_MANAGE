@@ -9,7 +9,7 @@
     >
       <self-form
         ref="lineForm"
-        class="lineForm"
+        class="lineForm p15"
         :list-query="listQuery"
         :form-item="formItem"
         label-width="100px"
@@ -172,6 +172,7 @@
                 </el-button>
                 <i
                   v-else
+                  style="font-size: 18px;"
                   class="el-icon-setting"
                 />
               </span>
@@ -265,6 +266,7 @@
                 </el-button>
                 <i
                   v-else
+                  style="font-size: 18px;"
                   class="el-icon-view"
                 />
               </span>

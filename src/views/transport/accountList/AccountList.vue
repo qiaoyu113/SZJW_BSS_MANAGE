@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :form-item="formItem"
         label-width="80px"
+        class="p15"
       >
         <div
           slot="btn1"
@@ -87,7 +88,11 @@
       @selection-change="handleChange"
     >
       <template v-slot:op="scope">
-        <el-dropdown
+        <span
+          class="linkTo"
+          @click="goDetail(scope.row)"
+        >详情</span>
+        <!-- <el-dropdown
           :trigger="isPC ? 'hover' : 'click'"
           @command="(e) => handleCommandChange(e,scope.row)"
         >
@@ -106,6 +111,7 @@
             <i
               v-else
               class="el-icon-setting"
+              style="font-size: 18px;"
             />
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -117,7 +123,7 @@
               </template>
             </el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown> -->
       </template>
     </self-table>
 
@@ -554,6 +560,10 @@ export default class extends Vue {
     }
   }
 
+  private goDetail(row:any) {
+    this.$router.push({ path: 'accountdetail', query: { id: row.i } })
+  }
+
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
@@ -570,14 +580,14 @@ export default class extends Vue {
   /**
    * 更多操作
    */
-  handleCommandChange(key:string|number, row:any) {
-    if (key === 'detail') { // 分配
-      this.type = 'detail'
-      this.rows = [row]
-      console.log(row.i, key)
-      this.$router.push({ path: 'accountdetail', query: { id: row.i } })
-    }
-  }
+  // handleCommandChange(key:string|number, row:any) {
+  //   if (key === 'detail') { // 分配
+  //     this.type = 'detail'
+  //     this.rows = [row]
+  //     console.log(row.i, key)
+  //     this.$router.push({ path: 'accountdetail', query: { id: row.i } })
+  //   }
+  // }
 
   /**
    * 删除顶部表单的选项
@@ -659,9 +669,13 @@ export default class extends Vue {
     }
 }
 </style>
-<style>
-.accountTable >>> .operation-main{
+<style scoped>
+  .accountTable >>> .operation-main{
     display: none;
+  }
+  .linkTo{
+    color:#649CEE;
+    cursor: pointer;
   }
   @media screen and (max-width:700px) {
     .el-message-box__wrapper {

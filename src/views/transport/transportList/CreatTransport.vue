@@ -23,9 +23,13 @@
         </div>
         <template v-if="activeCreat === 1">
           <div class="chooseBox">
-            <div class="creatPhone">
+            <div
+              class="creatPhone"
+              @click="confession"
+            >
               <span class="phoneLabel">签约司机姓名（手机号）:</span>
               <el-select
+                ref="elInput"
                 v-model="phoneNum"
                 :remote-method="remoteMethod"
                 :loading="loading"
@@ -34,6 +38,7 @@
                 reserve-keyword
                 placeholder="请输入司机姓名或完整手机号"
                 @change="getOrderList"
+                @focus="confession"
               >
                 <el-option
                   v-for="item in driverOptions"
@@ -711,6 +716,15 @@ export default class extends Vue {
     }
   }
 
+  // 兼容IOS
+  private confession() {
+    console.log(123, this.$refs)
+    let u = navigator.userAgent
+    if (u.indexOf('iPhone') > -1) { // ios手机
+      (this.$refs['elInput'] as any).focus()// 显示键盘
+    }
+  }
+
   private async getDictionaryAll() {
     let params = ['Intentional_compartment', 'type_of_goods', 'expected_monthly_income', 'accept_one_day_of_work']
     let { data } = await GetDictionaryList(params)
@@ -979,7 +993,7 @@ export default class extends Vue {
             }
             .orderNum{
               font-weight: bold;
-              color: black;
+              color: #c4c4c4;
             }
           }
           .orderItem:last-child{
@@ -1077,6 +1091,8 @@ export default class extends Vue {
       max-height: 40vh;
       overflow-y: scroll;
       .boxItem{
+        padding: 0 30px;
+        box-sizing: border-box;
         display: flex;
         justify-content: center;
         align-items: center;

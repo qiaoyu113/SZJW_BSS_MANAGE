@@ -9,6 +9,7 @@
     <div class="detailBox">
       <el-tabs
         v-model="activeName"
+        type="card"
         @tab-click="handleClick"
       >
         <el-tab-pane
@@ -23,7 +24,7 @@
               :row-style="{height: '20px'}"
               :cell-style="{padding: '5px 0'}"
               size="mini"
-              :height="isPC ? 'calc(100vh - 550px)' : 'calc(100vh - 140px)'"
+              :max-height="isPC ? 'calc(100vh - 550px)' : 'calc(100vh - 140px)'"
               fit
               :border="isPC"
               stripe
@@ -33,16 +34,22 @@
               <el-table-column
                 fixed
                 align="left"
-                label="货主编号"
+                label="运力编号"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.customerId }}</span>
+                  <router-link
+                    class="linkTo"
+                    :to="{
+                      path: '/transport/transportdetail',
+                      query: {id: scope.row.customerId}
+                    }"
+                  >
+                    <span>{{ scope.row.customerId }}</span>
+                  </router-link>
                 </template>
               </el-table-column>
 
-              <el-table-column
-                label="货主"
-              >
+              <el-table-column label="运力手机号">
                 <template slot-scope="scope">
                   <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
                 </template>
@@ -50,30 +57,41 @@
 
               <el-table-column
                 class-name="status-col"
-                label="类型"
+                label="订单编号"
               >
                 <template slot-scope="{row}">
-                  <el-tag :type="row.status | articleStatusFilter">
-                    {{ row.primaryClassificationName
-                    }}<span
-                      v-if="row.secondaryClassificationName"
-                    >/{{ row.secondaryClassificationName }}</span>
-                  </el-tag>
+                  <router-link
+                    class="linkTo"
+                    :to="{
+                      path: '/transport/transportdetail',
+                      query: {id: row.customerId}
+                    }"
+                  >
+                    <span>{{ row.customerId }}</span>
+                  </router-link>
                 </template>
               </el-table-column>
 
               <el-table-column
                 align="left"
-                label="合同状态"
+                label="标书"
               >
                 <template slot-scope="{row}">
-                  {{ row.contractEffectiveness }}
+                  <router-link
+                    class="linkTo"
+                    :to="{
+                      path: '/transport/transportdetail',
+                      query: {id: row.customerId}
+                    }"
+                  >
+                    <span>{{ row.customerId }}</span>
+                  </router-link>
                 </template>
               </el-table-column>
 
               <el-table-column
                 align="left"
-                label="创建时间"
+                label="线路名称"
               >
                 <template slot-scope="scope">
                   <p>{{ scope.row.createDate | Timestamp }}</p>
@@ -82,20 +100,16 @@
 
               <el-table-column
                 align="left"
-                label="创建人"
+                label="出车时间"
               >
                 <template slot-scope="scope">
-                  <p>
-                    <span
-                      v-if="scope.row.creatorName"
-                    >({{ scope.row.creatorName }})</span>
-                  </p>
+                  <p>{{ scope.row.createDate | Timestamp }}</p>
                 </template>
               </el-table-column>
 
               <el-table-column
                 align="left"
-                label="合同止期"
+                label="运费"
               >
                 <template slot-scope="scope">
                   <span>{{ scope.row.contractEnd | Timestamp }}</span>
@@ -104,7 +118,15 @@
 
               <el-table-column
                 align="left"
-                label="线路销售"
+                label="抽佣比例"
+              >
+                <template slot-scope="{row}">
+                  {{ row.lineSaleName | DataIsNull }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="left"
+                label="抽佣金额"
               >
                 <template slot-scope="{row}">
                   {{ row.lineSaleName | DataIsNull }}
@@ -234,7 +256,7 @@ interface IState {
   })
 
 export default class extends Vue {
-  private activeName:string = 'f2'
+  private activeName:string = 'f1'
   private listLoading:boolean = true
   private list: CargoListData[] = []
   private total = 0;
@@ -420,8 +442,14 @@ export default class extends Vue {
 .AccountDetail >>> .operation-main,.AccountDetail-m >>> .operation-m{
   display: none;
 }
+.linkTo {
+  color: #649cee;
+  font-weight: bold;
+  cursor: pointer;
+}
 .AccountDetail-m >>> .el-tabs__header{
-  padding: 0 20px;
-  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
