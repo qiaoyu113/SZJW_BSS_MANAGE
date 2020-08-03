@@ -197,10 +197,11 @@ export default class extends Vue {
     @Prop({ default: () => {} }) rules!:IState
     @Prop({ default: false }) mBlock!:boolean
     @Prop({ default: false }) pcBlock!:boolean
+    // 区分设备
     get isPC() {
       return SettingsModule.isPC
     }
-
+    // 提交表单
     submitForm(args:any) {
       ((this.$refs['ruleForm']) as any).validate((valid:boolean) => {
         if (valid) {
@@ -211,6 +212,7 @@ export default class extends Vue {
         }
       })
     }
+    // 重置表单
     resetForm() {
       ((this.$refs['ruleForm']) as any).resetFields()
     }

@@ -96,8 +96,12 @@
               v-if="isPC"
               :a="scope"
               type="text"
+              size="mini"
             >
-              更多操作
+              更多操作<i
+                v-if="isPC"
+                class="el-icon-arrow-down el-icon--right"
+              />
             </el-button>
             <i
               v-else

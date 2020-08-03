@@ -7,12 +7,20 @@
       }"
       shadow="never"
     >
-      <self-form
-        class="base"
-        :list-query="listQuery"
-        :form-item="formItem"
-        label-width="80px"
-      />
+      <SectionContainer
+        title="司机信息"
+        :md="true"
+      >
+        <self-form
+          class="base"
+          :list-query="listQuery"
+          :form-item="formItem"
+          label-width="80px"
+          :m-block="true"
+          :pc-block="true"
+        />
+      </SectionContainer>
+
       <el-tabs
         v-model="activeName"
         @tab-click="handleClick"
@@ -71,7 +79,7 @@ import bidInfo from './components/BidInfo.vue'
 import AccountInfo from './components/AccountInfo.vue'
 import { GetDriverDetail, DriverFollowFormation, driverDetailToCarrierInfo, driverDetailToOrderInfo } from '@/api/driver'
 import { SettingsModule } from '@/store/modules/settings'
-
+import SectionContainer from '@/components/SectionContainer/index.vue'
 interface IState {
     [key: string]: any;
 }
@@ -84,7 +92,8 @@ interface IState {
     OrderInfo,
     TransportInfo,
     bidInfo,
-    AccountInfo
+    AccountInfo,
+    SectionContainer
   }
 })
 export default class extends Vue {
@@ -105,8 +114,7 @@ export default class extends Vue {
     {
       type: 7,
       key: 'name',
-      label: '姓名:',
-      col: 24,
+      label: '姓名',
       tagAttrs: {
         style: {
           fontWeight: 'bold',
@@ -117,7 +125,7 @@ export default class extends Vue {
     {
       type: 7,
       key: 'driverId',
-      label: '司机编号:',
+      label: '司机编号',
       tagAttrs: {
         style: {
           color: '#3DA1FF',
@@ -128,27 +136,27 @@ export default class extends Vue {
     {
       type: 7,
       key: 'phone',
-      label: '手机号:'
+      label: '手机号'
     },
     {
       type: 7,
       key: 'workCityName',
-      label: '工作城市:'
+      label: '工作城市'
     },
     {
       type: 7,
       key: 'busiTypeName',
-      label: '业务线:'
+      label: '业务线'
     },
     {
       type: 7,
       key: 'gmTeam',
-      label: '加盟小组:'
+      label: '加盟小组'
     },
     {
       type: 7,
       key: 'gmIdName',
-      label: '加盟经理:'
+      label: '加盟经理'
     }
 
   ]
@@ -263,11 +271,16 @@ export default class extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped>
-
-</style>
 
 <style scoped>
+  .driverDetail >>> .el-card {
+    padding-bottom: 20px;
+    background: #f8f9fa;
+    border: none;
+  }
+  .baseInfo >>> .el-card__body {
+      padding: 0px;
+  }
   .baseInfo >>> .el-form-item {
     margin-bottom: 0px;
   }
@@ -277,9 +290,79 @@ export default class extends Vue {
     font-size:14px;
   }
 
-  @media screen and (max-width: 700px){
-    .baseInfo >>> .el-card__body {
-      padding: 0px;
+   @media screen and (max-width:700px) {
+    .base >>> .el-form-item {
+      width: 100%;
+      padding: 10px 14px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      border-bottom: 1px solid #F8F9FA;
+    }
+    .base >>> .el-form-item__label {
+      width: 100%!important;
+      font-size: 12px!important;
+      line-height: 13px;
+      color: #666;
+      font-weight: 400;
+      text-align: left;
+      padding-right: 15px;
+      padding-bottom: 10px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .base >>> .el-form-item__content {
+      width: 100%;
+      font-size: 14px;
+      font-weight: 400;
+      color: #252525;
+      line-height: 16px;
+    }
+    .base >>> dl {
+      margin: 0px;
+    }
+    .base >>> dt {
+      width: 100%;
+      height: 45px!important;
+      line-height: 40px;
+      font-size: 15px;
+      color: #4A4A4A;
+      font-weight: 500;
+      position: relative;
+      padding: 0 20px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+ }
+
+  @media screen and (min-width: 700px){
+    .base >>> .el-form-item__label {
+      font-size: 13px!important;
+      color: #9e9e9e!important;
+      font-weight: 400;
+      padding-right: 16px;
+    }
+    .base >>> .el-form-item__content span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 700;
+      overflow-wrap: break-word;
+    }
+    .driverDetail >>> .el-tabs__header{
+      padding: 0 10px;
+      box-sizing: border-box;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      background: #fff;
+      margin-bottom: 5px;
+    }
+    .driverDetail >>> .el-tabs__content{
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      background: #fff;
+    }
+    .driverDetail >>> .title_left_border{
+      margin-left: 15px;
+    }
+    .driverDetail >>> .context_d{
+      padding: 0 30px;
     }
   }
 </style>
