@@ -16,6 +16,7 @@
         :list-query="listQuery"
         :form-item="formItem"
         label-width="80px"
+        class="p15"
       >
         <div
           slot="btn1"
