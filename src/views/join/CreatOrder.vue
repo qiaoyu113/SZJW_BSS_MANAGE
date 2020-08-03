@@ -35,6 +35,7 @@
               reserve-keyword
               placeholder="请输入司机编号/姓名/手机号"
               @change="checkDiver"
+              @click="confession"
             >
               <el-option
                 v-for="item in driverList"
@@ -1318,6 +1319,11 @@ export default class CreatLine extends Vue {
     })
   }
 
+  // ios聚焦
+  private confession() {
+    (this.$refs['elInput'] as Input).focus()// 显示键盘
+  }
+
   // 提交
   private submitForm(formName:any) {
     this.fullscreenLoading = true;
@@ -1553,6 +1559,7 @@ export default class CreatLine extends Vue {
   .el-form-item__label{
     color: #4a4a4a;
     font-weight: 400;
+    text-align: left;
   }
   .btn_box{
     padding: 30px 20px 0 20px;
