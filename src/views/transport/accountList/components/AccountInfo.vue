@@ -50,7 +50,7 @@
       <dd class="acountTitle">
         <el-row>
           <el-col
-            span="8"
+            :span="8"
             class="afterBorder"
           >
             <div>
@@ -59,7 +59,7 @@
             </div>
           </el-col>
           <el-col
-            span="8"
+            :span="8"
             class="afterBorder"
           >
             <div>
@@ -68,7 +68,7 @@
             </div>
           </el-col>
           <el-col
-            span="8"
+            :span="8"
             class="afterBox"
           >
             <div>
@@ -82,32 +82,32 @@
         <h1>姓名:白巧克力</h1>
         <div class="contentBox">
           <el-row>
-            <el-col span="12">
+            <el-col :span="12">
               <span class="contentText">
                 司机编号：1313131311313
               </span>
             </el-col>
-            <el-col span="12">
+            <el-col :span="12">
               <span class="contentText">
                 联系方式：1313131311313
               </span>
             </el-col>
-            <el-col span="12">
+            <el-col :span="12">
               <span class="contentText">
                 工作城市：北京市
               </span>
             </el-col>
-            <el-col span="12">
+            <el-col :span="12">
               <span class="contentText">
                 业务线：共享
               </span>
             </el-col>
-            <el-col span="12">
+            <el-col :span="12">
               <span class="contentText">
                 加盟小组：共享一组
               </span>
             </el-col>
-            <el-col span="12">
+            <el-col :span="12">
               <span class="contentText">
                 加盟经理：向畑静
               </span>

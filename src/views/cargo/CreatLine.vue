@@ -20,7 +20,10 @@
               clearable: true,
               filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
               placeholder: '请输入选择货主',filterable: true,
-              disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},options: customerOptions}"
+              disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},listeners: {
+                'focus': confession
+              },options: customerOptions}"
+            @click.native="confession"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -1159,6 +1162,14 @@ export default class CreatLine extends Vue {
     }
   }
 
+  // 兼容ios
+  private confession() {
+    let u = navigator.userAgent
+    if (u.indexOf('iPhone') > -1) { // ios手机
+      ((this.$refs['ruleForm'] as any).$children[0].$children[0].$children[0].$refs['elInput'] as any).focus()
+    }
+  }
+
   created() {
     this.fetchData()
     let routeArr = this.$route.path.split('/')
@@ -1231,24 +1242,24 @@ export default class CreatLine extends Vue {
 
 @media screen and (min-width: 701px) {
   .CreatLine .SelfItem .el-select {
-    width: 100%;
+    width: 100%!important;
   }
   .CreatLine .SelfItem .el-input,
   .CreatLine .el-date-editor,
   .CreatLine .el-textarea {
-    width: 75%;
+    width: 100%!important;
   }
   .CreatLine .el-cascader {
-    width: 100%;
+    width: 100%!important;
   }
 }
 
 @media screen and (max-width: 700px) {
   .CreatLine-m .el-select {
-    width: 100%;
+    width: 100%!important;
   }
   .CreatLine-m .el-input {
-    width: 90%;
+    width: 100%!important;
   }
 }
 </style>

@@ -79,6 +79,7 @@
         :prop="params.prop"
       >
         <el-select
+          ref="elInput"
           v-model="ruleForm[params.prop]"
           v-bind="params.tagAttrs || {}"
           v-on="params.listeners"

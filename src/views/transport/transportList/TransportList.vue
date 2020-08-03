@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :form-item="formItem"
         label-width="100px"
+        class="p15"
       >
         <div
           slot="btn1"
@@ -137,6 +138,7 @@
               </el-button>
               <i
                 v-else
+                style="font-size: 18px;"
                 class="el-icon-setting"
               />
             </span>

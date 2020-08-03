@@ -17,33 +17,6 @@
       <div
         v-show="tabVal === '1'"
       >
-        <!-- <div class="baseBox">
-          <self-form
-            class="base"
-            :list-query="detailQuery"
-            :form-item="formItem"
-            label-width="80px"
-          >
-            <template slot="detail">
-              <router-link
-                :to="{path: '/join/orderdetail',query: {id: detailQuery.orderId}}"
-                class="link"
-              >
-                详情>>
-              </router-link>
-            </template>
-
-            <template
-              v-if="detailQuery.orderId"
-              v-slot:payTypeName="{row}"
-            >
-              {{ row.payTypeName === '' ? row.orderPayRecordInfoVOList[0].payTypeName : row.payTypeName }}
-            </template>
-            <template v-slot:payCompleteTime="{row}">
-              {{ row.payCompleteTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
-            </template>
-          </self-form>
-        </div> -->
         <SectionContainer
           :title="'订单编号'+detailQuery.orderId"
           :md="true"
