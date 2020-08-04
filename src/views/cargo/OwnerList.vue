@@ -647,7 +647,7 @@ export default class extends Vue {
     private async confirmAssign(done: any) {
       let linesIds: any = []
       this.multipleSelection.forEach(i => {
-        linesIds.push(i.lineSaleId)
+        linesIds.push(i.customerId)
       })
       // 提交操作
       if (this.saleId) {

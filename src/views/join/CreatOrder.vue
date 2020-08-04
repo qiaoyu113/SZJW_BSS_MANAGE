@@ -35,8 +35,8 @@
               reserve-keyword
               placeholder="请输入司机编号/姓名/手机号"
               @change="checkDiver"
-              @focus="confession(1)"
-              @blur="confession(0)"
+              @focus="confession"
+              @blur="confession"
             >
               <el-option
                 v-for="item in driverList"
@@ -1321,12 +1321,16 @@ export default class CreatLine extends Vue {
   }
 
   // ios聚焦
-  private confession(type: any) {
-    if (type) {
-      (this.$refs['elInput'] as Input).focus()// 显示键盘
-    } else {
-      (this.$refs['elInput'] as Input).blur()// 显示键盘
-    }
+  private confession() {
+    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+      (item.children[0].children[0] as any).removeAttribute('readOnly');
+      (item.children[0].children[0] as any).onblur = function() {
+        let _this = this
+        setTimeout(() => {
+          _this.removeAttribute('readOnly')
+        }, 200)
+      }
+    })
   }
 
   // 提交
@@ -1423,6 +1427,7 @@ export default class CreatLine extends Vue {
       this.ruleForm.driverId = driverId
       this.remoteMethod(this.ruleForm.driverId, true)
     }
+    this.confession()
   }
 }
 </script>
