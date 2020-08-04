@@ -475,6 +475,9 @@ export default class extends Vue {
 .AccountDetail-m >>> .operation-m {
   display: none;
 }
+.AccountDetail >>> .el-radio-button__inner,.AccountDetail-m >>> .el-radio-button__inner{
+  width: 98px;
+}
 .linkTo {
   color: #649cee;
   font-weight: bold;
