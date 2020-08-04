@@ -192,7 +192,7 @@ export default class accountOrder extends Vue {
 </script>
 <style lang="scss" scoped>
 .accountOrder {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   h1 {
     margin: 0 0 20px 0;
     font-size: 16px;
@@ -313,5 +313,8 @@ export default class accountOrder extends Vue {
 .accountOrder-m >>> .el-card__body {
   padding: 10px 20px;
   box-sizing: border-box;
+}
+.accountOrder >>> .el-card.is-always-shadow {
+    box-shadow: 0 1px 10px 0 rgba(80, 79, 79, 0.1);
 }
 </style>

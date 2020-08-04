@@ -68,8 +68,7 @@ export const updateGmId = (data: any) =>
 // 运力列表
 export const getCarrierInfoList = (data: any) =>
   request({
-    url: `/carrier_center/v1/order/getCarrierInfoList`,
-    // url: `/carrier_center/v1/carrier/getCarrierInfoList`,
+    url: `/carrier_center/v1/carrier/getCarrierInfoList`,
     method: 'post',
     data
   })
