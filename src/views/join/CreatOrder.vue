@@ -1427,6 +1427,7 @@ export default class CreatLine extends Vue {
       this.ruleForm.driverId = driverId
       this.remoteMethod(this.ruleForm.driverId, true)
     }
+    this.confession()
   }
 }
 </script>

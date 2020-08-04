@@ -31,7 +31,8 @@
 
               },
               options: customerOptions}"
-            @click.native="confession"
+            @focus.native="confession"
+            @blur.native="confession"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -1172,13 +1173,15 @@ export default class CreatLine extends Vue {
 
   // 兼容ios
   private confession() {
-    (document.getElementById('mInput') as any).focus()
-    // (this.$refs.mInput as any).focus()
-    // let u = navigator.userAgent
-    // if (u.indexOf('iPhone') > -1) { // ios手机
-    // ((this.$refs['ruleForm'] as any).$children[0].$children[0].$children[0].$refs['elInput'] as any).focus()
-
-    // }
+    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+      (item.children[0].children[0] as any).removeAttribute('readOnly');
+      (item.children[0].children[0] as any).onblur = function() {
+        let _this = this
+        setTimeout(() => {
+          _this.removeAttribute('readOnly')
+        }, 200)
+      }
+    })
   }
 
   created() {
@@ -1197,6 +1200,10 @@ export default class CreatLine extends Vue {
       this.pageStatus = 3
       this.getDetail(this.lineId)
     }
+  }
+
+  mounted() {
+    this.confession()
   }
 }
 </script>
