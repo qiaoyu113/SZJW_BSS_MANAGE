@@ -718,7 +718,6 @@ export default class extends Vue {
 
   // 兼容IOS
   private confession() {
-    console.log(123, this.$refs)
     let u = navigator.userAgent
     if (u.indexOf('iPhone') > -1) { // ios手机
       (this.$refs['elInput'] as any).focus()// 显示键盘

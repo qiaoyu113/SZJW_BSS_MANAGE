@@ -173,7 +173,22 @@
               <el-table-column
                 prop="address"
                 label="交易截图（只有线下有）"
-              />
+              >
+                <template slot-scope="scope">
+                  <!-- <el-image
+                    v-if="scope.row.payImageUrl"
+                    style="width:50px;height:50px;"
+                    :preview-src-list="[scope.row.payImageUrl]"
+                    :src="scope.row.payImageUrl"
+                  /> -->
+                  <el-image
+                    :a="scope"
+                    style="width:50px;height:50px;"
+                    :preview-src-list="['https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg']"
+                    src="https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg"
+                  />
+                </template>
+              </el-table-column>
               <el-table-column
                 prop="address"
                 label="缴费时间"
@@ -204,25 +219,20 @@
             >
               <el-table-column
                 prop="date"
-                label="缴费渠道"
-                width="180"
-              />
-              <el-table-column
-                prop="name"
-                label="交易编号（只有小程序有）"
+                label="退款方式"
                 width="180"
               />
               <el-table-column
                 prop="address"
-                label="交易截图（只有线下有）"
+                label="退款原因"
               />
               <el-table-column
                 prop="address"
-                label="缴费时间"
+                label="退款时间"
               />
               <el-table-column
                 prop="address"
-                label="缴费金额"
+                label="退款金额"
               />
             </el-table>
           </div>

@@ -16,13 +16,21 @@
         <el-row class="detail">
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'customerId',type: 5,label: '货主名称',tagAttrs: {
-              clearable: true,
-              filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
-              placeholder: '请输入选择货主',filterable: true,
-              disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},listeners: {
-                'focus': confession
-              },options: customerOptions}"
+            :params="{
+              prop: 'customerId',
+              type: 5,
+              label: '货主名称',
+              tagAttrs: {
+                id: 'mInput',
+                clearable: true,
+                filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
+                placeholder: '请输入选择货主',filterable: true,
+                disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true
+              },
+              listeners: {
+
+              },
+              options: customerOptions}"
             @click.native="confession"
           />
           <SelfItem
@@ -1164,10 +1172,13 @@ export default class CreatLine extends Vue {
 
   // 兼容ios
   private confession() {
-    let u = navigator.userAgent
-    if (u.indexOf('iPhone') > -1) { // ios手机
-      ((this.$refs['ruleForm'] as any).$children[0].$children[0].$children[0].$refs['elInput'] as any).focus()
-    }
+    (document.getElementById('mInput') as any).focus()
+    // (this.$refs.mInput as any).focus()
+    // let u = navigator.userAgent
+    // if (u.indexOf('iPhone') > -1) { // ios手机
+    // ((this.$refs['ruleForm'] as any).$children[0].$children[0].$children[0].$refs['elInput'] as any).focus()
+
+    // }
   }
 
   created() {

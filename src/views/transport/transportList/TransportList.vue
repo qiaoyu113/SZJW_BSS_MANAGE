@@ -411,7 +411,7 @@ export default class extends Vue {
         key: 'carrierId',
         label: '运力编号',
         tagAttrs: {
-          placeholder: '请输入司机编号'
+          placeholder: '请输入运力编号'
         }
       },
       {
