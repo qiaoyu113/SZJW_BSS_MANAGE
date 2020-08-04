@@ -49,15 +49,24 @@
         </el-col>
         <el-col :span="isPC ? 8 : 24">
           <div class="fee">
-            <span class="item">
+            <span
+              class="item"
+              style="color: #5C9BDD;"
+            >
               <h4>总运费：</h4>
               <p>￥{{ '4000' }}</p>
             </span>
-            <span class="item">
+            <span
+              class="item"
+              style="color: #FFA000;"
+            >
               <h4>总抽佣金额：</h4>
               <p>￥{{ '5000' }}</p>
             </span>
-            <span class="item">
+            <span
+              class="item"
+              style="color: #3ACB8D;"
+            >
               <h4>账户余额：</h4>
               <p>￥{{ '0' }}</p>
             </span>
@@ -183,7 +192,7 @@ export default class accountOrder extends Vue {
 </script>
 <style lang="scss" scoped>
 .accountOrder {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   h1 {
     margin: 0 0 20px 0;
     font-size: 16px;
@@ -304,5 +313,8 @@ export default class accountOrder extends Vue {
 .accountOrder-m >>> .el-card__body {
   padding: 10px 20px;
   box-sizing: border-box;
+}
+.accountOrder >>> .el-card.is-always-shadow {
+    box-shadow: 0 1px 10px 0 rgba(80, 79, 79, 0.1);
 }
 </style>

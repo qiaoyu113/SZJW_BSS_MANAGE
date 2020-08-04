@@ -39,6 +39,7 @@
                 placeholder="请输入司机姓名或完整手机号"
                 @change="getOrderList"
                 @focus="confession"
+                @blur="confession"
               >
                 <el-option
                   v-for="item in driverOptions"
@@ -718,11 +719,15 @@ export default class extends Vue {
 
   // 兼容IOS
   private confession() {
-    console.log(123, this.$refs)
-    let u = navigator.userAgent
-    if (u.indexOf('iPhone') > -1) { // ios手机
-      (this.$refs['elInput'] as any).focus()// 显示键盘
-    }
+    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+      (item.children[0].children[0] as any).removeAttribute('readOnly');
+      (item.children[0].children[0] as any).onblur = function() {
+        let _this = this
+        setTimeout(() => {
+          _this.removeAttribute('readOnly')
+        }, 200)
+      }
+    })
   }
 
   private async getDictionaryAll() {
@@ -879,6 +884,7 @@ export default class extends Vue {
         this.getOrderList(driverId)
       }
     }
+    this.confession()
   }
 }
 </script>

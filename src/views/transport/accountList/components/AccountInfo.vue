@@ -29,15 +29,24 @@
           </el-col>
           <el-col :span="isPC ? 8 : 24">
             <div :class="isPC ? 'fee' : 'fee-m'">
-              <span class="item">
+              <span
+                class="item"
+                style="color: #5C9BDD;"
+              >
                 <h4>总运费</h4>
                 <p>￥{{ listQuery.all }}</p>
               </span>
-              <span class="item">
+              <span
+                class="item"
+                style="color: #FFA000;"
+              >
                 <h4>总抽佣金额</h4>
                 <p>￥{{ listQuery.yong }}</p>
               </span>
-              <span class="item">
+              <span
+                class="item"
+                style="color: #3ACB8D;"
+              >
                 <h4>账户余额</h4>
                 <p>￥{{ listQuery.yu }}</p>
               </span>

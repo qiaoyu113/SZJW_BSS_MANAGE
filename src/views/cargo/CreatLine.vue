@@ -16,14 +16,23 @@
         <el-row class="detail">
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'customerId',type: 5,label: '货主名称',tagAttrs: {
-              clearable: true,
-              filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
-              placeholder: '请输入选择货主',filterable: true,
-              disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true},listeners: {
-                'focus': confession
-              },options: customerOptions}"
-            @click.native="confession"
+            :params="{
+              prop: 'customerId',
+              type: 5,
+              label: '货主名称',
+              tagAttrs: {
+                id: 'mInput',
+                clearable: true,
+                filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
+                placeholder: '请输入选择货主',filterable: true,
+                disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true
+              },
+              listeners: {
+
+              },
+              options: customerOptions}"
+            @focus.native="confession"
+            @blur.native="confession"
           />
           <SelfItem
             :rule-form="ruleForm"
@@ -1164,10 +1173,15 @@ export default class CreatLine extends Vue {
 
   // 兼容ios
   private confession() {
-    let u = navigator.userAgent
-    if (u.indexOf('iPhone') > -1) { // ios手机
-      ((this.$refs['ruleForm'] as any).$children[0].$children[0].$children[0].$refs['elInput'] as any).focus()
-    }
+    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+      (item.children[0].children[0] as any).removeAttribute('readOnly');
+      (item.children[0].children[0] as any).onblur = function() {
+        let _this = this
+        setTimeout(() => {
+          _this.removeAttribute('readOnly')
+        }, 200)
+      }
+    })
   }
 
   created() {
@@ -1186,6 +1200,10 @@ export default class CreatLine extends Vue {
       this.pageStatus = 3
       this.getDetail(this.lineId)
     }
+  }
+
+  mounted() {
+    this.confession()
   }
 }
 </script>
