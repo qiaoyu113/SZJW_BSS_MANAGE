@@ -202,7 +202,7 @@ export default class extends Vue {
     roleId: '',
     status: '',
     page: 1,
-    limit: 20
+    limit: 30
   };
   private dropdownList: any[] = [
     '姓名',

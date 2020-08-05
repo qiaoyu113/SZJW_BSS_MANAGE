@@ -32,7 +32,7 @@
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
-          name="cluelist_creat_btn"
+          name="cluelist_create_btn"
           @click="createClue"
         >
           <i class="el-icon-plus" />
@@ -43,7 +43,7 @@
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
-          name="cluelist_creat_btn"
+          name="cluelist_import_btn"
           @click="goImport"
         >
           <i class="el-icon-download" />
@@ -266,6 +266,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-permission="['/v1/line/clue/lineClueInfo']"
+                    name="cluelist_detail_dropdown"
                     @click.native="goDetail(row.clueId)"
                   >
                     详情
@@ -281,6 +282,7 @@
                         row.isTransform !== '2'
                     "
                     v-permission="['/v1/line/clue/followClue']"
+                    name="cluelist_followUp_dropdown"
                     @click.native="goFollow(row)"
                   >
                     跟进
@@ -288,12 +290,14 @@
                   <el-dropdown-item
                     v-if="row.isTransform !== '1' && row.clueState !== 2"
                     v-permission="['/v1/customer/transformCustomer']"
+                    name="cluelist_transform_dropdown"
                     @click.native="goConversion(row.clueId)"
                   >
                     转化
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/v1/line/clue/lineClueEdit']"
+                    name="cluelist_edit_dropdown"
                     @click.native="goEdit(row)"
                   >
                     编辑
@@ -433,6 +437,7 @@
           <el-input
             v-model="ruleForm.invalidDescription"
             type="textarea"
+            name="cluelist_followUpContent_input"
             :rows="2"
             placeholder="请输入内容"
             maxlength="200"
@@ -539,7 +544,7 @@ export default class extends Vue {
     startDate: '',
     endDate: '',
     page: 1,
-    limit: 20
+    limit: 30
   };
 
   private dropdownList: any[] = [

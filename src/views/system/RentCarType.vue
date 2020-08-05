@@ -362,7 +362,7 @@ export default class extends Vue {
     endDate: '',
     startDate: '',
     page: 1,
-    limit: 20
+    limit: 30
   };
   private dropdownList: any[] = [
     '商品编号',
