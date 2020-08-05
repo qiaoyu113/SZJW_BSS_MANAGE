@@ -379,7 +379,7 @@ export default class extends Vue {
       total: 0
     }
     private listQuery:IState = {
-      gmId: '',
+      gmId: null,
       status: 'all',
       workCity: null,
       carrierId: null,
@@ -571,7 +571,7 @@ export default class extends Vue {
     private handleResetClick() {
       this.tags = []
       this.listQuery = {
-        gmId: '',
+        gmId: null,
         limit: '10',
         page: '1',
         status: null,
