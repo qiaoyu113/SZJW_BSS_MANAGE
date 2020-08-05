@@ -804,7 +804,7 @@ export default class LineManage extends Vue {
   };
   private page: PageObj = {
     page: 1,
-    limit: 10,
+    limit: 30,
     total: 0
   };
 
