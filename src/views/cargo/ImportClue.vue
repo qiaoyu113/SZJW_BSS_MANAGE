@@ -238,7 +238,7 @@ export default class extends Vue {
   private DateValue: any[] = [];
   private listQuery: IState = {
     page: 1,
-    limit: 20,
+    limit: 30,
     endDate: '',
     startDate: ''
   };

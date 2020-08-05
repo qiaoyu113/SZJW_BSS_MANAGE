@@ -544,7 +544,7 @@ export default class extends Vue {
     startDate: '',
     endDate: '',
     page: 1,
-    limit: 20
+    limit: 30
   };
 
   private dropdownList: any[] = [
