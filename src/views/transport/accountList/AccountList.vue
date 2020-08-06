@@ -20,7 +20,7 @@
           <el-button
             type="primary"
             :class="isPC ? '' : 'btnMobile'"
-            name="AccountList_query_btn"
+            name="accountlist_query_btn"
             size="small"
             @click="handleQueryClick"
           >
@@ -28,7 +28,7 @@
           </el-button>
           <el-button
             :class="isPC ? '' : 'btnMobile'"
-            name="AccountList_reset_btn"
+            name="accountlist_reset_btn"
             size="small"
             @click="handleResetClick"
           >
@@ -45,18 +45,23 @@
       <el-dropdown
         :hide-on-click="false"
         trigger="click"
+        name="accountlist_tableMenu_dropdown"
       >
         <el-button
+          :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
           type="primary"
           size="small"
-          style="margin-left:10px"
-          name="driverclue_column_btn"
+          name="accountlist_columnstatus_btn"
         >
           <i
             class="el-icon-s-operation"
           />
+          <span v-if="isPC">筛选</span>
         </el-button>
-        <el-dropdown-menu slot="dropdown">
+        <el-dropdown-menu
+          slot="dropdown"
+          name="transportlist_tableMenuItem_dropdown"
+        >
           <el-checkbox-group v-model="checkList">
             <el-dropdown-item
               v-for="item in dropdownList"
@@ -202,18 +207,20 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 2,
-      key: 'city',
+      key: 'workCity',
       label: '工作城市',
       tagAttrs: {
-        placeholder: '请选择工作城市'
+        placeholder: '请选择工作城市',
+        name: 'accountlist_chooseCity_select'
       }
     },
     {
       type: 1,
-      key: 'code',
+      key: 'driverId',
       label: '司机编号',
       tagAttrs: {
-        placeholder: '请输入司机编号'
+        placeholder: '请输入司机编号',
+        name: 'accountlist_chooseDriverId_input'
       }
     },
     {
@@ -221,7 +228,8 @@ export default class extends Vue {
       key: 'name',
       label: '姓名',
       tagAttrs: {
-        placeholder: '请输入姓名'
+        placeholder: '请输入姓名',
+        name: 'accountlist_chooseName_input'
       }
     },
     {
@@ -229,62 +237,48 @@ export default class extends Vue {
       key: 'phone',
       label: '手机号',
       tagAttrs: {
-        placeholder: '请输入手机号'
+        placeholder: '请输入手机号',
+        name: 'accountlist_choosePhone_input'
       }
     },
     {
       type: 2,
-      key: 'line',
+      key: 'busiType',
       label: '业务线',
       tagAttrs: {
-        placeholder: '请选择业务线'
+        placeholder: '请选择业务线',
+        name: 'accountlist_chooseBusiType_input'
       },
       options: [
         {
-          label: '专车',
-          value: 'car1'
+          label: '梧桐专车',
+          value: '0'
         },
         {
-          label: '共享',
-          value: 'share1'
+          label: '梧桐共享',
+          value: '1'
         }
       ]
     },
     {
       type: 2,
-      key: 'group',
+      key: 'gmGroup',
       label: '加盟小组',
       tagAttrs: {
-        placeholder: '请选择加盟小组'
+        placeholder: '请选择加盟小组',
+        name: 'accountlist_chooseGmGroup_select'
       },
-      options: [
-        {
-          label: '专车',
-          value: 'car2'
-        },
-        {
-          label: '共享',
-          value: 'share2'
-        }
-      ]
+      options: []
     },
     {
       type: 2,
-      key: 'manager',
+      key: 'gmId',
       label: '加盟经理',
       tagAttrs: {
-        placeholder: '请选择加盟经理'
+        placeholder: '请选择加盟经理',
+        name: 'accountlist_chooseGmId_select'
       },
-      options: [
-        {
-          label: '专车',
-          value: 'car3'
-        },
-        {
-          label: '共享',
-          value: 'share3'
-        }
-      ]
+      options: []
     },
     {
       type: 4,
@@ -370,11 +364,11 @@ export default class extends Vue {
 
   private tableData:any[] = [
     {
-      a: '121313123131',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
+      driverId: '121313123131',
+      driverName: 'tom',
+      phone: '15021578502',
+      busiType: '共享',
+      workCity: '北京市',
       f: '待跟进',
       g: '面试转化',
       h: '王利',
@@ -385,11 +379,11 @@ export default class extends Vue {
       status: 1
     },
     {
-      a: '121313123132',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
+      driverId: '121313123132',
+      driverName: 'tom',
+      phone: '15021578502',
+      busiType: '共享',
+      workCity: '北京市',
       f: '已跟进',
       g: '面试转化',
       h: '王利1',
@@ -400,11 +394,11 @@ export default class extends Vue {
       status: 2
     },
     {
-      a: '121313123133',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
+      driverId: '121313123131',
+      driverName: 'tom',
+      phone: '15021578502',
+      busiType: '共享',
+      workCity: '北京市',
       f: '已成交',
       g: '面试转化',
       h: '王利2',
@@ -415,11 +409,11 @@ export default class extends Vue {
       status: 3
     },
     {
-      a: '121313123134',
-      b: 'tom',
-      c: '15021578502',
-      d: '共享',
-      e: '北京市',
+      driverId: '121313123131',
+      driverName: 'tom',
+      phone: '15021578502',
+      busiType: '共享',
+      workCity: '北京市',
       f: '已放弃',
       g: '面试转化',
       h: '王利3',
@@ -433,27 +427,27 @@ export default class extends Vue {
 
   private columns:any[] = [
     {
-      key: 'a',
+      key: 'driverId',
       label: '司机编号'
     },
     {
-      key: 'b',
+      key: 'driverName',
       label: '司机姓名'
     },
     {
-      key: 'c',
+      key: 'phone',
       label: '手机号'
     },
     {
-      key: 'd',
+      key: 'busiType',
       label: '业务线'
     },
     {
-      key: 'e',
+      key: 'workCity',
       label: '工作城市'
     },
     {
-      key: 'f',
+      key: 'status',
       label: '司机状态'
     },
     {

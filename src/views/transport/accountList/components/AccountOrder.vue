@@ -160,11 +160,15 @@
         <el-button
           type="primary"
           size="small"
+          name="accorderdetail_goOrderDetail_btn"
           @click="goDetail(item.lineId)"
         >
           查看
         </el-button>
-        <el-button size="small">
+        <el-button
+          size="small"
+          name="accorderdetail_goOutPay_btn"
+        >
           退款
         </el-button>
       </div>

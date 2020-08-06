@@ -55,7 +55,8 @@ export default class extends Vue {
         rows: 3,
         maxlength: 100,
         'show-word-limit': true,
-        clearable: true
+        clearable: true,
+        name: 'followClue_changeRemarks_input'
       }
     }
   ]

@@ -207,7 +207,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseName_input'
       }
     },
     {
@@ -216,7 +217,8 @@ export default class extends Vue {
       label: '电话:',
       tagAttrs: {
         placeholder: '电话',
-        clearable: true
+        clearable: true,
+        name: 'interview_choosePhone_input'
       }
     },
     {
@@ -225,7 +227,8 @@ export default class extends Vue {
       label: '工作城市:',
       tagAttrs: {
         placeholder: '工作城市',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseWorkCity_select'
       },
       options: this.workCityOptions
     },
@@ -235,7 +238,8 @@ export default class extends Vue {
       label: '车型:',
       tagAttrs: {
         placeholder: '车型',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseCarType_select'
       },
       options: this.carOptions
     }
