@@ -150,7 +150,10 @@
               label="车牌号"
               prop="plateNo"
             >
-              <el-input v-model="ruleForm.plateNo" />
+              <el-input
+                v-model="ruleForm.plateNo"
+                name="dealform_plateNo_input"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -179,6 +182,7 @@
               <el-select
                 v-model="ruleForm.operationId"
                 filterable
+                name="dealform_operationId_select"
                 placeholder="请输入运营经理"
               >
                 <el-option
@@ -206,6 +210,7 @@
             >
               <el-input
                 v-model="ruleForm.engineNo"
+                name="dealform_engineNo_input"
                 maxlength="50"
               />
             </el-form-item>
@@ -217,6 +222,7 @@
             >
               <el-input
                 v-model="ruleForm.engineInvoiceNo"
+                name="dealform_engineInvoiceNo_input"
                 maxlength="50"
               />
             </el-form-item>
@@ -344,6 +350,7 @@
                         v-model="scope.row.tailgate"
                         v-only-number="{min: 0, max: 1000000, precision: 2}"
                         type="number"
+                        name="dealform_tailgate_input"
                         size="mini"
                         class="edit-cell"
                       />
@@ -366,6 +373,7 @@
               <el-input
                 v-model="ruleForm.financialRebate"
                 v-only-number="{min: 0, precision: 2}"
+                name="dealform_financialRebate_input"
                 type="number"
               />
             </el-form-item>
@@ -376,7 +384,10 @@
               label="保险返利(元)"
               prop="insuranceRebate"
             >
-              <el-input v-model="ruleForm.insuranceRebate" />
+              <el-input
+                v-model="ruleForm.insuranceRebate"
+                name="dealform_insuranceRebate_input"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -385,7 +396,10 @@
               label="上牌返利(元)"
               prop="plateNoRebate"
             >
-              <el-input v-model="ruleForm.plateNoRebate" />
+              <el-input
+                v-model="ruleForm.plateNoRebate"
+                name="dealform_plateNoRebate_input"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
@@ -394,7 +408,10 @@
               label="其他返利(元)"
               prop="otherRebate"
             >
-              <el-input v-model="ruleForm.otherRebate" />
+              <el-input
+                v-model="ruleForm.otherRebate"
+                name="dealform_otherRebate_input"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -414,6 +431,7 @@
               <el-select
                 v-model="ruleForm.gpsSupplier"
                 placeholder="请选择供应商"
+                name="dealform_gpsSupplier_select"
               >
                 <el-option
                   v-for="item in gpsSupplierList"
@@ -433,6 +451,7 @@
               <el-input
                 v-model="ruleForm.gpsDeviceNo"
                 maxlength="50"
+                name="dealform_gpsDeviceNo_input"
               />
             </el-form-item>
           </el-col>
@@ -445,6 +464,7 @@
               <el-input
                 v-model="ruleForm.gpsSimNo"
                 maxlength="50"
+                name="dealform_gpsSimNo_input"
               />
             </el-form-item>
           </el-col>
@@ -455,11 +475,15 @@
         <el-button
           v-loading.fullscreen.lock="fullscreenLoading"
           type="primary"
+          name="dealform_submit_btn"
           @click="submitForm('ruleForm')"
         >
           提交
         </el-button>
-        <el-button @click="resetForm('ruleForm')">
+        <el-button
+          name="dealform_reset_btn"
+          @click="resetForm('ruleForm')"
+        >
           重置
         </el-button>
       </div>

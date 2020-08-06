@@ -95,12 +95,14 @@
                     :class="isPC ? '' : 'btnGroup-m'"
                     :label-width="isPC ? '150px' : '0'"
                     label=""
+                    name="takepicture_cancel_btn"
                   >
                     <el-button @click="showDio = true">
                       取消
                     </el-button>
                     <el-button
                       type="primary"
+                      name="takepicture_cancel_submit"
                       @click="onSubmit"
                     >
                       提交

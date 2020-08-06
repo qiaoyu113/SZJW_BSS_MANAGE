@@ -80,7 +80,7 @@
               :class="isPC ? 'btn-item' : 'btn-item-m'"
               type="primary"
               size="small"
-              name="LineManage_downLoad_btn"
+              name="linemanage_downLoad_btn"
               @click="downLoad"
             >
               <i class="el-icon-download" />
@@ -91,7 +91,7 @@
               :class="isPC ? 'btn-item-right' : 'btn-item-right-m'"
               type="primary"
               size="small"
-              name="LineManage_creat_btn"
+              name="linemanage_create_btn"
               @click="goCreat"
             >
               <i class="el-icon-plus" />
@@ -181,6 +181,7 @@
                   v-if="[3].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/edit']"
                   command="edit"
+                  name="linemanage_edit_dropdown"
                 >
                   <template>
                     编辑
@@ -189,6 +190,7 @@
                 <el-dropdown-item
                   permission="['/v1/line/saveOrUpdatePicture']"
                   command="take"
+                  name="linemanage_take_dropdown"
                 >
                   <template>
                     拍照
@@ -198,6 +200,7 @@
                   v-if="[3].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/manualDeactivate']"
                   command="stopuse"
+                  name="linemanage_stopuse_dropdown"
                 >
                   <template>
                     停用
@@ -207,6 +210,7 @@
                   v-if="[2].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/mountGuard']"
                   command="gowork"
+                  name="linemanage_gowork_dropdown"
                 >
                   <template>
                     上岗
@@ -216,6 +220,7 @@
                   v-if="[2].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/shelfAdjustment']"
                   command="putaway"
+                  name="linemanage_putaway_dropdown"
                 >
                   <template>
                     上架调整
@@ -225,6 +230,7 @@
                   v-if="[2].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/shelveLine']"
                   command="getaway"
+                  name="linemanage_getaway_dropdown"
                 >
                   <template>
                     下架
@@ -234,6 +240,7 @@
                   v-if="[1,2,3,4].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/copy']"
                   command="copy"
+                  name="linemanage_copy_dropdown"
                 >
                   <template>
                     复制
@@ -243,6 +250,7 @@
                   v-if="[1].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/approved']"
                   command="audit"
+                  name="linemanage_audit_dropdown"
                 >
                   <template>
                     审核
@@ -274,6 +282,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/detail']"
                   command="linedetail"
+                  name="linemanage_linedetail_dropdown"
                 >
                   <template>
                     查看线路详情
@@ -282,6 +291,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/pictureDetail']"
                   command="showpic"
+                  name="linemanage_showpic_dropdown"
                 >
                   <template>
                     查看线路照片
@@ -290,6 +300,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/customer/queryLineCustomerList']"
                   command="showtender"
+                  name="linemanage_showtender_dropdown"
                 >
                   <template>
                     查看全部标书
@@ -298,6 +309,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/list']"
                   command="showlog"
+                  name="linemanage_showlog_dropdown"
                 >
                   <template>
                     操作日志
@@ -343,6 +355,7 @@
           <el-input
             v-model="diaUpcarNum"
             type="number"
+            name="linemanage_diaUpcarNum_input"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
           />
@@ -547,7 +560,8 @@ export default class LineManage extends Vue {
       key: 'city',
       label: '工作城市',
       tagAttrs: {
-        placeholder: '请选择工作城市'
+        placeholder: '请选择工作城市',
+        name: 'linemanage_city_select'
       },
       options: []
     },
@@ -557,7 +571,8 @@ export default class LineManage extends Vue {
       label: '线路销售',
       tagAttrs: {
         placeholder: '请选择线路销售',
-        filterable: true
+        filterable: true,
+        name: 'linemanage_lineSaleId_select'
       },
       options: []
     },
@@ -577,7 +592,8 @@ export default class LineManage extends Vue {
       key: 'carType',
       tagAttrs: {
         placeholder: '请选择车型',
-        filterable: true
+        filterable: true,
+        name: 'linemanage_carType_select'
       },
       options: []
     },
@@ -588,6 +604,7 @@ export default class LineManage extends Vue {
       tagAttrs: {
         placeholder: '请输入线路名称',
         clearable: true,
+        name: 'linemanage_lineName_input',
         'fetch-suggestions': this.remoteMethodName
       }
     },
@@ -597,7 +614,8 @@ export default class LineManage extends Vue {
       key: 'lineId',
       tagAttrs: {
         placeholder: '请输入线路编号',
-        clearable: true
+        clearable: true,
+        name: 'linemanage_lineId_input'
       }
     },
     {
@@ -607,7 +625,8 @@ export default class LineManage extends Vue {
       tagAttrs: {
         clearable: true,
         placeholder: '请输入货主名称',
-        'fetch-suggestions': this.remoteMethod
+        'fetch-suggestions': this.remoteMethod,
+        name: 'linemanage_customerName_input'
       }
     },
     {
@@ -630,7 +649,8 @@ export default class LineManage extends Vue {
       label: '是否需要返仓',
       tagAttrs: {
         clearable: true,
-        placeholder: '请选择是否需要返仓'
+        placeholder: '请选择是否需要返仓',
+        name: 'linemanage_returnWarehouse_select'
       },
       options: [
         {
@@ -1095,7 +1115,6 @@ export default class LineManage extends Vue {
       //   params.jobStartDate = parseTime(this.listQuery.jobTime[0], '{h}:{i}')
       //   params.jobEndDate = parseTime(this.listQuery.jobTime[1], '{h}:{i}')
       // }
-      console.log(this.listQuery)
       params.jobEndDate = this.listQuery.jobTime.jobEndDate
       params.jobStartDate = this.listQuery.jobTime.jobStartDate
       const { data: res } = await lineListAll(params)

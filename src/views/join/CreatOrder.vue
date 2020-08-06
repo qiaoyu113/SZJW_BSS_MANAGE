@@ -34,6 +34,7 @@
               remote
               reserve-keyword
               placeholder="请输入司机编号/姓名/手机号"
+              name="creatorder_driverId_select"
               @change="checkDiver"
               @focus="confession"
               @blur="confession"
@@ -80,6 +81,7 @@
               <el-input
                 v-model="ruleForm.driverInfoFORM.idNo"
                 placeholder="请输入身份证号"
+                name="creatorder_idNo_input"
                 maxlength="18"
               />
             </el-form-item>
@@ -136,6 +138,7 @@
                 v-model="ruleForm.cooperationTime"
                 v-only-number="{min: 0, max: 999}"
                 placeholder="合作期限"
+                name="creatorder_cooperationTime_input"
                 type="number"
               />
             </el-form-item>
@@ -152,6 +155,7 @@
                 v-model="ruleForm.incomeGuarantee"
                 v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入收入保障"
+                name="creatorder_incomeGuarantee_input"
                 maxlength="10"
                 type="number"
               />
@@ -166,6 +170,7 @@
                 v-model="ruleForm.rake"
                 v-only-number="{min: 0, max: 100, precision: 1}"
                 placeholder="请输入抽佣比例"
+                name="creatorder_rake_input"
                 type="number"
               />
             </el-form-item>
@@ -179,6 +184,7 @@
                 v-model="ruleForm.goodsAmount"
                 v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入商品金额"
+                name="creatorder_goodsAmount_input"
                 controls-position="right"
                 type="number"
                 @blur="goodBlur"
@@ -237,6 +243,7 @@
               <el-select
                 v-model="ruleForm.supplier"
                 placeholder="请选择租赁公司"
+                name="creatorder_supplier_select"
               >
                 <el-option
                   v-for="item in optionsCompany"
@@ -258,6 +265,7 @@
               <el-select
                 v-model="ruleForm.supplier"
                 placeholder="请选择购车公司"
+                name="creatorder_supplier_select"
               >
                 <el-option
                   v-for="item in optionsCompany"
@@ -280,6 +288,7 @@
               <el-select
                 v-model="ruleForm.cooperationCar"
                 placeholder="请选择合作车型"
+                name="creatorder_cooperationCar_select"
               >
                 <el-option
                   v-for="item in optionsCar"
@@ -302,6 +311,7 @@
               <el-select
                 v-model="ruleForm.cooperationCar"
                 placeholder="请选择合作车型"
+                name="creatorder_cooperationCar_select"
               >
                 <el-option
                   v-for="item in optionsCar2"
@@ -324,6 +334,7 @@
               <el-select
                 v-model="ruleForm.carModel"
                 placeholder="请选择车辆型号"
+                name="creatorder_carModel_select"
               >
                 <el-option
                   v-for="item in optionsCarType"
@@ -344,6 +355,7 @@
             >
               <el-input
                 v-model="ruleForm.plateNo"
+                name="creatorder_plateNo_input"
                 placeholder="请输入车牌号"
                 maxlength="10"
               />
@@ -357,6 +369,7 @@
               <el-input-number
                 v-model="ruleForm.capacityQuota"
                 v-only-number="{min: 0, max: 999}"
+                name="creatorder_capacityQuota_input"
                 class="input-number"
                 :min="1"
                 :max="999"
@@ -409,6 +422,7 @@
               <el-input
                 v-model="payNumber"
                 v-only-number="{min: 0, precision: 2, max: 999999.99}"
+                name="creatorder_payNumber_input"
                 placeholder="请输入支付金额"
                 maxlength="10"
               />
@@ -418,6 +432,7 @@
                 <el-button
                   type="primary"
                   icon="el-icon-plus"
+                  name="creatorder_addMoney_btn"
                   @click="addPayList"
                 >
                   添加金额
@@ -451,6 +466,7 @@
                       type="warning"
                       size="small"
                       plain
+                      name="creatorder_imPay_btn"
                       @click="goBill(scope.row, scope.$index)"
                     >
                       立即支付
@@ -459,6 +475,7 @@
                       v-if="Number(scope.row.status) === 3"
                       type="text"
                       size="small"
+                      name="creatorder_paied_btn"
                       style="color: #67C23A;"
                     >
                       已支付
@@ -474,6 +491,7 @@
                       v-if="Number(scope.row.status) === 3"
                       type="text"
                       size="small"
+                      name="creatorder_look_btn"
                       @click="handleClick(scope.row, scope.$index)"
                     >
                       查看
@@ -482,6 +500,7 @@
                       v-if="Number(scope.row.status) === 1"
                       type="text"
                       size="small"
+                      name="creatorder_delete_btn"
                       @click="delClick(scope.row, scope.$index)"
                     >
                       删除
@@ -502,14 +521,14 @@
       <el-button
         v-loading.fullscreen.lock="fullscreenLoading"
         type="primary"
-        name="CreatLine-btn-creat"
+        name="creatorder_submit_btn"
         @click="submitForm('ruleForm')"
       >
         提交
       </el-button>
       <el-button
         v-if="!id"
-        name="CreatLine-btn-creat"
+        name="creatorder_reset_btn"
         @click="resetForm('ruleForm')"
       >
         重置
@@ -556,6 +575,7 @@
               <el-select
                 v-model="payForm.payType"
                 placeholder="请选择支付方式"
+                name="creatorder_payType_btn"
               >
                 <el-option
                   v-for="item in optionsPay"
@@ -603,6 +623,7 @@
               <el-input
                 v-model="payForm.transactionId"
                 placeholder="请输入流水编号"
+                name="creatorder_transactionId_input"
                 maxlength="50"
                 show-word-limit
               />
@@ -615,6 +636,7 @@
             >
               <el-input
                 v-model="payForm.remarks"
+                name="creatorder_remarks_input"
                 type="textarea"
                 maxlength="150"
                 show-word-limit

@@ -26,7 +26,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
-          name="cluelist_creat_btn"
+          name="dealmanage_export_btn"
           @click="downLoad"
         >
           <i class="el-icon-download" />
@@ -205,6 +205,7 @@
                   <el-dropdown-item
                     v-if="scope.row.isDeliver === 0"
                     v-permission="['/v1/order/orderDeliver/selectOrderInfo']"
+                    name="dealmanage_deliver_btn"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     交付
@@ -212,6 +213,7 @@
                   <el-dropdown-item
                     v-if="scope.row.isDeliver === 1"
                     v-permission="['/v1/order/orderDeliver/orderDeliverDetail']"
+                    name="dealmanage_detail_btn"
                     @click.native="goDetail(scope.row.orderId, 2)"
                   >
                     详情

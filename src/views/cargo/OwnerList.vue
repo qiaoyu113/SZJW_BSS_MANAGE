@@ -254,12 +254,14 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-permission="['/v1/customer/onlyCustomerInfo']"
+                    name="ownerlist_detail_dropdown"
                     @click.native="goDetail(scope.row.customerId)"
                   >
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/v1/customer/edit']"
+                    name="ownerlist_edit_dropdown"
                     @click.native="goClue(scope.row.customerId)"
                   >
                     编辑

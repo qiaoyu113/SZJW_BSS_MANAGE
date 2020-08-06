@@ -342,14 +342,14 @@
     >
       <el-button
         type="primary"
-        name="lineaudit-btn-creat"
+        name="lineaudit_resolve_btn"
         @click="pass"
       >
         审核通过
       </el-button>
       <el-button
         type="primary"
-        name="lineaudit-btn-creat"
+        name="lineaudit_reject_btn"
         @click="auditBack = true"
       >
         审核拒绝

@@ -239,14 +239,14 @@
       <el-button
         v-loading.fullscreen.lock="fullscreenLoading"
         type="success"
-        name="OrderAudit-btn-pass"
+        name="orderaudit-resolve-btn"
         @click="auditPass()"
       >
         审核通过
       </el-button>
       <el-button
         v-loading.fullscreen.lock="fullscreenLoading"
-        name="OrderAudit-btn-nopass"
+        name="orderaudit-reject-btn"
         type="danger"
         @click="auditNoPass()"
       >
