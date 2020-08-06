@@ -18,6 +18,7 @@
         <el-select
           v-model="searchVal"
           placeholder="请选择"
+          name="transportlist_goWork_select"
         >
           <el-option
             v-for="item in searchOptions"
@@ -123,7 +124,8 @@ export default class extends Vue {
       label: '每日配送趟数',
       key: 'plateNo',
       tagAttrs: {
-        placeholder: '请输入车牌号'
+        placeholder: '请输入车牌号',
+        name: 'transportlist_plateNo_input'
       }
     },
     {

@@ -28,6 +28,7 @@
               v-permission="['/v1/base/office/create']"
               circle
               size="mini"
+              name="organizationmanage_appendOffice_btn"
               icon="el-icon-circle-plus-outline"
               @click.stop="
                 () => {
@@ -40,6 +41,7 @@
               v-permission="['/v1/base/office/delete']"
               circle
               size="mini"
+              name="organizationmanage_deleteOffice_btn"
               class="delete"
               icon="el-icon-remove-outline"
               @click.stop="
@@ -54,6 +56,7 @@
               circle
               size="mini"
               icon="el-icon-edit"
+              name="organizationmanage_updateOffice_btn"
               @click.stop="
                 () => {
                   updateOffice(node, data);
@@ -66,6 +69,7 @@
               circle
               size="mini"
               icon="el-icon-top"
+              name="organizationmanage_upOffice_btn"
               @click.stop="
                 () => {
                   upOffice(node, data);
@@ -78,6 +82,7 @@
               circle
               size="mini"
               icon="el-icon-bottom"
+              name="organizationmanage_downOffice_btn"
               @click.stop="
                 () => {
                   downOffice(node, data);
@@ -118,6 +123,7 @@
               v-model="dialogForm.name"
               class="opacity"
               placeholder="请选择"
+              name="organizationmanage_chooseAreaCode1_input"
             />
           </el-form-item>
           <el-tabs
@@ -149,6 +155,7 @@
                   v-model="dialogForm.name"
                   class="opacity"
                   placeholder="请选择"
+                  name="organizationmanage_chooseAreaCode2_input"
                 />
               </el-form-item>
             </el-tab-pane>
@@ -165,6 +172,7 @@
                   v-model="dialogForm.name"
                   placeholder="请输入2-10位中文"
                   maxlength="10"
+                  name="organizationmanage_chooseName1_input"
                 />
               </el-form-item>
             </el-tab-pane>
@@ -179,6 +187,7 @@
               placeholder="请输入2-10位中文"
               maxlength="10"
               clearable
+              name="organizationmanage_chooseName2_input"
             />
           </el-form-item>
         </template>
@@ -202,6 +211,7 @@
               v-model="dialogForm.name"
               class="opacity"
               placeholder="请选择"
+              name="organizationmanage_chooseName3_input"
             />
           </el-form-item>
           <el-form-item
@@ -214,6 +224,7 @@
               placeholder="请输入2-10位中文"
               maxlength="10"
               clearable
+              name="organizationmanage_chooseName4_input"
             />
           </el-form-item>
         </template>

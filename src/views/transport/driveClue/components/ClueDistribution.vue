@@ -52,7 +52,8 @@ export default class extends Vue {
       key: 'userId',
       tagAttrs: {
         placeholder: '请选择跟进人',
-        filterable: true
+        filterable: true,
+        name: 'driverclue_chooseUserId_select'
       },
       options: this.gmOptions
     }

@@ -12,6 +12,7 @@
                     placeholder="请选择"
                     clearable
                     filterable
+                    name="rentcartype_chooseCarType_select"
                   >
                     <el-option
                       v-for="(item, index) in dataTypes.optionsCar"
@@ -27,6 +28,7 @@
                   <el-input
                     v-model="listQuery.supplier"
                     placeholder="请输入供应商"
+                    name="rentcartype_chooseSupplier_input"
                     clearable
                   />
                 </el-form-item>
@@ -36,6 +38,7 @@
                   <el-select
                     v-model="listQuery.city"
                     placeholder="请选择"
+                    name="rentcartype_chooseCity_select"
                     clearable
                   >
                     <el-option
@@ -53,6 +56,7 @@
                     v-model="listQuery.productCode"
                     placeholder="请输入商品编号"
                     clearable
+                    name="rentcartype_chooseProductCoder_input"
                   />
                 </el-form-item>
               </el-col>
@@ -78,6 +82,7 @@
                 <el-button
                   size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  name="rentcartype_reset_btn"
                   @click="resetForm"
                 >
                   重置
@@ -86,6 +91,7 @@
                   size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  name="rentcartype_query_btn"
                   @click="search"
                 >
                   筛选

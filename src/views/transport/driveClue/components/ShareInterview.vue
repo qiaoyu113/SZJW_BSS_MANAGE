@@ -88,7 +88,8 @@ export default class extends Vue {
         rows: 2,
         maxlength: 32,
         'show-word-limit': true,
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseInterviewDistrict_input'
       }
     },
     {
@@ -98,7 +99,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入0-60之间的数字',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseAge_input'
       }
     },
     {
@@ -107,7 +109,8 @@ export default class extends Vue {
       label: '加盟经理:',
       tagAttrs: {
         placeholder: '加盟经理',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseGmId_select'
       },
       options: this.gmOptions
     },
@@ -136,7 +139,8 @@ export default class extends Vue {
         rows: 2,
         maxlength: 32,
         'show-word-limit': true,
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseLiveDistrict_input'
       }
     },
     {
@@ -145,7 +149,8 @@ export default class extends Vue {
       label: '邀约渠道:',
       tagAttrs: {
         placeholder: '邀约渠道',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseSourceChannel_select'
       },
       options: this.sourceOptions
     },
@@ -155,7 +160,8 @@ export default class extends Vue {
       label: '驾照类型:',
       tagAttrs: {
         placeholder: '驾照类型',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseDrivingLicenceType_select'
       },
       options: this.drivingLicenceTypeOptions
     },
@@ -186,7 +192,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '原收入(去油)(元/月)(请输入0-25000之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseOriginIncomeAvg_input'
       }
     },
     {
@@ -197,7 +204,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '期望收入（去油）（元/月） (请输入3000-25000之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseExpIncomeAvg_input'
       }
     },
     {
@@ -208,7 +216,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '从业时间（月） (请输入0-500之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseWorkDuration_input'
       }
     },
     {
@@ -219,7 +228,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '零散活占比（%） (请输入0-100之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseScatteredJobRate_input'
       }
     },
     {

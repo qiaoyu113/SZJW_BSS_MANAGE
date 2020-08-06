@@ -13,6 +13,7 @@
         </div>
         <div class="right">
           <el-dropdown
+            name="followClue_tableMenu_dropdown"
             @command="handleCommandOp"
           >
             <el-button
@@ -21,7 +22,10 @@
             >
               线索操作
             </el-button>
-            <el-dropdown-menu slot="dropdown">
+            <el-dropdown-menu
+              slot="dropdown"
+              name="followClue_tableMenuItem_dropdown"
+            >
               <el-dropdown-item command="clueDistribution">
                 分配线索
               </el-dropdown-item>
@@ -108,6 +112,7 @@
         </div>
         <div class="right">
           <el-dropdown
+            name="followClue_tableMenuRight_dropdown"
             @command="handleCommand"
           >
             <el-button
@@ -116,7 +121,10 @@
             >
               线索跟进
             </el-button>
-            <el-dropdown-menu slot="dropdown">
+            <el-dropdown-menu
+              slot="dropdown"
+              name="followClue_tableMenuRightItem_dropdown"
+            >
               <el-dropdown-item :command="1">
                 <el-link
                   :underline="false"

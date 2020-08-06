@@ -51,7 +51,8 @@ export default class extends Vue {
       label: '请选择运营经理',
       tagAttrs: {
         placeholder: '请选择新的运营经理',
-        filterable: true
+        filterable: true,
+        name: 'transportlist_chooseManager_select'
       },
       options: []
     }

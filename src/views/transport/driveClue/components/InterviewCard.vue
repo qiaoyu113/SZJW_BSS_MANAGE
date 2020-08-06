@@ -13,6 +13,7 @@
         <el-button
           type="primary"
           size="small"
+          name="followClue_saveInfo_btn"
           @click="handleBtnClick"
         >
           {{ isAdd ? '填写面试表' :'修改面试表' }}

@@ -404,62 +404,6 @@ export default class extends Vue {
     payCompleteTime: ''
   }
 
-  private formItem:any[] = [
-    {
-      type: 7,
-      key: 'orderId',
-      label: '订单编号:',
-      col: 24,
-      tagAttrs: {
-        style: {
-          fontWeight: 'bold',
-          fontSize: '16px'
-        }
-      }
-    },
-    {
-      type: 7,
-      key: 'busiTypeName',
-      label: '商品分类:'
-    },
-    {
-      type: 7,
-      key: 'cooperationModelName',
-      label: '合作模式:'
-    },
-    {
-      type: 7,
-      key: 'cooperationCarName',
-      label: '合作车型:'
-    },
-    {
-      type: 7,
-      key: 'cooperationTime',
-      label: '合作期限:'
-    },
-    {
-      type: 7,
-      key: 'goodsAmount',
-      label: '订单金额:'
-    },
-    {
-      type: 'payTypeName',
-      label: '支付方式:',
-      slot: true
-    },
-    {
-      type: 'payCompleteTime',
-      label: '支付时间:',
-      slot: true
-    },
-    {
-      slot: true,
-      key: 'driverId',
-      w: '10px',
-      type: 'detail'
-    }
-  ]
-
   private baseObj:any = {
     title: '基本信息',
     carrierId: '',
@@ -495,7 +439,7 @@ export default class extends Vue {
   }
 
   private handleClick(tab:any, event:any) {
-    console.log(tab, event)
+    // console.log(tab, event)
   }
 
   private async carrierDetail() {

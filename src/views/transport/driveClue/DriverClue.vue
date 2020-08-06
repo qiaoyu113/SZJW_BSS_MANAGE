@@ -76,6 +76,7 @@
       <el-dropdown
         :hide-on-click="false"
         trigger="click"
+        name="driverclue_tableMenu_dropdown"
       >
         <el-button
           type="warning"
@@ -88,7 +89,10 @@
           />
           <span v-if="isPC">筛选</span>
         </el-button>
-        <el-dropdown-menu slot="dropdown">
+        <el-dropdown-menu
+          slot="dropdown"
+          name="driverclue_tableMenuItem_dropdown"
+        >
           <el-checkbox-group v-model="checkList">
             <el-dropdown-item
               v-for="item in dropdownList"
@@ -158,6 +162,7 @@
       <template v-slot:op="scope">
         <el-dropdown
           :trigger="isPC ? 'hover' : 'click'"
+          name="driverclue_moreMenu_dropdown"
           @command="(e) => handleCommandChange(e,scope.row)"
         >
           <span
@@ -177,7 +182,10 @@
             <i class="el-icon-setting el-icon--right" />
           </span>
 
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu
+            slot="dropdown"
+            name="driverclue_moreMenuItem_dropdown"
+          >
             <el-dropdown-item
               v-permission="['/v1/driver/clue/clue/edit']"
               command="edit"
@@ -366,7 +374,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'driverclue_chooseName_input'
       },
       label: '姓名',
       key: 'name'
@@ -376,7 +385,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入电话',
         maxlength: 11,
-        clearable: true
+        clearable: true,
+        name: 'driverclue_choosePhone_input'
       },
       label: '电话',
       key: 'phone'
@@ -386,7 +396,8 @@ export default class extends Vue {
       key: 'carType',
       tagAttrs: {
         placeholder: '请选择车型',
-        filterable: true
+        filterable: true,
+        name: 'driverclue_chooseCarType_select'
       },
       label: '车型',
       options: this.carOptions
@@ -395,7 +406,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择来源渠道',
-        filterable: true
+        filterable: true,
+        name: 'driverclue_chooseSourceChannel_select'
       },
       label: '来源渠道',
       key: 'sourceChannel',
@@ -405,7 +417,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择工作城市',
-        filterable: true
+        filterable: true,
+        name: 'driverclue_chooseWorkCity_select'
       },
       label: '工作城市',
       key: 'workCity',
@@ -415,7 +428,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择跟进人',
-        filterable: true
+        filterable: true,
+        name: 'driverclue_chooseGmId_select'
       },
       label: '跟进人',
       key: 'gmId',
@@ -424,7 +438,8 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择'
+        placeholder: '请选择',
+        name: 'driverclue_chooseOnlyMe_select'
       },
       label: '只看我的',
       key: 'onlyMe',
@@ -444,7 +459,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入编号',
         maxlength: 14,
-        clearable: true
+        clearable: true,
+        name: 'driverclue_chooseClueId_input'
       },
       label: '编号',
       key: 'clueId'
