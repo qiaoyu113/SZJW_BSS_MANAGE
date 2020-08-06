@@ -9,6 +9,7 @@
                 <el-form-item label="货主编号">
                   <el-input
                     v-model="listQuery.customerId"
+                    name="ownerlist_customerId_input"
                     placeholder="请输入货主编号"
                     clearable
                   />
@@ -18,6 +19,7 @@
                 <el-form-item label="联系人">
                   <el-input
                     v-model="listQuery.bussinessName"
+                    name="ownerlist_bussinessName_input"
                     placeholder="请输入联系人"
                     clearable
                   />
@@ -27,6 +29,7 @@
                 <el-form-item label="联系电话">
                   <el-input
                     v-model="listQuery.bussinessPhone"
+                    name="ownerlist_bussinessPhone_input"
                     placeholder="请输入联系电话"
                     clearable
                   />
@@ -36,6 +39,7 @@
                 <el-form-item label="公司简称">
                   <el-input
                     v-model="listQuery.customerCompanyName"
+                    name="ownerlist_customerCompanyName_input"
                     placeholder="请输入公司简称"
                     clearable
                   />
@@ -45,6 +49,7 @@
                 <el-form-item label="分类">
                   <el-select
                     v-model="listQuery.classification"
+                    name="ownerlist_classification_select"
                     placeholder="请选择分类"
                   >
                     <el-option
@@ -60,6 +65,7 @@
                 <el-form-item label="城市">
                   <el-select
                     v-model="listQuery.city"
+                    name="ownerlist_city_select"
                     placeholder="请选择"
                   >
                     <el-option
@@ -75,6 +81,7 @@
                 <el-form-item label="销售">
                   <el-select
                     v-model="listQuery.lineSaleId"
+                    name="ownerlist_lineSaleId_select"
                     placeholder="请选择"
                     filterable
                   >
@@ -122,6 +129,7 @@
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   size="small"
+                  name="ownerlist_reset_btn"
                   @click="reset"
                 >
                   重置
@@ -130,6 +138,7 @@
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
                   size="small"
+                  name="ownerlist_query_btn"
                   @click="research"
                 >
                   筛选

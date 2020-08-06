@@ -10,9 +10,7 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <SectionContainer
-        title="详情信息"
-      >
+      <SectionContainer title="详情信息">
         <el-row class="detail">
           <SelfItem
             :rule-form="ruleForm"
@@ -25,6 +23,7 @@
                 clearable: true,
                 filterable: true,remote: true,reserveKeyword: true,remoteMethod: remoteMethod,loading: loading,
                 placeholder: '请输入选择货主',filterable: true,
+                name: 'linecopy_customerId_input',
                 disabled: this.$route.path.split('/')[2] === 'creatline' ? false :true
               },
               listeners: {
@@ -36,33 +35,58 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'lineName',type: 1,label: '内部使用线路名称',
-                      tagAttrs: {
-                        placeholder: '名称应具有辨识度',
-                        maxlength: 10,
-                        showWordLimit: true,
-                        clearable: true
-                      }}"
+            :params="{
+              prop: 'lineName',
+              type: 1,
+              label: '内部使用线路名称',
+              tagAttrs: {
+                placeholder: '名称应具有辨识度',
+                maxlength: 10,
+                name: 'linecopy_lineName_input',
+                showWordLimit: true,
+                clearable: true
+              }}"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'deployNo',type: 1,label: '可上车数',kind: 'number',tagAttrs: {placeholder: '请输入可上车数',min: 1,max: 11,clearable: true}}"
-          />
-          <SelfItem
-            :rule-form="ruleForm"
-            :params="{prop: 'lineType',type: 3,label: '线路类型',radio: lineType}"
-          />
-          <SelfItem
-            :rule-form="ruleForm"
-            :params="{prop: 'waitDirveValidity',type: 2,label: '等待上车有效期（天）',tagAttrs: {
-              placeholder: '请输入有效期',
-              'value-format': 'timestamp',
-              'picker-options': {
-                disabledDate(time) {
-                  return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000 )
-                }
+            :params="{
+              prop: 'deployNo',
+              type: 1,
+              label: '可上车数',
+              kind: 'number',
+              tagAttrs: {
+                placeholder: '请输入可上车数',
+                min: 1,
+                max: 11,
+                clearable: true,
+                name: 'linecopy_deployNo_input'
               }
-            }}"
+            }"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{
+              prop: 'lineType',
+              type: 3,
+              label: '线路类型',
+              radio: lineType
+            }"
+          />
+          <SelfItem
+            :rule-form="ruleForm"
+            :params="{
+              prop: 'waitDirveValidity',
+              type: 2,
+              label: '等待上车有效期（天）',
+              tagAttrs: {
+                placeholder: '请输入有效期',
+                'value-format': 'timestamp',
+                'picker-options': {
+                  disabledDate(time) {
+                    return (time.getTime() < Date.now() || time.getTime() > Date.now() + 41 * 86400000 )
+                  }
+                }
+              }}"
           />
 
           <SelfItem
@@ -87,49 +111,110 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'warehouseDistrict',type: 1,label: '仓位置详细地址',tagAttrs: {placeholder: '请输入仓位置详细地址',
-                                                                                    maxlength: 20,
-                                                                                    showWordLimit: true,
-                                                                                    clearable: true}}"
+            :params="{
+              prop: 'warehouseDistrict',
+              type: 1,
+              label: '仓位置详细地址',
+              tagAttrs: {
+                placeholder: '请输入仓位置详细地址',
+                maxlength: 20,
+                showWordLimit: true,
+                clearable: true,
+                name: 'linecopy_warehouseDistrict_input'
+              }
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
             :pccol="16"
-            :params="{prop: 'stabilityRate',type: 3,label: '线路稳定性',radio: linetask}"
+            :params="{
+              prop: 'stabilityRate',
+              type: 3,
+              label: '线路稳定性',
+              radio: linetask
+            }"
           />
           <SelfItem
             :pccol="24"
             :rule-form="ruleForm"
-            :params="{prop: 'remark',type: 1,label: '备注信息/线路描述',kind: 'textarea',tagAttrs: {maxlength:
-              500, row: 6, showWordLimit: true,placeholder: '请输入备注信息或线路描述'}}"
+            :params="{
+              prop: 'remark',
+              type: 1,
+              label: '备注信息/线路描述',
+              kind: 'textarea',
+              tagAttrs: {
+                maxlength: 500,
+                row: 6,
+                showWordLimit: true,
+                name: 'linecopy_remark_input',
+                placeholder: '请输入备注信息或线路描述'
+              }
+            }"
           />
         </el-row>
       </SectionContainer>
-      <SectionContainer
-        title="配送信息"
-      >
+      <SectionContainer title="配送信息">
         <el-row>
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'carType',type: 5,label: '选择车型',placeholder: '请选择车型',options: carType}"
+            :params="{
+              prop: 'carType',
+              type: 5,
+              label: '选择车型',
+              name: 'linecopy_carType_select',
+              placeholder: '请选择车型',
+              options: carType
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'returnWarehouse',type: 3,label: '是否需要返仓',radio: [{label: '是',type: 1},{label: '否',type: 2}]}"
+            :params="{
+              prop: 'returnWarehouse',
+              type: 3,
+              label: '是否需要返仓',
+              radio: [
+                {label: '是',type: 1},
+                {label: '否',type: 2}
+              ]
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'returnBill',type: 3,label: '是否需要回单',radio: [{label: '是',type: 1},{label: '否',type: 2}]}"
+            :params="{
+              prop: 'returnBill',
+              type: 3,
+              label: '是否需要回单',
+              radio: [
+                {label: '是',type: 1},
+                {label: '否',type: 2}
+              ]
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'deliveryNo',type: 1,label: '预计每日平均配送点位数',tagAttrs: {placeholder: '请输入每日平均配送点位数'},kind: 'number'}"
+            :params="{
+              prop: 'deliveryNo',
+              type: 1,
+              label: '预计每日平均配送点位数',tagAttrs: {
+                placeholder: '请输入每日平均配送点位数',
+                name: 'linecopy_deliveryNo_input'
+              },
+              kind: 'number'
+            }"
             :pccol="8"
             :width="200"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'distance',type: 1,label: '预计每日平均总公里数（公里）',tagAttrs: {placeholder: '请输入每日平均总公里数'},kind: 'number'}"
+            :params="{
+              prop: 'distance',
+              type: 1,
+              label: '预计每日平均总公里数（公里）',tagAttrs: {
+                placeholder: '请输入每日平均总公里数',
+                name: 'linecopy_distance_input'
+              },
+              kind: 'number'
+            }"
             :pccol="8"
             :width="240"
           />
@@ -155,119 +240,248 @@
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'districtArea',type: 1,label: '配送区域详细地址',tagAttrs: {placeholder: '请输入配送区域详细地址',
-                                                                                maxlength: 20,
-                                                                                showWordLimit: true,
-                                                                                clearable: true}}"
+            :params="{
+              prop: 'districtArea',
+              type: 1,
+              label: '配送区域详细地址',
+              tagAttrs: {
+                placeholder: '请输入配送区域详细地址',
+                maxlength: 20,
+                showWordLimit: true,
+                clearable: true,
+                name: 'linecopy_districtArea_input'
+              }
+            }"
           />
         </el-row>
       </SectionContainer>
-      <SectionContainer
-        title="结算信息"
-      >
+      <SectionContainer title="结算信息">
         <el-row>
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'dayNo',type: 1,label: '每日配送趟数',tagAttrs: {placeholder: '每日配送趟数不能超过6次',maxlength: 6},kind: 'number'}"
+            :params="{
+              prop: 'dayNo',
+              type: 1,
+              label: '每日配送趟数',
+              tagAttrs: {
+                placeholder: '每日配送趟数不能超过6次',
+                name: 'linecopy_dayNo_input',
+                maxlength: 6
+              },
+              kind: 'number'
+            }"
           />
           <div v-if="ruleForm['dayNo'] > 0">
             <SelfItem
               v-for="(item,idx) in Number(ruleForm['dayNo'])"
               :key="item"
               :rule-form="ruleForm"
-              :params="{prop: `lineDeliveryInfoFORMS${idx}`,type: 7,label: '预计工作时间',placeholder: '请选择时间',tagAttrs: {
-                'picker-options': {
-                  start: '00:00',
-                  step: '00:15',
-                  end: '23:45'
-                }
-              }}"
+              :params="{
+                prop: `lineDeliveryInfoFORMS${idx}`,
+                type: 7,
+                label: '预计工作时间',
+                placeholder: '请选择时间',
+                tagAttrs: {
+                  'picker-options': {
+                    start: '00:00',
+                    step: '00:15',
+                    end: '23:45'
+                  }
+                }}"
             />
           </div>
 
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'monthNo',type: 1,label: '预计月出车天数',tagAttrs: {placeholder: '请输入月出车天数'},kind: 'number'}"
+            :params="{
+              prop: 'monthNo',
+              type: 1,
+              label: '预计月出车天数',
+              tagAttrs: {
+                placeholder: '请输入月出车天数',
+                name: 'linecopy_monthNo_input'
+              },
+              kind: 'number'
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'incomeSettlementMethod',type: 3,label: '结算方式',radio: [{label: '整车',type: 1},{label: '多点配',type: 2}]}"
+            :params="{
+              prop: 'incomeSettlementMethod',
+              type: 3,
+              label: '结算方式',
+              radio: [
+                {label: '整车',type: 1},
+                {label: '多点配',type: 2}
+              ]
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'settlementDays',type: 5,label: '结算天数',tagAttrs: {placeholder: '请输入结算天数'},options: dayOver}"
+            :params="{
+              prop: 'settlementDays',
+              type: 5,
+              label: '结算天数',
+              tagAttrs: {
+                placeholder: '请输入结算天数'
+              },
+              options: dayOver
+            }"
           />
 
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod']"
             :rule-form="ruleForm"
-            :params="{prop: 'shipperOffer',type: 1,label: '预计货主月报价',kind: 'number',tagAttrs: {placeholder: '请输入货主月报价',disabled: NoshipperOffer}}"
+            :params="{
+              prop: 'shipperOffer',
+              type: 1,
+              label: '预计货主月报价',
+              kind: 'number',
+              tagAttrs: {
+                placeholder: '请输入货主月报价',disabled: NoshipperOffer,
+                name: 'linecopy_shipperOffer_input'
+              }
+            }"
           />
 
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 1"
             :rule-form="ruleForm"
-            :params="{prop: 'everyTripGuaranteed',type: 1,label: '货主单趟报价',kind: 'number',tagAttrs: {placeholder: '请输入单趟报价'}}"
+            :params="{
+              prop: 'everyTripGuaranteed',
+              type: 1,
+              label: '货主单趟报价',
+              kind: 'number',
+              tagAttrs: {
+                placeholder: '请输入单趟报价',
+                name: 'linecopy_everyTripGuaranteed_input'
+              }
+            }"
           />
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 2"
             :rule-form="ruleForm"
-            :params="{prop: 'everyTripGuaranteed',type: 1,label: '每趟保底（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟保底'}}"
+            :params="{
+              prop: 'everyTripGuaranteed',
+              type: 1,
+              label: '每趟保底（元）',
+              kind: 'number',
+              tagAttrs: {
+                placeholder: '请输入每趟保底',
+                name: 'linecopy_everyTripGuaranteed_input'
+              }
+            }"
           />
           <SelfItem
             v-if="ruleForm['incomeSettlementMethod'] === 2"
             :rule-form="ruleForm"
-            :params="{prop: 'everyUnitPrice',type: 1,label: '每趟提成单价（元）',kind: 'number',tagAttrs: {placeholder: '请输入每趟提成',type: number}}"
+            :params="{
+              prop: 'everyUnitPrice',
+              type: 1,
+              label: '每趟提成单价（元）',
+              kind: 'number',
+              tagAttrs: {
+                placeholder: '请输入每趟提成',
+                type: number,
+                name: 'linecopy_everyUnitPrice_input'
+              }
+            }"
           />
           <SelfItem
             :rule-form="ruleForm"
             :pccol="12"
-            :params="{prop: 'settlementCycle',type: 3,label: '结算周期',radio: settlement}"
+            :params="{
+              prop: 'settlementCycle',
+              type: 3,
+              label: '结算周期',
+              radio: settlement
+            }"
           />
           <SelfItem
             v-if="ruleForm['stabilityRate'] >= 3"
             :pccol="16"
             :rule-form="ruleForm"
-            :params="{prop: 'deliveryWeekCycle',type: 6,label: '配送周期',options: WeekCycleList,tagAttrs: {},listeners: {
-              change: checkBoxChange
-            }}"
+            :params="{
+              prop: 'deliveryWeekCycle',
+              type: 6,
+              label: '配送周期',
+              options: WeekCycleList,
+              tagAttrs: {
+
+              },
+              listeners: {
+                change: checkBoxChange
+              }
+            }"
           />
         </el-row>
       </SectionContainer>
-      <SectionContainer
-        title="货物信息"
-      >
+      <SectionContainer title="货物信息">
         <el-row>
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'cargoType',type: 5,label: '货物类型',placeholder: '请选择货物类型',options: goodsType}"
+            :params="{
+              prop: 'cargoType',
+              type: 5,
+              label: '货物类型',
+              placeholder: '请选择货物类型',
+              options: goodsType,
+              tagAttrs: {
+                name: 'linecopy_cargoType_select'
+              }
+            }"
           />
           <SelfItem
             :pccol="12"
             :rule-form="ruleForm"
-            :params="{prop: 'goodsWeight',type: 3,label: '货物总重量',radio: goodsWeight}"
+            :params="{
+              prop: 'goodsWeight',
+              type: 3,
+              label: '货物总重量',
+              radio: goodsWeight
+            }"
           />
           <SelfItem
             :pccol="8"
             :rule-form="ruleForm"
-            :params="{prop: 'carry',type: 3,label: '是否需要搬运',radio: [{label: '是',type: 1},{label: '否',type: 2}]}"
+            :params="{
+              prop: 'carry',
+              type: 3,
+              label: '是否需要搬运',
+              radio: [
+                {label: '是',type: 1},
+                {label: '否',type: 2}
+              ]
+            }"
           />
           <SelfItem
             v-if="ruleForm['carry'] === 1"
             :pccol="12"
             :rule-form="ruleForm"
-            :params="{prop: 'handlingDifficultyDegree',type: 3,label: '装卸难度',radio: difficulty}"
+            :params="{
+              prop: 'handlingDifficultyDegree',type: 3,
+              label: '装卸难度',
+              radio: difficulty
+            }"
           />
         </el-row>
       </SectionContainer>
-      <SectionContainer
-        title="线路角色"
-      >
+      <SectionContainer title="线路角色">
         <el-row>
           <SelfItem
             :rule-form="ruleForm"
-            :params="{prop: 'lineSaleId',type: 5,label: '所属销售',
-                      tagAttrs: {placeholder: '请选择所属销售',disabled: true,filterable: true},options: optionsSale}"
+            :params="{
+              prop: 'lineSaleId',
+              type: 5,
+              label: '所属销售',
+              tagAttrs: {
+                placeholder: '请选择所属销售',
+                disabled: true,
+                filterable: true,
+                name: 'linecopy_lineSaleId_select'
+              },
+              options: optionsSale
+            }"
           />
           <!-- <SelfItem
             :rule-form="ruleForm"
@@ -285,7 +499,7 @@
           v-if="pageStatus === 1"
           type="primary"
           size="small"
-          name="CreatLine-btn-creat"
+          name="linecopy_create_btn"
           @click="submitForm('ruleForm')"
         >
           立即创建
@@ -294,7 +508,7 @@
           v-if="pageStatus === 2"
           size="small"
           type="primary"
-          name="CreatLine-btn-creat"
+          name="linecopy_againSubmit_btn"
           @click="againForm('ruleForm')"
         >
           重新提交
@@ -303,7 +517,7 @@
           v-if="pageStatus === 3"
           size="small"
           type="primary"
-          name="CreatLine-btn-creat"
+          name="linecopy_submit_btn"
           @click="copyForm('ruleForm')"
         >
           提交
@@ -311,7 +525,7 @@
 
         <el-button
           size="small"
-          name="CreatLine-btn-cancel"
+          name="linecopy_cancel_btn"
           @click="cancelBtn"
         >
           取消
@@ -320,7 +534,7 @@
         <el-button
           v-if="pageStatus === 1"
           size="small"
-          name="CreatLine-btn-reset"
+          name="linecopy_reset_btn"
           @click="resetForm('ruleForm')"
         >
           重置
@@ -417,7 +631,7 @@ export default class CreatLine extends Vue {
     { label: '周六', type: '6' },
     { label: '周日', type: '7' }
   ];
-  private isFirst = true
+  private isFirst = true;
   private ruleForm: IState = {
     addressShow: false,
     // 仓位置
@@ -814,7 +1028,7 @@ export default class CreatLine extends Vue {
       this.ruleForm.deliveryWeekCycle.includes('')
     ) {
       this.ruleForm.deliveryWeekCycle = this.WeekCycleList.map(
-        item => item.type
+        (item) => item.type
       )
     }
   }
@@ -842,7 +1056,9 @@ export default class CreatLine extends Vue {
     (this.$refs[formName] as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         let ruleForm = { ...this.ruleForm }
-        ruleForm.waitDirveValidity = new Date(ruleForm.waitDirveValidity).getTime()
+        ruleForm.waitDirveValidity = new Date(
+          ruleForm.waitDirveValidity
+        ).getTime()
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
         }
@@ -921,7 +1137,9 @@ export default class CreatLine extends Vue {
         if (type === 2) {
           delete ruleForm.createDate
           delete ruleForm.createId
-          ruleForm.waitDirveValidity = new Date(ruleForm.waitDirveValidity).getTime()
+          ruleForm.waitDirveValidity = new Date(
+            ruleForm.waitDirveValidity
+          ).getTime()
         }
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
@@ -1047,7 +1265,9 @@ export default class CreatLine extends Vue {
       let goodsType = datas.type_of_goods.map(function(ele: any) {
         return { value: Number(ele.dictValue), label: ele.dictLabel }
       })
-      let difficulty = datas.handling_difficulty_degree.map(function(ele: any) {
+      let difficulty = datas.handling_difficulty_degree.map(function(
+        ele: any
+      ) {
         return { type: Number(ele.dictValue), label: ele.dictLabel }
       })
 
@@ -1260,24 +1480,24 @@ export default class CreatLine extends Vue {
 
 @media screen and (min-width: 701px) {
   .CreatLine .SelfItem .el-select {
-    width: 100%!important;
+    width: 100% !important;
   }
   .CreatLine .SelfItem .el-input,
   .CreatLine .el-date-editor,
   .CreatLine .el-textarea {
-    width: 100%!important;
+    width: 100% !important;
   }
   .CreatLine .el-cascader {
-    width: 100%!important;
+    width: 100% !important;
   }
 }
 
 @media screen and (max-width: 700px) {
   .CreatLine-m .el-select {
-    width: 100%!important;
+    width: 100% !important;
   }
   .CreatLine-m .el-input {
-    width: 100%!important;
+    width: 100% !important;
   }
 }
 </style>

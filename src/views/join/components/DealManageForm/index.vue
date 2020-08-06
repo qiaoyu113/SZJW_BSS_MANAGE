@@ -9,6 +9,7 @@
                 <el-form-item label="订单编号">
                   <el-input
                     v-model="listQuery.orderId"
+                    name="dealmanage_orderId_input"
                     placeholder="请输入订单编号"
                     clearable
                   />
@@ -18,6 +19,7 @@
                 <el-form-item label="司机姓名">
                   <el-input
                     v-model="listQuery.diverName"
+                    name="dealmanage_diverName_input"
                     placeholder="请输入司机编号/姓名/手机号"
                     clearable
                   />
@@ -27,6 +29,7 @@
                 <el-form-item label="城市">
                   <el-select
                     v-model="listQuery.city"
+                    name="dealmanage_city_select"
                     placeholder="请选择城市"
                   >
                     <el-option
@@ -42,6 +45,7 @@
                 <el-form-item label="加盟经理">
                   <el-select
                     v-model="listQuery.joinManageId"
+                    name="dealmanage_joinManageId_select"
                     filterable
                     placeholder="请选择"
                   >
@@ -75,6 +79,7 @@
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   size="small"
+                  name="dealmanage_reset_btn"
                   @click="reset"
                 >
                   重置
@@ -83,6 +88,7 @@
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   size="small"
                   type="primary"
+                  name="dealmanage_filter_btn"
                   @click="research"
                 >
                   筛选
