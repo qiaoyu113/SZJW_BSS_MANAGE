@@ -20,7 +20,10 @@
       </el-radio-button>
     </el-radio-group>
 
-    <div class="detailBox">
+    <div
+      id="detailBox"
+      class="detailBox"
+    >
       <div v-show="tabVal === '1'">
         <div class="table_center">
           <el-table
