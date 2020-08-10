@@ -5,7 +5,7 @@
         <span class="title_left_border" />
         {{ busiTypeName }}信息
       </dt>
-      <dd>
+      <dd v-if="isShow">
         <self-form
           class="base"
           :list-query="listQuery"
@@ -80,9 +80,9 @@
           </template>
         </self-form>
       </dd>
-      <!-- <dd>
+      <dd v-else>
         <span class="noData">暂无数据</span>
-      </dd> -->
+      </dd>
     </dl>
   </div>
 </template>
@@ -466,17 +466,26 @@ export default class extends Vue {
     }
   ]
 
+  get isShow() {
+    if (this.obj && Object.values(this.obj).length > 0) {
+      return true
+    }
+    return false
+  }
+
   @Watch('busiTypeName')
   onBusiTypeNameChange(val:string) {
-    if (val === '共享') {
-      this.formItem = this.shareItem as any
-      for (let key in this.shareForm) {
-        this.$set(this.listQuery, key, this.obj[key])
-      }
-    } else if (val === '专车') {
-      this.formItem = this.specialItem as any
-      for (let key in this.specialForm) {
-        this.$set(this.listQuery, key, this.obj[key])
+    if (this.isShow) {
+      if (val === '共享') {
+        this.formItem = this.shareItem as any
+        for (let key in this.shareForm) {
+          this.$set(this.listQuery, key, this.obj[key])
+        }
+      } else if (val === '专车') {
+        this.formItem = this.specialItem as any
+        for (let key in this.specialForm) {
+          this.$set(this.listQuery, key, this.obj[key])
+        }
       }
     }
   }

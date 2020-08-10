@@ -190,7 +190,7 @@ export default class extends Vue {
       let { data: res } = await GetDriverDetail(params)
       if (res.success) {
         this.listQuery = res.data.driverInfoFormationVOList[0]
-        this.baseObj = res.data.driverClueInterViewInfoVOList[0]
+        this.baseObj = res.data.driverClueInterViewInfoVOList && res.data.driverClueInterViewInfoVOList[0]
       }
     } catch (err) {
       console.log('get driver detail fail:', err)
