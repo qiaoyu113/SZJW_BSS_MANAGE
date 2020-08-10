@@ -265,7 +265,7 @@
                     取消
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="scope.row.status === 15 && scope.row.payType !== 1"
+                    v-if="scope.row.status === 15 && scope.row.createSource !== 1"
                     v-permission="['/v1/order/orderDetail']"
                     @click.native="goCheck(scope.row.orderId, 1)"
                   >
