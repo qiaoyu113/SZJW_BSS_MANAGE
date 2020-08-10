@@ -3,28 +3,28 @@ import request from '@/utils/request'
 // 创建订单
 export const CreateNewOrder = (params: any) =>
   request({
-    url: '/order/v1/order/createNewOrder',
+    url: '/business_center/v1/order/createNewOrder',
     method: 'post',
     data: params
   })
 // 重新支付订单
 export const RepayOrder = (params: any) =>
   request({
-    url: '/order/v1/order/rePay',
+    url: '/business_center/v1/order/rePay',
     method: 'post',
     data: params
   })
 // 获取订单详情
 export const GetOrderDetail = (params: any) =>
   request({
-    url: '/order/v1/order/orderDetail',
+    url: '/business_center/v1/order/orderDetail',
     method: 'get',
     params
   })
 // 详情日志
 export const GetOrderLog = (params: any) =>
   request({
-    url: '/order/v1/order/getOrderStatusLogById',
+    url: '/business_center/v1/order/getOrderStatusLogById',
     method: 'get',
     params
   })
@@ -53,21 +53,21 @@ export const GetContractDetail = (params: any) =>
 // 交付详情
 export const GetOrderDeliverDetail = (params: any) =>
   request({
-    url: '/order/v1/order/orderDeliver/orderDeliverDetail',
+    url: '/business_center/v1/order/orderDeliver/orderDeliverDetail',
     method: 'get',
     params
   })
 // 提交交付信息
 export const SubmitOrderDeliver = (params: any) =>
   request({
-    url: '/order/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
+    url: '/business_center/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
     method: 'post',
     data: params
   })
 // 交付详情
 export const SelectOrderInfo = (params: any) =>
   request({
-    url: '/order/v1/order/orderDeliver/selectOrderInfo',
+    url: '/business_center/v1/order/orderDeliver/selectOrderInfo',
     method: 'get',
     params
   })
@@ -131,14 +131,14 @@ export const GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel = (pa
 // 激活
 export const ActiveContract = (params: any) =>
   request({
-    url: '/order/v1/order/contract/activeContract',
+    url: '/business_center/v1/order/contract/activeContract',
     method: 'get',
     params
   })
 // 下载合同
 export const DownloadContract = (params: any) =>
   request({
-    url: '/order/v1/order/contract/downloadContract',
+    url: '/business_center/v1/order/contract/downloadContract',
     method: 'get',
     params
   })
@@ -152,21 +152,21 @@ export const GetOrderInfoList = (params: any) =>
 // 取消订单
 export const CancelOrder = (params: any) =>
   request({
-    url: '/order/v1/order/cancelOrder',
+    url: '/business_center/v1/order/cancelOrder',
     method: 'post',
     data: params
   })
 // 订单审核
 export const PostAuditOrder = (params: any) =>
   request({
-    url: '/order/v1/order/auditOrder',
+    url: '/business_center/v1/order/auditOrder',
     method: 'post',
     data: params
   })
 // 订单确认
 export const PostConfirmOrder = (params: any) =>
   request({
-    url: '/order/v1/order/confirmOrder',
+    url: '/business_center/v1/order/confirmOrder',
     method: 'post',
     data: params
   })
@@ -181,7 +181,7 @@ export const GetDelieverList = (params: any) =>
 // 交付列表
 export const GetOperManagerListByUserId = (params: any) =>
   request({
-    url: '/order/v1/order/deliever/getDelieverList',
+    url: '/business_center/v1/order/deliever/getDelieverList',
     method: 'post',
     data: params
   })
