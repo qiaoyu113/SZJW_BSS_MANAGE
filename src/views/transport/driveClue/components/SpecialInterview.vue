@@ -91,7 +91,8 @@ export default class extends Vue {
         label: '加盟经理:',
         tagAttrs: {
           placeholder: '加盟经理',
-          filterable: true
+          filterable: true,
+          name: 'interview_chooseGmId_select'
         },
         options: this.gmOptions
       },
@@ -101,7 +102,8 @@ export default class extends Vue {
         label: '邀约方式:',
         tagAttrs: {
           placeholder: '邀约方式',
-          filterable: true
+          filterable: true,
+          name: 'interview_chooseInviteType_select'
         },
         options: this.inviteTypeOptions
       },
@@ -111,7 +113,8 @@ export default class extends Vue {
         label: '来源渠道:',
         tagAttrs: {
           placeholder: '来源渠道',
-          filterable: true
+          filterable: true,
+          name: 'interview_chooseSourceChannel_select'
         },
         options: this.sourceOptions
       },
@@ -126,7 +129,8 @@ export default class extends Vue {
           rows: 2,
           maxlength: 30,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseWhereKnow_input'
         }
       },
       {
@@ -136,7 +140,8 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '重代理姓名',
           maxlength: 10,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseHeavyAgentName_input'
         }
       },
       {
@@ -146,7 +151,8 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '请输入0-60之间的数字',
           type: 'number',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseAge_input'
         }
       },
       {
@@ -175,7 +181,8 @@ export default class extends Vue {
           rows: 2,
           maxlength: 32,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseLiveDistrict_input'
         }
       },
       {
@@ -205,7 +212,8 @@ export default class extends Vue {
           rows: 2,
           maxlength: 32,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseIntentWorkDistrict_input'
         }
       },
       {
@@ -256,7 +264,8 @@ export default class extends Vue {
         tagAttrs: {
           type: 'number',
           placeholder: '请输入3000-25000之间的数字',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseExpIncomeAvg_input'
         }
       },
       {
@@ -300,7 +309,8 @@ export default class extends Vue {
           rows: 2,
           maxlength: 32,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseHouseholdDistrict_input'
         }
       },
       {
@@ -333,7 +343,8 @@ export default class extends Vue {
         w: '150px',
         tagAttrs: {
           placeholder: '请输入0-500之间的数字',
-          type: 'number'
+          type: 'number',
+          name: 'interview_chooseExperience_input'
         }
       },
       {
@@ -344,7 +355,8 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '请输入0-500之间的数字',
           type: 'number',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseDrivingAge_input'
         }
       },
       {
@@ -355,14 +367,18 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '请输入0-730之间的数字',
           type: 'number',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseLivingAge_input'
         }
       },
       {
         type: 2,
         key: 'drivingLicenceType',
         label: '驾照类型',
-        options: this.drivingLicenceTypeOptions
+        options: this.drivingLicenceTypeOptions,
+        tagAttrs: {
+          name: 'interview_chooseDrivingLicenceType_select'
+        }
       },
       {
         type: 2,
@@ -370,6 +386,9 @@ export default class extends Vue {
         label: '是否有自己的货车',
         w: '150px',
         col: 8,
+        tagAttrs: {
+          name: 'interview_chooseHasOwnCar_select'
+        },
         options: [
           {
             label: '有',
@@ -386,14 +405,20 @@ export default class extends Vue {
         key: 'ownCarNum',
         w: '0px',
         col: 4,
-        options: this.carNumOptions
+        options: this.carNumOptions,
+        tagAttrs: {
+          name: 'interview_chooseOwnCarNum_select'
+        }
       },
       {
         type: 2,
         key: 'maxAdvancePayment',
         label: '最大可支付首付款',
         w: '150px',
-        options: this.maxAdvancePaymentOptions
+        options: this.maxAdvancePaymentOptions,
+        tagAttrs: {
+          name: 'interview_chooseMaxAdvancePayment_select'
+        }
       },
       {
         type: 4,
@@ -431,21 +456,30 @@ export default class extends Vue {
         type: 2,
         key: 'strategyRight',
         label: '投资决策权',
-        options: this.strategyRightOptions
+        options: this.strategyRightOptions,
+        tagAttrs: {
+          name: 'interview_chooseStrategyRight_select'
+        }
       },
       {
         type: 2,
         key: 'cooperateFocusPoint',
         label: '如果有机会跟云鸟合作，你看中的是什么',
         w: '280px',
-        options: this.cooperateFocusPointOptions
+        options: this.cooperateFocusPointOptions,
+        tagAttrs: {
+          name: 'interview_chooseCooperateFocusPoint_select'
+        }
       },
       {
         type: 2,
         label: '最终决定你是否与云鸟合作的关键因素是什么?',
         key: 'cooperateKeyFactor',
         w: '330px',
-        options: this.cooperateKeyFactorOptions
+        options: this.cooperateKeyFactorOptions,
+        tagAttrs: {
+          name: 'interview_chooseCooperateKeyFactor_select'
+        }
       },
       {
         type: 4,
@@ -472,7 +506,10 @@ export default class extends Vue {
           type: 'textarea',
           maxlength: 100,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          tagAttrs: {
+            name: 'interview_chooseRemarks_input'
+          }
         }
       },
       {

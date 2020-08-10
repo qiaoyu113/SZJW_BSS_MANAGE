@@ -33,6 +33,7 @@
                 v-model="phoneNum"
                 :remote-method="remoteMethod"
                 :loading="loading"
+                name="creattransport_queryDrivder_select"
                 filterable
                 remote
                 reserve-keyword
@@ -96,6 +97,7 @@
             class="nextBtn"
             type="primary"
             style="margin-top:40px"
+            name="creattransport_formNext_btn"
             @click="nextChoose"
           >
             下一步
@@ -300,7 +302,8 @@ export default class extends Vue {
         showWordLimit: true,
         placeholder: '请输入姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'creattransport_transportName_input'
       }
     },
     {
@@ -310,7 +313,8 @@ export default class extends Vue {
       tagAttrs: {
         showWordLimit: true,
         placeholder: '请输入联系方式',
-        maxlength: '11'
+        maxlength: '11',
+        name: 'creattransport_transportPhone_input'
       }
     },
     {
@@ -318,7 +322,8 @@ export default class extends Vue {
       key: 'workCity',
       label: '工作城市',
       tagAttrs: {
-        placeholder: '请选择城市'
+        placeholder: '请选择城市',
+        name: 'creattransport_transportCity_select'
       },
       options: []
     },
@@ -327,7 +332,8 @@ export default class extends Vue {
       label: '车牌号',
       key: 'plateNo',
       tagAttrs: {
-        placeholder: '请输入车牌号'
+        placeholder: '请输入车牌号',
+        name: 'creattransport_transportPlate_input'
       }
     },
     {
@@ -335,7 +341,8 @@ export default class extends Vue {
       key: 'carType',
       label: '车型',
       tagAttrs: {
-        placeholder: '请选择车型'
+        placeholder: '请选择车型',
+        name: 'creattransport_transportCarType_select'
       },
       options: []
     },
@@ -344,7 +351,8 @@ export default class extends Vue {
       key: 'gmId',
       label: '运营经理',
       tagAttrs: {
-        placeholder: '请选择运营经理'
+        placeholder: '请选择运营经理',
+        name: 'creattransport_transportGmId_select'
       },
       options: []
     }
@@ -356,7 +364,8 @@ export default class extends Vue {
       key: 'age',
       tagAttrs: {
         placeholder: '请输入司机年龄',
-        type: 'number'
+        type: 'number',
+        name: 'creattransport_driverAge_input'
       }
     },
     {
@@ -364,7 +373,8 @@ export default class extends Vue {
       key: 'householdType',
       label: '户口类型',
       tagAttrs: {
-        placeholder: '请选择户口类型'
+        placeholder: '请选择户口类型',
+        name: 'creattransport_driverhouseholdType_select'
       },
       options: [
         {
@@ -383,7 +393,8 @@ export default class extends Vue {
       key: 'workExperience',
       tagAttrs: {
         placeholder: '请输入货物运输经验',
-        type: 'number'
+        type: 'number',
+        name: 'creattransport_driverWorkExperience_input'
       }
     },
     {
@@ -406,7 +417,8 @@ export default class extends Vue {
       key: 'cargoType',
       label: '配送货物类型',
       tagAttrs: {
-        placeholder: '请选择配送货物类型'
+        placeholder: '请选择配送货物类型',
+        name: 'creattransport_driverCargoType_select'
       },
       options: []
     },
@@ -415,7 +427,8 @@ export default class extends Vue {
       key: 'expMonthlyIncome',
       label: '期望月收入',
       tagAttrs: {
-        placeholder: '请选择期望月收入'
+        placeholder: '请选择期望月收入',
+        name: 'creattransport_driverExpMonthlyIncome_select'
       },
       options: []
     },
@@ -424,7 +437,8 @@ export default class extends Vue {
       label: '平均月收入',
       key: 'avgMonthlyIncome',
       tagAttrs: {
-        placeholder: '请输入平均月收入'
+        placeholder: '请输入平均月收入',
+        name: 'creattransport_driverAvgMonthlyIncome_input'
       }
     },
     {
@@ -432,7 +446,8 @@ export default class extends Vue {
       key: 'isIndebted',
       label: '是否存在还贷款',
       tagAttrs: {
-        placeholder: '请选择是否存在还贷款'
+        placeholder: '请选择是否存在还贷款',
+        name: 'creattransport_driverIsIndebted_select'
       },
       options: [
         {
@@ -450,7 +465,8 @@ export default class extends Vue {
       key: 'maxWorkTime',
       label: '可接受一天工作时长',
       tagAttrs: {
-        placeholder: '请选择可接受一天工作时长'
+        placeholder: '请选择可接受一天工作时长',
+        name: 'creattransport_driverMaxWorkTime_select'
       },
       options: []
     },
@@ -465,7 +481,8 @@ export default class extends Vue {
         rows: 4,
         maxlength: 100,
         row: 6,
-        showWordLimit: true
+        showWordLimit: true,
+        name: 'creattransport_driverRemarks_input'
       }
     }
   ]

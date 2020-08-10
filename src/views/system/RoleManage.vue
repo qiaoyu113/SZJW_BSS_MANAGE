@@ -11,12 +11,14 @@
           size="small"
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
+          name="rolemanage_create_btn"
           @click="goCreateUser"
         >
           <i class="el-icon-plus" />
           <span v-if="isPC">创建角色</span>
         </el-button>
         <el-dropdown
+          name="rolemanage_tableMenu_dropdown"
           :hide-on-click="false"
           trigger="click"
         >
@@ -24,11 +26,15 @@
             size="small"
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
+            name="rolemanage_query_btn"
           >
             <i class="el-icon-s-operation" />
             <span v-if="isPC">筛选</span>
           </el-button>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu
+            slot="dropdown"
+            name="rolemanage_tableMenuItem_dropdown"
+          >
             <el-checkbox-group v-model="checkList">
               <el-dropdown-item
                 v-for="item in dropdownList"
@@ -89,6 +95,7 @@
             <template slot-scope="{row}">
               <el-dropdown
                 :trigger="isPC ? 'hover' : 'click'"
+                name="rolemanage_moreMenu_dropdown"
               >
                 <span
                   v-if="isPC"
@@ -106,7 +113,10 @@
                 >
                   <i class="el-icon-setting el-icon--right" />
                 </span>
-                <el-dropdown-menu slot="dropdown">
+                <el-dropdown-menu
+                  slot="dropdown"
+                  name="rolemanage_moreMenuItem_dropdown"
+                >
                   <el-dropdown-item
                     v-permission="['/v1/base/role/delete']"
                     @click.native="deleteRole(row)"

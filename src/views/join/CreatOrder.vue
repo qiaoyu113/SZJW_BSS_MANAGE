@@ -725,6 +725,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/Base/SelfItem.vue'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { Timestamp } from '@/utils/index'
+import numeral from 'numeral'
 import '@/styles/common.scss'
 @Component({
   name: 'CreatOrder',
@@ -1019,11 +1020,13 @@ export default class CreatLine extends Vue {
     if (value <= (Number(this.readyPay) + Number(this.notPay))) {
       // this.ruleForm.goodsAmount = Number(this.readyPay) + Number(this.notPay)
       this.orderPrice = Number(this.readyPay) + Number(this.notPay)
-      this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+      this.remain = Number(this.orderPrice) - (Number(this.notPay) + Number(this.readyPay))
     } else {
       this.orderPrice = value
       this.notPay = this.getNotPay()
-      this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+      const orderPrice = numeral(this.orderPrice)
+      const remain = orderPrice.subtract(this.readyPay).subtract(this.notPay).value()
+      this.remain = remain
     }
     if (!this.id) {
       this.payNumber = value
@@ -1180,7 +1183,10 @@ export default class CreatLine extends Vue {
         }
       })
       setTimeout(() => {
-        this.remain = Number(this.orderPrice) - (Number(notReadPay) + this.readyPay)
+        // this.remain = Number(this.orderPrice) - (Number(notReadPay) + this.readyPay)
+        const orderPrice = numeral(this.orderPrice)
+        const remain = orderPrice.subtract(this.readyPay).subtract(this.notPay).value()
+        this.remain = remain
       }, 100)
       this.ruleForm.busiType = this.ruleForm.busiType.toString()
       this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
