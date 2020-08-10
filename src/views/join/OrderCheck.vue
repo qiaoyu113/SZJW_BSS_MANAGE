@@ -180,7 +180,6 @@
                 disabled="disabled"
                 controls-position="right"
                 type="number"
-                @blur="goodBlur"
               />
             </el-form-item>
           </el-col>
@@ -992,6 +991,7 @@ export default class CreatLine extends Vue {
       }, 100)
       this.ruleForm.busiType = this.ruleForm.busiType.toString()
       this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
+      this.ruleForm.cooperationCar = this.ruleForm.cooperationCar.toString()
     } else {
       this.$message.error(data)
     }
