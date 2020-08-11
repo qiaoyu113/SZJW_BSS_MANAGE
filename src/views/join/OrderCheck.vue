@@ -193,7 +193,7 @@
       >
         <el-row class="detail">
           <el-col
-            v-if="Number(ruleForm.busiType) === 0 && ruleForm.cooperationModel === 3"
+            v-if="ruleForm.busiType !== '1' && ruleForm.cooperationModel === '3'"
             :span="isPC ? 6 : 24"
           >
             <el-form-item
@@ -209,7 +209,7 @@
             </el-form-item>
           </el-col>
           <el-col
-            v-if="Number(ruleForm.busiType) === 0 && ruleForm.cooperationModel === 3"
+            v-if="ruleForm.busiType !== '1' && ruleForm.cooperationModel === '3'"
             :span="isPC ? 6 : 24"
           >
             <el-form-item
@@ -348,13 +348,28 @@
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
-            <el-form-item
+            <!-- <el-form-item
               label="运力配额"
               prop="capacityQuota"
             >
               <el-input
                 v-model="ruleForm.capacityQuota"
                 v-only-number="{min: 1, max: 99}"
+                placeholder="请输入运力配额"
+                maxlength="10"
+              />
+            </el-form-item> -->
+            <el-form-item
+              label="运力配额"
+              prop="capacityQuota"
+            >
+              <el-input-number
+                v-model="ruleForm.capacityQuota"
+                v-only-number="{min: 0, max: 999}"
+                name="creatorder_capacityQuota_input"
+                class="input-number"
+                :min="1"
+                :max="999"
                 placeholder="请输入运力配额"
                 maxlength="10"
               />
@@ -703,6 +718,8 @@ export default class CreatLine extends Vue {
   private showMessage:boolean = false
   private showMessageBill:boolean = false
   private fullscreenLoading: Boolean = false
+  private editorsCar: Boolean = false
+  private editorsSupplier: Boolean = false
   private id: any = ''
   private ruleForm:any = {
     'operateFlag': 'creat',
@@ -877,21 +894,51 @@ export default class CreatLine extends Vue {
   @Watch('ruleForm.buyCarCompany', { deep: true })
   private changeCarCompany(value:any) {
     // this.ruleForm.cooperationCar = ''
-    this.getCar()
+    if (value) {
+      // this.getCar()
+    }
   }
 
   @Watch('ruleForm.supplier', { deep: true })
   private changeleaseCarCompany(value:any) {
     // this.ruleForm.cooperationCar = ''
-    this.getCar()
+    if (!this.id) {
+      this.ruleForm.cooperationCar = ''
+    } else {
+      if (this.editorsSupplier) {
+        this.ruleForm.cooperationCar = ''
+      }
+      this.editorsSupplier = true
+    }
+    if (value) {
+      this.getCar()
+    }
   }
 
   @Watch('ruleForm.cooperationCar', { deep: true })
   private changeCooperationCar(value:any) {
-    if (this.ruleForm.cooperationModel === '1') {
-      this.getModelByTypeAndCityAndSupplierAndCarType()
+    // if (this.ruleForm.cooperationModel === '1') {
+    //   this.getModelByTypeAndCityAndSupplierAndCarType()
+    // }
+    // this.getPrice()
+    if (this.ruleForm.cooperationModel === '1' || this.ruleForm.cooperationModel === '2') {
+      if (value) {
+        if (this.id) {
+          if (this.editorsCar) {
+            this.ruleForm.carModel = ''
+          }
+          this.editorsCar = true
+        } else {
+          this.ruleForm.carModel = ''
+        }
+
+        if (this.ruleForm.cooperationModel === '1' && value) {
+          this.getModelByTypeAndCityAndSupplierAndCarType()
+        } else if (this.ruleForm.cooperationModel === '2') {
+          this.getPrice()
+        }
+      }
     }
-    this.getPrice()
   }
 
   @Watch('ruleForm.goodsAmount', { deep: true })
@@ -910,7 +957,7 @@ export default class CreatLine extends Vue {
     const { data } = await GetDictionaryList(['Intentional_compartment', 'busi_type'])
     if (data.success) {
       this.optionsCar2 = data.data.Intentional_compartment
-      this.optionsBusi = data.data.busi_type
+      this.optionsBusi = data.data.busi_type.splice(0, 2)
     } else {
       this.$message.error(data)
     }
@@ -976,6 +1023,10 @@ export default class CreatLine extends Vue {
       let datas = data.data
       this.ruleForm = Object.assign(this.ruleForm, datas)
       this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
+      let str = this.ruleForm.insuranceTime + ' 00:00:00'
+      let str2 = this.ruleForm.inspectionTime + ' 00:00:00'
+      this.ruleForm.insuranceTime = new Date(str.replace(/-/g, '/')).getTime()
+      this.ruleForm.inspectionTime = new Date(str.replace(/-/g, '/')).getTime()
       this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
       this.orderPrice = this.ruleForm.goodsAmount
       let notReadPay = 0

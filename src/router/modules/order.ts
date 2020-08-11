@@ -78,7 +78,7 @@ const orderRouter: RouteConfig = {
         hidden: true,
         apiUrl: 'root',
         title: 'orderCheck',
-        noCache: false
+        noCache: true
       }
     },
     {
