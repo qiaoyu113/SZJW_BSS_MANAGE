@@ -60,7 +60,7 @@ export const GetOrderDeliverDetail = (params: any) =>
 // 提交交付信息
 export const SubmitOrderDeliver = (params: any) =>
   request({
-    url: '/business_center/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
+    url: '/order/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
     method: 'post',
     data: params
   })
