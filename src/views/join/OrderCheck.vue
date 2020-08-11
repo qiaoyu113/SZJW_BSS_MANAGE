@@ -348,13 +348,28 @@
             </el-form-item>
           </el-col>
           <el-col :span="isPC ? 6 : 24">
-            <el-form-item
+            <!-- <el-form-item
               label="运力配额"
               prop="capacityQuota"
             >
               <el-input
                 v-model="ruleForm.capacityQuota"
                 v-only-number="{min: 1, max: 99}"
+                placeholder="请输入运力配额"
+                maxlength="10"
+              />
+            </el-form-item> -->
+            <el-form-item
+              label="运力配额"
+              prop="capacityQuota"
+            >
+              <el-input-number
+                v-model="ruleForm.capacityQuota"
+                v-only-number="{min: 0, max: 999}"
+                name="creatorder_capacityQuota_input"
+                class="input-number"
+                :min="1"
+                :max="999"
                 placeholder="请输入运力配额"
                 maxlength="10"
               />
