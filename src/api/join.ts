@@ -67,7 +67,7 @@ export const SubmitOrderDeliver = (params: any) =>
 // 交付详情
 export const SelectOrderInfo = (params: any) =>
   request({
-    url: '/business_center/v1/order/orderDeliver/selectOrderInfo',
+    url: '/business_center/v1/order/deliever/selectOrderInfo',
     method: 'get',
     params
   })
