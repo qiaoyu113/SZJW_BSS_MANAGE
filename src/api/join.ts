@@ -53,7 +53,7 @@ export const GetContractDetail = (params: any) =>
 // 交付详情
 export const GetOrderDeliverDetail = (params: any) =>
   request({
-    url: '/business_center/v1/order/orderDeliver/orderDeliverDetail',
+    url: '/business_center/v1/order/deliever/orderDeliverDetail',
     method: 'get',
     params
   })

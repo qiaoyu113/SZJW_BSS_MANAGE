@@ -1023,6 +1023,10 @@ export default class CreatLine extends Vue {
       let datas = data.data
       this.ruleForm = Object.assign(this.ruleForm, datas)
       this.ruleForm.driverInfoFORM = this.ruleForm.driverInfoVO
+      let str = this.ruleForm.insuranceTime + ' 00:00:00'
+      let str2 = this.ruleForm.inspectionTime + ' 00:00:00'
+      this.ruleForm.insuranceTime = new Date(str.replace(/-/g, '/')).getTime()
+      this.ruleForm.inspectionTime = new Date(str.replace(/-/g, '/')).getTime()
       this.ruleForm.orderPayRecordInfoFORMList = this.ruleForm.orderPayRecordInfoVOList
       this.orderPrice = this.ruleForm.goodsAmount
       let notReadPay = 0
