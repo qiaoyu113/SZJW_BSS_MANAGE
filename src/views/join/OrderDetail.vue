@@ -323,6 +323,23 @@
                 </template>
               </DetailItem>
             </el-col>
+            <el-col
+              v-if="orderDetail.status === 10"
+              :span="24"
+            >
+              <!-- <DetailItem
+                name="审核通过时间"
+                :value="(orderDetail.driverInfoVO.notPassTime | Timestamp) + (driverInfoVO.driverInfoVO.passName)"
+              /> -->
+              <DetailItem
+                name="订单取消时间"
+                :value="orderDetail.updateDate"
+              >
+                <template>
+                  ({{ orderDetail.createName }})
+                </template>
+              </DetailItem>
+            </el-col>
           </div>
         </el-col>
       </el-row>
