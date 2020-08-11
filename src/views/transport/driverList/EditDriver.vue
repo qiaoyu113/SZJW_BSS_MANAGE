@@ -10,6 +10,7 @@
       :md="true"
     >
       <self-form
+        v-if="listQuery.isShow"
         ref="editDriver"
         :list-query="listQuery"
         :form-item="formItem"
@@ -48,6 +49,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { EditDriverInfo, driverDetailByDriverId } from '@/api/driver'
 import { phoneReg } from '@/utils/index.ts'
+import { GetCityByCode } from '@/api/common'
 
 interface IState {
     [key: string]: any;
@@ -71,8 +73,12 @@ export default class extends Vue {
     email: '',
     remark: '',
     workCity: '',
-    workCityName: ''
+    workCityName: '',
+    liveDistrict: '',
+    home: [],
+    isShow: false
   }
+
   // 表单数组
   private formItem:any[] = [
     {
@@ -121,6 +127,36 @@ export default class extends Vue {
       }
     },
     {
+      type: 8,
+      key: 'home',
+      label: '居住住址:',
+      tagAttrs: {
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'liveProvince',
+        placeholder: '现住址',
+        props: {
+          lazy: true,
+          lazyLoad: this.loadhomeAddress
+        }
+      }
+    },
+    {
+      type: 1,
+      key: 'liveDistrict',
+      label: '详细居住住址:',
+      col: 12,
+      tagAttrs: {
+        placeholder: '现住址详细住址',
+        type: 'textarea',
+        rows: 2,
+        maxlength: 32,
+        'show-word-limit': true,
+        clearable: true,
+        name: 'interview_chooseLiveDistrict_input'
+      }
+    },
+    {
       type: 1,
       key: 'remark',
       label: '备注:',
@@ -145,6 +181,7 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+
   /**
    * 校验手机号
    */
@@ -176,6 +213,7 @@ export default class extends Vue {
       let params = {
         driverId: this.driverId
       }
+
       let { data: res } = await driverDetailByDriverId(params)
       if (res.success) {
         this.listQuery = {
@@ -187,11 +225,17 @@ export default class extends Vue {
             email: res.data.email,
             remark: res.data.remark,
             workCity: res.data.workCity,
-            workCityName: res.data.workCityName
+            workCityName: res.data.workCityName,
+            liveDistrict: res.data.liveDistrict
           }
         }
+        this.listQuery.home.push(res.data.liveProvince + '')
+        this.listQuery.home.push(res.data.liveCity + '')
+        this.listQuery.home.push(res.data.liveCounty + '')
       }
+      this.listQuery.isShow = true
     } catch (err) {
+      this.listQuery.isShow = true
       console.log(`get driver fail:${err}`)
     }
   }
@@ -211,15 +255,65 @@ export default class extends Vue {
   }
 
   /**
+   * 加载城市
+   */
+  async loadCityByCode(params:string[]) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: params.length > 2
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+
+  /**
+   *现住址
+   */
+  async loadhomeAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.loadCityByCode(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  /**
    * 表单验证通过
    */
   async handlePass() {
     try {
-      let params = {
+      let params:any = {
         ...this.listQuery,
         ...{
           driverId: this.driverId
         }
+      }
+      if (params.home && params.home.length > 0) {
+        params.liveProvince = +params.home[0]
+        params.liveCity = +params.home[1]
+        params.liveCounty = +params.home[2]
+        delete params.home
       }
 
       let { data: res } = await EditDriverInfo(params)
