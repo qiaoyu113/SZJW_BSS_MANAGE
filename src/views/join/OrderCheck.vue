@@ -1200,6 +1200,20 @@ export default class CreatLine extends Vue {
         } else {
           this.fullscreenLoading = false
           this.$message.error(data.errorMsg)
+          if (data.errorCode === 650) {
+            this.$confirm('创建订单必须要有司机电子邮箱，请在司机信息中编辑完善！', '提示', {
+              confirmButtonText: '去完善',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$router.push({ name: 'EditDriver', query: { id: this.ruleForm.driverId } })
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消'
+              })
+            })
+          }
         }
       } else {
         this.fullscreenLoading = false
@@ -1405,23 +1419,33 @@ export default class CreatLine extends Vue {
 </style>
 <style lang="scss" scoped>
 @media screen and (min-width: 701px) {
-  .SelfItem .el-select {
-    width: 100%;
+  .OrderCheck{
+    .SelfItem .el-select {
+      width: 100%;
+    }
+    .SelfItem  .el-input, .el-date-editor, .el-textarea {
+      width: 100%;
+    }
+    .el-input{
+      width: 100%;
+    }
+    .el-select {
+      width: 100%;
+    }
+    // .el-cascader{
+    //   width: 100%;
+    // }
   }
-  .SelfItem  .el-input, .el-date-editor, .el-textarea {
-    width: 100%;
-  }
-  // .el-cascader{
-  //   width: 100%;
-  // }
 }
 
 @media screen and (max-width: 700px) {
-  .el-select {
-    width: 100%;
-  }
-  .el-input{
-    width: 100%;
+  .OrderCheck-m{
+    .el-select {
+      width: 100%;
+    }
+    .el-input{
+      width: 100%;
+    }
   }
 }
 </style>

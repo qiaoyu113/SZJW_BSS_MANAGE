@@ -60,7 +60,7 @@ export const GetOrderDeliverDetail = (params: any) =>
 // 提交交付信息
 export const SubmitOrderDeliver = (params: any) =>
   request({
-    url: '/business_center/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
+    url: '/order/v1/order/orderDeliver/submitOrderDeliverCreateCarrier',
     method: 'post',
     data: params
   })
@@ -131,14 +131,14 @@ export const GetPriceAndDescribeByTypeAndCityAndSupplierAndCarTypeAndModel = (pa
 // 激活
 export const ActiveContract = (params: any) =>
   request({
-    url: '/business_center/v1/order/contract/activeContract',
+    url: '/business_center/v1/contract/activeContract',
     method: 'get',
     params
   })
 // 下载合同
 export const DownloadContract = (params: any) =>
   request({
-    url: '/business_center/v1/order/contract/downloadContract',
+    url: '/business_center/v1/contract/downloadContract',
     method: 'get',
     params
   })

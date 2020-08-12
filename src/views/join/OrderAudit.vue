@@ -426,6 +426,20 @@ export default class extends Vue {
         this.$message.success('操作成功，审核通过')
       } else {
         this.$message.error(data.errorMsg)
+        if (data.errorCode === 650) {
+          this.$confirm('创建订单必须要有司机电子邮箱，请在司机信息中编辑完善！', '提示', {
+            confirmButtonText: '去完善',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$router.push({ name: 'EditDriver', query: { id: this.orderDetail.driverId } })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+          })
+        }
       }
     }
 
@@ -452,6 +466,11 @@ export default class extends Vue {
       } else {
         this.fullscreenLoading = false
         this.$message.error(data.errorMsg)
+        if (data.errorCode === 650) {
+          setTimeout(() => {
+            this.$router.push({ name: 'EditDriver', query: { id: this.orderDetail.driverId } })
+          }, 1500)
+        }
       }
     }
 
