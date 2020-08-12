@@ -173,7 +173,8 @@ export default class extends Vue {
       label: '是否工作地车牌:',
       w: '130px',
       tagAttrs: {
-        placeholder: '是否工作地车牌'
+        placeholder: '是否工作地车牌',
+        name: 'interview_isLocalPlate_radio'
       },
       options: [
         {
@@ -239,7 +240,7 @@ export default class extends Vue {
       key: 'isNewEnergy',
       label: '是否新能源:',
       tagAttrs: {
-
+        name: 'interview_isNewEnergy_radio'
       },
       options: [
         {
