@@ -164,6 +164,7 @@ export default class extends Vue {
           'default-checked-keys': true,
           'node-key': 'householdProvince',
           placeholder: '现居住地址',
+          name: 'interview_interviewAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadinterviewAddress
@@ -195,6 +196,7 @@ export default class extends Vue {
           'default-expanded-keys': true,
           'default-checked-keys': true,
           'node-key': 'intentWorkProvince',
+          name: 'interview_intentAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadintentAddress
@@ -223,7 +225,8 @@ export default class extends Vue {
         w: '130px',
         options: this.intentDeliveryModeOptions,
         tagAttrs: {
-          filterable: true
+          filterable: true,
+          name: 'interview_intentDeliveryMode_select'
         }
       },
       {
@@ -232,7 +235,8 @@ export default class extends Vue {
         label: '意向货物类型',
         w: '130px',
         tagAttrs: {
-          filterable: true
+          filterable: true,
+          name: 'interview_intentCargoType_select'
         },
         options: this.intentCargoOptions
       },
@@ -243,7 +247,8 @@ export default class extends Vue {
         w: '140px',
         options: this.intentWorkDurationOptions,
         tagAttrs: {
-          filterable: true
+          filterable: true,
+          name: 'interview_intentWorkDuration_select'
         }
       },
       {
@@ -253,7 +258,8 @@ export default class extends Vue {
         w: '200px',
         tagAttrs: {
           type: 'number',
-          placeholder: '请输入0-25000之间的数字'
+          placeholder: '请输入0-25000之间的数字',
+          name: 'interview_originIncomeAvg_input'
         }
       },
       {
@@ -272,6 +278,9 @@ export default class extends Vue {
         type: 4,
         label: '户籍类型',
         key: 'householdType',
+        tagAttrs: {
+          name: 'interview_householdType_radio'
+        },
         options: [
           {
             label: '农村',
@@ -292,6 +301,7 @@ export default class extends Vue {
           'default-expanded-keys': true,
           'default-checked-keys': true,
           'node-key': 'householdProvince',
+          name: 'interview_houseAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadhouseAddress
@@ -317,6 +327,9 @@ export default class extends Vue {
         label: '子女数',
         key: 'childNum',
         type: 4,
+        tagAttrs: {
+          name: 'interview_childNum_radio'
+        },
         options: [
           {
             value: 0,
@@ -425,6 +438,9 @@ export default class extends Vue {
         key: 'heavyLifting',
         label: '是否能承担较重搬运',
         w: '150px',
+        tagAttrs: {
+          name: 'interview_heavyLifting_radio'
+        },
         options: [
           {
             label: '是',
@@ -441,6 +457,9 @@ export default class extends Vue {
         key: 'providePersonalCredit',
         label: '能否提供个人征信',
         w: '150px',
+        tagAttrs: {
+          name: 'interview_providePersonalCredit_radio'
+        },
         options: [
           {
             label: '是',
@@ -486,6 +505,9 @@ export default class extends Vue {
         key: 'isAdvancedIntention',
         label: '是否是高意向司机',
         w: '150px',
+        tagAttrs: {
+          name: 'interview_isAdvancedIntention_radio'
+        },
         options: [
           {
             label: '是',
@@ -507,9 +529,7 @@ export default class extends Vue {
           maxlength: 100,
           'show-word-limit': true,
           clearable: true,
-          tagAttrs: {
-            name: 'interview_chooseRemarks_input'
-          }
+          name: 'interview_chooseRemarks_input'
         }
       },
       {
@@ -518,7 +538,8 @@ export default class extends Vue {
         label: '是否本地车牌:',
         w: '130px',
         tagAttrs: {
-          placeholder: '是否本地车牌'
+          placeholder: '是否本地车牌',
+          name: 'interview_isLocalPlate_radio'
         },
         options: [
           {

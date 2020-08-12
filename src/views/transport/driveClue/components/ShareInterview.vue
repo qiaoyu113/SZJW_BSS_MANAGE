@@ -71,6 +71,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'interviewProvince',
+        name: 'interview_interviewAddress_input',
         props: {
           lazy: true,
           lazyLoad: this.loadinterviewAddress
@@ -122,6 +123,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'liveProvince',
+        name: 'interview_home_input',
         placeholder: '现住址',
         props: {
           lazy: true,
@@ -171,7 +173,8 @@ export default class extends Vue {
       label: '是否工作地车牌:',
       w: '130px',
       tagAttrs: {
-        placeholder: '是否工作地车牌'
+        placeholder: '是否工作地车牌',
+        name: 'interview_isLocalPlate_radio'
       },
       options: [
         {
@@ -237,7 +240,7 @@ export default class extends Vue {
       key: 'isNewEnergy',
       label: '是否新能源:',
       tagAttrs: {
-
+        name: 'interview_isNewEnergy_radio'
       },
       options: [
         {

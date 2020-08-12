@@ -88,7 +88,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'editDriver_name_input'
       }
     },
     {
@@ -98,7 +99,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入联系方式',
         maxlength: 11,
-        clearable: true
+        clearable: true,
+        name: 'editDriver_phone_input'
       }
     },
     {
@@ -113,7 +115,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入身份证号',
         maxlength: 18,
-        clearable: true
+        clearable: true,
+        name: 'editDriver_idNo_input'
       }
     },
     {
@@ -123,7 +126,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入电子邮箱',
         maxlength: 20,
-        clearable: true
+        clearable: true,
+        name: 'editDriver_email_input'
       }
     },
     {
@@ -135,6 +139,7 @@ export default class extends Vue {
         'default-checked-keys': true,
         'node-key': 'liveProvince',
         placeholder: '现住址',
+        name: 'editDriver_home_input',
         props: {
           lazy: true,
           lazyLoad: this.loadhomeAddress
@@ -153,7 +158,7 @@ export default class extends Vue {
         maxlength: 32,
         'show-word-limit': true,
         clearable: true,
-        name: 'interview_chooseLiveDistrict_input'
+        name: 'editDriver_liveDistrict_input'
       }
     },
     {
@@ -167,7 +172,8 @@ export default class extends Vue {
         type: 'textarea',
         'show-word-limit': true,
         rows: 3,
-        clearable: true
+        clearable: true,
+        name: 'editDriver_remark_input'
       }
     },
     {

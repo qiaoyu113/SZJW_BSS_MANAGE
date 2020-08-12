@@ -637,6 +637,7 @@ export default class LineManage extends Vue {
         ref: 'cascader',
         placeholder: '请输入配送区域',
         clearable: true,
+        name: 'linemanage_houseAddress_input',
         props: {
           lazy: true,
           lazyLoad: this.getLineArea
