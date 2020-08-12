@@ -310,7 +310,8 @@ export default class extends Vue {
       label: '工作城市',
       tagAttrs: {
         placeholder: '请选择工作城市',
-        filterable: true
+        filterable: true,
+        name: 'driverList_workCity_select'
       },
       options: this.workCityOptions
     },
@@ -321,7 +322,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入司机编号',
         maxlength: 32,
-        clearable: true
+        clearable: true,
+        name: 'driverList_driverId_input'
       }
     },
     {
@@ -331,7 +333,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'driverList_name_input'
       }
     },
     {
@@ -341,7 +344,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入手机号',
         maxlength: 11,
-        clearable: true
+        clearable: true,
+        name: 'driverList_phone_input'
       }
     },
     {
@@ -349,7 +353,8 @@ export default class extends Vue {
       key: 'busiType',
       label: '业务线',
       tagAttrs: {
-        placeholder: '请选择业务线'
+        placeholder: '请选择业务线',
+        name: 'driverList_busiType_select'
       },
       options: [
         {
@@ -371,7 +376,8 @@ export default class extends Vue {
       key: 'gmId',
       label: '加盟经理',
       tagAttrs: {
-        placeholder: '请选择加盟经理'
+        placeholder: '请选择加盟经理',
+        name: 'driverList_gmId_select'
       },
       options: this.gmOptions
     },
@@ -380,7 +386,8 @@ export default class extends Vue {
       key: 'sourceChannel',
       label: '司机来源',
       tagAttrs: {
-        placeholder: '请选择司机来源'
+        placeholder: '请选择司机来源',
+        name: 'driverList_sourceChannel_select'
       },
       options: [
         {

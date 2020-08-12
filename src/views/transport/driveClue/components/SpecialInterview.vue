@@ -164,6 +164,7 @@ export default class extends Vue {
           'default-checked-keys': true,
           'node-key': 'householdProvince',
           placeholder: '现居住地址',
+          name: 'interview_interviewAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadinterviewAddress
@@ -195,6 +196,7 @@ export default class extends Vue {
           'default-expanded-keys': true,
           'default-checked-keys': true,
           'node-key': 'intentWorkProvince',
+          name: 'interview_intentAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadintentAddress
@@ -292,6 +294,7 @@ export default class extends Vue {
           'default-expanded-keys': true,
           'default-checked-keys': true,
           'node-key': 'householdProvince',
+          name: 'interview_houseAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadhouseAddress

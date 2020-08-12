@@ -71,6 +71,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'interviewProvince',
+        name: 'interview_interviewAddress_input',
         props: {
           lazy: true,
           lazyLoad: this.loadinterviewAddress
@@ -122,6 +123,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'liveProvince',
+        name: 'interview_home_input',
         placeholder: '现住址',
         props: {
           lazy: true,

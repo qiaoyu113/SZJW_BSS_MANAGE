@@ -55,7 +55,8 @@ export default class extends Vue {
       label: '请选择加盟经理',
       tagAttrs: {
         placeholder: '请选择新的加盟经理',
-        filterable: true
+        filterable: true,
+        name: 'driverlist_gmId_select'
       },
       options: this.gmOptions
     }

@@ -102,6 +102,7 @@
                 'default-expanded-keys': true,
                 'default-checked-keys': true,
                 'node-key': 'warehouseProvince',
+                name: 'linecopy_address_input',
                 props: {
                   lazy: true,
                   lazyLoad: loadAddress
@@ -231,6 +232,7 @@
                 'default-expanded-keys': true,
                 'default-checked-keys': true,
                 'node-key': 'provinceArea',
+                name: 'linecopy_delivery_input',
                 props: {
                   lazy: true,
                   lazyLoad: loadhouseAddress
