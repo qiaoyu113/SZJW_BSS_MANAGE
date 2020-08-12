@@ -249,7 +249,7 @@
                     下载
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="scope.row.status === 2 || scope.row.status === 4"
+                    v-if="scope.row.status === 3"
                     v-permission="['/v1/order/contract/activeContract']"
                     name="contractlist_active_dropdown"
                     @click.native="Activate(scope.row.contractId)"
