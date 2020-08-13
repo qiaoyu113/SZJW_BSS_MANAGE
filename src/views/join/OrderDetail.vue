@@ -326,6 +326,19 @@
               </DetailItem>
             </el-col>
             <el-col
+              v-if="orderDetail.confirmName"
+              :span="24"
+            >
+              <DetailItem
+                name="订单确认时间"
+                :value="orderDetail.confirmTime"
+              >
+                <template>
+                  ({{ orderDetail.confirmName }})
+                </template>
+              </DetailItem>
+            </el-col>
+            <el-col
               v-if="orderDetail.passName"
               :span="24"
             >
@@ -339,19 +352,6 @@
               >
                 <template>
                   ({{ orderDetail.passName }})
-                </template>
-              </DetailItem>
-            </el-col>
-            <el-col
-              v-if="orderDetail.confirmName"
-              :span="24"
-            >
-              <DetailItem
-                name="订单确认时间"
-                :value="orderDetail.confirmTime"
-              >
-                <template>
-                  ({{ orderDetail.confirmName }})
                 </template>
               </DetailItem>
             </el-col>
