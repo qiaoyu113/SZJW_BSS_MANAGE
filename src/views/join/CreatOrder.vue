@@ -546,6 +546,7 @@
       :visible.sync="showMessageBill"
       title="支付"
       :confirm="confirm"
+      @closed="cancel"
     >
       <el-form
         ref="payForm"
@@ -1312,6 +1313,13 @@ export default class CreatLine extends Vue {
         return false
       }
     })
+  }
+
+  // 取消订单
+  private cancel() {
+    this.payForm.payType = ''
+    this.payForm.payImageUrl = '0'
+    this.payForm.payDate = new Date().getTime()
   }
 
   // 搜索司机列表
