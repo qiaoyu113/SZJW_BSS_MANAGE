@@ -99,7 +99,10 @@
               label="商品分类"
               prop="busiType"
             >
-              <el-radio-group v-model="ruleForm.busiType">
+              <el-radio-group
+                v-model="ruleForm.busiType"
+                :disabled="ruleForm.createSource !== 1"
+              >
                 <el-radio
                   v-for="item in optionsBusi"
                   :key="item.dictValue"
@@ -116,7 +119,10 @@
               label="合作模式"
               prop="cooperationModel"
             >
-              <el-radio-group v-model="ruleForm.cooperationModel">
+              <el-radio-group
+                v-model="ruleForm.cooperationModel"
+                :disabled="ruleForm.createSource !== 1"
+              >
                 <el-radio label="1">
                   购车
                 </el-radio>
@@ -187,6 +193,7 @@
                 name="creatorder_goodsAmount_input"
                 controls-position="right"
                 type="number"
+                :disabled="ruleForm.createSource !== 1"
                 @blur="goodBlur"
               />
             </el-form-item>
