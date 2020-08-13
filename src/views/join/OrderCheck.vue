@@ -95,7 +95,10 @@
               label="商品分类"
               prop="busiType"
             >
-              <el-radio-group v-model="ruleForm.busiType">
+              <el-radio-group
+                v-model="ruleForm.busiType"
+                :disabled="ruleForm.createSource !== 1"
+              >
                 <el-radio
                   v-for="item in optionsBusi"
                   :key="item.dictValue"
@@ -112,7 +115,10 @@
               label="合作模式"
               prop="cooperationModel"
             >
-              <el-radio-group v-model="ruleForm.cooperationModel">
+              <el-radio-group
+                v-model="ruleForm.cooperationModel"
+                :disabled="ruleForm.createSource !== 1"
+              >
                 <el-radio label="1">
                   购车
                 </el-radio>
@@ -1200,8 +1206,8 @@ export default class CreatLine extends Vue {
         } else {
           this.fullscreenLoading = false
           this.$message.error(data.errorMsg)
-          if (data.errorCode === 650) {
-            this.$confirm('创建订单必须要有司机电子邮箱，请在司机信息中编辑完善！', '提示', {
+          if (data.errorMsg === '司机信息不完善') {
+            this.$confirm('检测到该司机没有现在居住地址信息，请完善！', '提示', {
               confirmButtonText: '去完善',
               cancelButtonText: '取消',
               type: 'warning'

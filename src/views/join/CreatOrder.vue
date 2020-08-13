@@ -99,7 +99,10 @@
               label="商品分类"
               prop="busiType"
             >
-              <el-radio-group v-model="ruleForm.busiType">
+              <el-radio-group
+                v-model="ruleForm.busiType"
+                :disabled="ruleForm.createSource !== 1 && id"
+              >
                 <el-radio
                   v-for="item in optionsBusi"
                   :key="item.dictValue"
@@ -116,7 +119,10 @@
               label="合作模式"
               prop="cooperationModel"
             >
-              <el-radio-group v-model="ruleForm.cooperationModel">
+              <el-radio-group
+                v-model="ruleForm.cooperationModel"
+                :disabled="ruleForm.createSource !== 1 && id"
+              >
                 <el-radio label="1">
                   购车
                 </el-radio>
@@ -187,6 +193,7 @@
                 name="creatorder_goodsAmount_input"
                 controls-position="right"
                 type="number"
+                :disabled="ruleForm.createSource !== 1 && id"
                 @blur="goodBlur"
               />
             </el-form-item>
@@ -539,6 +546,7 @@
       :visible.sync="showMessageBill"
       title="支付"
       :confirm="confirm"
+      @closed="cancel"
     >
       <el-form
         ref="payForm"
@@ -1305,6 +1313,14 @@ export default class CreatLine extends Vue {
         return false
       }
     })
+  }
+
+  // 取消订单
+  private cancel() {
+    let index = this.orderIndex
+    this.ruleForm.orderPayRecordInfoFORMList[index].payType = ''
+    this.ruleForm.orderPayRecordInfoFORMList[index].payImageUrl = '0'
+    this.ruleForm.orderPayRecordInfoFORMList[index].payDate = ''
   }
 
   // 搜索司机列表
