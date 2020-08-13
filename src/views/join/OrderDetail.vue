@@ -252,13 +252,19 @@
             </div>
           </div>
           <div class="card-box clearfix">
-            <el-col :span="24">
+            <el-col
+              v-if="orderDetail.statusName"
+              :span="24"
+            >
               <DetailItem
                 name="订单状态"
                 :value="orderDetail.statusName"
               />
             </el-col>
-            <el-col :span="24">
+            <el-col
+              v-if="orderDetail.createName"
+              :span="24"
+            >
               <!-- <DetailItem
                 name="订单生成时间"
                 :value="(orderDetail.driverInfoVO.createDate | Timestamp) + (driverInfoVO.driverInfoVO.createName)"
@@ -266,6 +272,19 @@
               <DetailItem
                 name="订单生成时间"
                 :value="orderDetail.createDate"
+              >
+                <template>
+                  ({{ orderDetail.createName }})
+                </template>
+              </DetailItem>
+            </el-col>
+            <el-col
+              v-if="orderDetail.status === 10"
+              :span="24"
+            >
+              <DetailItem
+                name="订单取消时间"
+                :value="orderDetail.updateDate"
               >
                 <template>
                   ({{ orderDetail.createName }})
@@ -320,23 +339,6 @@
               >
                 <template>
                   ({{ orderDetail.passName }})
-                </template>
-              </DetailItem>
-            </el-col>
-            <el-col
-              v-if="orderDetail.createName"
-              :span="24"
-            >
-              <!-- <DetailItem
-                name="审核通过时间"
-                :value="(orderDetail.driverInfoVO.notPassTime | Timestamp) + (driverInfoVO.driverInfoVO.passName)"
-              /> -->
-              <DetailItem
-                name="订单取消时间"
-                :value="orderDetail.updateDate"
-              >
-                <template>
-                  ({{ orderDetail.createName }})
                 </template>
               </DetailItem>
             </el-col>

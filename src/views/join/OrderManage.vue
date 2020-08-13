@@ -267,7 +267,7 @@
                     取消
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="scope.row.status === 15 && scope.row.createSource !== 1"
+                    v-if="scope.row.status === 15"
                     v-permission="['/v1/order/orderDetail']"
                     name="ordermanage_confirm_dropdown"
                     @click.native="goCheck(scope.row.orderId, 1)"
