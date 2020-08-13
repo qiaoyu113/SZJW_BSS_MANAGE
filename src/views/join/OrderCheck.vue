@@ -1206,8 +1206,8 @@ export default class CreatLine extends Vue {
         } else {
           this.fullscreenLoading = false
           this.$message.error(data.errorMsg)
-          if (data.errorCode === 650) {
-            this.$confirm('创建订单必须要有司机电子邮箱，请在司机信息中编辑完善！', '提示', {
+          if (data.errorMsg === '司机信息不完善') {
+            this.$confirm('检测到该司机没有现在居住地址信息，请完善！', '提示', {
               confirmButtonText: '去完善',
               cancelButtonText: '取消',
               type: 'warning'
