@@ -663,16 +663,18 @@ export default class extends Vue {
     // 编辑回显专车表单
     @Watch('obj', { deep: true, immediate: true })
     handleObjChange(val:any) {
-      this.listQuery = { ...this.listQuery, ...val }
-      this.listQuery.interviewAddress.push(val.liveProvince + '')
-      this.listQuery.interviewAddress.push(val.liveCity + '')
-      this.listQuery.interviewAddress.push(val.liveCounty + '')
-      this.listQuery.intentAddress.push(val.intentWorkProvince + '')
-      this.listQuery.intentAddress.push(val.intentWorkCity + '')
-      this.listQuery.intentAddress.push(val.intentWorkCounty + '')
-      this.listQuery.houseAddress.push(val.householdProvince + '')
-      this.listQuery.houseAddress.push(val.householdCity + '')
-      this.listQuery.houseAddress.push(val.householdCounty + '')
+      if (Object.keys(val).length > 0) {
+        this.listQuery = { ...this.listQuery, ...val }
+        this.listQuery.interviewAddress.push(val.liveProvince + '')
+        this.listQuery.interviewAddress.push(val.liveCity + '')
+        this.listQuery.interviewAddress.push(val.liveCounty + '')
+        this.listQuery.intentAddress.push(val.intentWorkProvince + '')
+        this.listQuery.intentAddress.push(val.intentWorkCity + '')
+        this.listQuery.intentAddress.push(val.intentWorkCounty + '')
+        this.listQuery.houseAddress.push(val.householdProvince + '')
+        this.listQuery.houseAddress.push(val.householdCity + '')
+        this.listQuery.houseAddress.push(val.householdCounty + '')
+      }
     }
 
     // 是否有车
