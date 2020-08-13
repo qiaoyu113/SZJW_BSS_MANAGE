@@ -1317,9 +1317,10 @@ export default class CreatLine extends Vue {
 
   // 取消订单
   private cancel() {
-    this.payForm.payType = ''
-    this.payForm.payImageUrl = '0'
-    this.payForm.payDate = new Date().getTime()
+    let index = this.orderIndex
+    this.ruleForm.orderPayRecordInfoFORMList[index].payType = ''
+    this.ruleForm.orderPayRecordInfoFORMList[index].payImageUrl = '0'
+    this.ruleForm.orderPayRecordInfoFORMList[index].payDate = ''
   }
 
   // 搜索司机列表
