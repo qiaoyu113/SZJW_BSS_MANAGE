@@ -101,7 +101,7 @@
             >
               <el-radio-group
                 v-model="ruleForm.busiType"
-                :disabled="ruleForm.createSource !== 1"
+                :disabled="ruleForm.createSource !== 1 && id"
               >
                 <el-radio
                   v-for="item in optionsBusi"
@@ -121,7 +121,7 @@
             >
               <el-radio-group
                 v-model="ruleForm.cooperationModel"
-                :disabled="ruleForm.createSource !== 1"
+                :disabled="ruleForm.createSource !== 1 && id"
               >
                 <el-radio label="1">
                   购车
@@ -193,7 +193,7 @@
                 name="creatorder_goodsAmount_input"
                 controls-position="right"
                 type="number"
-                :disabled="ruleForm.createSource !== 1"
+                :disabled="ruleForm.createSource !== 1 && id"
                 @blur="goodBlur"
               />
             </el-form-item>
