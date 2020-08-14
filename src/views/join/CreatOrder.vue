@@ -1673,6 +1673,9 @@ export default class CreatLine extends Vue {
     .SelfItem  .el-input, .el-date-editor, .el-textarea {
       width: 100%;
     }
+    .el-input{
+      width: 100% !important;
+    }
     // .el-cascader{
     //   width: 100%;
     // }
