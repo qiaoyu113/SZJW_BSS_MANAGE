@@ -546,7 +546,8 @@
       :visible.sync="showMessageBill"
       title="支付"
       :confirm="confirm"
-      @closed="cancel"
+      :before-close="cancel"
+      :cancel="cancel"
     >
       <el-form
         ref="payForm"
@@ -1316,11 +1317,12 @@ export default class CreatLine extends Vue {
   }
 
   // 取消订单
-  private cancel() {
+  private cancel(done: any) {
     let index = this.orderIndex
     this.ruleForm.orderPayRecordInfoFORMList[index].payType = ''
     this.ruleForm.orderPayRecordInfoFORMList[index].payImageUrl = '0'
     this.ruleForm.orderPayRecordInfoFORMList[index].payDate = ''
+    done()
   }
 
   // 搜索司机列表
