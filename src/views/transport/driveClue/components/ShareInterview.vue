@@ -311,14 +311,16 @@ export default class extends Vue {
 
   @Watch('obj', { deep: true, immediate: true })
   handleObjChange(val:any) {
-    this.listQuery = { ...this.listQuery, ...val }
-    this.listQuery.interviewAddress.push(val.interviewProvince + '')
-    this.listQuery.interviewAddress.push(val.interviewCity + '')
-    this.listQuery.interviewAddress.push(val.interviewCounty + '')
-    this.listQuery.home.push(val.liveProvince + '')
-    this.listQuery.home.push(val.liveCity + '')
-    this.listQuery.home.push(val.liveCounty + '')
-    this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
+    if (Object.keys(val).length > 0) {
+      this.listQuery = { ...this.listQuery, ...val }
+      this.listQuery.interviewAddress.push(val.interviewProvince + '')
+      this.listQuery.interviewAddress.push(val.interviewCity + '')
+      this.listQuery.interviewAddress.push(val.interviewCounty + '')
+      this.listQuery.home.push(val.liveProvince + '')
+      this.listQuery.home.push(val.liveCity + '')
+      this.listQuery.home.push(val.liveCounty + '')
+      this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
+    }
   }
 
   @Emit('onFinish')
