@@ -174,7 +174,7 @@
         >
           <DetailItem
             name="每趟提成订单"
-            :value="ruleForm.bussinessName"
+            :value="ruleForm.everyUnitPrice"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
