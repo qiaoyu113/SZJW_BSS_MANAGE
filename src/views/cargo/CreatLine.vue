@@ -1146,6 +1146,7 @@ export default class CreatLine extends Vue {
         if (ruleForm.everyUnitPrice === '') {
           ruleForm.everyUnitPrice = 0
         }
+        ruleForm.lineDeliveryInfoFORMS = []
         for (let i = 0; i < ruleForm.dayNo; i++) {
           ruleForm.lineDeliveryInfoFORMS.push(
             ruleForm['lineDeliveryInfoFORMS' + i]
@@ -1185,6 +1186,11 @@ export default class CreatLine extends Vue {
             return this.$message.error('请检查预计工作时间，不能为空')
           }
         }
+
+        for (let i = 0; i < Number(ruleForm.dayNo); i++) {
+          delete ruleForm['lineDeliveryInfoFORMS' + i]
+        }
+
         if (type === 1) {
           this.createdLine(ruleForm)
         } else {
