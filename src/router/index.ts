@@ -15,6 +15,7 @@ import transportRouter from './modules/transport'
 // import deliveryRouter from './modules/delivery'
 import systemRouter from './modules/system'
 import orderRouter from './modules/order'
+import freightRouter from './modules/freight'
 // import customerRouter from './modules/customer'
 
 Vue.use(Router)
@@ -193,6 +194,7 @@ export const asyncRoutes: RouteConfig[] = [
   orderRouter,
   // deliveryRouter,
   transportRouter,
+  freightRouter,
   systemRouter,
   {
     path: '*',
