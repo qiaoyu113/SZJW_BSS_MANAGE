@@ -317,6 +317,7 @@
           >
             <el-input
               v-model="item.price"
+              v-only-number="{min: 0}"
               placeholder="请输入"
               name="freight_price_input"
               maxlength="10"
@@ -363,7 +364,7 @@
           :closable="false"
         />
         <div
-          v-for="item in freightFormAll.list"
+          v-for="(item, itemindex) in freightFormAll.lists"
           :key="item.id"
           class="freightSelfDialog"
         >
@@ -386,16 +387,18 @@
             :value="item.driverName + '/' + item.driverPhone"
           />
           <div
-            v-for="(i, index) in item.list"
-            :key="index"
+            v-if="item.check"
           >
             <el-form-item
+              v-for="(i, index) in item.list"
+              :key="index"
               :label="`趟数` + (index + 1) + `: ` + i.deliverTime"
-              :prop="'list[' + index + '].price'"
+              :prop="'lists[' + itemindex + '].list.' + index + '.price'"
               :rules="{required: true, message: '请输入金额', trigger: 'blur'}"
             >
               <el-input
                 v-model="i.price"
+                v-only-number="{min: 0}"
                 placeholder="请输入"
                 name="freight_price_input"
                 maxlength="10"
@@ -565,7 +568,7 @@ export default class extends Vue {
       ],
       remark: ''
     };
-    private freightFormAll: any = { list: [
+    private freightFormAll: any = { lists: [
       {
         list: [
           {
@@ -775,7 +778,7 @@ export default class extends Vue {
                 })
               }
             })
-            this.freightFormAll.list = list
+            this.freightFormAll.lists = list
             console.log(list)
             this.assignShowDialog = true
           } else {
@@ -837,10 +840,15 @@ export default class extends Vue {
         if (valid) {
           let moneysArr: any = []
           let wayBillAmountIdsArr: any = []
-          this.freightFormAll.list.forEach((i: any) => {
+          let noCheck: any = []
+          this.freightFormAll.lists.forEach((i: any) => {
             i.list.forEach((element: any) => {
-              moneysArr.push(element.price)
-              wayBillAmountIdsArr.push(element.wayBillId)
+              if (i.check) {
+                moneysArr.push(i.price)
+                wayBillAmountIdsArr.push(i.wayBillId)
+              } else {
+                noCheck.push(i.wayBillId)
+              }
             })
           })
           const { data } = await ReportMoneyBatch({
@@ -850,8 +858,20 @@ export default class extends Vue {
           })
           if (data.success) {
             this.$message.success('提交成功')
-            this.assignShowDialogMin = false
-            done()
+            this.assignShowDialog = false
+            if (noCheck.length) {
+              const { data } = await NoCarBatch({
+                wayBillAmountIds: noCheck
+              })
+              if (data.success) {
+                this.assignShowDialog = false
+                done()
+              } else {
+                this.$message.error(data.errorMsg)
+              }
+            } else {
+              done()
+            }
           } else {
             this.$message.error(data.errorMsg)
           }
@@ -865,7 +885,7 @@ export default class extends Vue {
         confirmButtonText: '确定',
         callback: async action => {
           let wayBillAmountIdsArr: any = []
-          this.freightFormAll.list.forEach((i: any) => {
+          this.freightFormAll.lists.forEach((i: any) => {
             i.list.forEach((element: any) => {
               wayBillAmountIdsArr.push(element.wayBillId)
             })
