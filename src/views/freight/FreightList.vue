@@ -313,7 +313,7 @@
           <el-form-item
             :label="`趟数` + (index + 1) + `: ` + item.deliverTime"
             :prop="'list[' + index + '].price'"
-            :rules="{required: true, message: '请输入金额', trigger: 'blur'}"
+            :rules="{required: true, message: '请输入金额', trigger: 'change'}"
           >
             <el-input
               v-model="item.price"
@@ -352,6 +352,7 @@
       :show-other-button="true"
       :confirm="confirmAssign"
       :other="confirmAssignOther"
+      other-type="danger"
     >
       <el-form
         ref="freightFormAll"
@@ -394,7 +395,7 @@
               :key="index"
               :label="`趟数` + (index + 1) + `: ` + i.deliverTime"
               :prop="'lists[' + itemindex + '].list.' + index + '.price'"
-              :rules="{required: true, message: '请输入金额', trigger: 'blur'}"
+              :rules="{required: true, message: '请输入金额', trigger: 'change'}"
             >
               <el-input
                 v-model="i.price"
@@ -881,7 +882,13 @@ export default class extends Vue {
 
     // 全部未出车
     private confirmAssignOther(done: any) {
-      this.$alert('确定全部' + this.multipleSelection.length + '个出车，全部未出车！', '提示', {
+      let noCheck: any = []
+      this.freightFormAll.lists.forEach((i: any) => {
+        i.list.forEach((element: any) => {
+          noCheck.push(i.wayBillId)
+        })
+      })
+      this.$alert('确定全部' + noCheck.length + '个出车，全部未出车！', '提示', {
         confirmButtonText: '确定',
         callback: async action => {
           let wayBillAmountIdsArr: any = []

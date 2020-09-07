@@ -190,11 +190,16 @@ export const constantRoutes: RouteConfig[] = [
 export const asyncRoutes: RouteConfig[] = [
   // driverRouter,
   // customerRouter,
-  cargoRouter,
-  orderRouter,
+  // 货源中心
+  // cargoRouter,
+  // 加盟中心
+  // orderRouter,
+  // 运力中心
   // deliveryRouter,
-  transportRouter,
+  // transportRouter,
+  // 运费管理
   freightRouter,
+  // 系统管理
   systemRouter,
   {
     path: '*',

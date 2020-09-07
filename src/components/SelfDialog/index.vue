@@ -28,7 +28,7 @@
         </el-button>
         <el-button
           v-if="showOtherButton"
-          type="danger"
+          :type="otherType"
           @click="onOther"
         >
           {{ otherButtonText }}
@@ -63,6 +63,7 @@ export default class extends Vue {
   @Prop({ default: '其他' }) private otherButtonText!: string;
   @Prop({ default: '提示' }) private title!: string;
   @Prop({ default: '' }) private customClass!: string;
+  @Prop({ default: '' }) private otherType!: string;
   @Prop({ default: false }) private cancel!: any;
   @Prop({ default: false }) private other!: any;
   @Prop({ default: false }) private confirm!: any;
@@ -158,6 +159,9 @@ export default class extends Vue {
   .dialog-content-m{
     max-height: 80vh;
     overflow: auto;
+  }
+  .el-button--medium{
+    margin-bottom: 10px;
   }
 }
 </style>
