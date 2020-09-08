@@ -301,7 +301,7 @@ export default class extends Vue {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
-      console.log(`get `)
+      console.log(err)
     }
   }
 

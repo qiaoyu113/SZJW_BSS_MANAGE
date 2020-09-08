@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 let prefix = '/mock/67'
+// let prefix = '/api/waybill_center'
 
 /**
  * 操作日志查询
