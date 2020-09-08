@@ -4,7 +4,7 @@
       <li
         v-for="(item,idx) in lists"
         :key="idx"
-        :class="idx === 0 ? 'borderTop':''"
+        :class="idx !== 0 ? 'borderTop':''"
       >
         <div
           class="left"
@@ -58,6 +58,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
  ul {
     padding-left: 0px;
+    margin:0px;
     .borderTop {
       border-top: 1px solid #ECECEC;
     }
@@ -69,7 +70,6 @@ export default class extends Vue {
         justify-content: space-between;
         align-items: center;
         height:50px;
-        border-bottom: 1px solid #ECECEC;
         .left {
           .tag {
             padding: 3px 6px;
@@ -104,10 +104,9 @@ export default class extends Vue {
 <style scoped lang="scss">
   @media screen and (max-width: 700px){
     li {
-        padding: 10px 0px;
+        padding: 10px 20px;
         display: block;
         width:100%;
-        border-bottom: 1px solid #ECECEC;
         .left {
           display: flex;
           flex-flow: row nowrap;
@@ -149,6 +148,8 @@ export default class extends Vue {
     justify-content: center;
     align-items: center;
     height:100px;
+    color:#666;
+    font-size:13px;
   }
 
 </style>

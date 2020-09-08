@@ -22,6 +22,7 @@
               <el-select
                 v-model="ruleForm.lineSaleId"
                 placeholder="请选择"
+                name="addclue_lineSaleId_select"
                 clearable
                 filterable
                 :disabled="optionsSale.length === 1"
@@ -44,6 +45,7 @@
               <el-select
                 v-model="ruleForm.clueSource"
                 placeholder="请选择"
+                name="addclue_clueSource_select"
                 clearable
               >
                 <el-option
@@ -64,6 +66,7 @@
               <el-input
                 v-model="ruleForm.name"
                 placeholder="请输入"
+                name="addclue_name_input"
                 maxlength="10"
                 clearable
               />
@@ -78,6 +81,7 @@
               <el-input
                 v-model="ruleForm.phone"
                 placeholder="请输入"
+                name="addclue_phone_input"
                 maxlength="11"
                 clearable
               />
@@ -92,6 +96,7 @@
               <el-select
                 v-model="ruleForm.city"
                 placeholder="请选择"
+                name="addclue_city_select"
                 clearable
                 filterable
                 :disabled="optionsCity.length === 1"
@@ -113,6 +118,7 @@
             >
               <el-input
                 v-model="ruleForm.address"
+                name="addclue_address_input"
                 placeholder="请输入"
                 maxlength="50"
                 clearable
@@ -126,6 +132,7 @@
             >
               <el-input
                 v-model="ruleForm.position"
+                name="addclue_position_input"
                 placeholder="请输入"
                 maxlength="20"
                 clearable
@@ -139,6 +146,7 @@
             >
               <el-input
                 v-model="ruleForm.company"
+                name="addclue_company_input"
                 placeholder="请输入"
                 maxlength="20"
                 clearable
@@ -152,6 +160,7 @@
             >
               <el-input
                 v-model="ruleForm.remark"
+                name="addclue_remark_input"
                 type="textarea"
                 :autosize="{minRows: 2, maxRows: 4}"
                 placeholder="请输入"
@@ -201,7 +210,10 @@
                 v-if="index === 0 && ruleForm.lineClueDemandForms.length < 4"
                 class="mb10"
               >
-                <el-button @click="addCar">
+                <el-button
+                  name="addclue_addCarType_btn"
+                  @click="addCar"
+                >
                   添加+
                 </el-button>
               </div>
@@ -211,6 +223,7 @@
                   placeholder="请选择"
                   clearable
                   filterable
+                  :name="`addclue_demandCarType${index}_select`"
                 >
                   <el-option
                     v-for="city in optionsCar"
@@ -224,6 +237,7 @@
                 <el-input
                   v-model="item.demandNo"
                   v-only-number="{min: 1, max: 100}"
+                  :name="`addclue_demandNo${index}_input`"
                   placeholder="请输入车型数量"
                   clearable
                 >
@@ -241,6 +255,7 @@
                   type="danger"
                   icon="el-icon-close"
                   circle
+                  :name="`addclue_remove${index}_btn`"
                   @click="removeCar(index)"
                 />
               </el-col>
@@ -266,6 +281,7 @@
                 ruleForm.lineClueFollowForms.length < 10 &&
                   details.clueState !== 2
               "
+              name="addclue_record_btn"
               @click="addFollow"
             >
               添加跟进记录
@@ -360,11 +376,15 @@
       <div class="btn_box">
         <el-button
           type="primary"
+          name="addclue_submit_btn"
           @click="submitForm('ruleForm')"
         >
           提交
         </el-button>
-        <el-button @click="resetForm('ruleForm')">
+        <el-button
+          name="addclue_reset_btn"
+          @click="resetForm('ruleForm')"
+        >
           重置
         </el-button>
       </div>

@@ -19,6 +19,7 @@
               <el-input
                 v-model="ruleForm.customerCompanyName"
                 placeholder="请输入公司简称"
+                name="conversionclue_customerCompanyName_input"
                 clearable
                 maxlength="20"
               />
@@ -32,6 +33,7 @@
               <el-input
                 v-model="ruleForm.customerCompanyMain"
                 placeholder="请输入公司主体公司"
+                name="conversionclue_customerCompanyMain_input"
                 clearable
                 maxlength="30"
               />
@@ -60,6 +62,7 @@
               <el-select
                 v-model="ruleForm.classification"
                 placeholder="请选择"
+                name="conversionclue_classification_select"
                 clearable
               >
                 <el-option
@@ -79,6 +82,7 @@
               <el-input
                 v-model="ruleForm.bussinessName"
                 placeholder="请输入业务对接人姓名"
+                name="conversionclue_bussinessName_input"
                 clearable
                 maxlength="10"
               />
@@ -92,6 +96,7 @@
               <el-input
                 v-model="ruleForm.bussinessPhone"
                 maxlength="11"
+                name="conversionclue_bussinessPhone_input"
                 clearable
                 placeholder="请输入业务对接人联系电话"
               />
@@ -104,6 +109,7 @@
             >
               <el-input
                 v-model="ruleForm.bussinessPosition"
+                name="conversionclue_bussinessPosition_input"
                 maxlength="20"
                 clearable
                 placeholder="请输入职务"
@@ -117,6 +123,7 @@
             >
               <el-input
                 v-model="ruleForm.bussinessCard"
+                name="conversionclue_bussinessCard_input"
                 maxlength="18"
                 clearable
                 placeholder="请输入业务对接人身份证号"
@@ -130,6 +137,7 @@
             >
               <el-select
                 v-model="ruleForm.city"
+                name="conversionclue_city_select"
                 placeholder="请选择城市"
                 clearable
               >
@@ -150,6 +158,7 @@
               <el-input
                 v-model="ruleForm.address"
                 placeholder="请输入详细地址"
+                name="conversionclue_address_input"
                 clearable
                 maxlength="50"
               />
@@ -187,6 +196,7 @@
               <el-input
                 v-model="ruleForm.remark"
                 type="textarea"
+                name="conversionclue_remark_input"
                 :autosize="{minRows: 2, maxRows: 4}"
                 placeholder="请输入"
                 maxlength="300"
@@ -198,11 +208,15 @@
       <div class="btn_box">
         <el-button
           type="primary"
+          name="conversionclue_submit_input"
           @click="submitForm('ruleForm')"
         >
           提交
         </el-button>
-        <el-button @click="resetForm('ruleForm')">
+        <el-button
+          name="conversionclue_reset_input"
+          @click="resetForm('ruleForm')"
+        >
           重置
         </el-button>
       </div>

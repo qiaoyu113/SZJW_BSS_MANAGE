@@ -1,5 +1,5 @@
 <template>
-  <div class="followDriver">
+  <div :class="isPC ? 'followDriver' : 'followDriver-m'">
     <el-card
       class="baseInfo"
       shadow="never"
@@ -60,6 +60,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import FollowDialog from './components/FollowDialog.vue'
+import { SettingsModule } from '@/store/modules/settings'
 import FollowItem from './components/FollowItem.vue'
 import { DriverFollowFormation } from '@/api/driver'
 interface IState {
@@ -143,6 +144,11 @@ export default class extends Vue {
   // 司机跟进类型
   private type:string = ''
 
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
   /**
    *司机跟进信息
    */
@@ -178,9 +184,32 @@ export default class extends Vue {
   .followDriver {
     .baseInfo {
       margin: 20px;
+      border: none;
+      box-shadow: 4px 4px 10px 0 hsla(0,0%,85.5%,.5);
     }
     .record {
       margin: 20px;
+      border: none;
+      box-shadow: 4px 4px 10px 0 hsla(0,0%,85.5%,.5);
+      .header {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+  }
+</style>
+
+<style lang="scss" scoped>
+  .followDriver-m {
+    .baseInfo {
+      margin: 0;
+      border:none;
+    }
+    .record {
+      margin-top: 4px;
+      border:none;
       .header {
         display: flex;
         flex-flow: row nowrap;
@@ -196,6 +225,23 @@ export default class extends Vue {
     .followDriver >>> .el-card  {
       margin: 0px;
     }
+    .followDriver-m >>> .el-card__body  {
+      padding: 0px;
+    }
+    .followDriver-m >>> ul  {
+      margin: 0px;
+    }
+    .followDriver-m >>> .borderTop{
+      border: none;
+      padding:15px 20px;
+      box-sizing: border-box;
+    }
+    .followDriver-m >>> .el-card__header{
+      border-bottom: 2px solid #f8f9fa;
+    }
+    .followDriver-m >>> .el-form-item{
+      margin-bottom: 0;
+    }
   }
   .followDriver >>> .el-form-item {
     margin-bottom: 0px;
@@ -206,7 +252,20 @@ export default class extends Vue {
     font-size:14px;
     font-weight: 400;
   }
-
+  .followDriver >>> ul  {
+    margin: 0px;
+  }
+  .followDriver >>> .borderTop{
+    border: none;
+    padding:15px 20px;
+    box-sizing: border-box;
+  }
+  .followDriver >>> .el-card__header{
+    border-bottom: 2px solid #f8f9fa;
+  }
+  .followDriver >>> .el-form-item{
+    margin-bottom: 0;
+  }
   .record >>> .el-card__header {
     font-weight: bold;
   }

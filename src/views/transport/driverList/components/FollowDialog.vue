@@ -51,6 +51,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '描述跟进情况(50字以内)',
         type: 'textarea',
+        name: 'followDriver_remarks_input',
         rows: 3,
         maxlength: 50,
         'show-word-limit': true,

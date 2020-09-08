@@ -9,6 +9,7 @@
                 <el-form-item label="线索编号">
                   <el-input
                     v-model="listQuery.clueId"
+                    name="cluelist_clueId_input"
                     placeholder="请输入线索编号"
                     clearable
                   />
@@ -18,6 +19,7 @@
                 <el-form-item label="姓名">
                   <el-input
                     v-model="listQuery.name"
+                    name="cluelist_name_input"
                     placeholder="请输入姓名"
                     clearable
                   />
@@ -27,6 +29,7 @@
                 <el-form-item label="手机号">
                   <el-input
                     v-model="listQuery.phone"
+                    name="cluelist_phone_input"
                     placeholder="请输入手机号"
                     clearable
                   />
@@ -36,6 +39,7 @@
                 <el-form-item label="线索状态">
                   <el-select
                     v-model="listQuery.clueState"
+                    name="cluelist_clueState_select"
                     placeholder="请选择"
                     clearable
                   >
@@ -52,6 +56,7 @@
                 <el-form-item label="线索来源">
                   <el-select
                     v-model="listQuery.clueSource"
+                    name="cluelist_clueSource_select"
                     placeholder="请选择"
                     clearable
                   >
@@ -68,6 +73,7 @@
                 <el-form-item label="城市">
                   <el-select
                     v-model="listQuery.city"
+                    name="cluelist_city_select"
                     placeholder="请选择"
                     clearable
                   >
@@ -84,6 +90,7 @@
                 <el-form-item label="分配状态">
                   <el-select
                     v-model="listQuery.distributionState"
+                    name="cluelist_distributionState_select"
                     placeholder="请选择"
                     clearable
                   >
@@ -100,6 +107,7 @@
                 <el-form-item label="销售">
                   <el-select
                     v-model="listQuery.lineSaleId"
+                    name="cluelist_lineSaleId_select"
                     placeholder="请选择"
                     clearable
                   >
@@ -132,6 +140,7 @@
               >
                 <el-button
                   size="small"
+                  name="cluelist_reset_btn"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   @click="resetForm"
                 >
@@ -139,6 +148,7 @@
                 </el-button>
                 <el-button
                   size="small"
+                  name="cluelist_query_btn"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
                   @click="search"

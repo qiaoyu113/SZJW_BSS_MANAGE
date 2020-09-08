@@ -23,6 +23,7 @@
           type="primary"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
+          name="usermanage_create_btn"
           @click="goCreateUser"
         >
           <i class="el-icon-plus" />
@@ -31,16 +32,21 @@
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
+          name="usermanage_tableMenu_dropdown"
         >
           <el-button
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
             size="small"
+            name="usermanage_query_btn"
           >
             <i class="el-icon-s-operation" />
             <span v-if="isPC">筛选</span>
           </el-button>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu
+            slot="dropdown"
+            name="usermanage_tableMenuItem_dropdown"
+          >
             <el-checkbox-group v-model="checkList">
               <el-dropdown-item
                 v-for="item in dropdownList"
@@ -106,6 +112,7 @@
           >
             <template slot-scope="{row}">
               <el-dropdown
+                name="usermanage_moreMenu_dropdown"
                 :trigger="isPC ? 'hover' : 'click'"
               >
                 <span
@@ -124,7 +131,10 @@
                 >
                   <i class="el-icon-setting el-icon--right" />
                 </span>
-                <el-dropdown-menu slot="dropdown">
+                <el-dropdown-menu
+                  slot="dropdown"
+                  name="usermanage_moreMenuItem_dropdown"
+                >
                   <el-dropdown-item
                     v-permission="['/v1/base/user/enableOrDisable']"
                     @click.native="enableOrDisable(row)"
@@ -202,7 +212,7 @@ export default class extends Vue {
     roleId: '',
     status: '',
     page: 1,
-    limit: 20
+    limit: 30
   };
   private dropdownList: any[] = [
     '姓名',

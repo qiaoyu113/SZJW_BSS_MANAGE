@@ -62,11 +62,15 @@
       <div class="btn_box">
         <el-button
           type="primary"
+          name="systemsetting_formSave_btn"
           @click="submitForm('ruleForm')"
         >
           提交
         </el-button>
-        <el-button @click="resetForm('ruleForm')">
+        <el-button
+          name="systemsetting_formReset_btn"
+          @click="resetForm('ruleForm')"
+        >
           重置
         </el-button>
       </div>

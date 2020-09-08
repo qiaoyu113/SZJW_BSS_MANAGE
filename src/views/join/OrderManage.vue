@@ -26,7 +26,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
-          name="cluelist_creat_btn"
+          name="ordermanage_export_btn"
           @click="downLoad"
         >
           <i class="el-icon-download" />
@@ -38,7 +38,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
-          name="cluelist_creat_btn"
+          name="ordermanage_create_btn"
           @click="$router.push({name: 'CreatOrder'})"
         >
           <i class="el-icon-plus" />
@@ -253,6 +253,7 @@
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
                     v-permission="['/v1/order/createNewOrder']"
+                    name="ordermanage_submit_dropdown"
                     @click.native="goCreat(scope.row, true)"
                   >
                     提交
@@ -260,13 +261,15 @@
                   <el-dropdown-item
                     v-if="scope.row.status === 5"
                     v-permission="['/v1/order/cancelOrder']"
+                    name="ordermanage_cancel_dropdown"
                     @click.native="cancelHandle(scope.row)"
                   >
                     取消
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="scope.row.status === 15 && scope.row.payType !== 1"
+                    v-if="scope.row.status === 15"
                     v-permission="['/v1/order/orderDetail']"
+                    name="ordermanage_confirm_dropdown"
                     @click.native="goCheck(scope.row.orderId, 1)"
                   >
                     确认
@@ -274,6 +277,7 @@
                   <el-dropdown-item
                     v-if="scope.row.status === 20"
                     v-permission="['/v1/order/orderDetail']"
+                    name="ordermanage_resolve_dropdown"
                     @click.native="goCheck(scope.row.orderId, 0)"
                   >
                     审核
@@ -286,18 +290,21 @@
                   <el-dropdown-item
                     v-if="scope.row.status === 25"
                     v-permission="['/v1/order/orderDetail','/v1/order/createNewOrder']"
+                    name="ordermanage_againResolve_dropdown"
                     @click.native="goCreat(scope.row, false)"
                   >
                     重新提交审核
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/v1/order/orderDetail']"
+                    name="ordermanage_detail_dropdown"
                     @click.native="goDetail(scope.row.orderId, 1)"
                   >
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/vl/order/getOrderStatusLogById']"
+                    name="ordermanage_log_dropdown"
                     @click.native="goDetail(scope.row.orderId, 0)"
                   >
                     日志

@@ -15,10 +15,11 @@
           <div class="right-btn">
             <el-button
               v-if="data.authType !== 4"
-              v-permission="['/v1/Base/authority/create']"
+              v-permission="['/v1/base/authority/create']"
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
+              name="permissionmanage_appendAuth_btn"
               @click.stop="
                 () => {
                   appendAuth(node, data);
@@ -27,11 +28,12 @@
             />
             <el-button
               v-if="node.level !== 1"
-              v-permission="['/v1/Base/authority/deleteByAuthId']"
+              v-permission="['/v1/base/authority/deleteByAuthId']"
               circle
               size="mini"
               class="delete"
               icon="el-icon-remove-outline"
+              name="permissionmanage_deleteAuth_btn"
               @click.stop="
                 () => {
                   deleteAuth(node, data);
@@ -40,10 +42,11 @@
             />
             <el-button
               v-if="node.level !== 1"
-              v-permission="['/v1/Base/authority/update']"
+              v-permission="['/v1/base/authority/update']"
               circle
               size="mini"
               icon="el-icon-edit"
+              name="permissionmanage_updateAuth_btn"
               @click.stop="
                 () => {
                   updateAuth(node, data);
@@ -84,6 +87,7 @@
                 placeholder="请输入权限名称"
                 maxlength="10"
                 clearable
+                name="permissionmanage_chooseAuthName1_input"
               />
             </el-form-item>
           </el-tab-pane>
@@ -100,6 +104,7 @@
                 v-model="dialogForm.authName"
                 placeholder="请输入权限名称"
                 maxlength="10"
+                name="permissionmanage_chooseAuthName2_input"
                 clearable
               />
             </el-form-item>
@@ -112,6 +117,7 @@
                 maxlength="100"
                 placeholder="请输入页面地址"
                 clearable
+                name="permissionmanage_url1_input"
               />
             </el-form-item>
           </el-tab-pane>
@@ -129,6 +135,7 @@
                 placeholder="请输入权限名称"
                 maxlength="10"
                 clearable
+                name="permissionmanage_chooseAuthName3_input"
               />
             </el-form-item>
             <el-form-item
@@ -154,6 +161,7 @@
                 maxlength="100"
                 placeholder="请输入页面地址"
                 clearable
+                name="permissionmanage_url2_input"
               />
             </el-form-item>
           </el-tab-pane>

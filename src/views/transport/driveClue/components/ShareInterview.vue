@@ -30,6 +30,10 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => {} }) form!:any
   @Prop({ default: () => {} }) obj!:any
+
+  private gmOptions:any[] = [] // 加盟经理列表
+  private sourceOptions:any[] = [] // 邀约渠道列表
+  private drivingLicenceTypeOptions:any[] = [] // 驾照类型列表
   // 表单对象
   private listQuery:IState = {
     interviewDate: '',
@@ -67,6 +71,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'interviewProvince',
+        name: 'interview_interviewAddress_input',
         props: {
           lazy: true,
           lazyLoad: this.loadinterviewAddress
@@ -84,7 +89,8 @@ export default class extends Vue {
         rows: 2,
         maxlength: 32,
         'show-word-limit': true,
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseInterviewDistrict_input'
       }
     },
     {
@@ -94,7 +100,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入0-60之间的数字',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseAge_input'
       }
     },
     {
@@ -103,9 +110,10 @@ export default class extends Vue {
       label: '加盟经理:',
       tagAttrs: {
         placeholder: '加盟经理',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseGmId_select'
       },
-      options: []
+      options: this.gmOptions
     },
     {
       type: 8,
@@ -115,6 +123,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'liveProvince',
+        name: 'interview_home_input',
         placeholder: '现住址',
         props: {
           lazy: true,
@@ -132,7 +141,8 @@ export default class extends Vue {
         rows: 2,
         maxlength: 32,
         'show-word-limit': true,
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseLiveDistrict_input'
       }
     },
     {
@@ -141,9 +151,10 @@ export default class extends Vue {
       label: '邀约渠道:',
       tagAttrs: {
         placeholder: '邀约渠道',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseSourceChannel_select'
       },
-      options: []
+      options: this.sourceOptions
     },
     {
       type: 2,
@@ -151,9 +162,10 @@ export default class extends Vue {
       label: '驾照类型:',
       tagAttrs: {
         placeholder: '驾照类型',
-        filterable: true
+        filterable: true,
+        name: 'interview_chooseDrivingLicenceType_select'
       },
-      options: []
+      options: this.drivingLicenceTypeOptions
     },
     {
       type: 4,
@@ -161,7 +173,8 @@ export default class extends Vue {
       label: '是否工作地车牌:',
       w: '130px',
       tagAttrs: {
-        placeholder: '是否工作地车牌'
+        placeholder: '是否工作地车牌',
+        name: 'interview_isLocalPlate_radio'
       },
       options: [
         {
@@ -182,7 +195,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '原收入(去油)(元/月)(请输入0-25000之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseOriginIncomeAvg_input'
       }
     },
     {
@@ -193,7 +207,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '期望收入（去油）（元/月） (请输入3000-25000之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseExpIncomeAvg_input'
       }
     },
     {
@@ -204,7 +219,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '从业时间（月） (请输入0-500之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseWorkDuration_input'
       }
     },
     {
@@ -215,7 +231,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '零散活占比（%） (请输入0-100之间的数字)',
         type: 'number',
-        clearable: true
+        clearable: true,
+        name: 'interview_chooseScatteredJobRate_input'
       }
     },
     {
@@ -223,7 +240,7 @@ export default class extends Vue {
       key: 'isNewEnergy',
       label: '是否新能源:',
       tagAttrs: {
-
+        name: 'interview_isNewEnergy_radio'
       },
       options: [
         {
@@ -294,14 +311,16 @@ export default class extends Vue {
 
   @Watch('obj', { deep: true, immediate: true })
   handleObjChange(val:any) {
-    this.listQuery = { ...this.listQuery, ...val }
-    this.listQuery.interviewAddress.push(val.interviewProvince + '')
-    this.listQuery.interviewAddress.push(val.interviewCity + '')
-    this.listQuery.interviewAddress.push(val.interviewCounty + '')
-    this.listQuery.home.push(val.liveProvince + '')
-    this.listQuery.home.push(val.liveCity + '')
-    this.listQuery.home.push(val.liveCounty + '')
-    this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
+    if (Object.keys(val).length > 0) {
+      this.listQuery = { ...this.listQuery, ...val }
+      this.listQuery.interviewAddress.push(val.interviewProvince + '')
+      this.listQuery.interviewAddress.push(val.interviewCity + '')
+      this.listQuery.interviewAddress.push(val.interviewCounty + '')
+      this.listQuery.home.push(val.liveProvince + '')
+      this.listQuery.home.push(val.liveCity + '')
+      this.listQuery.home.push(val.liveCounty + '')
+      this.listQuery.interviewDate = new Date(this.listQuery.interviewDate).getTime()
+    }
   }
 
   @Emit('onFinish')
@@ -318,12 +337,13 @@ export default class extends Vue {
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
-        this.formItem[4].options = res.data.map(function(item:any) {
+        let gms = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
           }
         })
+        this.gmOptions.push(...gms)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -339,12 +359,14 @@ export default class extends Vue {
       let params = ['source_channel', 'driving_licence_type']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
-        this.formItem[7].options = res.data.source_channel.map(function(item:any) {
+        let sourceChannel = res.data.source_channel.map(function(item:any) {
           return { label: item.dictLabel, value: +item.dictValue }
         })
-        this.formItem[8].options = res.data.driving_licence_type.map(function(item:any) {
+        let drivingLicenceType = res.data.driving_licence_type.map(function(item:any) {
           return { label: item.dictLabel, value: +item.dictValue }
         })
+        this.sourceOptions.push(...sourceChannel)
+        this.drivingLicenceTypeOptions.push(...drivingLicenceType)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -490,8 +512,3 @@ export default class extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped>
-  .shareInterview {
-
-  }
-</style>

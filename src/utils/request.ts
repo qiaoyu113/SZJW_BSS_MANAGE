@@ -4,7 +4,7 @@ import { UserModule } from '@/store/modules/user'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = Base url + request url
-  timeout: 5000
+  timeout: 8000
   // withCredentials: true // send cookies when cross-domain requests
 })
 

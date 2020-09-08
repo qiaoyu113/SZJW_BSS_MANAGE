@@ -18,6 +18,7 @@
             >
               <el-input
                 v-model="ruleForm.userName"
+                name="createuser_chooseUserName_input"
                 placeholder="请输入姓名"
                 maxlength="5"
                 clearable
@@ -31,6 +32,7 @@
             >
               <el-input
                 v-model="ruleForm.mobile"
+                name="createuser_chooseMobile_input"
                 clearable
                 placeholder="请输入手机号"
                 maxlength="11"
@@ -46,6 +48,7 @@
                 v-model="ruleForm.roleId"
                 placeholder="请选择"
                 clearable
+                name="createuser_chooseroleId_select"
               >
                 <el-option
                   v-for="item in optionsRoles"
@@ -89,6 +92,7 @@
                 autocomplete="off"
                 placeholder="默认密码为手机号"
                 clearable
+                name="createuser_choosePasswd_input"
               />
             </el-form-item>
           </el-col>
@@ -104,6 +108,7 @@
                 autocomplete="off"
                 placeholder="请再次输入密码"
                 clearable
+                name="createuser_chooseCheckPass_input"
               />
             </el-form-item>
           </el-col>
@@ -112,11 +117,15 @@
       <div class="btn_box">
         <el-button
           type="primary"
+          name="createuser_formsave_btn"
           @click="submitForm('ruleForm')"
         >
           提交
         </el-button>
-        <el-button @click="resetForm('ruleForm')">
+        <el-button
+          name="createuser_formreset_btn"
+          @click="resetForm('ruleForm')"
+        >
           重置
         </el-button>
       </div>

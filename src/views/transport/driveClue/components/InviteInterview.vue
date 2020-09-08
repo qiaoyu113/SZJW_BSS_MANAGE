@@ -60,7 +60,8 @@ export default class extends Vue {
       key: 'isNeedSendsms',
       label: '是否发短信',
       tagAttrs: {
-        placeholder: '是否发短信'
+        placeholder: '是否发短信',
+        name: 'followClue_changeIsNeedSendsms_select'
       },
       options: [
         {
@@ -83,7 +84,8 @@ export default class extends Vue {
         rows: 4,
         'show-word-limit': true,
         maxlength: 100,
-        clearable: true
+        clearable: true,
+        name: 'followClue_changeRemarks_input'
       }
     }
   ]

@@ -39,6 +39,8 @@ interface IState {
 export default class extends Vue {
   @Prop({ default: () => [] }) rows!:any[]
   private showAlert = false // 控制弹窗
+
+  private gmOptions:any[] = [] // 跟进人列表
   // 表单对象
   private dialogForm:IState = {
     userId: ''
@@ -50,9 +52,10 @@ export default class extends Vue {
       key: 'userId',
       tagAttrs: {
         placeholder: '请选择跟进人',
-        filterable: true
+        filterable: true,
+        name: 'driverclue_chooseUserId_select'
       },
-      options: []
+      options: this.gmOptions
     }
   ]
 
@@ -75,12 +78,13 @@ export default class extends Vue {
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
-        this.dialogItems[0].options = res.data.map(function(item:any) {
+        let gm = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
           }
         })
+        this.gmOptions.push(...gm)
       } else {
         this.$message.error(res.errorMsg)
       }

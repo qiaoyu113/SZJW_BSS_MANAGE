@@ -23,17 +23,24 @@
         </div>
         <template v-if="activeCreat === 1">
           <div class="chooseBox">
-            <div class="creatPhone">
+            <div
+              class="creatPhone"
+              @click="confession"
+            >
               <span class="phoneLabel">签约司机姓名（手机号）:</span>
               <el-select
+                ref="elInput"
                 v-model="phoneNum"
                 :remote-method="remoteMethod"
                 :loading="loading"
+                name="creattransport_queryDrivder_select"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入司机姓名或完整手机号"
                 @change="getOrderList"
+                @focus="confession"
+                @blur="confession"
               >
                 <el-option
                   v-for="item in driverOptions"
@@ -87,8 +94,10 @@
             </el-row>
           </div>
           <el-button
+            class="nextBtn"
             type="primary"
             style="margin-top:40px"
+            name="creattransport_formNext_btn"
             @click="nextChoose"
           >
             下一步
@@ -293,7 +302,8 @@ export default class extends Vue {
         showWordLimit: true,
         placeholder: '请输入姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'creattransport_transportName_input'
       }
     },
     {
@@ -303,7 +313,8 @@ export default class extends Vue {
       tagAttrs: {
         showWordLimit: true,
         placeholder: '请输入联系方式',
-        maxlength: '11'
+        maxlength: '11',
+        name: 'creattransport_transportPhone_input'
       }
     },
     {
@@ -311,7 +322,8 @@ export default class extends Vue {
       key: 'workCity',
       label: '工作城市',
       tagAttrs: {
-        placeholder: '请选择城市'
+        placeholder: '请选择城市',
+        name: 'creattransport_transportCity_select'
       },
       options: []
     },
@@ -320,7 +332,8 @@ export default class extends Vue {
       label: '车牌号',
       key: 'plateNo',
       tagAttrs: {
-        placeholder: '请输入车牌号'
+        placeholder: '请输入车牌号',
+        name: 'creattransport_transportPlate_input'
       }
     },
     {
@@ -328,7 +341,8 @@ export default class extends Vue {
       key: 'carType',
       label: '车型',
       tagAttrs: {
-        placeholder: '请选择车型'
+        placeholder: '请选择车型',
+        name: 'creattransport_transportCarType_select'
       },
       options: []
     },
@@ -337,62 +351,12 @@ export default class extends Vue {
       key: 'gmId',
       label: '运营经理',
       tagAttrs: {
-        placeholder: '请选择运营经理'
+        placeholder: '请选择运营经理',
+        name: 'creattransport_transportGmId_select'
       },
       options: []
     }
   ]
-
-  private async loadhouseAddress(node:any, resolve:any) {
-    let params:string[] = []
-    if (node.level === 0) {
-      params = ['100000']
-    } else if (node.level === 1) {
-      params = ['100000']
-      params.push(node.value)
-    } else if (node.level === 2) {
-      params = ['100000']
-      params.push(node.parent.value)
-      params.push(node.value)
-    }
-    try {
-      let nodes = await this.loadCityByCode(params)
-      resolve(nodes)
-    } catch (err) {
-      resolve([])
-    }
-  }
-
-  // 地址级联选择器 回显问题
-  get showAddress() {
-    if (this.carrierId) {
-      if (this.orderInfo.address.length > 0) {
-        return true
-      } else {
-        return false
-      }
-    } else {
-      return true
-    }
-  }
-
-  async loadCityByCode(params:string[]) {
-    try {
-      let { data: res } = await GetCityByCode(params)
-      if (res.success) {
-        const nodes = res.data.map(function(item:any) {
-          return {
-            value: item.code,
-            label: item.name,
-            leaf: params.length > 2
-          }
-        })
-        return nodes
-      }
-    } catch (err) {
-      console.log(`load city by code fail:${err}`)
-    }
-  }
   private formItemOther:any[] = [
     {
       type: 1,
@@ -400,7 +364,8 @@ export default class extends Vue {
       key: 'age',
       tagAttrs: {
         placeholder: '请输入司机年龄',
-        type: 'number'
+        type: 'number',
+        name: 'creattransport_driverAge_input'
       }
     },
     {
@@ -408,7 +373,8 @@ export default class extends Vue {
       key: 'householdType',
       label: '户口类型',
       tagAttrs: {
-        placeholder: '请选择户口类型'
+        placeholder: '请选择户口类型',
+        name: 'creattransport_driverhouseholdType_select'
       },
       options: [
         {
@@ -427,7 +393,8 @@ export default class extends Vue {
       key: 'workExperience',
       tagAttrs: {
         placeholder: '请输入货物运输经验',
-        type: 'number'
+        type: 'number',
+        name: 'creattransport_driverWorkExperience_input'
       }
     },
     {
@@ -450,7 +417,8 @@ export default class extends Vue {
       key: 'cargoType',
       label: '配送货物类型',
       tagAttrs: {
-        placeholder: '请选择配送货物类型'
+        placeholder: '请选择配送货物类型',
+        name: 'creattransport_driverCargoType_select'
       },
       options: []
     },
@@ -459,7 +427,8 @@ export default class extends Vue {
       key: 'expMonthlyIncome',
       label: '期望月收入',
       tagAttrs: {
-        placeholder: '请选择期望月收入'
+        placeholder: '请选择期望月收入',
+        name: 'creattransport_driverExpMonthlyIncome_select'
       },
       options: []
     },
@@ -468,7 +437,8 @@ export default class extends Vue {
       label: '平均月收入',
       key: 'avgMonthlyIncome',
       tagAttrs: {
-        placeholder: '请输入平均月收入'
+        placeholder: '请输入平均月收入',
+        name: 'creattransport_driverAvgMonthlyIncome_input'
       }
     },
     {
@@ -476,7 +446,8 @@ export default class extends Vue {
       key: 'isIndebted',
       label: '是否存在还贷款',
       tagAttrs: {
-        placeholder: '请选择是否存在还贷款'
+        placeholder: '请选择是否存在还贷款',
+        name: 'creattransport_driverIsIndebted_select'
       },
       options: [
         {
@@ -494,7 +465,8 @@ export default class extends Vue {
       key: 'maxWorkTime',
       label: '可接受一天工作时长',
       tagAttrs: {
-        placeholder: '请选择可接受一天工作时长'
+        placeholder: '请选择可接受一天工作时长',
+        name: 'creattransport_driverMaxWorkTime_select'
       },
       options: []
     },
@@ -509,7 +481,8 @@ export default class extends Vue {
         rows: 4,
         maxlength: 100,
         row: 6,
-        showWordLimit: true
+        showWordLimit: true,
+        name: 'creattransport_driverRemarks_input'
       }
     }
   ]
@@ -544,6 +517,7 @@ export default class extends Vue {
     ]
   }
 
+  // 自定义效验方法
   private checkAge(rule:any, value:any, callback:Function) {
     if (value < 18) {
       callback(new Error('必须年满18岁'))
@@ -571,6 +545,61 @@ export default class extends Vue {
         }
       }
     })
+  }
+
+  private async loadhouseAddress(node:any, resolve:any) {
+    let params:string[] = []
+    if (node.level === 0) {
+      params = ['100000']
+    } else if (node.level === 1) {
+      params = ['100000']
+      params.push(node.value)
+    } else if (node.level === 2) {
+      params = ['100000']
+      params.push(node.parent.value)
+      params.push(node.value)
+    }
+    try {
+      let nodes = await this.loadCityByCode(params)
+      resolve(nodes)
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  // 地址级联选择器 回显问题
+  get showAddress() {
+    if (this.carrierId) {
+      if (this.orderInfo.address.length > 0) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return true
+    }
+  }
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
+  private async loadCityByCode(params:string[]) {
+    try {
+      let { data: res } = await GetCityByCode(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item:any) {
+          return {
+            value: item.code,
+            label: item.name,
+            leaf: params.length > 2
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
   }
 
   private nextChoose() {
@@ -705,6 +734,19 @@ export default class extends Vue {
     }
   }
 
+  // 兼容IOS
+  private confession() {
+    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+      (item.children[0].children[0] as any).removeAttribute('readOnly');
+      (item.children[0].children[0] as any).onblur = function() {
+        let _this = this
+        setTimeout(() => {
+          _this.removeAttribute('readOnly')
+        }, 200)
+      }
+    })
+  }
+
   private async getDictionaryAll() {
     let params = ['Intentional_compartment', 'type_of_goods', 'expected_monthly_income', 'accept_one_day_of_work']
     let { data } = await GetDictionaryList(params)
@@ -832,11 +874,6 @@ export default class extends Vue {
     }
   }
 
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
   mounted() {
     this.fetchData()
     let carrierId = this.$route.query.carrierId as string
@@ -864,6 +901,7 @@ export default class extends Vue {
         this.getOrderList(driverId)
       }
     }
+    this.confession()
   }
 }
 </script>
@@ -978,7 +1016,7 @@ export default class extends Vue {
             }
             .orderNum{
               font-weight: bold;
-              color: black;
+              color: #c4c4c4;
             }
           }
           .orderItem:last-child{
@@ -1044,9 +1082,19 @@ export default class extends Vue {
   .creatInfo{
     display: flex;
     flex-direction: column;
-    padding: 20px;
     .stepsBox{
       font-size: 12px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .chooseBox{
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+    .nextBtn{
+      width: 80%;
+      margin-top: 20px!important;
+      margin: 20px auto;
     }
     .creatPhone{
       display: flex;
@@ -1066,6 +1114,8 @@ export default class extends Vue {
       max-height: 40vh;
       overflow-y: scroll;
       .boxItem{
+        padding: 0 30px;
+        box-sizing: border-box;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -1134,11 +1184,12 @@ export default class extends Vue {
   .btnGroup{
     margin-top: 10px;
     width: 100%;
+    text-align: center;
     .el-button + .el-button {
         margin-left: 0px;
     }
     .el-button{
-      width: 100%;
+      width: 80%;
       margin-bottom: 10px;
     }
   }

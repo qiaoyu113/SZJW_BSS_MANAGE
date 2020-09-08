@@ -18,6 +18,7 @@
                 maxlength="10"
                 placeholder="请输入角色中文名称"
                 clearable
+                name="createrole_chooseNick_input"
               />
             </el-form-item>
           </el-col>
@@ -32,6 +33,7 @@
                 placeholder="请输入角色英文名称"
                 maxlength="20"
                 clearable
+                name="createrole_chooseName_input"
               />
             </el-form-item>
           </el-col>
@@ -44,6 +46,7 @@
                 v-model="ruleForm.productLine"
                 placeholder="请选择"
                 clearable
+                name="createrole_chooseProductLine_select"
               >
                 <el-option
                   v-for="(item, index) in productList"
@@ -65,6 +68,7 @@
                 placeholder="请输入角色描述"
                 maxlength="50"
                 clearable
+                name="createrole_chooseDescription_input"
               />
             </el-form-item>
           </el-col>
@@ -108,11 +112,15 @@
       <div class="btn_box">
         <el-button
           type="primary"
+          name="createrole_formsave_btn"
           @click="submitForm('ruleForm')"
         >
           提交
         </el-button>
-        <el-button @click="resetForm('ruleForm')">
+        <el-button
+          name="createrole_formreset_btn"
+          @click="resetForm('ruleForm')"
+        >
           重置
         </el-button>
       </div>

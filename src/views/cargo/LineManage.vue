@@ -9,7 +9,7 @@
     >
       <self-form
         ref="lineForm"
-        class="lineForm"
+        class="lineForm p15"
         :list-query="listQuery"
         :form-item="formItem"
         label-width="100px"
@@ -47,7 +47,8 @@
       >
         <template v-slot:left>
           <div>
-            <span>统计：已查询到
+            <span>
+              统计：已查询到
               <span
                 class="numCol"
                 v-text="title.all"
@@ -79,7 +80,7 @@
               :class="isPC ? 'btn-item' : 'btn-item-m'"
               type="primary"
               size="small"
-              name="LineManage_downLoad_btn"
+              name="linemanage_downLoad_btn"
               @click="downLoad"
             >
               <i class="el-icon-download" />
@@ -90,7 +91,7 @@
               :class="isPC ? 'btn-item-right' : 'btn-item-right-m'"
               type="primary"
               size="small"
-              name="LineManage_creat_btn"
+              name="linemanage_create_btn"
               @click="goCreat"
             >
               <i class="el-icon-plus" />
@@ -171,6 +172,7 @@
                 </el-button>
                 <i
                   v-else
+                  style="font-size: 18px;"
                   class="el-icon-setting"
                 />
               </span>
@@ -179,6 +181,7 @@
                   v-if="[3].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/edit']"
                   command="edit"
+                  name="linemanage_edit_dropdown"
                 >
                   <template>
                     编辑
@@ -187,6 +190,7 @@
                 <el-dropdown-item
                   permission="['/v1/line/saveOrUpdatePicture']"
                   command="take"
+                  name="linemanage_take_dropdown"
                 >
                   <template>
                     拍照
@@ -196,6 +200,7 @@
                   v-if="[3].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/manualDeactivate']"
                   command="stopuse"
+                  name="linemanage_stopuse_dropdown"
                 >
                   <template>
                     停用
@@ -205,6 +210,7 @@
                   v-if="[2].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/mountGuard']"
                   command="gowork"
+                  name="linemanage_gowork_dropdown"
                 >
                   <template>
                     上岗
@@ -214,6 +220,7 @@
                   v-if="[2].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/shelfAdjustment']"
                   command="putaway"
+                  name="linemanage_putaway_dropdown"
                 >
                   <template>
                     上架调整
@@ -223,6 +230,7 @@
                   v-if="[2].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/shelveLine']"
                   command="getaway"
+                  name="linemanage_getaway_dropdown"
                 >
                   <template>
                     下架
@@ -232,6 +240,7 @@
                   v-if="[1,2,3,4].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/copy']"
                   command="copy"
+                  name="linemanage_copy_dropdown"
                 >
                   <template>
                     复制
@@ -241,6 +250,7 @@
                   v-if="[1].includes(scope.row.shelvesState)"
                   v-permission="['/v1/line/approved']"
                   command="audit"
+                  name="linemanage_audit_dropdown"
                 >
                   <template>
                     审核
@@ -264,6 +274,7 @@
                 </el-button>
                 <i
                   v-else
+                  style="font-size: 18px;"
                   class="el-icon-view"
                 />
               </span>
@@ -271,6 +282,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/detail']"
                   command="linedetail"
+                  name="linemanage_linedetail_dropdown"
                 >
                   <template>
                     查看线路详情
@@ -279,6 +291,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/pictureDetail']"
                   command="showpic"
+                  name="linemanage_showpic_dropdown"
                 >
                   <template>
                     查看线路照片
@@ -287,6 +300,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/customer/queryLineCustomerList']"
                   command="showtender"
+                  name="linemanage_showtender_dropdown"
                 >
                   <template>
                     查看全部标书
@@ -295,6 +309,7 @@
                 <el-dropdown-item
                   v-permission="['/v1/line/list']"
                   command="showlog"
+                  name="linemanage_showlog_dropdown"
                 >
                   <template>
                     操作日志
@@ -340,6 +355,7 @@
           <el-input
             v-model="diaUpcarNum"
             type="number"
+            name="linemanage_diaUpcarNum_input"
             :min="rowInfo.mountGuardNo"
             placeholder="请输入可上车数量"
           />
@@ -544,7 +560,8 @@ export default class LineManage extends Vue {
       key: 'city',
       label: '工作城市',
       tagAttrs: {
-        placeholder: '请选择工作城市'
+        placeholder: '请选择工作城市',
+        name: 'linemanage_city_select'
       },
       options: []
     },
@@ -554,7 +571,8 @@ export default class LineManage extends Vue {
       label: '线路销售',
       tagAttrs: {
         placeholder: '请选择线路销售',
-        filterable: true
+        filterable: true,
+        name: 'linemanage_lineSaleId_select'
       },
       options: []
     },
@@ -574,7 +592,8 @@ export default class LineManage extends Vue {
       key: 'carType',
       tagAttrs: {
         placeholder: '请选择车型',
-        filterable: true
+        filterable: true,
+        name: 'linemanage_carType_select'
       },
       options: []
     },
@@ -585,6 +604,7 @@ export default class LineManage extends Vue {
       tagAttrs: {
         placeholder: '请输入线路名称',
         clearable: true,
+        name: 'linemanage_lineName_input',
         'fetch-suggestions': this.remoteMethodName
       }
     },
@@ -594,7 +614,8 @@ export default class LineManage extends Vue {
       key: 'lineId',
       tagAttrs: {
         placeholder: '请输入线路编号',
-        clearable: true
+        clearable: true,
+        name: 'linemanage_lineId_input'
       }
     },
     {
@@ -604,7 +625,8 @@ export default class LineManage extends Vue {
       tagAttrs: {
         clearable: true,
         placeholder: '请输入货主名称',
-        'fetch-suggestions': this.remoteMethod
+        'fetch-suggestions': this.remoteMethod,
+        name: 'linemanage_customerName_input'
       }
     },
     {
@@ -615,6 +637,7 @@ export default class LineManage extends Vue {
         ref: 'cascader',
         placeholder: '请输入配送区域',
         clearable: true,
+        name: 'linemanage_houseAddress_input',
         props: {
           lazy: true,
           lazyLoad: this.getLineArea
@@ -627,7 +650,8 @@ export default class LineManage extends Vue {
       label: '是否需要返仓',
       tagAttrs: {
         clearable: true,
-        placeholder: '请选择是否需要返仓'
+        placeholder: '请选择是否需要返仓',
+        name: 'linemanage_returnWarehouse_select'
       },
       options: [
         {
@@ -664,35 +688,9 @@ export default class LineManage extends Vue {
       key: 'jobTime'
     }
   ];
-  private listQuery: IState = {
-    city: '',
-    shelvesState: '',
-    lineSaleId: '',
-    // auditState: '',
-    carType: '',
-    lineName: '',
-    lineId: '',
-    customerName: '',
-    houseAddress: [],
-    returnWarehouse: '',
-    time: [],
-    // jobTime: [Date.now(),Date.now()],
-    jobTime: {
-      jobStartDate: '',
-      jobEndDate: ''
-    },
-    jobStartDate: '',
-    jobEndDate: ''
-  };
   private showPutDio: boolean = false;
   private showGetDio: boolean = false;
-  page: PageObj = {
-    page: 1,
-    limit: 10,
-    total: 0
-  };
   private tableData: any[] = [];
-
   private columns: any[] = [
     {
       key: 'lineId',
@@ -803,7 +801,43 @@ export default class LineManage extends Vue {
       label: '详情'
     }
   ];
+  private passNo:boolean = false
+  private reason:string = ''
+  private listQuery: IState = {
+    city: '',
+    shelvesState: '',
+    lineSaleId: '',
+    // auditState: '',
+    carType: '',
+    lineName: '',
+    lineId: '',
+    customerName: '',
+    houseAddress: [],
+    returnWarehouse: '',
+    time: [],
+    // jobTime: [Date.now(),Date.now()],
+    jobTime: {
+      jobStartDate: '',
+      jobEndDate: ''
+    },
+    jobStartDate: '',
+    jobEndDate: ''
+  };
+  private page: PageObj = {
+    page: 1,
+    limit: 30,
+    total: 0
+  };
 
+  @Watch('checkList', { deep: true })
+  private checkListChange(val: any) {
+    this.columns = this.dropdownList.filter(item => val.includes(item.label))
+  }
+  get isPC() {
+    return SettingsModule.isPC
+  }
+
+  // 时间处理方法
   private pickerOptions: any = {
     disabledDate(time: any) {
       return (
@@ -812,9 +846,8 @@ export default class LineManage extends Vue {
       )
     }
   };
-  private passNo:boolean = false
-  private reason:string = ''
 
+  // 下载方法
   private async downLoad() {
     const postData = this.listQuery
     // delete postData.page
@@ -832,6 +865,7 @@ export default class LineManage extends Vue {
     }
   }
 
+  // 货主模糊查询
   private async remoteMethod(query: string, cb: Function) {
     if (query !== '') {
       let params = {
@@ -854,6 +888,7 @@ export default class LineManage extends Vue {
     }
   }
 
+  // 线路名称模糊查询
   private async remoteMethodName(query: string, cb: Function) {
     if (query !== '') {
       let params = {
@@ -873,16 +908,10 @@ export default class LineManage extends Vue {
     }
   }
 
-  mounted() {
-    this.dropdownList = [...this.columns]
-    this.checkList = this.dropdownList.map(item => item.label)
-    this.dicList()
-    this.getList()
-  }
   /**
    * 省市县3级联动
    */
-  async getLineArea(node: any, resolve: any) {
+  private async getLineArea(node: any, resolve: any) {
     let params: string[] = []
     if (node.level === 0) {
       params = ['100000']
@@ -904,7 +933,7 @@ export default class LineManage extends Vue {
   /**
    * 加载城市
    */
-  async loadCityByCode(params: string[]) {
+  private async loadCityByCode(params: string[]) {
     try {
       let { data: res } = await GetCityByCode(params)
       if (res.success) {
@@ -924,7 +953,7 @@ export default class LineManage extends Vue {
   /**
    *重置按钮
    */
-  handleResetClick() {
+  private handleResetClick() {
     this.tags = []
     this.listQuery = {
       city: '',
@@ -950,7 +979,7 @@ export default class LineManage extends Vue {
   /**
    *筛选按钮
    */
-  handleFilterClick() {
+  private handleFilterClick() {
     let blackLists = ['shelvesState']
     this.tags = []
     if (this.listQuery.houseAddress.length !== 0) {
@@ -989,7 +1018,7 @@ export default class LineManage extends Vue {
   /**
    * 分页
    */
-  handlePageSize(page: any) {
+  private handlePageSize(page: any) {
     this.page.page = page.page
     this.page.limit = page.limit
     this.getList()
@@ -1087,7 +1116,6 @@ export default class LineManage extends Vue {
       //   params.jobStartDate = parseTime(this.listQuery.jobTime[0], '{h}:{i}')
       //   params.jobEndDate = parseTime(this.listQuery.jobTime[1], '{h}:{i}')
       // }
-      console.log(this.listQuery)
       params.jobEndDate = this.listQuery.jobTime.jobEndDate
       params.jobStartDate = this.listQuery.jobTime.jobStartDate
       const { data: res } = await lineListAll(params)
@@ -1133,7 +1161,7 @@ export default class LineManage extends Vue {
   /**
    * 表格下拉菜单
    */
-  handleCommandChange(key: string | number, row: any) {
+  private handleCommandChange(key: string | number, row: any) {
     this.id = row.lineId
     this.rowInfo = row
     switch (key) {
@@ -1293,11 +1321,6 @@ export default class LineManage extends Vue {
     done()
   }
 
-  @Watch('checkList', { deep: true })
-  private checkListChange(val: any) {
-    this.columns = this.dropdownList.filter(item => val.includes(item.label))
-  }
-
   // 处理tags方法
   private handleTags(value: any) {
     this.tags = value
@@ -1323,10 +1346,6 @@ export default class LineManage extends Vue {
     this.$router.push('creatline')
   }
 
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
   // ------------下面区域是批量操作的功能,其他页面使用直接复制-------------
   private drawer: boolean = false;
   /**
@@ -1349,7 +1368,7 @@ export default class LineManage extends Vue {
   /**
    * 批量操作的按钮
    */
-  handleOlClick(val: any) {
+  private handleOlClick(val: any) {
     if (val.name === '查看选中') {
       if (this.rows.length > 0) {
         this.drawer = true
@@ -1432,6 +1451,13 @@ export default class LineManage extends Vue {
     this.rows = row
   }
   // ------------上面区域是批量操作的功能,其他页面使用直接复制-------------
+
+  mounted() {
+    this.dropdownList = [...this.columns]
+    this.checkList = this.dropdownList.map(item => item.label)
+    this.dicList()
+    this.getList()
+  }
 }
 </script>
 
@@ -1544,6 +1570,9 @@ export default class LineManage extends Vue {
     overflow: hidden;
     transform: translateZ(0);
     .table_center {
+      .linkTo {
+        color: #649cee;
+      }
       // height: calc(100vh - 360px) !important;
       padding-bottom: 0;
       box-sizing: border-box;

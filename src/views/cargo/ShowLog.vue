@@ -118,9 +118,10 @@ export default class ShowLog extends Vue {
     limit: 30,
     lineId: ''
   }
-  created() {
-    this.listQuery.lineId = this.$route.query.id
-    this.fetchData()
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   // 所有请求方法
@@ -148,9 +149,10 @@ export default class ShowLog extends Vue {
       }, 0.5 * 1000)
     }
   }
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
+
+  created() {
+    this.listQuery.lineId = this.$route.query.id
+    this.fetchData()
   }
 }
 </script>

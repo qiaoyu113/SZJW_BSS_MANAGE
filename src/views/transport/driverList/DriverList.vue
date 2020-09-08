@@ -16,6 +16,7 @@
         :list-query="listQuery"
         :form-item="formItem"
         label-width="80px"
+        class="p15"
       >
         <div
           slot="btn1"
@@ -285,6 +286,9 @@ export default class extends Vue {
 
   private dropdownList:any[] = [] // 表格筛选下拉
   private checkList:any[] =[] // 表格筛选checkbox
+
+  private workCityOptions:any[] = [] // 工作城市列表
+  private gmOptions:any[] = [] // 加盟经理列表
   // 表单对象
   private listQuery:IState = {
     status: '',
@@ -306,9 +310,10 @@ export default class extends Vue {
       label: '工作城市',
       tagAttrs: {
         placeholder: '请选择工作城市',
-        filterable: true
+        filterable: true,
+        name: 'driverList_workCity_select'
       },
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 1,
@@ -317,7 +322,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入司机编号',
         maxlength: 32,
-        clearable: true
+        clearable: true,
+        name: 'driverList_driverId_input'
       }
     },
     {
@@ -327,7 +333,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'driverList_name_input'
       }
     },
     {
@@ -337,7 +344,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入手机号',
         maxlength: 11,
-        clearable: true
+        clearable: true,
+        name: 'driverList_phone_input'
       }
     },
     {
@@ -345,7 +353,8 @@ export default class extends Vue {
       key: 'busiType',
       label: '业务线',
       tagAttrs: {
-        placeholder: '请选择业务线'
+        placeholder: '请选择业务线',
+        name: 'driverList_busiType_select'
       },
       options: [
         {
@@ -367,16 +376,18 @@ export default class extends Vue {
       key: 'gmId',
       label: '加盟经理',
       tagAttrs: {
-        placeholder: '请选择加盟经理'
+        placeholder: '请选择加盟经理',
+        name: 'driverList_gmId_select'
       },
-      options: []
+      options: this.gmOptions
     },
     {
       type: 2,
       key: 'sourceChannel',
       label: '司机来源',
       tagAttrs: {
-        placeholder: '请选择司机来源'
+        placeholder: '请选择司机来源',
+        name: 'driverList_sourceChannel_select'
       },
       options: [
         {
@@ -544,7 +555,7 @@ export default class extends Vue {
    */
   private page:PageObj = {
     page: 1,
-    limit: 20,
+    limit: 30,
     total: 0
   }
 
@@ -558,12 +569,13 @@ export default class extends Vue {
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
-        this.formItem[5].options = res.data.map(function(item:any) {
+        let gms = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
           }
         })
+        this.gmOptions.push(...gms)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -579,12 +591,13 @@ export default class extends Vue {
     try {
       let { data: res } = await GetOpenCityData()
       if (res.success) {
-        this.formItem[0].options = res.data.map(function(item:any) {
+        let workCity = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.code
           }
         })
+        this.workCityOptions.push(...workCity)
       } else {
         this.$message.error(res.errorMsg)
       }

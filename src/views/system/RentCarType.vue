@@ -28,6 +28,7 @@
           v-permission="['/v1/product/product/rentalCar/download']"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
+          name="rentcartype_download_btn"
           @click="downLoad"
         >
           <i class="el-icon-download" />
@@ -37,6 +38,7 @@
           v-permission="['/v1/product/product/rentalCar/create']"
           size="small"
           type="primary"
+          name="rentcartype_create_btn"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           @click="showDialog('create')"
         >
@@ -44,6 +46,7 @@
           <span v-if="isPC">新建商品</span>
         </el-button>
         <el-dropdown
+          name="rentcartype_tableMenu_dropdown"
           :hide-on-click="false"
           trigger="click"
         >
@@ -51,11 +54,15 @@
             size="small"
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
+            name="rentcartype_columnstatus_btn"
           >
             <i class="el-icon-s-operation" />
             <span v-if="isPC">筛选</span>
           </el-button>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu
+            slot="dropdown"
+            name="rentcartype_tableMenuItem_dropdown"
+          >
             <el-checkbox-group v-model="checkList">
               <el-dropdown-item
                 v-for="item in dropdownList"
@@ -233,6 +240,7 @@
             v-model="dialogForm.supplier"
             placeholder="请输入供应商"
             maxlength="15"
+            name="rentcartype_chooseSupplier_input"
             clearable
           />
         </el-form-item>
@@ -245,6 +253,7 @@
             placeholder="请选择"
             clearable
             filterable
+            name="rentcartype_chooseCarType_select"
           >
             <el-option
               v-for="(item, index) in optionsCar"
@@ -263,6 +272,7 @@
             placeholder="请输入车辆信息"
             maxlength="50"
             clearable
+            name="rentcartype_chooseCarDescribe_input"
           />
         </el-form-item>
         <el-form-item
@@ -274,6 +284,7 @@
             v-only-number="{min: 0, max: 1000000, precision: 2}"
             placeholder="请输入无税价格"
             clearable
+            name="rentcartype_choosePrice_input"
           >
             <template slot="append">
               元
@@ -290,6 +301,7 @@
             multiple
             clearable
             :disabled="!isAdd"
+            name="rentcartype_chooseCity_select"
           >
             <el-option
               v-for="(item, index) in optionsDialogCity"
@@ -362,7 +374,7 @@ export default class extends Vue {
     endDate: '',
     startDate: '',
     page: 1,
-    limit: 20
+    limit: 30
   };
   private dropdownList: any[] = [
     '商品编号',

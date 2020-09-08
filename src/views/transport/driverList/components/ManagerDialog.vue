@@ -41,6 +41,8 @@ export default class extends Vue {
   @Prop({ default: '' }) type!:string
   private showAlert = false // 是否显示弹窗
   private title:string = '' // 标题
+
+  private gmOptions:any[] = [] // 加盟经理列表
   // 表单对象
   private dialogForm:IState = {
     gmId: ''
@@ -53,9 +55,10 @@ export default class extends Vue {
       label: '请选择加盟经理',
       tagAttrs: {
         placeholder: '请选择新的加盟经理',
-        filterable: true
+        filterable: true,
+        name: 'driverlist_gmId_select'
       },
-      options: []
+      options: this.gmOptions
     }
   ]
 
@@ -85,12 +88,13 @@ export default class extends Vue {
       }
       let { data: res } = await GetManagerLists(params)
       if (res.success) {
-        this.dialogItems[0].options = res.data.map(function(item:any) {
+        let gms = res.data.map(function(item:any) {
           return {
             label: item.name,
             value: item.id
           }
         })
+        this.gmOptions.push(...gms)
       } else {
         this.$message.error(res.errorMsg)
       }

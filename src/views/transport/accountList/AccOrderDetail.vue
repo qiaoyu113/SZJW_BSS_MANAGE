@@ -9,6 +9,7 @@
     <div class="detailBox">
       <el-tabs
         v-model="activeName"
+        type="card"
         @tab-click="handleClick"
       >
         <el-tab-pane
@@ -16,200 +17,225 @@
           name="f1"
         >
           <!--table表单-->
-          <el-card>
-            <div class="table_center">
-              <el-table
-                v-loading="listLoading"
-                :data="list"
-                :row-style="{height: '20px'}"
-                :cell-style="{padding: '5px 0'}"
-                size="mini"
-                :height="isPC ? 'calc(100vh - 550px)' : 'calc(100vh - 140px)'"
-                fit
-                :border="isPC"
-                stripe
-                highlight-current-row
-                style="width: 100%"
+          <div class="table_center">
+            <el-table
+              v-loading="listLoading"
+              :data="list"
+              :row-style="{height: '20px'}"
+              :cell-style="{padding: '5px 0'}"
+              size="mini"
+              :max-height="isPC ? 'calc(100vh - 550px)' : 'calc(100vh - 140px)'"
+              fit
+              :border="isPC"
+              stripe
+              highlight-current-row
+              style="width: 100%"
+            >
+              <el-table-column
+                fixed
+                align="left"
+                label="运力编号"
               >
-                <el-table-column
-                  fixed
-                  align="left"
-                  label="货主编号"
-                >
-                  <template slot-scope="scope">
+                <template slot-scope="scope">
+                  <router-link
+                    class="linkTo"
+                    :to="{
+                      path: '/transport/transportdetail',
+                      query: {id: scope.row.customerId}
+                    }"
+                  >
                     <span>{{ scope.row.customerId }}</span>
-                  </template>
-                </el-table-column>
+                  </router-link>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  label="货主"
-                >
-                  <template slot-scope="scope">
-                    <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
-                  </template>
-                </el-table-column>
+              <el-table-column label="运力手机号">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.customerName }} （{{ scope.row.cityName }})</span>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  class-name="status-col"
-                  label="类型"
-                >
-                  <template slot-scope="{row}">
-                    <el-tag :type="row.status | articleStatusFilter">
-                      {{ row.primaryClassificationName
-                      }}<span
-                        v-if="row.secondaryClassificationName"
-                      >/{{ row.secondaryClassificationName }}</span>
-                    </el-tag>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                class-name="status-col"
+                label="订单编号"
+              >
+                <template slot-scope="{row}">
+                  <router-link
+                    class="linkTo"
+                    :to="{
+                      path: '/transport/transportdetail',
+                      query: {id: row.customerId}
+                    }"
+                  >
+                    <span>{{ row.customerId }}</span>
+                  </router-link>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="合同状态"
-                >
-                  <template slot-scope="{row}">
-                    {{ row.contractEffectiveness }}
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="标书"
+              >
+                <template slot-scope="{row}">
+                  <router-link
+                    class="linkTo"
+                    :to="{
+                      path: '/transport/transportdetail',
+                      query: {id: row.customerId}
+                    }"
+                  >
+                    <span>{{ row.customerId }}</span>
+                  </router-link>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="创建时间"
-                >
-                  <template slot-scope="scope">
-                    <p>{{ scope.row.createDate | Timestamp }}</p>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="线路名称"
+              >
+                <template slot-scope="scope">
+                  <p>{{ scope.row.createDate | Timestamp }}</p>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="创建人"
-                >
-                  <template slot-scope="scope">
-                    <p>
-                      <span
-                        v-if="scope.row.creatorName"
-                      >({{ scope.row.creatorName }})</span>
-                    </p>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="出车时间"
+              >
+                <template slot-scope="scope">
+                  <p>{{ scope.row.createDate | Timestamp }}</p>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="合同止期"
-                >
-                  <template slot-scope="scope">
-                    <span>{{ scope.row.contractEnd | Timestamp }}</span>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                align="left"
+                label="运费"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.contractEnd | Timestamp }}</span>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  align="left"
-                  label="线路销售"
-                >
-                  <template slot-scope="{row}">
-                    {{ row.lineSaleName | DataIsNull }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-            <pagination
-              v-show="total > 0"
-              :total="total"
-              :page.sync="listQuery.page"
-              :limit.sync="listQuery.limit"
-              :operation-list="operationList"
-              @pagination="getList"
-            />
-          </el-card>
+              <el-table-column
+                align="left"
+                label="抽佣比例"
+              >
+                <template slot-scope="{row}">
+                  {{ row.lineSaleName | DataIsNull }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="left"
+                label="抽佣金额"
+              >
+                <template slot-scope="{row}">
+                  {{ row.lineSaleName | DataIsNull }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <pagination
+            v-show="total > 0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            :operation-list="operationList"
+            @pagination="getList"
+          />
         </el-tab-pane>
         <el-tab-pane
           label="缴费明细"
           name="f2"
         >
-          <el-card>
-            <div class="table_center">
-              <el-table
-                v-loading="payLoading"
-                :data="payData"
-                style="width: 100%"
-                :row-style="{height: '20px'}"
-                :cell-style="{padding: '5px 0'}"
-                size="mini"
-                fit
-                :border="isPC"
-                stripe
-                highlight-current-row
+          <div class="table_center">
+            <el-table
+              v-loading="payLoading"
+              :data="payData"
+              style="width: 100%"
+              :row-style="{height: '20px'}"
+              :cell-style="{padding: '5px 0'}"
+              size="mini"
+              fit
+              :border="isPC"
+              stripe
+              highlight-current-row
+            >
+              <el-table-column
+                prop="date"
+                label="缴费渠道"
+                width="180"
+              />
+              <el-table-column
+                prop="name"
+                label="交易编号（只有小程序有）"
+                width="180"
+              />
+              <el-table-column
+                prop="address"
+                label="交易截图（只有线下有）"
               >
-                <el-table-column
-                  prop="date"
-                  label="缴费渠道"
-                  width="180"
-                />
-                <el-table-column
-                  prop="name"
-                  label="交易编号（只有小程序有）"
-                  width="180"
-                />
-                <el-table-column
-                  prop="address"
-                  label="交易截图（只有线下有）"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费时间"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费金额"
-                />
-              </el-table>
-            </div>
-          </el-card>
+                <template slot-scope="scope">
+                  <!-- <el-image
+                    v-if="scope.row.payImageUrl"
+                    style="width:50px;height:50px;"
+                    :preview-src-list="[scope.row.payImageUrl]"
+                    :src="scope.row.payImageUrl"
+                  /> -->
+                  <el-image
+                    :a="scope"
+                    style="width:50px;height:50px;"
+                    :preview-src-list="['https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg']"
+                    src="https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="address"
+                label="缴费时间"
+              />
+              <el-table-column
+                prop="address"
+                label="缴费金额"
+              />
+            </el-table>
+          </div>
         </el-tab-pane>
         <el-tab-pane
           label="退款明细"
           name="f3"
         >
-          <el-card>
-            <div class="table_center">
-              <el-table
-                v-loading="outLoading"
-                :data="outData"
-                style="width: 100%"
-                :row-style="{height: '20px'}"
-                :cell-style="{padding: '5px 0'}"
-                size="mini"
-                fit
-                :border="isPC"
-                stripe
-                highlight-current-row
-              >
-                <el-table-column
-                  prop="date"
-                  label="缴费渠道"
-                  width="180"
-                />
-                <el-table-column
-                  prop="name"
-                  label="交易编号（只有小程序有）"
-                  width="180"
-                />
-                <el-table-column
-                  prop="address"
-                  label="交易截图（只有线下有）"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费时间"
-                />
-                <el-table-column
-                  prop="address"
-                  label="缴费金额"
-                />
-              </el-table>
-            </div>
-          </el-card>
+          <div class="table_center">
+            <el-table
+              v-loading="outLoading"
+              :data="outData"
+              style="width: 100%"
+              :row-style="{height: '20px'}"
+              :cell-style="{padding: '5px 0'}"
+              size="mini"
+              fit
+              :border="isPC"
+              stripe
+              highlight-current-row
+            >
+              <el-table-column
+                prop="date"
+                label="退款方式"
+                width="180"
+              />
+              <el-table-column
+                prop="address"
+                label="退款原因"
+              />
+              <el-table-column
+                prop="address"
+                label="退款时间"
+              />
+              <el-table-column
+                prop="address"
+                label="退款金额"
+              />
+            </el-table>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -219,9 +245,9 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetCustomerList } from '@/api/customer'
 import { SettingsModule } from '@/store/modules/settings'
-import AccountInfo from './components/accountInfo.vue'
+import AccountInfo from './components/AccountInfo.vue'
+import AccountOrder from './components/AccountOrder.vue'
 import { HandlePages } from '@/utils/index'
-import accountOrder from './components/accountOrder.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import '@/styles/common.scss'
 import { CargoListData } from '@/api/types'
@@ -235,12 +261,12 @@ interface IState {
     components: {
       AccountInfo,
       Pagination,
-      accountOrder
+      AccountOrder
     }
   })
 
 export default class extends Vue {
-  private activeName:string = 'f2'
+  private activeName:string = 'f1'
   private listLoading:boolean = true
   private list: CargoListData[] = []
   private total = 0;
@@ -425,5 +451,15 @@ export default class extends Vue {
 <style scoped>
 .AccountDetail >>> .operation-main,.AccountDetail-m >>> .operation-m{
   display: none;
+}
+.linkTo {
+  color: #649cee;
+  font-weight: bold;
+  cursor: pointer;
+}
+.AccountDetail-m >>> .el-tabs__header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

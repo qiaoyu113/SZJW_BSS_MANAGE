@@ -121,6 +121,8 @@ export default class extends Vue {
       .title {
         color:#303133;
         font-weight:bold;
+        border-bottom: 1px solid #EEEEEE;
+        padding-bottom: 15px;
       }
       dd {
         margin-left: 0px;
@@ -135,6 +137,8 @@ export default class extends Vue {
       justify-content: center;
       align-items: center;
       height:100px;
+      color:#666;
+      font-size:13px;
     }
   }
 </style>
