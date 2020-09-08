@@ -4,7 +4,7 @@
     <div class="table_center">
       <el-table
         v-loading="listLoading"
-        :data="list"
+        :data="lists"
         :row-style="{height: '20px'}"
         :cell-style="{padding: '5px 0'}"
         size="mini"
@@ -21,7 +21,7 @@
           label="时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.createDate | Timestamp }}</span>
+            <span>{{ scope.row.createDate }}</span>
           </template>
         </el-table-column>
 
@@ -90,7 +90,7 @@ interface IState {
 
 export default class ShowLog extends Vue {
   private listLoading = true
-  private list: any[] = []
+  private lists: any[] = []
   private total = 0;
   private operationList: any[] = [{}]
   private listQuery: IState = {
@@ -116,7 +116,8 @@ export default class ShowLog extends Vue {
     this.listLoading = true
     const { data } = await freightLog(this.listQuery)
     if (data.success) {
-      this.list = data.data
+      console.log(data)
+      this.lists = data.data
       data.page = await HandlePages(data.page)
       this.total = data.page.total
       setTimeout(() => {

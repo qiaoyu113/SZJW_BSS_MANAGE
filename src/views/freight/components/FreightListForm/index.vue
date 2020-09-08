@@ -76,9 +76,9 @@
                   >
                     <el-option
                       v-for="item in optionsClassification"
-                      :key="item.dictValue"
-                      :label="item.dictLabel"
-                      :value="item.dictValue"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -148,6 +148,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList } from '@/api/common'
+import { GetSpecifiedRoleList } from '@/api/freight'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
@@ -247,36 +248,43 @@ export default class extends Vue {
     let vodeName = ''
     switch (key) {
       // 根据listQuery中的key来判断
-      case 'city':
+      case 'driverCity':
         for (let entry of this.optionsCity) {
           if (entry.codeVal === value) {
             vodeName = entry.code
           }
         }
         break
-      case 'customerId':
+      case 'wayBillId':
         vodeName = value
         break
-      case 'bussinessName':
+      case 'driver':
         vodeName = value
         break
-      case 'bussinessPhone':
+      case 'line':
         vodeName = value
         break
       case 'customerCompanyName':
         vodeName = value
         break
-      case 'lineSaleId':
+      case 'feeDiff':
         for (let entry of this.hasDiff) {
           if (entry.dictValue === value) {
             vodeName = entry.dictLabel
           }
         }
         break
-      case 'classification':
+      case 'dutyManagerId':
         for (let entry of this.optionsClassification) {
-          if (entry.dictValue === value) {
-            vodeName = entry.dictLabel
+          if (entry.id === value) {
+            vodeName = entry.name
+          }
+        }
+        break
+      case 'gmId':
+        for (let entry of this.optionsJoin) {
+          if (entry.id === value) {
+            vodeName = entry.name
           }
         }
         break
@@ -308,8 +316,8 @@ export default class extends Vue {
   // 获取加盟经理列表
   private async getDictionary() {
     return new Promise((resolve, reject) => {
-      GetManagerLists({
-        uri: '/v1/line/clue/queryLineClueList'
+      GetSpecifiedRoleList({
+        roleId: '3'
       })
         .then(({ data }: any) => {
           if (data.success) {
@@ -328,8 +336,8 @@ export default class extends Vue {
   // 获取加盟经理
   private async getJoinManageList() {
     return new Promise((resolve, reject) => {
-      GetManagerLists({
-        uri: '/v1/line/clue/queryLineClueList'
+      GetSpecifiedRoleList({
+        roleId: '1'
       })
         .then(({ data }: any) => {
           if (data.success) {

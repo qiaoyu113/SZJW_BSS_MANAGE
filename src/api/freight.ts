@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 let prefix = '/mock/67'
+let prefix2 = '/mock/25'
 // let prefix = '/api/waybill_center'
 
 /**
@@ -75,6 +76,17 @@ export const WayBillAmountDetail = (data: any) =>
 export const NoCarBatch = (data: any) =>
   request({
     url: `${prefix}/v2/waybill/noCarBatch`,
+    method: 'post',
+    data
+  })
+
+/**
+   *
+   * 获取外线销售和上岗经理
+   */
+export const GetSpecifiedRoleList = (data: any) =>
+  request({
+    url: `${prefix2}/v1/base/role/getSpecifiedRoleList`,
     method: 'post',
     data
   })
