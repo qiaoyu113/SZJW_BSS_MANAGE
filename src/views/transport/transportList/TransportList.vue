@@ -11,6 +11,7 @@
         :list-query="listQuery"
         :form-item="formItem"
         label-width="100px"
+        class="p15"
       >
         <div
           slot="btn1"
@@ -18,7 +19,7 @@
         >
           <el-button
             :class="isPC ? '' : 'btnMobile'"
-            name="transportList_reset_btn"
+            name="transportlist_reset_btn"
             size="small"
             @click="handleResetClick"
           >
@@ -27,7 +28,7 @@
           <el-button
             type="primary"
             :class="isPC ? '' : 'btnMobile'"
-            name="transportList_query_btn"
+            name="transportlist_query_btn"
             size="small"
             @click="handleQueryClick"
           >
@@ -48,7 +49,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
-          name="Transport_btn_creat"
+          name="transportlist_create_btn"
           @click="creatTransport"
         >
           <i
@@ -58,6 +59,7 @@
         </el-button>
 
         <el-dropdown
+          name="transportlist_tableMenu_dropdown"
           :hide-on-click="false"
           trigger="click"
         >
@@ -65,13 +67,17 @@
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
             size="small"
+            name="transportlist_columnstatus_btn"
           >
             <i
               class="el-icon-s-operation"
             />
             <span v-if="isPC">筛选</span>
           </el-button>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu
+            slot="dropdown"
+            name="transportlist_tableMenuItem_dropdown"
+          >
             <el-checkbox-group v-model="checkList">
               <el-dropdown-item
                 v-for="item in dropdownList"
@@ -91,7 +97,7 @@
           :class="isPC ? 'btn-item' : 'btn-item-m'"
           type="primary"
           size="small"
-          name="Transport_btn_change"
+          name="transportlist_changeManager_btn"
           @click="handleModifyManager"
         >
           <i
@@ -120,6 +126,7 @@
         </template>
         <template v-slot:op="scope">
           <el-dropdown
+            name="transportlist_table_dropdown"
             :trigger="isPC ? 'hover' : 'click'"
             @command="(e) => handleCommandChange(e,scope.row)"
           >
@@ -128,11 +135,16 @@
                 v-if="isPC"
                 :a="scope"
                 type="text"
+                size="mini"
               >
-                更多操作
+                更多操作<i
+                  v-if="isPC"
+                  class="el-icon-arrow-down el-icon--right"
+                />
               </el-button>
               <i
                 v-else
+                style="font-size: 18px;"
                 class="el-icon-setting"
               />
             </span>
@@ -202,6 +214,7 @@
       :type="type"
       :options="managerArr"
       @onRows="rows = []"
+      @changeSuccess="getList(listQuery)"
     />
 
     <!-- 上岗 -->
@@ -221,15 +234,14 @@ import SelfTable from '@/components/Base/SelfTable.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { TransportListForm } from '../components'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
 import { GetDictionaryList, GetOpenCityData, GetManagerLists } from '@/api/common'
 import { updateCarrierStatus, getCarrierInfoList } from '@/api/transport'
 import { getLabel } from '@/utils/index.ts'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import ManagerDialog from './components/managerDialog.vue'
-import workDialog from './components/workDialog.vue'
+import ManagerDialog from './components/ManagerDialog.vue'
+import WorkDialog from './components/WorkDialog.vue'
 import { delayTime } from '@/settings'
 
 interface IState {
@@ -247,12 +259,11 @@ interface PageObj {
       Pagination,
       SuggestContainer,
       TableHeader,
-      TransportListForm,
       SelfForm,
       SelfTable,
       PitchBox,
       ManagerDialog,
-      workDialog
+      WorkDialog
     }
   })
 
@@ -368,11 +379,11 @@ export default class extends Vue {
     */
     private page:PageObj = {
       page: 1,
-      limit: 20,
+      limit: 30,
       total: 0
     }
     private listQuery:IState = {
-      gmId: '',
+      gmId: null,
       status: 'all',
       workCity: null,
       carrierId: null,
@@ -395,7 +406,8 @@ export default class extends Vue {
         key: 'workCity',
         label: '工作城市',
         tagAttrs: {
-          placeholder: '请选择工作城市'
+          placeholder: '请选择工作城市',
+          name: 'transportlist_chooseCity_select'
         },
         options: []
       },
@@ -404,7 +416,8 @@ export default class extends Vue {
         key: 'carrierId',
         label: '运力编号',
         tagAttrs: {
-          placeholder: '请输入司机编号'
+          placeholder: '请输入运力编号',
+          name: 'transportlist_chooseCarrierId_input'
         }
       },
       {
@@ -412,7 +425,8 @@ export default class extends Vue {
         key: 'name',
         label: '运力姓名',
         tagAttrs: {
-          placeholder: '请输入姓名'
+          placeholder: '请输入姓名',
+          name: 'transportlist_chooseName_input'
         }
       },
       {
@@ -421,7 +435,8 @@ export default class extends Vue {
         label: '运力手机号',
         tagAttrs: {
           placeholder: '请输入手机号',
-          type: ''
+          type: 'number',
+          name: 'transportlist_choosePhone_input'
         }
       },
       {
@@ -429,7 +444,8 @@ export default class extends Vue {
         key: 'carType',
         label: '车型',
         tagAttrs: {
-          placeholder: '请选择车型'
+          placeholder: '请选择车型',
+          name: 'transportlist_chooseCarType_input'
         },
         options: []
       },
@@ -438,7 +454,8 @@ export default class extends Vue {
         key: 'busiType',
         label: '业务线',
         tagAttrs: {
-          placeholder: '业务线'
+          placeholder: '业务线',
+          name: 'transportlist_chooseBusiType_select'
         },
         options: [
           {
@@ -456,7 +473,8 @@ export default class extends Vue {
       //   key: 'gmGroup',
       //   label: '运营小组',
       //   tagAttrs: {
-      //     placeholder: '请选择运营小组'
+      //     placeholder: '请选择运营小组',
+      //     name: 'transportlist_chooseGmGroup_select'
       //   },
       //   options: []
       // },
@@ -465,7 +483,8 @@ export default class extends Vue {
         key: 'gmId',
         label: '运营经理',
         tagAttrs: {
-          placeholder: '请选择运营经理'
+          placeholder: '请选择运营经理',
+          name: 'transportlist_chooseGmId_select'
         },
         options: []
       },
@@ -475,7 +494,8 @@ export default class extends Vue {
         label: '所属司机姓名',
         w: '130px',
         tagAttrs: {
-          placeholder: '请输入所属司机姓名'
+          placeholder: '请输入所属司机姓名',
+          name: 'transportlist_chooseDriverName_input'
         }
       },
       {
@@ -484,7 +504,8 @@ export default class extends Vue {
         label: '所属司机手机号',
         w: '130px',
         tagAttrs: {
-          placeholder: '请输入所属司机手机号'
+          placeholder: '请输入所属司机手机号',
+          name: 'transportlist_chooseDriverPhone_input'
         }
       },
       {
@@ -564,7 +585,7 @@ export default class extends Vue {
     private handleResetClick() {
       this.tags = []
       this.listQuery = {
-        gmId: '',
+        gmId: null,
         limit: '10',
         page: '1',
         status: null,

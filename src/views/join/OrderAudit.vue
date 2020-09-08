@@ -239,14 +239,14 @@
       <el-button
         v-loading.fullscreen.lock="fullscreenLoading"
         type="success"
-        name="OrderAudit-btn-pass"
+        name="orderaudit-resolve-btn"
         @click="auditPass()"
       >
         审核通过
       </el-button>
       <el-button
         v-loading.fullscreen.lock="fullscreenLoading"
-        name="OrderAudit-btn-nopass"
+        name="orderaudit-reject-btn"
         type="danger"
         @click="auditNoPass()"
       >
@@ -426,6 +426,20 @@ export default class extends Vue {
         this.$message.success('操作成功，审核通过')
       } else {
         this.$message.error(data.errorMsg)
+        if (data.errorMsg === '司机信息不完善') {
+          this.$confirm('检测到该司机没有现在居住地址信息，请完善！', '提示', {
+            confirmButtonText: '去完善',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$router.push({ name: 'EditDriver', query: { id: this.orderDetail.driverId } })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+          })
+        }
       }
     }
 
@@ -452,6 +466,11 @@ export default class extends Vue {
       } else {
         this.fullscreenLoading = false
         this.$message.error(data.errorMsg)
+        if (data.errorCode === 650) {
+          setTimeout(() => {
+            this.$router.push({ name: 'EditDriver', query: { id: this.orderDetail.driverId } })
+          }, 1500)
+        }
       }
     }
 

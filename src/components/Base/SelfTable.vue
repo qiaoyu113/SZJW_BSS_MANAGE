@@ -126,44 +126,46 @@ export default class extends Vue {
   ] }) operationList!:any[]
   @Prop({ default: () => ({ current: 1, size: 20, total: 0 }) }) page!:PageObj
 
+  // 区分设备
   get isPC() {
     return SettingsModule.isPC
   }
-  multipleSelection:any[] =[]
 
+  // 多选数组
+  multipleSelection:any[] =[]
+  // 表格高度
   get height() {
     return SettingsModule.tableHeight
   }
   /**
-   * 勾选中的item
-   */
-  handleSelectionChange(val:any) {
-    this.multipleSelection = val
-  }
-  /**
-   * 切换勾选
-   */
-  toggleRowSelection(rows:any[]) {
-    if (rows) {
-      rows.forEach(row => {
-        (this.$refs.multipleTable as any).toggleRowSelection(row)
-      })
-    } else {
-      (this.$refs.multipleTable as any).clearSelection()
-    }
-  }
-
-  /**
    * 分页和切换页码
    */
-   @Emit('onPageSize')
+  @Emit('onPageSize')
   handlePageSizeChange(value:PageObj) {
   }
    @Emit('onCommand')
-   handleCommand(command:any, row:any) {
-   }
+  handleCommand(command:any, row:any) {
+  }
    @Emit('olclick')
    handleOlClick(value:any) {
+   }
+   /**
+   * 勾选中的item
+   */
+   handleSelectionChange(val:any) {
+     this.multipleSelection = val
+   }
+   /**
+   * 切换勾选
+   */
+   toggleRowSelection(rows:any[]) {
+     if (rows) {
+       rows.forEach(row => {
+         (this.$refs.multipleTable as any).toggleRowSelection(row)
+       })
+     } else {
+       (this.$refs.multipleTable as any).clearSelection()
+     }
    }
 }
 </script>
@@ -172,5 +174,12 @@ export default class extends Vue {
     background: #FFFFFF;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     overflow: hidden;
+  }
+</style>
+
+<style scoped>
+  .selfTable >>> .pagination-container {
+    padding-left: 0px;
+    padding-right: 0px;
   }
 </style>

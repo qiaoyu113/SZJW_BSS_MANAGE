@@ -242,7 +242,7 @@ export default class extends mixins(ResizeMixin) {
         ]
       }
       ]
-    } as EChartOption<EChartOption.SeriesLine | EChartOption.SeriesBar>)
+    } as any)
   }
 }
 </script>

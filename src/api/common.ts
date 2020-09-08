@@ -84,7 +84,7 @@ export const Upload = (params: any, data: any) =>
 // 获取支付方式
 export const GetPayList = (data:any) =>
   request({
-    url: `order/v1/order/getPayTypeList`,
+    url: `business_center/v1/order/getPayTypeList`,
     method: 'get',
     data
   })

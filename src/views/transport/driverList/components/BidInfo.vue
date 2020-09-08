@@ -15,6 +15,8 @@
             :list-query="item"
             :form-item="formItem"
             label-width="80px"
+            :m-block="true"
+            :pc-block="true"
           >
             <template v-slot:c="{row}">
               {{ row.c | Timestamp }}
@@ -76,6 +78,8 @@ export default class extends Vue {
       justify-content: center;
       align-items: center;
       height:100px;
+      color:#666;
+      font-size:13px;
     }
   }
 </style>
@@ -125,5 +129,19 @@ export default class extends Vue {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
     }
+ }
+ @media screen and (min-width: 700px){
+   .orderInfo >>> .el-form-item__label {
+    font-size: 13px!important;
+    color: #9e9e9e!important;
+    font-weight: 400;
+    padding-right: 16px;
+  }
+  .orderInfo >>> .el-form-item__content span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 700;
+      overflow-wrap: break-word;
+  }
  }
 </style>

@@ -136,7 +136,7 @@ const transportRouter: RouteConfig = {
         activeMenu: '/transport/transportlist',
         noCache: true,
         icon: '',
-        apiUrl: '/v1/order/getCarrierInfoList'
+        apiUrl: '/v1/carrier/getCarrierInfoList'
       }
     },
     {

@@ -140,8 +140,10 @@ export default class ShowTender extends Vue {
     state: '',
     lineSaleId: ''
   }
-  created() {
-    this.fetchData()
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   // 所有请求方法
@@ -169,9 +171,9 @@ export default class ShowTender extends Vue {
       }, 0.5 * 1000)
     }
   }
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
+
+  created() {
+    this.fetchData()
   }
 }
 </script>

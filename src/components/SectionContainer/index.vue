@@ -66,7 +66,7 @@ export default class extends Vue {
             height: 17px;
             position: absolute;
             left: 16px;
-            top: 4px;
+            top: 0;
             bottom: 0;
             margin: auto;
             background-image: linear-gradient(270deg, #FF9600 0%, #FFB400 100%);

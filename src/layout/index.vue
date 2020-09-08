@@ -72,16 +72,16 @@ export default class extends mixins(ResizeMixin) {
   }
 
   mounted() {
-    // ios无法呼键盘解决方案
-    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
-      item.children[0].children[0].removeAttribute('readOnly')
-      // item.children[0].children[0].onblur = function() {
-      //   let _this = this
-      //   setTimeout(() => {
-      //     _this.removeAttribute('readOnly')
-      //   }, 200)
-      // }
-    })
+    // // ios无法呼键盘解决方案
+    // Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+    //   (item.children[0].children[0] as any).removeAttribute('readOnly');
+    //   (item.children[0].children[0] as any).onblur = function() {
+    //     let _this = this
+    //     setTimeout(() => {
+    //       _this.removeAttribute('readOnly')
+    //     }, 200)
+    //   }
+    // })
   }
 }
 </script>

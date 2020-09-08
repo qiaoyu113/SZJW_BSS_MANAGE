@@ -34,7 +34,10 @@
               remote
               reserve-keyword
               placeholder="请输入司机编号/姓名/手机号"
+              name="creatorder_driverId_select"
               @change="checkDiver"
+              @focus="confession"
+              @blur="confession"
             >
               <el-option
                 v-for="item in driverList"
@@ -78,6 +81,7 @@
               <el-input
                 v-model="ruleForm.driverInfoFORM.idNo"
                 placeholder="请输入身份证号"
+                name="creatorder_idNo_input"
                 maxlength="18"
               />
             </el-form-item>
@@ -95,7 +99,10 @@
               label="商品分类"
               prop="busiType"
             >
-              <el-radio-group v-model="ruleForm.busiType">
+              <el-radio-group
+                v-model="ruleForm.busiType"
+                :disabled="ruleForm.createSource !== 1 && id"
+              >
                 <el-radio
                   v-for="item in optionsBusi"
                   :key="item.dictValue"
@@ -112,7 +119,10 @@
               label="合作模式"
               prop="cooperationModel"
             >
-              <el-radio-group v-model="ruleForm.cooperationModel">
+              <el-radio-group
+                v-model="ruleForm.cooperationModel"
+                :disabled="ruleForm.createSource !== 1 && id"
+              >
                 <el-radio label="1">
                   购车
                 </el-radio>
@@ -134,6 +144,7 @@
                 v-model="ruleForm.cooperationTime"
                 v-only-number="{min: 0, max: 999}"
                 placeholder="合作期限"
+                name="creatorder_cooperationTime_input"
                 type="number"
               />
             </el-form-item>
@@ -150,6 +161,7 @@
                 v-model="ruleForm.incomeGuarantee"
                 v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入收入保障"
+                name="creatorder_incomeGuarantee_input"
                 maxlength="10"
                 type="number"
               />
@@ -164,6 +176,7 @@
                 v-model="ruleForm.rake"
                 v-only-number="{min: 0, max: 100, precision: 1}"
                 placeholder="请输入抽佣比例"
+                name="creatorder_rake_input"
                 type="number"
               />
             </el-form-item>
@@ -177,8 +190,10 @@
                 v-model="ruleForm.goodsAmount"
                 v-only-number="{min: 0, precision: 2, max: 999999.99}"
                 placeholder="请输入商品金额"
+                name="creatorder_goodsAmount_input"
                 controls-position="right"
                 type="number"
+                :disabled="ruleForm.createSource !== 1 && id"
                 @blur="goodBlur"
               />
             </el-form-item>
@@ -235,6 +250,7 @@
               <el-select
                 v-model="ruleForm.supplier"
                 placeholder="请选择租赁公司"
+                name="creatorder_supplier_select"
               >
                 <el-option
                   v-for="item in optionsCompany"
@@ -256,6 +272,7 @@
               <el-select
                 v-model="ruleForm.supplier"
                 placeholder="请选择购车公司"
+                name="creatorder_supplier_select"
               >
                 <el-option
                   v-for="item in optionsCompany"
@@ -278,6 +295,7 @@
               <el-select
                 v-model="ruleForm.cooperationCar"
                 placeholder="请选择合作车型"
+                name="creatorder_cooperationCar_select"
               >
                 <el-option
                   v-for="item in optionsCar"
@@ -300,6 +318,7 @@
               <el-select
                 v-model="ruleForm.cooperationCar"
                 placeholder="请选择合作车型"
+                name="creatorder_cooperationCar_select"
               >
                 <el-option
                   v-for="item in optionsCar2"
@@ -322,6 +341,7 @@
               <el-select
                 v-model="ruleForm.carModel"
                 placeholder="请选择车辆型号"
+                name="creatorder_carModel_select"
               >
                 <el-option
                   v-for="item in optionsCarType"
@@ -342,6 +362,7 @@
             >
               <el-input
                 v-model="ruleForm.plateNo"
+                name="creatorder_plateNo_input"
                 placeholder="请输入车牌号"
                 maxlength="10"
               />
@@ -355,6 +376,7 @@
               <el-input-number
                 v-model="ruleForm.capacityQuota"
                 v-only-number="{min: 0, max: 999}"
+                name="creatorder_capacityQuota_input"
                 class="input-number"
                 :min="1"
                 :max="999"
@@ -407,6 +429,7 @@
               <el-input
                 v-model="payNumber"
                 v-only-number="{min: 0, precision: 2, max: 999999.99}"
+                name="creatorder_payNumber_input"
                 placeholder="请输入支付金额"
                 maxlength="10"
               />
@@ -416,6 +439,7 @@
                 <el-button
                   type="primary"
                   icon="el-icon-plus"
+                  name="creatorder_addMoney_btn"
                   @click="addPayList"
                 >
                   添加金额
@@ -449,6 +473,7 @@
                       type="warning"
                       size="small"
                       plain
+                      name="creatorder_imPay_btn"
                       @click="goBill(scope.row, scope.$index)"
                     >
                       立即支付
@@ -457,6 +482,7 @@
                       v-if="Number(scope.row.status) === 3"
                       type="text"
                       size="small"
+                      name="creatorder_paied_btn"
                       style="color: #67C23A;"
                     >
                       已支付
@@ -472,6 +498,7 @@
                       v-if="Number(scope.row.status) === 3"
                       type="text"
                       size="small"
+                      name="creatorder_look_btn"
                       @click="handleClick(scope.row, scope.$index)"
                     >
                       查看
@@ -480,6 +507,7 @@
                       v-if="Number(scope.row.status) === 1"
                       type="text"
                       size="small"
+                      name="creatorder_delete_btn"
                       @click="delClick(scope.row, scope.$index)"
                     >
                       删除
@@ -500,14 +528,14 @@
       <el-button
         v-loading.fullscreen.lock="fullscreenLoading"
         type="primary"
-        name="CreatLine-btn-creat"
+        name="creatorder_submit_btn"
         @click="submitForm('ruleForm')"
       >
         提交
       </el-button>
       <el-button
         v-if="!id"
-        name="CreatLine-btn-creat"
+        name="creatorder_reset_btn"
         @click="resetForm('ruleForm')"
       >
         重置
@@ -518,6 +546,8 @@
       :visible.sync="showMessageBill"
       title="支付"
       :confirm="confirm"
+      :before-close="cancel"
+      :cancel="cancel"
     >
       <el-form
         ref="payForm"
@@ -554,6 +584,7 @@
               <el-select
                 v-model="payForm.payType"
                 placeholder="请选择支付方式"
+                name="creatorder_payType_btn"
               >
                 <el-option
                   v-for="item in optionsPay"
@@ -601,6 +632,7 @@
               <el-input
                 v-model="payForm.transactionId"
                 placeholder="请输入流水编号"
+                name="creatorder_transactionId_input"
                 maxlength="50"
                 show-word-limit
               />
@@ -613,6 +645,7 @@
             >
               <el-input
                 v-model="payForm.remarks"
+                name="creatorder_remarks_input"
                 type="textarea"
                 maxlength="150"
                 show-word-limit
@@ -701,6 +734,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfItem from '@/components/Base/SelfItem.vue'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { Timestamp } from '@/utils/index'
+import numeral from 'numeral'
 import '@/styles/common.scss'
 @Component({
   name: 'CreatOrder',
@@ -995,11 +1029,13 @@ export default class CreatLine extends Vue {
     if (value <= (Number(this.readyPay) + Number(this.notPay))) {
       // this.ruleForm.goodsAmount = Number(this.readyPay) + Number(this.notPay)
       this.orderPrice = Number(this.readyPay) + Number(this.notPay)
-      this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+      this.remain = Number(this.orderPrice) - (Number(this.notPay) + Number(this.readyPay))
     } else {
       this.orderPrice = value
       this.notPay = this.getNotPay()
-      this.remain = Number(this.orderPrice) - (Number(this.notPay) + this.readyPay)
+      const orderPrice = numeral(this.orderPrice)
+      const remain = orderPrice.subtract(this.readyPay).subtract(this.notPay).value()
+      this.remain = remain
     }
     if (!this.id) {
       this.payNumber = value
@@ -1156,7 +1192,10 @@ export default class CreatLine extends Vue {
         }
       })
       setTimeout(() => {
-        this.remain = Number(this.orderPrice) - (Number(notReadPay) + this.readyPay)
+        // this.remain = Number(this.orderPrice) - (Number(notReadPay) + this.readyPay)
+        const orderPrice = numeral(this.orderPrice)
+        const remain = orderPrice.subtract(this.readyPay).subtract(this.notPay).value()
+        this.remain = remain
       }, 100)
       this.ruleForm.busiType = this.ruleForm.busiType.toString()
       this.ruleForm.cooperationModel = this.ruleForm.cooperationModel.toString()
@@ -1277,6 +1316,15 @@ export default class CreatLine extends Vue {
     })
   }
 
+  // 取消订单
+  private cancel(done: any) {
+    let index = this.orderIndex
+    this.ruleForm.orderPayRecordInfoFORMList[index].payType = ''
+    this.ruleForm.orderPayRecordInfoFORMList[index].payImageUrl = '0'
+    this.ruleForm.orderPayRecordInfoFORMList[index].payDate = ''
+    done()
+  }
+
   // 搜索司机列表
   private remoteMethod(query: any, type: boolean) {
     if (query !== '') {
@@ -1314,6 +1362,19 @@ export default class CreatLine extends Vue {
         this.ruleForm.driverInfoFORM.workCityName = i.detail.workCityName
         this.ruleForm.driverInfoFORM.idNo = i.detail.idNo
         this.ruleForm.driverInfoFORM.driverId = driverId
+      }
+    })
+  }
+
+  // ios聚焦
+  private confession() {
+    Array.from(document.getElementsByClassName('el-select')).forEach((item) => {
+      (item.children[0].children[0] as any).removeAttribute('readOnly');
+      (item.children[0].children[0] as any).onblur = function() {
+        let _this = this
+        setTimeout(() => {
+          _this.removeAttribute('readOnly')
+        }, 200)
       }
     })
   }
@@ -1412,6 +1473,7 @@ export default class CreatLine extends Vue {
       this.ruleForm.driverId = driverId
       this.remoteMethod(this.ruleForm.driverId, true)
     }
+    this.confession()
   }
 }
 </script>
@@ -1553,6 +1615,7 @@ export default class CreatLine extends Vue {
   .el-form-item__label{
     color: #4a4a4a;
     font-weight: 400;
+    text-align: left;
   }
   .btn_box{
     padding: 30px 20px 0 20px;
@@ -1609,6 +1672,9 @@ export default class CreatLine extends Vue {
     }
     .SelfItem  .el-input, .el-date-editor, .el-textarea {
       width: 100%;
+    }
+    .el-input{
+      width: 100% !important;
     }
     // .el-cascader{
     //   width: 100%;

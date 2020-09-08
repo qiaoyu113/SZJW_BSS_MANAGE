@@ -174,7 +174,7 @@
         >
           <DetailItem
             name="每趟提成订单"
-            :value="ruleForm.bussinessName"
+            :value="ruleForm.everyUnitPrice"
           />
         </el-col>
         <el-col :span="isPC ? 6 : 24">
@@ -342,14 +342,14 @@
     >
       <el-button
         type="primary"
-        name="lineaudit-btn-creat"
+        name="lineaudit_resolve_btn"
         @click="pass"
       >
         审核通过
       </el-button>
       <el-button
         type="primary"
-        name="lineaudit-btn-creat"
+        name="lineaudit_reject_btn"
         @click="auditBack = true"
       >
         审核拒绝

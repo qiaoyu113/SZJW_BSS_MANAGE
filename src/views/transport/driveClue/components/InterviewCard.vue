@@ -13,6 +13,7 @@
         <el-button
           type="primary"
           size="small"
+          name="followClue_saveInfo_btn"
           @click="handleBtnClick"
         >
           {{ isAdd ? '填写面试表' :'修改面试表' }}
@@ -105,8 +106,8 @@ export default class extends Vue {
     }
     .noData {
       margin:50px auto;
-      color:#000;
-      font-size:14px;
+      color:#666;
+      font-size:13px;
       font-weight:bold;
       text-align: center;
     }

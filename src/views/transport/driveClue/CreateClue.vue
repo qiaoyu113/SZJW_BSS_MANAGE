@@ -19,7 +19,7 @@
           <el-button
             :class="isPC ? '' : 'btnMobile'"
             type="warning"
-            name="createClue_cancel_btn"
+            name="createclue_cancel_btn"
             @click="handleCancelClick"
           >
             取消
@@ -28,7 +28,7 @@
             v-permission="['/v1/driver/clue/create/manually']"
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
-            name="driverclue_save_btn"
+            name="createclue_save_btn"
             @click="handleSaveClick"
           >
             保存
@@ -37,7 +37,7 @@
             v-permission="['/v1/driver/clue/clue/special/interview','/v1/driver/clue/clue/share/interview','/v1/driver/clue/clue/edit/interview']"
             :class="isPC ? '' : 'btnMobile'"
             type="primary"
-            name="driverclue_saveInterview_btn"
+            name="createclue_saveInterview_btn"
             :disabled="!id"
             @click="handleSaveAndInterviewClick"
           >
@@ -98,7 +98,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入姓名',
         maxlength: 10,
-        clearable: true
+        clearable: true,
+        name: 'createclue_changeName_input'
       },
       label: '姓名',
       key: 'name'
@@ -107,7 +108,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入电话',
-        clearable: true
+        clearable: true,
+        name: 'createclue_changePhone_input'
       },
       label: '电话',
       key: 'phone'
@@ -117,7 +119,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入微信',
         maxlength: 20,
-        clearable: true
+        clearable: true,
+        name: 'createclue_changeWechatNo_input'
       },
       label: '微信',
       key: 'wechatNo'
@@ -126,7 +129,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择工作城市',
-        filterable: true
+        filterable: true,
+        name: 'createclue_changeWorkCity_select'
       },
       label: '工作城市',
       key: 'workCity',
@@ -137,7 +141,8 @@ export default class extends Vue {
       key: 'carType',
       tagAttrs: {
         placeholder: '请选择车型',
-        filterable: true
+        filterable: true,
+        name: 'createclue_changeCarType_select'
       },
       label: '车型',
       options: this.carOptions
@@ -146,7 +151,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择来源渠道',
-        filterable: true
+        filterable: true,
+        name: 'createclue_changeSourceChannel_select'
       },
       label: '来源渠道',
       key: 'sourceChannel',
@@ -155,7 +161,8 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择业务线'
+        placeholder: '请选择业务线',
+        name: 'createclue_changeBusiType_select'
       },
       label: '业务线',
       key: 'busiType',

@@ -29,6 +29,7 @@
           v-permission="['/v1/product/product/buyCar/download']"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
+          name="buycartype_downLoad_btn"
           @click="downLoad"
         >
           <i class="el-icon-download" />
@@ -39,12 +40,14 @@
           type="primary"
           size="small"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
+          name="buycartype_create_btn"
           @click="showDialog('create')"
         >
           <i class="el-icon-plus" />
           <span v-if="isPC">新建商品</span>
         </el-button>
         <el-dropdown
+          name="buycartype_tableMenu_dropdown"
           :hide-on-click="false"
           trigger="click"
         >
@@ -52,11 +55,15 @@
             size="small"
             :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
             type="primary"
+            name="buycartype_columnstatus_btn"
           >
             <i class="el-icon-s-operation" />
             <span v-if="isPC">筛选</span>
           </el-button>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu
+            slot="dropdown"
+            name="buycartype_tableMenuItem_dropdown"
+          >
             <el-checkbox-group v-model="checkList">
               <el-dropdown-item
                 v-for="item in dropdownList"
@@ -240,6 +247,7 @@
             placeholder="请输入供应商"
             maxlength="15"
             clearable
+            name="buycartype_supplier_input"
           />
         </el-form-item>
         <el-form-item
@@ -251,6 +259,7 @@
             placeholder="请选择"
             clearable
             filterable
+            name="buycartype_carType_select"
           >
             <el-option
               v-for="(item, index) in optionsCar"
@@ -269,6 +278,7 @@
             placeholder="请输入车型"
             maxlength="15"
             clearable
+            name="buycartype_model_input"
           />
         </el-form-item>
         <el-form-item
@@ -280,6 +290,7 @@
             placeholder="请输入车辆信息"
             maxlength="50"
             clearable
+            name="buycartype_carDescribe_input"
           />
         </el-form-item>
         <el-form-item
@@ -291,6 +302,7 @@
             v-only-number="{min: 0, max: 1000000, precision: 2}"
             placeholder="请输入无税价格"
             clearable
+            name="buycartype_price_input"
           >
             <template slot="append">
               元
@@ -307,6 +319,7 @@
             multiple
             clearable
             :disabled="!isAdd"
+            name="buycartype_citys_select"
           >
             <el-option
               v-for="(item, index) in optionsDialogCity"
@@ -380,7 +393,7 @@ export default class extends Vue {
     endDate: '',
     startDate: '',
     page: 1,
-    limit: 20
+    limit: 30
   };
   private dropdownList: any[] = [
     '商品编号',

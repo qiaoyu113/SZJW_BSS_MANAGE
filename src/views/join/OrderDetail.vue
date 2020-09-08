@@ -252,13 +252,19 @@
             </div>
           </div>
           <div class="card-box clearfix">
-            <el-col :span="24">
+            <el-col
+              v-if="orderDetail.statusName"
+              :span="24"
+            >
               <DetailItem
                 name="订单状态"
                 :value="orderDetail.statusName"
               />
             </el-col>
-            <el-col :span="24">
+            <el-col
+              v-if="orderDetail.createName"
+              :span="24"
+            >
               <!-- <DetailItem
                 name="订单生成时间"
                 :value="(orderDetail.driverInfoVO.createDate | Timestamp) + (driverInfoVO.driverInfoVO.createName)"
@@ -266,6 +272,19 @@
               <DetailItem
                 name="订单生成时间"
                 :value="orderDetail.createDate"
+              >
+                <template>
+                  ({{ orderDetail.createName }})
+                </template>
+              </DetailItem>
+            </el-col>
+            <el-col
+              v-if="orderDetail.status === 10"
+              :span="24"
+            >
+              <DetailItem
+                name="订单取消时间"
+                :value="orderDetail.updateDate"
               >
                 <template>
                   ({{ orderDetail.createName }})
@@ -290,7 +309,7 @@
               </DetailItem>
             </el-col> -->
             <el-col
-              v-if="orderDetail.status === 25"
+              v-if="orderDetail.notPassName"
               :span="24"
             >
               <!-- <DetailItem
@@ -307,7 +326,20 @@
               </DetailItem>
             </el-col>
             <el-col
-              v-if="orderDetail.status === 30"
+              v-if="orderDetail.confirmName"
+              :span="24"
+            >
+              <DetailItem
+                name="订单确认时间"
+                :value="orderDetail.confirmTime"
+              >
+                <template>
+                  ({{ orderDetail.confirmName }})
+                </template>
+              </DetailItem>
+            </el-col>
+            <el-col
+              v-if="orderDetail.passName"
               :span="24"
             >
               <!-- <DetailItem

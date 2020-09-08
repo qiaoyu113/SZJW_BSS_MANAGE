@@ -1,5 +1,5 @@
 <template>
-  <div class="baseInfo">
+  <div class="BaseInfo">
     <dt class="title">
       {{ item.title }}
     </dt>
@@ -30,15 +30,15 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 
 @Component({
-  name: 'baseInfo',
+  name: 'BaseInfo',
   components: {
     SelfForm
   }
 })
 export default class extends Vue {
-  @Prop({ default: () => [] }) item!:any
+  @Prop({ default: () => [] }) item!: any;
 
-  private formItem:any[] = [
+  private formItem: any[] = [
     {
       type: 7,
       key: 'carrierId',
@@ -120,9 +120,9 @@ export default class extends Vue {
       label: '创建时间:',
       slot: true
     }
-  ]
+  ];
 
-  private formItemOther:any[] = [
+  private formItemOther: any[] = [
     {
       type: 7,
       key: 'age',
@@ -173,25 +173,23 @@ export default class extends Vue {
       type: 7,
       label: '备注:'
     }
-  ]
+  ];
 }
 </script>
 <style lang="scss" scoped>
-  .baseInfo{
-
-      .title {
-        padding-bottom: 20px;
-        border-bottom:1px solid #EEEEEE;
-        color:#303133;
-        font-weight:bold;
-      }
-      dd {
-        margin-left: 0px;
-      }
-      .link {
-        color: #649CEE;
-        font-weight:bold;
-      }
-
+.BaseInfo {
+  .title {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eeeeee;
+    color: #303133;
+    font-weight: bold;
   }
+  dd {
+    margin-left: 0px;
+  }
+  .link {
+    color: #649cee;
+    font-weight: bold;
+  }
+}
 </style>

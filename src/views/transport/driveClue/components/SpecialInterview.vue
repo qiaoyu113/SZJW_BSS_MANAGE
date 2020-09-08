@@ -43,6 +43,7 @@ export default class extends Vue {
     private strategyRightOptions:any[] = [] // 投资决策权列表
     private cooperateFocusPointOptions:any[] = [] // 如果有机会跟云鸟合作，你看中的是什么列表
     private cooperateKeyFactorOptions:any[] = [] // 最终决定你是否与云鸟合作的关键因素是什么列表
+    private carNumOptions:any[] = [] // 有几辆列表
 
     // 表单对象
     private listQuery:IState = {
@@ -90,7 +91,8 @@ export default class extends Vue {
         label: '加盟经理:',
         tagAttrs: {
           placeholder: '加盟经理',
-          filterable: true
+          filterable: true,
+          name: 'interview_chooseGmId_select'
         },
         options: this.gmOptions
       },
@@ -100,7 +102,8 @@ export default class extends Vue {
         label: '邀约方式:',
         tagAttrs: {
           placeholder: '邀约方式',
-          filterable: true
+          filterable: true,
+          name: 'interview_chooseInviteType_select'
         },
         options: this.inviteTypeOptions
       },
@@ -110,7 +113,8 @@ export default class extends Vue {
         label: '来源渠道:',
         tagAttrs: {
           placeholder: '来源渠道',
-          filterable: true
+          filterable: true,
+          name: 'interview_chooseSourceChannel_select'
         },
         options: this.sourceOptions
       },
@@ -125,7 +129,8 @@ export default class extends Vue {
           rows: 2,
           maxlength: 30,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseWhereKnow_input'
         }
       },
       {
@@ -135,7 +140,8 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '重代理姓名',
           maxlength: 10,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseHeavyAgentName_input'
         }
       },
       {
@@ -145,7 +151,8 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '请输入0-60之间的数字',
           type: 'number',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseAge_input'
         }
       },
       {
@@ -157,6 +164,7 @@ export default class extends Vue {
           'default-checked-keys': true,
           'node-key': 'householdProvince',
           placeholder: '现居住地址',
+          name: 'interview_interviewAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadinterviewAddress
@@ -174,7 +182,8 @@ export default class extends Vue {
           rows: 2,
           maxlength: 32,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseLiveDistrict_input'
         }
       },
       {
@@ -187,6 +196,7 @@ export default class extends Vue {
           'default-expanded-keys': true,
           'default-checked-keys': true,
           'node-key': 'intentWorkProvince',
+          name: 'interview_intentAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadintentAddress
@@ -204,7 +214,8 @@ export default class extends Vue {
           rows: 2,
           maxlength: 32,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseIntentWorkDistrict_input'
         }
       },
       {
@@ -214,7 +225,8 @@ export default class extends Vue {
         w: '130px',
         options: this.intentDeliveryModeOptions,
         tagAttrs: {
-          filterable: true
+          filterable: true,
+          name: 'interview_intentDeliveryMode_select'
         }
       },
       {
@@ -223,7 +235,8 @@ export default class extends Vue {
         label: '意向货物类型',
         w: '130px',
         tagAttrs: {
-          filterable: true
+          filterable: true,
+          name: 'interview_intentCargoType_select'
         },
         options: this.intentCargoOptions
       },
@@ -234,7 +247,8 @@ export default class extends Vue {
         w: '140px',
         options: this.intentWorkDurationOptions,
         tagAttrs: {
-          filterable: true
+          filterable: true,
+          name: 'interview_intentWorkDuration_select'
         }
       },
       {
@@ -244,7 +258,8 @@ export default class extends Vue {
         w: '200px',
         tagAttrs: {
           type: 'number',
-          placeholder: '请输入0-25000之间的数字'
+          placeholder: '请输入0-25000之间的数字',
+          name: 'interview_originIncomeAvg_input'
         }
       },
       {
@@ -255,13 +270,17 @@ export default class extends Vue {
         tagAttrs: {
           type: 'number',
           placeholder: '请输入3000-25000之间的数字',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseExpIncomeAvg_input'
         }
       },
       {
         type: 4,
         label: '户籍类型',
         key: 'householdType',
+        tagAttrs: {
+          name: 'interview_householdType_radio'
+        },
         options: [
           {
             label: '农村',
@@ -282,6 +301,7 @@ export default class extends Vue {
           'default-expanded-keys': true,
           'default-checked-keys': true,
           'node-key': 'householdProvince',
+          name: 'interview_houseAddress_input',
           props: {
             lazy: true,
             lazyLoad: this.loadhouseAddress
@@ -299,13 +319,17 @@ export default class extends Vue {
           rows: 2,
           maxlength: 32,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseHouseholdDistrict_input'
         }
       },
       {
         label: '子女数',
         key: 'childNum',
         type: 4,
+        tagAttrs: {
+          name: 'interview_childNum_radio'
+        },
         options: [
           {
             value: 0,
@@ -332,7 +356,8 @@ export default class extends Vue {
         w: '150px',
         tagAttrs: {
           placeholder: '请输入0-500之间的数字',
-          type: 'number'
+          type: 'number',
+          name: 'interview_chooseExperience_input'
         }
       },
       {
@@ -343,7 +368,8 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '请输入0-500之间的数字',
           type: 'number',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseDrivingAge_input'
         }
       },
       {
@@ -354,14 +380,18 @@ export default class extends Vue {
         tagAttrs: {
           placeholder: '请输入0-730之间的数字',
           type: 'number',
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseLivingAge_input'
         }
       },
       {
         type: 2,
         key: 'drivingLicenceType',
         label: '驾照类型',
-        options: this.drivingLicenceTypeOptions
+        options: this.drivingLicenceTypeOptions,
+        tagAttrs: {
+          name: 'interview_chooseDrivingLicenceType_select'
+        }
       },
       {
         type: 2,
@@ -369,6 +399,9 @@ export default class extends Vue {
         label: '是否有自己的货车',
         w: '150px',
         col: 8,
+        tagAttrs: {
+          name: 'interview_chooseHasOwnCar_select'
+        },
         options: [
           {
             label: '有',
@@ -385,22 +418,29 @@ export default class extends Vue {
         key: 'ownCarNum',
         w: '0px',
         col: 4,
-        options: [
-
-        ]
+        options: this.carNumOptions,
+        tagAttrs: {
+          name: 'interview_chooseOwnCarNum_select'
+        }
       },
       {
         type: 2,
         key: 'maxAdvancePayment',
         label: '最大可支付首付款',
         w: '150px',
-        options: this.maxAdvancePaymentOptions
+        options: this.maxAdvancePaymentOptions,
+        tagAttrs: {
+          name: 'interview_chooseMaxAdvancePayment_select'
+        }
       },
       {
         type: 4,
         key: 'heavyLifting',
         label: '是否能承担较重搬运',
         w: '150px',
+        tagAttrs: {
+          name: 'interview_heavyLifting_radio'
+        },
         options: [
           {
             label: '是',
@@ -417,6 +457,9 @@ export default class extends Vue {
         key: 'providePersonalCredit',
         label: '能否提供个人征信',
         w: '150px',
+        tagAttrs: {
+          name: 'interview_providePersonalCredit_radio'
+        },
         options: [
           {
             label: '是',
@@ -432,27 +475,39 @@ export default class extends Vue {
         type: 2,
         key: 'strategyRight',
         label: '投资决策权',
-        options: this.strategyRightOptions
+        options: this.strategyRightOptions,
+        tagAttrs: {
+          name: 'interview_chooseStrategyRight_select'
+        }
       },
       {
         type: 2,
         key: 'cooperateFocusPoint',
         label: '如果有机会跟云鸟合作，你看中的是什么',
         w: '280px',
-        options: this.cooperateFocusPointOptions
+        options: this.cooperateFocusPointOptions,
+        tagAttrs: {
+          name: 'interview_chooseCooperateFocusPoint_select'
+        }
       },
       {
         type: 2,
         label: '最终决定你是否与云鸟合作的关键因素是什么?',
         key: 'cooperateKeyFactor',
         w: '330px',
-        options: this.cooperateKeyFactorOptions
+        options: this.cooperateKeyFactorOptions,
+        tagAttrs: {
+          name: 'interview_chooseCooperateKeyFactor_select'
+        }
       },
       {
         type: 4,
         key: 'isAdvancedIntention',
         label: '是否是高意向司机',
         w: '150px',
+        tagAttrs: {
+          name: 'interview_isAdvancedIntention_radio'
+        },
         options: [
           {
             label: '是',
@@ -473,7 +528,8 @@ export default class extends Vue {
           type: 'textarea',
           maxlength: 100,
           'show-word-limit': true,
-          clearable: true
+          clearable: true,
+          name: 'interview_chooseRemarks_input'
         }
       },
       {
@@ -482,7 +538,8 @@ export default class extends Vue {
         label: '是否本地车牌:',
         w: '130px',
         tagAttrs: {
-          placeholder: '是否本地车牌'
+          placeholder: '是否本地车牌',
+          name: 'interview_isLocalPlate_radio'
         },
         options: [
           {
@@ -606,16 +663,18 @@ export default class extends Vue {
     // 编辑回显专车表单
     @Watch('obj', { deep: true, immediate: true })
     handleObjChange(val:any) {
-      this.listQuery = { ...this.listQuery, ...val }
-      this.listQuery.interviewAddress.push(val.liveProvince + '')
-      this.listQuery.interviewAddress.push(val.liveCity + '')
-      this.listQuery.interviewAddress.push(val.liveCounty + '')
-      this.listQuery.intentAddress.push(val.intentWorkProvince + '')
-      this.listQuery.intentAddress.push(val.intentWorkCity + '')
-      this.listQuery.intentAddress.push(val.intentWorkCounty + '')
-      this.listQuery.houseAddress.push(val.householdProvince + '')
-      this.listQuery.houseAddress.push(val.householdCity + '')
-      this.listQuery.houseAddress.push(val.householdCounty + '')
+      if (Object.keys(val).length > 0) {
+        this.listQuery = { ...this.listQuery, ...val }
+        this.listQuery.interviewAddress.push(val.liveProvince + '')
+        this.listQuery.interviewAddress.push(val.liveCity + '')
+        this.listQuery.interviewAddress.push(val.liveCounty + '')
+        this.listQuery.intentAddress.push(val.intentWorkProvince + '')
+        this.listQuery.intentAddress.push(val.intentWorkCity + '')
+        this.listQuery.intentAddress.push(val.intentWorkCounty + '')
+        this.listQuery.houseAddress.push(val.householdProvince + '')
+        this.listQuery.houseAddress.push(val.householdCity + '')
+        this.listQuery.houseAddress.push(val.householdCounty + '')
+      }
     }
 
     // 是否有车
@@ -623,7 +682,7 @@ export default class extends Vue {
     onOwnCar(val:boolean) {
       this.listQuery.ownCarNum = ''
       if (val) {
-        this.formItem[24].options = [
+        let carNums = [
           {
             label: 1,
             value: 1
@@ -637,13 +696,12 @@ export default class extends Vue {
             value: 3
           }
         ]
+        this.carNumOptions.push(...carNums)
       } else {
-        this.formItem[24].options = [
-          {
-            label: 0,
-            value: 0
-          }
-        ]
+        this.carNumOptions.push({
+          label: 0,
+          value: 0
+        })
         this.listQuery.ownCarNum = 0
       }
     }

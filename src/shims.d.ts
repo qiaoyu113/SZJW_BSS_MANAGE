@@ -25,3 +25,5 @@ declare module 'vue-image-crop-upload'
 
 // TODO: remove this part after vue-splitpane has its typescript file
 declare module 'vue-splitpane'
+
+declare module 'numeral'

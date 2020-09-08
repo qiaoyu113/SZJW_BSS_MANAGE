@@ -78,7 +78,7 @@
             >
               <template>
                 <el-button
-                  v-if="showReachPhone"
+                  v-if="OwnerDetail.isPhone"
                   type="text"
                   style="padding: 0 4px"
                   @click="getAllPhone(true)"
@@ -205,7 +205,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="分配状态"
-              :value="OwnerDetail.clueInfoVO.distributionState === 1 ? '待分配' : (OwnerDetail.clueInfoVO.distributionState === 2 ? '已分配' : '暂无数据')"
+              :value="OwnerDetail.clueInfoVO.distributionState === 0 ? '待分配' : (OwnerDetail.clueInfoVO.distributionState === 1 ? '已分配' : '暂无数据')"
             />
           </el-col>
 
@@ -233,7 +233,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="职务"
-              :value="OwnerDetail.bussinessPosition | DataIsNull"
+              :value="OwnerDetail.clueInfoVO.position | DataIsNull"
             />
           </el-col>
 
@@ -436,7 +436,8 @@ export default class extends Vue {
     private async fetchData(value: any) {
       const { data } = await GetOwnerDetail({ customerId: value, info: 'info' })
       if (data.success) {
-        this.OwnerDetail = data.data
+        data.data.clueInfoVO = this.OwnerDetail.clueInfoVO
+        this.OwnerDetail = Object.assign(this.OwnerDetail, data.data)
         this.getClueData(this.OwnerDetail.clueId)
       } else {
         this.$message.error(data.errorMsg)
@@ -447,7 +448,7 @@ export default class extends Vue {
     private async getClueData(value: any) {
       const { data } = await GetLineClueInfo({ clueId: value, info: 'info' })
       if (data.success) {
-        this.OwnerDetail.clueInfoVO = data.data
+        this.OwnerDetail.clueInfoVO = Object.assign(this.OwnerDetail.clueInfoVO, data.data)
       } else {
         this.$message.error(data.errorMsg)
       }
@@ -476,7 +477,7 @@ export default class extends Vue {
         const { data } = await GetFindBusinessPhone({ customerId: this.id })
         if (data.success) {
           this.OwnerDetail.bussinessPhone = data.data
-          this.showReachPhone = false
+          this.OwnerDetail.isPhone = false
         } else {
           this.$message.error(data.errorMsg)
         }
@@ -484,6 +485,7 @@ export default class extends Vue {
         const { data } = await GetShowPhone({ clueId: this.OwnerDetail.clueId })
         if (data.success) {
           this.OwnerDetail.clueInfoVO.phone = data.data
+          this.OwnerDetail.clueInfoVO.isPhone = false
         } else {
           this.$message.error(data)
         }

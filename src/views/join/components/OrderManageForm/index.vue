@@ -9,6 +9,7 @@
                 <el-form-item label="订单编号">
                   <el-input
                     v-model="listQuery.orderId"
+                    name="ordermanage_orderId_input"
                     placeholder="请输入订单编号"
                     clearable
                   />
@@ -18,6 +19,7 @@
                 <el-form-item label="司机姓名">
                   <el-input
                     v-model="listQuery.diverName"
+                    name="ordermanage_diverName_input"
                     placeholder="请输入联系人"
                     clearable
                   />
@@ -27,6 +29,7 @@
                 <el-form-item label="合作模式">
                   <el-select
                     v-model="listQuery.cooperationModel"
+                    name="ordermanage_cooperationModel_select"
                     placeholder="请选择合作模式"
                   >
                     <el-option
@@ -42,6 +45,7 @@
                 <el-form-item label="商品分类">
                   <el-select
                     v-model="listQuery.busiType"
+                    name="ordermanage_busiType_select"
                     placeholder="请选择商品分类"
                   >
                     <el-option
@@ -57,6 +61,7 @@
                 <el-form-item label="支付方式">
                   <el-select
                     v-model="listQuery.payType"
+                    name="ordermanage_payType_select"
                     placeholder="请选择支付方式"
                   >
                     <el-option
@@ -72,6 +77,7 @@
                 <el-form-item label="城市">
                   <el-select
                     v-model="listQuery.city"
+                    name="ordermanage_city_select"
                     placeholder="请选择城市"
                   >
                     <el-option
@@ -87,6 +93,7 @@
                 <el-form-item label="加盟经理">
                   <el-select
                     v-model="listQuery.joinManageId"
+                    name="ordermanage_joinManageId_select"
                     placeholder="请选择加盟经理"
                     filterable
                   >
@@ -141,6 +148,7 @@
                 <el-button
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   size="small"
+                  name="ordermanage_reset_btn"
                   @click="reset"
                 >
                   重置
@@ -149,6 +157,7 @@
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   size="small"
                   type="primary"
+                  name="ordermanage_filter_btn"
                   @click="research"
                 >
                   筛选

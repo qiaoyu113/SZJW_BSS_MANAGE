@@ -10,6 +10,7 @@
                   <el-select
                     v-model="listQuery.carType"
                     placeholder="请选择"
+                    name="buycartype_chooseCarType_select"
                     clearable
                     filterable
                   >
@@ -26,6 +27,7 @@
                 <el-form-item label="供应商">
                   <el-input
                     v-model="listQuery.supplier"
+                    name="buycartype_chooseSupplier_input"
                     placeholder="请输入供应商"
                     clearable
                   />
@@ -35,6 +37,7 @@
                 <el-form-item label="城市">
                   <el-select
                     v-model="listQuery.city"
+                    name="buycartype_chooseCity_select"
                     placeholder="请选择"
                     clearable
                     filterable
@@ -52,6 +55,7 @@
                 <el-form-item label="商品编号">
                   <el-input
                     v-model="listQuery.productCode"
+                    name="buycartype_chooseProductCoder_input"
                     placeholder="请输入商品编号"
                     clearable
                   />
@@ -62,6 +66,7 @@
                   <el-form-item label="车辆型号">
                     <el-select
                       v-model="listQuery.model"
+                      name="buycartype_chooseModel_select"
                       placeholder="请选择"
                       clearable
                       filterable
@@ -98,6 +103,7 @@
                 <el-button
                   size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  name="buycartype_reset_btn"
                   @click="resetForm"
                 >
                   重置
@@ -106,6 +112,7 @@
                   size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  name="buycartype_query_btn"
                   @click="search"
                 >
                   筛选

@@ -18,6 +18,7 @@
                     v-model="listQuery.nickName"
                     placeholder="请输入姓名"
                     clearable
+                    name="usermanage_chooseName_input"
                   />
                 </el-form-item>
               </el-col>
@@ -30,6 +31,7 @@
                     v-model="listQuery.mobile"
                     placeholder="请输入电话"
                     clearable
+                    name="usermanage_choosePhone_input"
                   />
                 </el-form-item>
               </el-col>
@@ -42,6 +44,7 @@
                     v-model="listQuery.roleId"
                     placeholder="请选择"
                     clearable
+                    name="usermanage_chooseRoleId_select"
                   >
                     <el-option
                       v-for="item in optionsRoles"
@@ -82,6 +85,7 @@
                     v-model="listQuery.status"
                     placeholder="请选择"
                     clearable
+                    name="usermanage_chooseStatus_select"
                   >
                     <el-option
                       v-for="(item, index) in optionsStatus"
@@ -99,6 +103,7 @@
                 <el-button
                   size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  name="usermanage_reset_btn"
                   @click="resetForm('ruleForm')"
                 >
                   重置
@@ -107,6 +112,7 @@
                   size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
                   type="primary"
+                  name="usermanage_query_btn"
                   @click="searchForm"
                 >
                   筛选

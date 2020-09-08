@@ -1,0 +1,1127 @@
+<template>
+  <div :class="isPC ? 'FreightList' : 'FreightList-m'">
+    <SuggestContainer
+      :tab="tab"
+      :tags="tags"
+      :active-name="listQuery.state"
+      @handle-date="handleDate"
+      @handle-query="handleQuery"
+    >
+      <FreightListForm
+        :list-query="listQuery"
+        :date-value="DateValue"
+        :date-value2="DateValue2"
+        @handle-tags="handleTags"
+        @handle-query="getList"
+      />
+    </SuggestContainer>
+
+    <div class="table_box">
+      <!--操作栏-->
+      <TableHeader
+        :tab="tab"
+        :active-name="listQuery.state"
+      >
+        <el-dropdown
+          :hide-on-click="false"
+          trigger="click"
+        >
+          <el-button
+            :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
+            type="primary"
+            size="small"
+          >
+            <i class="el-icon-s-operation" />
+            <span v-if="isPC">筛选</span>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-checkbox-group v-model="checkList">
+              <el-dropdown-item
+                v-for="item in dropdownList"
+                :key="item"
+              >
+                <el-checkbox :label="item" />
+              </el-dropdown-item>
+            </el-checkbox-group>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </TableHeader>
+
+      <!--table表单-->
+      <div class="table_center">
+        <el-table
+          ref="multipleTable"
+          v-loading="listLoading"
+          :data="list"
+          :row-style="{height: '20px'}"
+          :cell-style="{padding: '5px 0'}"
+          size="mini"
+          :max-height="tableHeight"
+          fit
+          :border="isPC"
+          stripe
+          highlight-current-row
+          style="width: 100%"
+          row-key="customerNo"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+            :key="checkList.length + 'c'"
+            fixed
+            reserve-selection
+            type="selection"
+            width="55"
+          />
+          <el-table-column
+            :key="checkList.length + 'index'"
+            type="index"
+            width="55"
+            label="序号"
+            :index="indexMethod('listQuery')"
+            align="center"
+            fixed
+          />
+          <el-table-column
+            v-if="checkList.indexOf('出车日期') > -1"
+            :key="checkList.length + 'a'"
+            :fixed="isPC"
+            align="left"
+            label="出车日期"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.departureDate | TimestampYMD }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('出车单号') > -1"
+            :key="checkList.length + 'd'"
+            align="left"
+            label="出车单号"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.wayBillId | DataIsNull }} </span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('司机姓名') > -1"
+            :key="checkList.length + 'e'"
+            align="left"
+            label="司机姓名"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.driverName | DataIsNull }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('线路名称') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="线路名称"
+          >
+            <template slot-scope="{row}">
+              {{ row.lineName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('预估运费') > -1"
+            :key="checkList.length + 'g'"
+            align="left"
+            label="预估运费(元)"
+          >
+            <template slot-scope="scope">
+              <p>{{ scope.row.predictCost | DataIsNull }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('加盟侧运费') > -1"
+            :key="checkList.length + 'k'"
+            align="left"
+            label="加盟侧运费（元）"
+          >
+            <template slot-scope="scope">
+              <p>
+                <span>{{ scope.row.gmFee | DataIsNull }}</span>
+              </p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('外线侧运费') > -1"
+            :key="checkList.length + 'm'"
+            align="left"
+            label="外线侧运费（元）"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.lineFee | DataIsNull }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('有无差额') > -1"
+            :key="checkList.length + 'n'"
+            align="left"
+            label="有无差额（元）"
+          >
+            <template slot-scope="{row}">
+              {{ row.feeDiff | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('运费状态') > -1"
+            :key="checkList.length + 'y'"
+            align="left"
+            label="运费状态"
+          >
+            <template slot-scope="{row}">
+              {{ row.status | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('加盟经理') > -1"
+            :key="checkList.length + 'h'"
+            align="left"
+            label="加盟经理"
+          >
+            <template slot-scope="{row}">
+              {{ row.joinManagerName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('上岗经理') > -1"
+            :key="checkList.length + 'o'"
+            align="left"
+            label="上岗经理"
+          >
+            <template slot-scope="{row}">
+              <span>{{ row.dutyManagerName | DataIsNull }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            :key="checkList.length + 'b'"
+            align="left"
+            label="操作"
+            fixed="right"
+            show-overflow-tooltip
+            :width="isPC ? 'auto' : '50'"
+          >
+            <template slot-scope="scope">
+              <el-dropdown :trigger="isPC ? 'hover' : 'click'">
+                <span
+                  v-if="isPC"
+                  class="el-dropdown-link"
+                >
+                  更多操作<i
+                    v-if="isPC"
+                    class="el-icon-arrow-down el-icon--right"
+                  />
+                </span>
+                <span
+                  v-else
+                  style="font-size: 18px;"
+                  class="el-dropdown-link"
+                >
+                  <i class="el-icon-setting el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    v-permission="['/v1/customer/onlyCustomerInfo']"
+                    name="ownerlist_detail_dropdown"
+                    @click.native="checkOption(scope.row.startDate, scope.row.wayBillId)"
+                  >
+                    确认
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-permission="['/v1/customer/onlyCustomerInfo']"
+                    name="ownerlist_detail_dropdown"
+                    @click.native="goDetail(scope.row.customerId)"
+                  >
+                    详情
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-permission="['/v1/customer/edit']"
+                    name="ownerlist_edit_dropdown"
+                    @click.native="goLog(scope.row.customerId)"
+                  >
+                    日志
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <pagination
+        v-show="total > 0"
+        :operation-list="operationList"
+        :small="true"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList"
+        @olclick="olClicks"
+      />
+    </div>
+    <PitchBox
+      :drawer.sync="drawer"
+      :drawer-list="multipleSelection"
+      @deletDrawerList="deletDrawerList"
+      @changeDrawer="changeDrawer"
+    >
+      <template slot-scope="slotProp">
+        <span>{{ slotProp.item.bussinessName }}</span>
+        <span>{{ slotProp.item.bussinessPhone }}</span>
+        <span>{{ slotProp.item.cityName }}</span>
+      </template>
+    </PitchBox>
+
+    <!-- 运费确认 -->
+    <SelfDialog
+      :visible.sync="assignShowDialogMin"
+      :title="`运费确认`"
+      :confirm-button-text="`确认`"
+      :cancel-button-text="`取消`"
+      :other-button-text="`未出车`"
+      :show-other-button="true"
+      :confirm="confirmAssignMin"
+      :other="confirmAssignOtherMin"
+    >
+      <DetailItem
+        name="出车单号"
+        :value="freightForm.list[0].deliverNo"
+      />
+      <DetailItem
+        name="司机姓名/手机号"
+        :value="freightForm.list[0].driverName + '/' + freightForm.list[0].driverPhone"
+      />
+      <el-form
+        ref="freightForm"
+        :model="freightForm"
+      >
+        <div
+          v-for="(item, index) in freightForm.list"
+          :key="index"
+        >
+          <el-form-item
+            :label="`趟数` + (index + 1) + `: ` + item.deliverTime"
+            :prop="'list[' + index + '].price'"
+            :rules="{required: true, message: '请输入金额', trigger: 'change'}"
+          >
+            <el-input
+              v-model="item.price"
+              v-only-number="{min: 0}"
+              placeholder="请输入"
+              name="freight_price_input"
+              maxlength="10"
+              clearable
+            />
+          </el-form-item>
+        </div>
+        <el-form-item
+          label="备注"
+          prop="remark"
+        >
+          <el-input
+            v-model="freightForm.remark"
+            name="addclue_remark_input"
+            type="textarea"
+            :autosize="{minRows: 2, maxRows: 4}"
+            placeholder="请输入"
+            maxlength="300"
+            clearable
+          />
+        </el-form-item>
+      </el-form>
+    </SelfDialog>
+
+    <!-- 批量运费确认 -->
+    <SelfDialog
+      :visible.sync="assignShowDialog"
+      :title="`批量运费确认`"
+      :confirm-button-text="`全部提交`"
+      :cancel-button-text="`取消`"
+      :other-button-text="`全部未出车`"
+      :show-other-button="true"
+      :confirm="confirmAssign"
+      :other="confirmAssignOther"
+      other-type="danger"
+    >
+      <el-form
+        ref="freightFormAll"
+        :model="freightFormAll"
+      >
+        <el-alert
+          class="mb10"
+          :title="`已选中${multipleSelection.length}条出车单`"
+          type="warning"
+          :closable="false"
+        />
+        <div
+          v-for="(item, itemindex) in freightFormAll.lists"
+          :key="item.id"
+          class="freightSelfDialog"
+        >
+          <div style="box-sizing:border-box;">
+            <el-switch
+              v-model="item.check"
+              style="padding:25px 15px;display: block"
+              active-color="#13ce66"
+              inactive-color="#F56C6C"
+              active-text="已出车"
+              inactive-text="未出车"
+            />
+          </div>
+          <DetailItem
+            name="出车单号"
+            :value="item.deliverNo"
+          />
+          <DetailItem
+            name="司机姓名/手机号"
+            :value="item.driverName + '/' + item.driverPhone"
+          />
+          <div
+            v-if="item.check"
+          >
+            <el-form-item
+              v-for="(i, index) in item.list"
+              :key="index"
+              :label="`趟数` + (index + 1) + `: ` + i.deliverTime"
+              :prop="'lists[' + itemindex + '].list.' + index + '.price'"
+              :rules="{required: true, message: '请输入金额', trigger: 'change'}"
+            >
+              <el-input
+                v-model="i.price"
+                v-only-number="{min: 0}"
+                placeholder="请输入"
+                name="freight_price_input"
+                maxlength="10"
+                type="number"
+                clearable
+              />
+            </el-form-item>
+          </div>
+        </div>
+        <el-form-item
+          label="备注"
+          prop="remark"
+        >
+          <el-input
+            v-model="remarkAll"
+            name="addclue_remark_input"
+            type="textarea"
+            :autosize="{minRows: 2, maxRows: 4}"
+            placeholder="请输入"
+            maxlength="300"
+            clearable
+          />
+        </el-form-item>
+      </el-form>
+    </SelfDialog>
+    <!--提示窗口-->
+    <SelfDialog
+      :visible.sync="showDialog.visible"
+      :title="showDialog.title"
+      :center="true"
+      :confirm="confirm"
+    >
+      <p>{{ showDialog.text }}</p>
+    </SelfDialog>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Form as ElForm, Input } from 'element-ui'
+import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch } from '@/api/freight'
+import { GetFindBusinessPhone } from '@/api/cargo'
+import { CargoListData } from '@/api/types'
+import { HandlePages } from '@/utils/index'
+import Pagination from '@/components/Pagination/index.vue'
+import TableHeader from '@/components/TableHeader/index.vue'
+import SuggestContainer from '@/components/SuggestContainer/index.vue'
+import SelfDialog from '@/components/SelfDialog/index.vue'
+import SelfTable from '@/components/Base/SelfTable.vue'
+import PitchBox from '@/components/PitchBox/index.vue'
+import { FreightListForm } from './components'
+import DetailItem from '@/components/DetailItem/index.vue'
+import { SettingsModule } from '@/store/modules/settings'
+import '@/styles/common.scss'
+
+interface IState {
+  [key: string]: any;
+}
+
+@Component({
+  name: 'FreightList',
+  components: {
+    Pagination,
+    SuggestContainer,
+    TableHeader,
+    FreightListForm,
+    SelfDialog,
+    SelfTable,
+    DetailItem,
+    PitchBox
+  }
+})
+export default class extends Vue {
+    private showDialog: any = {
+      visible: false,
+      title: '提示',
+      text: '内容',
+      name: ''
+    };
+    private drawer: boolean= false;
+    private total = 0;
+    private list: CargoListData[] = [];
+    private page: Object | undefined = '';
+    private listLoading = true;
+    private tags: any[] = [];
+    private templateRadio: any[] = []
+    private DateValue: any[] = [];
+    private DateValue2: any[] = [];
+    private multipleSelection: any[] = []
+    private operationList: any[] = [
+      { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3' },
+      { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
+    ];
+    private dropdownList: any[] = [
+      '出车日期',
+      '出车单号',
+      '司机姓名',
+      '线路名称',
+      '预估运费',
+      '加盟侧运费',
+      '外线侧运费',
+      '有无差额',
+      '运费状态',
+      '加盟经理',
+      '上岗经理',
+      '操作'
+    ];
+    private checkList: any[] = this.dropdownList;
+    private tab: any[] = [
+      {
+        label: '全部',
+        name: '',
+        num: ''
+      },
+      {
+        label: '待上报',
+        name: '1',
+        num: ''
+      },
+      {
+        label: '待确认',
+        name: '2',
+        num: ''
+      },
+      {
+        label: '已确认',
+        name: '3',
+        num: ''
+      },
+      {
+        label: '待二次确认',
+        name: '4',
+        num: ''
+      },
+      {
+        label: '二次已确认',
+        name: '5',
+        num: ''
+      }
+    ];
+    private listQuery: IState = {
+      customer: '',
+      customerCity: '',
+      driver: '',
+      driverCity: '',
+      dutyManagerId: '',
+      page: 1,
+      limit: 30,
+      endDate: '',
+      feeDiff: '',
+      gmId: '',
+      key: '',
+      line: '',
+      pageNumber: '',
+      project: '',
+      startDate: '',
+      wayBillId: ''
+    };
+    private freightForm: any = {
+      list: [
+        {
+          price: ''
+        },
+        {
+          price: ''
+        }
+      ],
+      remark: ''
+    };
+    private freightFormAll: any = { lists: [
+      {
+        list: [
+          {
+            price: ''
+          },
+          {
+            price: ''
+          }
+        ]
+      }
+    ] }
+    private freightRules: any = {
+      price: [
+        { required: true, message: '请输入金额', trigger: 'change' }
+      ]
+    };
+    private saleId: any = '';
+    private remarkAll: any = '';
+    // 弹窗分配
+    private dialogList: any[] = [];
+    private dialogLoading: boolean= false;
+    private multipleSelectionAssign: any[] = []
+    private assignShowDialog: boolean= false;
+    private assignShowDialogMin: boolean= false;
+    // 弹窗分页
+    private dialogTotal: number = 0;
+    private dialogListQuery: IState = {
+      page: 1,
+      limit: 20
+    };
+
+    @Watch('checkList', { deep: true })
+    private checkListChange(val:any) {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
+    }
+
+    // 判断是否是PC
+    get isPC() {
+      return SettingsModule.isPC
+    }
+
+    // table列表高度适配
+    get tableHeight() {
+      return SettingsModule.tableHeight
+    }
+
+    // 确认清除
+    private confirm(done:any) {
+      if (this.showDialog.name === '1') {
+        (this.$refs.multipleTable as any).clearSelection()
+        this.multipleSelection = []
+      } else {
+        this.assignShowDialog = true
+      }
+      done()
+    }
+
+    // 所有请求方法
+    private fetchData() {
+      this.getList(this.listQuery)
+    }
+
+    // 处理tags方法
+    private handleTags(value: any) {
+      this.tags = value
+    }
+
+    // 处理query方法
+    private handleQuery(value: any, key: any) {
+      this.listQuery[key] = value
+      if (key === 'startDate' || key === 'contractEndStartTime') {
+        return
+      }
+      this.fetchData()
+    }
+
+    // 处理选择日期方法
+    private handleDate(value: any, name: any) {
+      if (name === 'startDate') {
+        this.DateValue = value
+      } else {
+        console.log(name)
+        console.log(value)
+        this.DateValue2 = value
+      }
+    }
+
+    // 请求列表
+    private async getList(value: any) {
+      this.listQuery.page = value.page
+      this.listQuery.limit = value.limit
+      this.listLoading = true
+      const { data } = await GetConfirmInfoList(this.listQuery)
+      if (data.success) {
+        this.list = data.data
+        this.tab[0].num = data.title.all
+        this.tab[1].num = data.title.init
+        this.tab[2].num = data.title.toBeConfirmed
+        this.tab[3].num = data.title.confirmed
+        this.tab[4].num = data.title.secondToBeConfirmed
+        this.tab[5].num = data.title.secondConfirmed
+        data.page = await HandlePages(data.page)
+        this.total = data.page.total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
+      } else {
+        this.$message.error(data)
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
+      }
+    }
+
+    // 确认操作
+    private async checkOption(time: any, id: any) {
+      let type = this.getWeekStartDate(time)
+      if (type) {
+        let endTime = this.getWednesdayDate(time)
+        this.$alert('出车单可确认时间，为' + endTime, '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+          }
+        })
+      } else {
+        const { data } = await WayBillAmountDetail({
+          wayBillAmountIds: [id]
+        })
+        if (data.success) {
+          this.freightForm.list = data.data
+          this.assignShowDialogMin = true
+        } else {
+          this.$message.error(data.errorMsg)
+        }
+      }
+    }
+
+    // 按钮操作
+    private goDetail(id: string | (string | null)[] | null | undefined) {
+      this.$router.push({ name: 'FreightDetail', query: { id: id } })
+    }
+
+    // 跳转线索
+    private goLog(id: string | (string | null)[] | null | undefined) {
+      this.$router.push({ name: 'FreightLog', query: { id: id } })
+    }
+
+    // 批量操作
+    private async olClicks(item: any) {
+      if (item.key === '2') {
+        if (this.multipleSelection.length) {
+          this.showDialog = {
+            visible: true,
+            title: '清空确认',
+            text: '确认清空所有选择吗？',
+            name: '1'
+          }
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '请先选择再进行操作！'
+          })
+        }
+      } else if (item.key === '3') {
+        if (this.multipleSelection.length) {
+          let ids: any = []
+          this.multipleSelection.forEach((i: any) => {
+            ids.push(i.wayBillId)
+          })
+          const { data } = await WayBillAmountDetail({
+            wayBillAmountIds: ids
+          })
+          if (data.success) {
+            let ret: any = []
+            let list: any = []
+            let datas = data.data
+            datas.forEach((i: any, index: any) => {
+              // this.freightForm[index].list = i
+              if (ret.indexOf(i.wayBillId) === -1) {
+                ret.push(i.wayBillId)
+                i.check = true
+                i.price = ''
+                i.list = []
+                let lists = Object.assign({}, i)
+                lists.list.push({
+                  deliverTime: lists.deliverTime,
+                  wayBillId: lists.wayBillId,
+                  check: lists.check,
+                  price: lists.price
+                })
+                list.push(lists)
+              } else {
+                list.array.forEach((e: any) => {
+                  if (e.wayBillId === i.wayBillId) {
+                    i.check = true
+                    i.price = ''
+                    let lists = Object.assign({}, i)
+                    e.list.push({
+                      deliverTime: lists.deliverTime,
+                      wayBillId: lists.wayBillId,
+                      check: lists.check,
+                      price: lists.price
+                    })
+                  }
+                })
+              }
+            })
+            this.freightFormAll.lists = list
+            console.log(list)
+            this.assignShowDialog = true
+          } else {
+            this.$message.error(data.errorMsg)
+          }
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '请先选择再进行操作！'
+          })
+        }
+      }
+    }
+
+    // table选择框
+    private handleSelectionChange(val: any) {
+      this.multipleSelection = val
+    }
+
+    // 关闭查看已选
+    private changeDrawer(val: any) {
+      this.drawer = val
+    }
+
+    // 删除选中项目
+    private deletDrawerList(item:any, i:any) {
+      (this.$refs.multipleTable as any).toggleRowSelection(item)
+    }
+
+    // 弹窗操作
+    private async confirmAssignMin(done: any) {
+      (this.$refs.freightForm as any).validate(async(valid: boolean) => {
+        if (valid) {
+          let moneysArr: any = []
+          let wayBillAmountIdsArr: any = []
+          this.freightForm.list.forEach((i: any) => {
+            moneysArr.push(i.price)
+            wayBillAmountIdsArr.push(i.wayBillId)
+          })
+          const { data } = await ReportMoneyBatch({
+            moneys: moneysArr,
+            remark: this.freightForm.remark,
+            wayBillAmountIds: wayBillAmountIdsArr
+          })
+          if (data.success) {
+            this.$message.success('提交成功')
+            this.assignShowDialogMin = false
+            done()
+          } else {
+            this.$message.error(data.errorMsg)
+          }
+        }
+      })
+    }
+
+    // 批量弹窗操作
+    private async confirmAssign(done: any) {
+      (this.$refs.freightFormAll as any).validate(async(valid: boolean) => {
+        if (valid) {
+          let moneysArr: any = []
+          let wayBillAmountIdsArr: any = []
+          let noCheck: any = []
+          this.freightFormAll.lists.forEach((i: any) => {
+            i.list.forEach((element: any) => {
+              if (i.check) {
+                moneysArr.push(i.price)
+                wayBillAmountIdsArr.push(i.wayBillId)
+              } else {
+                noCheck.push(i.wayBillId)
+              }
+            })
+          })
+          const { data } = await ReportMoneyBatch({
+            moneys: moneysArr,
+            remark: this.remarkAll,
+            wayBillAmountIds: wayBillAmountIdsArr
+          })
+          if (data.success) {
+            this.$message.success('提交成功')
+            this.assignShowDialog = false
+            if (noCheck.length) {
+              const { data } = await NoCarBatch({
+                wayBillAmountIds: noCheck
+              })
+              if (data.success) {
+                this.assignShowDialog = false
+                done()
+              } else {
+                this.$message.error(data.errorMsg)
+              }
+            } else {
+              done()
+            }
+          } else {
+            this.$message.error(data.errorMsg)
+          }
+        }
+      })
+    }
+
+    // 全部未出车
+    private confirmAssignOther(done: any) {
+      let noCheck: any = []
+      this.freightFormAll.lists.forEach((i: any) => {
+        i.list.forEach((element: any) => {
+          noCheck.push(i.wayBillId)
+        })
+      })
+      this.$alert('确定全部' + noCheck.length + '个出车，全部未出车！', '提示', {
+        confirmButtonText: '确定',
+        callback: async action => {
+          let wayBillAmountIdsArr: any = []
+          this.freightFormAll.lists.forEach((i: any) => {
+            i.list.forEach((element: any) => {
+              wayBillAmountIdsArr.push(element.wayBillId)
+            })
+          })
+          const { data } = await NoCarBatch({
+            wayBillAmountIds: wayBillAmountIdsArr
+          })
+          if (data.success) {
+            this.$message.success('已成功操作全部未出车')
+            this.assignShowDialogMin = false
+            done()
+          } else {
+            this.$message.error(data.errorMsg)
+          }
+          done()
+        }
+      })
+    }
+
+    // 未出车
+    private async confirmAssignOtherMin(done: any) {
+      let wayBillAmountIdsArr: any = []
+      this.freightForm.list.forEach((i: any) => {
+        wayBillAmountIdsArr.push(i.wayBillId)
+      })
+      const { data } = await NoCarBatch({
+        wayBillAmountIds: wayBillAmountIdsArr
+      })
+      if (data.success) {
+        this.$message.success('已成功操作未出车')
+        this.assignShowDialogMin = false
+        done()
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+
+    // 弹窗表格选中
+    private handleSelectionDialog(val: any) {
+      this.saleId = val
+    }
+
+    // table index
+    private indexMethod(type: string) {
+      let page: number, limit: number
+      if (type === 'listQuery') {
+        ({ page, limit } = this.listQuery)
+      } else if (type === 'dialogListQuery') {
+        ({ page, limit } = this.listQuery)
+      }
+      return (index: number) => {
+        return index + 1 + (page - 1) * limit
+      }
+    }
+
+    // 获得本周的开始日期
+    private getWeekStartDate(times: any) {
+      let now = new Date() // 当前日期
+      let nowDayOfWeek = now.getDay() // 今天本周的第几天
+      let nowDay = now.getDate() // 当前日
+      let nowMonth = now.getMonth() // 当前月
+      let nowYear = now.getFullYear() // 当前年
+      nowYear += (nowYear < 2000) ? 1900 : 0
+      let weekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek).getTime()
+      return !(times - weekStartDate < 0)
+    }
+
+    // 获得本周的开始日期
+    private getWednesdayDate(times: any) {
+      let now = new Date() // 当前日期
+      let nowDayOfWeek = now.getDay() // 今天本周的第几天
+      let nowDay = now.getDate() // 当前日
+      let nowMonth = now.getMonth() // 当前月
+      let nowYear = now.getFullYear() // 当前年
+      nowYear += (nowYear < 2000) ? 1900 : 0
+      return this.formatDate(new Date(nowYear, nowMonth, nowDay + 10 - nowDayOfWeek))
+    }
+
+    // 格式化日期：yyyy-MM-dd
+    private formatDate(date: any) {
+      var myyear = date.getFullYear()
+      var mymonth = date.getMonth() + 1
+      var myweekday = date.getDate()
+
+      if (mymonth < 10) {
+        mymonth = '0' + mymonth
+      }
+      if (myweekday < 10) {
+        myweekday = '0' + myweekday
+      }
+      return (myyear + '-' + mymonth + '-' + myweekday)
+    }
+    // 截取备注
+    private splice(value: any) {
+      return value.slice(0, 16)
+    }
+
+    // 生命周期
+    created() {
+      this.fetchData()
+    }
+
+    activated() {
+      this.$nextTick(() => {
+        ((this.$refs['multipleTable']) as any).doLayout()
+      })
+    }
+}
+</script>
+
+<style lang="scss">
+.FreightList {
+  padding: 15px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  .btn-item {
+    background: #649cee;
+    border-radius: 4px;
+    border-radius: 4px;
+    border: none;
+    margin: 0 10px;
+  }
+  .btn-item-filtrate {
+    background: #ffa000;
+    border-radius: 4px;
+    border-radius: 4px;
+    border: none;
+  }
+  .table_box {
+    // height: calc(100vh - 225px) !important;
+    background: #ffffff;
+    // border: 1px solid #dfe6ec;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    overflow: hidden;
+    transform: translateZ(0);
+    .table_center {
+      // height: calc(100vh - 360px) !important;
+      padding: 0 30px;
+      padding-bottom: 0;
+      box-sizing: border-box;
+      background: #ffffff;
+      overflow-y: scroll;
+    }
+  }
+  .edit-input {
+    padding-right: 100px;
+  }
+  .cancel-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+  }
+  .pagination-container {
+    background: #fff;
+  }
+  .freightSelfDialog{
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eeeeee;
+    box-sizing: border-box;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.FreightList-m {
+  padding-bottom: 0;
+  box-sizing: border-box;
+  .btn-item-m {
+    background: #649cee;
+    border-radius: 4px;
+    border-radius: 4px;
+    border: none;
+    margin: 0 10px;
+  }
+  .btn-item-filtrate-m {
+    background: #ffa000;
+    border-radius: 4px;
+    border-radius: 4px;
+    border: none;
+  }
+  .table_box {
+    // height: calc(100vh - 183px) !important;
+    background: #ffffff;
+    // border: 1px solid #dfe6ec;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    overflow: hidden;
+    transform: translateZ(0);
+    .table_center {
+      // height: calc(100vh - 300px) !important;
+      padding-bottom: 0;
+      box-sizing: border-box;
+      background: #ffffff;
+      overflow-y: scroll;
+    }
+  }
+  .edit-input {
+    padding-right: 100px;
+  }
+  .cancel-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+  }
+  .pagination-container {
+    background: #f8f9fa;
+  }
+  .el-table th.gutter {
+    display: table-cell !important
+  }
+}
+</style>
+
+<style lang="scss" scope>
+.el-collapse-item__content {
+  padding-bottom: 0;
+}
+
+.el-form-item__label {
+  color: #999999;
+}
+
+.redio-label{
+  .el-radio__label{
+    display: none;
+  }
+}
+
+.el-dialog__body{
+  max-height: 60vh;
+  overflow: scroll;
+}
+</style>

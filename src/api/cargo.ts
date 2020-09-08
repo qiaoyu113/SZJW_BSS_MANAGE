@@ -70,7 +70,8 @@ export const IsFollowClue = (data: any) =>
     method: 'post',
     data
   })
-// 获取线路详情
+
+// 线路详情
 export const GetLineDetail = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/detail`,
@@ -166,7 +167,6 @@ export const notApprovedLine = (data: any) =>
   })
 
 // 线路操作日志列表
-
 export const GetLogList = (params: any) =>
   request({
     url: `${ptrfix}/v1/line/list`,
@@ -223,7 +223,7 @@ export const pictureDetail = (params: any) =>
 // 获取货主详情
 export const GetOwnerDetail = (params: any) =>
   request({
-    url: '/line/v1/customer/customerInfo',
+    url: '/line/v1/customer/onlyCustomerInfo',
     method: 'get',
     params
   })
