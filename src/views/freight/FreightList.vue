@@ -907,7 +907,6 @@ export default class extends Vue {
           } else {
             this.$message.error(data.errorMsg)
           }
-          done()
         }
       })
     }
