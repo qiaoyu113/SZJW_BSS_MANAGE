@@ -29,15 +29,15 @@ module.exports = {
           '/api/mock': '/mock'
         }
       },
-      '[process.env.VUE_APP_BASE_API]': {
+      [process.env.VUE_APP_BASE_API]: {
         // target: `http://localhost:${mockServerPort}/mock-api/v1`,
-        target: `https://szjw-bss-web.m1.yunniao.cn`,
+        target: `https://szjw-bss-web.d2.yunniao.cn`,
         // target: `http://szjw-domain-gateway.d2.yunniao.cn`,
         changeOrigin: true, // needed for virtual hosted sites
         secure: false,
         ws: true, // proxy websockets
         pathRewrite: {
-          // ['^' + process.env.VUE_APP_BASE_API + '']: '/api'
+          // ['^' + process.env.VUE_APP_BASE_API + '']: ''
         }
       }
     }

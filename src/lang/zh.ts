@@ -11,7 +11,6 @@ export default {
     followDriver: '跟进司机',
     cargoTitle: '货源中心',
     clueList: '线索列表',
-    clueLista: '线索列表a',
     addClue: '新增线索',
     editClue: '编辑线索',
     followUpClue: '跟进线索',

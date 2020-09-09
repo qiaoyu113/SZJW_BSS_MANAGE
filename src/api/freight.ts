@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
-let prefix = '/mock/67'
+// let prefix = '/mock/67'
+let prefix = ''
 let prefix2 = '/mock/25'
 // let prefix = '/api/waybill_center'
 
@@ -9,7 +10,7 @@ let prefix2 = '/mock/25'
  */
 export const freightLog = (data: any) =>
   request({
-    url: `${prefix}/v2/waybill/shipping/queryLog`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/queryLog`,
     method: 'post',
     data
   })
@@ -18,11 +19,11 @@ export const freightLog = (data: any) =>
    *
    * 运单详情
    */
-export const freightDetail = (data: any) =>
+export const freightDetail = (params: any) =>
   request({
-    url: `${prefix}/v2/waybill/shipping/shippingDetail`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/shippingDetail`,
     method: 'post',
-    data
+    params
   })
 
 /**
@@ -31,7 +32,7 @@ export const freightDetail = (data: any) =>
    */
 export const GetClueDetailByClueId = (params: any) =>
   request({
-    url: `${prefix}/v1/driver/clue/clue/detail`,
+    url: `${prefix || '/driver'}/v1/driver/clue/clue/detail`,
     method: 'get',
     params
   })
@@ -42,7 +43,7 @@ export const GetClueDetailByClueId = (params: any) =>
    */
 export const GetConfirmInfoList = (data: any) =>
   request({
-    url: `${prefix}/v2/waybill/getConfirmInfoList`,
+    url: `${prefix || '/waybill_center'}/v2/waybill/getConfirmInfoList`,
     method: 'post',
     data
   })
@@ -51,9 +52,9 @@ export const GetConfirmInfoList = (data: any) =>
    *
    * 上报出车金额
    */
-export const ReportMoneyBatch = (data: any) =>
+export const ReportMoneyBatch = (data: any, parmas: any) =>
   request({
-    url: `${prefix}/v2/waybill/reportMoneyBatch`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/reportMoneyBatch?remark=` + parmas,
     method: 'post',
     data
   })
@@ -64,7 +65,7 @@ export const ReportMoneyBatch = (data: any) =>
    */
 export const WayBillAmountDetail = (data: any) =>
   request({
-    url: `${prefix}/v2/waybill/wayBillAmountDetail`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/wayBillAmountDetail`,
     method: 'post',
     data
   })
@@ -75,7 +76,7 @@ export const WayBillAmountDetail = (data: any) =>
    */
 export const NoCarBatch = (data: any) =>
   request({
-    url: `${prefix}/v2/waybill/noCarBatch`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/noCarBatch`,
     method: 'post',
     data
   })
@@ -86,7 +87,7 @@ export const NoCarBatch = (data: any) =>
    */
 export const GetSpecifiedRoleList = (data: any) =>
   request({
-    url: `${prefix2}/v1/base/role/getSpecifiedRoleList`,
+    url: `${prefix2 || '/base'}/v1/base/role/getSpecifiedRoleList`,
     method: 'post',
     data
   })

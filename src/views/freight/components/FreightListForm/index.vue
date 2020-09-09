@@ -171,8 +171,8 @@ export default class extends Vue {
   private DateValueChild2: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate', 'contractEndStartTime']; // 添加过滤listQuery中key的名称
   private hasDiff: any[] = [
-    { dictValue: '0', dictLabel: '有' },
-    { dictValue: '1', dictLabel: '无' }
+    { dictValue: '1', dictLabel: '有' },
+    { dictValue: '0', dictLabel: '无' }
   ]
 
   @Watch('DateValue', { deep: true })
