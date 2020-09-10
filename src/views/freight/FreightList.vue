@@ -516,7 +516,7 @@ export default class extends Vue {
       },
       {
         label: '待上报',
-        name: '50',
+        name: '1',
         num: ''
       },
       {
