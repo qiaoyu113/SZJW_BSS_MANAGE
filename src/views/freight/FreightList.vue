@@ -71,6 +71,7 @@
             reserve-selection
             type="selection"
             width="55"
+            :selectable="selectable"
           />
           <el-table-column
             :key="checkList.length + 'index'"
@@ -627,6 +628,11 @@ export default class extends Vue {
         this.assignShowDialog = true
       }
       done()
+    }
+
+    // 判断是否可以选中
+    private selectable(row: any) {
+      return row.canConfirm
     }
 
     // 所有请求方法
