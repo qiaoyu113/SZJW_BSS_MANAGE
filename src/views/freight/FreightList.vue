@@ -206,6 +206,7 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('操作') > -1"
             :key="checkList.length + 'b'"
             align="left"
             label="操作"
@@ -233,21 +234,18 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    v-permission="['/v1/customer/onlyCustomerInfo']"
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
                     确认
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-permission="['/v1/customer/onlyCustomerInfo']"
                     name="ownerlist_detail_dropdown"
                     @click.native="goDetail(scope.row.wayBillId)"
                   >
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-permission="['/v1/customer/edit']"
                     name="ownerlist_edit_dropdown"
                     @click.native="goLog(scope.row.wayBillId)"
                   >
@@ -517,27 +515,27 @@ export default class extends Vue {
       },
       {
         label: '待上报',
-        name: '1',
+        name: '50',
         num: ''
       },
       {
         label: '待确认',
-        name: '2',
+        name: '10',
         num: ''
       },
       {
         label: '已确认',
-        name: '3',
+        name: '20',
         num: ''
       },
       {
         label: '待二次确认',
-        name: '4',
+        name: '30',
         num: ''
       },
       {
         label: '二次已确认',
-        name: '5',
+        name: '40',
         num: ''
       }
     ];
@@ -557,7 +555,8 @@ export default class extends Vue {
       pageNumber: '',
       project: '',
       startDate: '',
-      wayBillId: ''
+      wayBillId: '',
+      state: ''
     };
     private freightForm: any = {
       list: [
@@ -662,6 +661,7 @@ export default class extends Vue {
     private async getList(value: any) {
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
+      // this.listQuery.state = Number(this.listQuery.state)
       this.listLoading = true
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {

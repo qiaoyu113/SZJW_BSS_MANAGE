@@ -19,8 +19,8 @@
         @tab-click="handleClick"
       >
         <el-tab-pane
-          v-for="item in tab"
-          :key="item.id"
+          v-for="(item, index) in tab"
+          :key="index"
           :label="item.label"
           :name="item.name"
         >
