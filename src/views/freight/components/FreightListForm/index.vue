@@ -63,7 +63,7 @@
                   <el-input
                     v-model="listQuery.line"
                     name="freightlist_line_input"
-                    placeholder="请输入线路名称"
+                    placeholder="线路名称/编号"
                     clearable
                   />
                 </el-form-item>

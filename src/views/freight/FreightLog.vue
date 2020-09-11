@@ -47,7 +47,7 @@
           label="操作前"
         >
           <template slot-scope="{row}">
-            {{ row.afterStateName }}
+            {{ row.beforeStateName }}
           </template>
         </el-table-column>
 
@@ -56,7 +56,7 @@
           label="操作后"
         >
           <template slot-scope="scope">
-            <p>{{ scope.row.beforeStateName }}</p>
+            <p>{{ scope.row.afterStateName }}</p>
           </template>
         </el-table-column>
       </el-table>

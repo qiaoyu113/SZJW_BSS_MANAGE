@@ -80,12 +80,10 @@
             label="序号"
             :index="indexMethod('listQuery')"
             align="center"
-            fixed
           />
           <el-table-column
             v-if="checkList.indexOf('出车日期') > -1"
             :key="checkList.length + 'a'"
-            :fixed="isPC"
             align="left"
             label="出车日期"
           >
@@ -112,7 +110,7 @@
             label="司机姓名"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.driverName | DataIsNull }}</span>
+              <span>{{ scope.row.driverName + '/' + scope.row.driverPhone | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -123,7 +121,7 @@
             label="线路名称"
           >
             <template slot-scope="{row}">
-              {{ row.lineName | DataIsNull }}
+              {{ row.lineName + '/' + row.lineId | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -134,7 +132,7 @@
             label="预估运费(元)"
           >
             <template slot-scope="scope">
-              <p>{{ scope.row.predictCost | DataIsNull }}</p>
+              <p>{{ Number(scope.row.predictCost).toFixed(2) | DataIsNull }}</p>
             </template>
           </el-table-column>
 
@@ -191,7 +189,7 @@
             label="加盟经理"
           >
             <template slot-scope="{row}">
-              {{ row.joinManagerName | DataIsNull }}
+              {{ row.joinManagerName + '/' + row.joinManagerPhone | DataIsNull }}
             </template>
           </el-table-column>
 
@@ -202,7 +200,7 @@
             label="上岗经理"
           >
             <template slot-scope="{row}">
-              <span>{{ row.dutyManagerName | DataIsNull }}</span>
+              <span>{{ row.dutyManagerName + '/' + row.dutyManagerPhone | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -248,6 +246,7 @@
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-if="scope.row.status !== 5"
                     name="ownerlist_edit_dropdown"
                     @click.native="goLog(scope.row.wayBillId)"
                   >
@@ -297,7 +296,7 @@
     >
       <DetailItem
         name="出车单号"
-        :value="freightForm.list[0].deliverNo"
+        :value="freightForm.list[0].wayBillId"
       />
       <DetailItem
         name="司机姓名/手机号"
@@ -318,7 +317,7 @@
           >
             <el-input
               v-model="item.preMoney"
-              v-only-number="{min: 0}"
+              v-only-number="{min: 0, precision: 2}"
               placeholder="请输入"
               name="freight_price_input"
               maxlength="10"
@@ -382,7 +381,7 @@
           </div>
           <DetailItem
             name="出车单号"
-            :value="item.deliverNo"
+            :value="item.wayBillId"
           />
           <DetailItem
             name="司机姓名/手机号"
@@ -674,7 +673,7 @@ export default class extends Vue {
       if (data.success) {
         this.list = data.data
         this.tab[0].num = data.title.all
-        this.tab[1].num = data.title.init
+        this.tab[1].num = data.title.notReported
         this.tab[2].num = data.title.toBeConfirmed
         this.tab[3].num = data.title.confirmed
         this.tab[4].num = data.title.secondToBeConfirmed

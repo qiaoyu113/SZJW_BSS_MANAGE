@@ -116,7 +116,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="预估运费"
-              :value="OwnerDetail.wayBillInfoVO.preFee"
+              :value="Number(OwnerDetail.wayBillInfoVO.preFee).toFixed(2)"
             />
           </el-col>
 
@@ -158,28 +158,28 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="客户名称"
-              :value="OwnerDetail.lineInfoVO.customerName"
+              :value="OwnerDetail.lineInfoVO.customerName + '/' + OwnerDetail.lineInfoVO.customerId"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="项目名称"
-              :value="OwnerDetail.lineInfoVO.lineCloudProjectVO.projectName"
+              :value="OwnerDetail.lineInfoVO.projectName + '/' + OwnerDetail.lineInfoVO.projectId"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="上岗经理"
-              :value="OwnerDetail.lineInfoVO.lineCloudProjectVO.dutyManagerName"
+              :value="OwnerDetail.lineInfoVO.dutyManagerIdName + '/' + OwnerDetail.lineInfoVO.dutyManagerPhone"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="外线销售"
-              :value="OwnerDetail.lineInfoVO.lineCloudProjectVO.lineSaleName"
+              :value="OwnerDetail.lineInfoVO.lineSaleName + '/' + OwnerDetail.lineInfoVO.lineSalePhone"
             />
           </el-col>
         </el-row>
