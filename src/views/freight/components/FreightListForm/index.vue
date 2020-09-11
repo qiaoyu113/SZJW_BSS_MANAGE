@@ -45,13 +45,14 @@
                 <el-form-item label="加盟经理">
                   <el-select
                     v-model="listQuery.gmId"
+                    filterable
                     name="freightlist_gmId_input"
                     placeholder="请选择"
                   >
                     <el-option
                       v-for="item in optionsJoin"
                       :key="item.id"
-                      :label="item.name"
+                      :label="item.nick"
                       :value="item.id"
                     />
                   </el-select>
@@ -71,13 +72,14 @@
                 <el-form-item label="上岗经理">
                   <el-select
                     v-model="listQuery.dutyManagerId"
+                    filterable
                     name="freightlist_dutyManagerId_input"
                     placeholder="请选择上岗经理"
                   >
                     <el-option
                       v-for="item in optionsClassification"
                       :key="item.id"
-                      :label="item.name"
+                      :label="item.nick"
                       :value="item.id"
                     />
                   </el-select>
@@ -316,9 +318,7 @@ export default class extends Vue {
   // 获取加盟经理列表
   private async getDictionary() {
     return new Promise((resolve, reject) => {
-      GetSpecifiedRoleList({
-        roleId: '3'
-      })
+      GetSpecifiedRoleList(3)
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsClassification = data.data
@@ -336,9 +336,7 @@ export default class extends Vue {
   // 获取加盟经理
   private async getJoinManageList() {
     return new Promise((resolve, reject) => {
-      GetSpecifiedRoleList({
-        roleId: '1'
-      })
+      GetSpecifiedRoleList(1)
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsJoin = data.data

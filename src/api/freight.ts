@@ -86,9 +86,8 @@ export const NoCarBatch = (data: any) =>
    *
    * 获取外线销售和上岗经理
    */
-export const GetSpecifiedRoleList = (data: any) =>
+export const GetSpecifiedRoleList = (params: any) =>
   request({
-    url: `${prefix2 || '/base'}/v1/base/role/getSpecifiedRoleList`,
-    method: 'post',
-    data
+    url: `${prefix2 || '/base'}/v1/base/role/getSpecifiedRoleList?roleId=` + params,
+    method: 'post'
   })
