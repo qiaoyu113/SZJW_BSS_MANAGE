@@ -2,7 +2,8 @@ import request from '@/utils/request'
 
 // let prefix = '/mock/67'
 let prefix = ''
-let prefix2 = '/mock/25'
+// let prefix2 = '/mock/25'
+let prefix2 = ''
 // let prefix = '/api/waybill_center'
 
 /**
