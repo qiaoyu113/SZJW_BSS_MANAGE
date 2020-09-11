@@ -96,7 +96,7 @@ export default class ShowLog extends Vue {
   private listQuery: IState = {
     page: 1,
     limit: 30,
-    lineId: ''
+    wayBillId: ''
   }
 
   // 判断是否是PC
@@ -130,9 +130,8 @@ export default class ShowLog extends Vue {
       }, 0.5 * 1000)
     }
   }
-
   created() {
-    this.listQuery.lineId = this.$route.query.id
+    this.listQuery.wayBillId = this.$route.query.id
     this.fetchData()
   }
 }
