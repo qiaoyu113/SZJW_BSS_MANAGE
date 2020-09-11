@@ -236,7 +236,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     name="ownerlist_detail_dropdown"
-                    @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
+                    @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId, scope.row.canConfirm)"
                   >
                     确认
                   </el-dropdown-item>
@@ -692,9 +692,9 @@ export default class extends Vue {
     }
 
     // 确认操作
-    private async checkOption(time: any, id: any) {
+    private async checkOption(time: any, id: any, flag: any) {
       let type = this.getWeekStartDate(time)
-      if (type) {
+      if (type && !flag) {
         let endTime = this.getWednesdayDate(time)
         this.$alert('出车单可确认时间，为' + endTime, '提示', {
           confirmButtonText: '确定',
