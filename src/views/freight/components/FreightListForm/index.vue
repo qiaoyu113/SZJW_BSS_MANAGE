@@ -10,7 +10,7 @@
                   <el-input
                     v-model="listQuery.wayBillId"
                     name="freightlist_wayBillId_input"
-                    placeholder="请输入出车单号"
+                    placeholder="请输入"
                     clearable
                   />
                 </el-form-item>
@@ -36,7 +36,7 @@
                   <el-input
                     v-model="listQuery.driver"
                     name="freightlist_driver_input"
-                    placeholder="请输入司机姓名/手机号"
+                    placeholder="请输入姓名/手机号"
                     clearable
                   />
                 </el-form-item>
@@ -74,7 +74,7 @@
                     v-model="listQuery.dutyManagerId"
                     filterable
                     name="freightlist_dutyManagerId_input"
-                    placeholder="请选择上岗经理"
+                    placeholder="请选择"
                   >
                     <el-option
                       v-for="item in optionsClassification"
