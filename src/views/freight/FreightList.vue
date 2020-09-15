@@ -401,7 +401,7 @@
             >
               <el-input
                 v-model="i.price"
-                v-only-number="{min: 0}"
+                v-only-number="{min: 0, max: 999999.99, precision: 2}"
                 placeholder="请输入"
                 name="freight_price_input"
                 maxlength="10"
@@ -767,7 +767,7 @@ export default class extends Vue {
                 })
                 list.push(lists)
               } else {
-                list.array.forEach((e: any) => {
+                list.forEach((e: any) => {
                   if (e.wayBillId === i.wayBillId) {
                     i.check = true
                     i.price = ''
@@ -850,7 +850,7 @@ export default class extends Vue {
                 moneysArr.push(element.price)
                 wayBillAmountIdsArr.push(i.wayBillAmountId)
               } else {
-                noCheck.push(i.wayBillId)
+                noCheck.push(i.wayBillAmountId)
               }
             })
           })
@@ -884,20 +884,12 @@ export default class extends Vue {
     private confirmAssignOther(done: any) {
       let noCheck: any = []
       this.freightFormAll.lists.forEach((i: any) => {
-        i.list.forEach((element: any) => {
-          noCheck.push(i.wayBillId)
-        })
+        noCheck.push(i.wayBillAmountId)
       })
       this.$alert('确定全部' + noCheck.length + '个出车，全部未出车！', '提示', {
         confirmButtonText: '确定',
         callback: async action => {
-          let wayBillAmountIdsArr: any = []
-          this.freightFormAll.lists.forEach((i: any) => {
-            i.list.forEach((element: any) => {
-              wayBillAmountIdsArr.push(element.wayBillAmountId)
-            })
-          })
-          const { data } = await NoCarBatch(wayBillAmountIdsArr)
+          const { data } = await NoCarBatch(noCheck)
           if (data.success) {
             this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
