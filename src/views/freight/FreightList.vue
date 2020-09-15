@@ -179,6 +179,7 @@
           >
             <template slot-scope="{row}">
               {{ row.statusName | DataIsNull }}
+              <span v-if="row.status === 20 || row.status === 40">{{ row.confirmMoney }}</span>
             </template>
           </el-table-column>
 

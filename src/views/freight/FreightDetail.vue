@@ -95,7 +95,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="加盟经理"
-              :value="OwnerDetail.driverBusiInfoVO.gmName"
+              :value="OwnerDetail.driverBusiInfoVO.gmName + '/' + OwnerDetail.driverBusiInfoVO.gmPhone"
             />
           </el-col>
         </el-row>
