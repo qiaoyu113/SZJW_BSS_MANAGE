@@ -27,6 +27,13 @@
           {{ cancelButtonText }}
         </el-button>
         <el-button
+          v-if="showOtherButton"
+          :type="otherType"
+          @click="onOther"
+        >
+          {{ otherButtonText }}
+        </el-button>
+        <el-button
           v-if="showConfirmButton"
           type="primary"
           @click="onConfirm"
@@ -48,13 +55,17 @@ import { SettingsModule } from '@/store/modules/settings'
 export default class extends Vue {
   @Prop({ required: true }) private visible!: boolean;
   @Prop({ default: true }) private showCancelButton!: boolean;
+  @Prop({ default: false }) private showOtherButton!: boolean;
   @Prop({ default: true }) private showConfirmButton!: boolean;
   @Prop({ default: '50%' }) private width!: string;
   @Prop({ default: '取消' }) private cancelButtonText!: string;
   @Prop({ default: '确定' }) private confirmButtonText!: string;
+  @Prop({ default: '其他' }) private otherButtonText!: string;
   @Prop({ default: '提示' }) private title!: string;
   @Prop({ default: '' }) private customClass!: string;
+  @Prop({ default: '' }) private otherType!: string;
   @Prop({ default: false }) private cancel!: any;
+  @Prop({ default: false }) private other!: any;
   @Prop({ default: false }) private confirm!: any;
 
   get show() {
@@ -78,6 +89,11 @@ export default class extends Vue {
   }
   private onCancel() {
     this.cancel && typeof this.cancel === 'function' ? this.cancel(() => {
+      this.show = false
+    }) : this.hideDialog()
+  }
+  private onOther() {
+    this.other && typeof this.other === 'function' ? this.other(() => {
       this.show = false
     }) : this.hideDialog()
   }
@@ -143,6 +159,9 @@ export default class extends Vue {
   .dialog-content-m{
     max-height: 80vh;
     overflow: auto;
+  }
+  .el-button--medium{
+    margin-bottom: 10px;
   }
 }
 </style>

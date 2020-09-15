@@ -1,8 +1,12 @@
 export default {
   route: {
     dashboard: 'Dashboard',
+    freightTitle: 'FreightTitle',
+    freightList: 'FreightList',
     driverTitle: 'DriverTitle',
     driverList: 'DriverList',
+    freightDetail: 'FreightDetail',
+    freightLog: 'FreightLog',
     editDriver: 'editDriver',
     driverDetail: 'DriverDetail',
     followDriver: 'followDriver',

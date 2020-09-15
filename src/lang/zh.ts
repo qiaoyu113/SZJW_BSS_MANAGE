@@ -1,6 +1,10 @@
 export default {
   route: {
     dashboard: '首页',
+    freightTitle: '运费管理',
+    freightList: '运费确认',
+    freightDetail: '运费详情',
+    freightLog: '运费日志',
     driverTitle: '司机管理',
     driverList: '司机列表',
     editDriver: '编辑司机',
