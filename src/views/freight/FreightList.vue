@@ -319,7 +319,7 @@
           >
             <el-input
               v-model="item.preMoney"
-              v-only-number="{min: 0, precision: 2}"
+              v-only-number="{min: 0, max: 999999.99, precision: 2}"
               placeholder="请输入"
               name="freight_price_input"
               maxlength="10"
