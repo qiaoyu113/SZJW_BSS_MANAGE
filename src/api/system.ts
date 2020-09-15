@@ -165,3 +165,11 @@ export const deleteAuthority = (id: number) =>
       authId: id
     }
   })
+
+// 获取用户列表-new
+export const getUserManagerList = (params:any) =>
+  request({
+    url: `${baseURL}/v1/base/user/page/list`,
+    method: 'get',
+    params
+  })

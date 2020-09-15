@@ -147,6 +147,18 @@ const systemRouter: RouteConfig = {
         icon: '',
         apiUrl: '/v1/product/product/list/page'
       }
+    },
+    {
+      path: 'user', /* 用户管理new */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/user/index.vue'),
+      name: 'User',
+      meta: {
+        title: 'user',
+        activeMenu: '/system/user',
+        noCache: false,
+        icon: '',
+        apiUrl: 'root'
+      }
     }
   ]
 }
