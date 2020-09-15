@@ -167,7 +167,7 @@
             label="有无差额（元）"
           >
             <template slot-scope="{row}">
-              {{ row.feeDiff | DataIsNull }}
+              {{ row.feeDiffValue || 0 }}
             </template>
           </el-table-column>
 
