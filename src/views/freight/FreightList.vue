@@ -246,7 +246,6 @@
                     详情
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="scope.row.status !== 5"
                     name="ownerlist_edit_dropdown"
                     @click.native="goLog(scope.row.wayBillId)"
                   >

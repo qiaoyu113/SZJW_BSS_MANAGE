@@ -25,13 +25,13 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="线路名称"
-              :value="OwnerDetail.wayBillInfoVO.lineName"
+              :value="OwnerDetail.wayBillInfoVO.lineId + OwnerDetail.wayBillInfoVO.lineName"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
-              name="出车趟数"
+              name="出车趟数(趟)"
               :value="OwnerDetail.wayBillInfoVO.deliverNum"
             />
           </el-col>
