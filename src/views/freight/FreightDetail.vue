@@ -123,14 +123,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="加盟运费"
-              :value="OwnerDetail.wayBillInfoVO.gmFee"
+              :value="OwnerDetail.wayBillInfoVO.gmStatusCode === 2 ? '未出车' : OwnerDetail.wayBillInfoVO.gmFee"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="外线运费"
-              :value="OwnerDetail.wayBillInfoVO.lineFee"
+              :value="OwnerDetail.wayBillInfoVO.lineStatusCode === 2 ? '未出车' : OwnerDetail.wayBillInfoVO.lineFee"
             />
           </el-col>
 
