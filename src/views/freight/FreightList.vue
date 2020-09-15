@@ -144,7 +144,8 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.gmFee | DataIsNull }}</span>
+                <span v-if="scope.row.gmStatusCode === 2">未出车</span>
+                <span v-else>{{ scope.row.gmFee | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -156,7 +157,8 @@
             label="外线侧运费（元）"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.lineFee | DataIsNull }}</span>
+              <span v-if="scope.row.lineStatusCode === 2">未出车</span>
+              <span v-else>{{ scope.row.lineFee | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -179,7 +181,7 @@
           >
             <template slot-scope="{row}">
               {{ row.statusName | DataIsNull }}
-              <span v-if="row.status === 20 || row.status === 40">{{ row.confirmMoney }}</span>
+              <span v-if="row.status === 20 || row.status === 40">/ {{ row.confirmMoney || 0 }}元</span>
             </template>
           </el-table-column>
 
