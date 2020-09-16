@@ -690,12 +690,12 @@ export default class extends Vue {
         this.total = data.page.total
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       } else {
         this.$message.error(data)
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       }
     }
 
@@ -764,7 +764,6 @@ export default class extends Vue {
                 i.check = true
                 i.list = []
                 let lists = Object.assign({}, i)
-                console.log(lists)
                 lists.list.push({
                   deliverTime: lists.deliverTime,
                   wayBillId: lists.wayBillId,
