@@ -146,7 +146,7 @@
             <template slot-scope="scope">
               <p>
                 <span v-if="scope.row.gmStatusCode === 2">未出车</span>
-                <span v-else>{{ scope.row.gmFee | DataIsNull }}</span>
+                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -159,7 +159,7 @@
           >
             <template slot-scope="scope">
               <span v-if="scope.row.lineStatusCode === 2">未出车</span>
-              <span v-else>{{ scope.row.lineFee | DataIsNull }}</span>
+              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -170,7 +170,7 @@
             label="有无差额（元）"
           >
             <template slot-scope="{row}">
-              {{ row.feeDiffValue || 0 }}
+              {{ Number(row.feeDiffValue).toFixed(2) || 0 }}
             </template>
           </el-table-column>
 
@@ -690,12 +690,12 @@ export default class extends Vue {
         this.total = data.page.total
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       } else {
         this.$message.error(data)
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       }
     }
 
@@ -743,7 +743,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       } else if (item.key === '3') {
@@ -764,7 +764,6 @@ export default class extends Vue {
                 i.check = true
                 i.list = []
                 let lists = Object.assign({}, i)
-                console.log(lists)
                 lists.list.push({
                   deliverTime: lists.deliverTime,
                   wayBillId: lists.wayBillId,
@@ -795,7 +794,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       }
