@@ -12,6 +12,7 @@
         :date-value="DateValue"
         :date-value2="DateValue2"
         @handle-tags="handleTags"
+        @handle-check="handleCheck"
         @handle-query="getList"
       />
     </SuggestContainer>
@@ -396,11 +397,11 @@
               v-for="(i, index) in item.list"
               :key="index"
               :label="`趟数` + (index + 1) + `: ` + i.deliverTime"
-              :prop="'lists[' + itemindex + '].list.' + index + '.price'"
+              :prop="'lists[' + itemindex + '].list.' + index + '.preMoney'"
               :rules="{required: true, message: '请输入金额', trigger: 'change'}"
             >
               <el-input
-                v-model="i.price"
+                v-model="i.preMoney"
                 v-only-number="{min: 0, max: 999999.99, precision: 2}"
                 placeholder="请输入"
                 name="freight_price_input"
@@ -647,6 +648,11 @@ export default class extends Vue {
       this.tags = value
     }
 
+    // 处理check方法
+    private handleCheck() {
+      (this.$refs.multipleTable as any).clearSelection()
+    }
+
     // 处理query方法
     private handleQuery(value: any, key: any) {
       this.listQuery[key] = value
@@ -756,27 +762,26 @@ export default class extends Vue {
               if (ret.indexOf(i.wayBillId) === -1) {
                 ret.push(i.wayBillId)
                 i.check = true
-                i.price = ''
                 i.list = []
                 let lists = Object.assign({}, i)
+                console.log(lists)
                 lists.list.push({
                   deliverTime: lists.deliverTime,
                   wayBillId: lists.wayBillId,
                   check: lists.check,
-                  price: lists.price
+                  preMoney: lists.preMoney
                 })
                 list.push(lists)
               } else {
                 list.forEach((e: any) => {
                   if (e.wayBillId === i.wayBillId) {
                     i.check = true
-                    i.price = ''
                     let lists = Object.assign({}, i)
                     e.list.push({
                       deliverTime: lists.deliverTime,
                       wayBillId: lists.wayBillId,
                       check: lists.check,
-                      price: lists.price
+                      preMoney: lists.preMoney
                     })
                   }
                 })
@@ -828,7 +833,7 @@ export default class extends Vue {
           if (data.success) {
             this.$message.success('提交成功')
             this.assignShowDialogMin = false
-            this.getList(this.listQuery)
+            this.reset()
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -847,7 +852,7 @@ export default class extends Vue {
           this.freightFormAll.lists.forEach((i: any) => {
             i.list.forEach((element: any) => {
               if (element.check) {
-                moneysArr.push(element.price)
+                moneysArr.push(element.preMoney)
                 wayBillAmountIdsArr.push(i.wayBillAmountId)
               } else {
                 noCheck.push(i.wayBillAmountId)
@@ -865,7 +870,7 @@ export default class extends Vue {
               const { data } = await NoCarBatch(noCheck)
               if (data.success) {
                 this.assignShowDialog = false
-                this.getList(this.listQuery)
+                this.reset()
                 done()
               } else {
                 this.$message.error(data.errorMsg)
@@ -893,7 +898,7 @@ export default class extends Vue {
           if (data.success) {
             this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
-            this.getList(this.listQuery)
+            this.reset()
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -906,13 +911,13 @@ export default class extends Vue {
     private async confirmAssignOtherMin(done: any) {
       let wayBillAmountIdsArr: any = []
       this.freightForm.list.forEach((i: any) => {
-        wayBillAmountIdsArr.push(i.waiBillAmountId)
+        wayBillAmountIdsArr.push(i.wayBillAmountId)
       })
       const { data } = await NoCarBatch(wayBillAmountIdsArr)
       if (data.success) {
         this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false
-        this.getList(this.listQuery)
+        this.reset()
         done()
       } else {
         this.$message.error(data.errorMsg)
@@ -958,6 +963,17 @@ export default class extends Vue {
       let nowYear = now.getFullYear() // 当前年
       nowYear += (nowYear < 2000) ? 1900 : 0
       return this.formatDate(new Date(nowYear, nowMonth, nowDay + 10 - nowDayOfWeek))
+    }
+
+    // 重制
+    private reset() {
+      this.handleCheck()
+      for (let key in this.listQuery) {
+        if (key !== 'page' && key !== 'limit' && key !== 'state') { this.listQuery[key] = '' } else {
+          this.listQuery['page'] = 1
+        }
+      }
+      this.getList(this.listQuery)
     }
 
     // 格式化日期：yyyy-MM-dd
