@@ -743,7 +743,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       } else if (item.key === '3') {
@@ -794,7 +794,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       }
