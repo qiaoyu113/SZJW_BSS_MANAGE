@@ -864,13 +864,13 @@ export default class extends Vue {
             wayBillAmountIds: wayBillAmountIdsArr
           }, this.remarkAll)
           if (data.success) {
+            this.reset()
             this.$message.success('提交成功')
             this.assignShowDialog = false
             if (noCheck.length) {
               const { data } = await NoCarBatch(noCheck)
               if (data.success) {
                 this.assignShowDialog = false
-                this.reset()
                 done()
               } else {
                 this.$message.error(data.errorMsg)
