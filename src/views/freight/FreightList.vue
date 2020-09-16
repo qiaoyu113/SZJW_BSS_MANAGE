@@ -146,7 +146,7 @@
             <template slot-scope="scope">
               <p>
                 <span v-if="scope.row.gmStatusCode === 2">未出车</span>
-                <span v-else>{{ scope.row.gmFee | DataIsNull }}</span>
+                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -159,7 +159,7 @@
           >
             <template slot-scope="scope">
               <span v-if="scope.row.lineStatusCode === 2">未出车</span>
-              <span v-else>{{ scope.row.lineFee | DataIsNull }}</span>
+              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -170,7 +170,7 @@
             label="有无差额（元）"
           >
             <template slot-scope="{row}">
-              {{ row.feeDiffValue || 0 }}
+              {{ Number(row.feeDiffValue).toFixed(2) || 0 }}
             </template>
           </el-table-column>
 
