@@ -12,44 +12,44 @@ const systemRouter: RouteConfig = {
     apiUrl: 'root'
   },
   children: [
-    {
-      path: 'usermanage', /* 用户管理 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/UserManage.vue'),
-      name: 'UserManage',
-      meta: {
-        apiUrl: '/v1/base/user/page/list',
-        activeMenu: '/system/usermanage',
-        title: 'userManage',
-        icon: '',
-        noCache: false
-      }
-    },
-    {
-      path: 'createuser',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
-      name: 'CreateUser',
-      meta: {
-        apiUrl: '/v1/base/user/create',
-        activeMenu: '/system/usermanage',
-        title: 'createUser',
-        hidden: true,
-        icon: '',
-        noCache: true
-      }
-    },
-    {
-      path: 'edituser',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
-      name: 'EditUser',
-      meta: {
-        apiUrl: '/v1/base/user/update',
-        activeMenu: '/system/usermanage',
-        title: 'editUser',
-        icon: '',
-        hidden: true,
-        noCache: true
-      }
-    },
+    // {
+    //   path: 'usermanage', /* 用户管理 */
+    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/UserManage.vue'),
+    //   name: 'UserManage',
+    //   meta: {
+    //     apiUrl: '/v1/base/user/page/list',
+    //     activeMenu: '/system/usermanage',
+    //     title: 'userManage',
+    //     icon: '',
+    //     noCache: false
+    //   }
+    // },
+    // {
+    //   path: 'createuser',
+    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
+    //   name: 'CreateUser',
+    //   meta: {
+    //     apiUrl: '/v1/base/user/create',
+    //     activeMenu: '/system/usermanage',
+    //     title: 'createUser',
+    //     hidden: true,
+    //     icon: '',
+    //     noCache: true
+    //   }
+    // },
+    // {
+    //   path: 'edituser',
+    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateUser.vue'),
+    //   name: 'EditUser',
+    //   meta: {
+    //     apiUrl: '/v1/base/user/update',
+    //     activeMenu: '/system/usermanage',
+    //     title: 'editUser',
+    //     icon: '',
+    //     hidden: true,
+    //     noCache: true
+    //   }
+    // },
     {
       path: 'rolemanage', /* 角色管理 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RoleManage.vue'),
@@ -150,12 +150,38 @@ const systemRouter: RouteConfig = {
     },
     {
       path: 'user', /* 用户管理new */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/user/index.vue'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/List/index.vue'),
       name: 'User',
       meta: {
         title: 'user',
         activeMenu: '/system/user',
-        noCache: false,
+        noCache: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'addUser', /* 创建用户new */
+      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/CreateUser/index.vue'),
+      name: 'AddUser',
+      meta: {
+        title: 'addUser',
+        hidden: true,
+        activeMenu: '/system/user',
+        noCache: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'modifyUser', /* 修改用户new */
+      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/CreateUser/index.vue'),
+      name: 'ModifyUser',
+      meta: {
+        title: 'modifyUser',
+        activeMenu: '/system/user',
+        noCache: true,
+        hidden: true,
         icon: '',
         apiUrl: 'root'
       }

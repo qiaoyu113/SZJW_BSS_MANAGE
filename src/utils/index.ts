@@ -312,3 +312,6 @@ export function validatorNumberRange(min:number, max:number) {
     callback()
   }
 }
+
+// 验证密码强度
+export const isValidPassWord = /^.*(?=.{8,16})(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*$/

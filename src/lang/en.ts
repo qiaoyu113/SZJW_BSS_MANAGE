@@ -131,7 +131,9 @@ export default {
     i18n: 'I18n',
     externalLink: 'External Link',
     profile: 'Profile',
-    user: 'UserManage'
+    user: 'UserManage',
+    addUser: 'AddUser',
+    modifyUser: 'ModifyUser'
   },
   navbar: {
     logOut: 'Log Out',
