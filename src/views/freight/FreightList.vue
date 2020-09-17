@@ -1127,6 +1127,6 @@ export default class extends Vue {
 
 .el-dialog__body{
   max-height: 60vh;
-  overflow: scroll;
+  overflow: auto;
 }
 </style>
