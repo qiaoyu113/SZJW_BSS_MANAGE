@@ -137,14 +137,14 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="确认运费"
-              :value="OwnerDetail.wayBillInfoVO.confirmFee"
+              :value="OwnerDetail.wayBillInfoVO.gmcIsNoCar ? '未出车' : OwnerDetail.wayBillInfoVO.confirmFee"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="二次确认运费"
-              :value="OwnerDetail.wayBillInfoVO.secondConfirmFee"
+              :value="OwnerDetail.wayBillInfoVO.gmcIsNoCar ? '未出车' : OwnerDetail.wayBillInfoVO.secondConfirmFee"
             />
           </el-col>
         </el-row>
