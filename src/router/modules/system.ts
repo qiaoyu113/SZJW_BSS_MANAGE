@@ -101,6 +101,18 @@ const systemRouter: RouteConfig = {
       }
     },
     {
+      path: 'dutymanage', /* 组织管理 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/DutyManage.vue'),
+      name: 'DutyManage',
+      meta: {
+        title: 'dutyManage',
+        activeMenu: '/system/dutymanage',
+        noCache: false,
+        icon: '',
+        apiUrl: '/v1/base/office/list'
+      }
+    },
+    {
       path: 'permissionmanage', /* 权限管理 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/PermissionManage.vue'),
       name: 'PermissionManage',

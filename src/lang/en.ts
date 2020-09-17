@@ -41,6 +41,7 @@ export default {
     editRole: 'editRole',
     organizationManage: 'OrganizationManage',
     permissionManage: 'PermissionManage',
+    dutyManage: 'dutyManage',
     systemSetting: 'SystemSetting',
     transportList: 'TransportList',
     accountList: 'AccountList',

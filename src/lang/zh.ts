@@ -62,6 +62,7 @@ export default {
     createRole: '创建角色',
     editRole: '编辑角色',
     organizationManage: '组织管理',
+    dutyManage: '职责管理',
     permissionManage: '权限管理',
     systemSetting: '系统设置',
     joinTitle: '加盟中心',

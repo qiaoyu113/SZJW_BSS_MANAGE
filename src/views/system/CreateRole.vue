@@ -25,11 +25,10 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="角色英文名称"
-              :prop="isEdit ? 'name' : ''"
+              prop="name"
             >
               <el-input
                 v-model="ruleForm.name"
-                :disabled="isEdit"
                 placeholder="请输入角色英文名称"
                 maxlength="20"
                 clearable
@@ -37,7 +36,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="isPC ? 6 : 24">
+          <!-- <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="产品线"
               prop="productLine"
@@ -56,7 +55,7 @@
                 />
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
@@ -69,6 +68,27 @@
                 maxlength="50"
                 clearable
                 name="createrole_chooseDescription_input"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="isPC ? 6 : 24">
+            <el-form-item
+              label="职责"
+              prop="dutyId"
+            >
+              <el-cascader
+                ref="dutyTree"
+                v-model="ruleForm.dutyId"
+                :disabled="isEdit"
+                :options="dutyList"
+                :props="{
+                  label: 'dutyName',
+                  value: 'id',
+                  children: 'childDuty'
+                }"
+                placeholder="请选择职责"
+                clearable
+                @change="handleChange"
               />
             </el-form-item>
           </el-col>
@@ -134,12 +154,13 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { RoleTree } from './components'
-import { GetDictionaryList } from '@/api/common'
+// import { GetDictionaryList } from '@/api/common'
 import {
   authorityList,
   createRole,
   getRoleDetail,
-  updateRole
+  updateRole,
+  dutyList
 } from '@/api/system'
 
 import '@/styles/common.scss'
@@ -167,6 +188,7 @@ export default class extends Vue {
   };
   private authorityList: any = [];
   private data: any = [];
+  private dutyList: any = [];
   private productList: any = [];
   private scopeList: any = [
     {
@@ -176,6 +198,10 @@ export default class extends Vue {
     {
       dictValue: 3,
       dictLabel: '小组数据'
+    },
+    {
+      dictValue: 5,
+      dictLabel: '业务线数据'
     },
     {
       dictValue: 2,
@@ -206,13 +232,30 @@ export default class extends Vue {
     productLine: [
       { required: true, message: '请选择产品线', trigger: 'change' }
     ],
-    description: [{ required: true, message: '请输入描述', trigger: 'blur' }]
+    description: [{ required: false, message: '请输入描述', trigger: 'blur' }],
+    dutyId: [{ required: true, message: '请选择职责', trigger: 'change' }]
   };
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
 
+  // 获取职责列表
+  private async getDutyList() {
+    const { data } = await dutyList()
+    if (data.success) {
+      this.dutyList = this.getTreeData(data.data, 'childDuty')
+    } else {
+      this.$message.error(data)
+    }
+  }
+  private async handleChange(value: any) {
+    const item = (this.$refs['dutyTree'] as any).getCheckedNodes()[0]
+    if (!item) return
+    this.ruleForm.dutyName = item.label
+    this.ruleForm.productLine = item.value
+  }
+  // 提交表单
   private submitForm(formName: any) {
     (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
@@ -224,6 +267,7 @@ export default class extends Vue {
           ...this.ruleForm
         }
         postData.authorities = this.getCheckedNodes()
+        postData.dutyId = postData.dutyId.slice(0).pop()
         const { data } = await createRole(postData)
         if (data.success) {
           this.$message.success(`创建成功`)
@@ -243,6 +287,7 @@ export default class extends Vue {
       }
     })
   }
+  // 编辑角色提交
   private async submitEditForm() {
     const postData = {
       ...this.ruleForm
@@ -250,6 +295,7 @@ export default class extends Vue {
     postData.roleId = postData.id
     postData.authorities = this.getCheckedNodes()
     delete postData.id
+    delete postData.productLine
     const { data } = await updateRole(postData)
     if (data.success) {
       this.$message.success(`编辑成功`)
@@ -267,6 +313,7 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+  // 重置表单
   private resetForm(formName: any) {
     this.resetChecked();
     (this.$refs[formName] as any).resetFields()
@@ -282,14 +329,6 @@ export default class extends Vue {
     (this.$refs['tree'] as any).$refs['roleTree'].setCheckedKeys([])
   }
 
-  private async getDictionary() {
-    const { data } = await GetDictionaryList(['busi_type'])
-    if (data.success) {
-      this.productList = data.data.busi_type
-    } else {
-      this.$message.error(data)
-    }
-  }
   private async getAuth() {
     const { data } = await authorityList()
     if (data.success) {
@@ -307,14 +346,28 @@ export default class extends Vue {
       const { data } = await getRoleDetail(Number(this.id))
       if (data.success) {
         this.ruleForm = data.data
-        this.ruleForm.productLine = String(data.data.productLine)
         this.authorityList = data.data.authorities || []
       } else {
         this.$message.error(data)
       }
     }
-    this.getDictionary()
+    this.getDutyList()
+    // this.getDictionary() 取消请求产品线接口
     this.getAuth()
+  }
+  // 递归解决children 为空数组
+  private getTreeData(data: any, key: string) {
+    // 循环遍历json数据
+    for (var i = 0; i < data.length; i++) {
+      if (data[i][key].length < 1) {
+        // children若为空数组，则将children设为undefined
+        data[i][key] = undefined
+      } else {
+        // children若不为空数组，则继续 递归调用 本方法
+        this.getTreeData(data[i][key], key)
+      }
+    }
+    return data
   }
   private traverseTree(data: any) {
     var setChecked = (list: any) => {

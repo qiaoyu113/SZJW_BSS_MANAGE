@@ -79,6 +79,12 @@
             label="描述"
           />
           <el-table-column
+            v-if="checkList.includes('职责')"
+            :key="checkList.length + 'dutyName'"
+            prop="dutyName"
+            label="描述"
+          />
+          <el-table-column
             v-if="checkList.includes('人数')"
             :key="checkList.length + 'usedUserCount'"
             prop="usedUserCount"
@@ -171,6 +177,7 @@ export default class extends Vue {
   private dropdownList: any[] = [
     '名称',
     '描述',
+    '职责',
     '人数',
     '操作'
   ];
