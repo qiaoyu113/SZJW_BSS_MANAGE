@@ -339,7 +339,7 @@
             type="textarea"
             :autosize="{minRows: 2, maxRows: 4}"
             placeholder="请输入"
-            maxlength="300"
+            maxlength="100"
             clearable
           />
         </el-form-item>
@@ -423,7 +423,7 @@
             type="textarea"
             :autosize="{minRows: 2, maxRows: 4}"
             placeholder="请输入"
-            maxlength="300"
+            maxlength="100"
             clearable
           />
         </el-form-item>
