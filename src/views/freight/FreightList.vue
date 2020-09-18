@@ -146,7 +146,7 @@
             <template slot-scope="scope">
               <p>
                 <span v-if="scope.row.gmStatusCode === 2">未出车</span>
-                <span v-else>{{ scope.row.gmFee | DataIsNull }}</span>
+                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -159,7 +159,7 @@
           >
             <template slot-scope="scope">
               <span v-if="scope.row.lineStatusCode === 2">未出车</span>
-              <span v-else>{{ scope.row.lineFee | DataIsNull }}</span>
+              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -170,7 +170,7 @@
             label="有无差额（元）"
           >
             <template slot-scope="{row}">
-              {{ row.feeDiffValue || 0 }}
+              {{ Number(row.feeDiffValue).toFixed(2) || 0 }}
             </template>
           </el-table-column>
 
@@ -182,7 +182,13 @@
           >
             <template slot-scope="{row}">
               {{ row.statusName | DataIsNull }}
-              <span v-if="row.status === 20 || row.status === 40">/ {{ row.confirmMoney || 0 }}元</span>
+              <span v-if="row.status === 20 && row.gmcIsNoCar === 1">/ 未出车</span>
+              <span v-if="row.status === 20 && row.gmcIsNoCar !== 1">/ {{ row.confirmMoney || 0 }}元</span>
+              <span v-if="row.status === 40 && row.againIsNoCar === 1">/ 未出车</span>
+              <span v-if="row.status === 40 && row.againIsNoCar !== 1">/ {{ row.againConfirmMoney || 0 }}元</span>
+              <!-- <span v-if="(row.status === 20 || row.status === 40) && row.gmcIsNoCar === 1">/ 未出车</span>
+              <span v-else-if="(row.status === 20 || row.status === 40) && row.againIsNoCar === 1">/ 未出车</span>
+              <span v-if="(row.status === 20 || row.status === 40) && row.againIsNoCar !== 1 && row.againIsNoCar !== 1">{{ row.confirmMoney || 0 }}元</span> -->
             </template>
           </el-table-column>
 
@@ -338,7 +344,7 @@
             type="textarea"
             :autosize="{minRows: 2, maxRows: 4}"
             placeholder="请输入"
-            maxlength="300"
+            maxlength="100"
             clearable
           />
         </el-form-item>
@@ -422,7 +428,7 @@
             type="textarea"
             :autosize="{minRows: 2, maxRows: 4}"
             placeholder="请输入"
-            maxlength="300"
+            maxlength="100"
             clearable
           />
         </el-form-item>
@@ -659,7 +665,7 @@ export default class extends Vue {
       if (key === 'startDate' || key === 'contractEndStartTime') {
         return
       }
-      this.fetchData()
+      this.reset()
     }
 
     // 处理选择日期方法
@@ -690,12 +696,12 @@ export default class extends Vue {
         this.total = data.page.total
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       } else {
         this.$message.error(data)
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       }
     }
 
@@ -743,7 +749,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       } else if (item.key === '3') {
@@ -764,10 +770,10 @@ export default class extends Vue {
                 i.check = true
                 i.list = []
                 let lists = Object.assign({}, i)
-                console.log(lists)
                 lists.list.push({
                   deliverTime: lists.deliverTime,
                   wayBillId: lists.wayBillId,
+                  wayBillAmountId: lists.wayBillAmountId,
                   check: lists.check,
                   preMoney: lists.preMoney
                 })
@@ -780,6 +786,7 @@ export default class extends Vue {
                     e.list.push({
                       deliverTime: lists.deliverTime,
                       wayBillId: lists.wayBillId,
+                      wayBillAmountId: lists.wayBillAmountId,
                       check: lists.check,
                       preMoney: lists.preMoney
                     })
@@ -795,7 +802,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       }
@@ -853,9 +860,9 @@ export default class extends Vue {
             i.list.forEach((element: any) => {
               if (element.check) {
                 moneysArr.push(element.preMoney)
-                wayBillAmountIdsArr.push(i.wayBillAmountId)
+                wayBillAmountIdsArr.push(element.wayBillAmountId)
               } else {
-                noCheck.push(i.wayBillAmountId)
+                noCheck.push(element.wayBillAmountId)
               }
             })
           })
@@ -864,13 +871,13 @@ export default class extends Vue {
             wayBillAmountIds: wayBillAmountIdsArr
           }, this.remarkAll)
           if (data.success) {
+            this.reset()
             this.$message.success('提交成功')
             this.assignShowDialog = false
             if (noCheck.length) {
               const { data } = await NoCarBatch(noCheck)
               if (data.success) {
                 this.assignShowDialog = false
-                this.reset()
                 done()
               } else {
                 this.$message.error(data.errorMsg)
@@ -1127,6 +1134,6 @@ export default class extends Vue {
 
 .el-dialog__body{
   max-height: 60vh;
-  overflow: scroll;
+  overflow: auto;
 }
 </style>
