@@ -92,6 +92,30 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="isPC ? 6 : 24">
+            <el-form-item
+              label="是否同步CRM账号"
+              prop="syncCRMAbility"
+              class="lineHeight"
+            >
+              <el-select
+                v-model="ruleForm.syncCRMAbility"
+                placeholder="请选择"
+                :disabled="isEdit"
+                clearable
+                filterable
+              >
+                <el-option
+                  label="是"
+                  :value="0"
+                />
+                <el-option
+                  label="否"
+                  :value="1"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
       </SectionContainer>
       <SectionContainer title="角色授权">
@@ -180,7 +204,8 @@ export default class extends Vue {
     name: '',
     nick: '',
     productLine: '',
-    description: ''
+    description: '',
+    syncCRMAbility: ''
   };
   private defaultProps: any = {
     children: 'childAuth',
@@ -233,7 +258,8 @@ export default class extends Vue {
       { required: true, message: '请选择产品线', trigger: 'change' }
     ],
     description: [{ required: false, message: '请输入描述', trigger: 'blur' }],
-    dutyId: [{ required: true, message: '请选择职责', trigger: 'change' }]
+    dutyId: [{ required: true, message: '请选择职责', trigger: 'change' }],
+    syncCRMAbility: [{ required: true, message: '请选择是否同步CRM账号', trigger: 'change' }]
   };
   // 判断是否是PC
   get isPC() {
@@ -426,6 +452,12 @@ export default class extends Vue {
     padding-top: 20px;
     box-sizing: border-box;
   }
+  ::v-deep{
+    .lineHeight label{
+      line-height: 1.3
+    }
+  }
+
 }
 .CreateRole-m {
   .btn_box {
