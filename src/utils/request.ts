@@ -15,6 +15,7 @@ service.interceptors.request.use(
     if (UserModule.token) {
       config.headers['Authorization'] = UserModule.token
       config.headers['uuid'] = UserModule.uuid
+      config.headers['platform'] = 1
     }
     return config
   },
