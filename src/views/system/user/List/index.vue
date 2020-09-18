@@ -129,7 +129,9 @@
             >
               编辑
             </el-dropdown-item>
+            <!-- v-permission="['/v2/base/user/pushUserToCRM']" -->
             <el-dropdown-item
+              v-if="scope.row.sync === false"
               command="crm"
             >
               同步CRM账号
@@ -145,7 +147,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { SettingsModule } from '@/store/modules/settings'
-import { getUserManagerList, enableOrDisableUser, resetPassword } from '@/api/system'
+import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM } from '@/api/system'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { getLabel, phoneReg } from '@/utils/index.ts'
@@ -405,13 +407,30 @@ export default class extends Vue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      this.resetPassword(row)
+      this.pushUserToCRM(row)
     }).catch(() => {
       this.$message({
         type: 'info',
         message: '已取消操作'
       })
     })
+  }
+  // 同步用户到crm
+  async pushUserToCRM(row:any) {
+    try {
+      let params = {
+        userId: row.id
+      }
+      let { data: res } = await pushUserToCRM(params)
+      if (res.success) {
+        this.$message.success(`同步CRM账号成功！`)
+        this.getLists()
+      } else {
+        this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
+      }
+    } catch (err) {
+      console.log(`push userto crm fail:${err}`)
+    }
   }
   // 删除顶部表单的选项
   handleQuery(value:any, key:keyof FormObj | 'state') {

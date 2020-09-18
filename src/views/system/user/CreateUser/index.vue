@@ -78,16 +78,15 @@
           />
         </template>
         <template
-          slot="crmSync"
+          v-slot:sync="scope"
         >
-          <span>12121</span>
+          <span>{{ scope.row.sync ? '已同步':'未同步' }}</span>
         </template>
         <template
-          slot="crmAccountSync"
+          v-slot:crmUserStatus="scope"
         >
-          <span>12121</span>
+          <span>{{ scope.row.crmUserStatus }}</span>
         </template>
-
         <div
           slot="btn"
           :class="isPC ? 'btnPc' : 'mobile'"
@@ -98,6 +97,7 @@
           >
             <el-button>取消</el-button>
           </router-link>
+          <!-- v-permission="['/v2/base/user/create','/v2/base/user/update'] -->
           <el-button
             type="primary"
             @click="handleValidateForm"
@@ -281,7 +281,7 @@ export default class extends Vue {
         slot: true
       })
       this.formItem.push({
-        type: 'crmAccountSync',
+        type: 'sync',
         label: 'CRM账号状态:',
         slot: true
       })

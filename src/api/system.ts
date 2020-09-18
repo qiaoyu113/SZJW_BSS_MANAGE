@@ -216,3 +216,11 @@ export const enableOrDisableUser = (data:any) =>
     method: 'post',
     data
   })
+
+// 同步用户到crm
+export const pushUserToCRM = (params:any) =>
+  request({
+    url: `${baseURL}/v2/base/user/pushUserToCRM`,
+    method: 'post',
+    params
+  })
