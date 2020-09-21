@@ -12,6 +12,44 @@ const systemRouter: RouteConfig = {
     apiUrl: 'root'
   },
   children: [
+    {
+      path: 'user', /* 用户管理new */
+      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/List/index.vue'),
+      name: 'User',
+      meta: {
+        title: 'user',
+        activeMenu: '/system/user',
+        noCache: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'addUser', /* 创建用户new */
+      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/CreateUser/index.vue'),
+      name: 'AddUser',
+      meta: {
+        title: 'addUser',
+        hidden: true,
+        activeMenu: '/system/user',
+        noCache: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
+    {
+      path: 'modifyUser', /* 修改用户new */
+      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/CreateUser/index.vue'),
+      name: 'ModifyUser',
+      meta: {
+        title: 'modifyUser',
+        activeMenu: '/system/user',
+        noCache: true,
+        hidden: true,
+        icon: '',
+        apiUrl: 'root'
+      }
+    },
     // {
     //   path: 'usermanage', /* 用户管理 */
     //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/UserManage.vue'),
@@ -101,7 +139,7 @@ const systemRouter: RouteConfig = {
       }
     },
     {
-      path: 'dutymanage', /* 组织管理 */
+      path: 'dutymanage', /* 职责管理 */
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/DutyManage.vue'),
       name: 'DutyManage',
       meta: {
@@ -123,81 +161,43 @@ const systemRouter: RouteConfig = {
         icon: '',
         apiUrl: '/v1/base/authority/list'
       }
-    },
-    {
-      path: 'systemsetting', /* 系统设置 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/SystemSetting.vue'),
-      name: 'SystemSetting',
-      meta: {
-        title: 'systemSetting',
-        activeMenu: '/system/systemsetting',
-        noCache: false,
-        icon: '',
-        apiUrl: '/v1/product/product/system/setting'
-      }
-    },
-    {
-      path: 'buycartype', /* 购车车型 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/BuyCarType.vue'),
-      name: 'BuyCarType',
-      meta: {
-        title: 'carType',
-        activeMenu: '/system/buycartype',
-        noCache: false,
-        icon: '',
-        apiUrl: '/v1/product/product/list/page'
-      }
-    },
-    {
-      path: 'rentcartype', /* 租车车型 */
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RentCarType.vue'),
-      name: 'RentCarType',
-      meta: {
-        title: 'rentCar',
-        activeMenu: '/system/rentcartype',
-        noCache: false,
-        icon: '',
-        apiUrl: '/v1/product/product/list/page'
-      }
-    },
-    {
-      path: 'user', /* 用户管理new */
-      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/List/index.vue'),
-      name: 'User',
-      meta: {
-        title: 'user',
-        activeMenu: '/system/user',
-        noCache: true,
-        icon: '',
-        apiUrl: 'root'
-      }
-    },
-    {
-      path: 'addUser', /* 创建用户new */
-      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/CreateUser/index.vue'),
-      name: 'AddUser',
-      meta: {
-        title: 'addUser',
-        hidden: true,
-        activeMenu: '/system/user',
-        noCache: true,
-        icon: '',
-        apiUrl: 'root'
-      }
-    },
-    {
-      path: 'modifyUser', /* 修改用户new */
-      component: () => import(/* webpackChunkName: "user" */ '@/views/system/user/CreateUser/index.vue'),
-      name: 'ModifyUser',
-      meta: {
-        title: 'modifyUser',
-        activeMenu: '/system/user',
-        noCache: true,
-        hidden: true,
-        icon: '',
-        apiUrl: 'root'
-      }
     }
+    // {
+    //   path: 'systemsetting', /* 系统设置 */
+    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/SystemSetting.vue'),
+    //   name: 'SystemSetting',
+    //   meta: {
+    //     title: 'systemSetting',
+    //     activeMenu: '/system/systemsetting',
+    //     noCache: false,
+    //     icon: '',
+    //     apiUrl: '/v1/product/product/system/setting'
+    //   }
+    // },
+    // {
+    //   path: 'buycartype', /* 购车车型 */
+    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/BuyCarType.vue'),
+    //   name: 'BuyCarType',
+    //   meta: {
+    //     title: 'carType',
+    //     activeMenu: '/system/buycartype',
+    //     noCache: false,
+    //     icon: '',
+    //     apiUrl: '/v1/product/product/list/page'
+    //   }
+    // },
+    // {
+    //   path: 'rentcartype', /* 租车车型 */
+    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RentCarType.vue'),
+    //   name: 'RentCarType',
+    //   meta: {
+    //     title: 'rentCar',
+    //     activeMenu: '/system/rentcartype',
+    //     noCache: false,
+    //     icon: '',
+    //     apiUrl: '/v1/product/product/list/page'
+    //   }
+    // },
   ]
 }
 

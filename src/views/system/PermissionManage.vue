@@ -15,7 +15,6 @@
           <div class="right-btn">
             <el-button
               v-if="data.authType !== 5 && data.authType !== 1"
-              v-permission="['/v1/base/authority/create']"
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
@@ -28,7 +27,6 @@
             />
             <el-button
               v-if="node.level !== 1 && node.level !== 2"
-              v-permission="['/v1/base/authority/deleteByAuthId']"
               circle
               size="mini"
               class="delete"
@@ -42,7 +40,6 @@
             />
             <el-button
               v-if="node.level !== 1 && node.level !== 2"
-              v-permission="['/v1/base/authority/update']"
               circle
               size="mini"
               icon="el-icon-edit"

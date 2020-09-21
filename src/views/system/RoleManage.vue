@@ -7,7 +7,6 @@
         :active-name="'0'"
       >
         <el-button
-          v-permission="['/v1/base/role/create']"
           size="small"
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -82,7 +81,7 @@
             v-if="checkList.includes('职责')"
             :key="checkList.length + 'dutyName'"
             prop="dutyName"
-            label="描述"
+            label="职责"
           />
           <el-table-column
             v-if="checkList.includes('人数')"
@@ -124,13 +123,11 @@
                   name="rolemanage_moreMenuItem_dropdown"
                 >
                   <el-dropdown-item
-                    v-permission="['/v1/base/role/delete']"
                     @click.native="deleteRole(row)"
                   >
                     删除
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-permission="['/v1/base/role/update']"
                     @click.native="editRole(row)"
                   >
                     编辑
