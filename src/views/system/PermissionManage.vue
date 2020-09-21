@@ -245,7 +245,7 @@ export default class extends Vue {
 
   @Watch('dialogForm.controlType')
   private onval(value: any) {
-    if (!value && this.addNode.level === 4) {
+    if (!value && this.addNode.level === 5) {
       this.dialogForm.url = ''
     }
   }
