@@ -459,6 +459,7 @@ export default class extends Vue {
   }
   // 跳转到用户列表
   jumplist() {
+    this.$message.success('操作成功')
     setTimeout(() => {
       this.$router.push({
         path: '/system/user'
