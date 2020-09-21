@@ -23,9 +23,9 @@
             class="mr10"
           />
           <div class="right-btn">
-            <!-- v-permission="['/v2/base/office/create']" -->
             <el-button
               v-if="data.type !== 5"
+              v-permission="['/v2/base/office/create']"
               circle
               size="mini"
               name="organizationmanage_appendOffice_btn"
@@ -36,9 +36,10 @@
                 }
               "
             />
-            <!-- v-permission="['/v2/base/office/delete']" -->
+
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v2/base/office/delete']"
               circle
               size="mini"
               name="organizationmanage_deleteOffice_btn"
@@ -50,9 +51,10 @@
                 }
               "
             />
-            <!-- v-permission="['/v2/base/office/update']" -->
+
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v2/base/office/update']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -63,9 +65,10 @@
                 }
               "
             />
-            <!-- v-permission="['/v1/base/office/sort']" -->
-            <el-button
+
+            <!-- <el-button
               v-if="data.type !== 1"
+              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-top"
@@ -75,12 +78,11 @@
                   upOffice(node, data);
                 }
               "
-            />
+            /> -->
 
-            <!-- v-permission="['/v1/base/office/sort']" -->
-            <el-button
+            <!-- <el-button
               v-if="data.type !== 1"
-
+              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-bottom"
@@ -90,7 +92,7 @@
                   downOffice(node, data);
                 }
               "
-            />
+            /> -->
           </div>
         </template>
       </RoleTree>
@@ -115,7 +117,7 @@
               prop="name"
             >
               <el-input
-                v-model="dialogForm.name"
+                v-model.trim="dialogForm.name"
                 placeholder="请输入2-10位中文"
                 maxlength="10"
                 show-word-limit
@@ -170,7 +172,7 @@
             prop="name"
           >
             <el-input
-              v-model="dialogForm.name"
+              v-model.trim="dialogForm.name"
               maxlength="10"
               show-word-limit
               clearable
@@ -264,7 +266,7 @@
             prop="name"
           >
             <el-input
-              v-model="dialogForm.name"
+              v-model.trim="dialogForm.name"
               maxlength="10"
               show-word-limit
               clearable
