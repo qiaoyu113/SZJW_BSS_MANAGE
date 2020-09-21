@@ -436,6 +436,7 @@ export default class extends Vue {
   // 删除顶部表单的选项
   handleQuery(value:any, key:keyof FormObj | 'state') {
     if (key === 'state') {
+      this.page.page = 1
       this.listQuery.status = value
     } else {
       this.listQuery[key] = value
