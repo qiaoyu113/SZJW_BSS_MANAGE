@@ -23,9 +23,9 @@
             class="mr10"
           />
           <div class="right-btn">
+            <!-- v-permission="['/v2/base/office/create']" -->
             <el-button
               v-if="data.type !== 5"
-              v-permission="['/v2/base/office/create']"
               circle
               size="mini"
               name="organizationmanage_appendOffice_btn"
@@ -36,9 +36,9 @@
                 }
               "
             />
+            <!-- v-permission="['/v2/base/office/delete']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v2/base/office/delete']"
               circle
               size="mini"
               name="organizationmanage_deleteOffice_btn"
@@ -50,10 +50,9 @@
                 }
               "
             />
-
+            <!-- v-permission="['/v2/base/office/update']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v2/base/office/update']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -64,10 +63,9 @@
                 }
               "
             />
-
+            <!-- v-permission="['/v1/base/office/sort']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-top"
@@ -79,9 +77,10 @@
               "
             />
 
+            <!-- v-permission="['/v1/base/office/sort']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v1/base/office/sort']"
+
               circle
               size="mini"
               icon="el-icon-bottom"
