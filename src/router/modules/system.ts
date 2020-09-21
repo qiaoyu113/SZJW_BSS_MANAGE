@@ -97,7 +97,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/rolemanage',
         noCache: false,
         icon: '',
-        apiUrl: '/v1/base/role/list'
+        apiUrl: '/v2/base/role/list'
       }
     },
     {
@@ -105,7 +105,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'CreateRole',
       meta: {
-        apiUrl: '/v1/base/role/create',
+        apiUrl: '/v2/base/role/create',
         activeMenu: '/system/rolemanage',
         title: 'createRole',
         hidden: true,
@@ -147,7 +147,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/dutymanage',
         noCache: false,
         icon: '',
-        apiUrl: '/v1/base/office/list'
+        apiUrl: '/v2/base/duty/list'
       }
     },
     {

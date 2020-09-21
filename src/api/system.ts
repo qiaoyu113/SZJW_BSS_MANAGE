@@ -190,7 +190,7 @@ export const createDuty = (data: any = {}) =>
     method: 'post',
     data
   })
-// 职责管理-创建职责
+// 职责管理-编辑职责
 export const updateDuty = (data: any = {}) =>
   request({
     url: `${baseURL}/v2/base/duty/update`,
