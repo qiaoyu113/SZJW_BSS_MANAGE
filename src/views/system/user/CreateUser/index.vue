@@ -165,6 +165,7 @@ export default class extends Vue {
     crmUserStatus: '',
     syncStatus: false
   }
+  sourcePhone:string = ''
   private formItem:any[] = [
     {
       type: 1,
@@ -294,6 +295,7 @@ export default class extends Vue {
       if (res.success) {
         let result = res.data
         let officeIds = this.getTreeSelectOffice(this.officeArr, result.officeId)
+        this.sourcePhone = result.mobile
         this.listQuery = {
           id: result.id,
           userName: result.nickName,
@@ -453,6 +455,11 @@ export default class extends Vue {
       }
       let { data: res } = await modifyUser(params)
       if (res.success) {
+        if (this.sourcePhone !== this.listQuery.mobile) {
+          this.$message.success('无法更改CRM中手机号，建议在本系统重新创建以新手机号为账号，并同至CRM，并前往CRM中删除相关账号')
+        } else {
+          this.$message.success('操作成功')
+        }
         this.jumplist()
       } else {
         this.$message.error(res.errorMsg)
@@ -465,7 +472,6 @@ export default class extends Vue {
   }
   // 跳转到用户列表
   jumplist() {
-    this.$message.success('操作成功')
     setTimeout(() => {
       this.$router.push({
         path: '/system/user'
