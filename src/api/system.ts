@@ -46,7 +46,11 @@ export const userDetail = (id: number) =>
     }
   })
 //
-
+export const getOfficeByCurrentUser = () =>
+  request({
+    url: `${baseURL}/v1/base/office/list/getOfficeByCurrentUser`,
+    method: 'get'
+  })
 // 组织管理-组织列表
 export const getOfficeList2 = (params: any) =>
   request({
@@ -56,25 +60,15 @@ export const getOfficeList2 = (params: any) =>
   })
 
 // 组织管理-组织列表
-export const getOfficeList = (num: number = 0) =>
+export const getOfficeList = () =>
   request({
-    url: `${baseURL}/v1/base/office/list/getOfficeByParentId`,
-    method: 'get',
-    params: {
-      parentId: num
-    }
+    url: `${baseURL}/v2/base/office/list`,
+    method: 'get'
   })
 // 组织管理-创建组织
 export const createOffice = (data: any = {}) =>
   request({
-    url: `${baseURL}/v1/base/office/create`,
-    method: 'post',
-    data
-  })
-// 组织管理-删除组织
-export const deleteOffice = (data: any = {}) =>
-  request({
-    url: `${baseURL}/v1/base/office/delete`,
+    url: `${baseURL}/v2/base/office/create`,
     method: 'post',
     data
   })
@@ -85,10 +79,31 @@ export const sortOffice = (data: any = {}) =>
     method: 'post',
     data
   })
+  // 组织管理-查询职责列表
+export const getDutyListByLevel = (params: any = {}) =>
+  request({
+    url: `${baseURL}/v2/base/duty/getDutyListByLevel`,
+    method: 'post',
+    params
+  })
 // 组织管理-修改组织信息
 export const updateOffice = (data: any = {}) =>
   request({
-    url: `${baseURL}/v1/base/office/update`,
+    url: `${baseURL}/v2/base/office/update`,
+    method: 'post',
+    data
+  })
+  // 组织管理-删除组织
+export const deleteOffice = (data: any = {}) =>
+  request({
+    url: `${baseURL}/v2/base/office/delete`,
+    method: 'post',
+    data
+  })
+// 获取当前登录人下属的相关角色的用户列表
+export const getSpecifiedLower = (data: any = {}) =>
+  request({
+    url: `${baseURL}/v2/base/user/getSpecifiedLowerUserListByCondition`,
     method: 'post',
     data
   })
@@ -105,11 +120,6 @@ export const createRole = (data: any = {}) =>
     url: `${baseURL}/v2/base/role/create`,
     method: 'post',
     data
-  })
-export const getOfficeByCurrentUser = () =>
-  request({
-    url: `${baseURL}/v1/base/office/list/getOfficeByCurrentUser`,
-    method: 'get'
   })
 // 角色管理-角色修改
 export const updateRole = (data: any = {}) =>
