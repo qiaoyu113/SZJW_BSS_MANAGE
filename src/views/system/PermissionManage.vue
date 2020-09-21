@@ -14,8 +14,7 @@
           <span class="mr10">{{ node.label }}</span>
           <div class="right-btn">
             <el-button
-              v-if="data.authType !== 4"
-              v-permission="['/v1/base/authority/create']"
+              v-if="data.authType !== 5 && data.authType !== 1"
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
@@ -27,8 +26,7 @@
               "
             />
             <el-button
-              v-if="node.level !== 1"
-              v-permission="['/v1/base/authority/deleteByAuthId']"
+              v-if="node.level !== 1 && node.level !== 2"
               circle
               size="mini"
               class="delete"
@@ -41,8 +39,7 @@
               "
             />
             <el-button
-              v-if="node.level !== 1"
-              v-permission="['/v1/base/authority/update']"
+              v-if="node.level !== 1 && node.level !== 2"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -74,9 +71,9 @@
           class="dialog-tab"
         >
           <el-tab-pane
-            v-if="activeName === '2'"
+            v-if="activeName === '3'"
             label="分类"
-            name="2"
+            name="3"
           >
             <el-form-item
               label="权限名称"
@@ -92,9 +89,9 @@
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane
-            v-if="activeName === '3'"
+            v-if="activeName === '4'"
             label="页面"
-            name="3"
+            name="4"
           >
             <el-form-item
               label="权限名称"
@@ -122,9 +119,9 @@
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane
-            v-if="activeName === '4'"
+            v-if="activeName === '5'"
             label="功能"
-            name="4"
+            name="5"
           >
             <el-form-item
               label="权限名称"
