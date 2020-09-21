@@ -737,6 +737,9 @@ export default class extends Vue {
   padding: 20px;
   box-sizing: border-box;
 }
+.OrganizationManagement .el-form-item__content .el-select{
+  width: 100%;
+}
 .OrganizationManagement,
 .OrganizationManagement-m {
   .el-cascader {
