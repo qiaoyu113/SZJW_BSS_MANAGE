@@ -15,6 +15,7 @@
           <div class="right-btn">
             <el-button
               v-if="data.dutyLevel !== 2"
+              v-permission="['/v2/base/duty/create']"
               circle
               size="mini"
               icon="el-icon-circle-plus-outline"
@@ -27,6 +28,7 @@
             />
             <el-button
               v-if="node.level !== 1"
+              v-permission="['/v2/base/duty/update']"
               circle
               size="mini"
               class="delete"
@@ -40,6 +42,7 @@
             />
             <el-button
               v-if="node.level !== 1"
+              v-permission="['/v2/base/duty/delete']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -137,12 +140,7 @@ export default class extends Vue {
   };
   private rules: any = {
     dutyName: [
-      { required: true, message: '请输入职责名称', trigger: 'blur' },
-      {
-        pattern: /^(?:[\u4e00-\u9fa5·]{1,10})$/,
-        message: '请输入1-10个中文',
-        trigger: 'blur'
-      }
+      { required: true, message: '请输入职责名称', trigger: 'blur' }
     ],
     parentDutyName: [
       { required: true, message: '请输入上级节点', trigger: 'blur' }
@@ -206,7 +204,6 @@ export default class extends Vue {
   }
   // 删除职责
   private async deleteDuty(node: any, item: any) {
-    console.log(node, item)
     const { dutyLevel, id } = item
     this.$confirm(`您确定要删除“${item.dutyName}”吗？`, '删除职责', {
       type: 'warning'
