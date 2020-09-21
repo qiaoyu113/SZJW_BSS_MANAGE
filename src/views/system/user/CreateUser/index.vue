@@ -78,9 +78,9 @@
           />
         </template>
         <template
-          v-slot:sync="scope"
+          v-slot:syncStatus="scope"
         >
-          <span>{{ scope.row.sync ? '已同步':'未同步' }}</span>
+          <span>{{ scope.row.syncStatus ? '已同步':'未同步' }}</span>
         </template>
         <template
           v-slot:crmUserStatus="scope"
@@ -97,7 +97,8 @@
           >
             <el-button>取消</el-button>
           </router-link>
-          <!-- v-permission="['/v2/base/user/create','/v2/base/user/update'] -->
+
+          <!-- v-permission="['/v2/base/user/create','/v2/base/user/update']" -->
           <el-button
             type="primary"
             @click="handleValidateForm"
@@ -128,6 +129,8 @@ export interface FormObj {
   confirmPassword: string;
   nickName: string;
   roleName?:string;
+  crmUserStatus?:string;
+  syncStatus?:boolean;
 }
 
 interface RuleForm {
@@ -158,7 +161,9 @@ export default class extends Vue {
     passwd: '',
     confirmPassword: '',
     nickName: '',
-    roleName: ''
+    roleName: '',
+    crmUserStatus: '',
+    syncStatus: false
   }
   private formItem:any[] = [
     {
@@ -276,12 +281,12 @@ export default class extends Vue {
         return false
       }
       this.formItem.push({
-        type: 'crmSync',
+        type: 'syncStatus',
         label: 'CRM账号同步状态:',
         slot: true
       })
       this.formItem.push({
-        type: 'sync',
+        type: 'crmUserStatus',
         label: 'CRM账号状态:',
         slot: true
       })
@@ -298,7 +303,9 @@ export default class extends Vue {
           passwd: '123456789qQ',
           confirmPassword: '123456789qQ',
           nickName: result.nickName,
-          roleId: [result.roleId]
+          roleId: [result.roleId],
+          crmUserStatus: result.crmUserStatus,
+          syncStatus: result.syncStatus
         }
       } else {
         this.$message.error(res.errorMsg)
@@ -458,6 +465,7 @@ export default class extends Vue {
   }
   // 跳转到用户列表
   jumplist() {
+    this.$message.success('操作成功')
     setTimeout(() => {
       this.$router.push({
         path: '/system/user'

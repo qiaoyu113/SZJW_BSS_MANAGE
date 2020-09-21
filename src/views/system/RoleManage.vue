@@ -7,7 +7,7 @@
         :active-name="'0'"
       >
         <el-button
-          v-permission="['/v1/base/role/create']"
+          v-permission="['/v2/base/role/create']"
           size="small"
           type="primary"
           :class="isPC ? 'btn-item' : 'btn-item-m'"
@@ -79,6 +79,12 @@
             label="描述"
           />
           <el-table-column
+            v-if="checkList.includes('职责')"
+            :key="checkList.length + 'dutyName'"
+            prop="dutyName"
+            label="职责"
+          />
+          <el-table-column
             v-if="checkList.includes('人数')"
             :key="checkList.length + 'usedUserCount'"
             prop="usedUserCount"
@@ -118,7 +124,7 @@
                   name="rolemanage_moreMenuItem_dropdown"
                 >
                   <el-dropdown-item
-                    v-permission="['/v1/base/role/delete']"
+                    v-permission="['/v2/base/role/deleteByRoleId']"
                     @click.native="deleteRole(row)"
                   >
                     删除
@@ -171,6 +177,7 @@ export default class extends Vue {
   private dropdownList: any[] = [
     '名称',
     '描述',
+    '职责',
     '人数',
     '操作'
   ];

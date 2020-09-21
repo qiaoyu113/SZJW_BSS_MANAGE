@@ -55,8 +55,8 @@
     >
       <div class="subTitle">
         <router-link :to="{path: '/system/addUser'}">
+          <!-- v-permission="['/v1/base/user/page/list']" -->
           <el-button
-            v-permission="['/v1/base/user/page/list']"
             class="createUser"
             icon="el-icon-plus"
             type="primary"
@@ -117,8 +117,8 @@
                 启用
               </template>
             </el-dropdown-item>
+            <!-- v-permission="['/v1/base/user/password/reset']" -->
             <el-dropdown-item
-              v-permission="['/v1/base/user/password/reset']"
               command="resetPwd"
             >
               重置密码
@@ -131,7 +131,7 @@
             </el-dropdown-item>
             <!-- v-permission="['/v2/base/user/pushUserToCRM']" -->
             <el-dropdown-item
-              v-if="scope.row.sync === false"
+              v-if="scope.row.syncPermission"
               command="crm"
             >
               同步CRM账号
@@ -140,7 +140,6 @@
         </el-dropdown>
       </template>
     </self-table>
-    <!-- </el-card> -->
   </div>
 </template>
 <script lang="ts">
@@ -326,10 +325,12 @@ export default class extends Vue {
         this.page.total = res.page.total
         for (let i = 0; i < this.tab.length; i++) {
           let item:Tab = this.tab[i]
-          if (item.name === this.listQuery.status) {
-            item.num = res.page.total
-          } else {
-            item.num = 0
+          if (item.name === '') {
+            item.num = res.title.totalCount
+          } else if (item.name === '1') {
+            item.num = res.title.enableCount
+          } else if (item.name === '2') {
+            item.num = res.title.disableCount
           }
         }
       }
@@ -435,6 +436,7 @@ export default class extends Vue {
   // 删除顶部表单的选项
   handleQuery(value:any, key:keyof FormObj | 'state') {
     if (key === 'state') {
+      this.page.page = 1
       this.listQuery.status = value
     } else {
       this.listQuery[key] = value
