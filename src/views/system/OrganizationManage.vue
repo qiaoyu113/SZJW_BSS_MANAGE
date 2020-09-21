@@ -9,7 +9,7 @@
         :data="data"
         :props="defaultProps"
         node-key="id"
-        :default-expand-all="false"
+        default-expand-all
       >
         <template slot-scope="{node, data}">
           <svg-icon
@@ -23,9 +23,9 @@
             class="mr10"
           />
           <div class="right-btn">
+            <!-- v-permission="['/v2/base/office/create']" -->
             <el-button
               v-if="data.type !== 5"
-              v-permission="['/v1/base/office/create']"
               circle
               size="mini"
               name="organizationmanage_appendOffice_btn"
@@ -36,9 +36,9 @@
                 }
               "
             />
+            <!-- v-permission="['/v2/base/office/delete']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v1/base/office/delete']"
               circle
               size="mini"
               name="organizationmanage_deleteOffice_btn"
@@ -50,9 +50,9 @@
                 }
               "
             />
+            <!-- v-permission="['/v2/base/office/update']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v1/base/office/update']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -63,9 +63,9 @@
                 }
               "
             />
+            <!-- v-permission="['/v1/base/office/sort']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-top"
@@ -76,9 +76,11 @@
                 }
               "
             />
+
+            <!-- v-permission="['/v1/base/office/sort']" -->
             <el-button
               v-if="data.type !== 1"
-              v-permission="['/v1/base/office/sort']"
+
               circle
               size="mini"
               icon="el-icon-bottom"
@@ -106,6 +108,23 @@
         label-width="80px"
       >
         <template v-if="isAdd">
+          <div>
+            <el-form-item
+              v-if="addData.type ===1"
+              label="组织名称"
+              prop="name"
+            >
+              <el-input
+                v-model="dialogForm.name"
+                placeholder="请输入2-10位中文"
+                maxlength="10"
+                show-word-limit
+                clearable
+                name="organizationmanage_chooseName2_input"
+              />
+            </el-form-item>
+          </div>
+
           <el-form-item
             v-if="addData.type === 2"
             label="城市"
@@ -126,74 +145,80 @@
               name="organizationmanage_chooseAreaCode1_input"
             />
           </el-form-item>
-          <el-tabs
+          <el-form-item
             v-else-if="addData.type === 3"
-            v-model="activeName"
-            class="dialog-tab"
-            :tab-click="resetDialog"
+            label="业务线"
+            prop="dutyId"
           >
-            <el-tab-pane
-              label="卫星城"
-              name="first"
+            <el-select
+              v-model="dialogForm.dutyId"
+              filterable
+              placeholder="请选择业务线"
+              @change="changeDuty"
             >
+              <el-option
+                v-for="item in busitypeOptions"
+                :key="item.id"
+                :label="item.dutyName"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-else-if="addData.type === 4"
+            label="小组"
+            prop="name"
+          >
+            <el-input
+              v-model="dialogForm.name"
+              maxlength="10"
+              show-word-limit
+              clearable
+              name="organizationmanage_chooseName2_input"
+              placeholder="请输入小组"
+            />
+          </el-form-item>
+          <el-form-item
+            label="上级组织"
+            prop="parent"
+          >
+            <el-input
+              :value="addData.name"
+              disabled
+              placeholder="上级组织"
+              clearable
+              name="organizationmanage_upName_input"
+            />
+          </el-form-item>
+        </template>
+        <template v-else>
+          <template v-if="addData.type === 2">
+            <div>
               <el-form-item
-                v-if="activeName === 'first'"
-                label="城市"
-                prop="areaCode"
-              >
-                <el-cascader
-                  ref="cascader"
-                  v-model="areaList"
-                  :options="optionsArea"
-                  :props="props"
-                  :show-all-levels="false"
-                  clearable
-                  placeholder=""
-                  @change="handleChange"
-                />
-                <el-input
-                  v-model="dialogForm.name"
-                  class="opacity"
-                  placeholder="请选择"
-                  name="organizationmanage_chooseAreaCode2_input"
-                />
-              </el-form-item>
-            </el-tab-pane>
-            <el-tab-pane
-              label="小组"
-              name="second"
-            >
-              <el-form-item
-                v-if="activeName === 'second'"
                 label="组织名称"
                 prop="name"
               >
                 <el-input
                   v-model="dialogForm.name"
-                  placeholder="请输入2-10位中文"
+                  placeholder="请输入2-100位中文"
                   maxlength="10"
-                  name="organizationmanage_chooseName1_input"
+                  clearable
+                  name="organizationmanage_chooseName4_input"
                 />
               </el-form-item>
-            </el-tab-pane>
-          </el-tabs>
-          <el-form-item
-            v-else
-            label="组织名称"
-            prop="name"
+            </div>
+          </template>
+          <!-- <el-form-item
+            v-if="addData.type === 3"
+            label="城市"
+            prop="areaCode"
           >
-            <el-input
-              v-model="dialogForm.name"
-              placeholder="请输入2-10位中文"
-              maxlength="10"
-              clearable
-              name="organizationmanage_chooseName2_input"
+            <test
+              :form="dialogForm"
             />
-          </el-form-item>
-        </template>
-        <template v-else>
+          </el-form-item> -->
           <el-form-item
-            v-if="addData.type === 3 || addData.type === 4"
+            v-if="addData.type === 3 "
             label="城市"
             prop="areaCode"
           >
@@ -215,16 +240,48 @@
             />
           </el-form-item>
           <el-form-item
-            v-else
-            label="组织名称"
+            v-else-if="addData.type === 4"
+            label="业务线"
+            prop="dutyId"
+          >
+            <el-select
+              v-model="dialogForm.dutyId"
+              filterable
+              placeholder="请选择业务线"
+              @change="changeDuty"
+            >
+              <el-option
+                v-for="item in busitypeOptions"
+                :key="item.id"
+                :label="item.dutyName"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-else-if="addData.type === 5"
+            label="小组"
             prop="name"
           >
             <el-input
               v-model="dialogForm.name"
-              placeholder="请输入2-10位中文"
               maxlength="10"
+              show-word-limit
               clearable
-              name="organizationmanage_chooseName4_input"
+              name="organizationmanage_chooseName2_input"
+              placeholder="请输入小组"
+            />
+          </el-form-item>
+          <el-form-item
+            label="上级组织"
+            prop="parent"
+          >
+            <el-input
+              :value="addData.parentName"
+              disabled
+              placeholder="上级组织"
+              clearable
+              name="organizationmanage_upName_input"
             />
           </el-form-item>
         </template>
@@ -243,12 +300,15 @@ import { GetArea } from '@/api/common'
 import {
   getOfficeList,
   createOffice,
-  deleteOffice,
   sortOffice,
-  updateOffice
+  updateOffice,
+  deleteOffice,
+  getDutyListByLevel,
+  getSpecifiedLower
 } from '@/api/system'
 
 import '@/styles/common.scss'
+import { forEach } from 'jszip'
 
 @Component({
   name: 'CreateRole',
@@ -277,10 +337,41 @@ export default class extends Vue {
     name: '',
     parentId: 0,
     parentIds: '',
-    areaCode: '', // 区域编码
-    type: 0
+    type: 0,
+    dutyId: '',
+    areaCode: []
   };
+
+  private busitypeOptions: any = [];
   private optionsArea: any = [];
+  //  props: any = {
+  //    lazy: true,
+  //    emitPath: false,
+  //    lazyLoad(node: any, resolve: any) {
+  //      const { level } = node
+  //      let params:string[] = []
+  //      if (level === 0) {
+  //        params = ['100000']
+  //      } else if (level === 1) {
+  //        params = ['100000']
+  //        params.push(node.value)
+  //      }
+  //      if (level < 2) {
+  //        GetArea(params).then(({ data }) => {
+  //          if (data.success) {
+  //            const nodes = data.data.map((item: any) => ({
+  //              value: item.code,
+  //              label: item.name,
+  //              leaf: level === 1
+  //            }))
+  //            resolve(nodes)
+  //          } else {
+  //            this.$message.error(data)
+  //          }
+  //        })
+  //      }
+  //    }
+  //  };
   private props: any = {
     label: 'name',
     value: 'code',
@@ -304,6 +395,7 @@ export default class extends Vue {
       })
     }
   };
+
   private areaList: any = [];
   private rules: any = {
     name: [
@@ -314,27 +406,26 @@ export default class extends Vue {
         trigger: 'blur'
       }
     ],
-    areaCode: [{ required: true, message: '请选择城市', trigger: 'change' }]
+    dutyId: [{ required: true, message: '请选择业务线', trigger: 'change' }],
+    areaCode: [{ required: true, message: '请选择城市', trigger: 'blur' }]
   };
   private isAdd: boolean = false;
   private disabled: boolean = false;
 
-  @Watch('dialogForm.areaCode')
-  private onval(value: any) {
-    if (value === '') {
-      this.dialogForm.name = ''
-    }
-  }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
+
   private appendOffice(node: any, data: any) {
     this.addNode = node
     this.addData = data
     this.dialogTit = '新建组织'
     this.isAdd = true
     this.showDialog = true
+    if (this.addData.type === 3) {
+      this.getBusitype()
+    }
   }
   private updateOffice(node: any, data: any) {
     this.addNode = node
@@ -343,7 +434,11 @@ export default class extends Vue {
     this.isAdd = false
     this.dialogForm.name = data.name
     this.dialogForm.areaCode = data.areaCode
+    this.dialogForm.dutyId = data.dutyId || ''
     this.showDialog = true
+    if (this.addData.type === 4) {
+      this.getBusitype()
+    }
   }
   private async upOffice(node: any, item: any) {
     // 向上
@@ -441,40 +536,88 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+  private async getBusitype() {
+    let params = {
+      dutyLevel: 1
+    }
+    try {
+      let { data: res } = await getDutyListByLevel(params)
+      console.log(res)
+      this.busitypeOptions = res.data
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.log('err')
+    }
+  }
   private async confirm(done: any) {
     (this.$refs['dialogForm'] as any).validate(async(valid: boolean) => {
       if (valid) {
         this.dialogForm.parentId = this.addData.id
         this.dialogForm.parentIds =
           this.addData.parentIds + ',' + this.addData.id
-        if (this.addData.type === 3) {
-          this.dialogForm.type = this.activeName === 'first' ? 4 : 5
-        } else {
-          this.dialogForm.type = this.addData.type + 1
-        }
         if (this.isAdd) {
           // 添加
-          const { data } = await createOffice({
-            ...this.dialogForm
-          })
+          let params = {
+            name: '',
+            parentId: 0,
+            parentIds: '',
+            type: 0,
+            dutyId: '',
+            areaCode: ''
+          }
+          params.name = this.dialogForm.name
+          params.type = this.addData.type + 1
+          params.parentIds = this.addData.parentIds
+          params.parentIds = `${this.addData.parentIds},${this.addData.id}`
+          if (this.addData.type === 2) {
+            params.areaCode = this.dialogForm.areaCode
+          }
+          if (this.addData.type === 3) {
+            params.dutyId = this.dialogForm.dutyId
+          }
+          if (this.addData.type === 4) {
+            params.dutyId = this.addData.dutyId
+          }
+          params.parentId = this.addData.id
+          const { data } = await createOffice(params)
           if (data.success) {
             this.$message.success(`创建成功`)
             this.append(data.data)
             this.showDialog = false
+            this.dialogForm = {
+              name: '',
+              parentId: 0,
+              parentIds: '',
+              type: 0,
+              dutyId: ''
+            }
           } else {
             this.$message.error(data)
           }
         } else {
           // 编辑
-          const { data } = await updateOffice({
+          let params = {
             id: this.addData.id,
             name: this.dialogForm.name,
-            areaCode: this.dialogForm.areaCode
-          })
+            areaCode: this.dialogForm.areaCode,
+            dutyId: ''
+          }
+          if (this.addData.type === 4) {
+            params.dutyId = this.dialogForm.dutyId
+          }
+          const { data } = await updateOffice(params)
           if (data.success) {
             this.$message.success(`编辑成功`)
             this.update(this.dialogForm)
             this.showDialog = false
+            this.dialogForm = {
+              name: '',
+              parentId: 0,
+              parentIds: '',
+              type: 0,
+              dutyId: ''
+            }
           } else {
             this.$message.error(data)
           }
@@ -497,6 +640,7 @@ export default class extends Vue {
     const node = (this.$refs.cascader as any).getCheckedNodes()
     if (node && node[0]) {
       this.dialogForm.name = node[0].label
+      console.log(this.dialogForm.name)
     }
   }
   // 获取组织管理列表
@@ -560,6 +704,7 @@ export default class extends Vue {
   private update(item: any) {
     this.$set(this.addNode.data, 'name', item.name)
     this.$set(this.addNode.data, 'areaCode', item.areaCode)
+    this.$set(this.addNode.data, 'dutyId', item.dutyId)
   }
   private async getArea() {
     const { data } = await GetArea(['100000'])
@@ -573,6 +718,13 @@ export default class extends Vue {
     this.getOfficeList()
     this.getArea()
   }
+  private changeDuty(value: any) {
+    this.busitypeOptions.forEach((ele: any) => {
+      if (ele.id === value) {
+        this.dialogForm.name = ele.dutyName
+      }
+    })
+  }
   mounted() {
     this.fetchData()
   }
@@ -585,8 +737,11 @@ export default class extends Vue {
   padding: 20px;
   box-sizing: border-box;
 }
+.OrganizationManagement .el-form-item__content .el-select{
+  width: 100%;
+}
 .OrganizationManagement,
-.OrganizationManagement-m{
+.OrganizationManagement-m {
   .el-cascader {
     position: absolute;
     left: 0;

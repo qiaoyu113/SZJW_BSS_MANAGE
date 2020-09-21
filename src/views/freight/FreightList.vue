@@ -182,9 +182,13 @@
           >
             <template slot-scope="{row}">
               {{ row.statusName | DataIsNull }}
-              <span v-if="(row.status === 20 || row.status === 40) && row.gmcIsNoCar === 1">/ 未出车</span>
+              <span v-if="row.status === 20 && row.gmcIsNoCar === 1">/ 未出车</span>
+              <span v-if="row.status === 20 && row.gmcIsNoCar !== 1">/ {{ row.confirmMoney || 0 }}元</span>
+              <span v-if="row.status === 40 && row.againIsNoCar === 1">/ 未出车</span>
+              <span v-if="row.status === 40 && row.againIsNoCar !== 1">/ {{ row.againConfirmMoney || 0 }}元</span>
+              <!-- <span v-if="(row.status === 20 || row.status === 40) && row.gmcIsNoCar === 1">/ 未出车</span>
               <span v-else-if="(row.status === 20 || row.status === 40) && row.againIsNoCar === 1">/ 未出车</span>
-              <span v-if="(row.status === 20 || row.status === 40) && row.againIsNoCar !== 1 && row.againIsNoCar !== 1">{{ row.confirmMoney || 0 }}元</span>
+              <span v-if="(row.status === 20 || row.status === 40) && row.againIsNoCar !== 1 && row.againIsNoCar !== 1">{{ row.confirmMoney || 0 }}元</span> -->
             </template>
           </el-table-column>
 
@@ -661,7 +665,7 @@ export default class extends Vue {
       if (key === 'startDate' || key === 'contractEndStartTime') {
         return
       }
-      this.fetchData()
+      this.reset()
     }
 
     // 处理选择日期方法
@@ -769,6 +773,7 @@ export default class extends Vue {
                 lists.list.push({
                   deliverTime: lists.deliverTime,
                   wayBillId: lists.wayBillId,
+                  wayBillAmountId: lists.wayBillAmountId,
                   check: lists.check,
                   preMoney: lists.preMoney
                 })
@@ -781,6 +786,7 @@ export default class extends Vue {
                     e.list.push({
                       deliverTime: lists.deliverTime,
                       wayBillId: lists.wayBillId,
+                      wayBillAmountId: lists.wayBillAmountId,
                       check: lists.check,
                       preMoney: lists.preMoney
                     })
@@ -854,9 +860,9 @@ export default class extends Vue {
             i.list.forEach((element: any) => {
               if (element.check) {
                 moneysArr.push(element.preMoney)
-                wayBillAmountIdsArr.push(i.wayBillAmountId)
+                wayBillAmountIdsArr.push(element.wayBillAmountId)
               } else {
-                noCheck.push(i.wayBillAmountId)
+                noCheck.push(element.wayBillAmountId)
               }
             })
           })
