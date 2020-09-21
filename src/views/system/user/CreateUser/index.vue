@@ -129,6 +129,8 @@ export interface FormObj {
   confirmPassword: string;
   nickName: string;
   roleName?:string;
+  crmUserStatus?:string;
+  syncStatus?:boolean;
 }
 
 interface RuleForm {
@@ -159,7 +161,9 @@ export default class extends Vue {
     passwd: '',
     confirmPassword: '',
     nickName: '',
-    roleName: ''
+    roleName: '',
+    crmUserStatus: '',
+    syncStatus: false
   }
   private formItem:any[] = [
     {
@@ -299,7 +303,9 @@ export default class extends Vue {
           passwd: '123456789qQ',
           confirmPassword: '123456789qQ',
           nickName: result.nickName,
-          roleId: [result.roleId]
+          roleId: [result.roleId],
+          crmUserStatus: result.crmUserStatus,
+          syncStatus: result.syncStatus
         }
       } else {
         this.$message.error(res.errorMsg)
