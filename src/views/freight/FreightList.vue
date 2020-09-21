@@ -12,6 +12,7 @@
         :date-value="DateValue"
         :date-value2="DateValue2"
         @handle-tags="handleTags"
+        @handle-check="handleCheck"
         @handle-query="getList"
       />
     </SuggestContainer>
@@ -144,7 +145,8 @@
           >
             <template slot-scope="scope">
               <p>
-                <span>{{ scope.row.gmFee | DataIsNull }}</span>
+                <span v-if="scope.row.gmStatusCode === 2">未出车</span>
+                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
               </p>
             </template>
           </el-table-column>
@@ -156,7 +158,8 @@
             label="外线侧运费（元）"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.lineFee | DataIsNull }}</span>
+              <span v-if="scope.row.lineStatusCode === 2">未出车</span>
+              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
             </template>
           </el-table-column>
 
@@ -167,7 +170,7 @@
             label="有无差额（元）"
           >
             <template slot-scope="{row}">
-              {{ row.feeDiffValue || 0 }}
+              {{ Number(row.feeDiffValue).toFixed(2) || 0 }}
             </template>
           </el-table-column>
 
@@ -179,7 +182,13 @@
           >
             <template slot-scope="{row}">
               {{ row.statusName | DataIsNull }}
-              <span v-if="row.status === 20 || row.status === 40">{{ row.confirmMoney }}</span>
+              <span v-if="row.status === 20 && row.gmcIsNoCar === 1">/ 未出车</span>
+              <span v-if="row.status === 20 && row.gmcIsNoCar !== 1">/ {{ row.confirmMoney || 0 }}元</span>
+              <span v-if="row.status === 40 && row.againIsNoCar === 1">/ 未出车</span>
+              <span v-if="row.status === 40 && row.againIsNoCar !== 1">/ {{ row.againConfirmMoney || 0 }}元</span>
+              <!-- <span v-if="(row.status === 20 || row.status === 40) && row.gmcIsNoCar === 1">/ 未出车</span>
+              <span v-else-if="(row.status === 20 || row.status === 40) && row.againIsNoCar === 1">/ 未出车</span>
+              <span v-if="(row.status === 20 || row.status === 40) && row.againIsNoCar !== 1 && row.againIsNoCar !== 1">{{ row.confirmMoney || 0 }}元</span> -->
             </template>
           </el-table-column>
 
@@ -317,7 +326,7 @@
           >
             <el-input
               v-model="item.preMoney"
-              v-only-number="{min: 0, precision: 2}"
+              v-only-number="{min: 0, max: 999999.99, precision: 2}"
               placeholder="请输入"
               name="freight_price_input"
               maxlength="10"
@@ -335,7 +344,7 @@
             type="textarea"
             :autosize="{minRows: 2, maxRows: 4}"
             placeholder="请输入"
-            maxlength="300"
+            maxlength="100"
             clearable
           />
         </el-form-item>
@@ -394,12 +403,12 @@
               v-for="(i, index) in item.list"
               :key="index"
               :label="`趟数` + (index + 1) + `: ` + i.deliverTime"
-              :prop="'lists[' + itemindex + '].list.' + index + '.price'"
+              :prop="'lists[' + itemindex + '].list.' + index + '.preMoney'"
               :rules="{required: true, message: '请输入金额', trigger: 'change'}"
             >
               <el-input
-                v-model="i.price"
-                v-only-number="{min: 0}"
+                v-model="i.preMoney"
+                v-only-number="{min: 0, max: 999999.99, precision: 2}"
                 placeholder="请输入"
                 name="freight_price_input"
                 maxlength="10"
@@ -419,7 +428,7 @@
             type="textarea"
             :autosize="{minRows: 2, maxRows: 4}"
             placeholder="请输入"
-            maxlength="300"
+            maxlength="100"
             clearable
           />
         </el-form-item>
@@ -645,13 +654,18 @@ export default class extends Vue {
       this.tags = value
     }
 
+    // 处理check方法
+    private handleCheck() {
+      (this.$refs.multipleTable as any).clearSelection()
+    }
+
     // 处理query方法
     private handleQuery(value: any, key: any) {
       this.listQuery[key] = value
       if (key === 'startDate' || key === 'contractEndStartTime') {
         return
       }
-      this.fetchData()
+      this.reset()
     }
 
     // 处理选择日期方法
@@ -682,12 +696,12 @@ export default class extends Vue {
         this.total = data.page.total
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       } else {
         this.$message.error(data)
         setTimeout(() => {
           this.listLoading = false
-        }, 0.5 * 1000)
+        }, 2 * 1000)
       }
     }
 
@@ -735,7 +749,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       } else if (item.key === '3') {
@@ -754,27 +768,27 @@ export default class extends Vue {
               if (ret.indexOf(i.wayBillId) === -1) {
                 ret.push(i.wayBillId)
                 i.check = true
-                i.price = ''
                 i.list = []
                 let lists = Object.assign({}, i)
                 lists.list.push({
                   deliverTime: lists.deliverTime,
                   wayBillId: lists.wayBillId,
+                  wayBillAmountId: lists.wayBillAmountId,
                   check: lists.check,
-                  price: lists.price
+                  preMoney: lists.preMoney
                 })
                 list.push(lists)
               } else {
-                list.array.forEach((e: any) => {
+                list.forEach((e: any) => {
                   if (e.wayBillId === i.wayBillId) {
                     i.check = true
-                    i.price = ''
                     let lists = Object.assign({}, i)
                     e.list.push({
                       deliverTime: lists.deliverTime,
                       wayBillId: lists.wayBillId,
+                      wayBillAmountId: lists.wayBillAmountId,
                       check: lists.check,
-                      price: lists.price
+                      preMoney: lists.preMoney
                     })
                   }
                 })
@@ -788,7 +802,7 @@ export default class extends Vue {
         } else {
           this.$message({
             type: 'warning',
-            message: '请先选择再进行操作！'
+            message: '请先选择出车单'
           })
         }
       }
@@ -826,7 +840,7 @@ export default class extends Vue {
           if (data.success) {
             this.$message.success('提交成功')
             this.assignShowDialogMin = false
-            this.getList(this.listQuery)
+            this.reset()
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -845,10 +859,10 @@ export default class extends Vue {
           this.freightFormAll.lists.forEach((i: any) => {
             i.list.forEach((element: any) => {
               if (element.check) {
-                moneysArr.push(element.price)
-                wayBillAmountIdsArr.push(i.wayBillAmountId)
+                moneysArr.push(element.preMoney)
+                wayBillAmountIdsArr.push(element.wayBillAmountId)
               } else {
-                noCheck.push(i.wayBillId)
+                noCheck.push(element.wayBillAmountId)
               }
             })
           })
@@ -857,13 +871,13 @@ export default class extends Vue {
             wayBillAmountIds: wayBillAmountIdsArr
           }, this.remarkAll)
           if (data.success) {
+            this.reset()
             this.$message.success('提交成功')
             this.assignShowDialog = false
             if (noCheck.length) {
               const { data } = await NoCarBatch(noCheck)
               if (data.success) {
                 this.assignShowDialog = false
-                this.getList(this.listQuery)
                 done()
               } else {
                 this.$message.error(data.errorMsg)
@@ -882,24 +896,16 @@ export default class extends Vue {
     private confirmAssignOther(done: any) {
       let noCheck: any = []
       this.freightFormAll.lists.forEach((i: any) => {
-        i.list.forEach((element: any) => {
-          noCheck.push(i.wayBillId)
-        })
+        noCheck.push(i.wayBillAmountId)
       })
       this.$alert('确定全部' + noCheck.length + '个出车，全部未出车！', '提示', {
         confirmButtonText: '确定',
         callback: async action => {
-          let wayBillAmountIdsArr: any = []
-          this.freightFormAll.lists.forEach((i: any) => {
-            i.list.forEach((element: any) => {
-              wayBillAmountIdsArr.push(element.wayBillAmountId)
-            })
-          })
-          const { data } = await NoCarBatch(wayBillAmountIdsArr)
+          const { data } = await NoCarBatch(noCheck)
           if (data.success) {
             this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
-            this.getList(this.listQuery)
+            this.reset()
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -912,13 +918,13 @@ export default class extends Vue {
     private async confirmAssignOtherMin(done: any) {
       let wayBillAmountIdsArr: any = []
       this.freightForm.list.forEach((i: any) => {
-        wayBillAmountIdsArr.push(i.waiBillAmountId)
+        wayBillAmountIdsArr.push(i.wayBillAmountId)
       })
       const { data } = await NoCarBatch(wayBillAmountIdsArr)
       if (data.success) {
         this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false
-        this.getList(this.listQuery)
+        this.reset()
         done()
       } else {
         this.$message.error(data.errorMsg)
@@ -964,6 +970,17 @@ export default class extends Vue {
       let nowYear = now.getFullYear() // 当前年
       nowYear += (nowYear < 2000) ? 1900 : 0
       return this.formatDate(new Date(nowYear, nowMonth, nowDay + 10 - nowDayOfWeek))
+    }
+
+    // 重制
+    private reset() {
+      this.handleCheck()
+      for (let key in this.listQuery) {
+        if (key !== 'page' && key !== 'limit' && key !== 'state') { this.listQuery[key] = '' } else {
+          this.listQuery['page'] = 1
+        }
+      }
+      this.getList(this.listQuery)
     }
 
     // 格式化日期：yyyy-MM-dd

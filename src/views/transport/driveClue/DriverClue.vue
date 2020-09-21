@@ -841,10 +841,10 @@ export default class extends Vue {
       }
     }
     .btnPc {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: flex-end;
-    }
+       display: flex;
+       flex-flow: row nowrap;
+       justify-content: flex-end;
+     }
     .mobile {
       width:100%;
       text-align: center;

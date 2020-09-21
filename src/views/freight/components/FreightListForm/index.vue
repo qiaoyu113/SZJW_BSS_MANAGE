@@ -389,11 +389,12 @@ export default class extends Vue {
 
   private research() {
     this.$emit('handle-query', this.listQuery)
+    this.$emit('handle-check')
   }
 
   private reset() {
     for (let key in this.listQuery) {
-      if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
+      if (key !== 'page' && key !== 'limit' && key !== 'state') { this.listQuery[key] = '' } else {
         this.listQuery['page'] = 1
       }
     }

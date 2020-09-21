@@ -46,11 +46,7 @@ export const userDetail = (id: number) =>
     }
   })
 //
-export const getOfficeByCurrentUser = () =>
-  request({
-    url: `${baseURL}/v1/base/office/list/getOfficeByCurrentUser`,
-    method: 'get'
-  })
+
 // 组织管理-组织列表
 export const getOfficeList2 = (params: any) =>
   request({
@@ -109,6 +105,11 @@ export const createRole = (data: any = {}) =>
     url: `${baseURL}/v2/base/role/create`,
     method: 'post',
     data
+  })
+export const getOfficeByCurrentUser = () =>
+  request({
+    url: `${baseURL}/v1/base/office/list/getOfficeByCurrentUser`,
+    method: 'get'
   })
 // 角色管理-角色修改
 export const updateRole = (data: any = {}) =>
@@ -192,4 +193,61 @@ export const deleteDuty = (data: any = {}) =>
     url: `${baseURL}/v2/base/duty/delete`,
     method: 'post',
     data
+  })
+// 获取用户列表-new
+export const getUserManagerList = (params:any) =>
+  request({
+    url: `${baseURL}/v1/base/user/page/list`,
+    method: 'get',
+    params
+  })
+// 获取组织架构-new
+export const getOfficeByCurrentUserV2 = () =>
+  request({
+    url: `${baseURL}/v2/base/office/list`,
+    method: 'get'
+  })
+
+export interface RoleParams {
+    dutyId?:number;
+    officeLevel:number;
+  }
+// 根据组织架构获取角色-new
+export const getDutyAndRoleList = (data:RoleParams) =>
+  request({
+    url: `${baseURL}/v2/base/duty/getDutyAndRoleList`,
+    method: 'post',
+    data
+  })
+
+// 创建用户-new
+export const addUser = (data:any) =>
+  request({
+    url: `${baseURL}/v2/base/user/create`,
+    method: 'post',
+    data
+  })
+
+// 修改用户-new
+export const modifyUser = (data:any) =>
+  request({
+    url: `${baseURL}/v2/base/user/update`,
+    method: 'post',
+    data
+  })
+
+// 启用或禁用用户
+export const enableOrDisableUser = (data:any) =>
+  request({
+    url: `${baseURL}/v2/base/user/enableOrDisable`,
+    method: 'post',
+    data
+  })
+
+// 同步用户到crm
+export const pushUserToCRM = (params:any) =>
+  request({
+    url: `${baseURL}/v2/base/user/pushUserToCRM`,
+    method: 'post',
+    params
   })
