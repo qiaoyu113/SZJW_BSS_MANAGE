@@ -376,7 +376,7 @@ export default class extends Vue {
   }
   // 打开禁用确认框
   openDisableUser(row:any) {
-    this.$confirm(`您确定要禁用${row.nickName}吗, ?`, '提示', {
+    this.$confirm(`您确定要禁用${row.nickName}吗?`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
@@ -437,7 +437,8 @@ export default class extends Vue {
         this.$message.success(`同步CRM账号成功！`)
         this.getLists()
       } else {
-        this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
+        // this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
+        this.$message.error(res.data)
       }
     } catch (err) {
       console.log(`push userto crm fail:${err}`)
