@@ -350,6 +350,7 @@ export default class extends Vue {
   }
   // 组织架构发生变化
   handleOfficeIdChange(val:number[]) {
+    this.listQuery.roleId = []
     let obj:{
       [propName:string]:any
       } = {
@@ -396,6 +397,7 @@ export default class extends Vue {
       let { data: res } = await getDutyAndRoleList(params)
       if (res.success) {
         let arrs = res.data
+        this.roleArr = []
         let brrs = this.deeploopRole(arrs)
         this.roleArr.push(...(brrs as []))
       } else {
@@ -411,6 +413,9 @@ export default class extends Vue {
     arrs.forEach(item => {
       if (item.childDuty === null || item.childDuty.length === 0) {
         delete item.childDuty
+        if (item.dutyLevel < 3) {
+          item.disabled = true
+        }
       } else {
         let crr = this.deeploopRole(item.childDuty)
         item.childDuty = crr
@@ -431,6 +436,8 @@ export default class extends Vue {
       }
       delete params.id
       delete params.roleName
+      delete params.crmUserStatus
+      delete params.syncStatus
       let { data: res } = await addUser(params)
       if (res.success) {
         this.jumplist()
