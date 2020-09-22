@@ -376,7 +376,7 @@ export default class extends Vue {
   }
   // 打开禁用确认框
   openDisableUser(row:any) {
-    this.$confirm(`您确定要禁用${row.nickName}吗, ?`, '提示', {
+    this.$confirm(`您确定要禁用${row.nickName}吗?`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
