@@ -438,7 +438,7 @@ export default class extends Vue {
         this.getLists()
       } else {
         // this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
-        this.$message.error(res.data)
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`push userto crm fail:${err}`)
