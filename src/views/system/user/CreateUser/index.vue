@@ -440,6 +440,7 @@ export default class extends Vue {
       delete params.syncStatus
       let { data: res } = await addUser(params)
       if (res.success) {
+        this.$message.success('创建成功')
         this.jumplist()
       } else {
         this.$message.error(res.errorMsg)
@@ -465,7 +466,7 @@ export default class extends Vue {
         if (this.sourcePhone !== this.listQuery.mobile) {
           this.$message.success('无法更改CRM中手机号，建议在本系统重新创建以新手机号为账号，并同至CRM，并前往CRM中删除相关账号')
         } else {
-          this.$message.success('操作成功')
+          this.$message.success('修改成功')
         }
         this.jumplist()
       } else {
