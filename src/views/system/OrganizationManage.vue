@@ -134,7 +134,7 @@
           >
             <el-cascader
               ref="cascader"
-              v-model="areaList"
+              v-model="dialogForm.areaCode"
               :options="optionsArea"
               :props="props"
               clearable
@@ -409,7 +409,7 @@ export default class extends Vue {
       }
     ],
     dutyId: [{ required: true, message: '请选择业务线', trigger: 'change' }],
-    areaCode: [{ required: true, message: '请选择城市', trigger: 'blur' }]
+    areaCode: [{ required: true, message: '请选择城市', trigger: 'change' }]
   };
   private isAdd: boolean = false;
   private disabled: boolean = false;
@@ -587,13 +587,7 @@ export default class extends Vue {
             this.$message.success(`创建成功`)
             this.append(data.data)
             this.showDialog = false
-            this.dialogForm = {
-              name: '',
-              parentId: 0,
-              parentIds: '',
-              type: 0,
-              dutyId: ''
-            }
+            this.resetDialog()
           } else {
             this.$message.error(data)
           }
@@ -613,13 +607,7 @@ export default class extends Vue {
             this.$message.success(`编辑成功`)
             this.update(this.dialogForm)
             this.showDialog = false
-            this.dialogForm = {
-              name: '',
-              parentId: 0,
-              parentIds: '',
-              type: 0,
-              dutyId: ''
-            }
+            this.resetDialog()
           } else {
             this.$message.error(data)
           }
@@ -631,6 +619,7 @@ export default class extends Vue {
   private resetDialog() {
     this.dialogForm.name = ''
     this.dialogForm.areaCode = ''
+    this.dialogForm.dutyId = ''
     this.areaList = []
     this.activeName = 'first'
     this.$nextTick(() => {
