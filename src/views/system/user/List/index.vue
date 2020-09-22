@@ -333,6 +333,8 @@ export default class extends Vue {
             item.num = res.title.disableCount
           }
         }
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`get lists fail:${err}`)
@@ -349,10 +351,18 @@ export default class extends Vue {
       }
       let { data: res } = await enableOrDisableUser(params)
       if (res.success) {
-        this.$message.success(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态成功！`)
+        if (row.syncStatus) {
+          this.$message.success(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态成功！`)
+        } else {
+          this.$message.success('操作成功')
+        }
         this.getLists()
       } else {
-        this.$message.error(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态失败！请联系系统管理员或在CRM中操作${row.status === 1 ? '禁用' : '启用'}`)
+        if (row.syncStatus) {
+          this.$message.error(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态失败！请联系系统管理员或在CRM中操作${row.status === 1 ? '禁用' : '启用'}`)
+        } else {
+          this.$message.error(res.errorMsg)
+        }
       }
     } catch (err) {
       console.log(`enable or disable fail:${err}`)
