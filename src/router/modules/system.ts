@@ -114,6 +114,19 @@ const systemRouter: RouteConfig = {
       }
     },
     {
+      path: 'roledetail',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RoleDetails.vue'),
+      name: 'RoleDetails',
+      meta: {
+        apiUrl: '/v2/base/role/create',
+        activeMenu: '/system/rolemanage',
+        title: 'roleDetails',
+        hidden: true,
+        icon: '',
+        noCache: true
+      }
+    },
+    {
       path: 'editrole',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/CreateRole.vue'),
       name: 'EditRole',

@@ -39,6 +39,7 @@ export default {
     roleManage: 'RoleManage',
     createRole: 'createRole',
     editRole: 'editRole',
+    roleDetails: 'roleDetails',
     organizationManage: 'OrganizationManage',
     permissionManage: 'PermissionManage',
     dutyManage: 'dutyManage',
