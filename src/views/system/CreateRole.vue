@@ -36,27 +36,6 @@
               />
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="isPC ? 6 : 24">
-            <el-form-item
-              label="产品线"
-              prop="productLine"
-            >
-              <el-select
-                v-model="ruleForm.productLine"
-                placeholder="请选择"
-                clearable
-                name="createrole_chooseProductLine_select"
-              >
-                <el-option
-                  v-for="(item, index) in productList"
-                  :key="index"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="角色描述"
@@ -74,7 +53,7 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="职责"
-              prop="dutyId"
+              :prop="isEdit ? 'dutyId' : ''"
             >
               <el-cascader
                 ref="dutyTree"
@@ -95,7 +74,7 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="是否同步CRM账号"
-              prop="syncCRMAbility"
+              :prop="isEdit ? 'syncCRMAbility' : ''"
               class="lineHeight"
             >
               <el-select
