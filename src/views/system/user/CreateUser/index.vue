@@ -78,6 +78,16 @@
           />
         </template>
         <template
+          v-slot:mobile="scope"
+        >
+          <el-input
+            v-model="listQuery.mobile"
+            :disabled="scope.row.status ===1&&listQuery.id!==''"
+            maxlength="11"
+            placeholder="请输入"
+          />
+        </template>
+        <template
           v-slot:syncStatus="scope"
         >
           <span>{{ scope.row.syncStatus ? '已同步':'未同步' }}</span>
@@ -131,6 +141,7 @@ export interface FormObj {
   roleName?:string;
   crmUserStatus?:string;
   syncStatus?:boolean;
+  status?:number;
 }
 
 interface RuleForm {
@@ -163,7 +174,8 @@ export default class extends Vue {
     nickName: '',
     roleName: '',
     crmUserStatus: '',
-    syncStatus: false
+    syncStatus: false,
+    status: 0
   }
   sourcePhone:string = ''
   private formItem:any[] = [
@@ -177,13 +189,10 @@ export default class extends Vue {
       }
     },
     {
-      type: 1,
+      type: 'mobile',
       key: 'mobile',
       label: '电话:',
-      tagAttrs: {
-        placeholder: '请选输入',
-        maxlength: 11
-      }
+      slot: true
     },
     {
       key: 'officeId',
@@ -239,7 +248,7 @@ export default class extends Vue {
 
   // 验证手机号
   private validatePhone(rule:any, value:string, callback:(string?: Error) => void) {
-    if (!phoneReg.test(value)) {
+    if (!/\d{8,11}/.test(value)) {
       return callback(new Error('请输入正确的手机号'))
     }
     return callback()
@@ -307,7 +316,8 @@ export default class extends Vue {
           nickName: result.nickName,
           roleId: [result.roleId],
           crmUserStatus: result.crmUserStatus,
-          syncStatus: result.syncStatus
+          syncStatus: result.syncStatus,
+          status: result.status
         }
       } else {
         this.$message.error(res.errorMsg)
@@ -438,6 +448,7 @@ export default class extends Vue {
       delete params.roleName
       delete params.crmUserStatus
       delete params.syncStatus
+      delete params.status
       let { data: res } = await addUser(params)
       if (res.success) {
         this.$message.success('创建成功')
@@ -463,7 +474,7 @@ export default class extends Vue {
       }
       let { data: res } = await modifyUser(params)
       if (res.success) {
-        if (this.sourcePhone !== this.listQuery.mobile) {
+        if (this.sourcePhone !== this.listQuery.mobile && this.listQuery.syncStatus) {
           this.$message.success('无法更改CRM中手机号，建议在本系统重新创建以新手机号为账号，并同至CRM，并前往CRM中删除相关账号')
         } else {
           this.$message.success('修改成功')
