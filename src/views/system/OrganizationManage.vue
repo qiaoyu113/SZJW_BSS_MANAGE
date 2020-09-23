@@ -18,7 +18,7 @@
           />
           <span class="mr10">{{ node.label }}</span>
           <el-badge
-            type="warning"
+            type="primary"
             :value="data.userCount"
             class="mr10"
           />
