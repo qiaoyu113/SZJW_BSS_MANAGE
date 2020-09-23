@@ -93,6 +93,7 @@
           <span>{{ scope.row.syncStatus ? '已同步':'未同步' }}</span>
         </template>
         <template
+
           v-slot:crmUserStatus="scope"
         >
           <span>{{ scope.row.crmUserStatus }}</span>
@@ -290,16 +291,7 @@ export default class extends Vue {
       if (!this.userId) {
         return false
       }
-      this.formItem.push({
-        type: 'syncStatus',
-        label: 'CRM账号同步状态:',
-        slot: true
-      })
-      this.formItem.push({
-        type: 'crmUserStatus',
-        label: 'CRM账号状态:',
-        slot: true
-      })
+
       let { data: res } = await userDetail(+this.userId)
       if (res.success) {
         let result = res.data
@@ -318,6 +310,18 @@ export default class extends Vue {
           crmUserStatus: result.crmUserStatus,
           syncStatus: result.syncStatus,
           status: result.status
+        }
+        if (result.syncStatus) {
+          this.formItem.push({
+            type: 'syncStatus',
+            label: 'CRM账号同步状态:',
+            slot: true
+          })
+          this.formItem.push({
+            type: 'crmUserStatus',
+            label: 'CRM账号状态:',
+            slot: true
+          })
         }
       } else {
         this.$message.error(res.errorMsg)
@@ -466,11 +470,13 @@ export default class extends Vue {
   async modifyUser() {
     try {
       this.listLoading = true
-      let params = {
+      let params:any = {
         id: this.listQuery.id,
         nickName: this.listQuery.userName,
-        userName: this.listQuery.userName,
-        mobile: this.listQuery.mobile
+        userName: this.listQuery.userName
+      }
+      if (this.sourcePhone !== this.listQuery.mobile) {
+        params.mobile = this.listQuery.mobile
       }
       let { data: res } = await modifyUser(params)
       if (res.success) {

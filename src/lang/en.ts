@@ -135,7 +135,9 @@ export default {
     profile: 'Profile',
     user: 'UserManage',
     addUser: 'AddUser',
-    modifyUser: 'ModifyUser'
+    modifyUser: 'ModifyUser',
+    billing: 'BillingManager',
+    billingLog: 'BillingLog'
   },
   navbar: {
     logOut: 'Log Out',

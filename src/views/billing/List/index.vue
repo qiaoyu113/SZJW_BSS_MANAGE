@@ -346,7 +346,9 @@ export default class extends Vue {
     if (key === 'adjust') { // 调整
 
     } else if (key === 'log') { // 日志
-
+      this.$router.push({
+        path: '/driveraccount/billingLog'
+      })
     } else if (key === 'status') { // 重置密码
 
     }
