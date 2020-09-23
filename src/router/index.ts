@@ -178,6 +178,32 @@ export const constantRoutes: RouteConfig[] = [
           icon: 'user',
           noCache: true
         }
+      },
+      {
+        path: 'billing', /* 计费管理 */
+        component: () => import(/* webpackChunkName: "billing" */ '@/views/billing/List/index.vue'),
+        name: 'Billing',
+        meta: {
+          apiUrl: '/root',
+          activeMenu: '',
+          title: 'freightLog',
+          icon: 'cargo',
+          hidden: true,
+          noCache: false
+        }
+      },
+      {
+        path: 'log', /* 计费管理日志 */
+        component: () => import(/* webpackChunkName: "billing" */ '@/views/billing/Log/index.vue'),
+        name: 'BillingLog',
+        meta: {
+          apiUrl: '/root',
+          activeMenu: '',
+          title: 'freightLog',
+          icon: 'cargo',
+          hidden: true,
+          noCache: false
+        }
       }
     ]
   }
