@@ -6,6 +6,7 @@ export default {
     freightDetail: '运费详情',
     freightLog: '运费日志',
     driverTitle: '司机管理',
+    driverAccount: '司机梧桐账户',
     driverList: '司机列表',
     editDriver: '编辑司机',
     followDriver: '跟进司机',
@@ -149,7 +150,9 @@ export default {
     profile: '个人中心',
     user: '用户管理',
     addUser: '新建用户',
-    modifyUser: '编辑用户'
+    modifyUser: '编辑用户',
+    billing: '计费管理',
+    billingLog: '操作日志'
   },
   navbar: {
     logOut: '退出登录',

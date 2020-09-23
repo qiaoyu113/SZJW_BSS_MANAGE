@@ -3,6 +3,7 @@ export default {
     dashboard: 'Dashboard',
     freightTitle: 'FreightTitle',
     freightList: 'FreightList',
+    driverAccount: 'DriverAccount',
     driverTitle: 'DriverTitle',
     driverList: 'DriverList',
     freightDetail: 'FreightDetail',
@@ -134,7 +135,9 @@ export default {
     profile: 'Profile',
     user: 'UserManage',
     addUser: 'AddUser',
-    modifyUser: 'ModifyUser'
+    modifyUser: 'ModifyUser',
+    billing: 'BillingManager',
+    billingLog: 'BillingLog'
   },
   navbar: {
     logOut: 'Log Out',
