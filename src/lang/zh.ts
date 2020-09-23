@@ -6,6 +6,7 @@ export default {
     freightDetail: '运费详情',
     freightLog: '运费日志',
     driverTitle: '司机管理',
+    driverAccount: '司机梧桐账户',
     driverList: '司机列表',
     editDriver: '编辑司机',
     followDriver: '跟进司机',

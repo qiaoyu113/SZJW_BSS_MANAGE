@@ -3,6 +3,7 @@ export default {
     dashboard: 'Dashboard',
     freightTitle: 'FreightTitle',
     freightList: 'FreightList',
+    driverAccount: 'DriverAccount',
     driverTitle: 'DriverTitle',
     driverList: 'DriverList',
     freightDetail: 'FreightDetail',

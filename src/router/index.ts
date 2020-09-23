@@ -16,6 +16,7 @@ import transportRouter from './modules/transport'
 import systemRouter from './modules/system'
 import orderRouter from './modules/order'
 import freightRouter from './modules/freight'
+import driverAccountRouter from './modules/driver-account'
 // import customerRouter from './modules/customer'
 
 Vue.use(Router)
@@ -225,6 +226,7 @@ export const asyncRoutes: RouteConfig[] = [
   // transportRouter,
   // 运费管理
   freightRouter,
+  driverAccountRouter,
   // 系统管理
   systemRouter,
   {
