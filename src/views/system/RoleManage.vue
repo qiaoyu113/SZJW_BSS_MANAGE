@@ -141,6 +141,14 @@
           </el-table-column>
         </el-table>
       </div>
+      <pagination
+        v-show="total > 0"
+        :operation-list="[]"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList"
+      />
     </div>
   </div>
 </template>
@@ -150,6 +158,8 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import { roleList, createRole, updateRole, deleteRole } from '@/api/system'
+import Pagination from '@/components/Pagination/index.vue'
+import { HandlePages } from '@/utils/index'
 
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
@@ -162,7 +172,8 @@ interface IState {
   name: 'RoleManage',
   components: {
     SuggestContainer,
-    TableHeader
+    TableHeader,
+    Pagination
   }
 })
 export default class extends Vue {
@@ -187,6 +198,10 @@ export default class extends Vue {
   private list: any[] = [];
   private page: Object | undefined = '';
   private listLoading = false;
+  private listQuery: IState = {
+    page: 1,
+    limit: 30
+  };
   // Watch
   @Watch('checkList', { deep: true })
   private onval(value: any) {
@@ -205,18 +220,22 @@ export default class extends Vue {
   // 处理tags方法
   // 所有请求方法
   private fetchData() {
-    this.getList()
+    this.getList(this.listQuery)
   }
   // button
   // 添加明细原因 row 当前行 column 当前列
   private tableClick(row: any, column: any, cell: any, event: any) {}
   // 请求列表
-  private async getList() {
+  private async getList(value: any) {
     this.listLoading = true
-    const { data } = await roleList()
+    this.listQuery.page = value.page
+    this.listQuery.limit = value.limit
+    const { data } = await roleList(this.listQuery)
     this.listLoading = false
     if (data.success) {
       this.list = data.data
+      data.page = await HandlePages(data.page)
+      this.total = data.page.total
     } else {
       this.$message.error(data)
     }
@@ -236,7 +255,7 @@ export default class extends Vue {
       const { data } = await deleteRole(item.id)
       if (data.success) {
         this.$message.success(`删除成功`)
-        this.getList()
+        this.getList(this.listQuery)
       } else {
         this.$message.error(data)
       }
@@ -264,7 +283,6 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       padding: 0 30px;
-      padding-bottom: 30px;
       box-sizing: border-box;
       background: #ffffff;
     }

@@ -146,7 +146,6 @@ import {
   userDetail
 } from '@/api/system'
 import '@/styles/common.scss'
-import { off } from 'codemirror'
 @Component({
   name: 'CreateUser',
   components: {

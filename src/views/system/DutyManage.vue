@@ -41,7 +41,6 @@
               "
             />
             <el-button
-              v-if="node.level !== 1"
               v-permission="['/v2/base/duty/delete']"
               circle
               size="mini"
@@ -74,7 +73,7 @@
           prop="dutyName"
         >
           <el-input
-            v-model="dialogForm.dutyName"
+            v-model.trim="dialogForm.dutyName"
             placeholder="请输入职责名称"
             maxlength="10"
             clearable
@@ -82,6 +81,7 @@
           />
         </el-form-item>
         <el-form-item
+          v-if="dialogForm.parentDutyName"
           label="上级节点"
           prop="parentDutyName"
         >
@@ -140,7 +140,8 @@ export default class extends Vue {
   };
   private rules: any = {
     dutyName: [
-      { required: true, message: '请输入职责名称', trigger: 'blur' }
+      { required: true, message: '请输入职责名称', trigger: 'blur' },
+      { pattern: /^[^\s]*$/, message: '请输入正确格式的职责名称', trigger: 'blur' }
     ],
     parentDutyName: [
       { required: true, message: '请输入上级节点', trigger: 'blur' }

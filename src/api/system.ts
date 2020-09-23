@@ -109,10 +109,11 @@ export const getSpecifiedLower = (data: any = {}) =>
   })
 
 // 角色管理-角色列表
-export const roleList = () =>
+export const roleList = (data: any = {}) =>
   request({
     url: `${baseURL}/v2/base/role/list`,
-    method: 'get'
+    method: 'post',
+    data
   })
 // 角色管理-角色新增
 export const createRole = (data: any = {}) =>
