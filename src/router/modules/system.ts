@@ -21,7 +21,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/user',
         noCache: true,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v1/base/user/menu'
       }
     },
     {
@@ -34,7 +34,7 @@ const systemRouter: RouteConfig = {
         activeMenu: '/system/user',
         noCache: true,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v2/base/user/create'
       }
     },
     {
@@ -47,7 +47,7 @@ const systemRouter: RouteConfig = {
         noCache: true,
         hidden: true,
         icon: '',
-        apiUrl: 'root'
+        apiUrl: '/v2/base/user/update'
       }
     },
     // {
