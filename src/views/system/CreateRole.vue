@@ -30,7 +30,7 @@
               <el-input
                 v-model="ruleForm.name"
                 placeholder="请输入角色英文名称"
-                maxlength="20"
+                maxlength="50"
                 clearable
                 name="createrole_chooseName_input"
               />
@@ -53,7 +53,7 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="职责"
-              :prop="isEdit ? 'dutyId' : ''"
+              prop="dutyId"
             >
               <el-cascader
                 ref="dutyTree"
@@ -74,7 +74,7 @@
           <el-col :span="isPC ? 6 : 24">
             <el-form-item
               label="是否同步CRM账号"
-              :prop="isEdit ? 'syncCRMAbility' : ''"
+              prop="syncCRMAbility"
               class="lineHeight"
             >
               <el-select
@@ -231,7 +231,7 @@ export default class extends Vue {
     ],
     name: [
       { required: true, message: '请输入角色英文名称', trigger: 'blur' },
-      { pattern: /^[a-z]+$/i, message: '请输入2-20位英文名称', trigger: 'blur' }
+      { pattern: /^[a-z]{2,50}$/i, message: '请输入2-50位英文名称', trigger: 'blur' }
     ],
     productLine: [
       { required: true, message: '请选择产品线', trigger: 'change' }
