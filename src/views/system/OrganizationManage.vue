@@ -18,14 +18,14 @@
           />
           <span class="mr10">{{ node.label }}</span>
           <el-badge
-            type="warning"
+            type="primary"
             :value="data.userCount"
             class="mr10"
           />
           <div class="right-btn">
-            <!-- v-permission="['/v2/base/office/create']" -->
             <el-button
               v-if="data.type !== 5"
+              v-permission="['/v2/base/office/create']"
               circle
               size="mini"
               name="organizationmanage_appendOffice_btn"
@@ -36,9 +36,10 @@
                 }
               "
             />
-            <!-- v-permission="['/v2/base/office/delete']" -->
+
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v2/base/office/delete']"
               circle
               size="mini"
               name="organizationmanage_deleteOffice_btn"
@@ -50,9 +51,10 @@
                 }
               "
             />
-            <!-- v-permission="['/v2/base/office/update']" -->
+
             <el-button
               v-if="data.type !== 1"
+              v-permission="['/v2/base/office/update']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -63,9 +65,10 @@
                 }
               "
             />
-            <!-- v-permission="['/v1/base/office/sort']" -->
-            <el-button
+
+            <!-- <el-button
               v-if="data.type !== 1"
+              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-top"
@@ -75,12 +78,11 @@
                   upOffice(node, data);
                 }
               "
-            />
+            /> -->
 
-            <!-- v-permission="['/v1/base/office/sort']" -->
-            <el-button
+            <!-- <el-button
               v-if="data.type !== 1"
-
+              v-permission="['/v1/base/office/sort']"
               circle
               size="mini"
               icon="el-icon-bottom"
@@ -90,7 +92,7 @@
                   downOffice(node, data);
                 }
               "
-            />
+            /> -->
           </div>
         </template>
       </RoleTree>
@@ -115,7 +117,7 @@
               prop="name"
             >
               <el-input
-                v-model="dialogForm.name"
+                v-model.trim="dialogForm.name"
                 placeholder="请输入2-10位中文"
                 maxlength="10"
                 show-word-limit
@@ -132,7 +134,7 @@
           >
             <el-cascader
               ref="cascader"
-              v-model="areaList"
+              v-model="dialogForm.areaCode"
               :options="optionsArea"
               :props="props"
               clearable
@@ -170,7 +172,7 @@
             prop="name"
           >
             <el-input
-              v-model="dialogForm.name"
+              v-model.trim="dialogForm.name"
               maxlength="10"
               show-word-limit
               clearable
@@ -264,7 +266,7 @@
             prop="name"
           >
             <el-input
-              v-model="dialogForm.name"
+              v-model.trim="dialogForm.name"
               maxlength="10"
               show-word-limit
               clearable
@@ -407,7 +409,7 @@ export default class extends Vue {
       }
     ],
     dutyId: [{ required: true, message: '请选择业务线', trigger: 'change' }],
-    areaCode: [{ required: true, message: '请选择城市', trigger: 'blur' }]
+    areaCode: [{ required: true, message: '请选择城市', trigger: 'change' }]
   };
   private isAdd: boolean = false;
   private disabled: boolean = false;
@@ -585,13 +587,7 @@ export default class extends Vue {
             this.$message.success(`创建成功`)
             this.append(data.data)
             this.showDialog = false
-            this.dialogForm = {
-              name: '',
-              parentId: 0,
-              parentIds: '',
-              type: 0,
-              dutyId: ''
-            }
+            this.resetDialog()
           } else {
             this.$message.error(data)
           }
@@ -611,13 +607,7 @@ export default class extends Vue {
             this.$message.success(`编辑成功`)
             this.update(this.dialogForm)
             this.showDialog = false
-            this.dialogForm = {
-              name: '',
-              parentId: 0,
-              parentIds: '',
-              type: 0,
-              dutyId: ''
-            }
+            this.resetDialog()
           } else {
             this.$message.error(data)
           }
@@ -629,6 +619,7 @@ export default class extends Vue {
   private resetDialog() {
     this.dialogForm.name = ''
     this.dialogForm.areaCode = ''
+    this.dialogForm.dutyId = ''
     this.areaList = []
     this.activeName = 'first'
     this.$nextTick(() => {

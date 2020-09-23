@@ -55,8 +55,8 @@
     >
       <div class="subTitle">
         <router-link :to="{path: '/system/addUser'}">
-          <!-- v-permission="['/v1/base/user/page/list']" -->
           <el-button
+            v-permission="['/v2/base/user/create']"
             class="createUser"
             icon="el-icon-plus"
             type="primary"
@@ -106,8 +106,8 @@
           <el-dropdown-menu
             slot="dropdown"
           >
-            <!-- v-permission="['/v2/base/user/enableOrDisable']" -->
             <el-dropdown-item
+              v-permission="['/v2/base/user/enableOrDisable']"
               command="status"
             >
               <template v-if="scope.row.status ===1">
@@ -117,19 +117,18 @@
                 启用
               </template>
             </el-dropdown-item>
-            <!-- v-permission="['/v1/base/user/password/reset']" -->
             <el-dropdown-item
+              v-permission="['/v1/base/user/password/reset']"
               command="resetPwd"
             >
               重置密码
             </el-dropdown-item>
-            <!-- v-permission="['/v2/base/user/update']" -->
             <el-dropdown-item
+              v-permission="['/v2/base/user/update']"
               command="edit"
             >
               编辑
             </el-dropdown-item>
-            <!-- v-permission="['/v2/base/user/pushUserToCRM']" -->
             <el-dropdown-item
               v-if="scope.row.syncPermission"
               command="crm"
@@ -333,6 +332,8 @@ export default class extends Vue {
             item.num = res.title.disableCount
           }
         }
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`get lists fail:${err}`)
@@ -349,10 +350,18 @@ export default class extends Vue {
       }
       let { data: res } = await enableOrDisableUser(params)
       if (res.success) {
-        this.$message.success(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态成功！`)
+        if (row.syncStatus) {
+          this.$message.success(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态成功！`)
+        } else {
+          this.$message.success('操作成功')
+        }
         this.getLists()
       } else {
-        this.$message.error(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态失败！请联系系统管理员或在CRM中操作${row.status === 1 ? '禁用' : '启用'}`)
+        if (row.syncStatus) {
+          this.$message.error(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态失败！请联系系统管理员或在CRM中操作${row.status === 1 ? '禁用' : '启用'}`)
+        } else {
+          this.$message.error(res.errorMsg)
+        }
       }
     } catch (err) {
       console.log(`enable or disable fail:${err}`)
@@ -366,7 +375,7 @@ export default class extends Vue {
   }
   // 打开禁用确认框
   openDisableUser(row:any) {
-    this.$confirm(`您确定要禁用${row.nickName}吗, ?`, '提示', {
+    this.$confirm(`您确定要禁用${row.nickName}吗?`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
@@ -427,7 +436,8 @@ export default class extends Vue {
         this.$message.success(`同步CRM账号成功！`)
         this.getLists()
       } else {
-        this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
+        // this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`push userto crm fail:${err}`)
@@ -451,7 +461,7 @@ export default class extends Vue {
       nickName: ''
     }
     this.tags = []
-    this.getLists()
+    // this.getLists()
   }
   handleFilterClick() {
     let blackLists = ['status']

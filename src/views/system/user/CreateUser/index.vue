@@ -78,6 +78,16 @@
           />
         </template>
         <template
+          v-slot:mobile="scope"
+        >
+          <el-input
+            v-model="listQuery.mobile"
+            :disabled="scope.row.status ===1&&listQuery.id!==''"
+            maxlength="11"
+            placeholder="请输入"
+          />
+        </template>
+        <template
           v-slot:syncStatus="scope"
         >
           <span>{{ scope.row.syncStatus ? '已同步':'未同步' }}</span>
@@ -129,6 +139,9 @@ export interface FormObj {
   confirmPassword: string;
   nickName: string;
   roleName?:string;
+  crmUserStatus?:string;
+  syncStatus?:boolean;
+  status?:number;
 }
 
 interface RuleForm {
@@ -159,8 +172,12 @@ export default class extends Vue {
     passwd: '',
     confirmPassword: '',
     nickName: '',
-    roleName: ''
+    roleName: '',
+    crmUserStatus: '',
+    syncStatus: false,
+    status: 0
   }
+  sourcePhone:string = ''
   private formItem:any[] = [
     {
       type: 1,
@@ -172,13 +189,10 @@ export default class extends Vue {
       }
     },
     {
-      type: 1,
+      type: 'mobile',
       key: 'mobile',
       label: '电话:',
-      tagAttrs: {
-        placeholder: '请选输入',
-        maxlength: 11
-      }
+      slot: true
     },
     {
       key: 'officeId',
@@ -234,7 +248,7 @@ export default class extends Vue {
 
   // 验证手机号
   private validatePhone(rule:any, value:string, callback:(string?: Error) => void) {
-    if (!phoneReg.test(value)) {
+    if (!/\d{8,11}/.test(value)) {
       return callback(new Error('请输入正确的手机号'))
     }
     return callback()
@@ -290,6 +304,7 @@ export default class extends Vue {
       if (res.success) {
         let result = res.data
         let officeIds = this.getTreeSelectOffice(this.officeArr, result.officeId)
+        this.sourcePhone = result.mobile
         this.listQuery = {
           id: result.id,
           userName: result.nickName,
@@ -299,7 +314,10 @@ export default class extends Vue {
           passwd: '123456789qQ',
           confirmPassword: '123456789qQ',
           nickName: result.nickName,
-          roleId: [result.roleId]
+          roleId: [result.roleId],
+          crmUserStatus: result.crmUserStatus,
+          syncStatus: result.syncStatus,
+          status: result.status
         }
       } else {
         this.$message.error(res.errorMsg)
@@ -342,6 +360,7 @@ export default class extends Vue {
   }
   // 组织架构发生变化
   handleOfficeIdChange(val:number[]) {
+    this.listQuery.roleId = []
     let obj:{
       [propName:string]:any
       } = {
@@ -388,6 +407,7 @@ export default class extends Vue {
       let { data: res } = await getDutyAndRoleList(params)
       if (res.success) {
         let arrs = res.data
+        this.roleArr = []
         let brrs = this.deeploopRole(arrs)
         this.roleArr.push(...(brrs as []))
       } else {
@@ -403,6 +423,9 @@ export default class extends Vue {
     arrs.forEach(item => {
       if (item.childDuty === null || item.childDuty.length === 0) {
         delete item.childDuty
+        if (item.dutyLevel < 3) {
+          item.disabled = true
+        }
       } else {
         let crr = this.deeploopRole(item.childDuty)
         item.childDuty = crr
@@ -423,8 +446,12 @@ export default class extends Vue {
       }
       delete params.id
       delete params.roleName
+      delete params.crmUserStatus
+      delete params.syncStatus
+      delete params.status
       let { data: res } = await addUser(params)
       if (res.success) {
+        this.$message.success('创建成功')
         this.jumplist()
       } else {
         this.$message.error(res.errorMsg)
@@ -447,6 +474,11 @@ export default class extends Vue {
       }
       let { data: res } = await modifyUser(params)
       if (res.success) {
+        if (this.sourcePhone !== this.listQuery.mobile && this.listQuery.syncStatus) {
+          this.$message.success('无法更改CRM中手机号，建议在本系统重新创建以新手机号为账号，并同至CRM，并前往CRM中删除相关账号')
+        } else {
+          this.$message.success('修改成功')
+        }
         this.jumplist()
       } else {
         this.$message.error(res.errorMsg)
@@ -459,7 +491,6 @@ export default class extends Vue {
   }
   // 跳转到用户列表
   jumplist() {
-    this.$message.success('操作成功')
     setTimeout(() => {
       this.$router.push({
         path: '/system/user'

@@ -28,7 +28,7 @@
           <!-- 输入框 -->
           <el-input
             v-if="item.type === 1"
-            v-model="listQuery[item.key]"
+            v-model.trim="listQuery[item.key]"
             v-bind="item.tagAttrs || {}"
             v-on="item.listeners"
           />
