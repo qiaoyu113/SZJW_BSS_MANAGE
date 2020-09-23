@@ -7,7 +7,7 @@ const driverAccountRouter: RouteConfig = {
   redirect: '/driveraccount/list',
   name: 'DriverAccount',
   meta: {
-    title: 'driverAccountList',
+    title: 'driverAccount',
     icon: 'driver',
     apiUrl: 'root'
   },
