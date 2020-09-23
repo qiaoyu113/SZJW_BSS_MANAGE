@@ -55,8 +55,8 @@
     >
       <div class="subTitle">
         <router-link :to="{path: '/system/addUser'}">
-          <!-- v-permission="['/v1/base/user/page/list']" -->
           <el-button
+            v-permission="['/v2/base/user/create']"
             class="createUser"
             icon="el-icon-plus"
             type="primary"
@@ -106,8 +106,8 @@
           <el-dropdown-menu
             slot="dropdown"
           >
-            <!-- v-permission="['/v2/base/user/enableOrDisable']" -->
             <el-dropdown-item
+              v-permission="['/v2/base/user/enableOrDisable']"
               command="status"
             >
               <template v-if="scope.row.status ===1">
@@ -117,19 +117,18 @@
                 启用
               </template>
             </el-dropdown-item>
-            <!-- v-permission="['/v1/base/user/password/reset']" -->
             <el-dropdown-item
+              v-permission="['/v1/base/user/password/reset']"
               command="resetPwd"
             >
               重置密码
             </el-dropdown-item>
-            <!-- v-permission="['/v2/base/user/update']" -->
             <el-dropdown-item
+              v-permission="['/v2/base/user/update']"
               command="edit"
             >
               编辑
             </el-dropdown-item>
-            <!-- v-permission="['/v2/base/user/pushUserToCRM']" -->
             <el-dropdown-item
               v-if="scope.row.syncPermission"
               command="crm"
@@ -462,7 +461,7 @@ export default class extends Vue {
       nickName: ''
     }
     this.tags = []
-    this.getLists()
+    // this.getLists()
   }
   handleFilterClick() {
     let blackLists = ['status']
