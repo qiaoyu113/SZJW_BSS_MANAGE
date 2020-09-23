@@ -118,7 +118,7 @@ const systemRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RoleDetails.vue'),
       name: 'RoleDetails',
       meta: {
-        apiUrl: '/v2/base/role/create',
+        apiUrl: '/v2/base/role/getByRoleId',
         activeMenu: '/system/rolemanage',
         title: 'roleDetails',
         hidden: true,
