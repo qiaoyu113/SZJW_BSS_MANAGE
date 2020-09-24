@@ -61,7 +61,8 @@
         </template>
         <template slot="passwd">
           <el-input
-            v-model="listQuery.passwd"
+            v-model.trim="listQuery.passwd"
+            onkeyup="this.value=this.value.replace(' ','')"
             :disabled="!!userId"
             placeholder="请输入"
             type="password"
@@ -70,7 +71,8 @@
         </template>
         <template slot="confirmPassword">
           <el-input
-            v-model="listQuery.confirmPassword"
+            v-model.trim="listQuery.confirmPassword"
+            onkeyup="this.value=this.value.replace(' ','')"
             :disabled="!!userId"
             placeholder="请输入"
             type="password"
