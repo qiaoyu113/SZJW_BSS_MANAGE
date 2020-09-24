@@ -14,7 +14,7 @@
       class="p15"
     >
       <div
-        slot="btn"
+        slot="mulBtn"
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
@@ -38,15 +38,14 @@
       <div class="count">
         总计：99个全部，299个启用，301个禁用
       </div>
-      <router-link :to="{path: '/system/addUser'}">
+      <router-link :to="{path: '/driveraccount/billingCreate'}">
         <el-button
-          v-permission="['/v2/base/user/create']"
           class="createUser"
           icon="el-icon-plus"
           type="primary"
           size="small"
         >
-          新建用户
+          新建
         </el-button>
       </router-link>
     </div>
@@ -110,6 +109,11 @@
             >
               日志
             </el-dropdown-item>
+            <el-dropdown-item
+              command="detail"
+            >
+              详情
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </template>
@@ -160,7 +164,7 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        maxlength: 10,
+        maxlength: 20,
         clearable: true
       },
       label: 'SOP类型:',
@@ -170,7 +174,7 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        maxlength: 10,
+        maxlength: 50,
         clearable: true
       },
       label: '计费编号:',
@@ -243,6 +247,12 @@ export default class extends Vue {
       },
       label: '创建日期:',
       key: 'f'
+    },
+    {
+      type: 'mulBtn',
+      col: 8,
+      slot: true,
+      w: '0px'
     }
   ]
   // 表格数据
@@ -344,14 +354,41 @@ export default class extends Vue {
   // 更多操作
   handleCommandChange(key:string, row:any) {
     if (key === 'adjust') { // 调整
-
+      let query = {
+        isAdjust: true
+      }
+      this.$router.push({
+        path: '/driveraccount/billingAdjust'
+      })
     } else if (key === 'log') { // 日志
       this.$router.push({
         path: '/driveraccount/billingLog'
       })
-    } else if (key === 'status') { // 重置密码
-
+    } else if (key === 'status') { // 状态
+      this.changeStatus()
+    } else if (key === 'detail') { // 详情
+      this.$router.push({
+        path: '/driveraccount/billingDetail'
+      })
     }
+  }
+  // 改变状态
+  changeStatus() {
+    this.$confirm('此操作将启用或禁用, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      this.$message({
+        type: 'success',
+        message: '操作成功!'
+      })
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消操作'
+      })
+    })
   }
 }
 </script>
@@ -363,6 +400,7 @@ export default class extends Vue {
     background: #ffffff;
     border-radius: 8px;
     .btnPc {
+       width: 100%;
        display: flex;
        flex-flow: row nowrap;
        justify-content: flex-end;
