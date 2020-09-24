@@ -62,6 +62,7 @@ export default {
     roleManage: '角色管理',
     createRole: '创建角色',
     editRole: '编辑角色',
+    roleDetails: '角色详情',
     organizationManage: '组织管理',
     dutyManage: '职责管理',
     permissionManage: '权限管理',
@@ -150,7 +151,9 @@ export default {
     profile: '个人中心',
     user: '用户管理',
     addUser: '新建用户',
-    modifyUser: '编辑用户'
+    modifyUser: '编辑用户',
+    billing: '计费管理',
+    billingLog: '操作日志'
   },
   navbar: {
     logOut: '退出登录',
