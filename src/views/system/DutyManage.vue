@@ -74,7 +74,7 @@
         >
           <el-input
             v-model.trim="dialogForm.dutyName"
-            placeholder="请输入职责名称"
+            placeholder="请输入"
             maxlength="10"
             clearable
             name="dutymanage_chooseDutyName1_input"
