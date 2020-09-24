@@ -153,7 +153,11 @@ export default {
     addUser: '新建用户',
     modifyUser: '编辑用户',
     billing: '计费管理',
-    billingLog: '操作日志'
+    billingLog: '计费日志',
+    billingDetail: '计费详情',
+    billingAdjust: '计费调整',
+    billingCreate: 'SOP计费',
+    financialFlow: '司机财务流水管理'
   },
   navbar: {
     logOut: '退出登录',
