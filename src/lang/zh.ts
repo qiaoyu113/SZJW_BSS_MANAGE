@@ -55,6 +55,8 @@ export default {
     accOrderDetail: '账号订单详情',
     customerList: '客户列表DEMO',
     customerDetail: '客户详情',
+    driverFreightAccount: '司机运费账户',
+    driverFreightList: '司机运费列表',
     systemTitle: '系统管理',
     userManage: '用户管理',
     createUser: '创建账号',

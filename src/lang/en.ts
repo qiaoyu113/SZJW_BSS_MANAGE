@@ -34,6 +34,8 @@ export default {
     customerList: 'CustomerList',
     customerDetail: 'CustomerDetail',
     systemTitle: 'System',
+    driverFreightAccount: 'driverFreightAccount',
+    driverFreightList: 'driverFreightList',
     userManage: 'UserManage',
     createUser: 'createUser',
     editUser: 'editUser',

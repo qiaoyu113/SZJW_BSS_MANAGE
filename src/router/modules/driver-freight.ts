@@ -1,28 +1,28 @@
 import { RouteConfig } from 'vue-router'
 import Layout from '@/layout/index.vue'
 // 司机运费账户
-const driverAccountRouter: RouteConfig = {
-  path: '/driveraccount',
+const driverFreight: RouteConfig = {
+  path: '/driverfreight',
   component: Layout,
-  redirect: '/driveraccount/list',
-  name: 'DriverAccount',
+  redirect: '/driverfreight/list',
+  name: 'DriverFreightAccount',
   meta: {
-    title: 'driverAccount',
+    title: 'driverFreightAccount',
     icon: 'driver',
     apiUrl: 'root'
   },
   children: [
     {
       path: 'list',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver/DriverList.vue'),
-      name: 'DriverList',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightList.vue'),
+      name: 'DriverFreightList',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
-        title: 'driverList',
+        apiUrl: 'root',
+        title: 'driverFreightList',
         noCache: false
       }
     }
   ]
 }
 
-export default driverAccountRouter
+export default driverFreight
