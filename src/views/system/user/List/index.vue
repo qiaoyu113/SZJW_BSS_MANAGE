@@ -358,12 +358,7 @@ export default class extends Vue {
             this.$message.success('启用状态同步CRM系统状态成功,需在CRM系统中进行用户授权！')
           }
         } else {
-          // 未同步crm
-          if (row.status === 1) { // 禁用
-            this.$message.success('被禁用账号无法登录使用!')
-          } else { // 启用
-            this.$message.success('操作成功!')
-          }
+          this.$message.success('操作成功!')
         }
         this.getLists()
       } else {
