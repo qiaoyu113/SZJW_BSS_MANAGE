@@ -98,6 +98,18 @@ const driverAccountRouter: RouteConfig = {
         icon: 'cargo',
         noCache: false
       }
+    },
+    {
+      path: 'orderList', /* 订单列表 */
+      component: () => import(/* webpackChunkName: "order" */ '@/views/billing/order/List/index.vue'),
+      name: 'OrderList',
+      meta: {
+        apiUrl: 'root',
+        activeMenu: '/driveraccount/orderList',
+        title: 'orderList',
+        icon: 'cargo',
+        noCache: false
+      }
     }
   ]
 }

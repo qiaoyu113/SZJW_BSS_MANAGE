@@ -83,7 +83,7 @@
           v-slot:mobile="scope"
         >
           <el-input
-            v-model="listQuery.mobile"
+            v-model.trim="listQuery.mobile"
             :disabled="scope.row.status ===1&&listQuery.id!==''"
             maxlength="11"
             placeholder="请输入"
@@ -95,7 +95,6 @@
           <span>{{ scope.row.syncStatus ? '已同步':'未同步' }}</span>
         </template>
         <template
-
           v-slot:crmUserStatus="scope"
         >
           <span>{{ scope.row.crmUserStatus }}</span>
@@ -187,7 +186,7 @@ export default class extends Vue {
       key: 'userName',
       label: '姓名:',
       tagAttrs: {
-        placeholder: '请选输入',
+        placeholder: '请输入',
         maxlength: 10
       }
     },
