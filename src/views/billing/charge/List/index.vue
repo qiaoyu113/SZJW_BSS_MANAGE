@@ -10,6 +10,7 @@
     <self-form
       :list-query="listQuery"
       :form-item="formItem"
+      :pc-col="8"
       label-width="80px"
       class="p15"
     >
@@ -36,7 +37,20 @@
     </self-form>
     <div class="middle">
       <div class="count">
-        总计：99个全部，299个启用，301个禁用
+        计费状态:
+        <el-badge
+          v-for="item in btns"
+          :key="item.text"
+          :value="item.num"
+        >
+          <el-button
+            size="small"
+            :type="item.name === listQuery.status ? 'primary':''"
+            @click="listQuery.status =item.name"
+          >
+            {{ item.text }}
+          </el-button>
+        </el-badge>
       </div>
       <router-link :to="{path: '/driveraccount/billingCreate'}">
         <el-button
@@ -156,7 +170,7 @@ export default class extends Vue {
   private listLoading:Boolean = false;
   // 查询表单
   private listQuery:IState = {
-
+    status: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -211,30 +225,6 @@ export default class extends Vue {
         {
           label: '专车',
           value: 2
-        }
-      ]
-    },
-    {
-      type: 4,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true
-      },
-      col: 8,
-      label: '计费状态:',
-      key: 'e',
-      options: [
-        {
-          label: '全部',
-          value: ''
-        },
-        {
-          label: '启用',
-          value: '1'
-        },
-        {
-          label: '禁用',
-          value: '2'
         }
       ]
     },
@@ -328,6 +318,24 @@ export default class extends Vue {
     limit: 30,
     total: 100
   }
+  // 按钮组
+  private btns:any[] = [
+    {
+      name: '',
+      num: 10,
+      text: '全部'
+    },
+    {
+      name: '1',
+      num: 8,
+      text: '启用'
+    },
+    {
+      name: '2',
+      num: 2,
+      text: '禁用'
+    }
+  ]
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
@@ -425,5 +433,11 @@ export default class extends Vue {
         color:#666;
       }
     }
+  }
+</style>
+
+<style scoped>
+  .billingListContainer >>> .el-badge {
+    margin-right:30px;
   }
 </style>
