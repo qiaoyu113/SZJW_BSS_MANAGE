@@ -121,7 +121,7 @@ interface IState {
   [key: string]: any;
 }
 @Component({
-  name: 'DriverFreightList',
+  name: 'FreightList',
   components: {
     SelfTable,
     SelfForm

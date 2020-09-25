@@ -36,6 +36,8 @@ export default {
     systemTitle: 'System',
     driverFreightAccount: 'driverFreightAccount',
     driverFreightList: 'driverFreightList',
+    driverFreightBillList: 'driverFreightBillList',
+    driverFreightMonthBill: 'driverFreightMonthBill',
     userManage: 'UserManage',
     createUser: 'createUser',
     editUser: 'editUser',

@@ -21,6 +21,27 @@ const driverFreight: RouteConfig = {
         title: 'driverFreightList',
         noCache: false
       }
+    },
+    // FreightBillList
+    {
+      path: 'bill',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightBill.vue'),
+      name: 'DriverFreightBillList',
+      meta: {
+        apiUrl: 'root',
+        title: 'driverFreightBillList',
+        noCache: false
+      }
+    },
+    {
+      path: 'monthbill',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightMonthBill.vue'),
+      name: 'DriverFreightMonthBill',
+      meta: {
+        apiUrl: 'root',
+        title: 'driverFreightMonthBill',
+        noCache: false
+      }
     }
   ]
 }
