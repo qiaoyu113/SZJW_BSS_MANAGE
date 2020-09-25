@@ -140,7 +140,11 @@ export default {
     addUser: 'AddUser',
     modifyUser: 'ModifyUser',
     billing: 'BillingManager',
-    billingLog: 'BillingLog'
+    billingLog: 'BillingLog',
+    billingDetail: 'billingDetail',
+    billingAdjust: 'billingAdjust',
+    billingCreate: 'billingCreate',
+    financialFlow: 'financialFlow'
   },
   navbar: {
     logOut: 'Log Out',

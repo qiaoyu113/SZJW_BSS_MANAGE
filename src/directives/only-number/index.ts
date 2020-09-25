@@ -38,7 +38,7 @@ export const onlyNumber: DirectiveOptions = {
       }
     })
     // 按键弹起=>并限制最大最小
-    el.addEventListener('keyup', (event:any) => {
+    el.addEventListener('blur', (event:any) => {
       const e:any = event || window.event
       content = parseFloat(e.target.value)
       if (!content) {

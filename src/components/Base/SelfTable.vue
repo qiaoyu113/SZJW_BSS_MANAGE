@@ -127,7 +127,7 @@ export default class extends Vue {
   @Prop({ default: () => disabledCheckBox }) func!:Function
   @Prop({ default: true }) index!:boolean
   @Prop({ default: true }) isP30!:boolean
-  @Prop({ default: true }) indexes!:false
+  @Prop({ default: false }) indexes!:boolean;
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }
