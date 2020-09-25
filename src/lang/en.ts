@@ -142,7 +142,8 @@ export default {
     billingDetail: 'billingDetail',
     billingAdjust: 'billingAdjust',
     billingCreate: 'billingCreate',
-    financialFlow: 'financialFlow'
+    financialFlow: 'financialFlow',
+    orderList: 'orderList'
   },
   navbar: {
     logOut: 'Log Out',
