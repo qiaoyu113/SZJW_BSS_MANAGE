@@ -8,7 +8,7 @@ const driverAccountRouter: RouteConfig = {
   name: 'DriverAccount',
   meta: {
     title: 'driverAccount',
-    // hidden: true,
+    hidden: true,
     icon: 'driver',
     apiUrl: 'root'
   },
