@@ -347,7 +347,8 @@ export default class extends Vue {
         placeholder: '请输入',
         maxlength: 300,
         type: 'textarea',
-        'show-word-limit': true
+        'show-word-limit': true,
+        rows: '5'
       },
       label: '申请调流水原因:',
       key: 'g'

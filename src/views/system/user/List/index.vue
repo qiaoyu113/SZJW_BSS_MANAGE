@@ -350,10 +350,20 @@ export default class extends Vue {
       }
       let { data: res } = await enableOrDisableUser(params)
       if (res.success) {
+        // 同步crm
         if (row.syncStatus) {
-          this.$message.success(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态成功！`)
+          if (row.status === 1) { // 禁用
+            this.$message.success('禁用状态同步CRM系统状态成功!')
+          } else { // 启用
+            this.$message.success('启用状态同步CRM系统状态成功,需在CRM系统中进行用户授权！')
+          }
         } else {
-          this.$message.success('操作成功')
+          // 未同步crm
+          if (row.status === 1) { // 禁用
+            this.$message.success('被禁用账号无法登录使用!')
+          } else { // 启用
+            this.$message.success('操作成功!')
+          }
         }
         this.getLists()
       } else {
@@ -375,7 +385,7 @@ export default class extends Vue {
   }
   // 打开禁用确认框
   openDisableUser(row:any) {
-    this.$confirm(`您确定要禁用${row.nickName}吗?`, '提示', {
+    this.$confirm(`您确定要${row.status === 1 ? '禁' : '启'}用${row.nickName}吗?`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
@@ -400,11 +410,7 @@ export default class extends Vue {
     } else if (key === 'resetPwd') { // 重置密码
       this.openResetPassword(row)
     } else if (key === 'status') { // 重置密码
-      if (row.status === 1) { // 启用
-        this.openDisableUser(row)
-      } else {
-        this.enableOrDisableUser(row)
-      }
+      this.openDisableUser(row)
     } else if (key === 'crm') {
       this.openSendCrmData(row)
       console.log('crm')
