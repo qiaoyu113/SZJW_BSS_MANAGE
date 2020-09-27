@@ -125,9 +125,10 @@ interface PageObj {
 export default class extends Vue {
   @Prop({ default: () => [] }) tableData!:any[]
   @Prop({ default: () => [] }) columns!:any[]
-  @Prop({ default: true }) index!:boolean
-  @Prop({ default: false }) indexes!:boolean
   @Prop({ default: () => disabledCheckBox }) func!:Function
+  @Prop({ default: true }) index!:boolean
+  @Prop({ default: true }) isP30!:boolean
+  @Prop({ default: false }) indexes!:boolean;
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }

@@ -67,6 +67,7 @@ export default {
     roleManage: '角色管理',
     createRole: '创建角色',
     editRole: '编辑角色',
+    roleDetails: '角色详情',
     organizationManage: '组织管理',
     dutyManage: '职责管理',
     permissionManage: '权限管理',
@@ -155,7 +156,14 @@ export default {
     profile: '个人中心',
     user: '用户管理',
     addUser: '新建用户',
-    modifyUser: '编辑用户'
+    modifyUser: '编辑用户',
+    billing: '计费管理',
+    billingLog: '计费日志',
+    billingDetail: '计费详情',
+    billingAdjust: '计费调整',
+    billingCreate: 'SOP计费',
+    financialFlow: '司机财务流水管理',
+    orderList: '订单管理'
   },
   navbar: {
     logOut: '退出登录',
