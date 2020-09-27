@@ -63,7 +63,7 @@
         <span
           class="active"
           :a="scope"
-          @click="goRouter('/financialFlow')"
+          @click="goRouter('/driveraccount/financialFlow')"
         >查看司机财务流水</span>
       </template>
       <template v-slot:op="scope">
@@ -704,7 +704,7 @@ export default class extends Vue {
       this.$message.error(res.errorMsg)
     }
   }
-  goRouter(url:string) {
+  private goRouter(url:string) {
     this.$router.push(url)
   }
 

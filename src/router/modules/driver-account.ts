@@ -15,21 +15,22 @@ const driverAccountRouter: RouteConfig = {
   children: [
     {
       path: 'payFee',
-      component: () => import(/* webpackChunkName: "driverAccount" */ '@/views/acount/payFee/payList/index.vue'),
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payList/index.vue'),
       name: 'payList',
       meta: {
         title: 'payFee',
         icon: '',
-        apiUrl: '/v1/base/user/menu',
-        noCache: true
+        apiUrl: 'root',
+        noCache: true,
+        hidden: true
       }
     },
     {
       path: 'payDetail',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/acount/payFee/payDetail/index.vue'),
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payDetail/index.vue'),
       name: 'payDetail',
       meta: {
-        apiUrl: '/v1/base/user/menu',
+        apiUrl: 'root',
         title: 'payDetail',
         hidden: true,
         noCache: true
@@ -37,10 +38,10 @@ const driverAccountRouter: RouteConfig = {
     },
     {
       path: 'payAudit',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/acount/payFee/payDetail/index.vue'),
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payDetail/index.vue'),
       name: 'payAudit',
       meta: {
-        apiUrl: '/v1/base/user/menu',
+        apiUrl: 'root',
         title: 'payAudit',
         hidden: true,
         noCache: true
@@ -48,10 +49,10 @@ const driverAccountRouter: RouteConfig = {
     },
     {
       path: 'addPay',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/acount/payFee/addPay/index.vue'),
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/addPay/index.vue'),
       name: 'addPay',
       meta: {
-        apiUrl: '/v1/base/user/menu',
+        apiUrl: 'root',
         title: 'addPay',
         hidden: true,
         noCache: true
@@ -59,12 +60,14 @@ const driverAccountRouter: RouteConfig = {
     },
     {
       path: 'wtAcountList',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/acount/wtAcountList/index.vue'),
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/wtAcountList/index.vue'),
       name: 'wtAcountList',
       meta: {
-        apiUrl: '/v1/base/user/menu',
+        apiUrl: 'root',
         title: 'wtAcountList',
-        noCache: true
+        noCache: true,
+        icon: 'cargo',
+        activeMenu: '/driveraccount/wtAcountList'
       }
     },
     {
