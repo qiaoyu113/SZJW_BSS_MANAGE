@@ -105,11 +105,11 @@
           <el-dropdown-menu
             slot="dropdown"
           >
-            <el-dropdown-item
+            <!-- <el-dropdown-item
               command="detail"
             >
               详情
-            </el-dropdown-item>
+            </el-dropdown-item> -->
             <el-dropdown-item
               command="renew"
             >
