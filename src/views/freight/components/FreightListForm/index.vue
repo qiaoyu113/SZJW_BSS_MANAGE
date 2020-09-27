@@ -269,6 +269,7 @@ export default class extends Vue {
   private handleClick(tab:any, event:any) {
     this.listQuery.state = tab.name
     this.listQuery.page = 1
+    this.$emit('handle-check')
     this.$emit('handle-query', this.listQuery)
   }
 
