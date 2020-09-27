@@ -28,7 +28,7 @@
             />
             <el-button
               v-if="node.level !== 1"
-              v-permission="['/v2/base/duty/update']"
+              v-permission="['/v2/base/duty/delete']"
               circle
               size="mini"
               class="delete"
@@ -41,7 +41,7 @@
               "
             />
             <el-button
-              v-permission="['/v2/base/duty/delete']"
+              v-permission="['/v2/base/duty/update']"
               circle
               size="mini"
               icon="el-icon-edit"
@@ -74,7 +74,7 @@
         >
           <el-input
             v-model.trim="dialogForm.dutyName"
-            placeholder="请输入职责名称"
+            placeholder="请输入"
             maxlength="10"
             clearable
             name="dutymanage_chooseDutyName1_input"

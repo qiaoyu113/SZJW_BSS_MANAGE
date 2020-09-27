@@ -71,7 +71,17 @@
             prop="nick"
             label="名称"
             fixed
-          />
+          >
+            <template slot-scope="{row}">
+              <el-link
+                :underline="false"
+                type="primary"
+                @click="goDetails(row)"
+              >
+                {{ row.nick }}
+              </el-link>
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkList.includes('描述')"
             :key="checkList.length + 'description'"
@@ -260,6 +270,9 @@ export default class extends Vue {
         this.$message.error(data)
       }
     })
+  }
+  private goDetails(row: any) {
+    this.$router.push({ name: 'RoleDetails', query: { id: row.id } })
   }
   mounted() {
     this.fetchData()

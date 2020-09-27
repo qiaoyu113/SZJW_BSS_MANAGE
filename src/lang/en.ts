@@ -44,6 +44,7 @@ export default {
     roleManage: 'RoleManage',
     createRole: 'createRole',
     editRole: 'editRole',
+    roleDetails: 'roleDetails',
     organizationManage: 'OrganizationManage',
     permissionManage: 'PermissionManage',
     dutyManage: 'dutyManage',
@@ -139,7 +140,14 @@ export default {
     profile: 'Profile',
     user: 'UserManage',
     addUser: 'AddUser',
-    modifyUser: 'ModifyUser'
+    modifyUser: 'ModifyUser',
+    billing: 'BillingManager',
+    billingLog: 'BillingLog',
+    billingDetail: 'billingDetail',
+    billingAdjust: 'billingAdjust',
+    billingCreate: 'billingCreate',
+    financialFlow: 'financialFlow',
+    orderList: 'orderList'
   },
   navbar: {
     logOut: 'Log Out',

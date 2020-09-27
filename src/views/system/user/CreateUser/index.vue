@@ -61,7 +61,8 @@
         </template>
         <template slot="passwd">
           <el-input
-            v-model="listQuery.passwd"
+            v-model.trim="listQuery.passwd"
+            onkeyup="this.value=this.value.replace(' ','')"
             :disabled="!!userId"
             placeholder="请输入"
             type="password"
@@ -70,7 +71,8 @@
         </template>
         <template slot="confirmPassword">
           <el-input
-            v-model="listQuery.confirmPassword"
+            v-model.trim="listQuery.confirmPassword"
+            onkeyup="this.value=this.value.replace(' ','')"
             :disabled="!!userId"
             placeholder="请输入"
             type="password"
@@ -81,7 +83,7 @@
           v-slot:mobile="scope"
         >
           <el-input
-            v-model="listQuery.mobile"
+            v-model.trim="listQuery.mobile"
             :disabled="scope.row.status ===1&&listQuery.id!==''"
             maxlength="11"
             placeholder="请输入"
@@ -184,7 +186,7 @@ export default class extends Vue {
       key: 'userName',
       label: '姓名:',
       tagAttrs: {
-        placeholder: '请选输入',
+        placeholder: '请输入',
         maxlength: 10
       }
     },
@@ -290,16 +292,7 @@ export default class extends Vue {
       if (!this.userId) {
         return false
       }
-      this.formItem.push({
-        type: 'syncStatus',
-        label: 'CRM账号同步状态:',
-        slot: true
-      })
-      this.formItem.push({
-        type: 'crmUserStatus',
-        label: 'CRM账号状态:',
-        slot: true
-      })
+
       let { data: res } = await userDetail(+this.userId)
       if (res.success) {
         let result = res.data
@@ -318,6 +311,18 @@ export default class extends Vue {
           crmUserStatus: result.crmUserStatus,
           syncStatus: result.syncStatus,
           status: result.status
+        }
+        if (result.syncStatus) {
+          this.formItem.push({
+            type: 'syncStatus',
+            label: 'CRM账号同步状态:',
+            slot: true
+          })
+          this.formItem.push({
+            type: 'crmUserStatus',
+            label: 'CRM账号状态:',
+            slot: true
+          })
         }
       } else {
         this.$message.error(res.errorMsg)
@@ -466,11 +471,13 @@ export default class extends Vue {
   async modifyUser() {
     try {
       this.listLoading = true
-      let params = {
+      let params:any = {
         id: this.listQuery.id,
         nickName: this.listQuery.userName,
-        userName: this.listQuery.userName,
-        mobile: this.listQuery.mobile
+        userName: this.listQuery.userName
+      }
+      if (this.sourcePhone !== this.listQuery.mobile) {
+        params.mobile = this.listQuery.mobile
       }
       let { data: res } = await modifyUser(params)
       if (res.success) {

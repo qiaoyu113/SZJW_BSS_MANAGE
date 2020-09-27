@@ -2,7 +2,7 @@
   <div
     class="selfTable"
     :style="{
-      padding: isPC ? '0px 30px' :'0px'
+      padding: isPC && isP30 ? '30px' :'0px'
     }"
   >
     <el-table
@@ -27,6 +27,12 @@
         type="selection"
         width="50"
         :selectable="func"
+      />
+      <el-table-column
+        v-if="indexes"
+        label="序号"
+        type="index"
+        width="50"
       />
       <el-table-column
         v-for="item in columns"
@@ -118,8 +124,10 @@ interface PageObj {
 export default class extends Vue {
   @Prop({ default: () => [] }) tableData!:any[]
   @Prop({ default: () => [] }) columns!:any[]
-  @Prop({ default: true }) index!:boolean
   @Prop({ default: () => disabledCheckBox }) func!:Function
+  @Prop({ default: true }) index!:boolean
+  @Prop({ default: true }) isP30!:boolean
+  @Prop({ default: false }) indexes!:boolean;
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }
@@ -172,7 +180,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .selfTable{
     background: #FFFFFF;
-    box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
+    /*box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);*/
     overflow: hidden;
   }
 </style>
