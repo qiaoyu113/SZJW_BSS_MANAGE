@@ -22,6 +22,13 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column
+        v-if="indexes"
+        label="序号"
+        type="index"
+        width="50"
+        align="center"
+      />
+      <el-table-column
         v-if="index"
         :reserve-selection="true"
         type="selection"
@@ -119,6 +126,7 @@ export default class extends Vue {
   @Prop({ default: () => [] }) tableData!:any[]
   @Prop({ default: () => [] }) columns!:any[]
   @Prop({ default: true }) index!:boolean
+  @Prop({ default: false }) indexes!:boolean
   @Prop({ default: () => disabledCheckBox }) func!:Function
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
