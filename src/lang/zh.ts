@@ -161,7 +161,8 @@ export default {
     billingDetail: '计费详情',
     billingAdjust: '计费调整',
     billingCreate: 'SOP计费',
-    financialFlow: '司机财务流水管理'
+    financialFlow: '司机财务流水管理',
+    orderList: '订单管理'
   },
   navbar: {
     logOut: '退出登录',

@@ -83,7 +83,7 @@
 
     <SelfDialog
       :visible.sync="dialogTableVisible"
-      title="解冻"
+      title="手动添加流水"
       width="50%"
       :before-close="beforeClose"
       :cancel="beforeClose"
@@ -171,7 +171,7 @@ export default class extends Vue {
     {
       key: 'g',
       label: '项目业务流水单号',
-      'min-width': '140px'
+      'width': '160px'
     },
     {
       key: 'h',
@@ -228,11 +228,9 @@ export default class extends Vue {
       options: []
     },
     {
-      type: 2,
+      type: 8,
       tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
+        placeholder: '请选择'
       },
       label: '所属管理区:',
       w: '100px',
@@ -296,7 +294,7 @@ export default class extends Vue {
   private addForm:IState = {}
   private addFormItem:any[] = [
     {
-      type: 7,
+      type: 1,
       label: '司机编号:',
       key: 'a'
     },
@@ -347,7 +345,8 @@ export default class extends Vue {
         placeholder: '请输入',
         maxlength: 300,
         type: 'textarea',
-        'show-word-limit': true
+        'show-word-limit': true,
+        rows: '5'
       },
       label: '申请调流水原因:',
       key: 'g'

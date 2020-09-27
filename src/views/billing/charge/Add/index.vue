@@ -172,6 +172,7 @@ export default class extends Vue {
         maxlength: 300,
         type: 'textarea',
         'show-word-limit': true,
+        rows: '5',
         clearable: true
       },
       key: 'd'
@@ -190,6 +191,7 @@ export default class extends Vue {
         maxlength: 300,
         type: 'textarea',
         'show-word-limit': true,
+        rows: '5',
         clearable: true
       },
       key: 'remark'
