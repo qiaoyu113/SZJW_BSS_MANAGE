@@ -8,7 +8,6 @@ const driverAccountRouter: RouteConfig = {
   name: 'DriverAccount',
   meta: {
     title: 'driverAccount',
-    hidden: true,
     icon: 'driver',
     apiUrl: 'root'
   },
@@ -29,6 +28,7 @@ const driverAccountRouter: RouteConfig = {
       name: 'Billing',
       meta: {
         apiUrl: 'root',
+        hidden: true,
         activeMenu: '/driveraccount/billing',
         title: 'billing',
         icon: 'cargo',
@@ -105,6 +105,7 @@ const driverAccountRouter: RouteConfig = {
       name: 'OrderList',
       meta: {
         apiUrl: 'root',
+        hidden: true,
         activeMenu: '/driveraccount/orderList',
         title: 'orderList',
         icon: 'cargo',
