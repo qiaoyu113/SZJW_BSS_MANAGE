@@ -69,6 +69,16 @@
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="业务线">
+                  <el-input
+                    v-model="listQuery.line"
+                    name="freightlist_line_input"
+                    placeholder="请选择"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="上岗经理">
                   <el-select
                     v-model="listQuery.dutyManagerId"
@@ -103,6 +113,43 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="司机上报状态">
+                  <el-select
+                    v-model="listQuery.feeDiff"
+                    name="freightlist_feeDiff_input"
+                    placeholder="请选择"
+                    filterable
+                  >
+                    <el-option
+                      v-for="item in hasDiff"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="司机上报状态">
+                  <el-select
+                    v-model="listQuery.feeDiff"
+                    name="freightlist_feeDiff_input"
+                    placeholder="请选择"
+                    filterable
+                  >
+                    <el-option
+                      v-for="item in hasDiff"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="出车日期">
                   <el-date-picker
@@ -121,23 +168,67 @@
                 :span="isPC ? 24 : 24"
                 class="btn-box"
               >
-                <el-button
-                  :class="isPC ? 'filter-item' : 'filter-item-m'"
-                  size="small"
-                  name="ownerlist_reset_btn"
-                  @click="reset"
-                >
-                  重置
-                </el-button>
-                <el-button
-                  :class="isPC ? 'filter-item' : 'filter-item-m'"
-                  type="primary"
-                  size="small"
-                  name="ownerlist_query_btn"
-                  @click="research"
-                >
-                  筛选
-                </el-button>
+                <el-form-item label="运费状态">
+                  <div style="display: inline-block; float: left;">
+                    <el-badge
+                      v-for="i in tab"
+                      :key="i.name"
+                      class="item"
+                      type="primary"
+                    >
+                      <el-button
+                        size="small"
+                        type="primary"
+                        :plain="listQuery.state !== i.name"
+                        @click="handleClick(i, 0)"
+                      >
+                        {{ i.label }}
+                      </el-button>
+                    </el-badge>
+                  </div>
+                </el-form-item>
+              </el-col>
+
+              <el-col
+                :span="isPC ? 24 : 24"
+                class="btn-box"
+              >
+                <el-form-item label="出车状态">
+                  <div style="display: inline-block; float: left;">
+                    <el-badge
+                      v-for="i in dispatch"
+                      :key="i.name"
+                      class="item"
+                      type="primary"
+                    >
+                      <el-button
+                        size="small"
+                        type="primary"
+                        :plain="listQuery.dispatchState !== i.name"
+                        @click="handleClick(i, 1)"
+                      >
+                        {{ i.label }}
+                      </el-button>
+                    </el-badge>
+                  </div>
+                  <el-button
+                    :class="isPC ? 'filter-item' : 'filter-item-m'"
+                    size="small"
+                    name="ownerlist_reset_btn"
+                    @click="reset"
+                  >
+                    重置
+                  </el-button>
+                  <el-button
+                    :class="isPC ? 'filter-item' : 'filter-item-m'"
+                    type="primary"
+                    size="small"
+                    name="ownerlist_query_btn"
+                    @click="research"
+                  >
+                    筛选
+                  </el-button>
+                </el-form-item>
               </el-col>
             </el-form>
           </el-row>
@@ -164,6 +255,8 @@ export default class extends Vue {
   @Prop({ default: {} }) private listQuery: any;
   @Prop({ default: () => [] }) private DateValue!: any[];
   @Prop({ default: () => [] }) private DateValue2!: any[];
+  @Prop({ default: () => [] }) private tab!: any[];
+  @Prop({ default: () => [] }) private dispatch!: any[];
   private optionsCity: any[] = []; // 字典查询定义(命名规则为options + 类型名称)
   private optionsCompany: any[] = []
   private optionsJoin: any[] = []
@@ -243,6 +336,18 @@ export default class extends Vue {
     this.getJoinManageList()
     this.getOpenCityData()
     this.getLowerStaffInfo()
+  }
+
+  // 状态点击逻辑
+  private handleClick(tab:any, type:any) {
+    if (type) {
+      this.listQuery.dispatchState = tab.name
+    } else {
+      this.listQuery.state = tab.name
+    }
+    this.listQuery.page = 1
+    this.$emit('handle-check')
+    this.$emit('handle-query', this.listQuery)
   }
 
   // 匹配创建tags标签
@@ -407,6 +512,9 @@ export default class extends Vue {
 <style lang="scss" scope>
 .SuggestForm {
   width: 100%;
+  background: #fff;
+  margin-bottom: 10px;
+  box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
   .filter-container {
     padding: 0;
   }
@@ -462,5 +570,8 @@ export default class extends Vue {
 }
 .el-form-item__label {
   color: #999999;
+}
+.el-badge{
+  margin-right: 20px;
 }
 </style>

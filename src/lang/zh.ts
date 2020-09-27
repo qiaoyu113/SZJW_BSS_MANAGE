@@ -1,12 +1,16 @@
 export default {
   route: {
     dashboard: '首页',
-    freightTitle: '运费管理',
-    freightList: '运费确认',
+    freightTitle: '试跑在跑生命周期',
+    freightList: '出车列表',
     freightDetail: '运费详情',
     freightLog: '运费日志',
     driverTitle: '司机管理',
     driverAccount: '司机梧桐账户',
+    refundList: '退费管理',
+    refundDetail: '退费详情',
+    refundApply: '申请退费',
+    refundAudit: '审核退费',
     driverList: '司机列表',
     editDriver: '编辑司机',
     followDriver: '跟进司机',
