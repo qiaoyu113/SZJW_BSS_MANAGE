@@ -132,6 +132,9 @@ export default class extends Vue {
   private listLoading:Boolean = false;
   // 查询表单
   private listQuery:IState = {
+    a: 1,
+    b: 2,
+    c: 3
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -280,8 +283,7 @@ export default class extends Vue {
   }
   // 重置表单
   private handleResetClick() {
-    const { listQuery } = (this.$options as any).data.apply(this)
-    Object.assign(this.listQuery, listQuery)
+
   }
   // 查询表单
   private handleFilterClick() {

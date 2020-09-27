@@ -57,7 +57,7 @@ export default {
     customerDetail: '客户详情',
     driverFreightAccount: '司机运费账户',
     driverFreightList: '司机运费列表',
-    driverFreightBillList: '司机运费账单',
+    driverFreightBillList: '司机运费流水',
     driverFreightMonthBill: '司机月账单列表',
     systemTitle: '系统管理',
     userManage: '用户管理',

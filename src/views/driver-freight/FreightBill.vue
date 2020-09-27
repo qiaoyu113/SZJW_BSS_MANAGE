@@ -93,9 +93,19 @@
             slot="dropdown"
           >
             <el-dropdown-item
-              command="collection"
+              command="1"
             >
-              标记收款
+              查看流水
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="2"
+            >
+              司机对账
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="3"
+            >
+              账单下载
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -320,6 +330,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择',
         clearable: true,
+        'default-time': ['00:00:00', '23:59:59'],
         pickerOptions: {
           shortcuts: [month, lastmonth, threemonth]
         }
@@ -333,6 +344,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择',
         clearable: true,
+        'default-time': ['00:00:00', '23:59:59'],
         pickerOptions: {
           shortcuts: [month, lastmonth, threemonth]
         }
@@ -498,8 +510,7 @@ export default class extends Vue {
   }
   // 重置表单
   private handleResetClick() {
-    const { listQuery } = (this.$options as any).data.apply(this)
-    Object.assign(this.listQuery, listQuery)
+
   }
   // 查询表单
   private handleFilterClick() {
@@ -520,12 +531,12 @@ export default class extends Vue {
   }
   // 更多操作
   private handleCommandChange(key:string, row:any) {
-    if (key === 'collection') { // 标记收款
-      this.dialogTit = '标记收款'
-      this.showDialog = true
-      // const q = (this.$options as any).data()
-      // console.log(q)
-      // Object.assign(this.dialogItem, dialogItem)
+    if (key === '1') { // 查看流水
+      console.log(`查看流水`)
+    } else if (key === '2') { // 司机对账
+      console.log(`司机对账`)
+    } else if (key === '3') { // 账单下载
+      console.log(`账单下载`)
     }
   }
   // 确认弹窗
