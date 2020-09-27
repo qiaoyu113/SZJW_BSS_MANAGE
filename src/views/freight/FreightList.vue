@@ -614,7 +614,7 @@ export default class extends Vue {
 
     // table列表高度适配
     get tableHeight() {
-      let otherHeight = 480
+      let otherHeight = 530
       let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
       return value
     }
