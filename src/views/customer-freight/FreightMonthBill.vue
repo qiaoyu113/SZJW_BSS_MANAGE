@@ -26,23 +26,19 @@
         />
       </template>
       <template slot="cccc">
-        <el-radio-group v-model="listQuery.cccc">
-          <el-radio-button
-            :label="0"
+        <el-badge
+          v-for="item in btns"
+          :key="item.text"
+        >
+          <el-button
+            size="small"
+            type="primary"
+            :plain="item.name !== listQuery.status"
+            @click="listQuery.status =item.name"
           >
-            全部
-          </el-radio-button>
-          <el-radio-button
-            :label="1"
-          >
-            待对账
-          </el-radio-button>
-          <el-radio-button
-            :label="2"
-          >
-            已对账
-          </el-radio-button>
-        </el-radio-group>
+            {{ item.text }}
+          </el-button>
+        </el-badge>
       </template>
       <div
         slot="mulBtn"
@@ -238,6 +234,20 @@ interface IState {
 export default class extends Vue {
   // loading
   private listLoading:Boolean = false;
+  private btns:any[] = [
+    {
+      name: '',
+      text: '全部'
+    },
+    {
+      name: '1',
+      text: '待对账'
+    },
+    {
+      name: '2',
+      text: '已对账'
+    }
+  ]
   // 查询表单
   private listQuery:IState = {
     cccc: []
@@ -666,5 +676,11 @@ export default class extends Vue {
         color:#666;
       }
     }
+  }
+</style>
+
+<style scoped>
+  .DriverFreightMonthBill >>> .el-badge {
+    margin-right: 20px;
   }
 </style>

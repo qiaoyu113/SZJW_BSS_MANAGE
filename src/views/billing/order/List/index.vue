@@ -41,11 +41,11 @@
         <el-badge
           v-for="item in btns"
           :key="item.text"
-          :value="item.num"
         >
           <el-button
             size="small"
-            :type="item.name === listQuery.status ? 'primary':''"
+            type="primary"
+            :plain="item.name !== listQuery.status"
             @click="listQuery.status =item.name"
           >
             {{ item.text }}
@@ -255,27 +255,22 @@ export default class extends Vue {
   private btns:any[] = [
     {
       name: '',
-      num: 10,
       text: '全部'
     },
     {
       name: '1',
-      num: 6,
       text: '待审核'
     },
     {
       name: '2',
-      num: 2,
       text: '审核未通过'
     },
     {
       name: '3',
-      num: 2,
       text: '已成交'
     },
     {
       name: '4',
-      num: 2,
       text: '订单终止'
     }
   ]
@@ -433,6 +428,6 @@ export default class extends Vue {
 
 <style scoped>
   .orderListsContainer >>> .el-badge {
-    margin-right:30px;
+    margin-right:20px;
   }
 </style>
