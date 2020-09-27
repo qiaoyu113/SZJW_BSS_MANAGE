@@ -9,6 +9,7 @@ const freightRouter: RouteConfig = {
   meta: {
     title: 'freightTitle',
     icon: 'cargo',
+    alwaysShow: true,
     apiUrl: 'root'
   },
   children: [
@@ -17,10 +18,9 @@ const freightRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/freight/FreightList.vue'),
       name: 'FreightList',
       meta: {
-        apiUrl: '/v1/line/clue/queryLineClueList',
-        activeMenu: '/freight/freightlist',
+        // apiUrl: '/v2/waybill/getConfirmInfoList',
+        apiUrl: 'root',
         title: 'freightList',
-        icon: 'cargo',
         noCache: false
       }
     },
@@ -29,7 +29,8 @@ const freightRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/freight/FreightDetail.vue'),
       name: 'FreightDetail',
       meta: {
-        apiUrl: '/v1/line/clue/queryLineClueList',
+        // apiUrl: '/v2/waybill/shipping/shippingDetail',
+        apiUrl: 'root',
         activeMenu: '/freight/freightlist',
         title: 'freightDetail',
         icon: 'cargo',
@@ -42,7 +43,8 @@ const freightRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/freight/FreightLog.vue'),
       name: 'FreightLog',
       meta: {
-        apiUrl: '/v1/line/clue/queryLineClueList',
+        // apiUrl: '/v2/waybill/shipping/queryLog',
+        apiUrl: 'root',
         activeMenu: '/freight/freightlist',
         title: 'freightLog',
         icon: 'cargo',
