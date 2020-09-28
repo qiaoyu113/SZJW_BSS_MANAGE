@@ -14,13 +14,60 @@ const driverAccountRouter: RouteConfig = {
   },
   children: [
     {
-      path: 'list',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver/DriverList.vue'),
-      name: 'DriverList',
+      path: 'payFee',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payList/index.vue'),
+      name: 'payList',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
-        title: 'driverList',
-        noCache: false
+        title: 'payFee',
+        icon: '',
+        apiUrl: 'root',
+        noCache: true,
+        hidden: true
+      }
+    },
+    {
+      path: 'payDetail',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payDetail/index.vue'),
+      name: 'payDetail',
+      meta: {
+        apiUrl: 'root',
+        title: 'payDetail',
+        hidden: true,
+        noCache: true
+      }
+    },
+    {
+      path: 'payAudit',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payDetail/index.vue'),
+      name: 'payAudit',
+      meta: {
+        apiUrl: 'root',
+        title: 'payAudit',
+        hidden: true,
+        noCache: true
+      }
+    },
+    {
+      path: 'addPay',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/addPay/index.vue'),
+      name: 'addPay',
+      meta: {
+        apiUrl: 'root',
+        title: 'addPay',
+        hidden: true,
+        noCache: true
+      }
+    },
+    {
+      path: 'wtAcountList',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/wtAcountList/index.vue'),
+      name: 'wtAcountList',
+      meta: {
+        apiUrl: 'root',
+        title: 'wtAcountList',
+        noCache: true,
+        icon: 'cargo',
+        activeMenu: '/driveraccount/wtAcountList'
       }
     },
     {

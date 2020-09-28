@@ -2,7 +2,7 @@
   <div
     class="selfTable"
     :style="{
-      padding: isPC && isP30 ? '30px' :'0px'
+      padding: isPC ? '0px 30px' :'0px'
     }"
   >
     <el-table
@@ -22,17 +22,18 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column
+        v-if="indexes"
+        label="序号"
+        type="index"
+        width="50"
+        align="center"
+      />
+      <el-table-column
         v-if="index"
         :reserve-selection="true"
         type="selection"
         width="50"
         :selectable="func"
-      />
-      <el-table-column
-        v-if="indexes"
-        label="序号"
-        type="index"
-        width="50"
       />
       <el-table-column
         v-for="item in columns"
@@ -180,7 +181,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .selfTable{
     background: #FFFFFF;
-    /*box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);*/
+    box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     overflow: hidden;
   }
 </style>
