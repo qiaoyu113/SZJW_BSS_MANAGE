@@ -1,55 +1,21 @@
 <template>
   <div :class="isPC ? 'FreightList' : 'FreightList-m'">
-    <SuggestContainer
+    <FreightListForm
       :tab="tab"
-      :tags="tags"
-      :active-name="listQuery.state"
-      @handle-date="handleDate"
-      @handle-query="handleQuery"
-    >
-      <FreightListForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        :date-value2="DateValue2"
-        @handle-tags="handleTags"
-        @handle-check="handleCheck"
-        @handle-query="getList"
-      />
-    </SuggestContainer>
-
+      :dispatch="dispatchTab"
+      :list-query="listQuery"
+      :date-value="DateValue"
+      :date-value2="DateValue2"
+      @handle-tags="handleTags"
+      @handle-check="handleCheck"
+      @handle-query="getList"
+    />
     <div class="table_box">
-      <!--操作栏-->
-      <TableHeader
-        :tab="tab"
-        :active-name="listQuery.state"
-      >
-        <el-dropdown
-          :hide-on-click="false"
-          trigger="click"
-        >
-          <el-button
-            :class="isPC ? 'btn-item-filtrate' : 'btn-item-filtrate-m'"
-            type="primary"
-            size="small"
-          >
-            <i class="el-icon-s-operation" />
-            <span v-if="isPC">筛选</span>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-checkbox-group v-model="checkList">
-              <el-dropdown-item
-                v-for="item in dropdownList"
-                :key="item"
-              >
-                <el-checkbox :label="item" />
-              </el-dropdown-item>
-            </el-checkbox-group>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </TableHeader>
-
       <!--table表单-->
-      <div class="table_center">
+      <div
+        class="table_center"
+        :style="total > 0 ? '' : 'padding-bottom: 30px;'"
+      >
         <el-table
           ref="multipleTable"
           v-loading="listLoading"
@@ -549,6 +515,28 @@ export default class extends Vue {
         num: ''
       }
     ];
+    private dispatchTab: any[] = [
+      {
+        label: '全部',
+        name: '',
+        num: ''
+      },
+      {
+        label: '待出车',
+        name: '5',
+        num: ''
+      },
+      {
+        label: '已出车',
+        name: '10',
+        num: ''
+      },
+      {
+        label: '未出车',
+        name: '20',
+        num: ''
+      }
+    ];
     private listQuery: IState = {
       customer: '',
       customerCity: '',
@@ -557,16 +545,22 @@ export default class extends Vue {
       dutyManagerId: '',
       page: 1,
       limit: 30,
+      startDate: '',
       endDate: '',
+      freightStartTime: '',
+      freightEndTime: '',
       feeDiff: '',
       gmId: '',
       key: '',
       line: '',
       pageNumber: '',
       project: '',
-      startDate: '',
       wayBillId: '',
-      state: ''
+      state: '',
+      dispatchState: '',
+      business: '',
+      clientUpLoadState: '',
+      driverUpLoadState: ''
     };
     private freightForm: any = {
       list: [
@@ -625,7 +619,9 @@ export default class extends Vue {
 
     // table列表高度适配
     get tableHeight() {
-      return SettingsModule.tableHeight
+      let otherHeight = 590
+      let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+      return value
     }
 
     // 确认清除
@@ -659,15 +655,6 @@ export default class extends Vue {
       (this.$refs.multipleTable as any).clearSelection()
     }
 
-    // 处理query方法
-    private handleQuery(value: any, key: any) {
-      this.listQuery[key] = value
-      if (key === 'startDate' || key === 'contractEndStartTime') {
-        return
-      }
-      this.reset()
-    }
-
     // 处理选择日期方法
     private handleDate(value: any, name: any) {
       if (name === 'startDate') {
@@ -681,7 +668,6 @@ export default class extends Vue {
     private async getList(value: any) {
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
-      // this.listQuery.state = Number(this.listQuery.state)
       this.listLoading = true
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
@@ -974,12 +960,12 @@ export default class extends Vue {
 
     // 重制
     private reset() {
-      this.handleCheck()
       for (let key in this.listQuery) {
-        if (key !== 'page' && key !== 'limit' && key !== 'state') { this.listQuery[key] = '' } else {
-          this.listQuery['page'] = 1
+        if (key !== 'page' && key !== 'limit' && key !== 'state') {
+          this.listQuery[key] = ''
         }
       }
+      this.handleCheck() // 处理选择checked
       this.getList(this.listQuery)
     }
 
@@ -1042,8 +1028,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       // height: calc(100vh - 360px) !important;
-      padding: 0 30px;
-      padding-bottom: 0;
+      padding: 30px 30px 0;
       box-sizing: border-box;
       background: #ffffff;
       overflow-y: scroll;

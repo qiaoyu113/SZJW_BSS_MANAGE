@@ -2,8 +2,7 @@
   <div
     class="financialFlowContainer"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
@@ -11,7 +10,7 @@
       :list-query="listQuery"
       :form-item="formItem"
       label-width="80px"
-      class="p15"
+      class="p15 SuggestForm"
       :pc-col="8"
     >
       <div
@@ -42,44 +41,46 @@
         </el-button>
       </div>
     </self-form>
-    <div class="middle">
-      <el-button
-        icon="el-icon-plus"
-        type="primary"
-        size="small"
-        @click="handleOpenClick"
+    <div class="table_box">
+      <div class="middle">
+        <el-button
+          icon="el-icon-plus"
+          type="primary"
+          size="small"
+          @click="handleOpenClick"
+        >
+          手动添加流水
+        </el-button>
+      </div>
+      <!-- 表格 -->
+      <self-table
+        v-loading="listLoading"
+        :index="false"
+        :is-p30="false"
+        :operation-list="[]"
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        @onPageSize="handlePageSize"
       >
-        手动添加流水
-      </el-button>
+        <template v-slot:a="scope">
+          <router-link to="#">
+            {{ scope.row.a }}
+          </router-link>
+        </template>
+        <template v-slot:b="scope">
+          {{ scope.row.b }}
+        </template>
+        <template v-slot:d="scope">
+          <router-link to="#">
+            {{ scope.row.d }}
+          </router-link>
+        </template>
+        <template v-slot:h="scope">
+          {{ scope.row.h }}
+        </template>
+      </self-table>
     </div>
-    <!-- 表格 -->
-    <self-table
-      v-loading="listLoading"
-      :index="false"
-      :is-p30="false"
-      :operation-list="[]"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      @onPageSize="handlePageSize"
-    >
-      <template v-slot:a="scope">
-        <router-link to="#">
-          {{ scope.row.a }}
-        </router-link>
-      </template>
-      <template v-slot:b="scope">
-        {{ scope.row.b }}
-      </template>
-      <template v-slot:d="scope">
-        <router-link to="#">
-          {{ scope.row.d }}
-        </router-link>
-      </template>
-      <template v-slot:h="scope">
-        {{ scope.row.h }}
-      </template>
-    </self-table>
 
     <SelfDialog
       :visible.sync="dialogTableVisible"
@@ -414,12 +415,7 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  .m15 {
-     margin: 15px;
-  }
   .financialFlowContainer {
-    background: #ffffff;
-    border-radius: 8px;
     .btnPc {
        width: 100%;
        display: flex;
@@ -437,6 +433,23 @@ export default class extends Vue {
     }
     .middle {
       margin: 10px 0px;
+    }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .table_box {
+      padding: 0px 30px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
   }
 </style>
