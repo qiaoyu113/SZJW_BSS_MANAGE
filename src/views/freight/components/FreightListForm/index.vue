@@ -21,6 +21,7 @@
                     v-model="listQuery.driverCity"
                     name="freightlist_driverCity_input"
                     placeholder="请选择"
+                    filterable
                   >
                     <el-option
                       v-for="item in optionsCity"
@@ -70,12 +71,19 @@
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="业务线">
-                  <el-input
-                    v-model="listQuery.line"
-                    name="freightlist_line_input"
+                  <el-select
+                    v-model="listQuery.business"
+                    name="freightlist_feeDiff_input"
                     placeholder="请选择"
-                    clearable
-                  />
+                    filterable
+                  >
+                    <el-option
+                      v-for="item in businessList"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
@@ -117,13 +125,13 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="司机上报状态">
                   <el-select
-                    v-model="listQuery.feeDiff"
+                    v-model="listQuery.driverUpLoadState"
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
                   >
                     <el-option
-                      v-for="item in hasDiff"
+                      v-for="item in uploading"
                       :key="item.dictValue"
                       :label="item.dictLabel"
                       :value="item.dictValue"
@@ -133,15 +141,15 @@
               </el-col>
 
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="司机上报状态">
+                <el-form-item label="客户上报状态">
                   <el-select
-                    v-model="listQuery.feeDiff"
+                    v-model="listQuery.clientUpLoadState"
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
                   >
                     <el-option
-                      v-for="item in hasDiff"
+                      v-for="item in uploading"
                       :key="item.dictValue"
                       :label="item.dictLabel"
                       :value="item.dictValue"
@@ -152,6 +160,20 @@
 
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="出车日期">
+                  <el-date-picker
+                    v-model="DateValueChild"
+                    :class="isPC ? '' : 'el-date-m'"
+                    :editable="false"
+                    type="daterange"
+                    value-format="timestamp"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    @change="changData()"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 12 : 24">
+                <el-form-item label="运费更新时间">
                   <el-date-picker
                     v-model="DateValueChild2"
                     :class="isPC ? '' : 'el-date-m'"
@@ -269,15 +291,25 @@ export default class extends Vue {
     { dictValue: '1', dictLabel: '有' },
     { dictValue: '0', dictLabel: '无' }
   ]
+  private uploading: any[] = [
+    { dictValue: '', dictLabel: '全部' },
+    { dictValue: '1', dictLabel: '未上报' },
+    { dictValue: '2', dictLabel: '已上报' }
+  ]
+  private businessList: any[] = [
+    { dictValue: '', dictLabel: '全部' },
+    { dictValue: '1', dictLabel: '共享' },
+    { dictValue: '2', dictLabel: '专车' }
+  ]
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
-    this.DateValueChild2 = value
+    this.DateValueChild = value
   }
 
   @Watch('DateValue2', { deep: true })
   private onDateChange2(value: any) {
-    this.DateValueChild = value
+    this.DateValueChild2 = value
   }
 
   // listQuery同步tags公共方法
@@ -286,12 +318,12 @@ export default class extends Vue {
     let tags: any = []
     for (var key in value) {
       if (this.QUERY_KEY_LIST.indexOf(key) < 0) {
-        if (value[key] && key === 'contractEndEndTime') {
+        if (value[key] && key === 'freightEndTime') {
           tags.unshift({
             name:
-              TimestampYMD(value['contractEndStartTime']) +
+              TimestampYMD(value['freightStartTime']) +
               '-' +
-              TimestampYMD(value['contractEndEndTime']),
+              TimestampYMD(value['freightEndTime']),
             type: '',
             key: key
           })
@@ -471,24 +503,23 @@ export default class extends Vue {
     }
   }
 
-  private changData2() {
-    if (this.DateValueChild2) {
-      this.listQuery.startDate = this.DateValueChild2[0]
-      this.listQuery.endDate = this.DateValueChild2[1] + 86399999
+  private changData() {
+    if (this.DateValueChild) {
+      this.listQuery.startDate = this.DateValueChild[0]
+      this.listQuery.endDate = this.DateValueChild[1] + 86399999
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
-    console.log(this.listQuery)
   }
 
-  private changData() {
-    if (this.DateValueChild) {
-      this.listQuery.contractEndStartTime = this.DateValueChild[0]
-      this.listQuery.contractEndEndTime = this.DateValueChild[1] + 86399999
+  private changData2() {
+    if (this.DateValueChild2) {
+      this.listQuery.freightStartTime = this.DateValueChild2[0]
+      this.listQuery.freightEndTime = this.DateValueChild2[1] + 86399999
     } else {
-      this.listQuery.contractEndStartTime = ''
-      this.listQuery.contractEndEndTime = ''
+      this.listQuery.freightStartTime = ''
+      this.listQuery.freightEndTime = ''
     }
   }
 

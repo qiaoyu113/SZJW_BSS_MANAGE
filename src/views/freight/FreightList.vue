@@ -545,17 +545,22 @@ export default class extends Vue {
       dutyManagerId: '',
       page: 1,
       limit: 30,
+      startDate: '',
       endDate: '',
+      freightStartTime: '',
+      freightEndTime: '',
       feeDiff: '',
       gmId: '',
       key: '',
       line: '',
       pageNumber: '',
       project: '',
-      startDate: '',
       wayBillId: '',
       state: '',
-      dispatchState: ''
+      dispatchState: '',
+      business: '',
+      clientUpLoadState: '',
+      driverUpLoadState: ''
     };
     private freightForm: any = {
       list: [
@@ -614,7 +619,7 @@ export default class extends Vue {
 
     // table列表高度适配
     get tableHeight() {
-      let otherHeight = 530
+      let otherHeight = 590
       let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
       return value
     }
