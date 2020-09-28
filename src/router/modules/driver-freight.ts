@@ -12,17 +12,17 @@ const driverFreight: RouteConfig = {
     apiUrl: 'root'
   },
   children: [
-    // {
-    //   path: 'list',
-    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightList.vue'),
-    //   name: 'DriverFreightList',
-    //   meta: {
-    //     apiUrl: 'root',
-    //     title: 'driverFreightList',
-    //     noCache: false
-    //   }
-    // },
-    // FreightBillList
+    {
+      path: 'list',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightList.vue'),
+      name: 'DriverFreightList',
+      meta: {
+        hidden: true,
+        apiUrl: 'root',
+        title: 'driverFreightList',
+        noCache: false
+      }
+    },
     {
       path: 'bill',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightBill.vue'),

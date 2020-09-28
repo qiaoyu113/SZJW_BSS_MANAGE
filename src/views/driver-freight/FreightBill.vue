@@ -2,8 +2,7 @@
   <div
     class="DriverFreightBill"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
@@ -11,8 +10,9 @@
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
+      :pc-col="8"
       label-width="90px"
-      class="p15"
+      class="p15 SuggestForm"
     >
       <div
         slot="btn"
@@ -43,74 +43,67 @@
         </el-button>
       </div>
     </self-form>
-    <div class="middle">
-      <div class="count">
-        筛选结果（1000条）
+    <div class="table_box">
+      <div class="middle">
+        <div class="count">
+          筛选结果（1000条）
+        </div>
       </div>
-    </div>
-    <!-- 表格 -->
-    <self-table
-      ref="freighForm"
-      v-loading="listLoading"
-      :index="true"
-      :is-p30="false"
-      :indexes="false"
-      :operation-list="operationList"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      style="overflow: inherit;"
-      @olclick="handleOlClick"
-      @onPageSize="handlePageSize"
-      @selection-change="handleSelectionChange"
-    >
-      <template v-slot:createDate="scope">
-        {{ scope.row.createDate }}
-      </template>
-      <template v-slot:op="scope">
-        <el-dropdown
-          :trigger="isPC ? 'hover' : 'click'"
-          @command="(e) => handleCommandChange(e,scope.row)"
-        >
-          <span
-            v-if="isPC"
-            class="el-dropdown-link"
+      <!-- 表格 -->
+      <self-table
+        ref="freighForm"
+        v-loading="listLoading"
+        :index="true"
+        :is-p30="false"
+        :indexes="false"
+        :operation-list="operationList"
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        style="overflow: inherit;"
+        @olclick="handleOlClick"
+        @onPageSize="handlePageSize"
+        @selection-change="handleSelectionChange"
+      >
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate }}
+        </template>
+        <template v-slot:op="scope">
+          <el-dropdown
+            :trigger="isPC ? 'hover' : 'click'"
+            @command="(e) => handleCommandChange(e,scope.row)"
           >
-            更多操作<i
+            <span
               v-if="isPC"
-              class="el-icon-arrow-down el-icon--right"
-            />
-          </span>
-          <span
-            v-else
-            style="font-size: 18px;"
-            class="el-dropdown-link"
-          >
-            <i class="el-icon-setting el-icon--right" />
-          </span>
+              class="el-dropdown-link"
+            >
+              更多操作<i
+                v-if="isPC"
+                class="el-icon-arrow-down el-icon--right"
+              />
+            </span>
+            <span
+              v-else
+              style="font-size: 18px;"
+              class="el-dropdown-link"
+            >
+              <i class="el-icon-setting el-icon--right" />
+            </span>
 
-          <el-dropdown-menu
-            slot="dropdown"
-          >
-            <el-dropdown-item
-              command="1"
+            <el-dropdown-menu
+              slot="dropdown"
             >
-              查看流水
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="2"
-            >
-              司机对账
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="3"
-            >
-              账单下载
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-    </self-table>
+              <el-dropdown-item
+                command="1"
+              >
+                标记收款
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </self-table>
+    </div>
+
     <!-- 标记收款弹窗 -->
     <SelfDialog
       :class="'distributionDialog'"
@@ -120,11 +113,13 @@
       :destroy-on-close="true"
       @closed="handleClosed"
     >
-      <p>已选择{{ multipleSelection.length }}条</p>
+      <p v-if="multipleSelection.length> 0">
+        已选择{{ multipleSelection.length }}条
+      </p>
       <self-form
         ref="dialogForm"
         :list-query="dialogForm"
-        :form-item="dialogItem"
+        :form-item="dialogFormItem"
         size="small"
         label-width="90px"
         class="p15"
@@ -217,7 +212,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入姓名/手机号',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '司机姓名:',
       key: 'a'
@@ -226,7 +222,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '加盟经理:',
       key: 'b',
@@ -245,7 +242,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '是否已收款:',
       key: 'c',
@@ -264,7 +262,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '流水编号:',
       key: 'd'
@@ -273,7 +272,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '出车单编号:',
       key: 'e'
@@ -282,7 +282,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '司机城市:',
       key: 'f',
@@ -301,7 +302,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '变动类型:',
       key: 'f',
@@ -378,7 +380,7 @@ export default class extends Vue {
     },
     {
       key: 'd',
-      label: '出车单号',
+      label: '出车单编号',
       'min-width': '200px'
     },
     {
@@ -462,6 +464,7 @@ export default class extends Vue {
       { required: true, message: '请上传凭证', trigger: 'change' }
     ]
   }
+  private dialogFormItem:any[] = [];
   // 弹窗表单容器
   private dialogItem: any[] = [
     {
@@ -473,7 +476,7 @@ export default class extends Vue {
     {
       type: 7,
       col: 12,
-      label: '出车编号:',
+      label: '出车单编号:',
       key: 'b'
     },
     {
@@ -531,12 +534,13 @@ export default class extends Vue {
   }
   // 更多操作
   private handleCommandChange(key:string, row:any) {
-    if (key === '1') { // 查看流水
-      console.log(`查看流水`)
-    } else if (key === '2') { // 司机对账
-      console.log(`司机对账`)
-    } else if (key === '3') { // 账单下载
-      console.log(`账单下载`)
+    if (key === '1') { // 标记收款
+      this.dialogTit = '标记收款'
+      this.dialogFormItem = []
+      setTimeout(() => {
+        this.dialogFormItem.push(...this.dialogItem)
+        this.showDialog = true
+      }, 20)
     }
   }
   // 确认弹窗
@@ -548,7 +552,7 @@ export default class extends Vue {
   }
   // 关闭弹窗清除数据
   private handleClosed() {
-    console.log('关闭弹窗清楚数据')
+    (this.$refs.freighForm as any).toggleRowSelection()
   }
   private customUpload(param: any) {
     // 自定义上传
@@ -603,7 +607,7 @@ export default class extends Vue {
       }
       this.dialogTit = '批量标记收款'
       this.showDialog = true
-      this.dialogItem = this.dialogItem.slice(3)
+      this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
   // 关闭查看已选
@@ -622,12 +626,7 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  .m15 {
-     margin: 15px;
-  }
   .DriverFreightBill{
-    background: #ffffff;
-    border-radius: 8px;
     .btnPc {
        display: flex;
        flex-flow: row nowrap;
@@ -652,6 +651,23 @@ export default class extends Vue {
         font-size:14px;
         color:#666;
       }
+    }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .table_box {
+      padding: 0px 30px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
   }
 </style>

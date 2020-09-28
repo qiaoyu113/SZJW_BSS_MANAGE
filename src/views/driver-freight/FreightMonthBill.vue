@@ -2,8 +2,7 @@
   <div
     class="DriverFreightMonthBill"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
@@ -11,8 +10,9 @@
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
+      :pc-col="8"
       label-width="90px"
-      class="p15"
+      class="p15 SuggestForm"
     >
       <template slot="ddd">
         <el-date-picker
@@ -25,18 +25,19 @@
         />
       </template>
       <template slot="cccc">
-        <el-checkbox-group v-model="listQuery.cccc">
-          <el-checkbox
-            :label="1"
+        <el-badge
+          v-for="item in btns"
+          :key="item.text"
+        >
+          <el-button
+            size="small"
+            type="primary"
+            :plain="item.name !== listQuery.status"
+            @click="listQuery.status =item.name"
           >
-            待对账
-          </el-checkbox>
-          <el-checkbox
-            :label="2"
-          >
-            已对账
-          </el-checkbox>
-        </el-checkbox-group>
+            {{ item.text }}
+          </el-button>
+        </el-badge>
       </template>
       <div
         slot="btn"
@@ -67,64 +68,77 @@
         </el-button>
       </div>
     </self-form>
-    <div class="middle">
-      <div class="count">
-        筛选结果（1000条）
+    <div class="table_box">
+      <div class="middle">
+        <div class="count">
+          筛选结果（1000条）
+        </div>
       </div>
-    </div>
-    <!-- 表格 -->
-    <self-table
-      ref="freighForm"
-      v-loading="listLoading"
-      :index="true"
-      :is-p30="false"
-      :indexes="false"
-      :operation-list="operationList"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      style="overflow: inherit;"
-      @olclick="handleOlClick"
-      @onPageSize="handlePageSize"
-      @selection-change="handleSelectionChange"
-    >
-      <template v-slot:createDate="scope">
-        {{ scope.row.createDate }}
-      </template>
-      <template v-slot:op="scope">
-        <el-dropdown
-          :trigger="isPC ? 'hover' : 'click'"
-          @command="(e) => handleCommandChange(e,scope.row)"
-        >
-          <span
-            v-if="isPC"
-            class="el-dropdown-link"
+      <!-- 表格 -->
+      <self-table
+        ref="freighForm"
+        v-loading="listLoading"
+        :index="true"
+        :is-p30="false"
+        :indexes="false"
+        :operation-list="operationList"
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        style="overflow: inherit;"
+        @olclick="handleOlClick"
+        @onPageSize="handlePageSize"
+        @selection-change="handleSelectionChange"
+      >
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate }}
+        </template>
+        <template v-slot:op="scope">
+          <el-dropdown
+            :trigger="isPC ? 'hover' : 'click'"
+            @command="(e) => handleCommandChange(e,scope.row)"
           >
-            更多操作<i
+            <span
               v-if="isPC"
-              class="el-icon-arrow-down el-icon--right"
-            />
-          </span>
-          <span
-            v-else
-            style="font-size: 18px;"
-            class="el-dropdown-link"
-          >
-            <i class="el-icon-setting el-icon--right" />
-          </span>
-
-          <el-dropdown-menu
-            slot="dropdown"
-          >
-            <el-dropdown-item
-              command="collection"
+              class="el-dropdown-link"
             >
-              标记收款
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-    </self-table>
+              更多操作<i
+                v-if="isPC"
+                class="el-icon-arrow-down el-icon--right"
+              />
+            </span>
+            <span
+              v-else
+              style="font-size: 18px;"
+              class="el-dropdown-link"
+            >
+              <i class="el-icon-setting el-icon--right" />
+            </span>
+
+            <el-dropdown-menu
+              slot="dropdown"
+            >
+              <el-dropdown-item
+                command="flow"
+              >
+                查看流水
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="driverCheck"
+              >
+                司机对账
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="download"
+              >
+                账单下载
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </self-table>
+    </div>
+
     <!-- 标记收款弹窗 -->
     <SelfDialog
       :class="'distributionDialog'"
@@ -138,7 +152,7 @@
       <self-form
         ref="dialogForm"
         :list-query="dialogForm"
-        :form-item="dialogItem"
+        :form-item="dialogFormItem"
         size="small"
         label-width="90px"
         class="p15"
@@ -220,6 +234,20 @@ interface IState {
 export default class extends Vue {
   // loading
   private listLoading:Boolean = false;
+  private btns:any[] = [
+    {
+      name: '',
+      text: '全部'
+    },
+    {
+      name: '1',
+      text: '待对账'
+    },
+    {
+      name: '2',
+      text: '已对账'
+    }
+  ]
   // 查询表单
   private listQuery:IState = {
     cccc: []
@@ -230,7 +258,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '月账单编号:',
       key: 'a'
@@ -239,7 +268,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '司机姓名:',
       key: 'b'
@@ -248,7 +278,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '司机城市:',
       key: 'c',
@@ -267,7 +298,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '业务线:',
       key: 'cc',
@@ -286,7 +318,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '加盟经理:',
       key: 'ccc',
@@ -305,7 +338,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '是否封账:',
       key: 'ccd',
@@ -321,14 +355,14 @@ export default class extends Vue {
       ]
     },
     {
-      col: 6,
+      col: 8,
       label: '月份:',
       key: 'ddd',
       type: 'ddd',
       slot: true
     },
     {
-      col: 6,
+      col: 20,
       label: '对账状态:',
       key: 'cccc',
       type: 'cccc',
@@ -432,6 +466,7 @@ export default class extends Vue {
       { required: true, message: '请上传凭证', trigger: 'change' }
     ]
   }
+  private dialogFormItem:any[] = [];
   // 弹窗表单容器
   private dialogItem: any[] = [
     {
@@ -501,9 +536,19 @@ export default class extends Vue {
   }
   // 更多操作
   private handleCommandChange(key:string, row:any) {
-    if (key === 'collection') { // 标记收款
-      this.dialogTit = '标记收款'
-      this.showDialog = true
+    if (key === 'flow') { // 查看流水
+      this.$router.push({
+        path: '/driverfreight/bill'
+      })
+    } else if (key === 'driverCheck') { // 司机对账
+      this.dialogTit = '月账单对账'
+      this.dialogFormItem = []
+      setTimeout(() => {
+        this.dialogFormItem.push(...this.dialogItem)
+        this.showDialog = true
+      }, 20)
+    } else if (key === 'download') { // 账单下载
+      console.log('账单下载')
     }
   }
   // 确认弹窗
@@ -515,7 +560,8 @@ export default class extends Vue {
   }
   // 关闭弹窗清除数据
   private handleClosed() {
-    console.log('关闭弹窗清楚数据')
+    this.showDialog = false;
+    (this.$refs.freighForm as any).toggleRowSelection()
   }
   private customUpload(param: any) {
     // 自定义上传
@@ -568,9 +614,9 @@ export default class extends Vue {
         this.$message.error('请先选择')
         return
       }
-      this.dialogTit = '批量标记收款'
+      this.dialogTit = '批量月账单对账'
       this.showDialog = true
-      this.dialogItem = this.dialogItem.slice(3)
+      this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
   // 关闭查看已选
@@ -589,12 +635,7 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  .m15 {
-     margin: 15px;
-  }
   .DriverFreightMonthBill{
-    background: #ffffff;
-    border-radius: 8px;
     .month-picker{
       ::v-deep{
         .el-range-separator{
@@ -627,5 +668,28 @@ export default class extends Vue {
         color:#666;
       }
     }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .table_box {
+      padding: 0px 30px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+  }
+</style>
+
+<style scoped>
+  .DriverFreightMonthBill >>> .el-badge {
+    margin-right:20px;
   }
 </style>

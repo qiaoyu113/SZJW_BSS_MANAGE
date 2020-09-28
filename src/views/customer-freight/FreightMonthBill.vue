@@ -2,8 +2,7 @@
   <div
     class="DriverFreightMonthBill"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
@@ -13,7 +12,7 @@
       size="small"
       :pc-col="8"
       label-width="90px"
-      class="p15"
+      class="p15 SuggestForm"
     >
       <template slot="ddd">
         <el-date-picker
@@ -69,74 +68,76 @@
         </el-button>
       </div>
     </self-form>
-    <div class="middle">
-      <div class="count">
-        筛选结果 1000条 10元
+    <div class="table_box">
+      <div class="middle">
+        <div class="count">
+          筛选结果 1000条 10元
+        </div>
       </div>
-    </div>
-    <!-- 表格 -->
-    <self-table
-      ref="freighForm"
-      v-loading="listLoading"
-      :index="true"
-      :is-p30="false"
-      :indexes="false"
-      :operation-list="operationList"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      style="overflow: inherit;"
-      @olclick="handleOlClick"
-      @onPageSize="handlePageSize"
-      @selection-change="handleSelectionChange"
-    >
-      <template v-slot:createDate="scope">
-        {{ scope.row.createDate }}
-      </template>
-      <template v-slot:op="scope">
-        <el-dropdown
-          :trigger="isPC ? 'hover' : 'click'"
-          @command="(e) => handleCommandChange(e,scope.row)"
-        >
-          <span
-            v-if="isPC"
-            class="el-dropdown-link"
+      <!-- 表格 -->
+      <self-table
+        ref="freighForm"
+        v-loading="listLoading"
+        :index="true"
+        :is-p30="false"
+        :indexes="false"
+        :operation-list="operationList"
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        style="overflow: inherit;"
+        @olclick="handleOlClick"
+        @onPageSize="handlePageSize"
+        @selection-change="handleSelectionChange"
+      >
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate }}
+        </template>
+        <template v-slot:op="scope">
+          <el-dropdown
+            :trigger="isPC ? 'hover' : 'click'"
+            @command="(e) => handleCommandChange(e,scope.row)"
           >
-            更多操作<i
+            <span
               v-if="isPC"
-              class="el-icon-arrow-down el-icon--right"
-            />
-          </span>
-          <span
-            v-else
-            style="font-size: 18px;"
-            class="el-dropdown-link"
-          >
-            <i class="el-icon-setting el-icon--right" />
-          </span>
+              class="el-dropdown-link"
+            >
+              更多操作<i
+                v-if="isPC"
+                class="el-icon-arrow-down el-icon--right"
+              />
+            </span>
+            <span
+              v-else
+              style="font-size: 18px;"
+              class="el-dropdown-link"
+            >
+              <i class="el-icon-setting el-icon--right" />
+            </span>
 
-          <el-dropdown-menu
-            slot="dropdown"
-          >
-            <el-dropdown-item
-              command="flow"
+            <el-dropdown-menu
+              slot="dropdown"
             >
-              查看流水
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="checkBill"
-            >
-              客户对账
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="download"
-            >
-              下载账单
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-    </self-table>
+              <el-dropdown-item
+                command="flow"
+              >
+                查看流水
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="checkBill"
+              >
+                客户对账
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="download"
+              >
+                下载账单
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </self-table>
+    </div>
     <!-- 标记收款弹窗 -->
     <SelfDialog
       :class="'distributionDialog'"
@@ -637,12 +638,7 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  .m15 {
-     margin: 15px;
-  }
   .DriverFreightMonthBill{
-    background: #ffffff;
-    border-radius: 8px;
     .month-picker{
       ::v-deep{
         .el-range-separator{
@@ -675,6 +671,23 @@ export default class extends Vue {
         font-size:14px;
         color:#666;
       }
+    }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .table_box {
+      padding: 0px 30px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
   }
 </style>
