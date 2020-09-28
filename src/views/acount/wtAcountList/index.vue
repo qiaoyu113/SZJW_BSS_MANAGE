@@ -156,6 +156,8 @@ export default class extends Vue {
     { label: '共享', value: 1 },
     { label: '专车', value: 0 }
   ]
+  private nameOptions:any[] = []
+  private idOptions:any[] = []
   // 表单对象
   private listQuery: IState = {
     workCity: '',
@@ -169,15 +171,13 @@ export default class extends Vue {
   // 表单数组
   private formItem: any[] = [
     {
-      type: 2,
+      type: 8,
       key: 'workCity',
       col: 8,
       w: '150px',
       label: '所属城市',
       tagAttrs: {
-        placeholder: '请选择所属管理区',
-        filterable: true,
-        name: 'driverList_workCity_select'
+        placeholder: '请选择所属管理区'
       },
       options: this.workCityOptions
     },
@@ -207,7 +207,7 @@ export default class extends Vue {
       options: this.gmOptions
     },
     {
-      type: 1,
+      type: 2,
       key: 'name',
       label: '司机姓名',
       col: 8,
@@ -217,10 +217,11 @@ export default class extends Vue {
         maxlength: 10,
         clearable: true,
         name: 'driverList_name_input'
-      }
+      },
+      options: this.nameOptions
     },
     {
-      type: 1,
+      type: 2,
       key: 'driverId',
       label: '司机编号',
       col: 8,
@@ -230,7 +231,8 @@ export default class extends Vue {
         maxlength: 32,
         clearable: true,
         name: 'driverList_driverId_input'
-      }
+      },
+      options: this.idOptions
     },
     {
       type: 4,
@@ -448,9 +450,9 @@ export default class extends Vue {
       label: '冻结原因：',
       col: 24,
       tagAttrs: {
-        placeholder: '请填写最多100个字',
+        placeholder: '请填写最多50个字',
         type: 'textarea',
-        maxlength: 100,
+        maxlength: 50,
         'show-word-limit': true,
         clearable: true,
         rows: '4'
@@ -522,9 +524,9 @@ export default class extends Vue {
       label: '申请解冻原因：',
       col: 24,
       tagAttrs: {
-        placeholder: '请填写最多100个字',
+        placeholder: '请填写最多50个字',
         type: 'textarea',
-        maxlength: 100,
+        maxlength: 50,
         'show-word-limit': true,
         clearable: true,
         rows: '4'
@@ -771,6 +773,11 @@ export default class extends Vue {
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+
+  @Watch('listQuery', { deep: true })
+  private changeList(val:any) {
+    console.log(val)
   }
 
   mounted() {
