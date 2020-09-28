@@ -3,7 +3,8 @@
     :class="isPC ? 'SectionContainer' : 'SectionContainer-m'"
   >
     <div class="title">
-      {{ title }}<span class="border" />
+      <span>{{ title }}<span class="border" /></span>
+      <slot name="rightBox" />
     </div>
     <div :class="md ? 'context_d' : 'context'">
       <slot />
@@ -90,7 +91,6 @@ export default class extends Vue {
     margin-bottom: 4px;
     box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     .title{
-        width:100%;
         height: 45px;
         line-height: 40px;
         font-size: 15px;
@@ -100,6 +100,9 @@ export default class extends Vue {
         position: relative;
         padding:0 20px;
         box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         .border{
             width: 4px;
             height: 14px;

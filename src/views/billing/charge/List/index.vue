@@ -41,11 +41,11 @@
         <el-badge
           v-for="item in btns"
           :key="item.text"
-          :value="item.num"
         >
           <el-button
             size="small"
-            :type="item.name === listQuery.status ? 'primary':''"
+            type="primary"
+            :plain="item.name !== listQuery.status"
             @click="listQuery.status =item.name"
           >
             {{ item.text }}
@@ -313,17 +313,14 @@ export default class extends Vue {
   private btns:any[] = [
     {
       name: '',
-      num: 10,
       text: '全部'
     },
     {
       name: '1',
-      num: 8,
       text: '启用'
     },
     {
       name: '2',
-      num: 2,
       text: '禁用'
     }
   ]
@@ -426,6 +423,6 @@ export default class extends Vue {
 
 <style scoped>
   .billingListContainer >>> .el-badge {
-    margin-right:30px;
+    margin-right:20px;
   }
 </style>
