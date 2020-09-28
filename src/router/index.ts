@@ -15,6 +15,8 @@ import transportRouter from './modules/transport'
 // import deliveryRouter from './modules/delivery'
 import systemRouter from './modules/system'
 import orderRouter from './modules/order'
+import driverFreight from './modules/driver-freight'
+import customerFreight from './modules/customer-freight'
 import freightRouter from './modules/freight'
 import driverAccountRouter from './modules/driver-account'
 // import customerRouter from './modules/customer'
@@ -198,6 +200,10 @@ export const asyncRoutes: RouteConfig[] = [
   // 运力中心
   // deliveryRouter,
   // transportRouter,
+  // 司机运费账户
+  driverFreight,
+  // 客户运费账户
+  customerFreight,
   // 运费管理
   freightRouter,
   driverAccountRouter,
