@@ -52,7 +52,7 @@
             v-model="listQuery[item.key]"
             :editable="false"
             v-bind="item.tagAttrs || {}"
-            type="daterange"
+            :type="item.dateType || 'daterange'"
             value-format="timestamp"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -238,7 +238,6 @@ export default class extends Vue {
     font-family: PingFangSC-Regular;
     font-size: 14px;
     color: #4A4A4A;
-    text-align: center;
   }
   .selfForm >>> .el-form-item__content {
     display: flex;

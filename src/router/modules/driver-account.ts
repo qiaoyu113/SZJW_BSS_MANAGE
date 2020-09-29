@@ -8,19 +8,112 @@ const driverAccountRouter: RouteConfig = {
   name: 'DriverAccount',
   meta: {
     title: 'driverAccount',
-    hidden: true,
     icon: 'driver',
     apiUrl: 'root'
   },
   children: [
     {
-      path: 'list',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver/DriverList.vue'),
-      name: 'DriverList',
+      path: 'payFee',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payList/index.vue'),
+      name: 'payList',
       meta: {
-        apiUrl: '/bss/v1/bss/driver/selectListByKey',
-        title: 'driverList',
-        noCache: false
+        title: 'payFee',
+        icon: '',
+        apiUrl: 'root',
+        noCache: true,
+        hidden: true
+      }
+    },
+    {
+      path: 'payDetail',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payDetail/index.vue'),
+      name: 'payDetail',
+      meta: {
+        apiUrl: 'root',
+        title: 'payDetail',
+        hidden: true,
+        noCache: true
+      }
+    },
+    {
+      path: 'payAudit',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/payDetail/index.vue'),
+      name: 'payAudit',
+      meta: {
+        apiUrl: 'root',
+        title: 'payAudit',
+        hidden: true,
+        noCache: true
+      }
+    },
+    {
+      path: 'addPay',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/payFee/addPay/index.vue'),
+      name: 'addPay',
+      meta: {
+        apiUrl: 'root',
+        title: 'addPay',
+        hidden: true,
+        noCache: true
+      }
+    },
+    {
+      path: 'wtAcountList',
+      component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/wtAcountList/index.vue'),
+      name: 'wtAcountList',
+      meta: {
+        apiUrl: 'root',
+        title: 'wtAcountList',
+        noCache: true,
+        icon: 'cargo',
+        activeMenu: '/driveraccount/wtAcountList'
+      }
+    },
+    {
+      path: 'refundlist',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundList.vue'),
+      name: 'RefundList',
+      meta: {
+        apiUrl: 'root',
+        title: 'refundList',
+        noCache: false,
+        hidden: true
+      }
+    },
+    {
+      path: 'refunddetail',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundDetail.vue'),
+      name: 'RefundDetail',
+      redirect: '/driveraccount/refundlist',
+      meta: {
+        apiUrl: 'root',
+        title: 'refundDetail',
+        noCache: false,
+        hidden: true
+      }
+    },
+    {
+      path: 'refundaudit',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundAudit.vue'),
+      name: 'RefundAudit',
+      redirect: '/driveraccount/refundlist',
+      meta: {
+        apiUrl: 'root',
+        title: 'refundAudit',
+        noCache: false,
+        hidden: true
+      }
+    },
+    {
+      path: 'refundapply',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundApply.vue'),
+      name: 'RefundApply',
+      redirect: '/driveraccount/refundlist',
+      meta: {
+        apiUrl: 'root',
+        title: 'refundApply',
+        noCache: false,
+        hidden: true
       }
     },
     {
@@ -76,6 +169,7 @@ const driverAccountRouter: RouteConfig = {
       name: 'Billing',
       meta: {
         apiUrl: 'root',
+        hidden: true,
         activeMenu: '/driveraccount/billing',
         title: 'billing',
         icon: 'cargo',
@@ -140,6 +234,7 @@ const driverAccountRouter: RouteConfig = {
       name: 'FinancialFlow',
       meta: {
         apiUrl: 'root',
+        hidden: true,
         activeMenu: '/driveraccount/financialFlow',
         title: 'financialFlow',
         icon: 'cargo',
@@ -152,6 +247,7 @@ const driverAccountRouter: RouteConfig = {
       name: 'OrderList',
       meta: {
         apiUrl: 'root',
+        hidden: true,
         activeMenu: '/driveraccount/orderList',
         title: 'orderList',
         icon: 'cargo',
