@@ -166,28 +166,43 @@ export default class extends Vue {
     },
     {
       key: 'f',
-      label: '项目名称',
+      label: '所属城市',
       'min-width': '140px'
     },
     {
       key: 'g',
-      label: '项目业务流水单号',
+      label: '业务线',
       'width': '160px'
     },
     {
       key: 'h',
-      label: '项目发生时间',
+      label: '所属加盟经理',
       slot: true,
       'min-width': '140px'
     },
     {
       key: 'i',
-      label: '项目发生金额',
+      label: '业务名称',
       'min-width': '140px'
     },
     {
       key: 'j',
-      label: '进流水方式',
+      label: '业务流水编号',
+      'min-width': '140px'
+    },
+    {
+      key: 'x',
+      label: '业务发生时间',
+      'min-width': '140px'
+    },
+    {
+      key: 'y',
+      label: '业务发生金额',
+      'min-width': '140px'
+    },
+    {
+      key: 'z',
+      label: '业务进流水方式',
       'min-width': '140px'
     },
     {
@@ -207,6 +222,41 @@ export default class extends Vue {
   }
 
   private formItem:any[] = [
+
+    {
+      type: 8,
+      tagAttrs: {
+        placeholder: '请选择'
+      },
+      label: '所属城市:',
+      w: '100px',
+      key: 'c',
+      options: []
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      w: '100px',
+      label: '业务线:',
+      key: 'e',
+      options: []
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '所属加盟经理:',
+      w: '100px',
+      key: 'd',
+      options: []
+    },
     {
       type: 1,
       tagAttrs: {
@@ -229,59 +279,13 @@ export default class extends Vue {
       options: []
     },
     {
-      type: 8,
-      tagAttrs: {
-        placeholder: '请选择'
-      },
-      label: '所属管理区:',
-      w: '100px',
-      key: 'c',
-      options: []
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
-      },
-      label: '所属加盟经理:',
-      w: '100px',
-      key: 'd',
-      options: []
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
-      },
-      w: '100px',
-      label: '所属业务线:',
-      key: 'e',
-      options: []
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
-      },
-      w: '100px',
-      label: '梧桐账户状态:',
-      key: 'f',
-      options: []
-    },
-    {
       type: 3,
       col: 8,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true
       },
-      label: '选择时间:',
+      label: '业务发生时间:',
       key: 'g'
     },
     {

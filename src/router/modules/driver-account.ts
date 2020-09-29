@@ -187,7 +187,7 @@ const driverAccountRouter: RouteConfig = {
       name: 'FinancialFlow',
       meta: {
         apiUrl: 'root',
-        hidden: true,
+        // hidden: true,
         activeMenu: '/driveraccount/financialFlow',
         title: 'financialFlow',
         icon: 'cargo',
