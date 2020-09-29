@@ -1,5 +1,5 @@
 <template>
-  <div class="SuggestForm">
+  <div class="FreightListForm">
     <div class-name="sub-navbar">
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
