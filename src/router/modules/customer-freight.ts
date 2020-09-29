@@ -9,8 +9,8 @@ const customerFreight: RouteConfig = {
   meta: {
     title: 'customerFreightAccount',
     icon: 'driver',
-    apiUrl: 'root',
-    hidden: true
+    apiUrl: 'root'
+    // hidden: true
   },
   children: [
     {
