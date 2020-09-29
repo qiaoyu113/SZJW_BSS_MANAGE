@@ -1,5 +1,5 @@
 <template>
-  <div class="SuggestForm">
+  <div class="FreightListForm">
     <div class-name="sub-navbar">
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
@@ -541,7 +541,7 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scope>
-.SuggestForm {
+.FreightListForm {
   width: 100%;
   background: #fff;
   margin-bottom: 10px;
