@@ -541,7 +541,7 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scope>
-.SuggestForm {
+.FreightListForm {
   width: 100%;
   background: #fff;
   margin-bottom: 10px;
