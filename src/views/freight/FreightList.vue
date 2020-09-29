@@ -2,6 +2,7 @@
   <div :class="isPC ? 'FreightList' : 'FreightList-m'">
     <FreightListForm
       :tab="tab"
+      :dispatch="dispatchTab"
       :list-query="listQuery"
       :date-value="DateValue"
       :date-value2="DateValue2"
@@ -514,6 +515,28 @@ export default class extends Vue {
         num: ''
       }
     ];
+    private dispatchTab: any[] = [
+      {
+        label: '全部',
+        name: '',
+        num: ''
+      },
+      {
+        label: '待出车',
+        name: '5',
+        num: ''
+      },
+      {
+        label: '已出车',
+        name: '10',
+        num: ''
+      },
+      {
+        label: '未出车',
+        name: '20',
+        num: ''
+      }
+    ];
     private listQuery: IState = {
       customer: '',
       customerCity: '',
@@ -522,16 +545,22 @@ export default class extends Vue {
       dutyManagerId: '',
       page: 1,
       limit: 30,
+      startDate: '',
       endDate: '',
+      freightStartTime: '',
+      freightEndTime: '',
       feeDiff: '',
       gmId: '',
       key: '',
       line: '',
       pageNumber: '',
       project: '',
-      startDate: '',
       wayBillId: '',
-      state: ''
+      state: '',
+      dispatchState: '',
+      business: '',
+      clientUpLoadState: '',
+      driverUpLoadState: ''
     };
     private freightForm: any = {
       list: [
@@ -590,7 +619,7 @@ export default class extends Vue {
 
     // table列表高度适配
     get tableHeight() {
-      let otherHeight = 480
+      let otherHeight = 590
       let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
       return value
     }
