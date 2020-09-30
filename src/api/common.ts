@@ -99,3 +99,19 @@ export const GetDownFileList = (data:any) =>
     method: 'post',
     data
   })
+
+// 组织大区查询
+export const getOfficeByType = (data:any) =>
+  request({
+    url: `base/v2/base/office/getOfficeByType`,
+    method: 'get',
+    params: data
+  })
+
+// 组织大区下城市查询
+export const getOfficeByTypeAndOfficeId = (data:any) =>
+  request({
+    url: `base/v2/base/office/getOfficeByTypeAndOfficeId`,
+    method: 'get',
+    params: data
+  })
