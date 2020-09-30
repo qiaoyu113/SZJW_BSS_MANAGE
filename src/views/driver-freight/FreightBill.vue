@@ -53,6 +53,7 @@
       <self-table
         ref="freighForm"
         v-loading="listLoading"
+        row-key="id"
         :index="true"
         :is-p30="false"
         :indexes="false"
@@ -65,8 +66,17 @@
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
       >
+        <template v-slot:departureDate="scope">
+          {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}
+        </template>
         <template v-slot:createDate="scope">
-          {{ scope.row.createDate }}
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}
+        </template>
+        <template v-slot:paymentReceivedFlag="scope">
+          {{ scope.row.paymentReceivedFlag ? '是':'否' }}
+        </template>
+        <template v-slot:paymentVoucherPath="scope">
+          {{ scope.row.paymentVoucherPath }}
         </template>
         <template v-slot:op="scope">
           <el-dropdown
@@ -126,7 +136,10 @@
         :rules="dialogRole"
         @onPass="handlePassClick"
       >
-        <template slot="d">
+        <template v-slot:amount="scope">
+          {{ scope.row.amount }} 元
+        </template>
+        <template slot="fileUrl">
           <el-upload
             ref="upload"
             :http-request="customUpload"
@@ -163,9 +176,9 @@
       @changeDrawer="changeDrawer"
     >
       <template slot-scope="slotProp">
-        <span>{{ slotProp.item.bussinessName }}</span>
-        <span>{{ slotProp.item.bussinessPhone }}</span>
-        <span>{{ slotProp.item.cityName }}</span>
+        <span>{{ slotProp.item.driverName }}</span>
+        <span>{{ slotProp.item.recordNo }}</span>
+        <span>{{ slotProp.item.amount }}元</span>
       </template>
     </PitchBox>
   </div>
@@ -181,6 +194,9 @@ import { fileUpload } from '@/api/cargo'
 import PitchBox from '@/components/PitchBox/index.vue'
 
 import { month, lastmonth, threemonth } from './components/date'
+
+import { GetFreightChargeList, ExportFreightChargeList, ReceiveFreightChargeList } from '@/api/driver-freight.ts'
+import { Upload } from '@/api/common'
 
 interface PageObj {
   page:Number,
@@ -201,10 +217,22 @@ interface IState {
   }
 })
 export default class extends Vue {
+  // 弹框选中的数据的id集合
+  private ids:number|string[] = []
   // loading
   private listLoading:Boolean = false;
   // 查询表单
   private listQuery:IState = {
+    driverName: '',
+    gmId: '',
+    businessType: '',
+    paymentReceivedFlag: '',
+    recordNo: '',
+    businessNo: '',
+    driverCity: '',
+    subject: '',
+    time: [],
+    createTime: []
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -216,7 +244,38 @@ export default class extends Vue {
         maxlength: 50
       },
       label: '司机姓名:',
-      key: 'a'
+      key: 'driverName'
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '司机城市:',
+      key: 'driverCity',
+      options: [
+        {
+          label: '共享',
+          value: 1
+        },
+        {
+          label: '专车',
+          value: 2
+        }
+      ]
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '业务线:',
+      key: 'businessType',
+      options: []
     },
     {
       type: 2,
@@ -226,7 +285,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '加盟经理:',
-      key: 'b',
+      key: 'gmId',
       options: [
         {
           label: '共享',
@@ -246,15 +305,15 @@ export default class extends Vue {
         filterable: true
       },
       label: '是否已收款:',
-      key: 'c',
+      key: 'paymentReceivedFlag',
       options: [
         {
-          label: '全部',
+          label: '是',
           value: 1
         },
         {
-          label: '专车',
-          value: 2
+          label: '否',
+          value: 0
         }
       ]
     },
@@ -266,7 +325,7 @@ export default class extends Vue {
         maxlength: 50
       },
       label: '流水编号:',
-      key: 'd'
+      key: 'recordNo'
     },
     {
       type: 1,
@@ -276,27 +335,7 @@ export default class extends Vue {
         maxlength: 50
       },
       label: '出车单编号:',
-      key: 'e'
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
-      },
-      label: '司机城市:',
-      key: 'f',
-      options: [
-        {
-          label: '共享',
-          value: 1
-        },
-        {
-          label: '专车',
-          value: 2
-        }
-      ]
+      key: 'businessNo'
     },
     {
       type: 2,
@@ -306,25 +345,8 @@ export default class extends Vue {
         filterable: true
       },
       label: '变动类型:',
-      key: 'f',
-      options: [
-        {
-          label: '全部',
-          value: 1
-        },
-        {
-          label: '已确认',
-          value: 2
-        },
-        {
-          label: '二次确认',
-          value: 3
-        },
-        {
-          label: '运费调整',
-          value: 4
-        }
-      ]
+      key: 'subject',
+      options: []
     },
     {
       type: 3,
@@ -338,7 +360,7 @@ export default class extends Vue {
         }
       },
       label: '出车日期:',
-      key: 'g'
+      key: 'time'
     },
     {
       type: 3,
@@ -352,79 +374,79 @@ export default class extends Vue {
         }
       },
       label: '创建时间:',
-      key: 'h'
+      key: 'createTime'
     }
   ]
   // 表格数据
-  private tableData:any[] = [
-    {
-      a: 1
-    }
-  ]
+  private tableData:any[] = []
   // 表格列
   private columns:any[] = [
     {
-      key: 'a',
+      key: 'recordNo',
       label: '流水编号',
       'min-width': '140px'
     },
     {
-      key: 'b',
+      key: 'departureDate',
+      slot: true,
       label: '出车日期',
       'min-width': '140px'
     },
     {
-      key: 'c',
+      key: 'driverName',
       label: '司机姓名',
       'min-width': '140px'
     },
     {
-      key: 'd',
+      key: 'businessNo',
       label: '出车单编号',
       'min-width': '200px'
     },
     {
-      key: 'e',
+      key: 'subject',
       label: '变动类型',
       'min-width': '140px'
     },
     {
-      key: 'f',
+      key: 'amount',
       label: '运费金额(元)',
       'min-width': '140px'
     },
     {
-      key: 'g',
+      key: 'createDate',
       label: '创建时间',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'aa',
+      key: 'createName',
       label: '创建人',
       'min-width': '140px'
     },
     {
-      key: 'h',
+      key: 'paymentReceivedFlag',
       label: '是否已收款',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'h1',
+      key: 'paymentVoucherPath',
       label: '收款凭证',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'h2',
+      key: 'remarks',
       label: '收款备注',
       'min-width': '140px'
     },
     {
-      key: 'h3',
+      key: 'gmName',
       label: '加盟经理',
       'min-width': '140px'
     },
     {
-      key: 'h4',
+      key: 'driverCity',
       label: '司机城市',
       'min-width': '140px'
     },
@@ -449,7 +471,7 @@ export default class extends Vue {
   private page :PageObj= {
     page: 1,
     limit: 30,
-    total: 100
+    total: 0
   }
   // 弹窗
   private showDialog: boolean = false;
@@ -460,36 +482,36 @@ export default class extends Vue {
   }
   private fileList: []= [];
   private dialogRole: IState= {
-    d: [
+    fileUrl: [
       { required: true, message: '请上传凭证', trigger: 'change' }
     ]
   }
-  private dialogFormItem:any[] = [];
+  private dialogFormItem:IState[] = [];
   // 弹窗表单容器
-  private dialogItem: any[] = [
+  private dialogItem: IState[] = [
     {
       type: 7,
       col: 12,
-      label: '账单编号:',
-      key: 'a'
+      label: '流水编号:',
+      key: 'recordNo'
     },
     {
       type: 7,
       col: 12,
       label: '出车单编号:',
-      key: 'b'
+      key: 'businessNo'
     },
     {
-      type: 7,
+      type: 'amount',
       col: 24,
       label: '运费金额:',
-      key: 'c'
+      slot: true
     },
     {
       col: 24,
       label: '上传凭证:',
-      key: 'd',
-      type: 'd',
+      key: 'fileUrl',
+      type: 'fileUrl',
       slot: true
     },
     {
@@ -513,15 +535,57 @@ export default class extends Vue {
   }
   // 重置表单
   private handleResetClick() {
-
+    this.listQuery = {
+      driverName: '',
+      gmId: '',
+      businessType: '',
+      paymentReceivedFlag: '',
+      recordNo: '',
+      businessNo: '',
+      driverCity: '',
+      subject: '',
+      time: [],
+      createTime: []
+    }
   }
   // 查询表单
   private handleFilterClick() {
-
+    this.page.page = 1
+    this.getLists()
   }
   // 导出
-  private handleExportClick() {
-
+  private async handleExportClick() {
+    try {
+      let params:IState = {}
+      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
+      this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
+      this.listQuery.recordNo !== '' && (params.recordNo = this.listQuery.recordNo)
+      this.listQuery.businessNo !== '' && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.driverCity !== '' && (params.driverCity = this.listQuery.driverCity)
+      this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let departureDateStart = new Date(this.listQuery.time[0])
+        let departureDateEnd = new Date(this.listQuery.time[1])
+        params.departureDateStart = departureDateStart.setHours(0, 0, 0)
+        params.departureDateEnd = departureDateEnd.setHours(0, 0, 0)
+      }
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let createDateStart = new Date(this.listQuery.createTime[0])
+        let createDateEnd = new Date(this.listQuery.createTime[1])
+        params.createDateStart = createDateStart.setHours(0, 0, 0)
+        params.createDateEnd = createDateEnd.setHours(0, 0, 0)
+      }
+      let { data: res } = await ExportFreightChargeList(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`export excel fail:${err}`)
+    }
   }
   // 分页
   private handlePageSize(page:PageObj) {
@@ -530,28 +594,102 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
-  private getLists() {
+  private async getLists() {
+    try {
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
+      }
+      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
+      this.listQuery.recordNo !== '' && (params.recordNo = this.listQuery.recordNo)
+      this.listQuery.businessNo !== '' && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.driverCity !== '' && (params.driverCity = this.listQuery.driverCity)
+      this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let departureDateStart = new Date(this.listQuery.time[0])
+        let departureDateEnd = new Date(this.listQuery.time[1])
+        params.departureDateStart = departureDateStart.setHours(0, 0, 0)
+        params.departureDateEnd = departureDateEnd.setHours(0, 0, 0)
+      }
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let createDateStart = new Date(this.listQuery.createTime[0])
+        let createDateEnd = new Date(this.listQuery.createTime[1])
+        params.createDateStart = createDateStart.setHours(0, 0, 0)
+        params.createDateEnd = createDateEnd.setHours(0, 0, 0)
+      }
+
+      let { data: res } = await GetFreightChargeList(params)
+      if (res.success) {
+        this.tableData = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
+    }
   }
   // 更多操作
   private handleCommandChange(key:string, row:any) {
     if (key === '1') { // 标记收款
       this.dialogTit = '标记收款'
       this.dialogFormItem = []
+      this.resetDialogForm()
+      this.dialogForm.recordNo = row.recordNo
+      this.dialogForm.businessNo = row.businessNo
+      this.dialogForm.amount = row.amount
+      this.ids = [row.id]
       setTimeout(() => {
         this.dialogFormItem.push(...this.dialogItem)
         this.showDialog = true
       }, 20)
     }
   }
+  // 重置弹框表单
+  resetDialogForm() {
+    this.dialogForm.recordNo = ''
+    this.dialogForm.businessNo = ''
+    this.dialogForm.amount = ''
+    this.dialogForm.fileUrl = ''
+    this.dialogForm.remark = ''
+  }
   // 确认弹窗
   private handlePassClick(valid: any) {
-    console.log('xxxx:', valid)
+    this.saveData()
   }
+  // 弹框确认按钮
+  async saveData() {
+    try {
+      let params:IState = {
+        fileUrl: this.dialogForm.fileUrl,
+        id: this.ids
+      }
+      this.dialogForm.remark && (params.remark = this.dialogForm.remark)
+      let { data: res } = await ReceiveFreightChargeList(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        this.page.page = 1
+        this.getLists()
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`save data fail:${err}`)
+    }
+  }
+  // 弹框的确定按钮
   private async confirm(done: any) {
     ((this.$refs.dialogForm) as any).submitForm()
   }
   // 关闭弹窗清除数据
   private handleClosed() {
+    this.resetDialogForm()
+    this.ids = []
+    this.showDialog = false;
     (this.$refs.freighForm as any).toggleRowSelection()
   }
   private customUpload(param: any) {
@@ -605,6 +743,8 @@ export default class extends Vue {
         this.$message.error('请先选择')
         return
       }
+      this.resetDialogForm()
+      this.ids = this.multipleSelection.map(item => item.id)
       this.dialogTit = '批量标记收款'
       this.showDialog = true
       this.dialogFormItem = this.dialogItem.slice(3)
@@ -622,6 +762,9 @@ export default class extends Vue {
     if (this.multipleSelection.length === 0) {
       this.drawer = false
     }
+  }
+  mounted() {
+    this.getLists()
   }
 }
 </script>
