@@ -297,7 +297,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否已收款:',
+      label: '是否已付款:',
       key: 'f',
       options: []
     },
