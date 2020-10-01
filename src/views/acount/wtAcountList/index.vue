@@ -70,13 +70,13 @@
         <div>
           <el-button
             type="text"
-            :disabled="scope.row.orderStatus !== 1 && scope.row.cashMoney > 0"
+            :disabled="scope.row.status !== 3 && scope.row.canExtractMoney > 0"
             @click="isFreeze(scope.row)"
           >
             冻结
           </el-button>
           <el-button
-            :disabled="scope.row.orderStatus !== 2 && scope.row.cashMoney > 0"
+            :disabled="scope.row.status !== 5 && scope.row.canExtractMoney > 0"
             type="text"
             @click="isFreeze(scope.row)"
           >
@@ -117,7 +117,7 @@ import { getAcountList, accountFreeze, accountUnfreeze } from '@/api/driver-acco
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
-import { GetManagerLists, GetOpenCityData } from '@/api/common'
+import { GetManagerLists, GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId } from '@/api/common'
 import { deleteUser } from '@/api/users'
 interface IState {
   [key: string]: any;
@@ -149,8 +149,9 @@ export default class extends Vue {
   private gmOptions: any[] = []; // 加盟经理列表
   private statusOptions: any[] = [];
   private balanceOptions: any[] = [
-    { label: '是', value: 1 },
-    { label: '否', value: 2 }
+    { label: '全部', value: 0 },
+    { label: '否', value: 2 },
+    { label: '是', value: 1 }
   ];
   private busiTypeOptions:any[] = [
     { label: '共享', value: 1 },
@@ -164,8 +165,8 @@ export default class extends Vue {
     driverId: '',
     name: '',
     busiType: '',
-    gmId: '',
-    balance: '',
+    joinManagerId: '',
+    balance: 0,
     time: []
   };
   // 表单数组
@@ -195,7 +196,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      key: 'gmId',
+      key: 'joinManagerId',
       col: 8,
       w: '150px',
       label: '所属加盟经理',
@@ -341,15 +342,15 @@ export default class extends Vue {
       width: '180px'
     },
     {
-      key: 'accountFrozen',
+      key: 'freezingMoney',
       label: '冻结金额'
     },
     {
-      key: 'cashMoney',
+      key: 'canExtractMoney',
       label: '可提现金额'
     },
     {
-      key: 'allAcountMoney',
+      key: 'accountBalance',
       label: '账户总金额'
     },
     {
@@ -383,8 +384,8 @@ export default class extends Vue {
     orderId: '',
     orderStatus: '',
     orderStatusName: '',
-    accountFrozen: '',
-    cashMoney: '',
+    freezingMoney: '',
+    canExtractMoney: '',
     applyForAccountFrozen: '', // 申请冻结金额
     frozenReason: '',
     unfrozenReason: '',
@@ -422,13 +423,13 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'accountFrozen',
+      key: 'freezingMoney',
       label: '冻结金额：',
       col: 24
     },
     {
       type: 7,
-      key: 'cashMoney',
+      key: 'canExtractMoney',
       label: '可提现金额：',
       col: 24
     },
@@ -496,13 +497,13 @@ export default class extends Vue {
     },
     {
       type: 7,
-      key: 'accountFrozen',
+      key: 'freezingMoney',
       label: '冻结金额：',
       col: 24
     },
     {
       type: 7,
-      key: 'cashMoney',
+      key: 'canExtractMoney',
       label: '可提现金额：',
       col: 24
     },
@@ -538,10 +539,10 @@ export default class extends Vue {
       { required: true, message: '请选择司机', trigger: 'blur' }
     ],
     applyForAccountFrozen: [
-      { required: true, message: '请选择是否开收据', trigger: 'blur' }
+      { required: true, message: '请填写申请冻结金额', trigger: 'blur' }
     ],
     applyForAccountUnfrozen: [
-      { required: true, message: '请选择是否开收据', trigger: 'blur' }
+      { required: true, message: '请填写申请解冻金额', trigger: 'blur' }
     ]
   }
   private isPass:Boolean = false
@@ -584,7 +585,7 @@ export default class extends Vue {
    */
   async getOpenCitys() {
     try {
-      let { data: res } = await GetOpenCityData()
+      let { data: res } = await getOfficeByType({ type: 2 })
       if (res.success) {
         let workCity = res.data.map(function(item: any) {
           return {
@@ -620,7 +621,7 @@ export default class extends Vue {
       this.listQuery.name && (params.name = this.listQuery.name)
       this.listQuery.busiType !== '' &&
         (params.busiType = this.listQuery.busiType)
-      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.joinManagerId !== '' && (params.joinManagerId = this.listQuery.joinManagerId)
 
       if (this.listQuery.time.length > 1) {
         params.startDate = this.listQuery.time[0]
@@ -753,8 +754,8 @@ export default class extends Vue {
       driverId: '',
       name: '',
       busiType: '',
-      gmId: '',
-      balance: '',
+      joinManagerId: '',
+      balance: 0,
       time: []
     }
     this.tags = []
