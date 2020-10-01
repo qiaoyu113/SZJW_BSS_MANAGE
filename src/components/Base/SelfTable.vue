@@ -2,7 +2,7 @@
   <div
     class="selfTable"
     :style="{
-      padding: isPC ? '0px 30px' :'0px'
+      padding: isPC && isP30 ? '0px 30px' :'0px'
     }"
   >
     <el-table

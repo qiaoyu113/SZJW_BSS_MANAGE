@@ -63,21 +63,21 @@
         :page="page"
         @onPageSize="handlePageSize"
       >
-        <template v-slot:a="scope">
+        <template v-slot:financialFlowCode="scope">
           <router-link to="#">
-            {{ scope.row.a }}
+            {{ scope.row.financialFlowCode }}
           </router-link>
         </template>
-        <template v-slot:b="scope">
-          {{ scope.row.b }}
+        <template v-slot:inFlowDate="scope">
+          {{ scope.row.inFlowDate | parseTime('{y}-{m}-{d}') }}
         </template>
-        <template v-slot:d="scope">
+        <template v-slot:driverCode="scope">
           <router-link to="#">
-            {{ scope.row.d }}
+            {{ scope.row.driverCode }}
           </router-link>
         </template>
-        <template v-slot:h="scope">
-          {{ scope.row.h }}
+        <template v-slot:busiDate="scope">
+          {{ scope.row.busiDate | parseTime('{y}-{m}-{d}') }}
         </template>
       </self-table>
     </div>
@@ -111,7 +111,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-
+import { getFlowList } from '@/api/driver-account'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -132,93 +132,90 @@ interface IState {
 export default class extends Vue {
   private listLoading:boolean = false;
   private dialogTableVisible:boolean = false;
-  private tableData:any[] = [
-    {}
-  ];
+  private tableData:any[] = [];
   private columns:any[] = [
     {
-      key: 'a',
+      key: 'financialFlowCode',
       label: '财务流水编号',
       slot: true,
       'min-width': '140px'
     },
     {
-      key: 'b',
+      key: 'inFlowDate',
       label: '进流水时间',
       slot: true,
       'min-width': '140px'
     },
     {
-      key: 'c',
+      key: 'inFlowMoney',
       label: '进流水金额',
       'min-width': '140px'
     },
     {
-      key: 'd',
+      key: 'driverCode',
       label: '司机编号',
       slot: true,
       'min-width': '140px'
     },
     {
-      key: 'e',
+      key: 'driverName',
       label: '司机姓名',
       'min-width': '140px'
     },
     {
-      key: 'f',
+      key: 'city',
       label: '所属城市',
       'min-width': '140px'
     },
     {
-      key: 'g',
+      key: 'busiTypeName',
       label: '业务线',
-      'width': '160px'
+      'width': '120px'
     },
     {
-      key: 'h',
+      key: 'gmName',
       label: '所属加盟经理',
-      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'i',
+      key: 'busiName',
       label: '业务名称',
       'min-width': '140px'
     },
     {
-      key: 'j',
+      key: 'busiCode',
       label: '业务流水编号',
       'min-width': '140px'
     },
     {
-      key: 'x',
+      key: 'busiDate',
       label: '业务发生时间',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'y',
+      key: 'busiMoney',
       label: '业务发生金额',
       'min-width': '140px'
     },
     {
-      key: 'z',
+      key: 'busiWay',
       label: '业务进流水方式',
-      'min-width': '140px'
+      'min-width': '160px'
     },
     {
-      key: 'k',
+      key: 'opName',
       label: '操作人',
-      'min-width': '140px'
+      'min-width': '120px'
     }
   ];
   private listQuery:IState = {
-    a: '',
-    b: '',
-    c: '',
-    d: '',
-    e: '',
-    f: '',
-    g: []
+    city: [],
+    busiType: '',
+    gmId: '',
+    driverCode: '',
+    driverName: '',
+    time: []
   }
 
   private formItem:any[] = [
@@ -230,7 +227,7 @@ export default class extends Vue {
       },
       label: '所属城市:',
       w: '100px',
-      key: 'c',
+      key: 'city',
       options: []
     },
     {
@@ -242,7 +239,7 @@ export default class extends Vue {
       },
       w: '100px',
       label: '业务线:',
-      key: 'e',
+      key: 'busiType',
       options: []
     },
     {
@@ -254,7 +251,7 @@ export default class extends Vue {
       },
       label: '所属加盟经理:',
       w: '100px',
-      key: 'd',
+      key: 'gmId',
       options: []
     },
     {
@@ -265,7 +262,7 @@ export default class extends Vue {
         clearable: true
       },
       label: '司机编号:',
-      key: 'a'
+      key: 'driverCode'
     },
     {
       type: 2,
@@ -275,22 +272,23 @@ export default class extends Vue {
         filterable: true
       },
       label: '司机姓名:',
-      key: 'b',
+      key: 'driverName',
       options: []
     },
     {
       type: 3,
-      col: 8,
+      col: 10,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true
       },
       label: '业务发生时间:',
-      key: 'g'
+      w: '120px',
+      key: 'time'
     },
     {
       type: 'mulBtn',
-      col: 16,
+      col: 14,
       slot: true,
       w: '0px'
     }
@@ -380,11 +378,19 @@ export default class extends Vue {
   }
   // 查询
   handleFilterClick() {
-
+    this.page.page = 1
+    this.getLists()
   }
   // 重置
   handleResetClick() {
-
+    this.listQuery = {
+      city: [],
+      busiType: '',
+      gmId: '',
+      driverCode: '',
+      driverName: '',
+      time: []
+    }
   }
   // 导出
   handleExportClick() {
@@ -397,8 +403,39 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
-  getLists() {
+  async getLists() {
+    try {
+      this.listLoading = true
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
+      }
+      if (this.listQuery.city && this.listQuery.city.length > 1) {
+        params.city = this.listQuery.city[1]
+      }
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
+      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
+      if (this.listQuery.time && this.listQuery.time.length > 0) {
+        let startDate = new Date(this.listQuery.time[0])
+        let endDate = new Date(this.listQuery.time[1])
+        params.startDate = startDate.setHours(0, 0, 0)
+        params.endDate = endDate.setHours(23, 59, 59)
+      }
+
+      let { data: res } = await getFlowList(params)
+      if (res.success) {
+        this.tableData = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
+    }
   }
   // 弹框关闭
   beforeClose() {
@@ -415,6 +452,9 @@ export default class extends Vue {
   // 打开弹框
   handleOpenClick() {
     this.dialogTableVisible = true
+  }
+  mounted() {
+    this.getLists()
   }
 }
 </script>
