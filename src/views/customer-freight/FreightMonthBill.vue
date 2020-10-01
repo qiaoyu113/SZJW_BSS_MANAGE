@@ -14,9 +14,9 @@
       label-width="90px"
       class="p15 SuggestForm"
     >
-      <template slot="ddd">
+      <template slot="monthBillDate">
         <el-date-picker
-          v-model="listQuery.ddd"
+          v-model="listQuery.monthBillDate"
           class="month-picker"
           type="monthrange"
           range-separator="-"
@@ -24,7 +24,7 @@
           end-placeholder="结束月份"
         />
       </template>
-      <template slot="cccc">
+      <template slot="checkStatus">
         <el-badge
           v-for="item in btns"
           :key="item.text"
@@ -32,8 +32,8 @@
           <el-button
             size="small"
             type="primary"
-            :plain="item.name !== listQuery.status"
-            @click="listQuery.status =item.name"
+            :plain="item.name !== listQuery.checkStatus"
+            @click="listQuery.checkStatus =item.name"
           >
             {{ item.text }}
           </el-button>
@@ -79,6 +79,7 @@
         ref="freighForm"
         v-loading="listLoading"
         :index="true"
+        row-key="id"
         :is-p30="false"
         :indexes="false"
         :operation-list="operationList"
@@ -90,8 +91,8 @@
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
       >
-        <template v-slot:createDate="scope">
-          {{ scope.row.createDate }}
+        <template v-slot:closeStatus="scope">
+          {{ scope.row.closeStatus ? '是':'否' }}
         </template>
         <template v-slot:op="scope">
           <el-dropdown
@@ -160,7 +161,10 @@
         :rules="dialogRole"
         @onPass="handlePassClick"
       >
-        <template slot="d">
+        <template v-slot:amount="scope">
+          {{ scope.row.amount }} 元
+        </template>
+        <template slot="fieldUrl">
           <el-upload
             ref="upload"
             :http-request="customUpload"
@@ -197,9 +201,9 @@
       @changeDrawer="changeDrawer"
     >
       <template slot-scope="slotProp">
-        <span>{{ slotProp.item.bussinessName }}</span>
-        <span>{{ slotProp.item.bussinessPhone }}</span>
-        <span>{{ slotProp.item.cityName }}</span>
+        <span>{{ slotProp.item.customerName }}</span>
+        <span>{{ slotProp.item.monthBillId }}</span>
+        <span>{{ slotProp.item.customerCity }}</span>
       </template>
     </PitchBox>
   </div>
@@ -213,7 +217,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
 import PitchBox from '@/components/PitchBox/index.vue'
-
+import { GetMonthlyBillList, ExportMonthlyBill, CustomerMonthlyBillCheck } from '@/api/customer-freight'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -235,23 +239,32 @@ interface IState {
 export default class extends Vue {
   // loading
   private listLoading:Boolean = false;
+  private ids:string|number[] = []
   private btns:any[] = [
     {
       name: '',
       text: '全部'
     },
     {
-      name: '1',
+      name: '0',
       text: '待对账'
     },
     {
-      name: '2',
+      name: '1',
       text: '已对账'
     }
   ]
   // 查询表单
   private listQuery:IState = {
-    cccc: []
+    monthBillId: '',
+    customerName: '',
+    customerCity: '',
+    dutyManagerId: '',
+    lineSaleId: '',
+    closeStatus: '',
+    projectId: '',
+    monthBillDate: [],
+    checkStatus: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -263,7 +276,7 @@ export default class extends Vue {
         maxlength: 50
       },
       label: '月账单编号:',
-      key: 'a'
+      key: 'monthBillId'
     },
     {
       type: 1,
@@ -273,7 +286,7 @@ export default class extends Vue {
         maxlength: 50
       },
       label: '客户姓名:',
-      key: 'b'
+      key: 'customerName'
     },
     {
       type: 2,
@@ -283,17 +296,8 @@ export default class extends Vue {
         filterable: true
       },
       label: '客户城市:',
-      key: 'c',
-      options: [
-        {
-          label: '全部',
-          value: 1
-        },
-        {
-          label: '北京',
-          value: 2
-        }
-      ]
+      key: 'customerCity',
+      options: []
     },
     {
       type: 2,
@@ -303,7 +307,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '上岗经理:',
-      key: 'cc',
+      key: 'dutyManagerId',
       options: []
     },
     {
@@ -314,7 +318,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '外线销售:',
-      key: 'ccc',
+      key: 'lineSaleId',
       options: []
     },
     {
@@ -325,30 +329,38 @@ export default class extends Vue {
         filterable: true
       },
       label: '是否封账:',
-      key: 'ccd',
+      key: 'closeStatus',
       options: [
         {
-          label: '全部',
+          label: '是',
           value: 1
         },
         {
-          label: '北京',
-          value: 2
+          label: '否',
+          value: 0
         }
       ]
     },
     {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请输入',
+        clearable: true,
+        filterable: true
+      },
+      label: '项目名称:',
+      key: 'projectId'
+    },
+    {
       col: 10,
       label: '月份:',
-      key: 'ddd',
-      type: 'ddd',
+      type: 'monthBillDate',
       slot: true
     },
     {
       col: 16,
       label: '对账状态:',
-      key: 'cccc',
-      type: 'cccc',
+      type: 'checkStatus',
       slot: true
     },
     {
@@ -359,78 +371,72 @@ export default class extends Vue {
     }
   ]
   // 表格数据
-  private tableData:any[] = [
-    {
-      a: 1
-    },
-    {
-      a: 2
-    }
-  ]
+  private tableData:any[] = []
   // 表格列
   private columns:any[] = [
     {
-      key: 'a',
+      key: 'monthBillId',
       label: '月账单编号',
       'min-width': '140px'
     },
     {
-      key: 'b',
+      key: 'monthBillDate',
       label: '月份',
       'min-width': '140px'
     },
     {
-      key: 'c',
+      key: 'customerName',
       label: '客户名称',
       'min-width': '140px'
     },
     {
-      key: 'd',
+      key: 'projectName',
       label: '项目名称',
       'min-width': '200px'
     },
     {
-      key: 'o',
+      key: 'customerCity',
       label: '客户城市',
       'min-width': '200px'
     },
     {
-      key: 'e',
+      key: 'turnoverTotalCount',
       label: '账单个数(个)',
       'min-width': '140px'
     },
     {
-      key: 'f',
+      key: 'waybillTotalCount',
       label: '出车单数(个)',
       'min-width': '140px'
     },
     {
-      key: 'p',
+      key: 'amount',
       label: '运费总额(元)',
       'min-width': '140px'
     },
     {
-      key: 'g',
+      key: 'closeStatus',
       label: '是否封账',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'aa',
+      key: 'checkStatus',
       label: '对账状态',
       'min-width': '140px'
     },
     {
-      key: 'h',
+      key: 'checkVoucherPath',
       label: '对账凭证',
       'min-width': '140px'
     },
     {
-      key: 'h1',
+      key: 'dutyManagerName',
       label: '上岗经理',
       'min-width': '140px'
     },
     {
-      key: 'h2',
+      key: 'lineSaleName',
       label: '外线销售',
       'min-width': '140px'
     },
@@ -455,7 +461,7 @@ export default class extends Vue {
   private page :PageObj= {
     page: 1,
     limit: 30,
-    total: 100
+    total: 0
   }
   // 弹窗
   private showDialog: boolean = false;
@@ -463,10 +469,15 @@ export default class extends Vue {
   private dialogTit: string = '';
   // 弹窗form
   private dialogForm: IState = {
+    monthBillId: '',
+    monthBillDate: '',
+    amount: '',
+    fieldUrl: '',
+    remark: ''
   }
   private fileList: []= [];
   private dialogRole: IState= {
-    d: [
+    fieldUrl: [
       { required: true, message: '请上传凭证', trigger: 'change' }
     ]
   }
@@ -476,26 +487,26 @@ export default class extends Vue {
     {
       type: 7,
       col: 12,
-      label: '月账单编号:',
-      key: 'a'
+      label: '月账单流水号:',
+      w: '120px',
+      key: 'monthBillId'
     },
     {
       type: 7,
       col: 12,
       label: '账单月份:',
-      key: 'b'
+      key: 'monthBillDate'
     },
     {
-      type: 7,
+      type: 'amount',
       col: 24,
       label: '运费总额:',
-      key: 'c'
+      slot: true
     },
     {
       col: 24,
       label: '上传凭证:',
-      key: 'd',
-      type: 'd',
+      type: 'fieldUrl',
       slot: true
     },
     {
@@ -519,15 +530,54 @@ export default class extends Vue {
   }
   // 重置表单
   private handleResetClick() {
-
+    this.listQuery = {
+      monthBillId: '',
+      customerName: '',
+      customerCity: '',
+      dutyManagerId: '',
+      lineSaleId: '',
+      closeStatus: '',
+      projectId: '',
+      monthBillDate: [],
+      checkStatus: ''
+    }
   }
   // 查询表单
   private handleFilterClick() {
-
+    this.page.page = 1
+    this.getLists()
   }
   // 导出
   private handleExportClick() {
-
+    let params:IState = {}
+    this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
+    this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
+    this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
+    this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
+    this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
+    this.listQuery.closeStatus !== '' && (params.closeStatus = this.listQuery.closeStatus)
+    this.listQuery.projectId !== '' && (params.projectId = this.listQuery.projectId)
+    this.listQuery.checkStatus !== '' && (params.checkStatus = this.listQuery.checkStatus)
+    if (this.listQuery.monthBillDate && this.listQuery.monthBillDate.length > 0) {
+      let monthBillDateStart = new Date(this.listQuery.monthBillDate[0])
+      let monthBillDateEnd = new Date(this.listQuery.monthBillDate[1])
+      params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
+      params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+    }
+    this.exportExcel(params)
+  }
+  // 导出或下载月账单
+  async exportExcel(params:IState) {
+    try {
+      let { data: res } = await ExportMonthlyBill(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`export excel fail:${err}`)
+    }
   }
   // 分页
   private handlePageSize(page:PageObj) {
@@ -536,7 +586,38 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
-  private getLists() {
+  private async getLists() {
+    try {
+      this.listLoading = true
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
+      }
+      this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
+      this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
+      this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
+      this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
+      this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
+      this.listQuery.closeStatus !== '' && (params.closeStatus = this.listQuery.closeStatus)
+      this.listQuery.projectId !== '' && (params.projectId = this.listQuery.projectId)
+      this.listQuery.checkStatus !== '' && (params.checkStatus = this.listQuery.checkStatus)
+      if (this.listQuery.monthBillDate && this.listQuery.monthBillDate.length > 0) {
+        let monthBillDateStart = new Date(this.listQuery.monthBillDate[0])
+        let monthBillDateEnd = new Date(this.listQuery.monthBillDate[1])
+        params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
+        params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+      }
+      let { data: res } = await GetMonthlyBillList(params)
+      if (res.success) {
+        this.tableData = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
+    }
   }
   // 更多操作
   private handleCommandChange(key:string, row:any) {
@@ -547,23 +628,62 @@ export default class extends Vue {
     } else if (key === 'checkBill') { // 客户对账
       this.dialogTit = '月账单客户确认'
       this.dialogFormItem = []
+      this.resetDialogForm()
+      this.dialogForm.monthBillId = row.monthBillId
+      this.dialogForm.monthBillDate = row.monthBillDate
+      this.dialogForm.amount = row.amount
+      this.ids = [row.id]
       setTimeout(() => {
         this.dialogFormItem.push(...this.dialogItem)
         this.showDialog = true
       }, 20)
     } else if (key === 'download') { // 下载账单
-      console.log('下载账单')
+      let params:IState = {
+        monthBillId: row.id
+      }
+      this.exportExcel(params)
     }
   }
   // 确认弹窗
   private handlePassClick(valid: any) {
-    console.log('xxxx:', valid)
+    this.saveData()
   }
   private async confirm(done: any) {
     ((this.$refs.dialogForm) as any).submitForm()
   }
+  // 弹框表单保存
+  async saveData() {
+    try {
+      let params:IState = {
+        fieldUrl: this.dialogForm.fieldUrl,
+        id: this.ids
+      }
+      let { data: res } = await CustomerMonthlyBillCheck(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        this.getLists()
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`save data fail:${err}`)
+    }
+  }
+  // 重置弹框表单
+  resetDialogForm() {
+    this.dialogForm = {
+      monthBillId: '',
+      monthBillDate: '',
+      amount: '',
+      fieldUrl: '',
+      remark: ''
+    }
+  }
   // 关闭弹窗清除数据
   private handleClosed() {
+    this.showDialog = false
+    this.resetDialogForm()
+    this.ids = [];
     (this.$refs.freighForm as any).toggleRowSelection()
   }
   private customUpload(param: any) {
@@ -617,6 +737,7 @@ export default class extends Vue {
         this.$message.error('请先选择')
         return
       }
+      this.ids = this.multipleSelection.map(item => item.id)
       this.dialogTit = '批量月账单客户确认'
       this.showDialog = true
       this.dialogFormItem = this.dialogItem.slice(3)
@@ -634,6 +755,9 @@ export default class extends Vue {
     if (this.multipleSelection.length === 0) {
       this.drawer = false
     }
+  }
+  mounted() {
+    this.getLists()
   }
 }
 </script>

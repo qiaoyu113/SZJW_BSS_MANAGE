@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 let prefix = '/mock/112/v2/bill'
+let prefix2 = '/mock/112'
 
 /**
  * XXXX
@@ -43,4 +44,12 @@ export const accountUnfreeze = (data: any) =>
     url: `${prefix}/v2/wt-driver-account/management/unfreeze`,
     method: 'post',
     data
+  })
+
+// 获取财务流水列表
+export const getFlowList = (params: any) =>
+  request({
+    url: `${prefix2}/v2/wt-driver-account/flow/list`,
+    method: 'get',
+    params
   })

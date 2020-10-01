@@ -1,13 +1,50 @@
 import request from '@/utils/request'
 // 客户运费账户
-let prefix = '/driver'
+let prefix = '/mock/112'
 
-/**
- * XXXX
- */
-export const CreateActivity = (data: any) =>
+// 客户运费流水列表
+export const GetFreightChargeList = (params: any) =>
   request({
-    url: `${prefix}/v1/driver/clue/create/manually`,
+    url: `${prefix}/v2/customerBilling/freightCharge/list`,
+    method: 'get',
+    params
+  })
+
+// 客户运费流水列表导出
+export const ExportFreightChargeList = (params: any) =>
+  request({
+    url: `${prefix}/v2/customerBilling/freightCharge/export`,
+    method: 'get',
+    params
+  })
+
+// 客户运费流水-标记付款
+export const BjfreightChargeReceive = (data: any) =>
+  request({
+    url: `${prefix}/v2/customerBilling/freightCharge/receive`,
+    method: 'post',
+    data
+  })
+// 获取客户月账单
+export const GetMonthlyBillList = (params: any) =>
+  request({
+    url: `${prefix}/v2/customerBilling/monthlyBill/list`,
+    method: 'get',
+    params
+  })
+
+// 客户运费月账单导出
+export const ExportMonthlyBill = (params: any) =>
+  request({
+    url: `${prefix}/v2/customerBilling/monthlyBill/export`,
+    method: 'get',
+    params
+  })
+
+// 客户运费月账单--客户确认
+export const CustomerMonthlyBillCheck = (data: any) =>
+  request({
+    url: `${prefix}/v2/customerBilling/monthlyBill/check`,
     method: 'post',
     data
   })
