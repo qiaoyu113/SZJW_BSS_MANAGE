@@ -101,7 +101,7 @@
         </el-row>
       </SectionContainer>
 
-      <SectionContainer
+      <!-- <SectionContainer
         title="运费信息"
         :md="true"
       >
@@ -148,7 +148,7 @@
             />
           </el-col>
         </el-row>
-      </SectionContainer>
+      </SectionContainer> -->
 
       <SectionContainer
         title="客户信息"
@@ -184,6 +184,76 @@
           </el-col>
         </el-row>
       </SectionContainer>
+
+      <SectionContainer
+        title="运费信息"
+        :md="true"
+      >
+        <el-col :span="isPC ? 24 : 24">
+          <DetailItem
+            name="运费金额"
+            :value="OwnerDetail.lineInfoVO.lineSaleName"
+          />
+          <!--table表单-->
+          <div
+            class="table_center"
+            style="margin-top:20px;"
+          >
+            <el-table
+              :data="logLists"
+              :row-style="{height: '20px'}"
+              :cell-style="{padding: '5px 0'}"
+              size="mini"
+              fit
+              :border="isPC"
+              stripe
+              highlight-current-row
+              style="width: 100%"
+            >
+              <el-table-column
+                label="序号"
+                type="index"
+                width="80"
+                align="left"
+              />
+              <el-table-column
+                align="left"
+                label="变动类型"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.changeType }}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                label="变更前"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.beforeStateName }}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                align="left"
+                label="变更后"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.afterStateName }}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                align="left"
+                label="变更记录"
+              >
+                <template slot-scope="{row}">
+                  {{ row.changeLog }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-col>
+      </SectionContainer>
     </div>
   </div>
 </template>
@@ -191,7 +261,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { freightDetail } from '@/api/freight'
+import { freightDetail, freightDetailLog } from '@/api/freight'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
@@ -206,6 +276,7 @@ import '@/styles/common.scss'
     })
 
 export default class extends Vue {
+    private logLists: any[] = []
     private id: any = ''
     private tabVal: any = '1'
     private showReachPhone: any = true
@@ -461,10 +532,21 @@ export default class extends Vue {
       }
     }
 
+    // 请求列表
+    private async getList(value: any) {
+      const { data } = await freightDetailLog({ wayBillId: value })
+      if (data.success) {
+        this.logLists = data.data
+      } else {
+        this.$message.error(data)
+      }
+    }
+
     // 生命周期
     created() {
       this.id = this.$route.query.id
       this.fetchData(this.id)
+      this.getList(this.id)
     }
 }
 </script>

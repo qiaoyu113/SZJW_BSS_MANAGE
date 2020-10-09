@@ -2,7 +2,7 @@
   <div
     class="selfTable"
     :style="{
-      padding: isPC ? '0px 30px' :'0px'
+      padding: isPC && isP30 ? '0px 30px' :'0px'
     }"
   >
     <el-table
@@ -42,6 +42,7 @@
         :min-width="item.width || 100"
         :label="item.label"
         :fixed="item.fixed"
+        v-bind="item.attrs"
       >
         <template
           slot-scope="scope"
@@ -129,6 +130,7 @@ export default class extends Vue {
   @Prop({ default: true }) index!:boolean
   @Prop({ default: true }) isP30!:boolean
   @Prop({ default: false }) indexes!:boolean;
+  @Prop({ default: () => SettingsModule.tableHeight }) height!:number;
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }
@@ -142,10 +144,7 @@ export default class extends Vue {
 
   // 多选数组
   multipleSelection:any[] =[]
-  // 表格高度
-  get height() {
-    return SettingsModule.tableHeight
-  }
+
   /**
    * 分页和切换页码
    */

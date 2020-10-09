@@ -42,6 +42,16 @@ const driverFreight: RouteConfig = {
         title: 'driverFreightMonthBill',
         noCache: false
       }
+    },
+    {
+      path: 'adjustmentList',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/AdjustmentList.vue'),
+      name: 'AdjustmentList',
+      meta: {
+        apiUrl: 'root',
+        title: 'adjustmentList',
+        noCache: false
+      }
     }
   ]
 }

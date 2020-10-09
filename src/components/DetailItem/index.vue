@@ -1,6 +1,6 @@
 <template>
   <div :class="isPC ? 'DetailItem' : 'DetailItem-m'">
-    <div :class="detail-title">
+    <div class="detail-title">
       {{ name }}
     </div>
     <img
