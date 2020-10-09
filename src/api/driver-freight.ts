@@ -48,3 +48,33 @@ export const driverMonthlyBillCheck = (params: any) =>
     method: 'get',
     params
   })
+
+// 司机运费调整列表
+export const GetShippingChangeList = (params: any) =>
+  request({
+    url: `${prefix}/v2/driverBilling/shippingChange/list`,
+    method: 'get',
+    params
+  })
+  // 司机运费调整列表导出
+export const GetShippingChangeExport = (params: any) =>
+  request({
+    url: `${prefix}/v2/driverBilling/shippingChange/export`,
+    method: 'get',
+    params
+  })
+
+// 司机运费调整-新增
+export const SaveShippingChange = (data: any) =>
+  request({
+    url: `${prefix}/v2/driverBilling/shippingChange/save`,
+    method: 'post',
+    data
+  })
+
+// 获取司机运费调整原因列表
+export const GetSubjectList = () =>
+  request({
+    url: `${prefix}/v2/driverBilling/subject`,
+    method: 'get'
+  })
