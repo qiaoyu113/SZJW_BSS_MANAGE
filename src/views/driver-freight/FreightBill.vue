@@ -46,7 +46,7 @@
     <div class="table_box">
       <div class="middle">
         <div class="count">
-          筛选结果（1000条）
+          筛选结果（{{ page.total }}条）
         </div>
       </div>
       <!-- 表格 -->
@@ -54,6 +54,7 @@
         ref="freighForm"
         v-loading="listLoading"
         row-key="id"
+        :height="tableHeight"
         :index="true"
         :is-p30="false"
         :indexes="false"
@@ -61,11 +62,21 @@
         :table-data="tableData"
         :columns="columns"
         :page="page"
-        style="overflow: inherit;"
+        style="overflow: initial;"
         @olclick="handleOlClick"
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
       >
+        <template v-slot:remarks="scope">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="scope.row.remarks"
+            placement="top"
+          >
+            <span>{{ scope.row.remarks }}</span>
+          </el-tooltip>
+        </template>
         <template v-slot:departureDate="scope">
           {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}
         </template>
@@ -141,17 +152,12 @@
         </template>
         <template slot="fileUrl">
           <el-upload
-            ref="upload"
-            :http-request="customUpload"
-            :on-remove="handleRemove"
-            :on-change="handleChange"
-            :on-exceed="handleExceed"
-            :file-list="fileList"
-            :auto-upload="true"
-            :multiple="false"
+            :http-request="uploadFile"
+            :show-file-list="false"
             :limit="1"
-            action="/line/gmv/importFile"
-            :show-file-list="true"
+            :before-upload="beforeFileUpload"
+            action="/121"
+            :file-list="filelist"
           >
             <el-button
               size="small"
@@ -163,7 +169,7 @@
               slot="tip"
               class="el-upload__tip"
             >
-              支持扩展名：.rar .zip .doc .docx .pdf .jpg...
+              支持扩展名:不超过10M,.rar .zip .doc .docx .pdf
             </div>
           </el-upload>
         </template>
@@ -217,6 +223,7 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private filelist:IState[] = []
   // 弹框选中的数据的id集合
   private ids:number|string[] = []
   // loading
@@ -438,7 +445,11 @@ export default class extends Vue {
     {
       key: 'remarks',
       label: '收款备注',
-      'min-width': '140px'
+      slot: true,
+      'min-width': '140px',
+      attrs: {
+        'show-overflow-tooltip': true
+      }
     },
     {
       key: 'gmName',
@@ -446,7 +457,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'driverCity',
+      key: 'cityName',
       label: '司机城市',
       'min-width': '140px'
     },
@@ -532,6 +543,10 @@ export default class extends Vue {
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+  get tableHeight() {
+    let otherHeight = 490
+    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   // 重置表单
   private handleResetClick() {
@@ -624,6 +639,7 @@ export default class extends Vue {
       let { data: res } = await GetFreightChargeList(params)
       if (res.success) {
         this.tableData = res.data
+        this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -656,6 +672,42 @@ export default class extends Vue {
     this.dialogForm.amount = ''
     this.dialogForm.fileUrl = ''
     this.dialogForm.remark = ''
+  }
+  // 上传文件
+  async uploadFile(file:any) {
+    try {
+      let params = {
+        expire: -1,
+        folder: 'img',
+        isEncode: true
+      }
+      let formData = new FormData()
+      formData.append('file', file.file)
+      let { data: res } = await Upload(params, formData)
+      if (res.success) {
+        this.dialogForm.fileUrl = res.data.url
+        this.$message.success('上传成功')
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`upload fail:${err}`)
+    }
+  }
+  // 上传文件前的校验
+  beforeFileUpload(file:any) {
+    this.filelist = []
+    const isType = file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1
+    const isSize = file.size / 1024 / 1024 < 10
+    if (isType) {
+      this.$message.error('上传文件只能是 .rar .zip .doc .docx jpg等 格式!')
+      return false
+    }
+    if (!isSize) {
+      this.$message.error('上传文件大小不能超过 10MB!')
+      return false
+    }
+    return true
   }
   // 确认弹窗
   private handlePassClick(valid: any) {
@@ -692,37 +744,7 @@ export default class extends Vue {
     this.showDialog = false;
     (this.$refs.freighForm as any).toggleRowSelection()
   }
-  private customUpload(param: any) {
-    // 自定义上传
-    const formData = new FormData()
-    formData.append('file', param.file)
-    fileUpload(formData)
-      .then(({ data } : any) => {
-        if (data.success) {
-          this.$message.success('上传成功')
-        } else {
-          this.fileList = []
-          this.$message({
-            showClose: true,
-            duration: 0,
-            message: data.errorMsg,
-            type: 'error'
-          })
-        }
-      })
-      .catch(() => {
-        this.fileList = []
-      })
-  }
-  private handleRemove(file: any, fileList: any) {
-    this.fileList = fileList
-  }
-  private handleChange(file: any, fileList: any) {
-    this.fileList = fileList.slice(-3)
-  }
-  private handleExceed(files: any, fileList: any) {
-    this.$message.warning(`当前限制选择 1 个文件`)
-  }
+
   // table选择框
   private handleSelectionChange(val: any) {
     this.multipleSelection = val

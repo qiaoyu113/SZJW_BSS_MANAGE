@@ -56,6 +56,7 @@
       <self-table
         v-loading="listLoading"
         :index="false"
+        :height="tableHeight"
         :is-p30="false"
         :operation-list="[]"
         :table-data="tableData"
@@ -90,6 +91,7 @@
       :cancel="beforeClose"
       :confirm="handleConfirmClick"
       append-to-body
+      @closed="handleClosed"
     >
       <self-form
         ref="addFlow"
@@ -111,7 +113,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { getFlowList } from '@/api/driver-account'
+import { getFlowList, exportFlowList, saveFlowData } from '@/api/driver-account'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -294,22 +296,30 @@ export default class extends Vue {
     }
   ]
 
-  private addForm:IState = {}
+  private addForm:IState = {
+    driverCode: '',
+    driverName: '',
+    orderCode: '',
+    orderStatus: '',
+    billingType: '',
+    amount: '',
+    reason: ''
+  }
   private addFormItem:any[] = [
     {
       type: 1,
       label: '司机编号:',
-      key: 'a'
+      key: 'driverCode'
     },
     {
       type: 7,
       label: '司机姓名:',
-      key: 'b'
+      key: 'driverName'
     },
     {
       type: 2,
       label: '选择订单:',
-      key: 'c',
+      key: 'orderCode',
       tagAttrs: {
         placeholder: '请选择',
         clearable: true,
@@ -320,17 +330,31 @@ export default class extends Vue {
     {
       type: 7,
       label: '订单状态:',
-      key: 'd'
+      key: 'orderStatus'
     },
     {
-      type: 1,
+      type: 2,
       tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 10,
-        clearable: true
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
       },
       label: '计费类型:',
-      key: 'e'
+      key: 'billingType',
+      options: [
+        {
+          label: '固定金额',
+          value: 1
+        },
+        {
+          label: '运费比例',
+          value: 2
+        },
+        {
+          label: '服务费比例',
+          value: 3
+        }
+      ]
     },
     {
       type: 1,
@@ -340,29 +364,29 @@ export default class extends Vue {
         clearable: true
       },
       label: '申请调流水金额:',
-      key: 'f'
+      key: 'amount'
     },
     {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        maxlength: 300,
+        maxlength: 50,
         type: 'textarea',
         'show-word-limit': true,
         rows: '5'
       },
       label: '申请调流水原因:',
-      key: 'g'
+      key: 'reason'
     }
   ]
   private rules:IState = {
-    c: [
+    orderCode: [
       { required: true, message: '请选择选择订单', trigger: 'blur' }
     ],
-    e: [
+    billingType: [
       { required: true, message: '请输入计费类型', trigger: 'blur' }
     ],
-    f: [
+    amount: [
       { required: true, message: '请输入申请调流水金额', trigger: 'blur' }
     ]
   }
@@ -370,11 +394,15 @@ export default class extends Vue {
   private page :PageObj= {
     page: 1,
     limit: 30,
-    total: 100
+    total: 0
   }
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+  get tableHeight() {
+    let otherHeight = 440
+    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   // 查询
   handleFilterClick() {
@@ -393,8 +421,32 @@ export default class extends Vue {
     }
   }
   // 导出
-  handleExportClick() {
+  async handleExportClick() {
+    try {
+      let params:IState = {}
+      if (this.listQuery.city && this.listQuery.city.length > 1) {
+        params.city = this.listQuery.city[1]
+      }
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
+      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
+      if (this.listQuery.time && this.listQuery.time.length > 0) {
+        let startDate = new Date(this.listQuery.time[0])
+        let endDate = new Date(this.listQuery.time[1])
+        params.startDate = startDate.setHours(0, 0, 0)
+        params.endDate = endDate.setHours(23, 59, 59)
+      }
+      let { data: res } = await exportFlowList(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`export excel fail:${err}`)
+    }
   }
   // 分页
   handlePageSize(page:PageObj) {
@@ -428,6 +480,7 @@ export default class extends Vue {
       let { data: res } = await getFlowList(params)
       if (res.success) {
         this.tableData = res.data
+        this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -447,7 +500,42 @@ export default class extends Vue {
   }
   // 表单验证通过
   handlePassClick(valid:boolean) {
-    this.dialogTableVisible = false
+    this.saveData()
+  }
+  // 关闭弹框
+  handleClosed() {
+    this.addForm = {
+      driverCode: '',
+      driverName: '',
+      orderCode: '',
+      orderStatus: '',
+      billingType: '',
+      amount: '',
+      reason: ''
+    }
+  }
+  // 提交弹框表单
+  async saveData() {
+    try {
+      let params = {
+        driverCode: this.addForm.driverCode,
+        driverName: this.addForm.driverName,
+        orderCode: this.addForm.orderCode,
+        orderStatus: this.addForm.orderStatus,
+        billingType: this.addForm.billingType,
+        amount: this.addForm.amount,
+        reason: this.addForm.reason
+      }
+      let { data: res } = await saveFlowData(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        this.getLists()
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`save data fail:${err}`)
+    }
   }
   // 打开弹框
   handleOpenClick() {
