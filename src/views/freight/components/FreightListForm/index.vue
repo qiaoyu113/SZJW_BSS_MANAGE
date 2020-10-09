@@ -164,6 +164,7 @@
                     v-model="DateValueChild"
                     :class="isPC ? '' : 'el-date-m'"
                     :editable="false"
+                    :picker-options="pickerOptions"
                     type="daterange"
                     value-format="timestamp"
                     start-placeholder="开始日期"
@@ -301,6 +302,55 @@ export default class extends Vue {
     { dictValue: '1', dictLabel: '共享' },
     { dictValue: '2', dictLabel: '专车' }
   ]
+  private pickerOptions: any = {
+    shortcuts: [ {
+      text: '本月',
+      onClick(picker: any) {
+        const end = new Date()
+        end.setTime(end.getTime() - 3600 * 1000 * 24)
+        const start = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+        picker.$emit('pick', [start, end])
+      }
+    }, {
+      text: '上月',
+      onClick(picker: any) {
+        let now = new Date()// 当前日期
+        let nowYear = now.getFullYear()// 当前年
+        nowYear += (nowYear < 2000) ? 1900 : 0//
+        let lastMonthDate = new Date()// 上月日期
+        lastMonthDate.setDate(1)
+        lastMonthDate.setMonth(lastMonthDate.getMonth() - 1)
+        let lastMonth = lastMonthDate.getMonth()
+        // 获得某月天数
+        let monthStartDate = new Date(nowYear, lastMonth, 1)
+        let monthEndDate = new Date(nowYear, lastMonth + 1, 1)
+        let subtract = Number(monthEndDate) - Number(monthStartDate)
+        let days = subtract / (1000 * 60 * 60 * 24)
+        const start = new Date(nowYear, lastMonth, 1)
+        const end = new Date(nowYear, lastMonth, days)
+        picker.$emit('pick', [start, end])
+      }
+    }, {
+      text: '前三月',
+      onClick(picker: any) {
+        let now = new Date()// 当前日期
+        let nowYear = now.getFullYear()// 当前年
+        nowYear += (nowYear < 2000) ? 1900 : 0//
+        let lastMonthDate = new Date()// 上月日期
+        lastMonthDate.setDate(1)
+        lastMonthDate.setMonth(lastMonthDate.getMonth() - 3)
+        let lastMonth = lastMonthDate.getMonth()
+        // 获得某月天数
+        let monthStartDate = new Date(nowYear, lastMonth, 1)
+        let monthEndDate = new Date(nowYear, lastMonth + 3, 1)
+        let subtract = Number(monthEndDate) - Number(monthStartDate)
+        let days = subtract / (1000 * 60 * 60 * 24)
+        const start = new Date(nowYear, lastMonth, 1)
+        const end = new Date(nowYear, lastMonth, days)
+        picker.$emit('pick', [start, end])
+      }
+    }]
+  }
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
