@@ -93,50 +93,24 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('预估运费') > -1"
-            :key="checkList.length + 'g'"
+            v-if="checkList.indexOf('出车状态') > -1"
+            :key="checkList.length + 'f'"
             align="left"
-            label="预估运费(元)"
-          >
-            <template slot-scope="scope">
-              <p>{{ Number(scope.row.predictCost).toFixed(2) | DataIsNull }}</p>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('加盟侧运费') > -1"
-            :key="checkList.length + 'k'"
-            align="left"
-            label="加盟侧运费（元）"
-          >
-            <template slot-scope="scope">
-              <p>
-                <span v-if="scope.row.gmStatusCode === 2">未出车</span>
-                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
-              </p>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('外线侧运费') > -1"
-            :key="checkList.length + 'm'"
-            align="left"
-            label="外线侧运费（元）"
-          >
-            <template slot-scope="scope">
-              <span v-if="scope.row.lineStatusCode === 2">未出车</span>
-              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            v-if="checkList.indexOf('有无差额') > -1"
-            :key="checkList.length + 'n'"
-            align="left"
-            label="有无差额（元）"
+            label="出车状态"
           >
             <template slot-scope="{row}">
-              {{ Number(row.feeDiffValue).toFixed(2) || 0 }}
+              {{ row.departStatus | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('运费金额') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="运费金额（元）"
+          >
+            <template slot-scope="{row}">
+              <p>{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</p>
             </template>
           </el-table-column>
 
@@ -159,6 +133,76 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('预估运费') > -1"
+            :key="checkList.length + 'g'"
+            align="left"
+            label="预估运费(元)"
+          >
+            <template slot-scope="scope">
+              <p>{{ Number(scope.row.predictCost).toFixed(2) | DataIsNull }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('司机运费上报状态') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="司机运费上报状态"
+          >
+            <template slot-scope="{row}">
+              {{ row.driverFreightFeeUpStatus | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('加盟侧运费') > -1"
+            :key="checkList.length + 'k'"
+            align="left"
+            label="司机运费上报金额（元）"
+          >
+            <template slot-scope="scope">
+              <p>
+                <span v-if="scope.row.gmStatusCode === 2">未出车</span>
+                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
+              </p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('客户运费上报状态') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="客户运费上报状态"
+          >
+            <template slot-scope="{row}">
+              {{ row.customerFreightFeeUpStatus | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('外线侧运费') > -1"
+            :key="checkList.length + 'm'"
+            align="left"
+            label="客户运费上报金额（元）"
+          >
+            <template slot-scope="scope">
+              <span v-if="scope.row.lineStatusCode === 2">未出车</span>
+              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('有无差额') > -1"
+            :key="checkList.length + 'n'"
+            align="left"
+            label="有无差额（元）"
+          >
+            <template slot-scope="{row}">
+              {{ Number(row.feeDiffValue).toFixed(2) || 0 }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
             v-if="checkList.indexOf('加盟经理') > -1"
             :key="checkList.length + 'h'"
             align="left"
@@ -177,6 +221,17 @@
           >
             <template slot-scope="{row}">
               <span>{{ row.dutyManagerName + '/' + row.dutyManagerPhone | DataIsNull }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('运费更新时间') > -1"
+            :key="checkList.length + 'a'"
+            align="left"
+            label="运费更新时间"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.freightUpdate | TimestampYMD }}</span>
             </template>
           </el-table-column>
 
@@ -213,7 +268,7 @@
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
-                    确认
+                    {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     name="ownerlist_detail_dropdown"
@@ -221,12 +276,12 @@
                   >
                     详情
                   </el-dropdown-item>
-                  <el-dropdown-item
+                  <!-- <el-dropdown-item
                     name="ownerlist_edit_dropdown"
                     @click.native="goLog(scope.row.wayBillId)"
                   >
                     日志
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -472,6 +527,11 @@ export default class extends Vue {
       '出车日期',
       '出车单号',
       '司机姓名',
+      '出车状态',
+      '运费金额',
+      '司机运费上报状态',
+      '客户运费上报状态',
+      '运费更新时间',
       '线路名称',
       '预估运费',
       '加盟侧运费',

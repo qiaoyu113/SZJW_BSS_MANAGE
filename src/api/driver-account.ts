@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
-let prefix = '/mock/112/v2/bill'
-let prefix2 = '/mock/112'
+let prefix = '/mock/112'
 
 /**
  * XXXX
@@ -17,11 +16,11 @@ export const CreateActivity = (data: any) =>
    *
    * 获取梧桐账户列表
    */
-export const getAcountList = (params: any) =>
+export const getAcountList = (data: any) =>
   request({
     url: `${prefix}/v2/wt-driver-account/management/list`,
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 
 /**
@@ -49,7 +48,7 @@ export const accountUnfreeze = (data: any) =>
 // 获取财务流水列表
 export const getFlowList = (params: any) =>
   request({
-    url: `${prefix2}/v2/wt-driver-account/flow/list`,
+    url: `${prefix}/v2/wt-driver-account/flow/list`,
     method: 'get',
     params
   })
