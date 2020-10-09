@@ -91,3 +91,14 @@ export const GetSpecifiedRoleList = (params: any) =>
     url: `${prefix2 || '/base'}/v1/base/role/getSpecifiedRoleList?roleId=` + params,
     method: 'post'
   })
+
+/**
+   *
+   * 获取出车详情运费列表
+   */
+export const freightDetailLog = (params: any) =>
+  request({
+    url: `${prefix || '/waybill'}/v2/waybill/getFreightDetailLog`,
+    method: 'post',
+    params
+  })
