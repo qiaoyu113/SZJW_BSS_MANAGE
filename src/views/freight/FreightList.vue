@@ -268,7 +268,7 @@
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
-                    确认
+                    {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     name="ownerlist_detail_dropdown"
@@ -276,12 +276,12 @@
                   >
                     详情
                   </el-dropdown-item>
-                  <el-dropdown-item
+                  <!-- <el-dropdown-item
                     name="ownerlist_edit_dropdown"
                     @click.native="goLog(scope.row.wayBillId)"
                   >
                     日志
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
