@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
-let prefix = '/mock/112'
+let prefix = '/mock/112/v2/bill'
+let prefix2 = '/mock/112'
 
 /**
  * XXXX

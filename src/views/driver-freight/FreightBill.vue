@@ -175,18 +175,6 @@
         </template>
       </self-form>
     </SelfDialog>
-    <PitchBox
-      :drawer.sync="drawer"
-      :drawer-list="multipleSelection"
-      @deletDrawerList="deletDrawerList"
-      @changeDrawer="changeDrawer"
-    >
-      <template slot-scope="slotProp">
-        <span>{{ slotProp.item.driverName }}</span>
-        <span>{{ slotProp.item.recordNo }}</span>
-        <span>{{ slotProp.item.amount }}元</span>
-      </template>
-    </PitchBox>
   </div>
 </template>
 <script lang="ts">
@@ -197,7 +185,6 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
-import PitchBox from '@/components/PitchBox/index.vue'
 
 import { month, lastmonth, threemonth } from './components/date'
 
@@ -218,8 +205,7 @@ interface IState {
   components: {
     SelfTable,
     SelfForm,
-    SelfDialog,
-    PitchBox
+    SelfDialog
   }
 })
 export default class extends Vue {
@@ -471,12 +457,10 @@ export default class extends Vue {
   ]
   // 全选
   private operationList: any[] = [
-    { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: '3' },
     { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1' },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
   ]
   private multipleSelection: any[] = []
-  private drawer: boolean= false;
 
   // 分页
   private page :PageObj= {
@@ -752,13 +736,7 @@ export default class extends Vue {
   // 批量操作
   private handleOlClick(item: any) {
     const { key } = item
-    if (key === '3') {
-      if (this.multipleSelection.length > 0) {
-        this.drawer = true
-      } else {
-        this.$message.error('请先选择')
-      }
-    } else if (key === '2') {
+    if (key === '2') {
       (this.$refs.freighForm as any).toggleRowSelection()
     } else if (key === '1') {
       if (this.multipleSelection.length === 0) {
@@ -772,19 +750,7 @@ export default class extends Vue {
       this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-  // 关闭查看已选
-  private changeDrawer(val: any) {
-    this.drawer = val
-  }
 
-  // 删除选中项目
-  private deletDrawerList(item: any, i: any) {
-    let arr: any[] = [item];
-    (this.$refs.freighForm as any).toggleRowSelection(arr)
-    if (this.multipleSelection.length === 0) {
-      this.drawer = false
-    }
-  }
   mounted() {
     this.getLists()
   }
