@@ -48,7 +48,7 @@ export const accountUnfreeze = (data: any) =>
 // 获取财务流水列表
 export const getFlowList = (params: any) =>
   request({
-    url: `${prefix2}/v2/wt-driver-account/flow/list`,
+    url: `${prefix}/v2/wt-driver-account/flow/list`,
     method: 'get',
     params
   })
