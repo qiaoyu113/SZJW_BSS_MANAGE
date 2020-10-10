@@ -200,8 +200,8 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
-import { GetMonthlyBillList, ExportMonthlyBill, CustomerMonthlyBillCheck } from '@/api/customer-freight'
-import { Upload } from '@/api/common'
+import { GetMonthlyBillList, ExportMonthlyBill, CustomerMonthlyBillCheck, GetProjectSearch } from '@/api/customer-freight'
+import { Upload, GetSpecifiedRoleList, GetOpenCityData } from '@/api/common'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -223,6 +223,10 @@ export default class extends Vue {
   private filelist:IState[] = []
   // loading
   private listLoading:Boolean = false;
+  private postManagerOptions:IState[] = []; // 上岗经理列表
+  private outsideSalesOptions:IState[] = [];// 外线销售列表
+  private workCityOptions:IState[] = [];// 客户城市列表
+  private projectListOptions:IState[] = [];// 项目列表
   private ids:string|number[] = []
   private btns:any[] = [
     {
@@ -281,7 +285,7 @@ export default class extends Vue {
       },
       label: '客户城市:',
       key: 'customerCity',
-      options: []
+      options: this.workCityOptions
     },
     {
       type: 2,
@@ -292,7 +296,7 @@ export default class extends Vue {
       },
       label: '上岗经理:',
       key: 'dutyManagerId',
-      options: []
+      options: this.postManagerOptions
     },
     {
       type: 2,
@@ -303,7 +307,7 @@ export default class extends Vue {
       },
       label: '外线销售:',
       key: 'lineSaleId',
-      options: []
+      options: this.outsideSalesOptions
     },
     {
       type: 2,
@@ -333,7 +337,8 @@ export default class extends Vue {
         filterable: true
       },
       label: '项目名称:',
-      key: 'projectId'
+      key: 'projectId',
+      options: this.projectListOptions
     },
     {
       col: 10,
@@ -489,6 +494,7 @@ export default class extends Vue {
       col: 24,
       label: '上传凭证:',
       type: 'fieldUrl',
+      key: 'fieldUrl',
       slot: true
     },
     {
@@ -514,6 +520,26 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  // 获取加盟经理、上岗经理、外线销售
+  async getManagerList(roleType:number) {
+    try {
+      let params:IState = {
+        roleType
+      }
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        return res.data.map((item:IState) => ({
+          label: item.name,
+          value: item.id
+        }))
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get mamager list fail:${err}`)
+    }
+  }
+
   // 重置表单
   private handleResetClick() {
     this.listQuery = {
@@ -647,6 +673,7 @@ export default class extends Vue {
       }
       let { data: res } = await CustomerMonthlyBillCheck(params)
       if (res.success) {
+        this.showDialog = false
         this.$message.success('操作成功')
         this.getLists()
       } else {
@@ -668,7 +695,6 @@ export default class extends Vue {
   }
   // 关闭弹窗清除数据
   private handleClosed() {
-    this.showDialog = false
     this.resetDialogForm()
     this.ids = [];
     (this.$refs.freighForm as any).toggleRowSelection()
@@ -729,9 +755,53 @@ export default class extends Vue {
       this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-
+  // 获取城市列表
+  async getCityList() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        let cityOptions:IState[] = res.data.map((item:any) => ({
+          label: item.name,
+          value: item.code
+        }))
+        this.workCityOptions.push(...cityOptions)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get open city fail:${err}`)
+    }
+  }
+  // 获取项目列表
+  async getProjectSearch() {
+    try {
+      let params:IState = {}
+      let { data: res } = await GetProjectSearch(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.projectName,
+          value: item.projectId
+        }))
+        this.projectListOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get project list fail:${err}`)
+    }
+  }
+  async init() {
+    // 加盟经理(1)  外销销售(2) 上岗经理(3)
+    let data1 = await this.getManagerList(3)
+    this.postManagerOptions.push(...data1)
+    let data2 = await this.getManagerList(2)
+    this.outsideSalesOptions.push(...data2)
+    this.getCityList()
+    this.getProjectSearch()
+  }
   mounted() {
     this.getLists()
+    this.init()
   }
 }
 </script>

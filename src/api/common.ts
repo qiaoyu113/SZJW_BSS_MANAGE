@@ -115,3 +115,19 @@ export const getOfficeByTypeAndOfficeId = (data:any) =>
     method: 'get',
     params: data
   })
+
+// 加盟经理(1)  外销销售(2) 上岗经理(3)
+export const GetSpecifiedRoleList = (data:any) =>
+  request({
+    url: `/base/v2/base/user/getSpecifiedLowerUserListByCondition`,
+    method: 'post',
+    data
+  })
+// 获取业务线列表
+export const GetDutyListByLevel = (data:any) =>
+  request({
+    url: `/base/v2/base/duty/getDutyListByLevel`,
+    method: 'post',
+    data,
+    params: data
+  })

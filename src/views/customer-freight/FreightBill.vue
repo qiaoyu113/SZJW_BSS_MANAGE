@@ -173,6 +173,7 @@ import { Vue, Component } from 'vue-property-decorator'
 
 import { month, lastmonth, threemonth } from './components/date'
 import { GetFreightChargeList, ExportFreightChargeList, BjfreightChargeReceive } from '@/api/customer-freight'
+import { GetSubjectList } from '@/api/driver-freight'
 import { Upload } from '@/api/common'
 interface PageObj {
   page:Number,
@@ -193,6 +194,8 @@ interface IState {
 })
 export default class extends Vue {
   private filelist:IState[] = []
+  // 变动类型列表
+  private subjectOptions:IState[] = []
   // loading
   private listLoading:Boolean = false;
   private ids:number|string[] = [];
@@ -275,18 +278,17 @@ export default class extends Vue {
       },
       label: '变动类型:',
       key: 'subject',
-      options: []
+      options: this.subjectOptions
     },
     {
-      type: 2,
+      type: 1,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true,
-        filterable: true
+        maxlength: 50
       },
       label: '司机姓名:',
-      key: 'driverName',
-      options: []
+      key: 'driverName'
     },
     {
       type: 1,
@@ -488,6 +490,7 @@ export default class extends Vue {
       col: 24,
       label: '上传凭证:',
       type: 'fileUrl',
+      key: 'fileUrl',
       slot: true
     },
     {
@@ -662,6 +665,7 @@ export default class extends Vue {
       this.dialogForm.remark && (params.remark = this.dialogForm.remark)
       let { data: res } = await BjfreightChargeReceive(params)
       if (res.success) {
+        this.showDialog = false
         this.$message.success('操作成功')
         this.getLists()
       } else {
@@ -674,8 +678,7 @@ export default class extends Vue {
   // 关闭弹窗清除数据
   private handleClosed() {
     this.resetDialogForm()
-    this.ids = []
-    this.showDialog = false;
+    this.ids = [];
     (this.$refs.freighForm as any).toggleRowSelection()
   }
   // 上传文件
@@ -735,9 +738,28 @@ export default class extends Vue {
       this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-
+  // 变动类型列表
+  async getSubjectList() {
+    try {
+      let { data: res } = await GetSubjectList()
+      if (res.success) {
+        let subjectArr = res.data.map((item:any) => {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+        this.subjectOptions.push(...subjectArr)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get subject list fail:${err}`)
+    }
+  }
   mounted() {
     this.getLists()
+    this.getSubjectList()
   }
 }
 </script>

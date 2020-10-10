@@ -14,6 +14,22 @@
       label-width="90px"
       class="p15 SuggestForm"
     >
+      <template slot="gmId">
+        <el-select
+          v-model="listQuery.gmId"
+          :disabled="(listQuery.driverCity.length > 0 && listQuery.businessType!== '' )? false :true"
+          placeholder="请选择"
+          clearable
+          filterable
+        >
+          <el-option
+            v-for="item in gmIdOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </template>
       <div
         slot="btn"
         :class="isPC ? 'btnPc' : 'mobile'"
@@ -73,6 +89,9 @@
         style="overflow: initial;"
         @onPageSize="handlePageSize"
       >
+        <template v-slot:driverName="scope">
+          <span>{{ scope.row.driverName }}/{{ scope.row.phone }}</span>
+        </template>
         <template v-slot:voucher_path="scope">
           <span>{{ scope.row.voucher_path }}</span>
         </template>
@@ -113,6 +132,7 @@
         <template slot="amount">
           <el-input
             v-model.trim="dialogForm.amount"
+            v-only-number="{min: 0, max: 999999.99, precision: 2}"
             type="text"
           >
             <template slot="append">
@@ -150,7 +170,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
@@ -159,7 +179,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
 import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList } from '@/api/driver-freight'
-import { Upload } from '@/api/common'
+import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -179,12 +199,20 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private dutyListOptions:IState[] = [];// 业务线列表
+  private gmIdOptions:IState[] = [];// 所属加盟经理列表
   // 运费调整原因列表
   private subjectOptions:IState[] = []
   // loading
   private listLoading:boolean = false
   // 是否显示弹框
   private showDialog:boolean = false
+  @Watch('listQuery', { deep: true })
+  onChange(newVal:IState, oldVal:IState) {
+    if (newVal.driverCity.length > 0 && this.listQuery.businessType !== '') {
+      this.getGmLists()
+    }
+  }
   // 查询表单
   private listQuery:IState = {
     changeId: '',
@@ -193,7 +221,7 @@ export default class extends Vue {
     gmId: '',
     businessType: '',
     driverId: '',
-    driverCity: '',
+    driverCity: [],
     createTime: []
   }
   // 查询表单容器
@@ -217,7 +245,7 @@ export default class extends Vue {
       },
       label: '调整原因:',
       key: 'subject',
-      options: []
+      options: this.subjectOptions
     },
     {
       type: 1,
@@ -230,15 +258,19 @@ export default class extends Vue {
       key: 'driverName'
     },
     {
-      type: 2,
+      type: 8,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true,
-        filterable: true
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'driverCity',
+        props: {
+          lazy: true,
+          lazyLoad: this.showWork
+        }
       },
-      label: '加盟经理:',
-      key: 'gmId',
-      options: []
+      label: '司机城市:',
+      key: 'driverCity'
     },
     {
       type: 2,
@@ -249,7 +281,13 @@ export default class extends Vue {
       },
       label: '业务线:',
       key: 'businessType',
-      options: []
+      options: this.dutyListOptions
+    },
+    {
+      type: 'gmId',
+      slot: true,
+      label: '加盟经理:',
+      key: 'gmId'
     },
     {
       type: 1,
@@ -260,17 +298,6 @@ export default class extends Vue {
       },
       label: '司机编号:',
       key: 'driverId'
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
-      },
-      label: '司机城市:',
-      key: 'driverCity',
-      options: []
     },
     {
       type: 3,
@@ -304,6 +331,7 @@ export default class extends Vue {
     },
     {
       key: 'driverName',
+      slot: true,
       label: '司机姓名',
       'min-width': '140px'
     },
@@ -435,7 +463,7 @@ export default class extends Vue {
       { required: true, message: '请输入', trigger: 'blur' }
     ],
     fileUrl: [
-      { required: true, message: '请选择', trigger: 'blur' }
+      { required: true, message: '请上传凭证', trigger: 'blur' }
     ]
   }
   // 判断是否是PC
@@ -456,7 +484,9 @@ export default class extends Vue {
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
       this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
-      this.listQuery.driverCity !== '' && (params.driverCity = this.listQuery.driverCity)
+      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
+        params.driverCity = this.listQuery.driverCity[1]
+      }
       if (this.listQuery.createTime && this.listQuery.createTime.length > 0) {
         let createDateStart = new Date(this.listQuery.createDateStart[0])
         let createDateEnd = new Date(this.listQuery.createTime[1])
@@ -511,6 +541,7 @@ export default class extends Vue {
       this.dialogForm.remark && (params.remark = this.dialogForm.remark)
       let { data: res } = await SaveShippingChange(params)
       if (res.success) {
+        this.showDialog = false
         this.$message.success('操作成功')
         this.getLists()
       } else {
@@ -529,7 +560,6 @@ export default class extends Vue {
       fileUrl: '',
       remark: ''
     }
-    this.showDialog = false
   }
   confirm() {
     ((this.$refs.dialogForm) as any).submitForm()
@@ -590,7 +620,9 @@ export default class extends Vue {
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
       this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
-      this.listQuery.driverCity !== '' && (params.driverCity = this.listQuery.driverCity)
+      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
+        params.driverCity = this.listQuery.driverCity[1]
+      }
       if (this.listQuery.createTime && this.listQuery.createTime.length > 0) {
         let createDateStart = new Date(this.listQuery.createDateStart[0])
         let createDateEnd = new Date(this.listQuery.createTime[1])
@@ -610,7 +642,7 @@ export default class extends Vue {
       this.listLoading = false
     }
   }
-  // 获取调整原因
+  // 变动类型列表
   async getSubjectList() {
     try {
       let { data: res } = await GetSubjectList()
@@ -629,9 +661,108 @@ export default class extends Vue {
       console.log(`get subject list fail:${err}`)
     }
   }
+  // 获取客户城市
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
+    try {
+      if (node.level === 0) {
+        let nodes = await this.areaAddress({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+  // 获取大区列表
+  private async areaAddress(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item: any) {
+          return {
+            value: item.id,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+  // 根据大区获取城市列表
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
+  // 获取业务线
+  private async getDutyListByLevel() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.dutyListOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get duty list fail:${err}`)
+    }
+  }
+  // 获取加盟经理列表
+  async getGmLists() {
+    try {
+      let len:number = this.gmIdOptions.length
+      if (len > 0) {
+        this.gmIdOptions.splice(0, len)
+      }
+      let params = {
+        cityCode: this.listQuery.driverCity[1],
+        productLine: this.listQuery.businessType,
+        roleType: 1
+      }
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.name,
+          value: item.id
+        }))
+        this.gmIdOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get gm list fail:${err}`)
+    }
+  }
   mounted() {
     this.getLists()
     this.getSubjectList()
+    this.getDutyListByLevel()
   }
 }
 </script>

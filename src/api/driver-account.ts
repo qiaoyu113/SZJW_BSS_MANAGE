@@ -112,3 +112,25 @@ export const saveFlowData = (data: any) =>
     method: 'post',
     data
   })
+// 根据司机id获取已终止订单列表
+export const getOrderListByDriverId = (params: any) =>
+  request({
+    url: `${prefix}/v2/order/getOrderListByDriverId`,
+    method: 'get',
+    params
+  })
+  // 根据司机id订单id获取订单详情
+export const getOrderDetailByDriverId = (params: any) =>
+  request({
+    url: `${prefix}/v2/ordergetOrderDetialByDriverId`,
+    method: 'get',
+    params
+  })
+
+// 通过加盟经理id获取司机列表
+export const getDriverListByGmId = (params: any) =>
+  request({
+    url: `/driver/v2/driver/getDriverListByGmId`,
+    method: 'get',
+    params
+  })
