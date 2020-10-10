@@ -49,7 +49,7 @@
     <self-table
       ref="driverListTable"
       v-loading="listLoading"
-      height="calc(100vh - 450px)"
+      :height="tableHeight"
       :index="false"
       :operation-list="[]"
       :table-data="tableData"
@@ -956,6 +956,11 @@ export default class extends Vue {
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
+  }
+
+  get tableHeight() {
+    let otherHeight = 440
+    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
 
   @Watch('listQuery', { deep: true })
