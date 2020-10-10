@@ -39,6 +39,7 @@
           :class="isPC ? '' : 'btnMobile'"
           name="driverlist_offout_btn"
           size="small"
+          @click="handleExportClick"
         >
           导出
         </el-button>
@@ -56,9 +57,6 @@
       :page="page"
       @onPageSize="handlePageSize"
     >
-      <template v-slot:driverId="scope">
-        <span class="active">{{ scope.row.driverId }}</span>
-      </template>
       <template v-slot:driverFinancialFlowInfo="scope">
         <span
           class="active"
@@ -71,14 +69,14 @@
           <el-button
             type="text"
             :disabled="scope.row.status !== 3 && scope.row.canExtractMoney > 0"
-            @click="isFreeze(scope.row)"
+            @click="isFreeze(scope.row,1)"
           >
             冻结
           </el-button>
           <el-button
             :disabled="scope.row.status !== 5 && scope.row.canExtractMoney > 0"
             type="text"
-            @click="isFreeze(scope.row)"
+            @click="isFreeze(scope.row,2)"
           >
             解冻
           </el-button>
@@ -102,7 +100,13 @@
           :rules="freezesRules"
           label-width="140px"
           @onPass="onPass"
-        />
+        >
+          <template slot="isconfirmOrder">
+            <div>
+              {{ freezeForm.isconfirmOrder === 0 ? '否' : '是' }}
+            </div>
+          </template>
+        </self-form>
       </div>
     </SelfDialog>
   </div>
@@ -113,12 +117,11 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
-import { getAcountList, accountFreeze, accountUnfreeze } from '@/api/driver-account'
+import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
 import { GetManagerLists, GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId } from '@/api/common'
-import { deleteUser } from '@/api/users'
 interface IState {
   [key: string]: any;
 }
@@ -159,9 +162,10 @@ export default class extends Vue {
   ]
   private nameOptions:any[] = []
   private idOptions:any[] = []
+  private orderOptions:any[] = []
   // 表单对象
   private listQuery: IState = {
-    workCity: '',
+    workCity: [],
     driverId: '',
     name: '',
     busiType: '',
@@ -178,9 +182,15 @@ export default class extends Vue {
       w: '150px',
       label: '所属城市',
       tagAttrs: {
-        placeholder: '请选择所属管理区'
-      },
-      options: this.workCityOptions
+        placeholder: '请选择所属城市',
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'workCity',
+        props: {
+          lazy: true,
+          lazyLoad: this.showWork
+        }
+      }
     },
     {
       type: 2,
@@ -308,8 +318,7 @@ export default class extends Vue {
     {
       key: 'driverId',
       label: '司机编号',
-      width: '140px',
-      slot: true
+      width: '140px'
     },
     {
       key: 'name',
@@ -413,7 +422,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择订单'
       },
-      options: this.busiTypeOptions
+      options: this.orderOptions
     },
     {
       type: 7,
@@ -481,7 +490,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择订单'
       },
-      options: this.busiTypeOptions
+      options: this.orderOptions
     },
     {
       type: 7,
@@ -490,10 +499,10 @@ export default class extends Vue {
       col: 24
     },
     {
-      type: 7,
-      key: 'isconfirmOrder',
+      type: 'isconfirmOrder',
       label: '订单执行期间运费是否有未确认：',
-      col: 24
+      col: 24,
+      slot: true
     },
     {
       type: 7,
@@ -539,10 +548,12 @@ export default class extends Vue {
       { required: true, message: '请选择司机', trigger: 'blur' }
     ],
     applyForAccountFrozen: [
-      { required: true, message: '请填写申请冻结金额', trigger: 'blur' }
+      { required: true, message: '请填写申请冻结金额', trigger: 'blur' },
+      { validator: this.checkFrozen(1), trigger: 'blur' }
     ],
     applyForAccountUnfrozen: [
-      { required: true, message: '请填写申请解冻金额', trigger: 'blur' }
+      { required: true, message: '请填写申请解冻金额', trigger: 'blur' },
+      { validator: this.checkFrozen(2), trigger: 'blur' }
     ]
   }
   private isPass:Boolean = false
@@ -601,6 +612,65 @@ export default class extends Vue {
       console.log(`get `)
     }
   }
+
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
+    try {
+      if (node.level === 0) {
+        let nodes = await this.areaAddress({ type: 2 })
+        if (node.level === 0) {
+          for (let i = 0; i < nodes.length; i++) {
+            if (Number(nodes[i].value) === -99) {
+              nodes[i].leaf = true
+            }
+          }
+        }
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  private async areaAddress(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item: any) {
+          return {
+            value: item.id,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
   /**
    *获取列表
    */
@@ -615,18 +685,7 @@ export default class extends Vue {
         page: this.page.page
       }
 
-      this.listQuery.balance && (params.balance = this.listQuery.balance)
-      this.listQuery.workCity && (params.workCity = this.listQuery.workCity)
-      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
-      this.listQuery.name && (params.name = this.listQuery.name)
-      this.listQuery.busiType !== '' &&
-        (params.busiType = this.listQuery.busiType)
-      this.listQuery.joinManagerId !== '' && (params.joinManagerId = this.listQuery.joinManagerId)
-
-      if (this.listQuery.time.length > 1) {
-        params.startDate = this.listQuery.time[0]
-        params.endDate = this.listQuery.time[1] + 86399999
-      }
+      this.setData(params)
       let { data: res } = await getAcountList(params)
       this.listLoading = false
       if (res.success) {
@@ -642,12 +701,66 @@ export default class extends Vue {
     }
   }
 
-  private isFreeze(item:any) {
+  // 查询订单列表
+  async getOrderList(id:string, type:number) {
+    try {
+      let params = {
+        driverId: id, //
+        operateFlag: ''
+      }
+      if (type === 2) {
+        params.operateFlag = 'abort'
+      } else {
+        params.operateFlag = 'list'
+      }
+      let { data: res } = await orderList(params)
+      if (res.success) {
+        let orderOptions = res.data.map((ele:any) => {
+          return { label: ele.orderId, value: ele.orderId, state: ele.status }
+        })
+        this.orderOptions.splice(0, orderOptions.length)
+        this.orderOptions.push(...orderOptions)
+        if (this.orderOptions.length && this.orderOptions.length === 1) {
+          this.freezeForm.orderId = this.orderOptions[0].value
+        }
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`fail:${err}`)
+    }
+  }
+
+  // 查询对应订单详情
+  async getOrderDetail(orderId:string) {
+    try {
+      let params = {
+        driverId: this.columnData.driverId,
+        operateFlag: 'detial',
+        orderId: orderId
+      }
+      let { data: res } = await orderDetail(params)
+      this.freezeForm.orderId = res.data.orderId
+      this.freezeForm.orderStatus = res.data.status
+      this.freezeForm.orderStatusName = res.data.statusName
+      this.freezeForm.freezingMoney = res.data.goodsAmount
+    } catch (err) {
+      console.log(`fail:${err}`)
+    }
+  }
+
+  // 开启弹窗 type === 1为冻结，2为解冻
+  private isFreeze(item:any, type:number) {
     let title:string = ''
     let name:number = 0
     this.columnData = item
+    delete this.columnData.orderId
+    delete this.columnData.orderStatus
+    delete this.columnData.orderStatusName
+    delete this.columnData.freezingMoney
+    delete this.columnData.isconfirmOrder
     this.freezeForm = { ...this.freezeForm, ...this.columnData }
-    if (item.orderStatus === 1) {
+    if (type === 1) {
       title = '冻结'
       name = 1
     } else {
@@ -659,8 +772,23 @@ export default class extends Vue {
       title: title,
       name: name
     }
+    this.getOrderList(item.driverId, type)
+    if (type === 2) {
+      this.isSureCheck(item.driverId)
+    }
   }
+
+  private async isSureCheck(id:string) {
+    let { data: res } = await countConfirmByDriver({ driverId: id })
+    if (res.success) {
+      this.freezeForm.isconfirmOrder = res.data
+    } else {
+      this.$message.error(res.errorMsg)
+    }
+  }
+
   private closed() {
+    this.columnData = {};
     ((this.$refs.SelfForm) as any).resetForm()
   }
   // 确认弹窗
@@ -683,7 +811,6 @@ export default class extends Vue {
     delete params.applyForAccountUnfrozen
     delete params.isconfirmOrder
     let { data: res } = await accountFreeze(params)
-    console.log('freezed', res)
     if (res.success) {
       this.$message.success('冻结成功')
       done()
@@ -750,7 +877,7 @@ export default class extends Vue {
    */
   private handleResetClick() {
     this.listQuery = {
-      workCity: '',
+      workCity: [],
       driverId: '',
       name: '',
       busiType: '',
@@ -760,6 +887,45 @@ export default class extends Vue {
     }
     this.tags = []
     this.getList()
+  }
+  /**
+   * 导出
+   */
+  private async handleExportClick() {
+    if (this.listQuery.time && this.listQuery.time.length === 2) {
+      let params: any = {}
+      this.setData(params)
+      const { data } = await managementExport(params)
+      if (data.success) {
+        this.$message({
+          type: 'success',
+          message: '导出成功!'
+        })
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    } else {
+      this.$message.error('需要按时间段进行导出')
+    }
+  }
+
+  // params处理
+  private setData(params:any) {
+    this.listQuery.balance && (params.balance = this.listQuery.balance)
+    if (this.listQuery.workCity.length > 0) {
+      this.listQuery.workCity && (params.workCity = Number(this.listQuery.workCity[1]))
+    }
+    this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+    this.listQuery.name && (params.name = this.listQuery.name)
+    this.listQuery.busiType !== '' &&
+        (params.busiType = this.listQuery.busiType)
+    this.listQuery.joinManagerId !== '' && (params.joinManagerId = this.listQuery.joinManagerId)
+
+    if (this.listQuery.time.length > 1) {
+      params.startDate = this.listQuery.time[0]
+      params.endDate = this.listQuery.time[1] + 86399999
+    }
+    return params
   }
 
   /**
@@ -771,6 +937,22 @@ export default class extends Vue {
     this.getList()
   }
 
+  // 冻结金额,解冻金额效验 输入效验
+  private checkFrozen(type:any) {
+    let that = this
+    return function(rule:any, value:any, callback:any) {
+      if (Number(value) <= Number(that.freezeForm.canExtractMoney)) {
+        return callback()
+      } else {
+        if (type === 1) {
+          return callback(new Error('申请冻结金额大于可提现金额'))
+        } else {
+          return callback(new Error('解冻金额小于订单的冻结金额'))
+        }
+      }
+    }
+  }
+
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
@@ -779,6 +961,13 @@ export default class extends Vue {
   @Watch('listQuery', { deep: true })
   private changeList(val:any) {
     console.log(val)
+  }
+
+  @Watch('freezeForm.orderId', { deep: true })
+  private changeOrderId(val:any) {
+    if (val) {
+      this.getOrderDetail(val)
+    }
   }
 
   mounted() {
