@@ -98,7 +98,7 @@ export const GetSpecifiedRoleList = (params: any) =>
    */
 export const freightDetailLog = (params: any) =>
   request({
-    url: `${prefix || '/waybill'}/v2/waybill/getFreightDetailLog`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/getFreightDetailLog`,
     method: 'post',
     params
   })
