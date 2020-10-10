@@ -2,18 +2,35 @@
   <div
     class="wtAcountList"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
     <self-form
       :list-query="listQuery"
       :form-item="formItem"
-      label-width="80px"
+      label-width="100px"
       class="p15"
       height=""
     >
+      <!-- <template v-slot:name="row">
+        <div :a="row">
+          <el-autocomplete
+            v-model="listQuery.name"
+            :fetch-suggestions="querySearchAsyncType('name')"
+            placeholder="请输入司机姓名"
+          />
+        </div>
+      </template>
+      <template v-slot:driverId="row">
+        <div :a="row">
+          <el-autocomplete
+            v-model="listQuery.driverId"
+            :fetch-suggestions="querySearchAsyncType('driverId')"
+            placeholder="请输入司机编号"
+          />
+        </div>
+      </template> -->
       <div
         slot="btn1"
         :class="isPC ? 'btnPc' : 'mobile'"
@@ -46,43 +63,51 @@
       </div>
     </self-form>
     <!-- 表格 -->
-    <self-table
-      ref="driverListTable"
-      v-loading="listLoading"
-      height="calc(100vh - 450px)"
-      :index="false"
-      :operation-list="[]"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      @onPageSize="handlePageSize"
-    >
-      <template v-slot:driverFinancialFlowInfo="scope">
-        <span
-          class="active"
-          :a="scope"
-          @click="goRouter('/driveraccount/financialFlow')"
-        >查看司机财务流水</span>
-      </template>
-      <template v-slot:op="scope">
-        <div>
-          <el-button
-            type="text"
-            :disabled="scope.row.status !== 3 && scope.row.canExtractMoney > 0"
-            @click="isFreeze(scope.row,1)"
-          >
-            冻结
-          </el-button>
-          <el-button
-            :disabled="scope.row.status !== 5 && scope.row.canExtractMoney > 0"
-            type="text"
-            @click="isFreeze(scope.row,2)"
-          >
-            解冻
-          </el-button>
-        </div>
-      </template>
-    </self-table>
+    <div class="table_box">
+      <div class="middle">
+        <div
+          class="count"
+          v-text="`筛选结果（${page.total}条）`"
+        />
+      </div>
+      <self-table
+        ref="driverListTable"
+        v-loading="listLoading"
+        :height="tableHeight"
+        :is-p30="false"
+        :index="false"
+        :operation-list="[]"
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        @onPageSize="handlePageSize"
+      >
+        <template v-slot:driverFinancialFlowInfo="scope">
+          <span
+            class="active"
+            @click="goRouter(scope.row.driverId)"
+          >查看司机财务流水</span>
+        </template>
+        <template v-slot:op="scope">
+          <div>
+            <el-button
+              type="text"
+              :disabled="scope.row.status !== 3 && scope.row.canExtractMoney > 0"
+              @click="isFreeze(scope.row,1)"
+            >
+              冻结
+            </el-button>
+            <el-button
+              :disabled="scope.row.status !== 5 && scope.row.canExtractMoney > 0"
+              type="text"
+              @click="isFreeze(scope.row,2)"
+            >
+              解冻
+            </el-button>
+          </div>
+        </template>
+      </self-table>
+    </div>
 
     <!--金额操作弹窗-->
     <SelfDialog
@@ -118,10 +143,11 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
+import { GetDriverListByKerWord, getDriverListByGmId } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
-import { GetManagerLists, GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId } from '@/api/common'
+import { GetManagerLists, GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -156,13 +182,12 @@ export default class extends Vue {
     { label: '否', value: 2 },
     { label: '是', value: 1 }
   ];
-  private busiTypeOptions:any[] = [
-    { label: '共享', value: 1 },
-    { label: '专车', value: 0 }
-  ]
-  private nameOptions:any[] = []
-  private idOptions:any[] = []
+  private busiTypeOptions:any[] = []
+  private keyOptions:any[] = []
+  private driverOtions:any[] = []
   private orderOptions:any[] = []
+  private getGmStatus:Boolean = true
+  private getDriverStatus:Boolean = true
   // 表单对象
   private listQuery: IState = {
     workCity: [],
@@ -179,7 +204,6 @@ export default class extends Vue {
       type: 8,
       key: 'workCity',
       col: 8,
-      w: '150px',
       label: '所属城市',
       tagAttrs: {
         placeholder: '请选择所属城市',
@@ -196,7 +220,6 @@ export default class extends Vue {
       type: 2,
       key: 'busiType',
       col: 8,
-      w: '150px',
       label: '所属业务线',
       tagAttrs: {
         placeholder: '请选择所属业务线',
@@ -208,43 +231,52 @@ export default class extends Vue {
       type: 2,
       key: 'joinManagerId',
       col: 8,
-      w: '150px',
       label: '所属加盟经理',
       tagAttrs: {
         placeholder: '请选择所属加盟经理',
         filterable: true,
-        name: 'driverList_gmId_select'
+        disabled: true
       },
       options: this.gmOptions
     },
     {
       type: 2,
       key: 'name',
-      label: '司机姓名',
       col: 8,
-      w: '150px',
+      label: '司机姓名',
       tagAttrs: {
-        placeholder: '请输入姓名',
-        maxlength: 10,
-        clearable: true,
-        name: 'driverList_name_input'
+        placeholder: '请选择司机姓名',
+        filterable: true,
+        disabled: true
       },
-      options: this.nameOptions
+      options: this.driverOtions
     },
     {
       type: 2,
       key: 'driverId',
-      label: '司机编号',
       col: 8,
-      w: '150px',
+      label: '司机编号',
       tagAttrs: {
-        placeholder: '请输入司机编号',
-        maxlength: 32,
-        clearable: true,
-        name: 'driverList_driverId_input'
+        placeholder: '司机编号',
+        filterable: true,
+        disabled: true
       },
-      options: this.idOptions
+      options: this.driverOtions
     },
+    // {
+    //   slot: true,
+    //   col: 8,
+    //   label: '司机姓名',
+    //   key: 'name',
+    //   type: 'name'
+    // },
+    // {
+    //   slot: true,
+    //   col: 8,
+    //   label: '司机编号',
+    //   key: 'driverId',
+    //   type: 'driverId'
+    // },
     {
       type: 4,
       col: 8,
@@ -258,7 +290,6 @@ export default class extends Vue {
     },
     {
       type: 3,
-      w: '150px',
       key: 'time',
       label: '司机创建日期',
       col: 12,
@@ -567,31 +598,6 @@ export default class extends Vue {
   };
 
   /**
-   *获取加盟经理列表
-   */
-  async getManagers() {
-    try {
-      let params = {
-        uri: '/v1/driver/getDriverList'
-      }
-      let { data: res } = await GetManagerLists(params)
-      if (res.success) {
-        let gms = res.data.map(function(item: any) {
-          return {
-            label: item.name,
-            value: item.id
-          }
-        })
-        this.gmOptions.push(...gms)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`get manager fail:${err}`)
-    }
-  }
-
-  /**
    *获取开通城市
    */
   async getOpenCitys() {
@@ -613,6 +619,84 @@ export default class extends Vue {
     }
   }
 
+  /**
+   * 获取组织
+   */
+  async getOffices() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        })).filter((ele:any) => {
+          return (ele.label === '共享' || ele.label === '专车')
+        })
+        this.busiTypeOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get duty list fail:${err}`)
+    }
+  }
+
+  private querySearchAsyncType(type:string) {
+    let that = this
+    return async function(queryString:any, cb:any) {
+      var restaurants:any[] = []
+      if (!queryString) {
+        cb(restaurants)
+        return
+      }
+      let params = {
+        page: 1,
+        limit: 9999,
+        key: queryString
+      }
+      let { data: res } = await GetDriverListByKerWord(params)
+      if (res.success) {
+        if (res.data.length > 0) {
+          that.keyOptions = res.data.map((ele:any) => {
+            return { value: ele[type] }
+          })
+          restaurants = that.keyOptions
+        } else {
+          restaurants.push({ value: '暂无数据' })
+        }
+      }
+      cb(restaurants)
+    }
+  }
+
+  private async querySearchAsync(queryString:any, cb:any) {
+    var restaurants:any[] = []
+    if (!queryString) {
+      cb(restaurants)
+      return
+    }
+    let params = {
+      page: 1,
+      limit: 9999,
+      key: queryString
+    }
+    let { data: res } = await GetDriverListByKerWord(params)
+    if (res.success) {
+      if (res.data.length > 0) {
+        this.keyOptions = res.data.map((ele:any) => {
+          return { value: ele.name }
+        })
+        restaurants = this.keyOptions
+      } else {
+        restaurants.push({ value: '暂无数据' })
+      }
+    }
+    cb(restaurants)
+  }
+
   private async showWork(node:any, resolve:any) {
     let query: any = {
       parentId: ''
@@ -623,13 +707,6 @@ export default class extends Vue {
     try {
       if (node.level === 0) {
         let nodes = await this.areaAddress({ type: 2 })
-        if (node.level === 0) {
-          for (let i = 0; i < nodes.length; i++) {
-            if (Number(nodes[i].value) === -99) {
-              nodes[i].leaf = true
-            }
-          }
-        }
         resolve(nodes)
       } else if (node.level === 1) {
         let nodes = await this.cityDetail(query)
@@ -834,8 +911,8 @@ export default class extends Vue {
       this.$message.error(res.errorMsg)
     }
   }
-  private goRouter(url:string) {
-    this.$router.push(url)
+  private goRouter(id:string) {
+    this.$router.push({ path: '/driveraccount/financialFlow', query: { id: id } })
   }
 
   private onPass(val:Boolean) {
@@ -953,14 +1030,65 @@ export default class extends Vue {
     }
   }
 
+  async getGmOptions(params:any) {
+    try {
+      this.gmOptions.splice(0, this.gmOptions.length)
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        let gms = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+        this.gmOptions.push(...gms)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async getDriverInfo(params:any) {
+    try {
+      this.driverOtions.splice(0, this.driverOtions.length)
+      let { data: res } = await getDriverListByGmId(params)
+      if (res.success) {
+        let driverInfos = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.driverId
+          }
+        })
+        this.driverOtions.push(...driverInfos)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
   }
 
-  @Watch('listQuery', { deep: true })
-  private changeList(val:any) {
-    console.log(val)
+  @Watch('listQuery', { immediate: true, deep: true })
+  private changeList(newForm:any, oldForm:any) {
+    if (newForm.workCity.length === 2 && newForm.busiType !== '' && newForm.joinManagerId === '') {
+      let params = {
+        cityCode: newForm.workCity[1],
+        productLine: newForm.busiType,
+        roleType: 1
+      }
+      this.getGmOptions(params)
+      this.$set(this.formItem[2].tagAttrs, 'disabled', false)
+    } else if (newForm.workCity.length === 2 && newForm.busiType !== '' && newForm.joinManagerId !== '') {
+      let params = {
+        gmId: newForm.joinManagerId
+      }
+      this.getDriverInfo(params)
+      this.$set(this.formItem[3].tagAttrs, 'disabled', false)
+      this.$set(this.formItem[4].tagAttrs, 'disabled', false)
+    }
   }
 
   @Watch('freezeForm.orderId', { deep: true })
@@ -970,20 +1098,20 @@ export default class extends Vue {
     }
   }
 
+  get tableHeight() {
+    let otherHeight = 440
+    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+  }
+
   mounted() {
     this.getList()
-    this.getManagers()
     this.getOpenCitys()
+    this.getOffices()
   }
 }
 </script>
 <style lang="scss" scoped>
-.m15 {
-  margin: 15px;
-}
 .wtAcountList {
-  background: #ffffff;
-  border-radius: 8px;
   .tableTitle {
     display: flex;
     justify-content: space-between;
@@ -1016,12 +1144,43 @@ export default class extends Vue {
     margin: 0 5px;
     cursor: pointer;
   }
+  .table_box {
+      padding: 0px 30px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      .middle {
+        margin: 10px 0px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .count {
+          font-size:14px;
+          color:#666;
+        }
+      }
+    }
 }
 </style>
 
 <style scoped>
 .wtAcountList >>> .el-form-item__label {
   color: #999;
+}
+.wtAcountList >>> .selfForm{
+    width: 100%;
+    background: #fff;
+    margin-bottom: 10px;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+}
+.wtAcountList >>> .el-form-item__content div{
+  width: 100%;
 }
 @media screen and (min-width: 700px) {
   .wtAcountList >>> .el-collapse-item__wrap {
