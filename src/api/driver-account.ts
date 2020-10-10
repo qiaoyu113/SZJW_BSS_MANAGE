@@ -134,3 +134,10 @@ export const getDriverListByGmId = (params: any) =>
     method: 'get',
     params
   })
+
+// 获取计费类型列表
+export const getListAll = () =>
+  request({
+    url: `/bill/v2/wt-driver-account/billing/listAll`,
+    method: 'get'
+  })
