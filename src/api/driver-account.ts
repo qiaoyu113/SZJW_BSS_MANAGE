@@ -100,7 +100,7 @@ export const getFlowList = (params: any) =>
 // 导出财务流水
 export const exportFlowList = (params: any) =>
   request({
-    url: `${prefix2}/v2/wt-driver-account/flow/export`,
+    url: `${prefix}/v2/wt-driver-account/flow/export`,
     method: 'get',
     params
   })
@@ -108,7 +108,7 @@ export const exportFlowList = (params: any) =>
 // 手动添加流水
 export const saveFlowData = (data: any) =>
   request({
-    url: `${prefix2}/v2/wt-driver-account/flow/manual/create`,
+    url: `${prefix}/v2/wt-driver-account/flow/manual/create`,
     method: 'post',
     data
   })
