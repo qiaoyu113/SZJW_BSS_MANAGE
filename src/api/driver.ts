@@ -266,3 +266,21 @@ export const GetDriverList = (data: any) =>
     method: 'post',
     data
   })
+
+// ==============v2====================
+
+// 根据关键字搜索司机
+export const GetDriverListByKerWord = (data: any) =>
+  request({
+    url: `${prefixCarrier}/v2/driver/getDriverList`,
+    method: 'post',
+    data
+  })
+
+// 加盟经理查询司机列表
+export const getDriverListByGmId = (params: any) =>
+  request({
+    url: `${prefix}/v2/driver/getDriverListByGmId`,
+    method: 'get',
+    params
+  })
