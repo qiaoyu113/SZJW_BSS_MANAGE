@@ -116,19 +116,17 @@ export const getOfficeByTypeAndOfficeId = (data:any) =>
     params: data
   })
 
+// 加盟经理(1)  外销销售(2) 上岗经理(3)
+export const GetSpecifiedRoleList = (data:any) =>
+  request({
+    url: `/base/v2/base/user/getSpecifiedLowerUserListByCondition`,
+    method: 'post',
+    data
+  })
 // 获取业务线列表
 export const GetDutyListByLevel = (data:any) =>
   request({
     url: `/base/v2/base/duty/getDutyListByLevel`,
-    method: 'post',
-    data,
-    params: data
-  })
-
-// 城市业务线查加盟经理
-export const getSpecifiedLowerUserListByCondition = (data:any) =>
-  request({
-    url: `/base/v2/base/user/getSpecifiedLowerUserListByCondition`,
     method: 'post',
     data,
     params: data

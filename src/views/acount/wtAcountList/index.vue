@@ -147,7 +147,7 @@ import { GetDriverListByKerWord, getDriverListByGmId } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
-import { GetManagerLists, GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, getSpecifiedLowerUserListByCondition } from '@/api/common'
+import { GetManagerLists, GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -1033,7 +1033,7 @@ export default class extends Vue {
   async getGmOptions(params:any) {
     try {
       this.gmOptions.splice(0, this.gmOptions.length)
-      let { data: res } = await getSpecifiedLowerUserListByCondition(params)
+      let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
         let gms = res.data.map(function(item: any) {
           return {

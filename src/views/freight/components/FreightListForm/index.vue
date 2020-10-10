@@ -10,6 +10,7 @@
                   <el-input
                     v-model="listQuery.wayBillId"
                     name="freightlist_wayBillId_input"
+                    maxlength="50"
                     placeholder="请输入"
                     clearable
                   />
@@ -37,6 +38,7 @@
                   <el-input
                     v-model="listQuery.driver"
                     name="freightlist_driver_input"
+                    maxlength="50"
                     placeholder="请输入姓名/手机号"
                     clearable
                   />
@@ -64,6 +66,7 @@
                   <el-input
                     v-model="listQuery.line"
                     name="freightlist_line_input"
+                    maxlength="50"
                     placeholder="线路名称/编号"
                     clearable
                   />
