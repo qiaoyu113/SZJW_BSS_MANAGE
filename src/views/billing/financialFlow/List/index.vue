@@ -147,7 +147,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { getFlowList, exportFlowList, saveFlowData, getOrderListByDriverId, getOrderDetailByDriverId, getDriverListByGmId } from '@/api/driver-account'
+import { getFlowList, exportFlowList, saveFlowData, getOrderListByDriverId, getOrderDetailByDriverId, getDriverListByGmId, getListAll } from '@/api/driver-account'
 import { GetDriverListByKerWord } from '@/api/driver'
 import { getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 interface PageObj {
@@ -172,6 +172,7 @@ export default class extends Vue {
   private dutyListOptions:IState[] = [];// 业务线列表
   private gmIdOptions:IState[] = [];// 所属加盟经理列表
   private driverOptions:IState[] = [];// 司机列表
+  private billOptons:IState[] = [];// 获取计费类型列表
   private listLoading:boolean = false;
   private dialogTableVisible:boolean = false;
   private tableData:any[] = [];
@@ -391,20 +392,7 @@ export default class extends Vue {
       },
       label: '计费类型:',
       key: 'billingType',
-      options: [
-        {
-          label: '固定金额',
-          value: 1
-        },
-        {
-          label: '运费比例',
-          value: 2
-        },
-        {
-          label: '服务费比例',
-          value: 3
-        }
-      ]
+      options: this.billOptons
     },
     {
       type: 1,
@@ -792,9 +780,31 @@ export default class extends Vue {
       console.log(`get driver lists fail:${err}`)
     }
   }
+  // 获取计费类型列表
+  async getBillListAll() {
+    try {
+      let len = this.billOptons.length
+      if (len > 0) {
+        this.billOptons.splice(0, len)
+      }
+      let { data: res } = await getListAll()
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.sopDesc,
+          value: item.id
+        }))
+        this.billOptons.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get bill list fail:${err}`)
+    }
+  }
   mounted() {
     this.getLists()
     this.getDutyListByLevel()
+    this.getBillListAll()
   }
 }
 </script>
