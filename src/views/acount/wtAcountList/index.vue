@@ -126,9 +126,33 @@
           label-width="140px"
           @onPass="onPass"
         >
+          <template slot="applyForAccountFrozen">
+            <div>
+              <el-input
+                v-model="freezeItem.applyForAccountUnfrozen"
+                v-only-number="{min: 0, max: 9999999.99, precision: 2}"
+                placeholder="申请冻结金额："
+                clearable
+                maxlength="10"
+                show-word-limit
+              />
+            </div>
+          </template>
           <template slot="isconfirmOrder">
             <div>
               {{ freezeForm.isconfirmOrder === 0 ? '否' : '是' }}
+            </div>
+          </template>
+          <template slot="applyForAccountUnfrozen">
+            <div>
+              <el-input
+                v-model="unfreezeItem.applyForAccountUnfrozen"
+                v-only-number="{min: 0, max: 9999999.99, precision: 2}"
+                placeholder="申请解冻金额："
+                clearable
+                maxlength="10"
+                show-word-limit
+              />
             </div>
           </template>
         </self-form>
@@ -185,6 +209,7 @@ export default class extends Vue {
   private busiTypeOptions:any[] = []
   private keyOptions:any[] = []
   private driverOtions:any[] = []
+  private nameOtions:any[] = []
   private orderOptions:any[] = []
   private getGmStatus:Boolean = true
   private getDriverStatus:Boolean = true
@@ -249,7 +274,7 @@ export default class extends Vue {
         filterable: true,
         disabled: true
       },
-      options: this.driverOtions
+      options: this.nameOtions
     },
     {
       type: 2,
@@ -474,16 +499,10 @@ export default class extends Vue {
       col: 24
     },
     {
-      type: 1,
-      key: 'applyForAccountFrozen',
-      col: 24,
+      type: 'applyForAccountFrozen',
       label: '申请冻结金额：',
-      tagAttrs: {
-        placeholder: '请输入申请冻结金额',
-        maxlength: 10,
-        'show-word-limit': true,
-        clearable: true
-      }
+      col: 24,
+      slot: true
     },
     {
       type: 1,
@@ -548,16 +567,10 @@ export default class extends Vue {
       col: 24
     },
     {
-      type: 1,
-      key: 'applyForAccountUnfrozen',
-      col: 24,
+      type: 'applyForAccountUnfrozen',
       label: '申请解冻金额：',
-      tagAttrs: {
-        placeholder: '请输入申请解冻金额',
-        maxlength: 10,
-        'show-word-limit': true,
-        clearable: true
-      }
+      col: 24,
+      slot: true
     },
     {
       type: 1,
@@ -890,6 +903,7 @@ export default class extends Vue {
     let { data: res } = await accountFreeze(params)
     if (res.success) {
       this.$message.success('冻结成功')
+      this.getList()
       done()
     } else {
       this.$message.error(res.errorMsg)
@@ -906,6 +920,7 @@ export default class extends Vue {
     console.log('unfreezed', res)
     if (res.success) {
       this.$message.success('解冻成功')
+      this.getList()
       done()
     } else {
       this.$message.error(res.errorMsg)
@@ -1051,43 +1066,69 @@ export default class extends Vue {
   async getDriverInfo(params:any) {
     try {
       this.driverOtions.splice(0, this.driverOtions.length)
+      this.nameOtions.splice(0, this.nameOtions.length)
       let { data: res } = await getDriverListByGmId(params)
       if (res.success) {
         let driverInfos = res.data.map(function(item: any) {
           return {
-            label: item.name,
+            label: item.driverId,
             value: item.driverId
           }
         })
+        let nameInfos = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
         this.driverOtions.push(...driverInfos)
+        this.nameOtions.push(...nameInfos)
       }
     } catch (err) {
       console.log(err)
     }
   }
 
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
-  @Watch('listQuery', { immediate: true, deep: true })
+  @Watch('listQueryChange', { deep: true })
   private changeList(newForm:any, oldForm:any) {
+    // 联动值清空
+    if (JSON.stringify(newForm.workCity) !== JSON.stringify(oldForm.workCity) || newForm.busiType !== oldForm.busiType) {
+      this.listQuery.joinManagerId = ''
+    }
+    if (newForm.joinManagerId !== oldForm.joinManagerId) {
+      this.listQuery.name = ''
+      this.listQuery.driverId = ''
+    }
+
+    // 联动请求接口
     if (newForm.workCity.length === 2 && newForm.busiType !== '' && newForm.joinManagerId === '') {
+      const cityCodeStatus = (newForm.workCity[1] === oldForm.workCity[1])
+      const busiTypeStatus = (newForm.busiType === oldForm.busiType)
+      this.$set(this.formItem[2].tagAttrs, 'disabled', false)
+      this.$set(this.formItem[3].tagAttrs, 'disabled', true)
+      this.$set(this.formItem[4].tagAttrs, 'disabled', true)
+      if (cityCodeStatus && busiTypeStatus) {
+        return
+      }
       let params = {
         cityCode: newForm.workCity[1],
         productLine: newForm.busiType,
         roleType: 1
       }
       this.getGmOptions(params)
-      this.$set(this.formItem[2].tagAttrs, 'disabled', false)
     } else if (newForm.workCity.length === 2 && newForm.busiType !== '' && newForm.joinManagerId !== '') {
+      const cityCodeStatus = (newForm.workCity[1] === oldForm.workCity[1])
+      const busiTypeStatus = (newForm.busiType === oldForm.busiType)
+      const joinManagerIdStatus = (newForm.joinManagerId === oldForm.joinManagerId)
+      this.$set(this.formItem[3].tagAttrs, 'disabled', false)
+      this.$set(this.formItem[4].tagAttrs, 'disabled', false)
+      if (cityCodeStatus && busiTypeStatus && joinManagerIdStatus) {
+        return
+      }
       let params = {
         gmId: newForm.joinManagerId
       }
       this.getDriverInfo(params)
-      this.$set(this.formItem[3].tagAttrs, 'disabled', false)
-      this.$set(this.formItem[4].tagAttrs, 'disabled', false)
     }
   }
 
@@ -1101,6 +1142,15 @@ export default class extends Vue {
   get tableHeight() {
     let otherHeight = 440
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+  }
+
+  get listQueryChange() {
+    return JSON.parse(JSON.stringify(this.listQuery))
+  }
+
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
   }
 
   mounted() {
