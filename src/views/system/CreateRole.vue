@@ -289,6 +289,8 @@ export default class extends Vue {
         } else {
           this.$message.error(data)
         }
+      } else {
+        (document.querySelector('.AppMain') as HTMLDivElement).scrollTop = 0
       }
     })
   }
