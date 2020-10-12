@@ -42,7 +42,7 @@
           size="small"
           @click="handleQueryClick"
         >
-          筛选
+          查询
         </el-button>
         <el-button
           :class="isPC ? '' : 'btnMobile'"
@@ -167,7 +167,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
-import { GetDriverListByKerWord, getDriverListByGmId } from '@/api/driver'
+import { getDriverListByGmId, GetDriverListByKerWord } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
@@ -685,30 +685,30 @@ export default class extends Vue {
     }
   }
 
-  private async querySearchAsync(queryString:any, cb:any) {
-    var restaurants:any[] = []
-    if (!queryString) {
-      cb(restaurants)
-      return
-    }
-    let params = {
-      page: 1,
-      limit: 9999,
-      key: queryString
-    }
-    let { data: res } = await GetDriverListByKerWord(params)
-    if (res.success) {
-      if (res.data.length > 0) {
-        this.keyOptions = res.data.map((ele:any) => {
-          return { value: ele.name }
-        })
-        restaurants = this.keyOptions
-      } else {
-        restaurants.push({ value: '暂无数据' })
-      }
-    }
-    cb(restaurants)
-  }
+  // private async querySearchAsync(queryString:any, cb:any) {
+  //   var restaurants:any[] = []
+  //   if (!queryString) {
+  //     cb(restaurants)
+  //     return
+  //   }
+  //   let params = {
+  //     page: 1,
+  //     limit: 9999,
+  //     key: queryString
+  //   }
+  //   let { data: res } = await GetDriverListByKerWord(params)
+  //   if (res.success) {
+  //     if (res.data.length > 0) {
+  //       this.keyOptions = res.data.map((ele:any) => {
+  //         return { value: ele.name }
+  //       })
+  //       restaurants = this.keyOptions
+  //     } else {
+  //       restaurants.push({ value: '暂无数据' })
+  //     }
+  //   }
+  //   cb(restaurants)
+  // }
 
   private async showWork(node:any, resolve:any) {
     let query: any = {
@@ -1129,6 +1129,10 @@ export default class extends Vue {
         gmId: newForm.joinManagerId
       }
       this.getDriverInfo(params)
+    } else {
+      this.$set(this.formItem[2].tagAttrs, 'disabled', true)
+      this.$set(this.formItem[3].tagAttrs, 'disabled', true)
+      this.$set(this.formItem[4].tagAttrs, 'disabled', true)
     }
   }
 
