@@ -16,11 +16,12 @@
     >
       <template slot="driverName">
         <el-select
-          v-model="listQuery.driverCode"
+          v-model="listQuery.driverName"
           :disabled="listQuery.gmId!== '' ? false :true"
           placeholder="请选择"
           clearable
           filterable
+          @change="listQuery.driverCode = listQuery.driverName"
         >
           <el-option
             v-for="item in driverOptions"
@@ -136,7 +137,17 @@
         :pc-col="20"
         :rules="rules"
         @onPass="handlePassClick"
-      />
+      >
+        <template slot="amount">
+          <el-input
+            v-model.trim="addForm.amount"
+            v-only-number="{min: 0, max: 99999999.99, precision: 2}"
+            placeholder="请输入"
+            maxlength="10"
+            clearable
+          />
+        </template>
+      </self-form>
     </SelfDialog>
   </div>
 </template>
@@ -401,13 +412,9 @@ export default class extends Vue {
       options: this.billOptons
     },
     {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 10,
-        clearable: true
-      },
+      type: 'amount',
       label: '申请调流水金额:',
+      slot: true,
       key: 'amount'
     },
     {
@@ -456,15 +463,13 @@ export default class extends Vue {
   resetGmId() {
     if (this.listQuery.gmId) {
       this.listQuery.gmId = ''
-      this.resetDriver()
     }
+    this.resetDriver()
   }
   // 重置司机
   resetDriver() {
-    if (this.listQuery.driverCode) {
-      this.listQuery.driverCode = ''
-      this.listQuery.driverName = ''
-    }
+    this.listQuery.driverCode = ''
+    this.listQuery.driverName = ''
   }
   // 查询
   handleFilterClick() {
@@ -492,7 +497,7 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
@@ -530,7 +535,7 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
@@ -779,6 +784,7 @@ export default class extends Vue {
   // 通过加盟经理获取司机列表
   async getDriverLists() {
     try {
+      this.resetDriver()
       let len = this.driverOptions.length
       if (len > 0) {
         this.driverOptions.splice(1, len)
