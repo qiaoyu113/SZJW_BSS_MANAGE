@@ -276,7 +276,10 @@ export default class extends Vue {
       },
       label: '所属城市:',
       w: '100px',
-      key: 'city'
+      key: 'city',
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 2,
@@ -288,7 +291,10 @@ export default class extends Vue {
       w: '100px',
       label: '业务线:',
       key: 'busiType',
-      options: this.dutyListOptions
+      options: this.dutyListOptions,
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       slot: true,
@@ -445,6 +451,20 @@ export default class extends Vue {
   get tableHeight() {
     let otherHeight = 440
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+  }
+  // 重置加盟经理
+  resetGmId() {
+    if (this.listQuery.gmId) {
+      this.listQuery.gmId = ''
+      this.resetDriver()
+    }
+  }
+  // 重置司机
+  resetDriver() {
+    if (this.listQuery.driverCode) {
+      this.listQuery.driverCode = ''
+      this.listQuery.driverName = ''
+    }
   }
   // 查询
   handleFilterClick() {

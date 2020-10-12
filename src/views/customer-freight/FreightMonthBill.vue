@@ -69,11 +69,6 @@
       </div>
     </self-form>
     <div class="table_box">
-      <div class="middle">
-        <div class="count">
-          筛选结果 {{ page.total }}条
-        </div>
-      </div>
       <!-- 表格 -->
       <self-table
         ref="freighForm"
@@ -92,6 +87,12 @@
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
       >
+        <template v-slot:checkVoucherPath="scope">
+          <a
+            :href="scope.row.checkVoucherPath"
+            download
+          >下载凭证</a>
+        </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ? '是':'否' }}
         </template>
@@ -417,6 +418,7 @@ export default class extends Vue {
     {
       key: 'checkVoucherPath',
       label: '对账凭证',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -849,7 +851,7 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     }
     .table_box {
-      padding: 0px 30px;
+      padding: 30px 30px 0px;
       background: #ffffff;
       -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);

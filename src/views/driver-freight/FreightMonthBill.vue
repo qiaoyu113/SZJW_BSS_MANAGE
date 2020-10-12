@@ -85,11 +85,6 @@
       </div>
     </self-form>
     <div class="table_box">
-      <div class="middle">
-        <div class="count">
-          筛选结果（{{ page.total }}条）
-        </div>
-      </div>
       <!-- 表格 -->
       <self-table
         ref="freighForm"
@@ -108,6 +103,12 @@
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
       >
+        <template v-slot:checkVoucherPath="scope">
+          <a
+            :href="scope.row.checkVoucherPath"
+            download
+          >下载凭证</a>
+        </template>
         <template v-slot:driverName="scope">
           {{ scope.row.driverName }}/{{ scope.row.phone }}
         </template>
@@ -311,7 +312,10 @@ export default class extends Vue {
         }
       },
       label: '司机城市:',
-      key: 'driverCity'
+      key: 'driverCity',
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 2,
@@ -322,7 +326,10 @@ export default class extends Vue {
       },
       label: '业务线:',
       key: 'businessType',
-      options: this.dutyListOptions
+      options: this.dutyListOptions,
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 'gmId',
@@ -417,6 +424,7 @@ export default class extends Vue {
     },
     {
       key: 'checkVoucherPath',
+      slot: true,
       label: '上传凭证',
       'min-width': '140px'
     },
@@ -514,6 +522,12 @@ export default class extends Vue {
   get tableHeight() {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+  }
+  // 重置加盟经理
+  resetGmId() {
+    if (this.listQuery.gmId) {
+      this.listQuery.gmId = ''
+    }
   }
   // 重置表单
   private handleResetClick() {
@@ -877,7 +891,7 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     }
     .table_box {
-      padding: 0px 30px;
+      padding: 30px 30px 0px;
       background: #ffffff;
       -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
