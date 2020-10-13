@@ -117,8 +117,8 @@
               prop="name"
             >
               <el-input
-                v-model.trim="dialogForm.name"
-                placeholder="请输入2-10位中文"
+                v-model="dialogForm.name"
+                placeholder="请输入组织名称"
                 maxlength="10"
                 show-word-limit
                 clearable
@@ -172,7 +172,7 @@
             prop="name"
           >
             <el-input
-              v-model.trim="dialogForm.name"
+              v-model="dialogForm.name"
               maxlength="10"
               show-word-limit
               clearable
@@ -202,7 +202,7 @@
               >
                 <el-input
                   v-model="dialogForm.name"
-                  placeholder="请输入2-100位中文"
+                  placeholder="请输入组织名称"
                   maxlength="10"
                   clearable
                   name="organizationmanage_chooseName4_input"
@@ -266,7 +266,7 @@
             prop="name"
           >
             <el-input
-              v-model.trim="dialogForm.name"
+              v-model="dialogForm.name"
               maxlength="10"
               show-word-limit
               clearable
@@ -401,12 +401,7 @@ export default class extends Vue {
   private areaList: any = [];
   private rules: any = {
     name: [
-      { required: true, message: '请输入组织名称', trigger: 'blur' },
-      {
-        pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/,
-        message: '请输入2-10个中文',
-        trigger: 'blur'
-      }
+      { required: true, message: '请输入组织名称', trigger: 'blur' }
     ],
     dutyId: [{ required: true, message: '请选择业务线', trigger: 'change' }],
     areaCode: [{ required: true, message: '请选择城市', trigger: 'change' }]

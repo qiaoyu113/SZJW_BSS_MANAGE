@@ -217,12 +217,7 @@ export default class extends Vue {
   };
   private rules: any = {
     authName: [
-      { required: true, message: '请输入权限名称', trigger: 'blur' },
-      {
-        pattern: /^(?:[\u4e00-\u9fa5·]{1,10})$/,
-        message: '请输入1-10个中文',
-        trigger: 'blur'
-      }
+      { required: true, message: '请输入权限名称', trigger: 'blur' }
     ],
     url: [
       { required: true, message: '请输入页面地址', trigger: 'blur' },
