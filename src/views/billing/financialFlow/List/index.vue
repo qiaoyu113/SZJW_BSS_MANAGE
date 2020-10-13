@@ -14,19 +14,18 @@
       class="p15 SuggestForm"
       :pc-col="8"
     >
-      <template slot="driverName">
+      <template slot="driverCode">
         <el-select
-          v-model="listQuery.driverName"
+          v-model="listQuery.driverCode"
           :disabled="listQuery.gmId!== '' ? false :true"
           placeholder="请选择"
           clearable
           filterable
-          @change="listQuery.driverCode = listQuery.driverName"
         >
           <el-option
             v-for="item in driverOptions"
             :key="item.value"
-            :label="item.label"
+            :label="`${item.label}/${item.value}` "
             :value="item.value"
           />
         </el-select>
@@ -34,7 +33,6 @@
       <template slot="gmId">
         <el-select
           v-model="listQuery.gmId"
-          :disabled="(listQuery.city.length > 0 && listQuery.busiType!== '' )? false :true"
           placeholder="请选择"
           clearable
           filterable
@@ -268,7 +266,6 @@ export default class extends Vue {
     busiType: '',
     gmId: '',
     driverCode: '',
-    driverName: '',
     time: []
   }
 
@@ -320,17 +317,7 @@ export default class extends Vue {
       type: 'gmId'
     },
     {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 50,
-        clearable: true
-      },
-      label: '司机编号:',
-      key: 'driverCode'
-    },
-    {
-      type: 'driverName',
+      type: 'driverCode',
       slot: true,
       label: '司机姓名:'
     },
@@ -762,10 +749,12 @@ export default class extends Vue {
       if (len > 0) {
         this.gmIdOptions.splice(0, len)
       }
-      let params = {
-        cityCode: this.listQuery.city[1],
-        productLine: this.listQuery.busiType,
+      let params:IState = {
         roleType: 1
+      }
+      this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiTyp)
+      if (this.listQuery.city && this.listQuery.city.length > 1) {
+        params.cityCode = this.listQuery.city[1]
       }
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
@@ -831,6 +820,7 @@ export default class extends Vue {
     this.getLists()
     this.getDutyListByLevel()
     this.getBillListAll()
+    this.getGmLists()
   }
 }
 </script>

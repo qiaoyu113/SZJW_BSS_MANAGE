@@ -42,11 +42,11 @@ export const ExportMonthlyBillList = (params: any) =>
   })
 
 // 司机对账月账单保存
-export const driverMonthlyBillCheck = (params: any) =>
+export const driverMonthlyBillCheck = (data: any) =>
   request({
     url: `${prefix}/v2/driverBilling/monthlyBill/check`,
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 
 // 司机运费调整列表
