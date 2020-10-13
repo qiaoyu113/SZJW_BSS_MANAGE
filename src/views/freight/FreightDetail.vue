@@ -192,7 +192,7 @@
         <el-col :span="isPC ? 24 : 24">
           <DetailItem
             name="运费金额"
-            :value="OwnerDetail.lineInfoVO.lineSaleName"
+            :value="OwnerDetail.wayBillFee"
           />
           <!--table表单-->
           <div

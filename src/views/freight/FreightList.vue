@@ -263,14 +263,18 @@
                   <i class="el-icon-setting el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
+                  <!--
                     v-if="scope.row.canConfirm"
+                  > -->
+                  <el-dropdown-item
+                    v-permission="['/v2/waybill/reportMoneyBatch']"
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
                     {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }}
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v2/waybill/shippingDetail']"
                     name="ownerlist_detail_dropdown"
                     @click.native="goDetail(scope.row.wayBillId)"
                   >
@@ -697,7 +701,8 @@ export default class extends Vue {
 
     // 判断是否可以选中
     private selectable(row: any) {
-      return row.canConfirm
+      // return row.canConfirm
+      return true
     }
 
     // 所有请求方法
@@ -753,7 +758,8 @@ export default class extends Vue {
 
     // 确认操作
     private async checkOption(time: any, id: any) {
-      let type = this.getWeekStartDate(time)
+      // let type = this.getWeekStartDate(time)
+      let type = false
       if (type) {
         let endTime = this.getWednesdayDate(time)
         this.$alert('出车单可确认时间，为' + endTime, '提示', {
