@@ -74,7 +74,9 @@
         <template v-slot:paymentReceivedFlag="scope">
           {{ scope.row.paymentReceivedFlag ? '是':'否' }}
         </template>
-        <template v-slot:op="scope">
+        <template
+          v-slot:op="scope"
+        >
           <el-dropdown
             :trigger="isPC ? 'hover' : 'click'"
             @command="(e) => handleCommandChange(e,scope.row)"
@@ -319,6 +321,10 @@ export default class extends Vue {
       key: 'paymentReceivedFlag',
       options: [
         {
+          label: '全部',
+          value: ''
+        },
+        {
           label: '是',
           value: 1
         },
@@ -554,6 +560,8 @@ export default class extends Vue {
         let departureDateEnd = new Date(this.listQuery.departureDate[1])
         params.departureDateStart = departureDateStart.setHours(0, 0, 0)
         params.departureDateEnd = departureDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择出车日期')
       }
 
       if (this.listQuery.createDate && this.listQuery.createDate.length > 0) {
@@ -561,6 +569,8 @@ export default class extends Vue {
         let createDateEnd = new Date(this.listQuery.createDate[1])
         params.createDateStart = createDateStart.setHours(0, 0, 0)
         params.createDateEnd = createDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择创建时间')
       }
       let { data: res } = await ExportFreightChargeList(params)
       if (res.success) {
@@ -624,7 +634,7 @@ export default class extends Vue {
   // 更多操作
   private handleCommandChange(key:string, row:any) {
     if (key === '1') { // 标记付款
-      this.dialogTit = '标记付款'
+      this.dialogTit = '标记已付款'
       this.dialogFormItem = []
       this.ids = [row.id]
       this.resetDialogForm()
@@ -665,7 +675,7 @@ export default class extends Vue {
       let { data: res } = await BjfreightChargeReceive(params)
       if (res.success) {
         this.showDialog = false
-        this.$message.success('操作成功')
+        this.$message.success('操作已付款成功')
         this.getLists()
       } else {
         this.$message.error(res.errorMsg)
@@ -735,7 +745,7 @@ export default class extends Vue {
       }
       this.resetDialogForm()
       this.ids = this.multipleSelection.map(item => item.id)
-      this.dialogTit = '批量标记付款'
+      this.dialogTit = '批量标记已付款'
       this.showDialog = true
       this.dialogFormItem = this.dialogItem.slice(3)
     }

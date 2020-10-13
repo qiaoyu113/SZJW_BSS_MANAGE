@@ -451,10 +451,10 @@ export default class extends Vue {
       { required: true, message: '请输入', trigger: 'blur' }
     ],
     driverId: [
-      { required: true, message: '请选择', trigger: 'blur' }
+      { required: true, message: '请选择成交的司机', trigger: 'blur' }
     ],
     amount: [
-      { required: true, message: '请输入', trigger: 'blur' }
+      { required: true, message: '请输入大于等于0', trigger: 'blur' }
     ],
     fileUrl: [
       { required: true, message: '请上传凭证', trigger: 'blur' }
@@ -492,6 +492,8 @@ export default class extends Vue {
         let createDateEnd = new Date(this.listQuery.createTime[1])
         params.createDateStart = createDateStart.setHours(0, 0, 0)
         params.createDateEnd = createDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择创建时间')
       }
       let { data: res } = await GetShippingChangeExport(params)
       if (res.success) {
@@ -542,7 +544,7 @@ export default class extends Vue {
       let { data: res } = await SaveShippingChange(params)
       if (res.success) {
         this.showDialog = false
-        this.$message.success('操作成功')
+        this.$message.success('新增运费调整成功')
         this.getLists()
       } else {
         this.$message.error(res.errorMsg)
@@ -728,6 +730,10 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)

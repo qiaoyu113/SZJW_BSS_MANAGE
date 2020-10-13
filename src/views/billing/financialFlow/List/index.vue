@@ -17,7 +17,6 @@
       <template slot="driverCode">
         <el-select
           v-model="listQuery.driverCode"
-          :disabled="listQuery.gmId!== '' ? false :true"
           placeholder="请选择"
           clearable
           filterable
@@ -334,7 +333,7 @@ export default class extends Vue {
     },
     {
       type: 'mulBtn',
-      col: 14,
+      col: 24,
       slot: true,
       w: '0px'
     }
@@ -484,13 +483,15 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
         let endDate = new Date(this.listQuery.time[1])
         params.startDate = startDate.setHours(0, 0, 0)
         params.endDate = endDate.setHours(23, 59, 59)
+      } else {
+        this.$message.error('请选择业务发生时间')
+        return false
       }
       let { data: res } = await exportFlowList(params)
       if (res.success) {
@@ -522,8 +523,6 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
-
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
         let endDate = new Date(this.listQuery.time[1])
@@ -734,6 +733,10 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
@@ -778,9 +781,8 @@ export default class extends Vue {
       if (len > 0) {
         this.driverOptions.splice(1, len)
       }
-      let params = {
-        gmId: this.listQuery.gmId
-      }
+      let params:IState = {}
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       let { data: res } = await getDriverListByGmId(params)
       if (res.success) {
         let options = res.data.map((item:any) => ({
@@ -816,11 +818,18 @@ export default class extends Vue {
       console.log(`get bill list fail:${err}`)
     }
   }
+  init() {
+    if (this.$route.query.id) {
+      this.listQuery.driverCode = this.$route.query.id
+    }
+  }
   mounted() {
+    this.init()
     this.getLists()
     this.getDutyListByLevel()
     this.getBillListAll()
     this.getGmLists()
+    // this.getDriverLists()
   }
 }
 </script>

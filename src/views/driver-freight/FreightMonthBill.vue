@@ -108,8 +108,15 @@
             download
           >下载凭证</a>
         </template>
+
+        <template v-slot:monthBillDate="scope">
+          {{ scope.row.monthBillDate | parseTime('{y}-{m}') }}
+        </template>
         <template v-slot:driverName="scope">
           {{ scope.row.driverName }}/{{ scope.row.phone }}
+        </template>
+        <template v-slot:checkStatus="scope">
+          {{ scope.row.checkStatus ===1 ? '是':'否' }}
         </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ===1 ? '是':'否' }}
@@ -145,11 +152,13 @@
                 查看流水
               </el-dropdown-item>
               <el-dropdown-item
+                v-if="scope.row.closeStatus !==1"
                 command="driverCheck"
               >
                 司机对账
               </el-dropdown-item>
               <el-dropdown-item
+
                 command="download"
               >
                 账单下载
@@ -387,7 +396,8 @@ export default class extends Vue {
     {
       key: 'monthBillDate',
       label: '账单月份',
-      'min-width': '140px'
+      'min-width': '140px',
+      slot: true
     },
     {
       key: 'driverName',
@@ -419,6 +429,7 @@ export default class extends Vue {
     {
       key: 'checkStatus',
       label: '对账状态',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -563,6 +574,8 @@ export default class extends Vue {
       let monthBillDateEnd = new Date(this.listQuery.months[1])
       params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
       params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+    } else {
+      return this.$message.error('请选择月份')
     }
     this.exportExcel(params)
   }
@@ -812,6 +825,10 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
