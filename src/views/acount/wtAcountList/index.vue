@@ -42,7 +42,7 @@
           size="small"
           @click="handleQueryClick"
         >
-          筛选
+          查询
         </el-button>
         <el-button
           :class="isPC ? '' : 'btnMobile'"
@@ -167,7 +167,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
-import { GetDriverListByKerWord, getDriverListByGmId } from '@/api/driver'
+import { getDriverListByGmId, GetDriverListByKerWord } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
@@ -209,7 +209,6 @@ export default class extends Vue {
   private busiTypeOptions:any[] = []
   private keyOptions:any[] = []
   private driverOtions:any[] = []
-  private nameOtions:any[] = []
   private orderOptions:any[] = []
   private getGmStatus:Boolean = true
   private getDriverStatus:Boolean = true
@@ -217,7 +216,6 @@ export default class extends Vue {
   private listQuery: IState = {
     workCity: [],
     driverId: '',
-    name: '',
     busiType: '',
     joinManagerId: '',
     balance: 0,
@@ -266,42 +264,16 @@ export default class extends Vue {
     },
     {
       type: 2,
-      key: 'name',
-      col: 8,
-      label: '司机姓名',
-      tagAttrs: {
-        placeholder: '请选择司机姓名',
-        filterable: true,
-        disabled: true
-      },
-      options: this.nameOtions
-    },
-    {
-      type: 2,
       key: 'driverId',
       col: 8,
-      label: '司机编号',
+      label: '司机信息',
       tagAttrs: {
-        placeholder: '司机编号',
+        placeholder: '请选择司机信息',
         filterable: true,
         disabled: true
       },
       options: this.driverOtions
     },
-    // {
-    //   slot: true,
-    //   col: 8,
-    //   label: '司机姓名',
-    //   key: 'name',
-    //   type: 'name'
-    // },
-    // {
-    //   slot: true,
-    //   col: 8,
-    //   label: '司机编号',
-    //   key: 'driverId',
-    //   type: 'driverId'
-    // },
     {
       type: 4,
       col: 8,
@@ -685,31 +657,6 @@ export default class extends Vue {
     }
   }
 
-  private async querySearchAsync(queryString:any, cb:any) {
-    var restaurants:any[] = []
-    if (!queryString) {
-      cb(restaurants)
-      return
-    }
-    let params = {
-      page: 1,
-      limit: 9999,
-      key: queryString
-    }
-    let { data: res } = await GetDriverListByKerWord(params)
-    if (res.success) {
-      if (res.data.length > 0) {
-        this.keyOptions = res.data.map((ele:any) => {
-          return { value: ele.name }
-        })
-        restaurants = this.keyOptions
-      } else {
-        restaurants.push({ value: '暂无数据' })
-      }
-    }
-    cb(restaurants)
-  }
-
   private async showWork(node:any, resolve:any) {
     let query: any = {
       parentId: ''
@@ -971,7 +918,6 @@ export default class extends Vue {
     this.listQuery = {
       workCity: [],
       driverId: '',
-      name: '',
       busiType: '',
       joinManagerId: '',
       balance: 0,
@@ -1008,7 +954,6 @@ export default class extends Vue {
       this.listQuery.workCity && (params.workCity = Number(this.listQuery.workCity[1]))
     }
     this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
-    this.listQuery.name && (params.name = this.listQuery.name)
     this.listQuery.busiType !== '' &&
         (params.busiType = this.listQuery.busiType)
     this.listQuery.joinManagerId !== '' && (params.joinManagerId = this.listQuery.joinManagerId)
@@ -1066,23 +1011,15 @@ export default class extends Vue {
   async getDriverInfo(params:any) {
     try {
       this.driverOtions.splice(0, this.driverOtions.length)
-      this.nameOtions.splice(0, this.nameOtions.length)
       let { data: res } = await getDriverListByGmId(params)
       if (res.success) {
         let driverInfos = res.data.map(function(item: any) {
           return {
-            label: item.driverId,
+            label: `${item.name}(${item.driverId})`,
             value: item.driverId
           }
         })
-        let nameInfos = res.data.map(function(item: any) {
-          return {
-            label: item.name,
-            value: item.name
-          }
-        })
         this.driverOtions.push(...driverInfos)
-        this.nameOtions.push(...nameInfos)
       }
     } catch (err) {
       console.log(err)
@@ -1106,7 +1043,6 @@ export default class extends Vue {
       const busiTypeStatus = (newForm.busiType === oldForm.busiType)
       this.$set(this.formItem[2].tagAttrs, 'disabled', false)
       this.$set(this.formItem[3].tagAttrs, 'disabled', true)
-      this.$set(this.formItem[4].tagAttrs, 'disabled', true)
       if (cityCodeStatus && busiTypeStatus) {
         return
       }
@@ -1121,7 +1057,6 @@ export default class extends Vue {
       const busiTypeStatus = (newForm.busiType === oldForm.busiType)
       const joinManagerIdStatus = (newForm.joinManagerId === oldForm.joinManagerId)
       this.$set(this.formItem[3].tagAttrs, 'disabled', false)
-      this.$set(this.formItem[4].tagAttrs, 'disabled', false)
       if (cityCodeStatus && busiTypeStatus && joinManagerIdStatus) {
         return
       }
@@ -1129,6 +1064,9 @@ export default class extends Vue {
         gmId: newForm.joinManagerId
       }
       this.getDriverInfo(params)
+    } else {
+      this.$set(this.formItem[2].tagAttrs, 'disabled', true)
+      this.$set(this.formItem[3].tagAttrs, 'disabled', true)
     }
   }
 
