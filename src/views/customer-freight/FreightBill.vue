@@ -705,13 +705,16 @@ export default class extends Vue {
   beforeFileUpload(file:any) {
     this.filelist = []
     const isType = file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1
-    const isSize = file.size / 1024 / 1024 < 10
+    const isSize = file.size / 1024 / 1024
     if (isType) {
       this.$message.error('上传文件只能是 .rar .zip .doc .docx jpg等 格式!')
       return false
     }
-    if (!isSize) {
+    if (isSize > 10) {
       this.$message.error('上传文件大小不能超过 10MB!')
+      return false
+    } else if (isSize <= 0) {
+      this.$message.error('上传文件大小应该大于 0MB!')
       return false
     }
     return true
