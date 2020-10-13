@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 let prefix = '/driver'
+// let prefix = '/mock/81'
 
 let prefixCarrier = '/carrier_center'
 /**
