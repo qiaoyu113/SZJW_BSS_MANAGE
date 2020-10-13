@@ -78,14 +78,7 @@
         @selection-change="handleSelectionChange"
       >
         <template v-slot:remarks="scope">
-          <el-tooltip
-            class="item"
-            effect="dark"
-            :content="scope.row.remarks"
-            placement="top"
-          >
-            <span>{{ scope.row.remarks }}</span>
-          </el-tooltip>
+          {{ scope.row.remarks }}
         </template>
         <template v-slot:departureDate="scope">
           {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}

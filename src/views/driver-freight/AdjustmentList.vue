@@ -90,13 +90,7 @@
           <a :href="scope.row.voucher_path">下载凭证</a>
         </template>
         <template v-slot:remark="scope">
-          <el-tooltip
-            effect="dark"
-            :content="scope.row.remark"
-            placement="top"
-          >
-            <span>{{ scope.row.remark }}</span>
-          </el-tooltip>
+          {{ scope.row.remark }}
         </template>
         <template v-slot:createDate="scope">
           <span>{{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}</span>
