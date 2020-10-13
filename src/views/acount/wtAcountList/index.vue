@@ -756,7 +756,11 @@ export default class extends Vue {
           return { label: ele.orderId, value: ele.orderId, state: ele.status }
         })
         this.orderOptions.splice(0, orderOptions.length)
-        this.orderOptions.push(...orderOptions)
+        if (type === 2) {
+          this.orderOptions.push(...orderOptions)
+        } else {
+          this.orderOptions = orderOptions.filter((ele:any) => (ele.state === 30))
+        }
         if (this.orderOptions.length && this.orderOptions.length === 1) {
           this.freezeForm.orderId = this.orderOptions[0].value
         }
