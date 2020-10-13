@@ -17,7 +17,6 @@
       <template slot="gmId">
         <el-select
           v-model="listQuery.gmId"
-          :disabled="(listQuery.driverCity.length > 0 && listQuery.businessType!== '' )? false :true"
           placeholder="请选择"
           clearable
           filterable
@@ -68,11 +67,6 @@
       </div>
     </self-form>
     <div class="table_box">
-      <div class="middle">
-        <div class="count">
-          筛选结果（{{ page.total }}条）
-        </div>
-      </div>
       <!-- 表格 -->
       <self-table
         ref="freighForm"
@@ -93,16 +87,10 @@
           <span>{{ scope.row.driverName }}/{{ scope.row.phone }}</span>
         </template>
         <template v-slot:voucher_path="scope">
-          <span>{{ scope.row.voucher_path }}</span>
+          <a :href="scope.row.voucher_path">下载凭证</a>
         </template>
         <template v-slot:remark="scope">
-          <el-tooltip
-            effect="dark"
-            :content="scope.row.remark"
-            placement="top"
-          >
-            <span>{{ scope.row.remark }}</span>
-          </el-tooltip>
+          {{ scope.row.remark }}
         </template>
         <template v-slot:createDate="scope">
           <span>{{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}</span>
@@ -270,7 +258,10 @@ export default class extends Vue {
         }
       },
       label: '司机城市:',
-      key: 'driverCity'
+      key: 'driverCity',
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 2,
@@ -281,7 +272,10 @@ export default class extends Vue {
       },
       label: '业务线:',
       key: 'businessType',
-      options: this.dutyListOptions
+      options: this.dutyListOptions,
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 'gmId',
@@ -474,6 +468,12 @@ export default class extends Vue {
     let otherHeight = 440
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  // 重置加盟经理
+  resetGmId() {
+    if (this.listQuery.gmId) {
+      this.listQuery.gmId = ''
+    }
+  }
   // 导出
   async handleExportClick() {
     try {
@@ -488,7 +488,7 @@ export default class extends Vue {
         params.driverCity = this.listQuery.driverCity[1]
       }
       if (this.listQuery.createTime && this.listQuery.createTime.length > 0) {
-        let createDateStart = new Date(this.listQuery.createDateStart[0])
+        let createDateStart = new Date(this.listQuery.createTime[0])
         let createDateEnd = new Date(this.listQuery.createTime[1])
         params.createDateStart = createDateStart.setHours(0, 0, 0)
         params.createDateEnd = createDateEnd.setHours(23, 59, 59)
@@ -589,13 +589,16 @@ export default class extends Vue {
   beforeFileUpload(file:any) {
     this.filelist = []
     const isType = file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1
-    const isSize = file.size / 1024 / 1024 < 10
+    const isSize = file.size / 1024 / 1024
     if (isType) {
       this.$message.error('上传文件只能是 .rar .zip .doc .docx jpg等 格式!')
       return false
     }
-    if (!isSize) {
+    if (isSize > 10) {
       this.$message.error('上传文件大小不能超过 10MB!')
+      return false
+    } else if (isSize <= 0) {
+      this.$message.error('上传文件大小应该大于 0MB!')
       return false
     }
     return true
@@ -624,7 +627,7 @@ export default class extends Vue {
         params.driverCity = this.listQuery.driverCity[1]
       }
       if (this.listQuery.createTime && this.listQuery.createTime.length > 0) {
-        let createDateStart = new Date(this.listQuery.createDateStart[0])
+        let createDateStart = new Date(this.listQuery.createTime[0])
         let createDateEnd = new Date(this.listQuery.createTime[1])
         params.createDateStart = createDateStart.setHours(0, 0, 0)
         params.createDateEnd = createDateEnd.setHours(23, 59, 59)
@@ -740,10 +743,12 @@ export default class extends Vue {
       if (len > 0) {
         this.gmIdOptions.splice(0, len)
       }
-      let params = {
-        cityCode: this.listQuery.driverCity[1],
-        productLine: this.listQuery.businessType,
+      let params:IState = {
         roleType: 1
+      }
+      this.listQuery.businessType !== '' && (params.productLine = this.listQuery.businessType)
+      if (this.listQuery.driverCity.length > 1) {
+        params.cityCode = this.listQuery.driverCity[1]
       }
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
@@ -763,6 +768,7 @@ export default class extends Vue {
     this.getLists()
     this.getSubjectList()
     this.getDutyListByLevel()
+    this.getGmLists()
   }
 }
 </script>
@@ -810,7 +816,7 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     }
     .table_box {
-      padding: 0px 30px;
+      padding: 30px 30px 0px;
       background: #ffffff;
       -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);

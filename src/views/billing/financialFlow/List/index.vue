@@ -14,7 +14,7 @@
       class="p15 SuggestForm"
       :pc-col="8"
     >
-      <template slot="driverName">
+      <template slot="driverCode">
         <el-select
           v-model="listQuery.driverCode"
           :disabled="listQuery.gmId!== '' ? false :true"
@@ -25,7 +25,7 @@
           <el-option
             v-for="item in driverOptions"
             :key="item.value"
-            :label="item.label"
+            :label="`${item.label}/${item.value}` "
             :value="item.value"
           />
         </el-select>
@@ -33,7 +33,6 @@
       <template slot="gmId">
         <el-select
           v-model="listQuery.gmId"
-          :disabled="(listQuery.city.length > 0 && listQuery.busiType!== '' )? false :true"
           placeholder="请选择"
           clearable
           filterable
@@ -136,7 +135,17 @@
         :pc-col="20"
         :rules="rules"
         @onPass="handlePassClick"
-      />
+      >
+        <template slot="amount">
+          <el-input
+            v-model.trim="addForm.amount"
+            v-only-number="{min: 0, max: 99999999.99, precision: 2}"
+            placeholder="请输入"
+            maxlength="10"
+            clearable
+          />
+        </template>
+      </self-form>
     </SelfDialog>
   </div>
 </template>
@@ -257,7 +266,6 @@ export default class extends Vue {
     busiType: '',
     gmId: '',
     driverCode: '',
-    driverName: '',
     time: []
   }
 
@@ -276,7 +284,10 @@ export default class extends Vue {
       },
       label: '所属城市:',
       w: '100px',
-      key: 'city'
+      key: 'city',
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 2,
@@ -288,7 +299,10 @@ export default class extends Vue {
       w: '100px',
       label: '业务线:',
       key: 'busiType',
-      options: this.dutyListOptions
+      options: this.dutyListOptions,
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       slot: true,
@@ -303,17 +317,7 @@ export default class extends Vue {
       type: 'gmId'
     },
     {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 50,
-        clearable: true
-      },
-      label: '司机编号:',
-      key: 'driverCode'
-    },
-    {
-      type: 'driverName',
+      type: 'driverCode',
       slot: true,
       label: '司机姓名:'
     },
@@ -395,13 +399,9 @@ export default class extends Vue {
       options: this.billOptons
     },
     {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 10,
-        clearable: true
-      },
+      type: 'amount',
       label: '申请调流水金额:',
+      slot: true,
       key: 'amount'
     },
     {
@@ -446,6 +446,18 @@ export default class extends Vue {
     let otherHeight = 440
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  // 重置加盟经理
+  resetGmId() {
+    if (this.listQuery.gmId) {
+      this.listQuery.gmId = ''
+    }
+    this.resetDriver()
+  }
+  // 重置司机
+  resetDriver() {
+    this.listQuery.driverCode = ''
+    this.listQuery.driverName = ''
+  }
   // 查询
   handleFilterClick() {
     this.page.page = 1
@@ -472,7 +484,7 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
@@ -510,7 +522,7 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
@@ -737,10 +749,12 @@ export default class extends Vue {
       if (len > 0) {
         this.gmIdOptions.splice(0, len)
       }
-      let params = {
-        cityCode: this.listQuery.city[1],
-        productLine: this.listQuery.busiType,
+      let params:IState = {
         roleType: 1
+      }
+      this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiTyp)
+      if (this.listQuery.city && this.listQuery.city.length > 1) {
+        params.cityCode = this.listQuery.city[1]
       }
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
@@ -759,6 +773,7 @@ export default class extends Vue {
   // 通过加盟经理获取司机列表
   async getDriverLists() {
     try {
+      this.resetDriver()
       let len = this.driverOptions.length
       if (len > 0) {
         this.driverOptions.splice(1, len)
@@ -805,6 +820,7 @@ export default class extends Vue {
     this.getLists()
     this.getDutyListByLevel()
     this.getBillListAll()
+    this.getGmLists()
   }
 }
 </script>

@@ -69,11 +69,6 @@
       </div>
     </self-form>
     <div class="table_box">
-      <div class="middle">
-        <div class="count">
-          筛选结果 {{ page.total }}条
-        </div>
-      </div>
       <!-- 表格 -->
       <self-table
         ref="freighForm"
@@ -92,6 +87,12 @@
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
       >
+        <template v-slot:checkVoucherPath="scope">
+          <a
+            :href="scope.row.checkVoucherPath"
+            download
+          >下载凭证</a>
+        </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ? '是':'否' }}
         </template>
@@ -417,6 +418,7 @@ export default class extends Vue {
     {
       key: 'checkVoucherPath',
       label: '对账凭证',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -711,7 +713,7 @@ export default class extends Vue {
       formData.append('file', file.file)
       let { data: res } = await Upload(params, formData)
       if (res.success) {
-        this.dialogForm.fileUrl = res.data.url
+        this.dialogForm.fieldUrl = res.data.url
         this.$message.success('上传成功')
       } else {
         this.$message.error(res.errorMsg)
@@ -724,13 +726,16 @@ export default class extends Vue {
   beforeFileUpload(file:any) {
     this.filelist = []
     const isType = file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1
-    const isSize = file.size / 1024 / 1024 < 10
+    const isSize = file.size / 1024 / 1024
     if (isType) {
       this.$message.error('上传文件只能是 .rar .zip .doc .docx jpg等 格式!')
       return false
     }
-    if (!isSize) {
+    if (isSize > 10) {
       this.$message.error('上传文件大小不能超过 10MB!')
+      return false
+    } else if (isSize <= 0) {
+      this.$message.error('上传文件大小应该大于 0MB!')
       return false
     }
     return true
@@ -849,7 +854,7 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     }
     .table_box {
-      padding: 0px 30px;
+      padding: 30px 30px 0px;
       background: #ffffff;
       -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);

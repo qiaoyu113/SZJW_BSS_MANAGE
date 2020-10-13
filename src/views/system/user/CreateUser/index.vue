@@ -26,6 +26,13 @@
         :rules="rules"
         @onPass="handlePassClick"
       >
+        <template slot="userName">
+          <el-input
+            v-model="listQuery.userName"
+            maxlength="10"
+            placeholder="请输入"
+          />
+        </template>
         <template slot="officeId">
           <el-cascader
             v-model="listQuery.officeId"
@@ -181,14 +188,20 @@ export default class extends Vue {
   }
   sourcePhone:string = ''
   private formItem:any[] = [
+    // {
+    //   type: 1,
+    //   key: 'userName',
+    //   label: '姓名:',
+    //   tagAttrs: {
+    //     placeholder: '请输入',
+    //     maxlength: 10
+    //   }
+    // },
     {
-      type: 1,
+      type: 'userName',
       key: 'userName',
       label: '姓名:',
-      tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 10
-      }
+      slot: true
     },
     {
       type: 'mobile',
