@@ -8,7 +8,7 @@ const freightRouter: RouteConfig = {
   name: 'Freight',
   meta: {
     title: 'freightTitle',
-    icon: 'cargo',
+    icon: 'lifeCycle',
     alwaysShow: true,
     apiUrl: '/v2/waybill/getConfirmInfoList'
   },
