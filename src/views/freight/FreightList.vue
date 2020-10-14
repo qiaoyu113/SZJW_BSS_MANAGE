@@ -593,17 +593,17 @@ export default class extends Vue {
       },
       {
         label: '待出车',
-        name: '5',
+        name: '0',
         num: ''
       },
       {
         label: '已出车',
-        name: '10',
+        name: '2',
         num: ''
       },
       {
         label: '未出车',
-        name: '20',
+        name: '1',
         num: ''
       }
     ];
