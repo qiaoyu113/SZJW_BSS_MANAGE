@@ -1064,6 +1064,8 @@ export default class extends Vue {
 
     // 生命周期
     created() {
+      let wayBillId = this.$route.query.wayBillId
+      if (wayBillId) this.listQuery.wayBillId = wayBillId
       this.fetchData()
     }
 
