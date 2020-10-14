@@ -66,7 +66,13 @@
             label="出车单号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.wayBillId | DataIsNull }} </span>
+              <el-link
+                type="primary"
+                style="font-size: 12px;"
+                @click="goDetail(scope.row.wayBillId)"
+              >
+                {{ scope.row.wayBillId | DataIsNull }}
+              </el-link>
             </template>
           </el-table-column>
 

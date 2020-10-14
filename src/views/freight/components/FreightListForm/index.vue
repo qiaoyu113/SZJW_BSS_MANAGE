@@ -318,8 +318,8 @@ export default class extends Vue {
   ]
   private uploading: any[] = [
     { dictValue: '', dictLabel: '全部' },
-    { dictValue: '1', dictLabel: '未上报' },
-    { dictValue: '2', dictLabel: '已上报' }
+    { dictValue: '0', dictLabel: '待上报' },
+    { dictValue: '1', dictLabel: '已上报' }
   ]
   private businessList: any[] = [
     { dictValue: '', dictLabel: '全部' },
