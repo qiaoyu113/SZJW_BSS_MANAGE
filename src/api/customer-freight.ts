@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 // 客户运费账户
 let prefix = '/mock/112'
+// let prefix = '/waybill_center'
 
 // 客户运费流水列表
 export const GetFreightChargeList = (params: any) =>

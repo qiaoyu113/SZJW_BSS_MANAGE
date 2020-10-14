@@ -321,6 +321,10 @@ export default class extends Vue {
       key: 'closeStatus',
       options: [
         {
+          label: '全部',
+          value: ''
+        },
+        {
           label: '是',
           value: 1
         },
@@ -577,6 +581,8 @@ export default class extends Vue {
       let monthBillDateEnd = new Date(this.listQuery.monthBillDate[1])
       params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
       params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+    } else {
+      return this.$message.error('请选择月份')
     }
     this.exportExcel(params)
   }
