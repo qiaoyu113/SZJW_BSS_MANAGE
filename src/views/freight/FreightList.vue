@@ -553,11 +553,11 @@ export default class extends Vue {
         name: '',
         num: ''
       },
-      {
-        label: '待上报',
-        name: '5',
-        num: ''
-      },
+      // {
+      //   label: '待上报',
+      //   name: '5',
+      //   num: ''
+      // },
       {
         label: '待确认',
         name: '10',
@@ -569,12 +569,12 @@ export default class extends Vue {
         num: ''
       },
       {
-        label: '待二次确认',
+        label: '待交叉确认',
         name: '30',
         num: ''
       },
       {
-        label: '二次已确认',
+        label: '已交叉确认',
         name: '40',
         num: ''
       }
@@ -604,6 +604,8 @@ export default class extends Vue {
     private listQuery: IState = {
       customer: '',
       customerCity: '',
+      customerName: '',
+      productName: '',
       driver: '',
       driverCity: '',
       dutyManagerId: '',
@@ -737,12 +739,12 @@ export default class extends Vue {
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
-        this.tab[0].num = data.title.all
-        this.tab[1].num = data.title.notReported
-        this.tab[2].num = data.title.toBeConfirmed
-        this.tab[3].num = data.title.confirmed
-        this.tab[4].num = data.title.secondToBeConfirmed
-        this.tab[5].num = data.title.secondConfirmed
+        // this.tab[0].num = data.title.all
+        // this.tab[1].num = data.title.notReported
+        // this.tab[2].num = data.title.toBeConfirmed
+        // this.tab[3].num = data.title.confirmed
+        // this.tab[4].num = data.title.secondToBeConfirmed
+        // this.tab[5].num = data.title.secondConfirmed
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {

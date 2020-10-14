@@ -22,7 +22,6 @@
                     v-model="listQuery.driverCity"
                     name="freightlist_driverCity_input"
                     placeholder="请选择"
-                    filterable
                   >
                     <el-option
                       v-for="item in optionsCity"
@@ -76,7 +75,7 @@
                 <el-form-item label="业务线">
                   <el-select
                     v-model="listQuery.business"
-                    name="freightlist_feeDiff_input"
+                    name="freightlist_business_input"
                     placeholder="请选择"
                     filterable
                   >
@@ -87,6 +86,28 @@
                       :value="item.dictValue"
                     />
                   </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="客户名称">
+                  <el-input
+                    v-model="listQuery.customerName"
+                    name="freightlist_customerName_input"
+                    maxlength="50"
+                    placeholder="请输入"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="项目名称">
+                  <el-input
+                    v-model="listQuery.productName"
+                    name="freightlist_productName_input"
+                    maxlength="50"
+                    placeholder="请输入"
+                    clearable
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
@@ -334,22 +355,15 @@ export default class extends Vue {
         picker.$emit('pick', [start, end])
       }
     }, {
-      text: '前三月',
+      text: '近三月',
       onClick(picker: any) {
-        let now = new Date()// 当前日期
-        let nowYear = now.getFullYear()// 当前年
-        nowYear += (nowYear < 2000) ? 1900 : 0//
-        let lastMonthDate = new Date()// 上月日期
-        lastMonthDate.setDate(1)
-        lastMonthDate.setMonth(lastMonthDate.getMonth() - 3)
-        let lastMonth = lastMonthDate.getMonth()
-        // 获得某月天数
-        let monthStartDate = new Date(nowYear, lastMonth, 1)
-        let monthEndDate = new Date(nowYear, lastMonth + 3, 1)
-        let subtract = Number(monthEndDate) - Number(monthStartDate)
-        let days = subtract / (1000 * 60 * 60 * 24)
-        const start = new Date(nowYear, lastMonth, 1)
-        const end = new Date(nowYear, lastMonth, days)
+        const date = new Date()
+        const endTime = 1000 * 60 * 60 * 24 - 1
+        const y = date.getFullYear()
+        const m = date.getMonth()
+        const d = date.getDate()
+        const start = +new Date(y, m - 3, d)
+        const end = +new Date(y, m, d) + endTime
         picker.$emit('pick', [start, end])
       }
     }]
