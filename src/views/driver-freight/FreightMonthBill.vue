@@ -104,8 +104,9 @@
       >
         <template v-slot:checkVoucherPath="scope">
           <a
+            v-if="scope.row.checkStatus"
             :href="scope.row.checkVoucherPath"
-            download
+            style="color:#649CEE;"
           >下载凭证</a>
         </template>
 
@@ -120,6 +121,14 @@
         </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ===1 ? '是':'否' }}
+          <template v-if="scope.row.closeStatus ===1">
+            / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
+          </template>
+        </template>
+        <template v-slot:monthBillId="scope">
+          <router-link :to="{path: '/freight/freightdetail', query: {wayBillId: scope.row.businessNo}}">
+            {{ scope.row.monthBillId }}
+          </router-link>
         </template>
         <template v-slot:op="scope">
           <el-dropdown
@@ -391,6 +400,7 @@ export default class extends Vue {
     {
       key: 'monthBillId',
       label: '月账单编号',
+      slot: true,
       'min-width': '140px'
     },
     {

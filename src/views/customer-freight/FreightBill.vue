@@ -63,13 +63,23 @@
         @selection-change="handleSelectionChange"
       >
         <template v-slot:paymentVoucherPath="scope">
-          <a :href="scope.row.paymentVoucherPath">下载凭证</a>
+          <a
+            v-if="scope.row.paymentReceivedFlag"
+            :href="scope.row.paymentVoucherPath"
+            style="color:#649CEE;"
+          >下载凭证</a>
         </template>
         <template v-slot:departureDate="scope">
           {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}
         </template>
+
         <template v-slot:createDate="scope">
-          {{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        </template>
+        <template v-slot:businessNo="scope">
+          <router-link :to="{path: '/freight/freightlist',query: {wayBillId: scope.row.businessNo}}">
+            {{ scope.row.businessNo }}
+          </router-link>
         </template>
         <template v-slot:paymentReceivedFlag="scope">
           {{ scope.row.paymentReceivedFlag ? '是':'否' }}
@@ -386,6 +396,7 @@ export default class extends Vue {
     {
       key: 'businessNo',
       label: '出车单号',
+      slot: true,
       'min-width': '200px'
     },
     {
@@ -753,7 +764,10 @@ export default class extends Vue {
   // 变动类型列表
   async getSubjectList() {
     try {
-      let { data: res } = await GetSubjectList()
+      let params:IState = {
+        type: 1
+      }
+      let { data: res } = await GetSubjectList(params)
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {

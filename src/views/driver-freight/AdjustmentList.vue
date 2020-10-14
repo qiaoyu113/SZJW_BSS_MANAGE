@@ -87,13 +87,16 @@
           <span>{{ scope.row.driverName }}/{{ scope.row.phone }}</span>
         </template>
         <template v-slot:voucher_path="scope">
-          <a :href="scope.row.voucher_path">下载凭证</a>
+          <a
+            :href="scope.row.voucher_path"
+            style="color:#649CEE;"
+          >下载凭证</a>
         </template>
         <template v-slot:remark="scope">
-          {{ scope.row.remark }}
+          {{ scope.row.remark | DataIsNull }}
         </template>
         <template v-slot:createDate="scope">
-          <span>{{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}</span>
+          <span>{{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </self-table>
     </div>
@@ -330,7 +333,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'businessNo',
+      key: 'amount',
       label: '调整金额(元)',
       'min-width': '140px'
     },
@@ -372,7 +375,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'driverCity',
+      key: 'cityName',
       label: '司机城市',
       'min-width': '140px'
     },
@@ -650,7 +653,10 @@ export default class extends Vue {
   // 变动类型列表
   async getSubjectList() {
     try {
-      let { data: res } = await GetSubjectList()
+      let params:IState = {
+        type: 1
+      }
+      let { data: res } = await GetSubjectList(params)
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {

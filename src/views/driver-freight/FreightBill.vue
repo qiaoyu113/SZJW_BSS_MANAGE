@@ -84,7 +84,7 @@
           {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}
         </template>
         <template v-slot:createDate="scope">
-          {{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
         <template v-slot:driverName="scope">
           {{ scope.row.driverName }}/{{ scope.row.phone }}
@@ -94,9 +94,10 @@
         </template>
         <template v-slot:paymentVoucherPath="scope">
           <a
+            v-if="scope.row.paymentReceivedFlag"
             type="primary"
-            download
             :href="scope.row.paymentVoucherPath"
+            style="color:#649CEE;"
           >
             下载凭证
           </a>
@@ -794,7 +795,10 @@ export default class extends Vue {
   // 获取调整原因
   async getSubjectList() {
     try {
-      let { data: res } = await GetSubjectList()
+      let params:IState = {
+        type: 1
+      }
+      let { data: res } = await GetSubjectList(params)
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {
