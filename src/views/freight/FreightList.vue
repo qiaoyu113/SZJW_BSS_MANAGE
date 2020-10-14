@@ -565,12 +565,12 @@ export default class extends Vue {
       //   num: ''
       // },
       {
-        label: '待确认',
+        label: '待单边确认',
         name: '10',
         num: ''
       },
       {
-        label: '已确认',
+        label: '单边已确认',
         name: '20',
         num: ''
       },
