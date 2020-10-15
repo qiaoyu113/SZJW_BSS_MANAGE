@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 // 司机运费账户
 
-let prefix = '/mock/112'
-// let prefix = '/waybill_center'
+// let prefix = '/mock/112'
+let prefix = '/waybill_center'
 
 // 获取司机运费流水列表
 export const GetFreightChargeList = (data: any) =>
@@ -74,8 +74,9 @@ export const SaveShippingChange = (data: any) =>
   })
 
 // 获取司机运费调整原因列表
-export const GetSubjectList = () =>
+export const GetSubjectList = (params:any) =>
   request({
     url: `${prefix}/v2/driverBilling/subject`,
-    method: 'get'
+    method: 'get',
+    params
   })

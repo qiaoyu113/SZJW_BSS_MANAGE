@@ -22,6 +22,7 @@
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
+          :disabled="true"
           @click="handleExportClick"
         >
           导出
@@ -63,13 +64,26 @@
         @selection-change="handleSelectionChange"
       >
         <template v-slot:paymentVoucherPath="scope">
-          <a :href="scope.row.paymentVoucherPath">下载凭证</a>
+          <a
+            v-if="scope.row.paymentReceivedFlag"
+            :href="scope.row.paymentVoucherPath"
+            style="color:#649CEE;cursor: pointer;"
+          >下载凭证</a>
         </template>
         <template v-slot:departureDate="scope">
           {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}
         </template>
+
         <template v-slot:createDate="scope">
-          {{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        </template>
+        <template v-slot:businessNo="scope">
+          <router-link
+            :to="{path: '/freight/freightlist',query: {wayBillId: scope.row.businessNo}}"
+            style="color:#649CEE;"
+          >
+            {{ scope.row.businessNo }}
+          </router-link>
         </template>
         <template v-slot:paymentReceivedFlag="scope">
           {{ scope.row.paymentReceivedFlag ? '是':'否' }}
@@ -175,6 +189,7 @@ import { month, lastmonth, threemonth } from './components/date'
 import { GetFreightChargeList, ExportFreightChargeList, BjfreightChargeReceive } from '@/api/customer-freight'
 import { GetSubjectList } from '@/api/driver-freight'
 import { Upload } from '@/api/common'
+import { delayTime } from '@/settings'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -373,6 +388,16 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
+      key: 'customerName',
+      label: '客户名称',
+      'min-width': '140px'
+    },
+    {
+      key: 'projectName',
+      label: '项目名称',
+      'min-width': '140px'
+    },
+    {
       key: 'departureDate',
       slot: true,
       label: '出车日期',
@@ -386,6 +411,7 @@ export default class extends Vue {
     {
       key: 'businessNo',
       label: '出车单号',
+      slot: true,
       'min-width': '200px'
     },
     {
@@ -620,7 +646,8 @@ export default class extends Vue {
       }
       let { data: res } = await GetFreightChargeList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -669,14 +696,16 @@ export default class extends Vue {
     try {
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
-        id: this.ids
+        ids: this.ids
       }
       this.dialogForm.remark && (params.remark = this.dialogForm.remark)
       let { data: res } = await BjfreightChargeReceive(params)
       if (res.success) {
         this.showDialog = false
         this.$message.success('操作已付款成功')
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -753,7 +782,8 @@ export default class extends Vue {
   // 变动类型列表
   async getSubjectList() {
     try {
-      let { data: res } = await GetSubjectList()
+      let params:IState = {}
+      let { data: res } = await GetSubjectList(params)
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {

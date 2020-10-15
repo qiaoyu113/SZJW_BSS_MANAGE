@@ -104,8 +104,9 @@
       >
         <template v-slot:checkVoucherPath="scope">
           <a
+            v-if="scope.row.checkStatus"
             :href="scope.row.checkVoucherPath"
-            download
+            style="color:#649CEE;cursor: pointer;"
           >下载凭证</a>
         </template>
 
@@ -120,6 +121,14 @@
         </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ===1 ? '是':'否' }}
+          <template v-if="scope.row.closeStatus ===1">
+            / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
+          </template>
+        </template>
+        <template v-slot:monthBillId="scope">
+          <router-link :to="{path: '/freight/freightdetail', query: {wayBillId: scope.row.businessNo}}">
+            {{ scope.row.monthBillId }}
+          </router-link>
         </template>
         <template v-slot:op="scope">
           <el-dropdown
@@ -152,7 +161,7 @@
                 查看流水
               </el-dropdown-item>
               <el-dropdown-item
-                v-if="scope.row.closeStatus !==1"
+                v-if="scope.row.closeStatus ===1"
                 command="driverCheck"
               >
                 司机对账
@@ -230,6 +239,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetMonthlyBillList, ExportMonthlyBillList, driverMonthlyBillCheck } from '@/api/driver-freight'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+import { delayTime } from '@/settings'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -314,6 +324,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'driverCity',
+        clearable: true,
         props: {
           lazy: true,
           lazyLoad: this.showWork
@@ -391,6 +402,7 @@ export default class extends Vue {
     {
       key: 'monthBillId',
       label: '月账单编号',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -623,7 +635,8 @@ export default class extends Vue {
       }
       let { data: res } = await GetMonthlyBillList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -671,14 +684,16 @@ export default class extends Vue {
     try {
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
-        id: this.ids
+        ids: this.ids
       }
       this.dialogForm.remark !== '' && (params.remark = this.dialogForm.remark)
       let { data: res } = await driverMonthlyBillCheck(params)
       if (res.success) {
         this.showDialog = false
         this.$message.success('操作成功')
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
