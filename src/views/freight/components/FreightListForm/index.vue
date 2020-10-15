@@ -273,7 +273,7 @@
                     name="ownerlist_query_btn"
                     @click="research"
                   >
-                    筛选
+                    查询
                   </el-button>
                 </el-form-item>
               </el-col>
@@ -597,7 +597,7 @@ export default class extends Vue {
 
   private reset() {
     for (let key in this.listQuery) {
-      if (key !== 'page' && key !== 'limit' && key !== 'state') { this.listQuery[key] = '' } else {
+      if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
         this.listQuery['page'] = 1
       }
     }
