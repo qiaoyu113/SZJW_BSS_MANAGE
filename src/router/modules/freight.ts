@@ -35,7 +35,7 @@ const freightRouter: RouteConfig = {
         title: 'freightDetail',
         icon: 'cargo',
         hidden: true,
-        noCache: false
+        noCache: true
       }
     },
     {
