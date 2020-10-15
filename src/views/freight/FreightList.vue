@@ -122,6 +122,7 @@
                 @show="getFloowData(row.wayBillId)"
               >
                 <el-table
+                  v-loading="floowLoading"
                   :data="floowData"
                   size="mini"
                 >
@@ -146,7 +147,8 @@
                   slot="reference"
                   type="text"
                 >
-                  {{ Number(row.freightFee).toFixed(2) | DataIsNull }}
+                  <span v-if="row.freightFee !== ''">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-else>{{ row.freightFee }}</span>
                 </el-button>
               </el-popover>
             </template>
@@ -199,16 +201,13 @@
             label="司机运费上报金额（元）"
           >
             <template slot-scope="scope">
-              <p v-if="scope.row.gmStatusCode === 2">
-                <span>未出车</span>
-              </p>
               <el-popover
-                v-else
                 placement="right"
                 trigger="hover"
-                @show="getFloowData(row.wayBillId)"
+                @show="getFloowData(scope.row.wayBillId)"
               >
                 <el-table
+                  v-loading="floowLoading"
                   :data="floowData"
                   size="mini"
                 >
@@ -233,7 +232,8 @@
                   slot="reference"
                   type="text"
                 >
-                  {{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}
+                  <span v-if="scope.row.gmFee !== ''">{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-else>{{ scope.row.gmFee }}</span>
                 </el-button>
               </el-popover>
             </template>
@@ -264,9 +264,10 @@
                 v-else
                 placement="right"
                 trigger="hover"
-                @show="getFloowData(row.wayBillId)"
+                @show="getFloowData(scope.row.wayBillId)"
               >
                 <el-table
+                  v-loading="floowLoading"
                   :data="floowData"
                   size="mini"
                 >
@@ -291,7 +292,8 @@
                   slot="reference"
                   type="text"
                 >
-                  {{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}
+                  <span v-if="scope.row.lineFee !== ''">{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-else>{{ scope.row.lineFee }}</span>
                 </el-button>
               </el-popover>
             </template>
@@ -654,6 +656,7 @@ export default class extends Vue {
     ];
     private checkList: any[] = this.dropdownList;
     private floowData: any[] = [];
+    private floowLoading: Boolean = false;
     private tab: any[] = [
       {
         label: '全部',
@@ -1098,8 +1101,11 @@ export default class extends Vue {
     }
 
     private async getFloowData(id: any) {
+      this.floowData = []
+      this.floowLoading = true
       const { data } = await WayBillAmountDetail([id])
       if (data.success) {
+        this.floowLoading = false
         this.floowData = data.data
       } else {
         this.$message.error(data.errorMsg)
