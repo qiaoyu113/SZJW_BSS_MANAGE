@@ -99,6 +99,28 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('客户名称') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="客户名称"
+          >
+            <template slot-scope="{row}">
+              {{ row.customerClueName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('项目名称') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="项目名称"
+          >
+            <template slot-scope="{row}">
+              {{ row.projectName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
             v-if="checkList.indexOf('出车状态') > -1"
             :key="checkList.length + 'f'"
             align="left"
@@ -640,6 +662,8 @@ export default class extends Vue {
       '出车单号',
       '司机姓名',
       '出车状态',
+      '项目名称',
+      '客户名称',
       '运费金额',
       '司机运费上报状态',
       '客户运费上报状态',

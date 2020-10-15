@@ -21,6 +21,7 @@
                   <el-select
                     v-model="listQuery.driverCity"
                     name="freightlist_driverCity_input"
+                    filterable
                     placeholder="请选择"
                   >
                     <el-option
