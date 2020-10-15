@@ -1,51 +1,51 @@
 import request from '@/utils/request'
 // 客户运费账户
-let prefix = '/mock/112'
-// let prefix = '/waybill_center'
+// let prefix = '/mock/112'
+let prefix = '/waybill_center'
 
 // 客户运费流水列表
-export const GetFreightChargeList = (params: any) =>
+export const GetFreightChargeList = (data: any) =>
   request({
-    url: `${prefix}/v2/customerBilling/freightCharge/list`,
-    method: 'get',
-    params
+    url: `${prefix}/v2/waybill/custBilling/freightCharge/list`,
+    method: 'post',
+    data
   })
 
 // 客户运费流水列表导出
-export const ExportFreightChargeList = (params: any) =>
+export const ExportFreightChargeList = (data: any) =>
   request({
-    url: `${prefix}/v2/customerBilling/freightCharge/export`,
-    method: 'get',
-    params
+    url: `${prefix}/v2/waybill/custBilling/freightCharge/export`,
+    method: 'post',
+    data
   })
 
 // 客户运费流水-标记付款
 export const BjfreightChargeReceive = (data: any) =>
   request({
-    url: `${prefix}/v2/customerBilling/freightCharge/receive`,
+    url: `${prefix}/v2/waybill/custBilling/freightCharge/receive`,
     method: 'post',
     data
   })
 // 获取客户月账单
-export const GetMonthlyBillList = (params: any) =>
+export const GetMonthlyBillList = (data: any) =>
   request({
-    url: `${prefix}/v2/customerBilling/monthlyBill/list`,
-    method: 'get',
-    params
+    url: `${prefix}/v2/waybill/custBilling/monthlyBill/list`,
+    method: 'post',
+    data
   })
 
 // 客户运费月账单导出
-export const ExportMonthlyBill = (params: any) =>
+export const ExportMonthlyBill = (data: any) =>
   request({
-    url: `${prefix}/v2/customerBilling/monthlyBill/export`,
-    method: 'get',
-    params
+    url: `${prefix}/v2/waybill/custBilling/monthlyBill/export`,
+    method: 'post',
+    data
   })
 
 // 客户运费月账单--客户确认
 export const CustomerMonthlyBillCheck = (data: any) =>
   request({
-    url: `${prefix}/v2/customerBilling/monthlyBill/check`,
+    url: `${prefix}/v2/waybill/custBilling/monthlyBill/check`,
     method: 'post',
     data
   })

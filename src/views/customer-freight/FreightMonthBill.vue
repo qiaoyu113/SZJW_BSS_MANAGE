@@ -47,6 +47,7 @@
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
+          :disabled="true"
           @click="handleExportClick"
         >
           导出
@@ -91,7 +92,10 @@
           {{ scope.row.monthBillDate | parseTime('{y}-{m}') }}
         </template>
         <template v-slot:monthBillId="scope">
-          <router-link :to="{path: '/freight/freightdetail', query: {wayBillId: scope.row.businessNo}}">
+          <router-link
+            :to="{path: '/freight/freightdetail', query: {wayBillId: scope.row.businessNo}}"
+            style="color:#649CEE;"
+          >
             {{ scope.row.monthBillId }}
           </router-link>
         </template>
@@ -100,7 +104,7 @@
           <a
             v-if="scope.row.checkStatus"
             :href="scope.row.checkVoucherPath"
-            style="color:#649CEE;"
+            style="color:#649CEE;cursor: pointer;"
           >下载凭证</a>
         </template>
         <template v-slot:checkStatus="scope">
@@ -147,11 +151,11 @@
               >
                 客户对账
               </el-dropdown-item>
-              <el-dropdown-item
+              <!-- <el-dropdown-item
                 command="download"
               >
                 下载账单
-              </el-dropdown-item>
+              </el-dropdown-item> -->
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -182,7 +186,7 @@
         <template v-slot:amount="scope">
           {{ scope.row.amount }} 元
         </template>
-        <template slot="fieldUrl">
+        <template slot="fileUrl">
           <el-upload
             :http-request="uploadFile"
             :show-file-list="false"
@@ -219,6 +223,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
 import { GetMonthlyBillList, ExportMonthlyBill, CustomerMonthlyBillCheck, GetProjectSearch } from '@/api/customer-freight'
 import { Upload, GetSpecifiedRoleList, GetOpenCityData } from '@/api/common'
+import { delayTime } from '@/settings'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -484,12 +489,12 @@ export default class extends Vue {
     monthBillId: '',
     monthBillDate: '',
     amount: '',
-    fieldUrl: '',
+    fileUrl: '',
     remark: ''
   }
   private fileList: []= [];
   private dialogRole: IState= {
-    fieldUrl: [
+    fileUrl: [
       { required: true, message: '请上传凭证', trigger: 'change' }
     ]
   }
@@ -518,8 +523,8 @@ export default class extends Vue {
     {
       col: 24,
       label: '上传凭证:',
-      type: 'fieldUrl',
-      key: 'fieldUrl',
+      type: 'fileUrl',
+      key: 'fileUrl',
       slot: true
     },
     {
@@ -648,7 +653,8 @@ export default class extends Vue {
       }
       let { data: res } = await GetMonthlyBillList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -695,14 +701,16 @@ export default class extends Vue {
   async saveData() {
     try {
       let params:IState = {
-        fieldUrl: this.dialogForm.fieldUrl,
-        id: this.ids
+        fileUrl: this.dialogForm.fileUrl,
+        ids: this.ids
       }
       let { data: res } = await CustomerMonthlyBillCheck(params)
       if (res.success) {
         this.showDialog = false
         this.$message.success('操作成功')
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -716,7 +724,7 @@ export default class extends Vue {
       monthBillId: '',
       monthBillDate: '',
       amount: '',
-      fieldUrl: '',
+      fileUrl: '',
       remark: ''
     }
   }
@@ -738,7 +746,7 @@ export default class extends Vue {
       formData.append('file', file.file)
       let { data: res } = await Upload(params, formData)
       if (res.success) {
-        this.dialogForm.fieldUrl = res.data.url
+        this.dialogForm.fileUrl = res.data.url
         this.$message.success('上传成功')
       } else {
         this.$message.error(res.errorMsg)

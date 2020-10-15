@@ -157,7 +157,7 @@
               :fetch-suggestions="querySearchAsync"
               placeholder="请输入"
               clearable
-              @select="getOrderListByDriverId"
+              @select="driverCodeChange"
             />
           </template>
         </template>
@@ -364,12 +364,12 @@ export default class extends Vue {
       this.getGmLists()
     }
   }
-
   @Watch('dialogTableVisible')
   onDialogTableVisibleChange(newVal:boolean) {
     if (newVal) {
       if (this.$route.query.id) {
-        this.addForm.driverCode = this.$route.query.id
+        // this.addForm.driverCode = this.$route.query.id
+        this.addForm.driverCode = this.listQuery.driverCode
         this.driverCodeChange(this.addForm.driverCode)
       }
     }
@@ -449,7 +449,7 @@ export default class extends Vue {
       { required: true, message: '请输入司机编号', trigger: 'blur' }
     ],
     orderCode: [
-      { required: true, message: '请选择选择订单', trigger: 'blur' }
+      { required: true, message: '请选择订单', trigger: 'blur' }
     ],
     billingType: [
       { required: true, message: '请输入计费类型', trigger: 'blur' }
@@ -485,6 +485,7 @@ export default class extends Vue {
     if (this.listQuery.gmId) {
       this.listQuery.gmId = ''
     }
+    this.getDriverLists()
     this.resetDriver()
   }
   // 重置司机
@@ -577,7 +578,8 @@ export default class extends Vue {
 
       let { data: res } = await getFlowList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -594,10 +596,10 @@ export default class extends Vue {
   }
   // 司机编号发生变化
   async driverCodeChange(val:string) {
-    this.getOrderListByDriverId()
-    let data:IState[] = await this.getDriverByKeyWord(val)
+    let data:IState[] = await this.getDriverByKeyWord(this.addForm.driverCode)
+    console.log('yyyyy:', val, data)
     if (data.length > 0) {
-      this.addForm.driverName = data[0].name
+      this.addForm.driverName = data[0].label
     } else {
       this.addForm.driverName = ''
     }
@@ -605,6 +607,7 @@ export default class extends Vue {
     if (len > 0) {
       this.orderListOptions.splice(0, len)
     }
+    this.getOrderListByDriverId()
   }
   // 通过关键字搜索司机
   async getDriverByKeyWord(keyword?:string) {
@@ -612,7 +615,6 @@ export default class extends Vue {
       let params:IState = {
         page: 1,
         limit: 9999
-
       }
       keyword && (params.key = keyword)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
@@ -633,17 +635,19 @@ export default class extends Vue {
   async querySearchAsync(val:string, cb:any) {
     if (!val) {
       let data:IState[] = [{ value: '暂无数据' }]
-      return cb(data)
+      cb(data)
+      return false
     }
+
     let result = await this.getDriverByKeyWord(val)
     if (result.length > 0) {
       let data = result.map((item:any) => ({
         value: item.value
       }))
-      return cb(data)
+      cb(data)
     } else {
       let data:IState[] = [{ value: '暂无数据' }]
-      return cb(data)
+      cb(data)
     }
   }
   // 弹框确认
@@ -845,7 +849,7 @@ export default class extends Vue {
       this.resetDriver()
       let len = this.driverOptions.length
       if (len > 0) {
-        this.driverOptions.splice(1, len)
+        this.driverOptions.splice(0, len)
       }
       // let params:IState = {}
       // this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)

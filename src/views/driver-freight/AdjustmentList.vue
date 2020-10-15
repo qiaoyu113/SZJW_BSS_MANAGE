@@ -34,6 +34,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-if="false"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -89,7 +90,7 @@
         <template v-slot:voucher_path="scope">
           <a
             :href="scope.row.voucher_path"
-            style="color:#649CEE;"
+            style="color:#649CEE;cursor: pointer;"
           >下载凭证</a>
         </template>
         <template v-slot:remark="scope">
@@ -170,7 +171,9 @@ import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
 import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList } from '@/api/driver-freight'
+import { GetDriverListByKerWord } from '@/api/driver'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+import { delayTime } from '@/settings'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -197,6 +200,7 @@ export default class extends Vue {
   // loading
   private listLoading:boolean = false
   // 是否显示弹框
+  private driverOptions:IState[] = [];// 司机列表
   private showDialog:boolean = false
   @Watch('listQuery', { deep: true })
   onChange(newVal:IState, oldVal:IState) {
@@ -255,6 +259,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'driverCity',
+        clearable: true,
         props: {
           lazy: true,
           lazyLoad: this.showWork
@@ -338,7 +343,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'subject',
+      key: 'subjectName',
       label: '调整原因',
       'min-width': '140px'
     },
@@ -421,7 +426,7 @@ export default class extends Vue {
       },
       label: '选择司机:',
       key: 'driverId',
-      options: []
+      options: this.driverOptions
     },
     {
       slot: true,
@@ -548,7 +553,9 @@ export default class extends Vue {
       if (res.success) {
         this.showDialog = false
         this.$message.success('新增运费调整成功')
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -639,7 +646,8 @@ export default class extends Vue {
       }
       let { data: res } = await GetShippingChangeList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -748,6 +756,29 @@ export default class extends Vue {
       console.log(`get duty list fail:${err}`)
     }
   }
+  // 通过关键字搜索司机
+  async getDriverByKeyWord() {
+    try {
+      let params:IState = {
+        page: 1,
+        limit: 9999
+      }
+
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      let { data: res } = await GetDriverListByKerWord(params)
+      if (res.success) {
+        let data = res.data.map((item:any) => ({
+          label: item.name,
+          value: item.driverId
+        })) || []
+        this.driverOptions.push(...data)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get driver fail:${err}`)
+    }
+  }
   // 获取加盟经理列表
   async getGmLists() {
     try {
@@ -781,6 +812,7 @@ export default class extends Vue {
     this.getSubjectList()
     this.getDutyListByLevel()
     this.getGmLists()
+    this.getDriverByKeyWord()
   }
 }
 </script>
