@@ -8,7 +8,7 @@ const driverAccountRouter: RouteConfig = {
   name: 'DriverAccount',
   meta: {
     title: 'driverAccount',
-    icon: 'driver',
+    icon: 'driverAccount',
     apiUrl: 'root'
   },
   children: [
@@ -65,7 +65,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         title: 'wtAcountList',
         noCache: true,
-        icon: 'cargo',
+        icon: '',
         activeMenu: '/driveraccount/wtAcountList'
       }
     },
@@ -190,7 +190,7 @@ const driverAccountRouter: RouteConfig = {
         // hidden: true,
         activeMenu: '/driveraccount/financialFlow',
         title: 'financialFlow',
-        icon: 'cargo',
+        icon: '',
         noCache: false
       }
     },

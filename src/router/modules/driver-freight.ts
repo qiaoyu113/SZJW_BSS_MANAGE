@@ -8,7 +8,7 @@ const driverFreight: RouteConfig = {
   name: 'DriverFreightAccount',
   meta: {
     title: 'driverFreightAccount',
-    icon: 'driver',
+    icon: 'driverFreight',
     apiUrl: 'root'
   },
   children: [
