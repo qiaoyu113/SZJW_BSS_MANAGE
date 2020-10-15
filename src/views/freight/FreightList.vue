@@ -116,7 +116,39 @@
             label="运费金额（元）"
           >
             <template slot-scope="{row}">
-              <p>{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</p>
+              <el-popover
+                placement="right"
+                trigger="hover"
+                @show="getFloowData(row.wayBillId)"
+              >
+                <el-table
+                  :data="floowData"
+                  size="mini"
+                >
+                  <el-table-column
+                    type="index"
+                    width="55"
+                    label="趟数"
+                    align="center"
+                  />
+                  <el-table-column
+                    width="150"
+                    property="deliverTime"
+                    label="时间段"
+                  />
+                  <el-table-column
+                    width="100"
+                    property="preMoney"
+                    label="运费"
+                  />
+                </el-table>
+                <el-button
+                  slot="reference"
+                  type="text"
+                >
+                  {{ Number(row.freightFee).toFixed(2) | DataIsNull }}
+                </el-button>
+              </el-popover>
             </template>
           </el-table-column>
 
@@ -167,10 +199,43 @@
             label="司机运费上报金额（元）"
           >
             <template slot-scope="scope">
-              <p>
-                <span v-if="scope.row.gmStatusCode === 2">未出车</span>
-                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
+              <p v-if="scope.row.gmStatusCode === 2">
+                <span>未出车</span>
               </p>
+              <el-popover
+                v-else
+                placement="right"
+                trigger="hover"
+                @show="getFloowData(row.wayBillId)"
+              >
+                <el-table
+                  :data="floowData"
+                  size="mini"
+                >
+                  <el-table-column
+                    type="index"
+                    width="55"
+                    label="趟数"
+                    align="center"
+                  />
+                  <el-table-column
+                    width="150"
+                    property="deliverTime"
+                    label="时间段"
+                  />
+                  <el-table-column
+                    width="100"
+                    property="preMoney"
+                    label="运费"
+                  />
+                </el-table>
+                <el-button
+                  slot="reference"
+                  type="text"
+                >
+                  {{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}
+                </el-button>
+              </el-popover>
             </template>
           </el-table-column>
 
@@ -192,8 +257,43 @@
             label="客户运费上报金额（元）"
           >
             <template slot-scope="scope">
-              <span v-if="scope.row.lineStatusCode === 2">未出车</span>
-              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+              <p v-if="scope.row.lineStatusCode === 2">
+                <span>未出车</span>
+              </p>
+              <el-popover
+                v-else
+                placement="right"
+                trigger="hover"
+                @show="getFloowData(row.wayBillId)"
+              >
+                <el-table
+                  :data="floowData"
+                  size="mini"
+                >
+                  <el-table-column
+                    type="index"
+                    width="55"
+                    label="趟数"
+                    align="center"
+                  />
+                  <el-table-column
+                    width="150"
+                    property="deliverTime"
+                    label="时间段"
+                  />
+                  <el-table-column
+                    width="100"
+                    property="preMoney"
+                    label="运费"
+                  />
+                </el-table>
+                <el-button
+                  slot="reference"
+                  type="text"
+                >
+                  {{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}
+                </el-button>
+              </el-popover>
             </template>
           </el-table-column>
 
@@ -553,6 +653,7 @@ export default class extends Vue {
       '操作'
     ];
     private checkList: any[] = this.dropdownList;
+    private floowData: any[] = [];
     private tab: any[] = [
       {
         label: '全部',
@@ -994,6 +1095,15 @@ export default class extends Vue {
     // 弹窗表格选中
     private handleSelectionDialog(val: any) {
       this.saleId = val
+    }
+
+    private async getFloowData(id: any) {
+      const { data } = await WayBillAmountDetail([id])
+      if (data.success) {
+        this.floowData = data.data
+      } else {
+        this.$message.error(data.errorMsg)
+      }
     }
 
     // table index
