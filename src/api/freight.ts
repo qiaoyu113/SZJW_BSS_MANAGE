@@ -102,3 +102,14 @@ export const freightDetailLog = (params: any) =>
     method: 'post',
     params
   })
+
+/**
+   *
+   * 获取出车详情运费列表
+   */
+export const freightTripMoney = (params: any) =>
+  request({
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/waybillTripMoney`,
+    method: 'get',
+    params
+  })
