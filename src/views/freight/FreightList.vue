@@ -141,7 +141,7 @@
               <el-popover
                 placement="right"
                 trigger="hover"
-                @show="getFloowData(row.wayBillId)"
+                @show="getFloowData(row.wayBillId, 'confirm')"
               >
                 <el-table
                   v-loading="floowLoading"
@@ -161,7 +161,7 @@
                   />
                   <el-table-column
                     width="100"
-                    property="preMoney"
+                    property="money"
                     label="运费"
                   />
                 </el-table>
@@ -224,9 +224,10 @@
           >
             <template slot-scope="scope">
               <el-popover
+                v-if="scope.row.gmFee !== '' && scope.row.gmStatusCode !== 2"
                 placement="right"
                 trigger="hover"
-                @show="getFloowData(scope.row.wayBillId)"
+                @show="getFloowData(scope.row.wayBillId, 'driver')"
               >
                 <el-table
                   v-loading="floowLoading"
@@ -246,7 +247,7 @@
                   />
                   <el-table-column
                     width="100"
-                    property="preMoney"
+                    property="money"
                     label="运费"
                   />
                 </el-table>
@@ -254,10 +255,10 @@
                   slot="reference"
                   type="text"
                 >
-                  <span v-if="scope.row.gmFee !== ''">{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
-                  <span v-else>{{ scope.row.gmFee }}</span>
+                  <span>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
+              <span v-else>{{ scope.row.gmStatusName }}</span>
             </template>
           </el-table-column>
 
@@ -279,14 +280,11 @@
             label="客户运费上报金额（元）"
           >
             <template slot-scope="scope">
-              <p v-if="scope.row.lineStatusCode === 2">
-                <span>未出车</span>
-              </p>
               <el-popover
-                v-else
+                v-if="scope.row.lineFee !== '' && scope.row.lineStatusCode !== 2"
                 placement="right"
                 trigger="hover"
-                @show="getFloowData(scope.row.wayBillId)"
+                @show="getFloowData(scope.row.wayBillId, 'line')"
               >
                 <el-table
                   v-loading="floowLoading"
@@ -306,7 +304,7 @@
                   />
                   <el-table-column
                     width="100"
-                    property="preMoney"
+                    property="money"
                     label="运费"
                   />
                 </el-table>
@@ -314,10 +312,10 @@
                   slot="reference"
                   type="text"
                 >
-                  <span v-if="scope.row.lineFee !== ''">{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
-                  <span v-else>{{ scope.row.lineFee }}</span>
+                  <span>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
+              <span v-else>{{ scope.row.lineStatusName }}</span>
             </template>
           </el-table-column>
 
@@ -604,7 +602,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch } from '@/api/freight'
+import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch, freightTripMoney } from '@/api/freight'
 import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
@@ -1124,13 +1122,19 @@ export default class extends Vue {
       this.saleId = val
     }
 
-    private async getFloowData(id: any) {
+    private async getFloowData(id: any, type: any) {
       this.floowData = []
       this.floowLoading = true
-      const { data } = await WayBillAmountDetail([id])
+      const { data } = await freightTripMoney({ wayBillId: id })
       if (data.success) {
+        let dataList: any = []
+        data.data.forEach((element: any) => {
+          if (element.reportedType === type) {
+            dataList.push(element)
+          }
+        })
         this.floowLoading = false
-        this.floowData = data.data
+        this.floowData = dataList
       } else {
         this.$message.error(data.errorMsg)
       }
