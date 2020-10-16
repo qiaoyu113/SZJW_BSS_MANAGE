@@ -53,6 +53,7 @@
             :key="checkList.length + 'a'"
             align="left"
             label="出车日期"
+            min-width="90"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.departureDate | TimestampYMD }}</span>
@@ -64,6 +65,7 @@
             :key="checkList.length + 'd'"
             align="left"
             label="出车单号"
+            min-width="130"
           >
             <template slot-scope="scope">
               <el-link
@@ -81,6 +83,7 @@
             :key="checkList.length + 'e'"
             align="left"
             label="司机姓名"
+            min-width="145"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.driverName + '/' + scope.row.driverPhone | DataIsNull }}</span>
@@ -92,6 +95,7 @@
             :key="checkList.length + 'f'"
             align="left"
             label="线路名称"
+            min-width="150"
           >
             <template slot-scope="{row}">
               {{ row.lineName + '/' + row.lineId | DataIsNull }}
@@ -103,6 +107,7 @@
             :key="checkList.length + 'f'"
             align="left"
             label="客户名称"
+            min-width="100"
           >
             <template slot-scope="{row}">
               {{ row.customerClueName | DataIsNull }}
@@ -114,6 +119,7 @@
             :key="checkList.length + 'f'"
             align="left"
             label="项目名称"
+            min-width="100"
           >
             <template slot-scope="{row}">
               {{ row.projectName | DataIsNull }}
@@ -136,6 +142,7 @@
             :key="checkList.length + 'f'"
             align="left"
             label="运费金额（元）"
+            min-width="110"
           >
             <template slot-scope="{row}">
               <el-popover
@@ -181,6 +188,7 @@
             :key="checkList.length + 'y'"
             align="left"
             label="运费状态"
+            min-width="105"
           >
             <template slot-scope="{row}">
               {{ row.statusName | DataIsNull }}
@@ -199,6 +207,7 @@
             :key="checkList.length + 'g'"
             align="left"
             label="预估运费(元)"
+            min-width="100"
           >
             <template slot-scope="scope">
               <p>{{ Number(scope.row.predictCost).toFixed(2) | DataIsNull }}</p>
@@ -210,6 +219,7 @@
             :key="checkList.length + 'f'"
             align="left"
             label="司机运费上报状态"
+            min-width="130"
           >
             <template slot-scope="{row}">
               {{ row.driverFreightFeeUpStatus | DataIsNull }}
@@ -221,6 +231,7 @@
             :key="checkList.length + 'k'"
             align="left"
             label="司机运费上报金额（元）"
+            min-width="155"
           >
             <template slot-scope="scope">
               <el-popover
@@ -267,6 +278,7 @@
             :key="checkList.length + 'f'"
             align="left"
             label="客户运费上报状态"
+            min-width="120"
           >
             <template slot-scope="{row}">
               {{ row.customerFreightFeeUpStatus | DataIsNull }}
@@ -278,6 +290,7 @@
             :key="checkList.length + 'm'"
             align="left"
             label="客户运费上报金额（元）"
+            min-width="160"
           >
             <template slot-scope="scope">
               <el-popover
@@ -324,6 +337,7 @@
             :key="checkList.length + 'n'"
             align="left"
             label="有无差额（元）"
+            min-width="120"
           >
             <template slot-scope="{row}">
               {{ Number(row.feeDiffValue).toFixed(2) || 0 }}
@@ -335,6 +349,7 @@
             :key="checkList.length + 'h'"
             align="left"
             label="加盟经理"
+            min-width="120"
           >
             <template slot-scope="{row}">
               {{ row.joinManagerName + '/' + row.joinManagerPhone | DataIsNull }}
@@ -346,6 +361,7 @@
             :key="checkList.length + 'o'"
             align="left"
             label="上岗经理"
+            min-width="120"
           >
             <template slot-scope="{row}">
               <span>{{ row.dutyManagerName + '/' + row.dutyManagerPhone | DataIsNull }}</span>
@@ -399,7 +415,9 @@
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
-                    {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }}
+                    <!-- {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }} -->
+                    <span v-if="scope.row.status === 10">单边确认</span>
+                    <span v-if="scope.row.status === 30">交叉确认</span>
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/v2/waybill/shippingDetail']"
