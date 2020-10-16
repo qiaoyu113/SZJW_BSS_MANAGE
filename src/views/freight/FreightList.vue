@@ -399,7 +399,9 @@
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
-                    {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }}
+                    <!-- {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }} -->
+                    <span v-if="scope.row.status === 10">单边确认</span>
+                    <span v-if="scope.row.status === 30">交叉确认</span>
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/v2/waybill/shippingDetail']"
