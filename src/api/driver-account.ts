@@ -1,7 +1,9 @@
 import request from '@/utils/request'
 
-const prefix = '/mock/112'
+// const prefix = '/mock/112'
+const prefix = '/bill'
 const driverFix = '/business_center'
+const billFix = '/bill_center'
 
 /**
  * XXXX
@@ -19,7 +21,7 @@ export const CreateActivity = (data: any) =>
    */
 export const getAcountList = (data: any) =>
   request({
-    url: `${prefix}/v2/wt-driver-account/management/list`,
+    url: `${billFix}/v2/wt-driver-account/management/list`,
     method: 'post',
     data
   })
@@ -52,7 +54,7 @@ export const accountUnfreeze = (data: any) =>
    */
 export const managementExport = (data: any) =>
   request({
-    url: `${prefix}/v2/wt-driver-account/management/export`,
+    url: `${billFix}/v2/wt-driver-account/management/export`,
     method: 'post',
     data
   })

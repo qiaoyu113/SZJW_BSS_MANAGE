@@ -33,7 +33,7 @@
             size="small"
             type="primary"
             :plain="item.name !== listQuery.checkStatus"
-            @click="listQuery.checkStatus =item.name"
+            @click="handleStatusChange(item.name)"
           >
             {{ item.text }}
           </el-button>
@@ -108,7 +108,7 @@
           >下载凭证</a>
         </template>
         <template v-slot:checkStatus="scope">
-          {{ scope.row.checkStatus ? '是':'否' }}
+          {{ scope.row.checkStatus ? '已对账':'待对账' }}
         </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ? '是':'否' }}
@@ -268,6 +268,7 @@ export default class extends Vue {
   private listQuery:IState = {
     monthBillId: '',
     customerName: '',
+    customerId: '',
     customerCity: '',
     dutyManagerId: '',
     lineSaleId: '',
@@ -295,8 +296,18 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户姓名:',
+      label: '客户名称:',
       key: 'customerName'
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入',
+        clearable: true,
+        maxlength: 50
+      },
+      label: '客户编号:',
+      key: 'customerId'
     },
     {
       type: 2,
@@ -575,6 +586,7 @@ export default class extends Vue {
     this.listQuery = {
       monthBillId: '',
       customerName: '',
+      customerId: '',
       customerCity: '',
       dutyManagerId: '',
       lineSaleId: '',
@@ -594,6 +606,7 @@ export default class extends Vue {
     let params:IState = {}
     this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
     this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
+    this.listQuery.customerId !== '' && (params.customerId = this.listQuery.customerId)
     this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
     this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
     this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
@@ -642,6 +655,7 @@ export default class extends Vue {
       }
       this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
       this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
+      this.listQuery.customerId !== '' && (params.customerId = this.listQuery.customerId)
       this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
       this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
       this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
@@ -843,6 +857,12 @@ export default class extends Vue {
     this.outsideSalesOptions.push(...data2)
     this.getCityList()
     this.getProjectSearch()
+  }
+  // 状态变化
+  handleStatusChange(name:string) {
+    this.listQuery.checkStatus = name
+    this.page.page = 1
+    this.getLists()
   }
   mounted() {
     this.getLists()
