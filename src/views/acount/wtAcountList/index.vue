@@ -820,7 +820,9 @@ export default class extends Vue {
     let { data: res } = await accountFreeze(params)
     if (res.success) {
       this.$message.success('冻结成功')
-      this.getList()
+      setTimeout(() => {
+        this.getList()
+      }, 2500)
       done()
     } else {
       this.$message.error(res.errorMsg)
@@ -838,7 +840,9 @@ export default class extends Vue {
     let { data: res } = await accountUnfreeze(params)
     if (res.success) {
       this.$message.success('解冻成功')
-      this.getList()
+      setTimeout(() => {
+        this.getList()
+      }, 2500)
       done()
     } else {
       this.$message.error(res.errorMsg)
