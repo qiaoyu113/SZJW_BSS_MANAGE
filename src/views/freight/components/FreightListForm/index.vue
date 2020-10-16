@@ -332,7 +332,8 @@ export default class extends Vue {
       text: '本月',
       onClick(picker: any) {
         const end = new Date()
-        end.setTime(end.getTime() - 3600 * 1000 * 24)
+        // end.setTime(end.getTime() - 3600 * 1000 * 24)
+        end.setTime(end.getTime())
         const start = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
         picker.$emit('pick', [start, end])
       }
