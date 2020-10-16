@@ -43,7 +43,7 @@ export const month = {
     const y = date.getFullYear()
     const m = date.getMonth()
     const start = +new Date(y, m)
-    const end = +new Date(y, m + 1) - 1
+    const end = new Date().setHours(23, 59, 59)
     picker.$emit('pick', [start, end])
   }
 }
