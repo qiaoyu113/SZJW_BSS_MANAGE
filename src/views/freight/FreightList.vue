@@ -373,6 +373,7 @@
             :key="checkList.length + 'a'"
             align="left"
             label="运费更新时间"
+            min-width="100"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.freightUpdate | TimestampYMD }}</span>
@@ -835,9 +836,10 @@ export default class extends Vue {
 
     // table列表高度适配
     get tableHeight() {
-      let otherHeight = 590
-      let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
-      return value
+      // let otherHeight = 590
+      // let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+      // return value
+      return 'auto'
     }
 
     // 确认清除
@@ -1242,7 +1244,7 @@ export default class extends Vue {
 <style lang="scss">
 .FreightList {
   padding: 15px;
-  padding-bottom: 0;
+  // padding-bottom: 0;
   box-sizing: border-box;
   .btn-item {
     background: #649cee;
@@ -1343,6 +1345,10 @@ export default class extends Vue {
 <style lang="scss" scope>
 .el-collapse-item__content {
   padding-bottom: 0;
+}
+
+.el-form-item__content{
+  font-size: 13px;
 }
 
 .el-form-item__label {
