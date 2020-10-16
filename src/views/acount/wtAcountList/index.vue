@@ -13,24 +13,6 @@
       class="p15"
       height=""
     >
-      <!-- <template v-slot:name="row">
-        <div :a="row">
-          <el-autocomplete
-            v-model="listQuery.name"
-            :fetch-suggestions="querySearchAsyncType('name')"
-            placeholder="请输入司机姓名"
-          />
-        </div>
-      </template>
-      <template v-slot:driverId="row">
-        <div :a="row">
-          <el-autocomplete
-            v-model="listQuery.driverId"
-            :fetch-suggestions="querySearchAsyncType('driverId')"
-            placeholder="请输入司机编号"
-          />
-        </div>
-      </template> -->
       <div
         slot="btn1"
         :class="isPC ? 'btnPc' : 'mobile'"
@@ -92,13 +74,14 @@
           <div>
             <el-button
               type="text"
-              :disabled="scope.row.status !== 3 && scope.row.canExtractMoney > 0"
+              :disabled="scope.row.haveDealNumber === 0 || scope.row.canExtractMoney <= 0"
               @click="isFreeze(scope.row,1)"
             >
               冻结
             </el-button>
+
             <el-button
-              :disabled="scope.row.status !== 5 && scope.row.canExtractMoney > 0"
+              :disabled="scope.row.haveAbortNumber === 0 || scope.row.freezingMoney <= 0"
               type="text"
               @click="isFreeze(scope.row,2)"
             >
@@ -126,19 +109,23 @@
           label-width="140px"
           @onPass="onPass"
         >
-          <template slot="applyForAccountFrozen">
+          <template
+            v-if="showDialog.name === 1"
+            slot="applyForAccountFrozen"
+          >
             <div>
               <el-input
-                v-model="freezeItem.applyForAccountUnfrozen"
-                v-only-number="{min: 0, max: 9999999.99, precision: 2}"
-                placeholder="申请冻结金额："
+                v-model="freezeForm.applyForAccountFrozen"
+                v-only-number="{min: 0, max: 99999999.99, precision: 2}"
+                placeholder="请输入"
                 clearable
-                maxlength="10"
-                show-word-limit
               />
             </div>
           </template>
-          <template slot="isconfirmOrder">
+          <template
+            v-if="showDialog.name === 2"
+            slot="isconfirmOrder"
+          >
             <div>
               {{ freezeForm.isconfirmOrder === 0 ? '否' : '是' }}
             </div>
@@ -146,12 +133,10 @@
           <template slot="applyForAccountUnfrozen">
             <div>
               <el-input
-                v-model="unfreezeItem.applyForAccountUnfrozen"
-                v-only-number="{min: 0, max: 9999999.99, precision: 2}"
-                placeholder="申请解冻金额："
+                v-model="freezeForm.applyForAccountUnfrozen"
+                v-only-number="{min: 0, max: 99999999.99, precision: 2}"
+                placeholder="请输入"
                 clearable
-                maxlength="10"
-                show-word-limit
               />
             </div>
           </template>
@@ -167,7 +152,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
-import { getDriverListByGmId, GetDriverListByKerWord } from '@/api/driver'
+import { getDriverList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
@@ -227,9 +212,11 @@ export default class extends Vue {
       type: 8,
       key: 'workCity',
       col: 8,
+      w: '80px',
       label: '所属城市',
       tagAttrs: {
         placeholder: '请选择所属城市',
+        clearable: true,
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'workCity',
@@ -246,7 +233,8 @@ export default class extends Vue {
       label: '所属业务线',
       tagAttrs: {
         placeholder: '请选择所属业务线',
-        name: 'driverList_busiType_select'
+        name: 'driverList_busiType_select',
+        clearable: true
       },
       options: this.busiTypeOptions
     },
@@ -258,7 +246,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择所属加盟经理',
         filterable: true,
-        disabled: true
+        clearable: true
       },
       options: this.gmOptions
     },
@@ -266,17 +254,18 @@ export default class extends Vue {
       type: 2,
       key: 'driverId',
       col: 8,
-      label: '司机信息',
+      w: '160px',
+      label: '司机姓名（司机编号）',
       tagAttrs: {
-        placeholder: '请选择司机信息',
+        placeholder: '请选择',
         filterable: true,
-        disabled: true
+        clearable: true
       },
       options: this.driverOtions
     },
     {
       type: 4,
-      col: 8,
+      col: 12,
       w: '150px',
       key: 'balance',
       label: '账户余额低于500元',
@@ -369,10 +358,6 @@ export default class extends Vue {
       label: '司机状态'
     },
     {
-      key: 'orderStatusName',
-      label: '订单状态'
-    },
-    {
       key: 'driverFinancialFlowInfo',
       label: '司机财务流水信息',
       slot: true,
@@ -424,8 +409,7 @@ export default class extends Vue {
     freezingMoney: '',
     canExtractMoney: '',
     applyForAccountFrozen: '', // 申请冻结金额
-    frozenReason: '',
-    unfrozenReason: '',
+    reason: '',
     applyForAccountUnfrozen: '',
     isconfirmOrder: ''
   }
@@ -473,12 +457,13 @@ export default class extends Vue {
     {
       type: 'applyForAccountFrozen',
       label: '申请冻结金额：',
+      key: 'applyForAccountFrozen',
       col: 24,
       slot: true
     },
     {
       type: 1,
-      key: 'frozenReason',
+      key: 'reason',
       label: '冻结原因：',
       col: 24,
       tagAttrs: {
@@ -540,13 +525,14 @@ export default class extends Vue {
     },
     {
       type: 'applyForAccountUnfrozen',
+      key: 'applyForAccountUnfrozen',
       label: '申请解冻金额：',
       col: 24,
       slot: true
     },
     {
       type: 1,
-      key: 'unfrozenReason',
+      key: 'reason',
       label: '申请解冻原因：',
       col: 24,
       tagAttrs: {
@@ -561,7 +547,7 @@ export default class extends Vue {
   ]
   private freezesRules:any = {
     orderId: [
-      { required: true, message: '请选择司机', trigger: 'blur' }
+      { required: true, message: '请选择订单', trigger: 'blur' }
     ],
     applyForAccountFrozen: [
       { required: true, message: '请填写申请冻结金额', trigger: 'blur' },
@@ -620,40 +606,12 @@ export default class extends Vue {
         })).filter((ele:any) => {
           return (ele.label === '共享' || ele.label === '专车')
         })
-        this.busiTypeOptions.push(...options)
+        this.busiTypeOptions.push({ label: '全部', value: '' }, ...options)
       } else {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`get duty list fail:${err}`)
-    }
-  }
-
-  private querySearchAsyncType(type:string) {
-    let that = this
-    return async function(queryString:any, cb:any) {
-      var restaurants:any[] = []
-      if (!queryString) {
-        cb(restaurants)
-        return
-      }
-      let params = {
-        page: 1,
-        limit: 9999,
-        key: queryString
-      }
-      let { data: res } = await GetDriverListByKerWord(params)
-      if (res.success) {
-        if (res.data.length > 0) {
-          that.keyOptions = res.data.map((ele:any) => {
-            return { value: ele[type] }
-          })
-          restaurants = that.keyOptions
-        } else {
-          restaurants.push({ value: '暂无数据' })
-        }
-      }
-      cb(restaurants)
     }
   }
 
@@ -713,9 +671,9 @@ export default class extends Vue {
    */
   async getList() {
     try {
-      if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
-        return this.$message.error('请输入正确的手机号')
-      }
+      // if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
+      //   return this.$message.error('请输入正确的手机号')
+      // }
       this.listLoading = true
       let params: any = {
         limit: this.page.limit,
@@ -728,7 +686,7 @@ export default class extends Vue {
       if (res.success) {
         res.page = await HandlePages(res.page)
         this.page.total = res.page.total
-        this.tableData = res.data
+        this.tableData = res.data || []
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -742,7 +700,7 @@ export default class extends Vue {
   async getOrderList(id:string, type:number) {
     try {
       let params = {
-        driverId: id, //
+        driverId: id,
         operateFlag: ''
       }
       if (type === 2) {
@@ -755,11 +713,13 @@ export default class extends Vue {
         let orderOptions = res.data.map((ele:any) => {
           return { label: ele.orderId, value: ele.orderId, state: ele.status }
         })
-        this.orderOptions.splice(0, orderOptions.length)
         if (type === 2) {
           this.orderOptions.push(...orderOptions)
         } else {
-          this.orderOptions = orderOptions.filter((ele:any) => (ele.state === 30))
+          orderOptions = orderOptions.filter((ele:any) => {
+            return ele.state === 30
+          })
+          this.orderOptions.push(...orderOptions)
         }
         if (this.orderOptions.length && this.orderOptions.length === 1) {
           this.freezeForm.orderId = this.orderOptions[0].value
@@ -781,26 +741,26 @@ export default class extends Vue {
         orderId: orderId
       }
       let { data: res } = await orderDetail(params)
-      this.freezeForm.orderId = res.data.orderId
-      this.freezeForm.orderStatus = res.data.status
-      this.freezeForm.orderStatusName = res.data.statusName
-      this.freezeForm.freezingMoney = res.data.goodsAmount
+      if (res.success) {
+        this.freezeForm.orderId = res.data.orderId
+        this.freezeForm.orderStatus = res.data.status
+        this.freezeForm.orderStatusName = res.data.statusName
+        this.freezeForm.freezingMoney = res.data.goodsAmount
+      } else {
+        this.$message.error(res.errorMsg)
+      }
     } catch (err) {
       console.log(`fail:${err}`)
     }
   }
 
   // 开启弹窗 type === 1为冻结，2为解冻
-  private isFreeze(item:any, type:number) {
+  private async isFreeze(item:any, type:number) {
     let title:string = ''
     let name:number = 0
     this.columnData = item
-    delete this.columnData.orderId
-    delete this.columnData.orderStatus
-    delete this.columnData.orderStatusName
-    delete this.columnData.freezingMoney
-    delete this.columnData.isconfirmOrder
     this.freezeForm = { ...this.freezeForm, ...this.columnData }
+    delete this.freezeForm.freezingMoney
     if (type === 1) {
       title = '冻结'
       name = 1
@@ -813,7 +773,7 @@ export default class extends Vue {
       title: title,
       name: name
     }
-    this.getOrderList(item.driverId, type)
+    await this.getOrderList(item.driverId, type)
     if (type === 2) {
       this.isSureCheck(item.driverId)
     }
@@ -831,6 +791,10 @@ export default class extends Vue {
   private closed() {
     this.columnData = {};
     ((this.$refs.SelfForm) as any).resetForm()
+    let len:number = this.orderOptions.length
+    if (len > 0) {
+      this.orderOptions.splice(0, len)
+    }
   }
   // 确认弹窗
   private confirm(done:any) {
@@ -848,9 +812,11 @@ export default class extends Vue {
    */
   private async freezed(done:any) {
     let params = { ...this.freezeForm }
-    delete params.unfrozenReason
     delete params.applyForAccountUnfrozen
     delete params.isconfirmOrder
+    delete params.reason
+    this.freezeForm.reason && (params.reason = this.freezeForm.reason)
+    params.freezeMeltMoney = params.applyForAccountFrozen
     let { data: res } = await accountFreeze(params)
     if (res.success) {
       this.$message.success('冻结成功')
@@ -865,10 +831,11 @@ export default class extends Vue {
    */
   private async unfreezed(done:any) {
     let params = { ...this.freezeForm }
-    delete params.frozenReason
     delete params.applyForAccountFrozen
-    let { data: res } = await accountFreeze(params)
-    console.log('unfreezed', res)
+    delete params.reason
+    params.freezeMeltMoney = params.applyForAccountUnfrozen
+    this.freezeForm.reason && (params.reason = this.freezeForm.reason)
+    let { data: res } = await accountUnfreeze(params)
     if (res.success) {
       this.$message.success('解冻成功')
       this.getList()
@@ -888,7 +855,7 @@ export default class extends Vue {
   /**
    *校验表单
    */
-  handleValidateForm() {
+  private handleValidateForm() {
     ((this.$refs.SelfForm) as any).submitForm()
   }
   /**
@@ -953,18 +920,25 @@ export default class extends Vue {
 
   // params处理
   private setData(params:any) {
-    this.listQuery.balance && (params.balance = this.listQuery.balance)
+    params.balance = this.listQuery.balance
     if (this.listQuery.workCity.length > 0) {
       this.listQuery.workCity && (params.workCity = Number(this.listQuery.workCity[1]))
     }
-    this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+    if (this.listQuery.driverId) {
+      // params.driverCodes = [this.listQuery.driverId]
+      params.driverCodes = ['SJ202010140004']
+    } else {
+      params.driverCodes = this.driverOtions.map((ele:any) => (
+        ele.value
+      ))
+    }
     this.listQuery.busiType !== '' &&
         (params.busiType = this.listQuery.busiType)
     this.listQuery.joinManagerId !== '' && (params.joinManagerId = this.listQuery.joinManagerId)
 
     if (this.listQuery.time.length > 1) {
-      params.startDate = this.listQuery.time[0]
-      params.endDate = this.listQuery.time[1] + 86399999
+      params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
+      params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
     }
     return params
   }
@@ -982,11 +956,15 @@ export default class extends Vue {
   private checkFrozen(type:any) {
     let that = this
     return function(rule:any, value:any, callback:any) {
-      if (Number(value) <= Number(that.freezeForm.canExtractMoney)) {
-        return callback()
-      } else {
-        if (type === 1) {
+      if (type === 1) {
+        if (Number(value) <= Number(that.freezeForm.canExtractMoney)) {
+          return callback()
+        } else {
           return callback(new Error('申请冻结金额大于可提现金额'))
+        }
+      } else {
+        if (Number(value) <= Number(that.freezeForm.freezingMoney)) {
+          return callback()
         } else {
           return callback(new Error('解冻金额小于订单的冻结金额'))
         }
@@ -994,11 +972,18 @@ export default class extends Vue {
     }
   }
 
-  async getGmOptions(params:any) {
+  async getGmOptions() {
     try {
-      this.gmOptions.splice(0, this.gmOptions.length)
+      let params = {
+        cityCode: this.listQuery.workCity[1],
+        productLine: this.listQuery.busiType,
+        roleType: 1
+      }
+      this.listQuery.cityCode !== '' && (params.cityCode = this.listQuery.cityCode)
+      this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
+        this.gmOptions.splice(0, this.gmOptions.length)
         let gms = res.data.map(function(item: any) {
           return {
             label: item.name,
@@ -1006,16 +991,25 @@ export default class extends Vue {
           }
         })
         this.gmOptions.push(...gms)
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(err)
     }
   }
 
-  async getDriverInfo(params:any) {
+  async getDriverInfo() {
     try {
+      let params = {
+        workCity: this.listQuery.workCity[1] || '',
+        busiType: this.listQuery.busiType || '',
+        gmId: this.listQuery.joinManagerId || '',
+        page: 1,
+        limit: 9999
+      }
       this.driverOtions.splice(0, this.driverOtions.length)
-      let { data: res } = await getDriverListByGmId(params)
+      let { data: res } = await getDriverList(params)
       if (res.success) {
         let driverInfos = res.data.map(function(item: any) {
           return {
@@ -1024,54 +1018,20 @@ export default class extends Vue {
           }
         })
         this.driverOtions.push(...driverInfos)
+      } else {
+        this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(err)
     }
   }
 
-  @Watch('listQueryChange', { deep: true })
-  private changeList(newForm:any, oldForm:any) {
-    // 联动值清空
-    if (JSON.stringify(newForm.workCity) !== JSON.stringify(oldForm.workCity) || newForm.busiType !== oldForm.busiType) {
-      this.listQuery.joinManagerId = ''
-    }
-    if (newForm.joinManagerId !== oldForm.joinManagerId) {
-      this.listQuery.name = ''
-      this.listQuery.driverId = ''
-    }
-
-    // 联动请求接口
-    if (newForm.workCity.length === 2 && newForm.busiType !== '' && newForm.joinManagerId === '') {
-      const cityCodeStatus = (newForm.workCity[1] === oldForm.workCity[1])
-      const busiTypeStatus = (newForm.busiType === oldForm.busiType)
-      this.$set(this.formItem[2].tagAttrs, 'disabled', false)
-      this.$set(this.formItem[3].tagAttrs, 'disabled', true)
-      if (cityCodeStatus && busiTypeStatus) {
-        return
-      }
-      let params = {
-        cityCode: newForm.workCity[1],
-        productLine: newForm.busiType,
-        roleType: 1
-      }
-      this.getGmOptions(params)
-    } else if (newForm.workCity.length === 2 && newForm.busiType !== '' && newForm.joinManagerId !== '') {
-      const cityCodeStatus = (newForm.workCity[1] === oldForm.workCity[1])
-      const busiTypeStatus = (newForm.busiType === oldForm.busiType)
-      const joinManagerIdStatus = (newForm.joinManagerId === oldForm.joinManagerId)
-      this.$set(this.formItem[3].tagAttrs, 'disabled', false)
-      if (cityCodeStatus && busiTypeStatus && joinManagerIdStatus) {
-        return
-      }
-      let params = {
-        gmId: newForm.joinManagerId
-      }
-      this.getDriverInfo(params)
-    } else {
-      this.$set(this.formItem[2].tagAttrs, 'disabled', true)
-      this.$set(this.formItem[3].tagAttrs, 'disabled', true)
-    }
+  private async fetchData() {
+    this.getOpenCitys()
+    this.getOffices()
+    this.getGmOptions()
+    await this.getDriverInfo()
+    await this.getList()
   }
 
   @Watch('freezeForm.orderId', { deep: true })
@@ -1080,14 +1040,35 @@ export default class extends Vue {
       this.getOrderDetail(val)
     }
   }
+  @Watch('listQuery.workCity', { deep: true })
+  private changeWorkCity(val:any, oldVal:any) {
+    if (val !== oldVal) {
+      this.getGmOptions()
+      this.getDriverInfo()
+      this.listQuery.joinManagerId = ''
+      this.listQuery.driverId = ''
+    }
+  }
+  @Watch('listQuery.busiType', { deep: true })
+  private changeBusiType(val:any, oldVal:any) {
+    if (val !== oldVal) {
+      this.getGmOptions()
+      this.getDriverInfo()
+      this.listQuery.joinManagerId = ''
+      this.listQuery.driverId = ''
+    }
+  }
+  @Watch('listQuery.joinManagerId', { deep: true })
+  private changeJoinManagerId(val:any, oldVal:any) {
+    if (val !== oldVal) {
+      this.getDriverInfo()
+      this.listQuery.driverId = ''
+    }
+  }
 
   get tableHeight() {
     let otherHeight = 440
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
-  }
-
-  get listQueryChange() {
-    return JSON.parse(JSON.stringify(this.listQuery))
   }
 
   // 判断是否是PC
@@ -1096,9 +1077,7 @@ export default class extends Vue {
   }
 
   mounted() {
-    this.getList()
-    this.getOpenCitys()
-    this.getOffices()
+    this.fetchData()
   }
 }
 </script>
