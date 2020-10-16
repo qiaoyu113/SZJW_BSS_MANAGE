@@ -4,7 +4,10 @@
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
           <el-row>
-            <el-form :label-width="isPC ? '120px' : '30%'">
+            <el-form
+              :label-width="isPC ? '120px' : '30%'"
+              size="small"
+            >
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="出车单号">
                   <el-input
@@ -13,6 +16,7 @@
                     maxlength="50"
                     placeholder="请输入"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
@@ -23,6 +27,7 @@
                     name="freightlist_driverCity_input"
                     filterable
                     placeholder="请选择"
+                    size="small"
                   >
                     <el-option
                       v-for="item in optionsCity"
@@ -41,6 +46,7 @@
                     maxlength="50"
                     placeholder="请输入姓名/手机号"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
@@ -51,6 +57,7 @@
                     filterable
                     name="freightlist_gmId_input"
                     placeholder="请选择"
+                    size="small"
                   >
                     <el-option
                       v-for="item in optionsJoin"
@@ -69,6 +76,7 @@
                     maxlength="50"
                     placeholder="线路名称/编号"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
@@ -79,6 +87,7 @@
                     name="freightlist_business_input"
                     placeholder="请选择"
                     filterable
+                    size="small"
                   >
                     <el-option
                       v-for="item in businessList"
@@ -97,6 +106,7 @@
                     maxlength="50"
                     placeholder="请输入"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
@@ -108,6 +118,7 @@
                     maxlength="50"
                     placeholder="请输入"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
@@ -118,6 +129,7 @@
                     filterable
                     name="freightlist_dutyManagerId_input"
                     placeholder="请选择"
+                    size="small"
                   >
                     <el-option
                       v-for="item in optionsClassification"
@@ -136,6 +148,7 @@
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    size="small"
                   >
                     <el-option
                       v-for="item in hasDiff"
@@ -154,6 +167,7 @@
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    size="small"
                   >
                     <el-option
                       v-for="item in uploading"
@@ -172,6 +186,7 @@
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    size="small"
                   >
                     <el-option
                       v-for="item in uploading"
@@ -187,6 +202,7 @@
                 <el-form-item label="出车日期">
                   <el-date-picker
                     v-model="DateValueChild"
+                    size="small"
                     :class="isPC ? '' : 'el-date-m'"
                     :editable="false"
                     :picker-options="pickerOptions"
@@ -202,6 +218,7 @@
                 <el-form-item label="运费更新时间">
                   <el-date-picker
                     v-model="DateValueChild2"
+                    size="small"
                     :class="isPC ? '' : 'el-date-m'"
                     :editable="false"
                     type="daterange"
@@ -657,9 +674,9 @@ export default class extends Vue {
     .el-select {
       display: block;
     }
-    .el-input {
-      width: 75%;
-    }
+    // .el-input {
+      // width: 75%;
+    // }
   }
 }
 </style>
