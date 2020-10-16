@@ -17,7 +17,6 @@
       <template slot="driverCode">
         <el-select
           v-model="listQuery.driverCode"
-          :disabled="listQuery.gmId!== '' ? false :true"
           placeholder="请选择"
           clearable
           filterable
@@ -25,12 +24,13 @@
           <el-option
             v-for="item in driverOptions"
             :key="item.value"
-            :label="`${item.label}/${item.value}` "
+            :label="`${item.label}(${item.value})` "
             :value="item.value"
           />
         </el-select>
       </template>
       <template slot="gmId">
+        <!-- :disabled="(listQuery.city.length > 0 && listQuery.busiType !== '') ? false :true" -->
         <el-select
           v-model="listQuery.gmId"
           placeholder="请选择"
@@ -103,7 +103,7 @@
           </router-link>
         </template>
         <template v-slot:inFlowDate="scope">
-          {{ scope.row.inFlowDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.inFlowDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
         <template v-slot:driverCode="scope">
           <router-link to="#">
@@ -111,7 +111,7 @@
           </router-link>
         </template>
         <template v-slot:busiDate="scope">
-          {{ scope.row.busiDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.busiDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
       </self-table>
     </div>
@@ -145,6 +145,22 @@
             clearable
           />
         </template>
+        <template
+          slot="driverCode"
+        >
+          <template v-if="$route.query.id">
+            {{ addForm.driverCode }}
+          </template>
+          <template v-else>
+            <el-autocomplete
+              v-model.trim="addForm.driverCode"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="请输入"
+              clearable
+              @select="driverCodeChange"
+            />
+          </template>
+        </template>
       </self-form>
     </SelfDialog>
   </div>
@@ -159,6 +175,7 @@ import SelfDialog from '@/components/SelfDialog/index.vue'
 import { getFlowList, exportFlowList, saveFlowData, getOrderListByDriverId, getOrderDetailByDriverId, getDriverListByGmId, getListAll } from '@/api/driver-account'
 import { GetDriverListByKerWord } from '@/api/driver'
 import { getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+
 interface PageObj {
   page:Number,
   limit:Number,
@@ -177,6 +194,7 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private orderStatus=''
   private orderListOptions:IState[] = [];// 已终止订单列表
   private dutyListOptions:IState[] = [];// 业务线列表
   private gmIdOptions:IState[] = [];// 所属加盟经理列表
@@ -196,7 +214,7 @@ export default class extends Vue {
       key: 'inFlowDate',
       label: '进流水时间',
       slot: true,
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'inFlowMoney',
@@ -243,7 +261,7 @@ export default class extends Vue {
       key: 'busiDate',
       label: '业务发生时间',
       slot: true,
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'busiMoney',
@@ -253,7 +271,7 @@ export default class extends Vue {
     {
       key: 'busiWay',
       label: '业务进流水方式',
-      'min-width': '160px'
+      'width': '160px'
     },
     {
       key: 'opName',
@@ -319,7 +337,8 @@ export default class extends Vue {
     {
       type: 'driverCode',
       slot: true,
-      label: '司机姓名:'
+      label: '司机姓名(司机编号):',
+      w: '160px'
     },
     {
       type: 3,
@@ -334,7 +353,7 @@ export default class extends Vue {
     },
     {
       type: 'mulBtn',
-      col: 14,
+      col: 24,
       slot: true,
       w: '0px'
     }
@@ -345,23 +364,31 @@ export default class extends Vue {
       this.getGmLists()
     }
   }
+  @Watch('dialogTableVisible')
+  onDialogTableVisibleChange(newVal:boolean) {
+    if (newVal) {
+      if (this.$route.query.id) {
+        // this.addForm.driverCode = this.$route.query.id
+        this.addForm.driverCode = this.listQuery.driverCode
+        this.driverCodeChange(this.addForm.driverCode)
+      }
+    }
+  }
   private addForm:IState = {
     driverCode: '',
     driverName: '',
     orderCode: '',
     orderStatus: '',
-    billingType: '',
+    billingId: '',
     amount: '',
     reason: ''
   }
   private addFormItem:any[] = [
     {
-      type: 1,
+      type: 'driverCode',
       label: '司机编号:',
       key: 'driverCode',
-      listeners: {
-        'change': this.driverCodeChange
-      }
+      slot: true
     },
     {
       type: 7,
@@ -395,7 +422,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '计费类型:',
-      key: 'billingType',
+      key: 'billingId',
       options: this.billOptons
     },
     {
@@ -419,18 +446,25 @@ export default class extends Vue {
   ]
   private rules:IState = {
     driverCode: [
-      { required: true, message: '请输入司机编号', trigger: 'blur' },
-      { min: 14, max: 14, message: '司机编号必须是14个字符', trigger: 'blur' }
+      { required: true, message: '请输入司机编号', trigger: 'blur' }
     ],
     orderCode: [
-      { required: true, message: '请选择选择订单', trigger: 'blur' }
+      { required: true, message: '请选择订单', trigger: 'blur' }
     ],
     billingType: [
       { required: true, message: '请输入计费类型', trigger: 'blur' }
     ],
     amount: [
-      { required: true, message: '请输入申请调流水金额', trigger: 'blur' }
+      { required: true, message: '请输入申请调流水金额', trigger: 'blur' },
+      { validator: this.validateAmount, trigger: 'blur' }
     ]
+  }
+  validateAmount(rule:any, value:any, callback:any) {
+    if (+value <= 0) {
+      return callback(new Error('流水金额不能小于0'))
+    } else {
+      callback()
+    }
   }
   // 分页
   private page :PageObj= {
@@ -451,6 +485,7 @@ export default class extends Vue {
     if (this.listQuery.gmId) {
       this.listQuery.gmId = ''
     }
+    this.getDriverLists()
     this.resetDriver()
   }
   // 重置司机
@@ -483,14 +518,21 @@ export default class extends Vue {
       }
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
-      this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+
+      if (this.listQuery.driverCode) {
+        params.driverCodes = [this.listQuery.driverCode]
+      } else {
+        params.driverCodes = this.driverOptions.map((item:any) => item.value)
+      }
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
         let endDate = new Date(this.listQuery.time[1])
         params.startDate = startDate.setHours(0, 0, 0)
         params.endDate = endDate.setHours(23, 59, 59)
+      } else {
+        this.$message.error('请选择业务发生时间')
+        return false
       }
       let { data: res } = await exportFlowList(params)
       if (res.success) {
@@ -521,8 +563,6 @@ export default class extends Vue {
       }
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
-      this.listQuery.driverCode !== '' && (params.driverCode = this.listQuery.driverCode)
-      // this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startDate = new Date(this.listQuery.time[0])
@@ -530,10 +570,16 @@ export default class extends Vue {
         params.startDate = startDate.setHours(0, 0, 0)
         params.endDate = endDate.setHours(23, 59, 59)
       }
+      if (this.listQuery.driverCode) {
+        params.driverCodes = [this.listQuery.driverCode]
+      } else {
+        params.driverCodes = this.driverOptions.map((item:any) => item.value)
+      }
 
       let { data: res } = await getFlowList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -550,36 +596,58 @@ export default class extends Vue {
   }
   // 司机编号发生变化
   async driverCodeChange(val:string) {
-    if (val.length === 14) {
-      let data:IState[] = await this.getDriverByKeyWord(val)
-      if (data.length > 0) {
-        this.addForm.driverName = data[0].name
-        this.getOrderListByDriverId()
-      } else {
-        this.addForm.driverName = ''
-      }
-      let len:number = this.orderListOptions.length
-      if (len > 0) {
-        this.orderListOptions.splice(0, len)
-      }
+    let data:IState[] = await this.getDriverByKeyWord(this.addForm.driverCode)
+    console.log('yyyyy:', val, data)
+    if (data.length > 0) {
+      this.addForm.driverName = data[0].label
+    } else {
+      this.addForm.driverName = ''
     }
+    let len:number = this.orderListOptions.length
+    if (len > 0) {
+      this.orderListOptions.splice(0, len)
+    }
+    this.getOrderListByDriverId()
   }
   // 通过关键字搜索司机
-  async getDriverByKeyWord(keyword:string) {
+  async getDriverByKeyWord(keyword?:string) {
     try {
       let params:IState = {
         page: 1,
         limit: 9999
       }
       keyword && (params.key = keyword)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       let { data: res } = await GetDriverListByKerWord(params)
       if (res.success) {
-        return res.data
+        let data = res.data.map((item:any) => ({
+          label: item.name,
+          value: item.driverId
+        })) || []
+        return data
       } else {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`get driver fail:${err}`)
+    }
+  }
+  async querySearchAsync(val:string, cb:any) {
+    if (!val) {
+      let data:IState[] = [{ value: '暂无数据' }]
+      cb(data)
+      return false
+    }
+
+    let result = await this.getDriverByKeyWord(val)
+    if (result.length > 0) {
+      let data = result.map((item:any) => ({
+        value: item.value
+      }))
+      cb(data)
+    } else {
+      let data:IState[] = [{ value: '暂无数据' }]
+      cb(data)
     }
   }
   // 弹框确认
@@ -609,8 +677,8 @@ export default class extends Vue {
         driverCode: this.addForm.driverCode,
         driverName: this.addForm.driverName,
         orderCode: this.addForm.orderCode,
-        orderStatus: this.addForm.orderStatus,
-        billingType: this.addForm.billingType,
+        orderStatus: this.orderStatus,
+        billingId: this.addForm.billingId,
         amount: this.addForm.amount,
         reason: this.addForm.reason
       }
@@ -635,7 +703,7 @@ export default class extends Vue {
     try {
       let params = {
         driverId: this.addForm.driverCode,
-        operateFlag: 'list'
+        operateFlag: 'abort_deal'
       }
       let { data: res } = await getOrderListByDriverId(params)
       if (res.success) {
@@ -662,6 +730,7 @@ export default class extends Vue {
       let { data: res } = await getOrderDetailByDriverId(params)
       if (res.success) {
         this.addForm.orderStatus = res.data.statusName
+        this.orderStatus = res.data.status
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -734,6 +803,10 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
@@ -770,27 +843,20 @@ export default class extends Vue {
       console.log(`get gm list fail:${err}`)
     }
   }
-  // 通过加盟经理获取司机列表
+  // 通过加盟经理获取司机列表--废弃
   async getDriverLists() {
     try {
       this.resetDriver()
       let len = this.driverOptions.length
       if (len > 0) {
-        this.driverOptions.splice(1, len)
+        this.driverOptions.splice(0, len)
       }
-      let params = {
-        gmId: this.listQuery.gmId
-      }
-      let { data: res } = await getDriverListByGmId(params)
-      if (res.success) {
-        let options = res.data.map((item:any) => ({
-          label: item.name,
-          value: item.driverId
-        }))
-        this.driverOptions.push(...options)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
+      // let params:IState = {}
+      // this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      let result = await this.getDriverByKeyWord()
+
+      let options = result
+      this.driverOptions.push(...options)
     } catch (err) {
       console.log(`get driver lists fail:${err}`)
     }
@@ -805,7 +871,7 @@ export default class extends Vue {
       let { data: res } = await getListAll()
       if (res.success) {
         let options = res.data.map((item:any) => ({
-          label: item.sopDesc,
+          label: item.sopTypeDesc,
           value: item.id
         }))
         this.billOptons.push(...options)
@@ -816,11 +882,18 @@ export default class extends Vue {
       console.log(`get bill list fail:${err}`)
     }
   }
-  mounted() {
+  init() {
+    if (this.$route.query.id) {
+      this.listQuery.driverCode = this.$route.query.id
+    }
     this.getLists()
     this.getDutyListByLevel()
     this.getBillListAll()
     this.getGmLists()
+  }
+  async mounted() {
+    await this.getDriverLists()
+    this.init()
   }
 }
 </script>

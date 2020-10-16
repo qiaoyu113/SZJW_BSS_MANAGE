@@ -34,6 +34,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-if="false"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -87,13 +88,16 @@
           <span>{{ scope.row.driverName }}/{{ scope.row.phone }}</span>
         </template>
         <template v-slot:voucher_path="scope">
-          <a :href="scope.row.voucher_path">下载凭证</a>
+          <a
+            :href="scope.row.voucher_path"
+            style="color:#649CEE;cursor: pointer;"
+          >下载凭证</a>
         </template>
         <template v-slot:remark="scope">
-          {{ scope.row.remark }}
+          {{ scope.row.remark | DataIsNull }}
         </template>
         <template v-slot:createDate="scope">
-          <span>{{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}</span>
+          <span>{{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </self-table>
     </div>
@@ -167,7 +171,9 @@ import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
 import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList } from '@/api/driver-freight'
+import { GetDriverListByKerWord } from '@/api/driver'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+import { delayTime } from '@/settings'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -194,6 +200,7 @@ export default class extends Vue {
   // loading
   private listLoading:boolean = false
   // 是否显示弹框
+  private driverOptions:IState[] = [];// 司机列表
   private showDialog:boolean = false
   @Watch('listQuery', { deep: true })
   onChange(newVal:IState, oldVal:IState) {
@@ -252,6 +259,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'driverCity',
+        clearable: true,
         props: {
           lazy: true,
           lazyLoad: this.showWork
@@ -330,12 +338,12 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'businessNo',
+      key: 'amount',
       label: '调整金额(元)',
       'min-width': '140px'
     },
     {
-      key: 'subject',
+      key: 'subjectName',
       label: '调整原因',
       'min-width': '140px'
     },
@@ -372,7 +380,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'driverCity',
+      key: 'cityName',
       label: '司机城市',
       'min-width': '140px'
     },
@@ -418,7 +426,7 @@ export default class extends Vue {
       },
       label: '选择司机:',
       key: 'driverId',
-      options: []
+      options: this.driverOptions
     },
     {
       slot: true,
@@ -451,10 +459,10 @@ export default class extends Vue {
       { required: true, message: '请输入', trigger: 'blur' }
     ],
     driverId: [
-      { required: true, message: '请选择', trigger: 'blur' }
+      { required: true, message: '请选择成交的司机', trigger: 'blur' }
     ],
     amount: [
-      { required: true, message: '请输入', trigger: 'blur' }
+      { required: true, message: '请输入大于等于0', trigger: 'blur' }
     ],
     fileUrl: [
       { required: true, message: '请上传凭证', trigger: 'blur' }
@@ -492,6 +500,8 @@ export default class extends Vue {
         let createDateEnd = new Date(this.listQuery.createTime[1])
         params.createDateStart = createDateStart.setHours(0, 0, 0)
         params.createDateEnd = createDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择创建时间')
       }
       let { data: res } = await GetShippingChangeExport(params)
       if (res.success) {
@@ -542,8 +552,10 @@ export default class extends Vue {
       let { data: res } = await SaveShippingChange(params)
       if (res.success) {
         this.showDialog = false
-        this.$message.success('操作成功')
-        this.getLists()
+        this.$message.success('新增运费调整成功')
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -634,7 +646,8 @@ export default class extends Vue {
       }
       let { data: res } = await GetShippingChangeList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -648,7 +661,10 @@ export default class extends Vue {
   // 变动类型列表
   async getSubjectList() {
     try {
-      let { data: res } = await GetSubjectList()
+      let params:IState = {
+        type: 1
+      }
+      let { data: res } = await GetSubjectList(params)
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {
@@ -728,12 +744,39 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(`get duty list fail:${err}`)
+    }
+  }
+  // 通过关键字搜索司机
+  async getDriverByKeyWord() {
+    try {
+      let params:IState = {
+        page: 1,
+        limit: 9999
+      }
+
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      let { data: res } = await GetDriverListByKerWord(params)
+      if (res.success) {
+        let data = res.data.map((item:any) => ({
+          label: item.name,
+          value: item.driverId
+        })) || []
+        this.driverOptions.push(...data)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get driver fail:${err}`)
     }
   }
   // 获取加盟经理列表
@@ -769,6 +812,7 @@ export default class extends Vue {
     this.getSubjectList()
     this.getDutyListByLevel()
     this.getGmLists()
+    this.getDriverByKeyWord()
   }
 }
 </script>

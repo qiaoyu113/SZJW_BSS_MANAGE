@@ -66,7 +66,13 @@
             label="出车单号"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.wayBillId | DataIsNull }} </span>
+              <el-link
+                type="primary"
+                style="font-size: 12px;"
+                @click="goDetail(scope.row.wayBillId)"
+              >
+                {{ scope.row.wayBillId | DataIsNull }}
+              </el-link>
             </template>
           </el-table-column>
 
@@ -93,6 +99,28 @@
           </el-table-column>
 
           <el-table-column
+            v-if="checkList.indexOf('客户名称') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="客户名称"
+          >
+            <template slot-scope="{row}">
+              {{ row.customerClueName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="checkList.indexOf('项目名称') > -1"
+            :key="checkList.length + 'f'"
+            align="left"
+            label="项目名称"
+          >
+            <template slot-scope="{row}">
+              {{ row.projectName | DataIsNull }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
             v-if="checkList.indexOf('出车状态') > -1"
             :key="checkList.length + 'f'"
             align="left"
@@ -110,7 +138,41 @@
             label="运费金额（元）"
           >
             <template slot-scope="{row}">
-              <p>{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</p>
+              <el-popover
+                placement="right"
+                trigger="hover"
+                @show="getFloowData(row.wayBillId, 'confirm')"
+              >
+                <el-table
+                  v-loading="floowLoading"
+                  :data="floowData"
+                  size="mini"
+                >
+                  <el-table-column
+                    type="index"
+                    width="55"
+                    label="趟数"
+                    align="center"
+                  />
+                  <el-table-column
+                    width="150"
+                    property="deliverTime"
+                    label="时间段"
+                  />
+                  <el-table-column
+                    width="100"
+                    property="money"
+                    label="运费"
+                  />
+                </el-table>
+                <el-button
+                  slot="reference"
+                  type="text"
+                >
+                  <span v-if="row.freightFee !== ''">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-else>{{ row.freightFee }}</span>
+                </el-button>
+              </el-popover>
             </template>
           </el-table-column>
 
@@ -161,10 +223,42 @@
             label="司机运费上报金额（元）"
           >
             <template slot-scope="scope">
-              <p>
-                <span v-if="scope.row.gmStatusCode === 2">未出车</span>
-                <span v-else>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
-              </p>
+              <el-popover
+                v-if="scope.row.gmFee !== '' && scope.row.gmStatusCode !== 2"
+                placement="right"
+                trigger="hover"
+                @show="getFloowData(scope.row.wayBillId, 'driver')"
+              >
+                <el-table
+                  v-loading="floowLoading"
+                  :data="floowData"
+                  size="mini"
+                >
+                  <el-table-column
+                    type="index"
+                    width="55"
+                    label="趟数"
+                    align="center"
+                  />
+                  <el-table-column
+                    width="150"
+                    property="deliverTime"
+                    label="时间段"
+                  />
+                  <el-table-column
+                    width="100"
+                    property="money"
+                    label="运费"
+                  />
+                </el-table>
+                <el-button
+                  slot="reference"
+                  type="text"
+                >
+                  <span>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
+                </el-button>
+              </el-popover>
+              <span v-else>{{ scope.row.gmStatusName }}</span>
             </template>
           </el-table-column>
 
@@ -186,8 +280,42 @@
             label="客户运费上报金额（元）"
           >
             <template slot-scope="scope">
-              <span v-if="scope.row.lineStatusCode === 2">未出车</span>
-              <span v-else>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+              <el-popover
+                v-if="scope.row.lineFee !== '' && scope.row.lineStatusCode !== 2"
+                placement="right"
+                trigger="hover"
+                @show="getFloowData(scope.row.wayBillId, 'line')"
+              >
+                <el-table
+                  v-loading="floowLoading"
+                  :data="floowData"
+                  size="mini"
+                >
+                  <el-table-column
+                    type="index"
+                    width="55"
+                    label="趟数"
+                    align="center"
+                  />
+                  <el-table-column
+                    width="150"
+                    property="deliverTime"
+                    label="时间段"
+                  />
+                  <el-table-column
+                    width="100"
+                    property="money"
+                    label="运费"
+                  />
+                </el-table>
+                <el-button
+                  slot="reference"
+                  type="text"
+                >
+                  <span>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+                </el-button>
+              </el-popover>
+              <span v-else>{{ scope.row.lineStatusName }}</span>
             </template>
           </el-table-column>
 
@@ -263,14 +391,18 @@
                   <i class="el-icon-setting el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
+                  <!--
                     v-if="scope.row.canConfirm"
+                  > -->
+                  <el-dropdown-item
+                    v-permission="['/v2/waybill/reportMoneyBatch']"
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
                     {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }}
                   </el-dropdown-item>
                   <el-dropdown-item
+                    v-permission="['/v2/waybill/shippingDetail']"
                     name="ownerlist_detail_dropdown"
                     @click.native="goDetail(scope.row.wayBillId)"
                   >
@@ -470,7 +602,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Form as ElForm, Input } from 'element-ui'
-import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch } from '@/api/freight'
+import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch, freightTripMoney } from '@/api/freight'
 import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
 import { HandlePages } from '@/utils/index'
@@ -528,6 +660,8 @@ export default class extends Vue {
       '出车单号',
       '司机姓名',
       '出车状态',
+      '项目名称',
+      '客户名称',
       '运费金额',
       '司机运费上报状态',
       '客户运费上报状态',
@@ -543,34 +677,36 @@ export default class extends Vue {
       '操作'
     ];
     private checkList: any[] = this.dropdownList;
+    private floowData: any[] = [];
+    private floowLoading: Boolean = false;
     private tab: any[] = [
       {
         label: '全部',
         name: '',
         num: ''
       },
+      // {
+      //   label: '待上报',
+      //   name: '5',
+      //   num: ''
+      // },
       {
-        label: '待上报',
-        name: '5',
-        num: ''
-      },
-      {
-        label: '待确认',
+        label: '待单边确认',
         name: '10',
         num: ''
       },
       {
-        label: '已确认',
+        label: '单边已确认',
         name: '20',
         num: ''
       },
       {
-        label: '待二次确认',
+        label: '待交叉确认',
         name: '30',
         num: ''
       },
       {
-        label: '二次已确认',
+        label: '已交叉确认',
         name: '40',
         num: ''
       }
@@ -583,23 +719,25 @@ export default class extends Vue {
       },
       {
         label: '待出车',
-        name: '5',
+        name: '0',
         num: ''
       },
       {
         label: '已出车',
-        name: '10',
+        name: '2',
         num: ''
       },
       {
         label: '未出车',
-        name: '20',
+        name: '1',
         num: ''
       }
     ];
     private listQuery: IState = {
       customer: '',
       customerCity: '',
+      customerName: '',
+      productName: '',
       driver: '',
       driverCity: '',
       dutyManagerId: '',
@@ -697,7 +835,8 @@ export default class extends Vue {
 
     // 判断是否可以选中
     private selectable(row: any) {
-      return row.canConfirm
+      // return row.canConfirm
+      return true
     }
 
     // 所有请求方法
@@ -732,12 +871,12 @@ export default class extends Vue {
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
-        this.tab[0].num = data.title.all
-        this.tab[1].num = data.title.notReported
-        this.tab[2].num = data.title.toBeConfirmed
-        this.tab[3].num = data.title.confirmed
-        this.tab[4].num = data.title.secondToBeConfirmed
-        this.tab[5].num = data.title.secondConfirmed
+        // this.tab[0].num = data.title.all
+        // this.tab[1].num = data.title.notReported
+        // this.tab[2].num = data.title.toBeConfirmed
+        // this.tab[3].num = data.title.confirmed
+        // this.tab[4].num = data.title.secondToBeConfirmed
+        // this.tab[5].num = data.title.secondConfirmed
         data.page = await HandlePages(data.page)
         this.total = data.page.total
         setTimeout(() => {
@@ -753,7 +892,8 @@ export default class extends Vue {
 
     // 确认操作
     private async checkOption(time: any, id: any) {
-      let type = this.getWeekStartDate(time)
+      // let type = this.getWeekStartDate(time)
+      let type = false
       if (type) {
         let endTime = this.getWednesdayDate(time)
         this.$alert('出车单可确认时间，为' + endTime, '提示', {
@@ -982,6 +1122,24 @@ export default class extends Vue {
       this.saleId = val
     }
 
+    private async getFloowData(id: any, type: any) {
+      this.floowData = []
+      this.floowLoading = true
+      const { data } = await freightTripMoney({ wayBillId: id })
+      if (data.success) {
+        let dataList: any = []
+        data.data.forEach((element: any) => {
+          if (element.reportedType === type) {
+            dataList.push(element)
+          }
+        })
+        this.floowLoading = false
+        this.floowData = dataList
+      } else {
+        this.$message.error(data.errorMsg)
+      }
+    }
+
     // table index
     private indexMethod(type: string) {
       let page: number, limit: number
@@ -1050,6 +1208,8 @@ export default class extends Vue {
 
     // 生命周期
     created() {
+      let wayBillId = this.$route.query.wayBillId
+      if (wayBillId) this.listQuery.wayBillId = wayBillId
       this.fetchData()
     }
 

@@ -126,8 +126,8 @@ export const GetSpecifiedRoleList = (data:any) =>
 // 获取业务线列表
 export const GetDutyListByLevel = (data:any) =>
   request({
-    url: `/base/v2/base/duty/getDutyListByLevel`,
-    method: 'post',
+    url: `/base/v2/base/duty/getPartFirstDutyList`,
+    method: 'get',
     data,
     params: data
   })

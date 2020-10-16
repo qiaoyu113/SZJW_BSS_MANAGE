@@ -77,14 +77,22 @@
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
       >
+        <template v-slot:businessNo="scope">
+          <router-link
+            :to="{path: '/freight/freightlist',query: {wayBillId: scope.row.businessNo}}"
+            style="color:#649CEE;"
+          >
+            {{ scope.row.businessNo }}
+          </router-link>
+        </template>
         <template v-slot:remarks="scope">
-          {{ scope.row.remarks }}
+          {{ scope.row.remarks | DataIsNull }}
         </template>
         <template v-slot:departureDate="scope">
           {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}
         </template>
         <template v-slot:createDate="scope">
-          {{ scope.row.createDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
         <template v-slot:driverName="scope">
           {{ scope.row.driverName }}/{{ scope.row.phone }}
@@ -94,14 +102,17 @@
         </template>
         <template v-slot:paymentVoucherPath="scope">
           <a
+            v-if="scope.row.paymentReceivedFlag"
             type="primary"
-            download
             :href="scope.row.paymentVoucherPath"
+            style="color:#649CEE;cursor: pointer;"
           >
             下载凭证
           </a>
         </template>
-        <template v-slot:op="scope">
+        <template
+          v-slot:op="scope"
+        >
           <el-dropdown
             :trigger="isPC ? 'hover' : 'click'"
             @command="(e) => handleCommandChange(e,scope.row)"
@@ -127,6 +138,7 @@
               slot="dropdown"
             >
               <el-dropdown-item
+                v-if="!scope.row.paymentReceivedFlag"
                 command="1"
               >
                 标记收款
@@ -202,6 +214,7 @@ import { month, lastmonth, threemonth } from './components/date'
 
 import { GetFreightChargeList, ExportFreightChargeList, ReceiveFreightChargeList, GetSubjectList } from '@/api/driver-freight.ts'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+import { delayTime } from '@/settings'
 
 interface PageObj {
   page:Number,
@@ -409,10 +422,11 @@ export default class extends Vue {
     {
       key: 'businessNo',
       label: '出车单编号',
+      slot: true,
       'min-width': '200px'
     },
     {
-      key: 'subject',
+      key: 'subjectName',
       label: '变动类型',
       'min-width': '140px'
     },
@@ -459,7 +473,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'driverCity',
+      key: 'cityName',
       label: '司机城市',
       'min-width': '140px'
     },
@@ -597,13 +611,17 @@ export default class extends Vue {
         let departureDateStart = new Date(this.listQuery.time[0])
         let departureDateEnd = new Date(this.listQuery.time[1])
         params.departureDateStart = departureDateStart.setHours(0, 0, 0)
-        params.departureDateEnd = departureDateEnd.setHours(0, 0, 0)
+        params.departureDateEnd = departureDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择出车日期')
       }
-      if (this.listQuery.time && this.listQuery.time.length > 1) {
+      if (this.listQuery.createTime && this.listQuery.createTime.length > 1) {
         let createDateStart = new Date(this.listQuery.createTime[0])
         let createDateEnd = new Date(this.listQuery.createTime[1])
         params.createDateStart = createDateStart.setHours(0, 0, 0)
-        params.createDateEnd = createDateEnd.setHours(0, 0, 0)
+        params.createDateEnd = createDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择创建时间')
       }
       let { data: res } = await ExportFreightChargeList(params)
       if (res.success) {
@@ -642,18 +660,19 @@ export default class extends Vue {
         let departureDateStart = new Date(this.listQuery.time[0])
         let departureDateEnd = new Date(this.listQuery.time[1])
         params.departureDateStart = departureDateStart.setHours(0, 0, 0)
-        params.departureDateEnd = departureDateEnd.setHours(0, 0, 0)
+        params.departureDateEnd = departureDateEnd.setHours(23, 59, 59)
       }
-      if (this.listQuery.time && this.listQuery.time.length > 1) {
+      if (this.listQuery.createTime && this.listQuery.createTime.length > 1) {
         let createDateStart = new Date(this.listQuery.createTime[0])
         let createDateEnd = new Date(this.listQuery.createTime[1])
         params.createDateStart = createDateStart.setHours(0, 0, 0)
-        params.createDateEnd = createDateEnd.setHours(0, 0, 0)
+        params.createDateEnd = createDateEnd.setHours(23, 59, 59)
       }
 
       let { data: res } = await GetFreightChargeList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -667,7 +686,7 @@ export default class extends Vue {
   // 更多操作
   private handleCommandChange(key:string, row:any) {
     if (key === '1') { // 标记收款
-      this.dialogTit = '标记收款'
+      this.dialogTit = '标记已收款'
       this.dialogFormItem = []
       this.resetDialogForm()
       this.dialogForm.recordNo = row.recordNo
@@ -736,15 +755,17 @@ export default class extends Vue {
     try {
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
-        id: this.ids
+        ids: this.ids
       }
       this.dialogForm.remark && (params.remark = this.dialogForm.remark)
       let { data: res } = await ReceiveFreightChargeList(params)
       if (res.success) {
         this.showDialog = false
-        this.$message.success('操作成功')
+        this.$message.success('操作已收款成功')
         this.page.page = 1
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -779,7 +800,7 @@ export default class extends Vue {
       }
       this.resetDialogForm()
       this.ids = this.multipleSelection.map(item => item.id)
-      this.dialogTit = '批量标记收款'
+      this.dialogTit = '批量标记已收款'
       this.showDialog = true
       this.dialogFormItem = this.dialogItem.slice(3)
     }
@@ -787,7 +808,8 @@ export default class extends Vue {
   // 获取调整原因
   async getSubjectList() {
     try {
-      let { data: res } = await GetSubjectList()
+      let params:IState = {}
+      let { data: res } = await GetSubjectList(params)
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {
@@ -867,6 +889,10 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)

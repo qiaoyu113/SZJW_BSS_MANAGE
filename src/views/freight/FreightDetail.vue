@@ -25,7 +25,7 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="线路名称"
-              :value="OwnerDetail.wayBillInfoVO.lineId + '/' + OwnerDetail.wayBillInfoVO.lineName"
+              :value="OwnerDetail.wayBillInfoVO.lineName + '/' + OwnerDetail.wayBillInfoVO.lineId"
             />
           </el-col>
 
@@ -192,7 +192,7 @@
         <el-col :span="isPC ? 24 : 24">
           <DetailItem
             name="运费金额"
-            :value="OwnerDetail.lineInfoVO.lineSaleName"
+            :value="OwnerDetail.wayBillFee"
           />
           <!--table表单-->
           <div

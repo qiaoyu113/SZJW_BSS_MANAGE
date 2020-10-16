@@ -104,15 +104,31 @@
       >
         <template v-slot:checkVoucherPath="scope">
           <a
+            v-if="scope.row.checkStatus"
             :href="scope.row.checkVoucherPath"
-            download
+            style="color:#649CEE;cursor: pointer;"
           >下载凭证</a>
+        </template>
+
+        <template v-slot:monthBillDate="scope">
+          {{ scope.row.monthBillDate | parseTime('{y}-{m}') }}
         </template>
         <template v-slot:driverName="scope">
           {{ scope.row.driverName }}/{{ scope.row.phone }}
         </template>
+        <template v-slot:checkStatus="scope">
+          {{ scope.row.checkStatus ===1 ? '是':'否' }}
+        </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ===1 ? '是':'否' }}
+          <template v-if="scope.row.closeStatus ===1">
+            / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
+          </template>
+        </template>
+        <template v-slot:monthBillId="scope">
+          <router-link :to="{path: '/freight/freightdetail', query: {wayBillId: scope.row.businessNo}}">
+            {{ scope.row.monthBillId }}
+          </router-link>
         </template>
         <template v-slot:op="scope">
           <el-dropdown
@@ -145,11 +161,13 @@
                 查看流水
               </el-dropdown-item>
               <el-dropdown-item
+                v-if="scope.row.closeStatus ===1"
                 command="driverCheck"
               >
                 司机对账
               </el-dropdown-item>
               <el-dropdown-item
+
                 command="download"
               >
                 账单下载
@@ -221,6 +239,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetMonthlyBillList, ExportMonthlyBillList, driverMonthlyBillCheck } from '@/api/driver-freight'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+import { delayTime } from '@/settings'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -305,6 +324,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'driverCity',
+        clearable: true,
         props: {
           lazy: true,
           lazyLoad: this.showWork
@@ -382,12 +402,14 @@ export default class extends Vue {
     {
       key: 'monthBillId',
       label: '月账单编号',
+      slot: true,
       'min-width': '140px'
     },
     {
       key: 'monthBillDate',
       label: '账单月份',
-      'min-width': '140px'
+      'min-width': '140px',
+      slot: true
     },
     {
       key: 'driverName',
@@ -419,6 +441,7 @@ export default class extends Vue {
     {
       key: 'checkStatus',
       label: '对账状态',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -561,8 +584,13 @@ export default class extends Vue {
     if (this.listQuery.months && this.listQuery.months.length > 0) {
       let monthBillDateStart = new Date(this.listQuery.months[0])
       let monthBillDateEnd = new Date(this.listQuery.months[1])
+      const y = monthBillDateEnd.getFullYear()
+      const m = monthBillDateEnd.getMonth()
+      const end = +new Date(y, m + 1) - 1
       params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
-      params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+      params.monthBillDateEnd = new Date(end).setHours(23, 59, 59)
+    } else {
+      return this.$message.error('请选择月份')
     }
     this.exportExcel(params)
   }
@@ -605,12 +633,17 @@ export default class extends Vue {
       if (this.listQuery.months && this.listQuery.months.length > 0) {
         let monthBillDateStart = new Date(this.listQuery.months[0])
         let monthBillDateEnd = new Date(this.listQuery.months[1])
+
+        const y = monthBillDateEnd.getFullYear()
+        const m = monthBillDateEnd.getMonth()
+        const end = +new Date(y, m + 1) - 1
         params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
-        params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+        params.monthBillDateEnd = new Date(end).setHours(23, 59, 59)
       }
       let { data: res } = await GetMonthlyBillList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)
@@ -658,14 +691,16 @@ export default class extends Vue {
     try {
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
-        id: this.ids
+        ids: this.ids
       }
       this.dialogForm.remark !== '' && (params.remark = this.dialogForm.remark)
       let { data: res } = await driverMonthlyBillCheck(params)
       if (res.success) {
         this.showDialog = false
         this.$message.success('操作成功')
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -812,6 +847,10 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
