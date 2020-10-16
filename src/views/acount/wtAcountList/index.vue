@@ -1,6 +1,5 @@
 <template>
   <div
-    v-loading.fullscreen.lock="fullscreenLoading"
     class="wtAcountList"
     :class="{
       p15: isPC
@@ -176,7 +175,6 @@ interface PageObj {
   }
 })
 export default class extends Vue {
-  private fullscreenLoading:Boolean = false
   private showDialog: any = {
     visible: false,
     title: '提示',
@@ -683,11 +681,6 @@ export default class extends Vue {
       }
 
       this.setData(params)
-      if (params.driverCodes.length === 0) {
-        this.tableData = []
-        this.listLoading = false
-        return
-      }
       let { data: res } = await getAcountList(params)
       this.listLoading = false
       if (res.success) {
@@ -906,7 +899,7 @@ export default class extends Vue {
       time: []
     }
     this.tags = []
-    // this.getList()
+    this.getList()
   }
   /**
    * 导出
@@ -915,10 +908,6 @@ export default class extends Vue {
     if (this.listQuery.time && this.listQuery.time.length === 2) {
       let params: any = {}
       this.setData(params)
-      if (params.driverCodes.length === 0) {
-        this.$message.error('未查询到司机！')
-        return
-      }
       const { data } = await managementExport(params)
       if (data.success) {
         this.$message({
@@ -940,7 +929,8 @@ export default class extends Vue {
       this.listQuery.workCity && (params.workCity = Number(this.listQuery.workCity[1]))
     }
     if (this.listQuery.driverId) {
-      params.driverCodes = [this.listQuery.driverId]
+      // params.driverCodes = [this.listQuery.driverId]
+      params.driverCodes = ['SJ202010140004']
     } else {
       params.driverCodes = this.driverOtions.map((ele:any) => (
         ele.value
@@ -1041,13 +1031,11 @@ export default class extends Vue {
   }
 
   private async fetchData() {
-    this.fullscreenLoading = true
     this.getOpenCitys()
     this.getOffices()
     this.getGmOptions()
     await this.getDriverInfo()
     await this.getList()
-    this.fullscreenLoading = false
   }
 
   @Watch('freezeForm.orderId', { deep: true })
