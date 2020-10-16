@@ -161,7 +161,7 @@
                   />
                   <el-table-column
                     width="100"
-                    property="preMoney"
+                    property="money"
                     label="运费"
                   />
                 </el-table>
@@ -247,7 +247,7 @@
                   />
                   <el-table-column
                     width="100"
-                    property="preMoney"
+                    property="money"
                     label="运费"
                   />
                 </el-table>
@@ -304,7 +304,7 @@
                   />
                   <el-table-column
                     width="100"
-                    property="preMoney"
+                    property="money"
                     label="运费"
                   />
                 </el-table>
