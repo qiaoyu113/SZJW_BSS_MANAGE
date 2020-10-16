@@ -597,7 +597,6 @@ export default class extends Vue {
   // 司机编号发生变化
   async driverCodeChange(val:string) {
     let data:IState[] = await this.getDriverByKeyWord(this.addForm.driverCode)
-    console.log('yyyyy:', val, data)
     if (data.length > 0) {
       this.addForm.driverName = data[0].label
     } else {
@@ -605,8 +604,10 @@ export default class extends Vue {
     }
     let len:number = this.orderListOptions.length
     if (len > 0) {
+      this.addForm.orderCode = ''
       this.orderListOptions.splice(0, len)
     }
+
     this.getOrderListByDriverId()
   }
   // 通过关键字搜索司机
@@ -634,7 +635,7 @@ export default class extends Vue {
   }
   async querySearchAsync(val:string, cb:any) {
     if (!val) {
-      let data:IState[] = [{ value: '暂无数据' }]
+      let data:IState[] = []
       cb(data)
       return false
     }
@@ -646,7 +647,7 @@ export default class extends Vue {
       }))
       cb(data)
     } else {
-      let data:IState[] = [{ value: '暂无数据' }]
+      let data:IState[] = []
       cb(data)
     }
   }
