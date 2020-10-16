@@ -103,7 +103,7 @@
           </router-link>
         </template>
         <template v-slot:inFlowDate="scope">
-          {{ scope.row.inFlowDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.inFlowDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
         <template v-slot:driverCode="scope">
           <router-link to="#">
@@ -111,7 +111,7 @@
           </router-link>
         </template>
         <template v-slot:busiDate="scope">
-          {{ scope.row.busiDate | parseTime('{y}-{m}-{d}') }}
+          {{ scope.row.busiDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
       </self-table>
     </div>
@@ -214,7 +214,7 @@ export default class extends Vue {
       key: 'inFlowDate',
       label: '进流水时间',
       slot: true,
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'inFlowMoney',
@@ -261,7 +261,7 @@ export default class extends Vue {
       key: 'busiDate',
       label: '业务发生时间',
       slot: true,
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'busiMoney',
@@ -271,7 +271,7 @@ export default class extends Vue {
     {
       key: 'busiWay',
       label: '业务进流水方式',
-      'min-width': '160px'
+      'width': '160px'
     },
     {
       key: 'opName',

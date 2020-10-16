@@ -603,8 +603,11 @@ export default class extends Vue {
     if (this.listQuery.monthBillDate && this.listQuery.monthBillDate.length > 0) {
       let monthBillDateStart = new Date(this.listQuery.monthBillDate[0])
       let monthBillDateEnd = new Date(this.listQuery.monthBillDate[1])
+      const y = monthBillDateEnd.getFullYear()
+      const m = monthBillDateEnd.getMonth()
+      const end = +new Date(y, m + 1) - 1
       params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
-      params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+      params.monthBillDateEnd = new Date(end).setHours(23, 59, 59)
     } else {
       return this.$message.error('请选择月份')
     }
@@ -648,8 +651,12 @@ export default class extends Vue {
       if (this.listQuery.monthBillDate && this.listQuery.monthBillDate.length > 0) {
         let monthBillDateStart = new Date(this.listQuery.monthBillDate[0])
         let monthBillDateEnd = new Date(this.listQuery.monthBillDate[1])
+
+        const y = monthBillDateEnd.getFullYear()
+        const m = monthBillDateEnd.getMonth()
+        const end = +new Date(y, m + 1) - 1
         params.monthBillDateStart = monthBillDateStart.setHours(0, 0, 0)
-        params.monthBillDateEnd = monthBillDateEnd.setHours(23, 59, 59)
+        params.monthBillDateEnd = new Date(end).setHours(23, 59, 59)
       }
       let { data: res } = await GetMonthlyBillList(params)
       if (res.success) {
