@@ -530,6 +530,7 @@ export default class extends Vue {
       driverCity: '',
       createTime: []
     }
+    this.getGmLists()
   }
   // 新增
   handleAddClick() {

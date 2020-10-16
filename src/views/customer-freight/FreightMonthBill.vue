@@ -147,6 +147,7 @@
                 查看流水
               </el-dropdown-item>
               <el-dropdown-item
+                v-if="scope.row.closeStatus ===1"
                 command="checkBill"
               >
                 客户对账

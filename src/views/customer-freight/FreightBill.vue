@@ -415,7 +415,7 @@ export default class extends Vue {
       'min-width': '200px'
     },
     {
-      key: 'subject',
+      key: 'subjectName',
       label: '变动类型',
       'min-width': '140px'
     },
@@ -782,8 +782,7 @@ export default class extends Vue {
   // 变动类型列表
   async getSubjectList() {
     try {
-      let params:IState = {}
-      let { data: res } = await GetSubjectList(params)
+      let { data: res } = await GetSubjectList()
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {
