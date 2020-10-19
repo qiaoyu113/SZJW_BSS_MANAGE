@@ -14,6 +14,7 @@
       class="p15 SuggestForm"
       :pc-col="8"
     >
+      <!-- :loading="queryDriverLoading" -->
       <template slot="driverCode">
         <el-select
           v-model="listQuery.driverCode"
@@ -22,23 +23,16 @@
           clearable
           filterable
           remote
-          :loading="queryDriverLoading"
+
           :remote-method="querySearchByKeyword"
           @clear="handleClearQueryDriver"
         >
-          <!-- <div
-            v-loading="queryDriverLoading"
-            v-infinite-scroll="loadQueryDriverByKeyword"
-            :infinite-scroll-immediate="false"
-            :infinite-scroll-distance="10"
-          > -->
           <el-option
             v-for="item in driverOptions"
             :key="item.value"
             :label="`${item.label}(${item.value})` "
             :value="item.value"
           />
-          <!-- </div> -->
         </el-select>
       </template>
       <template slot="gmId">
@@ -179,6 +173,7 @@
             {{ addForm.driverCode }}
           </template>
           <template v-else>
+            <!-- :loading="dialogDriverLoading" -->
             <el-select
               v-model="addForm.driverCode"
               v-loadmore="loadDialogDriverByKeyword"
@@ -186,24 +181,16 @@
               clearable
               filterable
               remote
-              :loading="dialogDriverLoading"
               :remote-method="dialogSearchByKeyword"
               @change="driverCodeChange"
               @clear="handleClearDialogDriver"
             >
-              <!-- <div
-                v-loading="dialogDriverLoading"
-                v-infinite-scroll="loadDialogDriverByKeyword"
-                :infinite-scroll-immediate="false"
-                :infinite-scroll-distance="10"
-              > -->
               <el-option
                 v-for="item in dialogDriverOptions"
                 :key="item.value"
                 :label="`${item.label}(${item.value})` "
                 :value="item.value"
               />
-              <!-- </div> -->
             </el-select>
           </template>
         </template>
@@ -409,7 +396,7 @@ export default class extends Vue {
       w: '0px'
     }
   ]
-  @Watch('listQuery', { deep: true })
+
   @Watch('dialogTableVisible')
   onDialogTableVisibleChange(newVal:boolean) {
     if (newVal) {
