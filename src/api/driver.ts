@@ -285,11 +285,3 @@ export const getDriverListByGmId = (params: any) =>
     method: 'get',
     params
   })
-
-// 查询司机列表
-export const getDriverList = (data: any) =>
-  request({
-    url: `${prefixCarrier}/v2/driver/getDriverList`,
-    method: 'post',
-    data
-  })

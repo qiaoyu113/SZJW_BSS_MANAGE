@@ -14,6 +14,30 @@
       class="p15"
       height=""
     >
+      <template
+        slot="driverId"
+      >
+        <div>
+          <el-select
+            v-model="listQuery.driverId"
+            v-selectMore="loadmore"
+            filterable
+            remote
+            reserve-keyword
+            :default-first-option="true"
+            :remote-method="remoteMethod"
+            :loading="driverLoading"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="(item,index) in driverOtions"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+      </template>
       <div
         slot="btn1"
         :class="isPC ? 'btnPc' : 'mobile'"
@@ -99,6 +123,7 @@
       :title="showDialog.title"
       :center="true"
       :confirm="confirm"
+      :sumbit-again="sumbitAgain"
       @closed="closed"
     >
       <div>
@@ -153,7 +178,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
-import { getDriverList } from '@/api/driver'
+import { GetDriverListByKerWord } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
@@ -176,7 +201,9 @@ interface PageObj {
   }
 })
 export default class extends Vue {
+  private sumbitAgain:Boolean = false
   private fullscreenLoading:Boolean = false
+  private driverLoading:Boolean = false
   private showDialog: any = {
     visible: false,
     title: '提示',
@@ -199,6 +226,10 @@ export default class extends Vue {
   private orderOptions:any[] = []
   private getGmStatus:Boolean = true
   private getDriverStatus:Boolean = true
+  private driverPage:any = {
+    page: 1,
+    limit: 20
+  }
   // 表单对象
   private listQuery: IState = {
     workCity: [],
@@ -253,18 +284,26 @@ export default class extends Vue {
       options: this.gmOptions
     },
     {
-      type: 2,
+      type: 'driverId',
+      label: '司机姓名（司机编号）',
       key: 'driverId',
       col: 8,
       w: '160px',
-      label: '司机姓名（司机编号）',
-      tagAttrs: {
-        placeholder: '请选择',
-        filterable: true,
-        clearable: true
-      },
-      options: this.driverOtions
+      slot: true
     },
+    // {
+    //   type: 2,
+    //   key: 'driverId',
+    //   col: 8,
+    //   w: '160px',
+    //   label: '司机姓名（司机编号）',
+    //   tagAttrs: {
+    //     placeholder: '请选择',
+    //     filterable: true,
+    //     clearable: true
+    //   },
+    //   options: this.driverOtions
+    // },
     {
       type: 4,
       col: 12,
@@ -671,11 +710,8 @@ export default class extends Vue {
   /**
    *获取列表
    */
-  async getList() {
+  private async getList() {
     try {
-      // if (this.listQuery.phone && !phoneReg.test(this.listQuery.phone)) {
-      //   return this.$message.error('请输入正确的手机号')
-      // }
       this.listLoading = true
       let params: any = {
         limit: this.page.limit,
@@ -683,11 +719,6 @@ export default class extends Vue {
       }
 
       this.setData(params)
-      if (params.driverCodes.length === 0) {
-        this.tableData = []
-        this.listLoading = false
-        return
-      }
       let { data: res } = await getAcountList(params)
       this.listLoading = false
       if (res.success) {
@@ -704,7 +735,7 @@ export default class extends Vue {
   }
 
   // 查询订单列表
-  async getOrderList(id:string, type:number) {
+  private async getOrderList(id:string, type:number) {
     try {
       let params = {
         driverId: id,
@@ -740,7 +771,7 @@ export default class extends Vue {
   }
 
   // 查询对应订单详情
-  async getOrderDetail(orderId:string) {
+  private async getOrderDetail(orderId:string) {
     try {
       let params = {
         driverId: this.columnData.driverId,
@@ -767,7 +798,7 @@ export default class extends Vue {
     let name:number = 0
     this.columnData = item
     this.freezeForm = { ...this.freezeForm, ...this.columnData }
-    delete this.freezeForm.freezingMoney
+    this.freezeForm.freezingMoney = null
     if (type === 1) {
       title = '冻结'
       name = 1
@@ -804,14 +835,16 @@ export default class extends Vue {
     }
   }
   // 确认弹窗
-  private confirm(done:any) {
+  private async confirm(done:any) {
     this.handleValidateForm()
     if (this.isPass) {
+      this.sumbitAgain = true
       if (this.showDialog.name === 1) {
-        this.freezed(done)
+        await this.freezed(done)
       } else {
-        this.unfreezed(done)
+        await this.unfreezed(done)
       }
+      this.sumbitAgain = false
     }
   }
   /**
@@ -860,7 +893,6 @@ export default class extends Vue {
   }
 
   private onPass(val:Boolean) {
-    console.log('freezeForm', this.freezeForm)
     this.isPass = val
   }
   /**
@@ -907,6 +939,9 @@ export default class extends Vue {
     }
     this.tags = []
     // this.getList()
+    this.driverPage.page = 1
+    this.driverOtions.splice(0, this.driverOtions.length)
+    this.getDriverInfo()
   }
   /**
    * 导出
@@ -915,10 +950,6 @@ export default class extends Vue {
     if (this.listQuery.time && this.listQuery.time.length === 2) {
       let params: any = {}
       this.setData(params)
-      if (params.driverCodes.length === 0) {
-        this.$message.error('未查询到司机！')
-        return
-      }
       const { data } = await managementExport(params)
       if (data.success) {
         this.$message({
@@ -939,13 +970,7 @@ export default class extends Vue {
     if (this.listQuery.workCity.length > 0) {
       this.listQuery.workCity && (params.workCity = Number(this.listQuery.workCity[1]))
     }
-    if (this.listQuery.driverId) {
-      params.driverCodes = [this.listQuery.driverId]
-    } else {
-      params.driverCodes = this.driverOtions.map((ele:any) => (
-        ele.value
-      ))
-    }
+    this.listQuery.driverId && (params.driverCode = this.listQuery.driverId)
     this.listQuery.busiType !== '' &&
         (params.busiType = this.listQuery.busiType)
     this.listQuery.joinManagerId !== '' && (params.joinManagerId = this.listQuery.joinManagerId)
@@ -960,7 +985,7 @@ export default class extends Vue {
   /**
    * 分页
    */
-  handlePageSize(page: any) {
+  private handlePageSize(page: any) {
     this.page.page = page.page
     this.page.limit = page.limit
     this.getList()
@@ -1013,17 +1038,17 @@ export default class extends Vue {
     }
   }
 
-  async getDriverInfo() {
+  async getDriverInfo(keyWord:any = '') {
     try {
       let params = {
         workCity: this.listQuery.workCity[1] || '',
         busiType: this.listQuery.busiType || '',
         gmId: this.listQuery.joinManagerId || '',
-        page: 1,
-        limit: 9999
+        key: ''
       }
-      this.driverOtions.splice(0, this.driverOtions.length)
-      let { data: res } = await getDriverList(params)
+      keyWord !== '' && (params.key = keyWord)
+      params = { ...params, ...this.driverPage }
+      let { data: res } = await GetDriverListByKerWord(params)
       if (res.success) {
         let driverInfos = res.data.map(function(item: any) {
           return {
@@ -1037,6 +1062,25 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(err)
+    }
+  }
+
+  private loadmore() {
+    this.driverPage.page++
+    this.getDriverInfo()
+  }
+
+  private remoteMethod(query:any) {
+    if (query !== '') {
+      this.driverLoading = true
+      setTimeout(() => {
+        this.driverLoading = false
+        this.driverPage.page = 1
+        this.driverOtions.splice(0, this.driverOtions.length)
+        this.getDriverInfo(query)
+      }, 200)
+    } else {
+      this.driverOtions = []
     }
   }
 
@@ -1060,6 +1104,8 @@ export default class extends Vue {
   private changeWorkCity(val:any, oldVal:any) {
     if (val !== oldVal) {
       this.getGmOptions()
+      this.driverPage.page = 1
+      this.driverOtions.splice(0, this.driverOtions.length)
       this.getDriverInfo()
       this.listQuery.joinManagerId = ''
       this.listQuery.driverId = ''
@@ -1069,6 +1115,8 @@ export default class extends Vue {
   private changeBusiType(val:any, oldVal:any) {
     if (val !== oldVal) {
       this.getGmOptions()
+      this.driverPage.page = 1
+      this.driverOtions.splice(0, this.driverOtions.length)
       this.getDriverInfo()
       this.listQuery.joinManagerId = ''
       this.listQuery.driverId = ''
@@ -1077,6 +1125,8 @@ export default class extends Vue {
   @Watch('listQuery.joinManagerId', { deep: true })
   private changeJoinManagerId(val:any, oldVal:any) {
     if (val !== oldVal) {
+      this.driverPage.page = 1
+      this.driverOtions.splice(0, this.driverOtions.length)
       this.getDriverInfo()
       this.listQuery.driverId = ''
     }
