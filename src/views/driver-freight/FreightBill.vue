@@ -71,6 +71,7 @@
         :operation-list="operationList"
         :table-data="tableData"
         :columns="columns"
+        :func="disabledFunc"
         :page="page"
         style="overflow: initial;"
         @olclick="handleOlClick"
@@ -81,6 +82,7 @@
           <router-link
             :to="{path: '/freight/freightlist',query: {wayBillId: scope.row.businessNo}}"
             style="color:#649CEE;"
+            target="_blank"
           >
             {{ scope.row.businessNo }}
           </router-link>
@@ -155,6 +157,7 @@
       :visible.sync="showDialog"
       :title="dialogTit"
       :confirm="confirm"
+      :sumbit-again="submitLoading"
       :destroy-on-close="true"
       @closed="handleClosed"
     >
@@ -241,14 +244,10 @@ export default class extends Vue {
   private subjectOptions:IState[] = []
   // 弹框选中的数据的id集合
   private ids:number|string[] = []
+  private submitLoading:boolean = false;
   // loading
   private listLoading:Boolean = false;
-  @Watch('listQuery', { deep: true })
-  onChange(newVal:IState, oldVal:IState) {
-    if (newVal.driverCity.length > 0 && this.listQuery.businessType !== '') {
-      this.getGmLists()
-    }
-  }
+
   // 查询表单
   private listQuery:IState = {
     driverName: '',
@@ -567,11 +566,18 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  private disabledFunc(row:any) {
+    if (row && row.paymentReceivedFlag) {
+      return false
+    }
+    return true
+  }
   // 重置加盟经理
   resetGmId() {
     if (this.listQuery.gmId) {
       this.listQuery.gmId = ''
     }
+    this.getGmLists()
   }
   // 重置表单
   private handleResetClick() {
@@ -754,6 +760,7 @@ export default class extends Vue {
   // 弹框确认按钮
   async saveData() {
     try {
+      this.submitLoading = true
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
         ids: this.ids
@@ -772,6 +779,10 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`save data fail:${err}`)
+    } finally {
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 弹框的确定按钮

@@ -17,13 +17,12 @@
       <!-- :loading="queryDriverLoading" -->
       <template slot="driverCode">
         <el-select
-          v-model="listQuery.driverCode"
+          v-model.trim="listQuery.driverCode"
           v-loadmore="loadQueryDriverByKeyword"
           placeholder="请选择"
           clearable
           filterable
           remote
-
           :remote-method="querySearchByKeyword"
           @clear="handleClearQueryDriver"
         >
@@ -142,9 +141,10 @@
       title="手动添加流水"
       width="50%"
       :before-close="beforeClose"
-      :cancel="beforeClose"
-      :confirm="handleConfirmClick"
       append-to-body
+      :confirm="handleConfirmClick"
+      :sumbit-again="submitLoading"
+      @cancel="beforeClose"
       @closed="handleClosed"
     >
       <self-form
@@ -166,19 +166,33 @@
             clearable
           />
         </template>
+        <template slot="billingId">
+          <el-select
+            v-model="addForm.billingId"
+            filterable
+            :disabled="addForm.orderStatus ? false :true"
+            placeholder="请选择"
+            @change="changeBillingId"
+          >
+            <el-option
+              v-for="item in billOptons"
+              :key="item.value"
+              :value="item.value"
+              :label="item.label"
+            />
+          </el-select>
+        </template>
         <template
           slot="driverCode"
         >
-          <template v-if="$route.query.id">
+          <template v-if="$route.query.id && listQuery.driverCode">
             {{ addForm.driverCode }}
           </template>
           <template v-else>
-            <!-- :loading="dialogDriverLoading" -->
             <el-select
-              v-model="addForm.driverCode"
+              v-model.trim="addForm.driverCode"
               v-loadmore="loadDialogDriverByKeyword"
               placeholder="请选择"
-              clearable
               filterable
               remote
               :remote-method="dialogSearchByKeyword"
@@ -238,6 +252,8 @@ export default class extends Vue {
   private billOptons:IState[] = [];// 获取计费类型列表
   private listLoading:boolean = false;
   private dialogTableVisible:boolean = false;
+  private submitLoading:boolean = false;
+  private isSubmit:boolean = true
   private tableData:any[] = [];
   private columns:any[] = [
     {
@@ -400,7 +416,7 @@ export default class extends Vue {
   @Watch('dialogTableVisible')
   onDialogTableVisibleChange(newVal:boolean) {
     if (newVal) {
-      if (this.$route.query.id) {
+      if (this.$route.query.id && this.listQuery.driverCode) {
         this.addForm.driverCode = this.listQuery.driverCode
         this.driverCodeChange(this.addForm.driverCode)
       }
@@ -433,7 +449,6 @@ export default class extends Vue {
       key: 'orderCode',
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true,
         filterable: true
       },
       options: this.orderListOptions,
@@ -447,15 +462,10 @@ export default class extends Vue {
       key: 'orderStatus'
     },
     {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
-      },
+      type: 'billingId',
+      slot: true,
       label: '计费类型:',
-      key: 'billingId',
-      options: this.billOptons
+      key: 'billingId'
     },
     {
       type: 'amount',
@@ -487,29 +497,16 @@ export default class extends Vue {
       { required: true, message: '请输入计费类型', trigger: 'blur' }
     ],
     amount: [
-      { required: true, message: '请输入申请调流水金额', trigger: 'blur' },
-      { validator: this.validateAmount, trigger: 'blur' }
+      { required: true, message: '请输入申请调流水金额', trigger: 'blur' }
+      // { validator: this.validateAmount, trigger: 'blur' }
     ],
     billingId: [
-      { required: false, trigger: 'blur' },
-      { validator: this.validateBillingId, trigger: ['blur', 'change'] }
+      { required: false, trigger: 'blur' }
     ]
   }
   validateAmount(rule:any, value:any, callback:any) {
     if (+value <= 0) {
       return callback(new Error('流水金额不能小于0'))
-    } else {
-      callback()
-    }
-  }
-  async validateBillingId(rule:any, value:any, callback:any) {
-    if (value) {
-      let ret = await this.changeBillingId()
-      if (ret) {
-        callback(new Error(ret))
-      } else {
-        callback()
-      }
     } else {
       callback()
     }
@@ -590,9 +587,7 @@ export default class extends Vue {
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
 
       if (this.listQuery.driverCode) {
-        params.driverCodes = [this.listQuery.driverCode]
-      } else if (this.driverOptions.length > 0) {
-        params.driverCodes = this.driverOptions.map((item:any) => item.value)
+        params.driverCode = this.listQuery.driverCode
       }
 
       if (this.listQuery.time && this.listQuery.time.length > 0) {
@@ -641,9 +636,7 @@ export default class extends Vue {
         params.endDate = endDate.setHours(23, 59, 59)
       }
       if (this.listQuery.driverCode) {
-        params.driverCodes = [this.listQuery.driverCode]
-      } else if (this.driverOptions.length > 0) {
-        params.driverCodes = this.driverOptions.map((item:any) => item.value)
+        params.driverCode = this.listQuery.driverCode
       }
 
       let { data: res } = await getFlowList(params)
@@ -719,6 +712,7 @@ export default class extends Vue {
   // 提交弹框表单
   async saveData() {
     try {
+      this.submitLoading = true
       let params = {
         driverCode: this.addForm.driverCode,
         driverName: this.addForm.driverName,
@@ -738,6 +732,10 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`save data fail:${err}`)
+    } finally {
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 打开弹框
@@ -916,15 +914,15 @@ export default class extends Vue {
     try {
       let params:IState = {
         chargeId: this.addForm.billingId,
-        orderId: this.orderStatus
+        orderId: this.addForm.orderCode
       }
       let { data: res } = await GetChargeAmountByChargeId(params)
       if (res.success) {
         this.addForm.amount = res.data
-        return ''
+        this.isSubmit = true
       } else {
         this.$message.error(res.errorMsg)
-        return res.errorMsg
+        this.isSubmit = false
       }
     } catch (err) {
       console.log(`get money fail:${err}`)
@@ -932,6 +930,9 @@ export default class extends Vue {
   }
   // 顶部司机关键字搜索
   querySearchByKeyword(val:string) {
+    if (val.trim() === '') {
+      return false
+    }
     this.resetDriver()
     this.loadQueryDriverByKeyword(val)
   }
@@ -953,6 +954,9 @@ export default class extends Vue {
   }
   // 弹框司机关键字搜索
   dialogSearchByKeyword(val:string) {
+    if (val.trim() === '') {
+      return false
+    }
     this.resetDialogDriverList()
     this.loadDialogDriverByKeyword(val)
   }

@@ -57,6 +57,7 @@
         :operation-list="operationList"
         :table-data="tableData"
         :columns="columns"
+        :func="disabledFunc"
         :page="page"
         style="overflow: initial;"
         @olclick="handleOlClick"
@@ -81,6 +82,7 @@
           <router-link
             :to="{path: '/freight/freightlist',query: {wayBillId: scope.row.businessNo}}"
             style="color:#649CEE;"
+            target="_blank"
           >
             {{ scope.row.businessNo }}
           </router-link>
@@ -116,6 +118,7 @@
               slot="dropdown"
             >
               <el-dropdown-item
+                v-if="!scope.row.paymentReceivedFlag"
                 command="1"
               >
                 标记付款
@@ -131,6 +134,7 @@
       :visible.sync="showDialog"
       :title="dialogTit"
       :confirm="confirm"
+      :sumbit-again="submitLoading"
       :destroy-on-close="true"
       @closed="handleClosed"
     >
@@ -298,7 +302,7 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '请选择',
+        placeholder: '请输入姓名/手机号',
         clearable: true,
         maxlength: 50
       },
@@ -478,6 +482,12 @@ export default class extends Vue {
     limit: 30,
     total: 0
   }
+  private disabledFunc(row:any) {
+    if (row && row.paymentReceivedFlag) {
+      return false
+    }
+    return true
+  }
   // 弹窗
   private showDialog: boolean = false;
   // 弹窗标题
@@ -497,6 +507,7 @@ export default class extends Vue {
     ]
   }
   private dialogFormItem:any[] = []
+  private submitLoading:boolean = false;
   // 弹窗表单容器
   private dialogItem: any[] = [
     {
@@ -694,6 +705,7 @@ export default class extends Vue {
   // 弹框表单提交
   async saveData() {
     try {
+      this.submitLoading = true
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
         ids: this.ids
@@ -711,6 +723,8 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`save data fail:${err}`)
+    } finally {
+      this.submitLoading = false
     }
   }
   // 关闭弹窗清除数据
