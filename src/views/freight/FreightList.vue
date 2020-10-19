@@ -33,7 +33,7 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column
-            :key="checkList.length + 'c'"
+            :key="checkList.length + 'selectable'"
             fixed
             reserve-selection
             type="selection"
@@ -41,7 +41,7 @@
             :selectable="selectable"
           />
           <el-table-column
-            :key="checkList.length + 'index'"
+            :key="checkList.length + 'departureDate'"
             type="index"
             width="55"
             label="序号"
@@ -62,7 +62,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('出车单号') > -1"
-            :key="checkList.length + 'd'"
+            :key="checkList.length + 'wayBillId'"
             align="left"
             label="出车单号"
             min-width="130"
@@ -80,7 +80,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('司机姓名') > -1"
-            :key="checkList.length + 'e'"
+            :key="checkList.length + 'driverName'"
             align="left"
             label="司机姓名"
             min-width="145"
@@ -92,7 +92,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('线路名称') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + 'lineId'"
             align="left"
             label="线路名称"
             min-width="150"
@@ -104,7 +104,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('客户名称') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + 'customerClueName'"
             align="left"
             label="客户名称"
             min-width="100"
@@ -116,7 +116,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('项目名称') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + 'projectName'"
             align="left"
             label="项目名称"
             min-width="100"
@@ -128,7 +128,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('出车状态') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + 'departStatus'"
             align="left"
             label="出车状态"
           >
@@ -139,7 +139,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('运费金额') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + 'floowData'"
             align="left"
             label="运费金额（元）"
             min-width="110"
@@ -185,17 +185,17 @@
 
           <el-table-column
             v-if="checkList.indexOf('运费状态') > -1"
-            :key="checkList.length + 'y'"
+            :key="checkList.length + 'statusName'"
             align="left"
             label="运费状态"
             min-width="105"
           >
             <template slot-scope="{row}">
               {{ row.statusName | DataIsNull }}
-              <span v-if="row.status === 20 && row.gmcIsNoCar === 1">/ 未出车</span>
+              <!-- <span v-if="row.status === 20 && row.gmcIsNoCar === 1">/ 未出车</span>
               <span v-if="row.status === 20 && row.gmcIsNoCar !== 1">/ {{ row.confirmMoney || 0 }}元</span>
               <span v-if="row.status === 40 && row.againIsNoCar === 1">/ 未出车</span>
-              <span v-if="row.status === 40 && row.againIsNoCar !== 1">/ {{ row.againConfirmMoney || 0 }}元</span>
+              <span v-if="row.status === 40 && row.againIsNoCar !== 1">/ {{ row.againConfirmMoney || 0 }}元</span> -->
               <!-- <span v-if="(row.status === 20 || row.status === 40) && row.gmcIsNoCar === 1">/ 未出车</span>
               <span v-else-if="(row.status === 20 || row.status === 40) && row.againIsNoCar === 1">/ 未出车</span>
               <span v-if="(row.status === 20 || row.status === 40) && row.againIsNoCar !== 1 && row.againIsNoCar !== 1">{{ row.confirmMoney || 0 }}元</span> -->
@@ -204,7 +204,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('预估运费') > -1"
-            :key="checkList.length + 'g'"
+            :key="checkList.length + 'predictCost'"
             align="left"
             label="预估运费(元)"
             min-width="100"
@@ -216,7 +216,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('司机运费上报状态') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + 'driverFreightFeeUpStatus'"
             align="left"
             label="司机运费上报状态"
             min-width="130"
@@ -228,7 +228,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('加盟侧运费') > -1"
-            :key="checkList.length + 'k'"
+            :key="checkList.length + 'gmFee'"
             align="left"
             label="司机运费上报金额（元）"
             min-width="155"
@@ -275,7 +275,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('客户运费上报状态') > -1"
-            :key="checkList.length + 'f'"
+            :key="checkList.length + 'customerFreightFeeUpStatus'"
             align="left"
             label="客户运费上报状态"
             min-width="120"
@@ -287,7 +287,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('外线侧运费') > -1"
-            :key="checkList.length + 'm'"
+            :key="checkList.length + 'lineFee'"
             align="left"
             label="客户运费上报金额（元）"
             min-width="160"
@@ -334,7 +334,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('有无差额') > -1"
-            :key="checkList.length + 'n'"
+            :key="checkList.length + 'feeDiffValue'"
             align="left"
             label="有无差额（元）"
             min-width="120"
@@ -346,7 +346,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('加盟经理') > -1"
-            :key="checkList.length + 'h'"
+            :key="checkList.length + 'joinManagerName'"
             align="left"
             label="加盟经理"
             min-width="120"
@@ -358,7 +358,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('上岗经理') > -1"
-            :key="checkList.length + 'o'"
+            :key="checkList.length + 'dutyManagerName'"
             align="left"
             label="上岗经理"
             min-width="120"
@@ -370,9 +370,10 @@
 
           <el-table-column
             v-if="checkList.indexOf('运费更新时间') > -1"
-            :key="checkList.length + 'a'"
+            :key="checkList.length + 'freightUpdate'"
             align="left"
             label="运费更新时间"
+            min-width="100"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.freightUpdate | TimestampYMD }}</span>
@@ -381,7 +382,7 @@
 
           <el-table-column
             v-if="checkList.indexOf('操作') > -1"
-            :key="checkList.length + 'b'"
+            :key="checkList.length + 'status'"
             align="left"
             label="操作"
             fixed="right"
@@ -835,9 +836,10 @@ export default class extends Vue {
 
     // table列表高度适配
     get tableHeight() {
-      let otherHeight = 590
-      let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
-      return value
+      // let otherHeight = 590
+      // let value = document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+      // return value
+      return 'auto'
     }
 
     // 确认清除
@@ -924,6 +926,7 @@ export default class extends Vue {
         if (data.success) {
           this.freightForm.list = data.data
           this.assignShowDialogMin = true
+          this.freightForm.remark = ''
         } else {
           this.$message.error(data.errorMsg)
         }
@@ -1242,7 +1245,7 @@ export default class extends Vue {
 <style lang="scss">
 .FreightList {
   padding: 15px;
-  padding-bottom: 0;
+  // padding-bottom: 0;
   box-sizing: border-box;
   .btn-item {
     background: #649cee;
@@ -1343,6 +1346,10 @@ export default class extends Vue {
 <style lang="scss" scope>
 .el-collapse-item__content {
   padding-bottom: 0;
+}
+
+.el-form-item__content{
+  font-size: 13px;
 }
 
 .el-form-item__label {

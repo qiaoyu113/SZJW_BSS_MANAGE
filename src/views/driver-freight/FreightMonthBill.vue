@@ -563,6 +563,7 @@ export default class extends Vue {
       months: [],
       checkStatus: ''
     }
+    this.getGmLists()
   }
   // 查询表单
   private handleFilterClick() {

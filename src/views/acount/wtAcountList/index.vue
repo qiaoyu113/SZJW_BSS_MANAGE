@@ -1,6 +1,5 @@
 <template>
   <div
-    v-loading.fullscreen.lock="fullscreenLoading"
     class="wtAcountList"
     :class="{
       p15: isPC
@@ -20,7 +19,7 @@
         <div>
           <el-select
             v-model="listQuery.driverId"
-            v-selectMore="loadmore"
+            v-loadmore="loadmore"
             filterable
             remote
             reserve-keyword
@@ -204,6 +203,7 @@ export default class extends Vue {
   private sumbitAgain:Boolean = false
   private fullscreenLoading:Boolean = false
   private driverLoading:Boolean = false
+  private driverOver:Boolean = false
   private showDialog: any = {
     visible: false,
     title: '提示',
@@ -291,19 +291,6 @@ export default class extends Vue {
       w: '160px',
       slot: true
     },
-    // {
-    //   type: 2,
-    //   key: 'driverId',
-    //   col: 8,
-    //   w: '160px',
-    //   label: '司机姓名（司机编号）',
-    //   tagAttrs: {
-    //     placeholder: '请选择',
-    //     filterable: true,
-    //     clearable: true
-    //   },
-    //   options: this.driverOtions
-    // },
     {
       type: 4,
       col: 12,
@@ -827,6 +814,7 @@ export default class extends Vue {
   }
 
   private closed() {
+    this.sumbitAgain = false
     this.columnData = {};
     ((this.$refs.SelfForm) as any).resetForm()
     let len:number = this.orderOptions.length
@@ -844,7 +832,9 @@ export default class extends Vue {
       } else {
         await this.unfreezed(done)
       }
-      this.sumbitAgain = false
+      setTimeout(() => {
+        this.sumbitAgain = false
+      }, 2500)
     }
   }
   /**
@@ -940,6 +930,7 @@ export default class extends Vue {
     this.tags = []
     // this.getList()
     this.driverPage.page = 1
+    this.driverOver = false
     this.driverOtions.splice(0, this.driverOtions.length)
     this.getDriverInfo()
   }
@@ -1048,8 +1039,16 @@ export default class extends Vue {
       }
       keyWord !== '' && (params.key = keyWord)
       params = { ...params, ...this.driverPage }
+      if (this.driverOver) {
+        return
+      }
       let { data: res } = await GetDriverListByKerWord(params)
       if (res.success) {
+        if (res.data.length && res.data.length > 0 && res.data.length === this.driverPage.limit) {
+          this.driverPage.page++
+        } else {
+          this.driverOver = true
+        }
         let driverInfos = res.data.map(function(item: any) {
           return {
             label: `${item.name}(${item.driverId})`,
@@ -1066,32 +1065,26 @@ export default class extends Vue {
   }
 
   private loadmore() {
-    this.driverPage.page++
     this.getDriverInfo()
   }
 
-  private remoteMethod(query:any) {
+  private async remoteMethod(query:any) {
     if (query !== '') {
       this.driverLoading = true
-      setTimeout(() => {
-        this.driverLoading = false
-        this.driverPage.page = 1
-        this.driverOtions.splice(0, this.driverOtions.length)
-        this.getDriverInfo(query)
-      }, 200)
-    } else {
-      this.driverOtions = []
+      this.driverPage.page = 1
+      this.driverOver = false
+      this.driverOtions.splice(0, this.driverOtions.length)
+      await this.getDriverInfo(query)
+      this.driverLoading = false
     }
   }
 
   private async fetchData() {
-    this.fullscreenLoading = true
     this.getOpenCitys()
     this.getOffices()
     this.getGmOptions()
     await this.getDriverInfo()
     await this.getList()
-    this.fullscreenLoading = false
   }
 
   @Watch('freezeForm.orderId', { deep: true })
@@ -1105,6 +1098,7 @@ export default class extends Vue {
     if (val !== oldVal) {
       this.getGmOptions()
       this.driverPage.page = 1
+      this.driverOver = false
       this.driverOtions.splice(0, this.driverOtions.length)
       this.getDriverInfo()
       this.listQuery.joinManagerId = ''
@@ -1116,6 +1110,7 @@ export default class extends Vue {
     if (val !== oldVal) {
       this.getGmOptions()
       this.driverPage.page = 1
+      this.driverOver = false
       this.driverOtions.splice(0, this.driverOtions.length)
       this.getDriverInfo()
       this.listQuery.joinManagerId = ''
@@ -1126,6 +1121,7 @@ export default class extends Vue {
   private changeJoinManagerId(val:any, oldVal:any) {
     if (val !== oldVal) {
       this.driverPage.page = 1
+      this.driverOver = false
       this.driverOtions.splice(0, this.driverOtions.length)
       this.getDriverInfo()
       this.listQuery.driverId = ''

@@ -46,6 +46,7 @@
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
+          :disabled="true"
           @click="handleExportClick"
         >
           导出
@@ -530,6 +531,7 @@ export default class extends Vue {
       driverCity: '',
       createTime: []
     }
+    this.getGmLists()
   }
   // 新增
   handleAddClick() {
