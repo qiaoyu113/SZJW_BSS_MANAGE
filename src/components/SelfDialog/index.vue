@@ -36,6 +36,7 @@
         <el-button
           v-if="showConfirmButton"
           type="primary"
+          :disabled="sumbitAgain"
           @click="onConfirm"
         >
           {{ confirmButtonText }}
@@ -67,6 +68,7 @@ export default class extends Vue {
   @Prop({ default: false }) private cancel!: any;
   @Prop({ default: false }) private other!: any;
   @Prop({ default: false }) private confirm!: any;
+  @Prop({ default: false }) private sumbitAgain!: boolean;
 
   get show() {
     return this.visible
