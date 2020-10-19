@@ -410,11 +410,6 @@ export default class extends Vue {
     }
   ]
   @Watch('listQuery', { deep: true })
-  onChange(newVal:IState, oldVal:IState) {
-    if (newVal.city.length > 0 && this.listQuery.busiType !== '') {
-      this.getGmLists()
-    }
-  }
   @Watch('dialogTableVisible')
   onDialogTableVisibleChange(newVal:boolean) {
     if (newVal) {
@@ -473,10 +468,7 @@ export default class extends Vue {
       },
       label: '计费类型:',
       key: 'billingId',
-      options: this.billOptons,
-      listeners: {
-        'change': this.changeBillingId
-      }
+      options: this.billOptons
     },
     {
       type: 'amount',
@@ -510,11 +502,27 @@ export default class extends Vue {
     amount: [
       { required: true, message: '请输入申请调流水金额', trigger: 'blur' },
       { validator: this.validateAmount, trigger: 'blur' }
+    ],
+    billingId: [
+      { required: false, trigger: 'blur' },
+      { validator: this.validateBillingId, trigger: ['blur', 'change'] }
     ]
   }
   validateAmount(rule:any, value:any, callback:any) {
     if (+value <= 0) {
       return callback(new Error('流水金额不能小于0'))
+    } else {
+      callback()
+    }
+  }
+  async validateBillingId(rule:any, value:any, callback:any) {
+    if (value) {
+      let ret = await this.changeBillingId()
+      if (ret) {
+        callback(new Error(ret))
+      } else {
+        callback()
+      }
     } else {
       callback()
     }
@@ -926,8 +934,10 @@ export default class extends Vue {
       let { data: res } = await GetChargeAmountByChargeId(params)
       if (res.success) {
         this.addForm.amount = res.data
+        return ''
       } else {
         this.$message.error(res.errorMsg)
+        return res.errorMsg
       }
     } catch (err) {
       console.log(`get money fail:${err}`)
