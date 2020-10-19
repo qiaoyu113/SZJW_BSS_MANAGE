@@ -34,7 +34,6 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
-          v-if="false"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -203,12 +202,6 @@ export default class extends Vue {
   // 是否显示弹框
   private driverOptions:IState[] = [];// 司机列表
   private showDialog:boolean = false
-  @Watch('listQuery', { deep: true })
-  onChange(newVal:IState, oldVal:IState) {
-    if (newVal.driverCity.length > 0 && this.listQuery.businessType !== '') {
-      this.getGmLists()
-    }
-  }
   // 查询表单
   private listQuery:IState = {
     changeId: '',
@@ -482,6 +475,7 @@ export default class extends Vue {
     if (this.listQuery.gmId) {
       this.listQuery.gmId = ''
     }
+    this.getGmLists()
   }
   // 导出
   async handleExportClick() {
