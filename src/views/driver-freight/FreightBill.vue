@@ -81,6 +81,7 @@
           <router-link
             :to="{path: '/freight/freightlist',query: {wayBillId: scope.row.businessNo}}"
             style="color:#649CEE;"
+            target="_blank"
           >
             {{ scope.row.businessNo }}
           </router-link>
