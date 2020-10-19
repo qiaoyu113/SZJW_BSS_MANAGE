@@ -642,8 +642,6 @@ export default class extends Vue {
       }
       if (this.listQuery.driverCode) {
         params.driverCodes = [this.listQuery.driverCode]
-      } else if (this.driverOptions.length > 0) {
-        params.driverCodes = this.driverOptions.map((item:any) => item.value)
       }
 
       let { data: res } = await getFlowList(params)
