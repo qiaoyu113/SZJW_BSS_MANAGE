@@ -79,6 +79,7 @@
         :height="tableHeight"
         :is-p30="false"
         :indexes="false"
+        :func="disabledFunc"
         :operation-list="operationList"
         :table-data="tableData"
         :columns="columns"
@@ -169,6 +170,7 @@
       :title="dialogTit"
       :confirm="confirm"
       :destroy-on-close="true"
+      :sumbit-again="submitLoading"
       @closed="handleClosed"
     >
       <p v-if="multipleSelection.length > 0">
@@ -248,6 +250,7 @@ export default class extends Vue {
   private listLoading:Boolean = false;
   private postManagerOptions:IState[] = []; // 上岗经理列表
   private outsideSalesOptions:IState[] = [];// 外线销售列表
+  private submitLoading:boolean = false;
   private workCityOptions:IState[] = [];// 客户城市列表
   private projectListOptions:IState[] = [];// 项目列表
   private ids:string|number[] = []
@@ -562,6 +565,12 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  private disabledFunc(row:any) {
+    if (row && row.closeStatus) {
+      return false
+    }
+    return true
+  }
   // 获取加盟经理、上岗经理、外线销售
   async getManagerList(roleType:number) {
     try {
@@ -722,6 +731,7 @@ export default class extends Vue {
   // 弹框表单保存
   async saveData() {
     try {
+      this.submitLoading = true
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
         ids: this.ids
@@ -738,6 +748,10 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`save data fail:${err}`)
+    } finally {
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 重置弹框表单

@@ -97,6 +97,7 @@
         :table-data="tableData"
         :columns="columns"
         :page="page"
+        :func="disabledFunc"
         style="overflow: initial;"
         @olclick="handleOlClick"
         @onPageSize="handlePageSize"
@@ -185,6 +186,7 @@
       :title="dialogTit"
       :confirm="confirm"
       :destroy-on-close="true"
+      :sumbit-again="submitLoading"
       @closed="handleClosed"
     >
       <p v-if="multipleSelection.length>0">
@@ -264,6 +266,7 @@ export default class extends Vue {
   private ids:number|string[] = [];
   // loading
   private listLoading:Boolean = false;
+  private submitLoading:boolean = false;
   private btns:any[] = [
     {
       name: '',
@@ -278,12 +281,6 @@ export default class extends Vue {
       text: '已对账'
     }
   ]
-  @Watch('listQuery', { deep: true })
-  onChange(newVal:IState, oldVal:IState) {
-    if (newVal.driverCity.length > 0 && this.listQuery.businessType !== '') {
-      this.getGmLists()
-    }
-  }
   // 查询表单
   private listQuery:IState = {
     monthBillId: '',
@@ -545,11 +542,18 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  private disabledFunc(row:any) {
+    if (row && !row.closeStatus) {
+      return false
+    }
+    return true
+  }
   // 重置加盟经理
   resetGmId() {
     if (this.listQuery.gmId) {
       this.listQuery.gmId = ''
     }
+    this.getGmLists()
   }
   // 重置表单
   private handleResetClick() {
@@ -690,6 +694,7 @@ export default class extends Vue {
   // 单匡表单提交
   private async saveData() {
     try {
+      this.submitLoading = true
       let params:IState = {
         fileUrl: this.dialogForm.fileUrl,
         ids: this.ids
@@ -707,6 +712,8 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`save dta:${err}`)
+    } finally {
+      this.submitLoading = false
     }
   }
   // 重置弹框表单数据

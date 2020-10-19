@@ -142,8 +142,9 @@
       width="50%"
       :before-close="beforeClose"
       append-to-body
-      :show-confirm-button="false"
-      :show-cancel-button="false"
+      :confirm="handleConfirmClick"
+      :sumbit-again="submitLoading"
+      @cancel="beforeClose"
       @closed="handleClosed"
     >
       <self-form
@@ -208,21 +209,6 @@
           </template>
         </template>
       </self-form>
-      <div
-        class="footerBtn"
-        style="display: flex;flex-flow: row nowrap;justify-content: flex-end;"
-      >
-        <el-button @click="beforeClose">
-          取消
-        </el-button>
-        <el-button
-          type="primary"
-          :loading="submitLoading"
-          @click="handleConfirmClick"
-        >
-          确定
-        </el-button>
-      </div>
     </SelfDialog>
   </div>
 </template>
@@ -726,6 +712,7 @@ export default class extends Vue {
   // 提交弹框表单
   async saveData() {
     try {
+      this.submitLoading = true
       let params = {
         driverCode: this.addForm.driverCode,
         driverName: this.addForm.driverName,
@@ -745,6 +732,10 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`save data fail:${err}`)
+    } finally {
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 打开弹框
