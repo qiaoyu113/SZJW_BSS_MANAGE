@@ -926,6 +926,7 @@ export default class extends Vue {
         if (data.success) {
           this.freightForm.list = data.data
           this.assignShowDialogMin = true
+          this.freightForm.remark = ''
         } else {
           this.$message.error(data.errorMsg)
         }
