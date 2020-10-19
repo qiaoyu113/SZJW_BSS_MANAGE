@@ -74,7 +74,7 @@ export const SaveShippingChange = (data: any) =>
   })
 
 // 获取司机运费调整原因列表
-export const GetSubjectList = (params:any) =>
+export const GetSubjectList = (params?:any) =>
   request({
     url: `${prefix}/v2/driverBilling/subject`,
     method: 'get',

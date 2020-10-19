@@ -143,3 +143,11 @@ export const getListAll = () =>
     url: `/bill/v2/wt-driver-account/billing/currUserChargeList`,
     method: 'get'
   })
+
+// 获取计费金额
+export const GetChargeAmountByChargeId = (params:any) =>
+  request({
+    url: `${prefix}/v2/wt-driver-account/billing/getChargeAmountByChargeId`,
+    method: 'get',
+    params
+  })

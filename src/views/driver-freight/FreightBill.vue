@@ -587,6 +587,7 @@ export default class extends Vue {
       time: [],
       createTime: []
     }
+    this.getGmLists()
   }
   // 查询表单
   private handleFilterClick() {
@@ -808,8 +809,7 @@ export default class extends Vue {
   // 获取调整原因
   async getSubjectList() {
     try {
-      let params:IState = {}
-      let { data: res } = await GetSubjectList(params)
+      let { data: res } = await GetSubjectList()
       if (res.success) {
         let subjectArr = res.data.map((item:any) => {
           return {
