@@ -28,6 +28,7 @@
                     filterable
                     placeholder="请选择"
                     size="small"
+                    @change="getManager()"
                   >
                     <el-option
                       v-for="item in optionsCity"
@@ -88,6 +89,7 @@
                     placeholder="请选择"
                     filterable
                     size="small"
+                    @change="getManager()"
                   >
                     <el-option
                       v-for="item in businessList"
@@ -134,7 +136,7 @@
                     <el-option
                       v-for="item in optionsClassification"
                       :key="item.id"
-                      :label="item.nick"
+                      :label="item.name"
                       :value="item.id"
                     />
                   </el-select>
@@ -305,7 +307,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition } from '@/api/common'
 import { GetSpecifiedRoleList } from '@/api/freight'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
@@ -400,7 +402,7 @@ export default class extends Vue {
 
   // listQuery同步tags公共方法
   @Watch('listQuery', { deep: true })
-  private onListQueryChange(value: any) {
+  private onListQueryChange(value: any, oldValue: any) {
     let tags: any = []
     for (var key in value) {
       if (this.QUERY_KEY_LIST.indexOf(key) < 0) {
@@ -541,7 +543,13 @@ export default class extends Vue {
   // 获取加盟经理列表
   private async getDictionary() {
     return new Promise((resolve, reject) => {
-      GetSpecifiedRoleList(3)
+      GetSpecifiedLowerUserListByCondition({
+        cityCode: this.listQuery.driverCity,
+        groupId: '',
+        keyword: '',
+        productLine: this.listQuery.business,
+        roleType: ''
+      })
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsClassification = data.data
@@ -554,6 +562,12 @@ export default class extends Vue {
           reject(err)
         })
     })
+  }
+
+  // 重新获取加盟经理
+  private getManager() {
+    this.getDictionary()
+    this.listQuery.dutyManagerId = ''
   }
 
   // 获取加盟经理

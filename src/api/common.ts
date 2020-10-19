@@ -131,3 +131,10 @@ export const GetDutyListByLevel = (data:any) =>
     data,
     params: data
   })
+// 获取加盟经理（可塞选）
+export const GetSpecifiedLowerUserListByCondition = (data:any) =>
+  request({
+    url: `/base/v2/base/user/getSpecifiedLowerUserListByCondition`,
+    method: 'post',
+    data
+  })
