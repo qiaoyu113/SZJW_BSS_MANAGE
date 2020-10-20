@@ -108,9 +108,7 @@
         </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ? '是':'否' }}
-          <template v-if="scope.row.closeStatus ===1">
-            / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
-          </template>
+          / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
         </template>
         <template v-slot:op="scope">
           <el-dropdown
@@ -297,16 +295,6 @@ export default class extends Vue {
       },
       label: '客户名称:',
       key: 'customerName'
-    },
-    {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        clearable: true,
-        maxlength: 50
-      },
-      label: '客户编号:',
-      key: 'customerId'
     },
     {
       type: 2,
