@@ -59,6 +59,7 @@
           重置
         </el-button>
         <el-button
+          v-permission="['/v2/wt-driver-account/management/export']"
           :class="isPC ? '' : 'btnMobile'"
           name="driverlist_offout_btn"
           size="small"
@@ -181,7 +182,7 @@ import { GetDriverListByKerWord } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
-import { GetManagerLists, GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -1004,12 +1005,10 @@ export default class extends Vue {
 
   async getGmOptions() {
     try {
-      let params = {
-        cityCode: this.listQuery.workCity[1],
-        productLine: this.listQuery.busiType,
+      let params:any = {
         roleType: 1
       }
-      this.listQuery.cityCode !== '' && (params.cityCode = this.listQuery.cityCode)
+      this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
       this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
