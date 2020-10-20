@@ -118,13 +118,11 @@
           {{ scope.row.driverName }}/{{ scope.row.phone }}
         </template>
         <template v-slot:checkStatus="scope">
-          {{ scope.row.checkStatus ===1 ? '是':'否' }}
+          {{ scope.row.checkStatus ===1 ? '已对账':'待对账' }}
         </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ===1 ? '是':'否' }}
-          <template v-if="scope.row.closeStatus ===1">
-            / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
-          </template>
+          / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
         </template>
         <template v-slot:monthBillId="scope">
           {{ scope.row.monthBillId }}
@@ -425,6 +423,11 @@ export default class extends Vue {
     {
       key: 'waybillTotalCount',
       label: '出车单数(个)',
+      'min-width': '140px'
+    },
+    {
+      key: 'amount',
+      label: '运费总额(元)',
       'min-width': '140px'
     },
     {
