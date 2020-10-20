@@ -93,12 +93,7 @@
           {{ scope.row.monthBillDate | parseTime('{y}-{m}') }}
         </template>
         <template v-slot:monthBillId="scope">
-          <router-link
-            :to="{path: '/freight/freightdetail', query: {wayBillId: scope.row.businessNo}}"
-            style="color:#649CEE;"
-          >
-            {{ scope.row.monthBillId }}
-          </router-link>
+          {{ scope.row.monthBillId }}
         </template>
 
         <template v-slot:checkVoucherPath="scope">
