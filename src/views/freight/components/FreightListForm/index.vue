@@ -713,6 +713,7 @@ export default class extends Vue {
         this.listQuery['page'] = 1
       }
     }
+    this.arrayCity = []
     this.DateValueChild = []
     this.DateValueChild2 = []
   }
@@ -783,5 +784,8 @@ export default class extends Vue {
 }
 .el-badge{
   margin-right: 20px;
+}
+.el-cascader{
+  display: block;
 }
 </style>
