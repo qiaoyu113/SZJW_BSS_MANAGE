@@ -191,7 +191,9 @@
             min-width="105"
           >
             <template slot-scope="{row}">
-              {{ row.statusName | DataIsNull }}
+              <span v-if="row.status !== 5">
+                {{ row.statusName | DataIsNull }}
+              </span>
               <!-- <span v-if="row.status === 20 && row.gmcIsNoCar === 1">/ 未出车</span>
               <span v-if="row.status === 20 && row.gmcIsNoCar !== 1">/ {{ row.confirmMoney || 0 }}元</span>
               <span v-if="row.status === 40 && row.againIsNoCar === 1">/ 未出车</span>

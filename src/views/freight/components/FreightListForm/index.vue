@@ -22,7 +22,7 @@
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="司机城市">
-                  <el-select
+                  <!-- <el-select
                     v-model="listQuery.driverCity"
                     name="freightlist_driverCity_input"
                     filterable
@@ -36,7 +36,16 @@
                       :label="item.code"
                       :value="item.codeVal"
                     />
-                  </el-select>
+                  </el-select> -->
+                  <el-cascader
+                    v-model="arrayCity"
+                    :props="{
+                      lazy: true,
+                      lazyLoad: showWork
+                    }"
+                    placeholder="请选择"
+                    @change="getManager()"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
@@ -93,9 +102,9 @@
                   >
                     <el-option
                       v-for="item in businessList"
-                      :key="item.dictValue"
-                      :label="item.dictLabel"
-                      :value="item.dictValue"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
                     />
                   </el-select>
                 </el-form-item>
@@ -307,11 +316,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel } from '@/api/common'
 import { GetSpecifiedRoleList } from '@/api/freight'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
+
 import '@/styles/common.scss'
 
 @Component({
@@ -328,6 +338,8 @@ export default class extends Vue {
   private optionsCompany: any[] = []
   private optionsJoin: any[] = []
   private optionsSale: any[] = []
+  private arrayCity: any[] = []
+  private dutyListOptions: any[] = []
   private optionsClassification: any[] = []
   private DateValueChild: any[] = []; // DateValue的赋值项
   private DateValueChild2: any[] = []; // DateValue的赋值项
@@ -341,11 +353,7 @@ export default class extends Vue {
     { dictValue: '0', dictLabel: '待上报' },
     { dictValue: '1', dictLabel: '已上报' }
   ]
-  private businessList: any[] = [
-    { dictValue: '', dictLabel: '全部' },
-    { dictValue: '1', dictLabel: '共享' },
-    { dictValue: '2', dictLabel: '专车' }
-  ]
+  private businessList: any[] = []
   private pickerOptions: any = {
     shortcuts: [ {
       text: '本月',
@@ -415,7 +423,6 @@ export default class extends Vue {
             type: '',
             key: key
           })
-          console.log(tags)
         } else if (value[key] && key === 'endDate') {
           tags.unshift({
             name:
@@ -454,8 +461,8 @@ export default class extends Vue {
   created() {
     this.getDictionary()
     this.getJoinManageList()
-    this.getOpenCityData()
     this.getLowerStaffInfo()
+    this.getDutyListByLevel()
   }
 
   // 状态点击逻辑
@@ -522,21 +529,59 @@ export default class extends Vue {
     return vodeName
   }
 
-  private async getOpenCityData() {
+  // 获取客户城市
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
     try {
-      let { data: res } = await GetOpenCityData()
+      if (node.level === 0) {
+        let nodes = await this.getOpenCityData({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  private async getOpenCityData(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
       if (res.success) {
-        this.optionsCity = res.data.map(function(item:any) {
+        const nodes = res.data.map(function(item: any) {
           return {
-            code: item.name,
-            codeVal: item.code
+            value: item.id,
+            label: item.name,
+            leaf: false
           }
         })
+        return nodes
       } else {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
       console.log(err)
+    }
+  }
+
+  // 根据大区获取城市列表
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
     }
   }
 
@@ -564,8 +609,34 @@ export default class extends Vue {
     })
   }
 
+  // 获取业务线
+  private async getDutyListByLevel() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.businessList.push({
+          label: '全部',
+          value: ''
+        })
+        this.businessList.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get duty list fail:${err}`)
+    }
+  }
+
   // 重新获取加盟经理
   private getManager() {
+    this.listQuery.driverCity = this.arrayCity[1]
     this.getDictionary()
     this.getJoinManageList()
     this.listQuery.dutyManagerId = ''
@@ -642,6 +713,7 @@ export default class extends Vue {
         this.listQuery['page'] = 1
       }
     }
+    this.arrayCity = []
     this.DateValueChild = []
     this.DateValueChild2 = []
   }
@@ -712,5 +784,8 @@ export default class extends Vue {
 }
 .el-badge{
   margin-right: 20px;
+}
+.el-cascader{
+  display: block;
 }
 </style>
