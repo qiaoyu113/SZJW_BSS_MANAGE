@@ -14,7 +14,6 @@
       class="p15 SuggestForm"
       :pc-col="8"
     >
-      <!-- :loading="queryDriverLoading" -->
       <template slot="driverCode">
         <el-select
           v-model.trim="listQuery.driverCode"
@@ -661,11 +660,7 @@ export default class extends Vue {
   // 司机编号发生变化查司机姓名
   async driverCodeChange(val:string) {
     this.getDriverNameByNo()
-    let len:number = this.orderListOptions.length
-    if (len > 0) {
-      this.addForm.orderCode = ''
-      this.orderListOptions.splice(0, len)
-    }
+    this.resetDialogOrderList()
     this.getOrderListByDriverId()
   }
   // 通过司机id获取司机名字
@@ -708,6 +703,27 @@ export default class extends Vue {
       amount: '',
       reason: ''
     }
+    this.billOptons = []
+    this.resetDialogDriverList()
+    this.resetDialogOrderList()
+    this.resetDialogbillingId()
+  }
+  // 清除订单列表
+  resetDialogOrderList() {
+    let len:number = this.orderListOptions.length
+    if (len > 0) {
+      this.orderListOptions.splice(0, len)
+    }
+    this.addForm.orderCode = ''
+    this.addForm.orderStatus = ''
+  }
+  // 清除计费类型:列表
+  resetDialogbillingId() {
+    let len:number = this.billOptons.length
+    if (len > 0) {
+      this.billOptons.splice(0, len)
+    }
+    this.addForm.billingType = ''
   }
   // 提交弹框表单
   async saveData() {
@@ -768,7 +784,7 @@ export default class extends Vue {
     try {
       let params:IState = {
         driverId: this.addForm.driverCode,
-        operateFlag: 'detail',
+        operateFlag: 'detial',
         orderId: this.addForm.orderCode
       }
       let { data: res } = await getOrderDetailByDriverId(params)
