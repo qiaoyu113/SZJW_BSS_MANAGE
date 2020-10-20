@@ -163,12 +163,12 @@
               >
                 司机对账
               </el-dropdown-item>
-              <el-dropdown-item
+              <!-- <el-dropdown-item
 
                 command="download"
               >
                 账单下载
-              </el-dropdown-item>
+              </el-dropdown-item> -->
             </el-dropdown-menu>
           </el-dropdown>
         </template>
