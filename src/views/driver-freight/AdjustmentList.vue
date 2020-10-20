@@ -106,6 +106,7 @@
       :class="'distributionDialog'"
       :visible.sync="showDialog"
       title="新增运费调整"
+      :sumbit-again="submitLoading"
       :confirm="confirm"
       :destroy-on-close="true"
       @closed="handleClosed"
@@ -121,6 +122,26 @@
         :rules="dialogRole"
         @onPass="handlePassClick"
       >
+        <template slot="driverId">
+          <el-select
+            v-model.trim="dialogForm.driverId"
+            v-loadmore="loadQueryDriverByKeyword"
+            placeholder="请选择"
+            clearable
+            filterable
+            remote
+            :remote-method="querySearchByKeyword"
+            @clear="handleClearQueryDriver"
+            @change="getOrderListByDriverId"
+          >
+            <el-option
+              v-for="item in driverOptions"
+              :key="item.value"
+              :label="`${item.label}/(${item.value})` "
+              :value="item.value"
+            />
+          </el-select>
+        </template>
         <template slot="amount">
           <el-input
             v-model.trim="dialogForm.amount"
@@ -171,13 +192,14 @@ import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
 import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList } from '@/api/driver-freight'
-import { GetDriverListByKerWord } from '@/api/driver'
+import { GetDriverListByKerWord, getDriverNoAndNameList } from '@/api/driver'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import { delayTime } from '@/settings'
+import { getOrderListByDriverId } from '@/api/driver-account'
 interface PageObj {
-  page:Number,
-  limit:Number,
-  total?:Number
+  page:number,
+  limit:number,
+  total?:number
 }
 
 interface IState {
@@ -195,6 +217,7 @@ interface IState {
 export default class extends Vue {
   private dutyListOptions:IState[] = [];// 业务线列表
   private gmIdOptions:IState[] = [];// 所属加盟经理列表
+  private orderListOptions:IState[] = []; // 订单列表
   // 运费调整原因列表
   private subjectOptions:IState[] = []
   // loading
@@ -202,6 +225,7 @@ export default class extends Vue {
   // 是否显示弹框
   private driverOptions:IState[] = [];// 司机列表
   private showDialog:boolean = false
+  private submitLoading:boolean = false;
   // 查询表单
   private listQuery:IState = {
     changeId: '',
@@ -394,6 +418,7 @@ export default class extends Vue {
   private dialogForm:IState = {
     subject: '',
     driverId: '',
+    orderId: '',
     amount: '',
     fileUrl: '',
     remark: ''
@@ -403,7 +428,7 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请输入',
+        placeholder: '请选择',
         clearable: true,
         filterable: true
       },
@@ -412,15 +437,21 @@ export default class extends Vue {
       options: this.subjectOptions
     },
     {
+      type: 'driverId',
+      slot: true,
+      label: '选择司机:',
+      key: 'driverId'
+    },
+    {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true,
         filterable: true
       },
-      label: '选择司机:',
-      key: 'driverId',
-      options: this.driverOptions
+      label: '订单编号:',
+      key: 'orderId',
+      options: this.orderListOptions
     },
     {
       slot: true,
@@ -450,10 +481,13 @@ export default class extends Vue {
   ]
   private dialogRole:any = {
     subject: [
-      { required: true, message: '请输入', trigger: 'blur' }
+      { required: true, message: '请选择', trigger: 'blur' }
     ],
     driverId: [
       { required: true, message: '请选择成交的司机', trigger: 'blur' }
+    ],
+    orderId: [
+      { required: true, message: '请选择', trigger: 'blur' }
     ],
     amount: [
       { required: true, message: '请输入大于等于0', trigger: 'blur' }
@@ -461,6 +495,18 @@ export default class extends Vue {
     fileUrl: [
       { required: true, message: '请上传凭证', trigger: 'blur' }
     ]
+  }
+  // 查询分页
+  private queryPage:PageObj = {
+    page: 0,
+    limit: 10
+  }
+  private queryDriverLoading:boolean = false
+  @Watch('showDialog')
+  onDialogChange(val:boolean) {
+    if (val) {
+      this.loadQueryDriverByKeyword()
+    }
   }
   // 判断是否是PC
   get isPC() {
@@ -470,6 +516,7 @@ export default class extends Vue {
     let otherHeight = 440
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+
   // 重置加盟经理
   resetGmId() {
     if (this.listQuery.gmId) {
@@ -538,9 +585,11 @@ export default class extends Vue {
   // 弹框提交表单
   async saveData() {
     try {
+      this.submitLoading = true
       let params:IState = {
         subject: this.dialogForm.subject,
         driverId: this.dialogForm.driverId,
+        orderId: this.dialogForm.orderId,
         amount: this.dialogForm.amount,
         fileUrl: this.dialogForm.fileUrl
       }
@@ -557,6 +606,10 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`submit fail:${err}`)
+    } finally {
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 关闭弹框
@@ -564,10 +617,12 @@ export default class extends Vue {
     this.dialogForm = {
       subject: '',
       driverId: '',
+      orderId: '',
       amount: '',
       fileUrl: '',
       remark: ''
     }
+    this.resetDriver()
   }
   confirm() {
     ((this.$refs.dialogForm) as any).submitForm()
@@ -752,29 +807,6 @@ export default class extends Vue {
       console.log(`get duty list fail:${err}`)
     }
   }
-  // 通过关键字搜索司机
-  async getDriverByKeyWord() {
-    try {
-      let params:IState = {
-        page: 1,
-        limit: 9999
-      }
-
-      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
-      let { data: res } = await GetDriverListByKerWord(params)
-      if (res.success) {
-        let data = res.data.map((item:any) => ({
-          label: item.name,
-          value: item.driverId
-        })) || []
-        this.driverOptions.push(...data)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`get driver fail:${err}`)
-    }
-  }
   // 获取加盟经理列表
   async getGmLists() {
     try {
@@ -803,12 +835,97 @@ export default class extends Vue {
       console.log(`get gm list fail:${err}`)
     }
   }
+  // 顶部司机关键字搜索
+  querySearchByKeyword(val:string) {
+    if (val.trim() === '') {
+      return false
+    }
+    this.resetDriver()
+    this.loadQueryDriverByKeyword(val)
+  }
+  async loadQueryDriverByKeyword(val?:string) {
+    this.queryPage.page++
+    let params:IState = {
+      page: this.queryPage.page,
+      limit: this.queryPage.limit
+    }
+    val !== '' && (params.key = val)
+    this.queryDriverLoading = true
+    try {
+      let result:IState[] = await this.loadDriverByKeyword(params)
+      this.driverOptions.push(...result)
+    } finally {
+      this.queryDriverLoading = false
+    }
+  }
+  // 根据关键字查司机id
+  async loadDriverByKeyword(params:IState) {
+    try {
+      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
+        params.workCity = this.listQuery.driverCity[1]
+      }
+      this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      let { data: res } = await getDriverNoAndNameList(params)
+      let result:any[] = res.data.map((item:any) => ({
+        label: item.name,
+        value: item.driverId
+      }))
+      return result
+    } catch (err) {
+      console.log(`get driver list fail:${err}`)
+      return []
+    }
+  }
+  // 删除查询区选中的司机
+  handleClearQueryDriver() {
+    this.resetDriver()
+    this.loadQueryDriverByKeyword()
+  }
+  // 重置司机
+  resetDriver() {
+    this.dialogForm.driverId = ''
+    let len:number = this.driverOptions.length
+    if (len > 0) {
+      this.queryPage.page = 0
+      this.driverOptions.splice(0, len)
+    }
+    this.resetOrder()
+  }
+  // 重置订单
+  resetOrder() {
+    this.dialogForm.orderId = ''
+    let len:number = this.orderListOptions.length
+    if (len > 0) {
+      this.orderListOptions.splice(0, len)
+    }
+  }
+  // 根据司机id获取已终止订单列表
+  async getOrderListByDriverId() {
+    try {
+      let params = {
+        driverId: this.dialogForm.driverId,
+        operateFlag: 'abort_deal'
+      }
+      let { data: res } = await getOrderListByDriverId(params)
+      if (res.success) {
+        let orderList = res.data.map((item:any) => ({
+          label: item.orderId,
+          value: item.orderId
+        }))
+        this.orderListOptions.push(...orderList)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get order list fail:${err}`)
+    }
+  }
   mounted() {
     this.getLists()
     this.getSubjectList()
     this.getDutyListByLevel()
     this.getGmLists()
-    this.getDriverByKeyWord()
   }
 }
 </script>

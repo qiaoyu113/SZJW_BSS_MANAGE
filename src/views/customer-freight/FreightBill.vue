@@ -591,7 +591,7 @@ export default class extends Vue {
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
-      this.listQuery.paymentReceivedFlag && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
+      this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
         let departureDateEnd = new Date(this.listQuery.departureDate[1])
@@ -641,7 +641,7 @@ export default class extends Vue {
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
-      this.listQuery.paymentReceivedFlag && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
+      this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
         let departureDateEnd = new Date(this.listQuery.departureDate[1])
