@@ -415,6 +415,7 @@ export default class extends Vue {
   @Watch('dialogTableVisible')
   onDialogTableVisibleChange(newVal:boolean) {
     if (newVal) {
+      this.getBillListAll()
       if (this.$route.query.id && this.listQuery.driverCode) {
         this.addForm.driverCode = this.listQuery.driverCode
         this.driverCodeChange(this.addForm.driverCode)
@@ -655,7 +656,6 @@ export default class extends Vue {
   // 弹框关闭
   beforeClose() {
     this.dialogTableVisible = false
-    this.resetDialogDriverList()
   }
   // 司机编号发生变化查司机姓名
   async driverCodeChange(val:string) {
@@ -1035,7 +1035,6 @@ export default class extends Vue {
     }
     this.getLists()
     this.getDutyListByLevel()
-    this.getBillListAll()
     this.getGmLists()
     this.loadQueryDriverByKeyword()
   }

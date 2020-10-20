@@ -127,9 +127,7 @@
           </template>
         </template>
         <template v-slot:monthBillId="scope">
-          <router-link :to="{path: '/freight/freightdetail', query: {wayBillId: scope.row.businessNo}}">
-            {{ scope.row.monthBillId }}
-          </router-link>
+          {{ scope.row.monthBillId }}
         </template>
         <template v-slot:op="scope">
           <el-dropdown
