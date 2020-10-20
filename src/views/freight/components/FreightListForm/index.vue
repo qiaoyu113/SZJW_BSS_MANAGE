@@ -63,7 +63,7 @@
                     <el-option
                       v-for="item in optionsJoin"
                       :key="item.id"
-                      :label="item.nick"
+                      :label="item.name"
                       :value="item.id"
                     />
                   </el-select>
