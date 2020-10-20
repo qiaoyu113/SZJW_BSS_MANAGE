@@ -548,7 +548,7 @@ export default class extends Vue {
         groupId: '',
         keyword: '',
         productLine: this.listQuery.business,
-        roleType: ''
+        roleType: '3'
       })
         .then(({ data }: any) => {
           if (data.success) {
@@ -567,13 +567,21 @@ export default class extends Vue {
   // 重新获取加盟经理
   private getManager() {
     this.getDictionary()
+    this.getJoinManageList()
     this.listQuery.dutyManagerId = ''
+    this.listQuery.gmId = ''
   }
 
   // 获取加盟经理
   private async getJoinManageList() {
     return new Promise((resolve, reject) => {
-      GetSpecifiedRoleList(1)
+      GetSpecifiedLowerUserListByCondition({
+        cityCode: this.listQuery.driverCity,
+        groupId: '',
+        keyword: '',
+        productLine: this.listQuery.business,
+        roleType: '1'
+      })
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsJoin = data.data
