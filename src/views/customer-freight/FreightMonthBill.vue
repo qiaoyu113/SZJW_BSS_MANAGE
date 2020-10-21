@@ -416,7 +416,7 @@ export default class extends Vue {
     },
     {
       key: 'turnoverTotalCount',
-      label: '账单个数(个)',
+      label: '流水个数(个)',
       'min-width': '140px'
     },
     {
