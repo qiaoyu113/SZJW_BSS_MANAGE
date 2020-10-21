@@ -814,6 +814,9 @@ export default class extends Vue {
     }
   }
   mounted() {
+    if (this.$route.query.customerName) {
+      this.listQuery.customerName = this.$route.query.customerName
+    }
     this.getLists()
     this.getSubjectList()
   }

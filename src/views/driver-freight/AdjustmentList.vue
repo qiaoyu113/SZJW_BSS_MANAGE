@@ -128,6 +128,8 @@
             v-model.trim="dialogForm.driverId"
             v-loadmore="loadQueryDriverByKeyword"
             placeholder="请选择"
+            reserve-keyword
+            :default-first-option="true"
             clearable
             filterable
             remote
@@ -854,10 +856,7 @@ export default class extends Vue {
     this.loadQueryDriverByKeyword(val)
   }
   async loadQueryDriverByKeyword(val?:string) {
-    if (this.searchKeyword && this.queryPage.page !== 0) {
-      this.searchKeyword = ''
-      return false
-    }
+    val = this.searchKeyword
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
@@ -892,6 +891,7 @@ export default class extends Vue {
   handleClearQueryDriver() {
     this.resetDriver()
     this.loadQueryDriverByKeyword()
+    this.searchKeyword = ''
   }
   // 重置司机
   resetDriver() {

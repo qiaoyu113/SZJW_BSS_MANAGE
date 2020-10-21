@@ -19,6 +19,8 @@
           v-model.trim="listQuery.driverCode"
           v-loadmore="loadQueryDriverByKeyword"
           placeholder="请选择"
+          reserve-keyword
+          :default-first-option="true"
           clearable
           filterable
           remote
@@ -192,6 +194,8 @@
               v-model.trim="addForm.driverCode"
               v-loadmore="loadDialogDriverByKeyword"
               placeholder="请选择"
+              reserve-keyword
+              :default-first-option="true"
               filterable
               remote
               :remote-method="dialogSearchByKeyword"
@@ -241,6 +245,7 @@ interface IState {
 })
 export default class extends Vue {
   private searchKeyword:string = '';
+  private dialogKeyword:string = '';
   private queryDriverLoading:boolean = false // 查询区下拉司机搜索框的loading
   private dialogDriverLoading:boolean = false // 弹框下拉司机搜索框的loading
   private dialogDriverOptions:IState[] = [] // 弹框下拉司机列表
@@ -555,6 +560,7 @@ export default class extends Vue {
   // 重置司机
   resetDriver() {
     this.listQuery.driverCode = ''
+    this.searchKeyword = ''
     let len:number = this.driverOptions.length
     if (len > 0) {
       this.queryPage.page = 0
@@ -711,6 +717,7 @@ export default class extends Vue {
     this.resetDialogOrderList()
     this.resetDialogbillingId();
     ((this.$refs.addFlow) as any).resetForm()
+    this.dialogKeyword = ''
   }
   // 清除订单列表
   resetDialogOrderList() {
@@ -957,10 +964,7 @@ export default class extends Vue {
   }
   // 顶部查询司机列表
   async loadQueryDriverByKeyword(val?:string) {
-    if (this.searchKeyword && this.queryPage.page !== 0) {
-      this.searchKeyword = ''
-      return false
-    }
+    val = this.searchKeyword
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
@@ -979,15 +983,12 @@ export default class extends Vue {
   dialogSearchByKeyword(val:string) {
     this.dialogPage.page = 0
     this.resetDialogDriverList()
-    this.searchKeyword = val
+    this.dialogKeyword = val
     this.loadDialogDriverByKeyword(val)
   }
   // 弹框查询司机列表
   async loadDialogDriverByKeyword(val?:string) {
-    if (this.searchKeyword && this.dialogPage.page !== 0) {
-      this.searchKeyword = ''
-      return false
-    }
+    val = this.dialogKeyword
     this.dialogPage.page++
     let params:IState = {
       page: this.dialogPage.page,
@@ -1031,6 +1032,7 @@ export default class extends Vue {
   }
   // 删除查询区选中的司机
   handleClearQueryDriver() {
+    this.searchKeyword = ''
     this.resetDriver()
     this.loadQueryDriverByKeyword()
   }
@@ -1038,6 +1040,7 @@ export default class extends Vue {
   handleClearDialogDriver() {
     this.resetDialogDriverList()
     this.loadDialogDriverByKeyword()
+    this.dialogKeyword = ''
   }
   init() {
     if (this.$route.query.id) {
