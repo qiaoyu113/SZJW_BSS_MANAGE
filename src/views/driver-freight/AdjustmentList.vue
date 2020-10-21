@@ -908,6 +908,7 @@ export default class extends Vue {
   // 根据司机id获取已终止订单列表
   async getOrderListByDriverId() {
     try {
+      this.resetOrder()
       let params = {
         driverId: this.dialogForm.driverId,
         operateFlag: 'abort_deal'
