@@ -163,7 +163,7 @@
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item
-                v-if="scope.row.closeStatus ===1"
+                v-if="scope.row.closeStatus ===1 && !scope.row.checkStatus"
                 command="driverCheck"
               >
                 司机对账
