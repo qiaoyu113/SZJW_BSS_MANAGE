@@ -855,7 +855,8 @@ export default class extends Vue {
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
-      limit: this.queryPage.limit
+      limit: this.queryPage.limit,
+      statuss: [3, 4, 5]
     }
     val !== '' && (params.key = val)
     this.queryDriverLoading = true
