@@ -793,7 +793,8 @@ export default class extends Vue {
   private handleClosed() {
     this.resetDialogForm()
     this.ids = [];
-    (this.$refs.freighForm as any).toggleRowSelection()
+    (this.$refs.freighForm as any).toggleRowSelection();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
 
   // table选择框
@@ -942,6 +943,9 @@ export default class extends Vue {
     }
   }
   mounted() {
+    if (this.$route.query.driverName) {
+      this.listQuery.driverName = this.$route.query.driverName
+    }
     this.getLists()
     this.getDutyListByLevel()
     this.getSubjectList()

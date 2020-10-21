@@ -155,7 +155,12 @@
               <el-dropdown-item
                 command="flow"
               >
-                查看流水
+                <router-link
+                  :to="{path: '/driverfreight/bill',query: {driverName: scope.row.userId}}"
+                  target="_blank"
+                >
+                  查看流水
+                </router-link>
               </el-dropdown-item>
               <el-dropdown-item
                 v-if="scope.row.closeStatus ===1"
@@ -731,7 +736,8 @@ export default class extends Vue {
   private handleClosed() {
     this.resetDialogForm()
     this.ids = [];
-    (this.$refs.freighForm as any).toggleRowSelection()
+    (this.$refs.freighForm as any).toggleRowSelection();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
   // 上传文件
   async uploadFile(file:any) {
