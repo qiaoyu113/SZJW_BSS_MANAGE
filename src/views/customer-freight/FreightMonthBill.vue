@@ -751,7 +751,8 @@ export default class extends Vue {
   private handleClosed() {
     this.resetDialogForm()
     this.ids = [];
-    (this.$refs.freighForm as any).toggleRowSelection()
+    (this.$refs.freighForm as any).toggleRowSelection();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
   // 上传文件
   async uploadFile(file:any) {
