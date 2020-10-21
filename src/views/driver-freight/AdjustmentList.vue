@@ -124,6 +124,7 @@
       >
         <template slot="driverId">
           <el-select
+            ref="select"
             v-model.trim="dialogForm.driverId"
             v-loadmore="loadQueryDriverByKeyword"
             placeholder="请选择"
@@ -215,6 +216,7 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private searchKeyword:string = ''
   private dutyListOptions:IState[] = [];// 业务线列表
   private gmIdOptions:IState[] = [];// 所属加盟经理列表
   private orderListOptions:IState[] = []; // 订单列表
@@ -481,20 +483,20 @@ export default class extends Vue {
   ]
   private dialogRole:any = {
     subject: [
-      { required: true, message: '请选择', trigger: 'blur' }
+      { required: true, message: '请选择', trigger: ['blur', 'change'] }
     ],
     driverId: [
-      { required: true, message: '请选择成交的司机', trigger: 'blur' }
+      { required: true, message: '请选择成交的司机', trigger: ['blur', 'change'] }
     ],
     orderId: [
-      { required: true, message: '请选择', trigger: 'blur' }
+      { required: true, message: '请选择', trigger: ['blur', 'change'] }
     ],
     amount: [
-      { required: true, message: '请输入运费金额', trigger: 'blur' },
-      { validator: this.validateAmount, trigger: 'blur' }
+      { required: true, message: '请输入运费金额', trigger: ['blur', 'change'] },
+      { validator: this.validateAmount, trigger: ['blur', 'change'] }
     ],
     fileUrl: [
-      { required: true, message: '请上传凭证', trigger: 'blur' }
+      { required: true, message: '请上传凭证', trigger: ['blur', 'change'] }
     ]
   }
   validateAmount(rule:any, value:any, callback:any) {
@@ -630,7 +632,8 @@ export default class extends Vue {
       fileUrl: '',
       remark: ''
     }
-    this.resetDriver()
+    this.resetDriver();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
   confirm() {
     ((this.$refs.dialogForm) as any).submitForm()
@@ -845,17 +848,21 @@ export default class extends Vue {
   }
   // 顶部司机关键字搜索
   querySearchByKeyword(val:string) {
-    if (val.trim() === '') {
-      return false
-    }
+    this.queryPage.page = 0
     this.resetDriver()
+    this.searchKeyword = val
     this.loadQueryDriverByKeyword(val)
   }
   async loadQueryDriverByKeyword(val?:string) {
+    if (this.searchKeyword && this.queryPage.page !== 0) {
+      this.searchKeyword = ''
+      return false
+    }
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
-      limit: this.queryPage.limit
+      limit: this.queryPage.limit,
+      statuss: [3, 4, 5]
     }
     val !== '' && (params.key = val)
     this.queryDriverLoading = true
@@ -907,6 +914,7 @@ export default class extends Vue {
   // 根据司机id获取已终止订单列表
   async getOrderListByDriverId() {
     try {
+      this.resetOrder()
       let params = {
         driverId: this.dialogForm.driverId,
         operateFlag: 'abort_deal'

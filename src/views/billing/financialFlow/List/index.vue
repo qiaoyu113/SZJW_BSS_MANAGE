@@ -240,6 +240,7 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private searchKeyword:string = '';
   private queryDriverLoading:boolean = false // 查询区下拉司机搜索框的loading
   private dialogDriverLoading:boolean = false // 弹框下拉司机搜索框的loading
   private dialogDriverOptions:IState[] = [] // 弹框下拉司机列表
@@ -488,20 +489,20 @@ export default class extends Vue {
   ]
   private rules:IState = {
     driverCode: [
-      { required: true, message: '请输入司机编号', trigger: 'blur' }
+      { required: true, message: '请输入司机编号', trigger: ['blur', 'change'] }
     ],
     orderCode: [
-      { required: true, message: '请选择订单', trigger: 'blur' }
+      { required: true, message: '请选择订单', trigger: ['blur', 'change'] }
     ],
     billingType: [
-      { required: true, message: '请输入计费类型', trigger: 'blur' }
+      { required: true, message: '请输入计费类型', trigger: ['blur', 'change'] }
     ],
     amount: [
-      { required: true, message: '请输入申请调流水金额', trigger: 'blur' }
+      { required: true, message: '请输入申请调流水金额', trigger: ['blur', 'change'] }
       // { validator: this.validateAmount, trigger: 'blur' }
     ],
     billingId: [
-      { required: false, trigger: 'blur' }
+      { required: false, trigger: ['blur', 'change'] }
     ]
   }
   validateAmount(rule:any, value:any, callback:any) {
@@ -543,9 +544,11 @@ export default class extends Vue {
     }
     this.resetDriver()
     this.getGmLists()
+    this.loadQueryDriverByKeyword()
   }
   // 加盟经理id发生变化
   handleGmIdChange() {
+    this.resetDriver()
     this.queryPage.page = 0
     this.loadQueryDriverByKeyword()
   }
@@ -706,7 +709,8 @@ export default class extends Vue {
     this.billOptons = []
     this.resetDialogDriverList()
     this.resetDialogOrderList()
-    this.resetDialogbillingId()
+    this.resetDialogbillingId();
+    ((this.$refs.addFlow) as any).resetForm()
   }
   // 清除订单列表
   resetDialogOrderList() {
@@ -946,14 +950,17 @@ export default class extends Vue {
   }
   // 顶部司机关键字搜索
   querySearchByKeyword(val:string) {
-    if (val.trim() === '') {
-      return false
-    }
+    this.queryPage.page = 0
     this.resetDriver()
+    this.searchKeyword = val
     this.loadQueryDriverByKeyword(val)
   }
   // 顶部查询司机列表
   async loadQueryDriverByKeyword(val?:string) {
+    if (this.searchKeyword && this.queryPage.page !== 0) {
+      this.searchKeyword = ''
+      return false
+    }
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
@@ -970,14 +977,17 @@ export default class extends Vue {
   }
   // 弹框司机关键字搜索
   dialogSearchByKeyword(val:string) {
-    if (val.trim() === '') {
-      return false
-    }
+    this.dialogPage.page = 0
     this.resetDialogDriverList()
+    this.searchKeyword = val
     this.loadDialogDriverByKeyword(val)
   }
   // 弹框查询司机列表
   async loadDialogDriverByKeyword(val?:string) {
+    if (this.searchKeyword && this.dialogPage.page !== 0) {
+      this.searchKeyword = ''
+      return false
+    }
     this.dialogPage.page++
     let params:IState = {
       page: this.dialogPage.page,
