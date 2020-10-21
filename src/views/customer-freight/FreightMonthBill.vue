@@ -554,7 +554,7 @@ export default class extends Vue {
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   private disabledFunc(row:any) {
-    if (row && row.closeStatus) {
+    if (row && (!row.closeStatus || row.checkStatus)) {
       return false
     }
     return true
