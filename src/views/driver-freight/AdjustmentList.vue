@@ -137,7 +137,7 @@
             <el-option
               v-for="item in driverOptions"
               :key="item.value"
-              :label="`${item.label}/(${item.value})` "
+              :label="`${item.label}/${item.phone}` "
               :value="item.value"
             />
           </el-select>
@@ -191,8 +191,8 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
-import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList } from '@/api/driver-freight'
-import { GetDriverListByKerWord, getDriverNoAndNameList } from '@/api/driver'
+import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList, GetOrderDriverList } from '@/api/driver-freight'
+import { GetDriverListByKerWord } from '@/api/driver'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import { delayTime } from '@/settings'
 import { getOrderListByDriverId } from '@/api/driver-account'
@@ -490,11 +490,19 @@ export default class extends Vue {
       { required: true, message: '请选择', trigger: 'blur' }
     ],
     amount: [
-      { required: true, message: '请输入大于等于0', trigger: 'blur' }
+      { required: true, message: '请输入运费金额', trigger: 'blur' },
+      { validator: this.validateAmount, trigger: 'blur' }
     ],
     fileUrl: [
       { required: true, message: '请上传凭证', trigger: 'blur' }
     ]
+  }
+  validateAmount(rule:any, value:any, callback:any) {
+    if (+value <= 0) {
+      return callback(new Error('流水金额不能小于0'))
+    } else {
+      callback()
+    }
   }
   // 查询分页
   private queryPage:PageObj = {
@@ -847,7 +855,8 @@ export default class extends Vue {
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
-      limit: this.queryPage.limit
+      limit: this.queryPage.limit,
+      statuss: [3, 4, 5]
     }
     val !== '' && (params.key = val)
     this.queryDriverLoading = true
@@ -861,15 +870,11 @@ export default class extends Vue {
   // 根据关键字查司机id
   async loadDriverByKeyword(params:IState) {
     try {
-      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
-        params.workCity = this.listQuery.driverCity[1]
-      }
-      this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
-      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
-      let { data: res } = await getDriverNoAndNameList(params)
+      let { data: res } = await GetOrderDriverList(params)
       let result:any[] = res.data.map((item:any) => ({
         label: item.name,
-        value: item.driverId
+        value: item.driverId,
+        phone: item.phone
       }))
       return result
     } catch (err) {
@@ -903,6 +908,7 @@ export default class extends Vue {
   // 根据司机id获取已终止订单列表
   async getOrderListByDriverId() {
     try {
+      this.resetOrder()
       let params = {
         driverId: this.dialogForm.driverId,
         operateFlag: 'abort_deal'
