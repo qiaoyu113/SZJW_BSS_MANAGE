@@ -378,7 +378,7 @@
             min-width="100"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.freightUpdate | TimestampYMD }}</span>
+              <span>{{ scope.row.freightUpdate | Timestamp }}</span>
             </template>
           </el-table-column>
 
