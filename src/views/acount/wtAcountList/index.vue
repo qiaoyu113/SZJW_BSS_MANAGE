@@ -576,15 +576,15 @@ export default class extends Vue {
   ]
   private freezesRules:any = {
     orderId: [
-      { required: true, message: '请选择订单', trigger: 'blur' }
+      { required: true, message: '请选择订单', trigger: ['blur', 'change'] }
     ],
     applyForAccountFrozen: [
-      { required: true, message: '请填写申请冻结金额', trigger: 'blur' },
-      { validator: this.checkFrozen(1), trigger: 'blur' }
+      { required: true, message: '请填写申请冻结金额', trigger: ['blur', 'change'] },
+      { validator: this.checkFrozen(1), trigger: ['blur', 'change'] }
     ],
     applyForAccountUnfrozen: [
-      { required: true, message: '请填写申请解冻金额', trigger: 'blur' },
-      { validator: this.checkFrozen(2), trigger: 'blur' }
+      { required: true, message: '请填写申请解冻金额', trigger: ['blur', 'change'] },
+      { validator: this.checkFrozen(2), trigger: ['blur', 'change'] }
     ]
   }
   private isPass:Boolean = false
