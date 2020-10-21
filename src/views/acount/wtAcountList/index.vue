@@ -201,6 +201,7 @@ interface PageObj {
   }
 })
 export default class extends Vue {
+  private keyWord:String = ''
   private sumbitAgain:Boolean = false
   private fullscreenLoading:Boolean = false
   private driverLoading:Boolean = false
@@ -1030,6 +1031,7 @@ export default class extends Vue {
 
   async getDriverInfo(keyWord:any = '') {
     try {
+      this.keyWord = keyWord
       let params = {
         workCity: this.listQuery.workCity[1] || '',
         busiType: this.listQuery.busiType || '',
@@ -1064,15 +1066,16 @@ export default class extends Vue {
   }
 
   private loadmore() {
-    this.getDriverInfo()
+    this.getDriverInfo(this.keyWord)
   }
 
   private async remoteMethod(query:any) {
+    this.keyWord = query
     this.driverLoading = true
     this.driverPage.page = 1
     this.driverOver = false
     this.driverOtions.splice(0, this.driverOtions.length)
-    await this.getDriverInfo(query)
+    await this.getDriverInfo(this.keyWord)
     this.driverLoading = false
   }
 
