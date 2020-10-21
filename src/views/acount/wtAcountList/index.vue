@@ -1068,14 +1068,12 @@ export default class extends Vue {
   }
 
   private async remoteMethod(query:any) {
-    if (query !== '') {
-      this.driverLoading = true
-      this.driverPage.page = 1
-      this.driverOver = false
-      this.driverOtions.splice(0, this.driverOtions.length)
-      await this.getDriverInfo(query)
-      this.driverLoading = false
-    }
+    this.driverLoading = true
+    this.driverPage.page = 1
+    this.driverOver = false
+    this.driverOtions.splice(0, this.driverOtions.length)
+    await this.getDriverInfo(query)
+    this.driverLoading = false
   }
 
   private async fetchData() {

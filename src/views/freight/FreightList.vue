@@ -908,12 +908,12 @@ export default class extends Vue {
         this.total = data.page.total
         setTimeout(() => {
           this.listLoading = false
-        }, 2 * 1000)
+        }, 1 * 1000)
       } else {
         this.$message.error(data)
         setTimeout(() => {
           this.listLoading = false
-        }, 2 * 1000)
+        }, 1 * 1000)
       }
     }
 
