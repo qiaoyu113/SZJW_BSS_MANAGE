@@ -268,7 +268,8 @@
                   slot="reference"
                   type="text"
                 >
-                  <span>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="scope.row.gmFee !== ''">{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-else>{{ scope.row.gmFee }}</span>
                 </el-button>
               </el-popover>
               <span v-else>{{ scope.row.gmStatusName }}</span>
@@ -327,7 +328,8 @@
                   slot="reference"
                   type="text"
                 >
-                  <span>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="scope.row.lineFee !== ''">{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-else>{{ scope.row.lineFee }}</span>
                 </el-button>
               </el-popover>
               <span v-else>{{ scope.row.lineStatusName }}</span>
