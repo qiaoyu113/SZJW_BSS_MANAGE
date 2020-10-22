@@ -177,7 +177,7 @@
                   type="text"
                 >
                   <span v-if="row.status === 20">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
-                  <span v-if="row.status !== 20 && row.isLookFee === 2">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="row.status !== 20 && row.isLookFee === 1">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
               <span v-if="row.status !== 20 && row.departStatusCode === 2">未出车</span>
@@ -230,9 +230,8 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('加盟侧运费') > -1"
+            v-if="checkList.indexOf('加盟侧运费') > -1 && getPermission('/canDriverFee')"
             :key="checkList.length + 'gmFee'"
-            v-permission="['/canDriverFee']"
             align="left"
             label="司机运费上报金额（元）"
             min-width="155"
@@ -280,7 +279,6 @@
           <el-table-column
             v-if="checkList.indexOf('客户运费上报状态') > -1"
             :key="checkList.length + 'customerFreightFeeUpStatus'"
-            v-permission="['/canLineFee']"
             align="left"
             label="客户运费上报状态"
             min-width="120"
@@ -291,7 +289,7 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('外线侧运费') > -1"
+            v-if="checkList.indexOf('外线侧运费') > -1 && getPermission('/canLineFee')"
             :key="checkList.length + 'lineFee'"
             align="left"
             label="客户运费上报金额（元）"
@@ -832,6 +830,15 @@ export default class extends Vue {
       this.$nextTick(() => {
         ((this.$refs['multipleTable']) as any).doLayout()
       })
+    }
+
+    private getPermission(role: any) {
+      let permissionArr = (localStorage as any).getItem('permission').split(',')
+      if (permissionArr.indexOf(role) > -1) {
+        return true
+      } else {
+        return false
+      }
     }
 
     // 判断是否是PC
