@@ -1,4 +1,5 @@
 // Set utils function parseTime to filter
+import store from '@/store'
 export { parseTime, Timestamp, TimestampYMD, DataIsNull } from '@/utils'
 
 // Filter for article status
@@ -23,5 +24,22 @@ export const hidePhone = (cellValue:string) => {
     return mobile.replace(reg, '$1****$2')
   } else {
     return cellValue
+  }
+}
+export function isPermission(this:any, value:Array<any>) {
+  let roles = store.state.user.roles
+  console.log(1)
+  if (value && value instanceof Array && value.length > 0) {
+    let values = value.filter(item => {
+      if (item.pUrl) {
+        return item.pUrl.some((sub:string) => {
+          return roles.includes(sub)
+        })
+      }
+      return item
+    })
+    return values
+  } else {
+    return []
   }
 }

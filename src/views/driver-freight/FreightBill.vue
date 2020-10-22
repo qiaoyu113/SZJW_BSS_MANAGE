@@ -43,6 +43,7 @@
           导出
         </el-button>
         <el-button
+          v-permission="['/v2/driverBilling/freightCharge/list']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -69,7 +70,7 @@
         :index="true"
         :is-p30="false"
         :indexes="false"
-        :operation-list="operationList"
+        :operation-list="operationList|isPermission"
         :table-data="tableData"
         :columns="columns"
         :func="disabledFunc"
@@ -489,11 +490,10 @@ export default class extends Vue {
   ]
   // 全选
   private operationList: any[] = [
-    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1' },
+    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1', pUrl: ['/v2/driverBilling/freightCharge/receive'] },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
   ]
   private multipleSelection: any[] = []
-
   // 分页
   private page :PageObj= {
     page: 1,
