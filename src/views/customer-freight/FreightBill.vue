@@ -603,7 +603,7 @@ export default class extends Vue {
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
-      this.listQuery.monthBillDate && (params.monthBillDate = this.listQuery.monthBillDate)
+      this.listQuery.monthBillDate && (params.monthBillDate = +this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
@@ -654,7 +654,7 @@ export default class extends Vue {
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
-      this.listQuery.monthBillDate && (params.monthBillDate = this.listQuery.monthBillDate)
+      this.listQuery.monthBillDate && (params.monthBillDate = +this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
