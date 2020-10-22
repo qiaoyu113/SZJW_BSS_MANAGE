@@ -1007,7 +1007,8 @@ export default class extends Vue {
   async getGmOptions() {
     try {
       let params:any = {
-        roleType: 1
+        roleType: [1],
+        uri: '/v2/wt-driver-account/management/queryGM'
       }
       this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
       this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
