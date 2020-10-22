@@ -262,7 +262,8 @@ export default class extends Vue {
     driverCity: [],
     subject: '',
     time: [],
-    createTime: []
+    createTime: [],
+    monthBillDate: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -600,7 +601,8 @@ export default class extends Vue {
       driverCity: '',
       subject: '',
       time: [],
-      createTime: []
+      createTime: [],
+      monthBillDate: ''
     }
     this.getGmLists()
   }
@@ -619,6 +621,7 @@ export default class extends Vue {
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       this.listQuery.recordNo !== '' && (params.recordNo = this.listQuery.recordNo)
       this.listQuery.businessNo !== '' && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = this.listQuery.monthBillDate)
       if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
         params.driverCity = this.listQuery.driverCity[1]
       }
@@ -639,6 +642,7 @@ export default class extends Vue {
       } else {
         return this.$message.error('请选择创建时间')
       }
+
       let { data: res } = await ExportFreightChargeList(params)
       if (res.success) {
         this.$message.success('操作成功')
@@ -672,6 +676,8 @@ export default class extends Vue {
         params.driverCity = this.listQuery.driverCity[1]
       }
       this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = this.listQuery.monthBillDate)
+
       if (this.listQuery.time && this.listQuery.time.length > 1) {
         let departureDateStart = new Date(this.listQuery.time[0])
         let departureDateEnd = new Date(this.listQuery.time[1])
@@ -955,6 +961,9 @@ export default class extends Vue {
   mounted() {
     if (this.$route.query.driverName) {
       this.listQuery.driverName = this.$route.query.driverName
+    }
+    if (this.$route.query.monthBillDate) {
+      this.listQuery.monthBillDate = this.$route.query.monthBillDate
     }
     this.getLists()
     this.getDutyListByLevel()

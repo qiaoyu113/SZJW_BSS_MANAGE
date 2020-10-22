@@ -233,7 +233,8 @@ export default class extends Vue {
     businessNo: '',
     paymentReceivedFlag: '',
     departureDate: [],
-    createDate: []
+    createDate: [],
+    monthBillDate: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -581,7 +582,8 @@ export default class extends Vue {
       businessNo: '',
       paymentReceivedFlag: '',
       departureDate: [],
-      createDate: []
+      createDate: [],
+      monthBillDate: ''
     }
   }
   // 查询表单
@@ -601,6 +603,7 @@ export default class extends Vue {
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.monthBillDate && (params.monthBillDate = this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
@@ -651,6 +654,7 @@ export default class extends Vue {
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.monthBillDate && (params.monthBillDate = this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
@@ -824,8 +828,11 @@ export default class extends Vue {
     }
   }
   mounted() {
-    if (this.$route.query.customerName) {
-      this.listQuery.customerName = this.$route.query.customerName
+    if (this.$route.query.customerId) {
+      this.listQuery.customerId = this.$route.query.customerId
+    }
+    if (this.$route.query.monthBillDate) {
+      this.listQuery.monthBillDate = this.$route.query.monthBillDate
     }
     this.getLists()
     this.getSubjectList()
