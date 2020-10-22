@@ -34,6 +34,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/driverBilling/shippingChange/save']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -42,6 +43,7 @@
           新增
         </el-button>
         <el-button
+          v-permission="['/v2/driverBilling/shippingChange/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -87,9 +89,9 @@
         <template v-slot:driverName="scope">
           <span>{{ scope.row.driverName }}/{{ scope.row.phone }}</span>
         </template>
-        <template v-slot:voucher_path="scope">
+        <template v-slot:voucherPath="scope">
           <a
-            :href="scope.row.voucher_path"
+            :href="scope.row.voucherPath"
             style="color:#649CEE;cursor: pointer;"
           >下载凭证</a>
         </template>
@@ -379,7 +381,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'voucher_path',
+      key: 'voucherPath',
       label: '调整凭证',
       slot: true,
       'min-width': '140px'

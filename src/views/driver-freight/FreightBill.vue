@@ -34,6 +34,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/driverBilling/freightCharge/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -141,6 +142,7 @@
             >
               <el-dropdown-item
                 v-if="!scope.row.paymentReceivedFlag"
+                v-permission="['/v2/driverBilling/freightCharge/receive']"
                 command="1"
               >
                 标记收款
@@ -218,6 +220,7 @@ import { month, lastmonth, threemonth } from './components/date'
 import { GetFreightChargeList, ExportFreightChargeList, ReceiveFreightChargeList, GetSubjectList } from '@/api/driver-freight.ts'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
 
 interface PageObj {
   page:Number,
@@ -566,8 +569,14 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/driverBilling/freightCharge/receive'
+    })
+  }
   private disabledFunc(row:any) {
-    if (row && row.paymentReceivedFlag) {
+    if (row && (row.paymentReceivedFlag || !this.isCheck)) {
       return false
     }
     return true

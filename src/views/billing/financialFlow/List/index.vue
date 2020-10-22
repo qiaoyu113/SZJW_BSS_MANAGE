@@ -70,7 +70,9 @@
         >
           重置
         </el-button>
+
         <el-button
+          v-permission="['/v2/wt-driver-account/flow/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           @click="handleExportClick"
@@ -82,6 +84,7 @@
     <div class="table_box">
       <div class="middle">
         <el-button
+          v-permission="['/v2/wt-driver-account/flow/manual/create']"
           icon="el-icon-plus"
           type="primary"
           size="small"
