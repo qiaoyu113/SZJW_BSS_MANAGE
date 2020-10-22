@@ -93,6 +93,10 @@
             style="color:#649CEE;cursor: pointer;"
           >下载凭证</a>
         </template>
+
+        <template v-slot:businessType="scope">
+          {{ businessTypeName(scope.row.businessType) | DataIsNull }}
+        </template>
         <template v-slot:remark="scope">
           {{ scope.row.remark | DataIsNull }}
         </template>
@@ -340,7 +344,12 @@ export default class extends Vue {
   ]
   // 表格数据
   private tableData:any[] = []
-
+  businessTypeName(id:number) {
+    let arr:IState[] = this.dutyListOptions.filter(item => item.value === id)
+    if (arr.length > 0) {
+      return arr[0].label
+    }
+  }
   // 表格列
   private columns:any[] = [
     {
@@ -399,6 +408,7 @@ export default class extends Vue {
     {
       key: 'businessType',
       label: '业务线',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -828,7 +838,8 @@ export default class extends Vue {
         this.gmIdOptions.splice(0, len)
       }
       let params:IState = {
-        roleType: 1
+        roleTypes: [1],
+        uri: '/v2/driverBilling/shippingChange/queryGM'
       }
       this.listQuery.businessType !== '' && (params.productLine = this.listQuery.businessType)
       if (this.listQuery.driverCity.length > 1) {
