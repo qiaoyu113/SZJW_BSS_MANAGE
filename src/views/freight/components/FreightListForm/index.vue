@@ -592,8 +592,8 @@ export default class extends Vue {
         cityCode: this.listQuery.driverCity,
         groupId: '',
         keyword: '',
-        productLine: [this.listQuery.business],
-        roleType: '3',
+        productLine: this.listQuery.business,
+        roleTypes: ['3'],
         uri: '/v2/waybill/getConfirmInfoList'
       })
         .then(({ data }: any) => {
@@ -651,8 +651,8 @@ export default class extends Vue {
         cityCode: this.listQuery.driverCity,
         groupId: '',
         keyword: '',
-        productLine: [this.listQuery.business],
-        roleType: '1',
+        productLine: this.listQuery.business,
+        roleTypes: ['1'],
         uri: '/v2/waybill/getConfirmInfoList'
       })
         .then(({ data }: any) => {
