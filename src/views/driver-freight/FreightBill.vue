@@ -7,6 +7,7 @@
   >
     <!-- 查询表单 -->
     <self-form
+      v-permission="['/v2/driverBilling/freightCharge/list']"
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
@@ -43,7 +44,6 @@
           导出
         </el-button>
         <el-button
-          v-permission="['/v2/driverBilling/freightCharge/list']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
