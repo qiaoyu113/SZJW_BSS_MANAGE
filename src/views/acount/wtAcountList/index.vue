@@ -98,6 +98,7 @@
         <template v-slot:op="scope">
           <div>
             <el-button
+              v-permission="['/v2/wt-driver-account/management/freeze']"
               type="text"
               :disabled="scope.row.haveDealNumber === 0 || scope.row.canExtractMoney <= 0"
               @click="isFreeze(scope.row,1)"
@@ -106,6 +107,7 @@
             </el-button>
 
             <el-button
+              v-permission="['/v2/wt-driver-account/management/unfreeze']"
               :disabled="scope.row.haveAbortNumber === 0 || scope.row.freezingMoney <= 0"
               type="text"
               @click="isFreeze(scope.row,2)"
@@ -178,7 +180,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
-import { GetDriverListByKerWord } from '@/api/driver'
+import { getDriverNoAndNameList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
@@ -1044,7 +1046,9 @@ export default class extends Vue {
       if (this.driverOver) {
         return
       }
-      let { data: res } = await GetDriverListByKerWord(params)
+      let { data: res } = await getDriverNoAndNameList(params, {
+        url: '/v2/wt-driver-account/management/queryDriverList'
+      })
       if (res.success) {
         if (res.data.length && res.data.length > 0 && res.data.length === this.driverPage.limit) {
           this.driverPage.page++
