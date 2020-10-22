@@ -176,11 +176,11 @@
                   slot="reference"
                   type="text"
                 >
-                  <span v-if="row.status === 20">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="row.status === 20 && row.departStatusCode !== 1">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
                   <span v-if="row.status !== 20 && row.isLookFee === 1">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
-              <span v-if="row.status !== 20 && row.departStatusCode === 2">未出车</span>
+              <span v-if="row.departStatusCode === 1">未出车</span>
             </template>
           </el-table-column>
 
