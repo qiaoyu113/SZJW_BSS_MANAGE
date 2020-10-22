@@ -1000,7 +1000,7 @@ export default class extends Vue {
         if (Number(value) <= Number(that.freezeForm.freezingMoney)) {
           return callback()
         } else {
-          return callback(new Error('解冻金额小于订单的冻结金额'))
+          return callback(new Error('解冻金额大于订单的冻结金额'))
         }
       }
     }
