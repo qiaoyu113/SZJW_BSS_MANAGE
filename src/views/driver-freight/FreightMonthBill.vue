@@ -161,7 +161,7 @@
                 <router-link
                   :to="{
                     path: '/driverfreight/bill',
-                    query: {driverName: scope.row.userId,monthBillDate: scope.row.monthBillDate}
+                    query: {driverId: scope.row.userId,monthBillDate: scope.row.monthBillDate}
                   }"
                   target="_blank"
                 >
