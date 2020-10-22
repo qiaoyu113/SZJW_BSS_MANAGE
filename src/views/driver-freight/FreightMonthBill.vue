@@ -882,7 +882,8 @@ export default class extends Vue {
         this.gmIdOptions.splice(0, len)
       }
       let params:IState = {
-        roleType: 1
+        roleTypes: [1],
+        uri: '/v2/driverBilling/monthlyBill/queryGM'
       }
       this.listQuery.businessType !== '' && (params.productLine = this.listQuery.businessType)
       if (this.listQuery.driverCity && this.listQuery.driverCity.length > 1) {
