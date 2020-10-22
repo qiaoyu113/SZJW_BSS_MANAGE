@@ -1,6 +1,7 @@
 <template>
   <div :class="isPC ? 'FreightList' : 'FreightList-m'">
     <FreightListForm
+      v-permission="['/v2/base/user/getCurrUserAuthList']"
       :tab="tab"
       :dispatch="dispatchTab"
       :list-query="listQuery"
