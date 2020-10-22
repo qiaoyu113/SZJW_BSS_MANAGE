@@ -138,10 +138,15 @@
               <el-dropdown-item
                 command="flow"
               >
-                查看流水
+                <router-link
+                  :to="{path: '/customerfreight/bill',query: {customerName: scope.row.customerName}}"
+                  target="_blank"
+                >
+                  查看流水
+                </router-link>
               </el-dropdown-item>
               <el-dropdown-item
-                v-if="scope.row.closeStatus ===1"
+                v-if="scope.row.closeStatus ===1 && !scope.row.checkStatus"
                 command="checkBill"
               >
                 客户对账
@@ -416,7 +421,7 @@ export default class extends Vue {
     },
     {
       key: 'turnoverTotalCount',
-      label: '账单个数(个)',
+      label: '流水个数(个)',
       'min-width': '140px'
     },
     {
@@ -549,7 +554,7 @@ export default class extends Vue {
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   private disabledFunc(row:any) {
-    if (row && row.closeStatus) {
+    if (row && (!row.closeStatus || row.checkStatus)) {
       return false
     }
     return true

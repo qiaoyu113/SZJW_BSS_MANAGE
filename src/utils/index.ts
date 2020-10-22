@@ -9,6 +9,9 @@ export const parseTime = (
   if (time === undefined) {
     return null
   }
+  if (time === null) {
+    return ''
+  }
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   let date: Date
   if (typeof time === 'object') {

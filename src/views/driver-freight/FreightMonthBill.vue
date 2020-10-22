@@ -163,7 +163,7 @@
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item
-                v-if="scope.row.closeStatus ===1"
+                v-if="scope.row.closeStatus ===1 && !scope.row.checkStatus"
                 command="driverCheck"
               >
                 司机对账
@@ -549,7 +549,7 @@ export default class extends Vue {
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   private disabledFunc(row:any) {
-    if (row && !row.closeStatus) {
+    if (row && (!row.closeStatus || row.checkStatus)) {
       return false
     }
     return true
