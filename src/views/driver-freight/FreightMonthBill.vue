@@ -59,6 +59,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/driverBilling/monthlyBill/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -66,6 +67,7 @@
         >
           导出
         </el-button>
+
         <el-button
           size="small"
           :class="isPC ? '' : 'btnMobile'"
@@ -153,10 +155,14 @@
               slot="dropdown"
             >
               <el-dropdown-item
+                v-permission="['/v2/driverBilling/freightCharge/list']"
                 command="flow"
               >
                 <router-link
-                  :to="{path: '/driverfreight/bill',query: {driverName: scope.row.userId}}"
+                  :to="{
+                    path: '/driverfreight/bill',
+                    query: {driverName: scope.row.userId}
+                  }"
                   target="_blank"
                 >
                   查看流水
@@ -164,12 +170,13 @@
               </el-dropdown-item>
               <el-dropdown-item
                 v-if="scope.row.closeStatus ===1 && !scope.row.checkStatus"
+                v-permission="['/v2/driverBilling/monthlyBill/check']"
                 command="driverCheck"
               >
                 司机对账
               </el-dropdown-item>
               <!-- <el-dropdown-item
-
+                v-permission="['/v2/driverBilling/monthlyBill/export']"
                 command="download"
               >
                 账单下载
@@ -243,6 +250,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetMonthlyBillList, ExportMonthlyBillList, driverMonthlyBillCheck } from '@/api/driver-freight'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -548,8 +556,14 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/driverBilling/monthlyBill/check'
+    })
+  }
   private disabledFunc(row:any) {
-    if (row && (!row.closeStatus || row.checkStatus)) {
+    if (row && (!row.closeStatus || row.checkStatus || row.checkStatus || !this.isCheck)) {
       return false
     }
     return true
@@ -668,9 +682,7 @@ export default class extends Vue {
   // 更多操作
   private handleCommandChange(key:string, row:any) {
     if (key === 'flow') { // 查看流水
-      this.$router.push({
-        path: '/driverfreight/bill'
-      })
+
     } else if (key === 'driverCheck') { // 司机对账
       this.dialogTit = '月账单对账'
       this.dialogFormItem = []

@@ -29,7 +29,7 @@ const customerFreight: RouteConfig = {
       component: () => import(/* webpackChunkName: "customerfreight" */ '@/views/customer-freight/FreightBill.vue'),
       name: 'CustomerFreightBillList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/waybill/custBilling/freightCharge/list',
         title: 'customerFreightBillList',
         noCache: false
       }
@@ -39,7 +39,7 @@ const customerFreight: RouteConfig = {
       component: () => import(/* webpackChunkName: "customerfreight" */ '@/views/customer-freight/FreightMonthBill.vue'),
       name: 'CustomerFreightMonthBill',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/waybill/custBilling/monthlyBill/list',
         title: 'customerFreightMonthBill',
         noCache: false
       }

@@ -44,6 +44,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/waybill/custBilling/monthlyBill/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -139,6 +140,7 @@
                 command="flow"
               >
                 <router-link
+                  v-permission="['/v2/waybill/custBilling/freightCharge/list']"
                   :to="{path: '/customerfreight/bill',query: {customerName: scope.row.customerName}}"
                   target="_blank"
                 >
@@ -147,6 +149,7 @@
               </el-dropdown-item>
               <el-dropdown-item
                 v-if="scope.row.closeStatus ===1 && !scope.row.checkStatus"
+                v-permission="['/v2/waybill/custBilling/monthlyBill/check']"
                 command="checkBill"
               >
                 客户对账
@@ -225,6 +228,7 @@ import { fileUpload } from '@/api/cargo'
 import { GetMonthlyBillList, ExportMonthlyBill, CustomerMonthlyBillCheck, GetProjectSearch } from '@/api/customer-freight'
 import { Upload, GetSpecifiedRoleList, GetOpenCityData } from '@/api/common'
 import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -553,8 +557,14 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/waybill/custBilling/monthlyBill/check'
+    })
+  }
   private disabledFunc(row:any) {
-    if (row && (!row.closeStatus || row.checkStatus)) {
+    if (row && (!row.closeStatus || row.checkStatus || !this.isCheck)) {
       return false
     }
     return true
@@ -688,9 +698,7 @@ export default class extends Vue {
   // 更多操作
   private handleCommandChange(key:string, row:any) {
     if (key === 'flow') { // 查看流水
-      this.$router.push({
-        path: '/customerfreight/bill'
-      })
+
     } else if (key === 'checkBill') { // 客户对账
       this.dialogTit = '月账单客户确认'
       this.dialogFormItem = []

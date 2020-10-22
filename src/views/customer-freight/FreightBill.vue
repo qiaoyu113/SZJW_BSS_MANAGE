@@ -19,6 +19,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/waybill/custBilling/freightCharge/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -119,6 +120,7 @@
             >
               <el-dropdown-item
                 v-if="!scope.row.paymentReceivedFlag"
+                v-permission="['/v2/waybill/custBilling/freightCharge/receive']"
                 command="1"
               >
                 标记付款
@@ -194,6 +196,7 @@ import { GetFreightChargeList, ExportFreightChargeList, BjfreightChargeReceive }
 import { GetSubjectList } from '@/api/driver-freight'
 import { Upload } from '@/api/common'
 import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -482,8 +485,15 @@ export default class extends Vue {
     limit: 30,
     total: 0
   }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/waybill/custBilling/freightCharge/receive'
+    })
+  }
   private disabledFunc(row:any) {
-    if (row && row.paymentReceivedFlag) {
+    console.log(this.isCheck)
+    if (row && (row.paymentReceivedFlag || !this.isCheck)) {
       return false
     }
     return true

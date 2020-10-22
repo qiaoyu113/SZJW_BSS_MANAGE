@@ -186,7 +186,7 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "billing" */ '@/views/billing/financialFlow/List/index.vue'),
       name: 'FinancialFlow',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/wt-driver-account/flow/list',
         // hidden: true,
         activeMenu: '/driveraccount/financialFlow',
         title: 'financialFlow',
