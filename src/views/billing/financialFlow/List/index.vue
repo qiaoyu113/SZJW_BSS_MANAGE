@@ -1023,7 +1023,9 @@ export default class extends Vue {
       }
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
-      let { data: res } = await getDriverNoAndNameList(params)
+      let { data: res } = await getDriverNoAndNameList(params, {
+        url: '/v2/wt-driver-account/flow/queryDriverList'
+      })
       let result:any[] = res.data.map((item:any) => ({
         label: item.name,
         value: item.driverId

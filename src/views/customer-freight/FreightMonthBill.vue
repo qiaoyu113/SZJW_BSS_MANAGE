@@ -141,7 +141,7 @@
               >
                 <router-link
                   v-permission="['/v2/waybill/custBilling/freightCharge/list']"
-                  :to="{path: '/customerfreight/bill',query: {customerName: scope.row.customerName}}"
+                  :to="{path: '/customerfreight/bill',query: {customerId: scope.row.customerId,monthBillDate: scope.row.monthBillDate}}"
                   target="_blank"
                 >
                   查看流水
