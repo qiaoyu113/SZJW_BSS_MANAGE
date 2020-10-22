@@ -176,8 +176,8 @@
                   slot="reference"
                   type="text"
                 >
-                  <span v-if="row.freightFee !== ''">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
-                  <span v-else>{{ row.freightFee }}</span>
+                  <span v-if="row.isLookFee === 1">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="row.departStatusCode === 2">未出车</span>
                 </el-button>
               </el-popover>
             </template>
@@ -231,13 +231,14 @@
           <el-table-column
             v-if="checkList.indexOf('加盟侧运费') > -1"
             :key="checkList.length + 'gmFee'"
+            v-permission="['/canDriverFee']"
             align="left"
             label="司机运费上报金额（元）"
             min-width="155"
           >
             <template slot-scope="scope">
               <el-popover
-                v-if="scope.row.gmFee !== '' && scope.row.gmStatusCode !== 2"
+                v-if="scope.row.gmStatusCode !== 2"
                 placement="right"
                 trigger="hover"
                 @show="getFloowData(scope.row.wayBillId, 'driver')"
@@ -268,17 +269,17 @@
                   slot="reference"
                   type="text"
                 >
-                  <span v-if="scope.row.gmFee !== ''">{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
-                  <span v-else>{{ scope.row.gmFee }}</span>
+                  <span v-if="scope.row.gmStatusCode === 1">{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
-              <span v-else>{{ scope.row.gmStatusName }}</span>
+              <span v-else>未出车</span>
             </template>
           </el-table-column>
 
           <el-table-column
             v-if="checkList.indexOf('客户运费上报状态') > -1"
             :key="checkList.length + 'customerFreightFeeUpStatus'"
+            v-permission="['/canLineFee']"
             align="left"
             label="客户运费上报状态"
             min-width="120"
@@ -297,7 +298,7 @@
           >
             <template slot-scope="scope">
               <el-popover
-                v-if="scope.row.lineFee !== '' && scope.row.lineStatusCode !== 2"
+                v-if="scope.row.lineStatusCode !== 2"
                 placement="right"
                 trigger="hover"
                 @show="getFloowData(scope.row.wayBillId, 'line')"
@@ -328,11 +329,10 @@
                   slot="reference"
                   type="text"
                 >
-                  <span v-if="scope.row.lineFee !== ''">{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
-                  <span v-else>{{ scope.row.lineFee }}</span>
+                  <span v-if="scope.row.lineStatusCode === 1">{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
-              <span v-else>{{ scope.row.lineStatusName }}</span>
+              <span v-else>未出车</span>
             </template>
           </el-table-column>
 
