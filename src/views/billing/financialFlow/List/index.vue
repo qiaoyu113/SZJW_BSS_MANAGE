@@ -894,7 +894,8 @@ export default class extends Vue {
         this.gmIdOptions.splice(0, len)
       }
       let params:IState = {
-        roleType: 1
+        roleTypes: [1],
+        uri: '/v2/wt-driver-account/flow/queryGM'
       }
       this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
       if (this.listQuery.city && this.listQuery.city.length > 1) {

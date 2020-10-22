@@ -560,10 +560,11 @@ export default class extends Vue {
     return true
   }
   // 获取加盟经理、上岗经理、外线销售
-  async getManagerList(roleType:number) {
+  async getManagerList(roleType:number, uri:string) {
     try {
       let params:IState = {
-        roleType
+        roleTypes: [roleType],
+        uri
       }
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
@@ -855,9 +856,9 @@ export default class extends Vue {
   }
   async init() {
     // 加盟经理(1)  外销销售(2) 上岗经理(3)
-    let data1 = await this.getManagerList(3)
+    let data1 = await this.getManagerList(3, '/v2/waybill/custBilling/monthlyBill/queryDutyManager')
     this.postManagerOptions.push(...data1)
-    let data2 = await this.getManagerList(2)
+    let data2 = await this.getManagerList(2, '/v2/waybill/custBilling/monthlyBill/queryLineSale')
     this.outsideSalesOptions.push(...data2)
     this.getCityList()
     this.getProjectSearch()
