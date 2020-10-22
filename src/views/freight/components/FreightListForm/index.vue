@@ -593,7 +593,8 @@ export default class extends Vue {
         groupId: '',
         keyword: '',
         productLine: this.listQuery.business,
-        roleType: '3'
+        roleTypes: ['3'],
+        uri: '/v2/waybill/getConfirmInfoList'
       })
         .then(({ data }: any) => {
           if (data.success) {
@@ -651,7 +652,8 @@ export default class extends Vue {
         groupId: '',
         keyword: '',
         productLine: this.listQuery.business,
-        roleType: '1'
+        roleTypes: ['1'],
+        uri: '/v2/waybill/getConfirmInfoList'
       })
         .then(({ data }: any) => {
           if (data.success) {
