@@ -592,7 +592,8 @@ export default class extends Vue {
         cityCode: this.listQuery.driverCity,
         groupId: '',
         keyword: '',
-        productLine: this.listQuery.business,
+        // productLine: this.listQuery.business,
+        productLine: [],
         roleTypes: ['3'],
         uri: '/v2/waybill/queryDuty'
       })
