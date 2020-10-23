@@ -1,6 +1,6 @@
 import { RouteConfig } from 'vue-router'
 import Layout from '@/layout/index.vue'
-// 司机运费账户
+// 客户运费账户
 const customerFreight: RouteConfig = {
   path: '/customerfreight',
   component: Layout,
@@ -9,7 +9,7 @@ const customerFreight: RouteConfig = {
   meta: {
     title: 'customerFreightAccount',
     icon: 'clientFreight',
-    apiUrl: 'root'
+    apiUrl: ['/v2/waybill/custBilling/freightCharge/list', '/v2/waybill/custBilling/monthlyBill/list']
     // hidden: true
   },
   children: [

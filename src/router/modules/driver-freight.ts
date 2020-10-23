@@ -9,7 +9,11 @@ const driverFreight: RouteConfig = {
   meta: {
     title: 'driverFreightAccount',
     icon: 'driverFreight',
-    apiUrl: 'root'
+    // apiUrl: 'root'
+    apiUrl: [
+      '/v2/driverBilling/freightCharge/list', '/v2/driverBilling/monthlyBill/list',
+      '/v2/driverBilling/shippingChange/list'
+    ]
   },
   children: [
     {
