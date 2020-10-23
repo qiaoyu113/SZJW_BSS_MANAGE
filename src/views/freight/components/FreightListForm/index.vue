@@ -593,7 +593,7 @@ export default class extends Vue {
         groupId: '',
         keyword: '',
         // productLine: this.listQuery.business,
-        productLine: [],
+        productLine: '',
         roleTypes: ['3'],
         uri: '/v2/waybill/queryDuty'
       })
