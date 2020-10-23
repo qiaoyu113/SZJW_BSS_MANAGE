@@ -592,9 +592,10 @@ export default class extends Vue {
         cityCode: this.listQuery.driverCity,
         groupId: '',
         keyword: '',
-        productLine: this.listQuery.business,
+        // productLine: this.listQuery.business,
+        productLine: '',
         roleTypes: ['3'],
-        uri: '/v2/waybill/getConfirmInfoList'
+        uri: '/v2/waybill/queryDuty'
       })
         .then(({ data }: any) => {
           if (data.success) {
@@ -653,7 +654,7 @@ export default class extends Vue {
         keyword: '',
         productLine: this.listQuery.business,
         roleTypes: ['1'],
-        uri: '/v2/waybill/getConfirmInfoList'
+        uri: '/v2/waybill/queryGm'
       })
         .then(({ data }: any) => {
           if (data.success) {

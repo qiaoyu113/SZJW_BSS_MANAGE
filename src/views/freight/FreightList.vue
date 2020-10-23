@@ -674,7 +674,7 @@ export default class extends Vue {
     private DateValue2: any[] = [];
     private multipleSelection: any[] = []
     private operationList: any[] = [
-      { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/shipping/reportMoneyBatch'] },
+      { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/reportMoneyBatch'] },
       { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
     ];
     private dropdownList: any[] = [
