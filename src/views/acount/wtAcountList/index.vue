@@ -150,14 +150,6 @@
               />
             </div>
           </template>
-          <template
-            v-if="showDialog.name === 2"
-            slot="isconfirmOrder"
-          >
-            <div>
-              {{ freezeForm.isconfirmOrder === 0 ? '否' : '是' }}
-            </div>
-          </template>
           <template slot="applyForAccountUnfrozen">
             <div>
               <el-input
@@ -538,10 +530,10 @@ export default class extends Vue {
       col: 24
     },
     {
-      type: 'isconfirmOrder',
+      type: 7,
+      key: 'isconfirmOrder',
       label: '订单执行期间运费是否有未确认：',
-      col: 24,
-      slot: true
+      col: 24
     },
     {
       type: 7,
@@ -833,15 +825,12 @@ export default class extends Vue {
     }
     await this.getOrderList(item.driverId, type)
     await this.getCanExtractMoney(item.driverId)
-    if (type === 2) {
-      this.isSureCheck(item.driverId)
-    }
   }
 
   private async isSureCheck(id:string) {
-    let { data: res } = await countConfirmByDriver({ driverId: id })
+    let { data: res } = await countConfirmByDriver({ orderId: id })
     if (res.success) {
-      this.freezeForm.isconfirmOrder = res.data
+      this.freezeForm.isconfirmOrder = (res.data ? '是' : '否')
     } else {
       this.$message.error(res.errorMsg)
     }
@@ -1133,6 +1122,9 @@ export default class extends Vue {
     if (val) {
       this.getOrderDetail(val)
       this.getMoney(val)
+      if (this.showDialog.name === 2) {
+        this.isSureCheck(val)
+      }
     }
   }
   @Watch('listQuery.workCity', { deep: true })
