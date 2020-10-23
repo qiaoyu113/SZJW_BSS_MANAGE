@@ -98,6 +98,7 @@
         <template v-slot:op="scope">
           <div>
             <el-button
+              v-permission="['/v2/wt-driver-account/management/freeze']"
               type="text"
               :disabled="scope.row.haveDealNumber === 0 || scope.row.canExtractMoney <= 0"
               @click="isFreeze(scope.row,1)"
@@ -106,6 +107,7 @@
             </el-button>
 
             <el-button
+              v-permission="['/v2/wt-driver-account/management/unfreeze']"
               :disabled="scope.row.haveAbortNumber === 0 || scope.row.freezingMoney <= 0"
               type="text"
               @click="isFreeze(scope.row,2)"
@@ -177,8 +179,8 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { getLabel } from '@/utils/index.ts'
-import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver } from '@/api/driver-account'
-import { GetDriverListByKerWord } from '@/api/driver'
+import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver, orderMoney, orderCanExtractMoney } from '@/api/driver-account'
+import { getDriverNoAndNameList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages, phoneReg } from '@/utils/index'
@@ -759,6 +761,36 @@ export default class extends Vue {
     }
   }
 
+  // 查询对应订单的冻结金额
+  private async getMoney(orderId:string) {
+    try {
+      let params = { orderId: orderId }
+      let { data: res } = await orderMoney(params)
+      if (res.success) {
+        this.freezeForm.freezingMoney = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`fail:${err}`)
+    }
+  }
+
+  // 查询对应订单的可提现金额
+  private async getCanExtractMoney(driverId:string) {
+    try {
+      let params = { driverId: driverId }
+      let { data: res } = await orderCanExtractMoney(params)
+      if (res.success) {
+        this.freezeForm.canExtractMoney = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`fail:${err}`)
+    }
+  }
+
   // 查询对应订单详情
   private async getOrderDetail(orderId:string) {
     try {
@@ -772,7 +804,6 @@ export default class extends Vue {
         this.freezeForm.orderId = res.data.orderId
         this.freezeForm.orderStatus = res.data.status
         this.freezeForm.orderStatusName = res.data.statusName
-        this.freezeForm.freezingMoney = res.data.goodsAmount
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -801,6 +832,7 @@ export default class extends Vue {
       name: name
     }
     await this.getOrderList(item.driverId, type)
+    await this.getCanExtractMoney(item.driverId)
     if (type === 2) {
       this.isSureCheck(item.driverId)
     }
@@ -989,16 +1021,22 @@ export default class extends Vue {
     let that = this
     return function(rule:any, value:any, callback:any) {
       if (type === 1) {
+        if (Number(value) === 0) {
+          return callback(new Error('申请冻结金额不能为0'))
+        }
         if (Number(value) <= Number(that.freezeForm.canExtractMoney)) {
           return callback()
         } else {
           return callback(new Error('申请冻结金额大于可提现金额'))
         }
       } else {
+        if (Number(value) === 0) {
+          return callback(new Error('解冻金额不能为0'))
+        }
         if (Number(value) <= Number(that.freezeForm.freezingMoney)) {
           return callback()
         } else {
-          return callback(new Error('解冻金额小于订单的冻结金额'))
+          return callback(new Error('解冻金额大于订单的冻结金额'))
         }
       }
     }
@@ -1044,7 +1082,9 @@ export default class extends Vue {
       if (this.driverOver) {
         return
       }
-      let { data: res } = await GetDriverListByKerWord(params)
+      let { data: res } = await getDriverNoAndNameList(params, {
+        url: '/v2/wt-driver-account/management/queryDriverList'
+      })
       if (res.success) {
         if (res.data.length && res.data.length > 0 && res.data.length === this.driverPage.limit) {
           this.driverPage.page++
@@ -1092,6 +1132,7 @@ export default class extends Vue {
   private changeOrderId(val:any) {
     if (val) {
       this.getOrderDetail(val)
+      this.getMoney(val)
     }
   }
   @Watch('listQuery.workCity', { deep: true })

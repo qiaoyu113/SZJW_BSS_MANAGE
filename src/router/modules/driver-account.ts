@@ -1,6 +1,7 @@
 import { RouteConfig } from 'vue-router'
 import Layout from '@/layout/index.vue'
 
+// 司机梧桐账户
 const driverAccountRouter: RouteConfig = {
   path: '/driveraccount',
   component: Layout,
@@ -9,7 +10,7 @@ const driverAccountRouter: RouteConfig = {
   meta: {
     title: 'driverAccount',
     icon: 'driverAccount',
-    apiUrl: 'root'
+    apiUrl: ['/v2/wt-driver-account/flow/list', '/v2/wt-driver-account/management/list']
   },
   children: [
     {
@@ -62,7 +63,7 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/wtAcountList/index.vue'),
       name: 'wtAcountList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/wt-driver-account/management/list',
         title: 'wtAcountList',
         noCache: true,
         icon: '',
@@ -74,7 +75,7 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundList.vue'),
       name: 'RefundList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/page/list',
         title: 'refundList',
         noCache: false,
         hidden: true

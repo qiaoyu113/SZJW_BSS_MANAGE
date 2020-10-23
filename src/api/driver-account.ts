@@ -82,6 +82,28 @@ export const orderDetail = (data: any) => {
 }
 
 /**
+ * 获取订单冻结金额
+ */
+export const orderMoney = (data: any) => {
+  return request({
+    url: `${prefix}/v2/wt-driver-account/management/order-freezing-money/orderid`,
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * 获取订单冻结金额
+ */
+export const orderCanExtractMoney = (data: any) => {
+  return request({
+    url: `${prefix}/v2/wt-driver-account/management/getCanExtractByUserId`,
+    method: 'post',
+    params: data
+  })
+}
+
+/**
  * 订单详情
  */
 export const countConfirmByDriver = (data: any) => {

@@ -28,7 +28,6 @@ export const hidePhone = (cellValue:string) => {
 }
 export function isPermission(this:any, value:Array<any>) {
   let roles = store.state.user.roles
-  console.log(1)
   if (value && value instanceof Array && value.length > 0) {
     let values = value.filter(item => {
       if (item.pUrl) {

@@ -7,6 +7,7 @@
   >
     <!-- 查询表单 -->
     <self-form
+      v-permission="['/v2/driverBilling/freightCharge/list']"
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
@@ -43,7 +44,6 @@
           导出
         </el-button>
         <el-button
-          v-permission="['/v2/driverBilling/freightCharge/list']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -255,6 +255,7 @@ export default class extends Vue {
   // 查询表单
   private listQuery:IState = {
     driverName: '',
+    driverId: '',
     gmId: '',
     businessType: '',
     paymentReceivedFlag: '',
@@ -621,7 +622,8 @@ export default class extends Vue {
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       this.listQuery.recordNo !== '' && (params.recordNo = this.listQuery.recordNo)
       this.listQuery.businessNo !== '' && (params.businessNo = this.listQuery.businessNo)
-      this.listQuery.monthBillDate !== '' && (params.monthBillDate = this.listQuery.monthBillDate)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = +this.listQuery.monthBillDate)
+      this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
       if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
         params.driverCity = this.listQuery.driverCity[1]
       }
@@ -676,7 +678,8 @@ export default class extends Vue {
         params.driverCity = this.listQuery.driverCity[1]
       }
       this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
-      this.listQuery.monthBillDate !== '' && (params.monthBillDate = this.listQuery.monthBillDate)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = +this.listQuery.monthBillDate)
+      this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
 
       if (this.listQuery.time && this.listQuery.time.length > 1) {
         let departureDateStart = new Date(this.listQuery.time[0])
@@ -959,8 +962,8 @@ export default class extends Vue {
     }
   }
   mounted() {
-    if (this.$route.query.driverName) {
-      this.listQuery.driverName = this.$route.query.driverName
+    if (this.$route.query.driverId) {
+      this.listQuery.driverId = this.$route.query.driverId
     }
     if (this.$route.query.monthBillDate) {
       this.listQuery.monthBillDate = this.$route.query.monthBillDate

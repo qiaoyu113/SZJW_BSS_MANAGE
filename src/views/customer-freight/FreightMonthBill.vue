@@ -81,7 +81,7 @@
         :is-p30="false"
         :indexes="false"
         :func="disabledFunc"
-        :operation-list="operationList"
+        :operation-list="operationList|isPermission"
         :table-data="tableData"
         :columns="columns"
         :page="page"
@@ -141,7 +141,7 @@
               >
                 <router-link
                   v-permission="['/v2/waybill/custBilling/freightCharge/list']"
-                  :to="{path: '/customerfreight/bill',query: {customerId: scope.row.customerId,monthBillDate: scope.row.monthBillDate}}"
+                  :to="{path: '/customerfreight/bill',query: {customerId: scope.row.customerId,monthBillDate: scope.row.monthBillDate,projectId: scope.row.projectId}}"
                   target="_blank"
                 >
                   查看流水
@@ -474,9 +474,10 @@ export default class extends Vue {
       'min-width': this.isPC ? '200px' : '50px'
     }
   ]
+  // https://szjw-bss-web-m1.yunniao.cn/api/waybill_center
   // 全选
   private operationList: any[] = [
-    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1' },
+    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1', pUrl: ['/v2/waybill/custBilling/monthlyBill/check'] },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
   ]
   private multipleSelection: any[] = []
