@@ -234,7 +234,8 @@ export default class extends Vue {
     paymentReceivedFlag: '',
     departureDate: [],
     createDate: [],
-    monthBillDate: ''
+    monthBillDate: '',
+    projectId: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -583,7 +584,8 @@ export default class extends Vue {
       paymentReceivedFlag: '',
       departureDate: [],
       createDate: [],
-      monthBillDate: ''
+      monthBillDate: '',
+      projectId: ''
     }
   }
   // 查询表单
@@ -602,6 +604,7 @@ export default class extends Vue {
       this.listQuery.subject && (params.subject = this.listQuery.subject)
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
+      this.listQuery.projectId && (params.projectId = this.listQuery.projectId)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
       this.listQuery.monthBillDate && (params.monthBillDate = +this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
@@ -653,6 +656,7 @@ export default class extends Vue {
       this.listQuery.subject && (params.subject = this.listQuery.subject)
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
+      this.listQuery.projectId && (params.projectId = this.listQuery.projectId)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
       this.listQuery.monthBillDate && (params.monthBillDate = +this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
@@ -833,6 +837,9 @@ export default class extends Vue {
     }
     if (this.$route.query.monthBillDate) {
       this.listQuery.monthBillDate = this.$route.query.monthBillDate
+    }
+    if (this.$route.query.projectId) {
+      this.listQuery.projectId = this.$route.query.projectId
     }
     this.getLists()
     this.getSubjectList()
