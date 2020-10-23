@@ -4,6 +4,7 @@ import request from '@/utils/request'
 const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
+const wayBillFix = '/waybill'
 
 /**
  * XXXX
@@ -104,11 +105,11 @@ export const orderCanExtractMoney = (data: any) => {
 }
 
 /**
- * 订单详情
+ * 订单是否确认
  */
 export const countConfirmByDriver = (data: any) => {
   return request({
-    url: `waybill/v2/waybill/shipping/countConfirmByDriver`,
+    url: `${wayBillFix}/v2/waybill/shipping/getWayBillStatusByOrderId`,
     method: 'get',
     params: data
   })

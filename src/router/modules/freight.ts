@@ -10,7 +10,7 @@ const freightRouter: RouteConfig = {
     title: 'freightTitle',
     icon: 'lifeCycle',
     alwaysShow: true,
-    apiUrl: '/v2/waybill/getConfirmInfoList'
+    apiUrl: ['/v2/waybill/getConfirmInfoList']
   },
   children: [
     {
