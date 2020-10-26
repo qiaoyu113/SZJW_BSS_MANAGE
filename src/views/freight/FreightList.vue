@@ -898,6 +898,20 @@ export default class extends Vue {
       }
     }
 
+    // 处理是否展示运费确认的总按钮
+    private handleChecked(arr: any) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].status === 10 || arr[i].status === 30) {
+          this.operationList = [
+            { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/reportMoneyBatch'] },
+            { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
+          ]
+          return true
+        }
+      }
+      this.operationList.shift()
+    }
+
     // 请求列表
     private async getList(value: any) {
       this.listQuery.page = value.page
@@ -906,6 +920,7 @@ export default class extends Vue {
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.handleChecked(data.data)
         // this.tab[0].num = data.title.all
         // this.tab[1].num = data.title.notReported
         // this.tab[2].num = data.title.toBeConfirmed
