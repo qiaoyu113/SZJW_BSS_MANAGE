@@ -420,8 +420,16 @@
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
                     <!-- {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }} -->
-                    <span v-if="scope.row.status === 10">单边确认</span>
-                    <span v-if="scope.row.status === 30">交叉确认</span>
+                    <div v-if="scope.row.status === 10">
+                      <span
+                        v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
+                      >单边确认</span>
+                    </div>
+                    <div v-if="scope.row.status === 30">
+                      <span
+                        v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
+                      >交叉确认</span>
+                    </div>
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/v2/waybill/shippingDetail']"
@@ -898,6 +906,22 @@ export default class extends Vue {
       }
     }
 
+    // 处理是否展示运费确认的总按钮
+    private handleChecked(arr: any) {
+      let list = [
+        { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/reportMoneyBatch'] },
+        { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
+      ]
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].status === 10 || arr[i].status === 30) {
+          this.operationList = list
+          return true
+        }
+      }
+      list.shift()
+      this.operationList = list
+    }
+
     // 请求列表
     private async getList(value: any) {
       this.listQuery.page = value.page
@@ -906,6 +930,7 @@ export default class extends Vue {
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.handleChecked(data.data)
         // this.tab[0].num = data.title.all
         // this.tab[1].num = data.title.notReported
         // this.tab[2].num = data.title.toBeConfirmed
