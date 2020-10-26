@@ -226,9 +226,10 @@ import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
 import { GetMonthlyBillList, ExportMonthlyBill, CustomerMonthlyBillCheck, GetProjectSearch } from '@/api/customer-freight'
-import { Upload, GetSpecifiedRoleList, GetOpenCityData } from '@/api/common'
+import { Upload, GetSpecifiedRoleList, getOfficeByType, getOfficeByTypeAndOfficeId } from '@/api/common'
 import { delayTime } from '@/settings'
 import { UserModule } from '@/store/modules/user'
+
 interface PageObj {
   page:Number,
   limit:Number,
@@ -253,7 +254,6 @@ export default class extends Vue {
   private postManagerOptions:IState[] = []; // 上岗经理列表
   private outsideSalesOptions:IState[] = [];// 外线销售列表
   private submitLoading:boolean = false;
-  private workCityOptions:IState[] = [];// 客户城市列表
   private projectListOptions:IState[] = [];// 项目列表
   private ids:string|number[] = []
   private btns:any[] = [
@@ -275,7 +275,7 @@ export default class extends Vue {
     monthBillId: '',
     customerName: '',
     customerId: '',
-    customerCity: '',
+    customerCity: [],
     dutyManagerId: '',
     lineSaleId: '',
     closeStatus: '',
@@ -306,15 +306,20 @@ export default class extends Vue {
       key: 'customerName'
     },
     {
-      type: 2,
+      type: 8,
       tagAttrs: {
         placeholder: '请选择',
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'driverCity',
         clearable: true,
-        filterable: true
+        props: {
+          lazy: true,
+          lazyLoad: this.showWork
+        }
       },
       label: '客户城市:',
-      key: 'customerCity',
-      options: this.workCityOptions
+      key: 'customerCity'
     },
     {
       type: 2,
@@ -474,7 +479,6 @@ export default class extends Vue {
       'min-width': this.isPC ? '200px' : '50px'
     }
   ]
-  // https://szjw-bss-web-m1.yunniao.cn/api/waybill_center
   // 全选
   private operationList: any[] = [
     { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1', pUrl: ['/v2/waybill/custBilling/monthlyBill/check'] },
@@ -570,6 +574,58 @@ export default class extends Vue {
     }
     return true
   }
+  // 获取客户城市
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
+    try {
+      if (node.level === 0) {
+        let nodes = await this.areaAddress({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+  // 获取大区列表
+  private async areaAddress(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item: any) {
+          return {
+            value: item.id,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+  // 根据大区获取城市列表
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
   // 获取加盟经理、上岗经理、外线销售
   async getManagerList(roleType:number, uri:string) {
     try {
@@ -597,7 +653,7 @@ export default class extends Vue {
       monthBillId: '',
       customerName: '',
       customerId: '',
-      customerCity: '',
+      customerCity: [],
       dutyManagerId: '',
       lineSaleId: '',
       closeStatus: '',
@@ -617,7 +673,9 @@ export default class extends Vue {
     this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
     this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
     this.listQuery.customerId !== '' && (params.customerId = this.listQuery.customerId)
-    this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
+    if (this.listQuery.customerCity && this.listQuery.customerCity.length > 0) {
+      params.customerCity = this.listQuery.customerCity[1]
+    }
     this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
     this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
     this.listQuery.closeStatus !== '' && (params.closeStatus = this.listQuery.closeStatus)
@@ -666,7 +724,9 @@ export default class extends Vue {
       this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
       this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
       this.listQuery.customerId !== '' && (params.customerId = this.listQuery.customerId)
-      this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
+      if (this.listQuery.customerCity && this.listQuery.customerCity.length > 0) {
+        params.customerCity = this.listQuery.customerCity[1]
+      }
       this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
       this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
       this.listQuery.closeStatus !== '' && (params.closeStatus = this.listQuery.closeStatus)
@@ -828,23 +888,6 @@ export default class extends Vue {
       this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-  // 获取城市列表
-  async getCityList() {
-    try {
-      let { data: res } = await GetOpenCityData()
-      if (res.success) {
-        let cityOptions:IState[] = res.data.map((item:any) => ({
-          label: item.name,
-          value: item.code
-        }))
-        this.workCityOptions.push(...cityOptions)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`get open city fail:${err}`)
-    }
-  }
   // 获取项目列表
   async getProjectSearch() {
     try {
@@ -869,7 +912,6 @@ export default class extends Vue {
     this.postManagerOptions.push(...data1)
     let data2 = await this.getManagerList(2, '/v2/waybill/custBilling/monthlyBill/queryLineSale')
     this.outsideSalesOptions.push(...data2)
-    this.getCityList()
     this.getProjectSearch()
   }
   // 状态变化

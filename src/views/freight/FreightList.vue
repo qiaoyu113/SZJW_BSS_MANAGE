@@ -420,8 +420,16 @@
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
                     <!-- {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }} -->
-                    <span v-if="scope.row.status === 10">单边确认</span>
-                    <span v-if="scope.row.status === 30">交叉确认</span>
+                    <div v-if="scope.row.status === 10">
+                      <span
+                        v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
+                      >单边确认</span>
+                    </div>
+                    <div v-if="scope.row.status === 30">
+                      <span
+                        v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
+                      >交叉确认</span>
+                    </div>
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-permission="['/v2/waybill/shippingDetail']"
@@ -674,7 +682,7 @@ export default class extends Vue {
     private DateValue2: any[] = [];
     private multipleSelection: any[] = []
     private operationList: any[] = [
-      { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/reportMoneyBatch'] },
+      { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/shipping/reportMoneyBatch'] },
       { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
     ];
     private dropdownList: any[] = [

@@ -35,12 +35,6 @@ const isInArray = (arr: string[], value: string|Array<string>) => {
     const inx = arr.indexOf(item)
     return inx >= 0
   })
-
-  // for (var i = 0; i < arr.length; i++) {
-  //   if (value === arr[i]) {
-  //     return true
-  //   }
-  // }
 }
 
 export const filterAsyncRoutes = (routes: RouteConfig[], roles: string[]) => {
