@@ -908,16 +908,18 @@ export default class extends Vue {
 
     // 处理是否展示运费确认的总按钮
     private handleChecked(arr: any) {
+      let list = [
+        { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/reportMoneyBatch'] },
+        { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
+      ]
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].status === 10 || arr[i].status === 30) {
-          this.operationList = [
-            { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/reportMoneyBatch'] },
-            { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
-          ]
+          this.operationList = list
           return true
         }
       }
-      this.operationList.shift()
+      list.shift()
+      this.operationList = list
     }
 
     // 请求列表
