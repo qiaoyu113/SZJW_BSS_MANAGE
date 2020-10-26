@@ -85,6 +85,7 @@
         :index="false"
         :operation-list="[]"
         :table-data="tableData"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         :columns="columns"
         :page="page"
         @onPageSize="handlePageSize"

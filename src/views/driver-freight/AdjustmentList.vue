@@ -84,6 +84,7 @@
         :columns="columns"
         :page="page"
         style="overflow: initial;"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @onPageSize="handlePageSize"
       >
         <template v-slot:driverName="scope">
