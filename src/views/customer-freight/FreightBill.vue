@@ -61,6 +61,7 @@
         :func="disabledFunc"
         :page="page"
         style="overflow: initial;"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @olclick="handleOlClick"
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"

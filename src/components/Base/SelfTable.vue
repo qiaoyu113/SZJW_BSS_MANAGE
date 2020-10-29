@@ -180,7 +180,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .selfTable{
     background: #FFFFFF;
-    box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
+    // box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     overflow: hidden;
   }
 </style>

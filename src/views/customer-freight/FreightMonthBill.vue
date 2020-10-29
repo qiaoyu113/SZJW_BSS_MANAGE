@@ -85,6 +85,7 @@
         :table-data="tableData"
         :columns="columns"
         :page="page"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         style="overflow: initial;"
         @olclick="handleOlClick"
         @onPageSize="handlePageSize"
