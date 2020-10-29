@@ -432,7 +432,7 @@
                     </div>
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-permission="['/v2/waybill/shippingDetail']"
+                    v-permission="['/v2/waybill/shipping/shippingDetail']"
                     name="ownerlist_detail_dropdown"
                     @click.native="goDetail(scope.row.wayBillId)"
                   >
@@ -975,6 +975,13 @@ export default class extends Vue {
 
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
+      let purl: any = localStorage.getItem('permission')
+      if (purl) {
+        let purlArr: any = purl.split(',')
+        if (purlArr.include('/v2/waybill/shipping/shippingDetail') < 0) {
+          return
+        }
+      }
       this.$router.push({ name: 'FreightDetail', query: { id: id } })
     }
 
