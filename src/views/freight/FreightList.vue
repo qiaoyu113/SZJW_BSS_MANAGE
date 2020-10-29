@@ -415,7 +415,7 @@
                     v-if="scope.row.canConfirm"
                   > -->
                   <el-dropdown-item
-                    v-permission="['/v2/waybill/reportMoneyBatch']"
+                    v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
@@ -1134,7 +1134,7 @@ export default class extends Vue {
             this.$message.success('提交成功')
             this.assignShowDialog = false
             if (noCheck.length) {
-              const { data } = await NoCarBatch(noCheck)
+              const { data } = await NoCarBatch(noCheck, this.remarkAll)
               if (data.success) {
                 this.assignShowDialog = false
                 done()
@@ -1160,7 +1160,7 @@ export default class extends Vue {
       this.$alert('确定全部' + noCheck.length + '个出车，全部未出车！', '提示', {
         confirmButtonText: '确定',
         callback: async action => {
-          const { data } = await NoCarBatch(noCheck)
+          const { data } = await NoCarBatch(noCheck, this.remarkAll)
           if (data.success) {
             this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
@@ -1179,7 +1179,7 @@ export default class extends Vue {
       this.freightForm.list.forEach((i: any) => {
         wayBillAmountIdsArr.push(i.wayBillAmountId)
       })
-      const { data } = await NoCarBatch(wayBillAmountIdsArr)
+      const { data } = await NoCarBatch(wayBillAmountIdsArr, this.freightForm.remark)
       if (data.success) {
         this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false
