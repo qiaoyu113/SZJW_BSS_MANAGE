@@ -841,6 +841,10 @@ export default class extends Vue {
     }
 
     private getPermission(role: any) {
+      const permission = (localStorage as any).getItem('permission')
+      if(!permission){
+        return false
+      }
       let permissionArr = (localStorage as any).getItem('permission').split(',')
       if (permissionArr.indexOf(role) > -1) {
         return true
