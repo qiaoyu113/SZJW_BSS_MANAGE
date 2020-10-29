@@ -978,7 +978,7 @@ export default class extends Vue {
       let purl: any = localStorage.getItem('permission')
       if (purl) {
         let purlArr: any = purl.split(',')
-        if (purlArr.include('/v2/waybill/shipping/shippingDetail') < 0) {
+        if (purlArr.indexOf('/v2/waybill/shipping/shippingDetail') < 0) {
           return
         }
       }
