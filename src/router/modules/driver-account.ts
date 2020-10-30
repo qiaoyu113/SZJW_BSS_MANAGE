@@ -75,17 +75,16 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundList.vue'),
       name: 'RefundList',
       meta: {
-        apiUrl: '/v1/base/user/page/list',
+        apiUrl: 'root',
         title: 'refundList',
         noCache: false,
-        hidden: true
+        hidden: false
       }
     },
     {
       path: 'refunddetail',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundDetail.vue'),
       name: 'RefundDetail',
-      redirect: '/driveraccount/refundlist',
       meta: {
         apiUrl: 'root',
         title: 'refundDetail',
@@ -97,19 +96,17 @@ const driverAccountRouter: RouteConfig = {
       path: 'refundapply',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundApply.vue'),
       name: 'RefundApply',
-      redirect: '/driveraccount/refundlist',
       meta: {
         apiUrl: 'root',
         title: 'refundApply',
         noCache: false,
-        hidden: true
+        hidden: false
       }
     },
     {
       path: 'refundaudit',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundAudit.vue'),
       name: 'RefundAudit',
-      redirect: '/driveraccount/refundlist',
       meta: {
         apiUrl: 'root',
         title: 'refundAudit',

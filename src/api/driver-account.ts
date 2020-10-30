@@ -5,6 +5,7 @@ const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
 const wayBillFix = '/waybill'
+let prefix2 = '/mock/25'
 
 /**
  * XXXX
@@ -173,4 +174,11 @@ export const GetChargeAmountByChargeId = (params:any) =>
     url: `${prefix}/v2/wt-driver-account/billing/getChargeAmountByChargeId`,
     method: 'get',
     params
+  })
+// 退费管理
+export const refundList = (data: any) =>
+  request({
+    url: `${prefix2}/v1/base/role/refundList`,
+    method: 'post',
+    data
   })
