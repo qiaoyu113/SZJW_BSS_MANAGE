@@ -2,18 +2,17 @@
   <div
     class="payList"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
     <self-form
+      ref="searchForm"
       :list-query="listQuery"
       :form-item="formItem"
       :rules="searchRules"
       label-width="80px"
       class="p15"
-      height=""
     >
       <div
         slot="btn1"
@@ -37,64 +36,78 @@
           重置
         </el-button>
       </div>
+
+      <div
+        slot="statusBox"
+        class="tableTitle"
+      >
+        <div class="statusBox">
+          <div class="btnBox">
+            <el-badge
+              v-for="(item,index) in statusOptions"
+              :key="index"
+              :value="item.num"
+              class="item"
+            >
+              <el-button
+                size="small"
+                :plain="item.value !== listQuery.status"
+                :type="index === active ? 'primary' : 'default' "
+                @click="changeStatus(item,index)"
+              >
+                {{ item.label }}
+              </el-button>
+            </el-badge>
+          </div>
+        </div>
+        <el-button
+          size="small"
+          type="primary"
+          @click="goRoute('addPay')"
+        >
+          新建缴费
+        </el-button>
+      </div>
     </self-form>
     <!-- 表头 -->
-    <div class="tableTitle">
-      <div class="statusBox">
-        <span>审核状态：</span>
-        <div class="btnBox">
-          <el-badge
-            v-for="(item,index) in statusOptions"
-            :key="index"
-            :value="item.num"
-            class="item"
-          >
-            <el-button
-              :type="index === active ? 'primary' : 'default' "
-              @click="changeStatus(item,index)"
-            >
-              {{ item.label }}
-            </el-button>
-          </el-badge>
-        </div>
+
+    <div class="table_box">
+      <div class="middle">
+        <div
+          class="count"
+          v-text="`筛选结果（${page.total}条）`"
+        />
       </div>
-      <el-button
-        size="small"
-        type="primary"
-        @click="goRoute('addPay')"
+      <!-- 表格 -->
+      <self-table
+        ref="driverListTable"
+        v-loading="listLoading"
+        :indexes="true"
+        height="calc(100vh - 550px)"
+        :index="false"
+        :operation-list="[]"
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        @onPageSize="handlePageSize"
       >
-        新建缴费
-      </el-button>
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        </template>
+        <template v-slot:op="scope">
+          <div>
+            <span
+              class="doItem"
+              @click="goRoute('payDetail',scope.row.driverId)"
+            >详情</span>
+            <span
+              class="doItem"
+              @click="goRoute('payAudit',scope.row.driverId)"
+            >审核</span>
+          </div>
+        </template>
+      </self-table>
     </div>
-    <!-- 表格 -->
-    <self-table
-      ref="driverListTable"
-      v-loading="listLoading"
-      :indexes="true"
-      height="calc(100vh - 550px)"
-      :index="false"
-      :operation-list="[]"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      @onPageSize="handlePageSize"
-    >
-      <template v-slot:createDate="scope">
-        {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
-      </template>
-      <template v-slot:op="scope">
-        <div>
-          <span
-            class="doItem"
-            @click="goRoute('payDetail',scope.row.driverId)"
-          >详情</span>
-          <span
-            class="doItem"
-            @click="goRoute('payAudit',scope.row.driverId)"
-          >审核</span>
-        </div>
-      </template>
-    </self-table>
   </div>
 </template>
 <script lang="ts">
@@ -103,7 +116,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
-import { getLabel, phoneRegExp } from '@/utils/index.ts'
+import { getLabel, phoneRegExp, IdRegExp } from '@/utils/index.ts'
 import { GetConfirmInfoList } from '@/api/freight'
 import { delayTime } from '@/settings.ts'
 import { HandlePages, phoneReg } from '@/utils/index'
@@ -133,7 +146,7 @@ interface Tab {
   }
 })
 export default class extends Vue {
-  private active:number = 0
+  private active: number = 0;
   private listLoading: boolean = false; // loading
   private tags: any[] = []; // 回显label
   private type: string = ''; // 修改加盟经理or分配加盟经理
@@ -145,12 +158,12 @@ export default class extends Vue {
   ];
   private workCityOptions: any[] = []; // 工作城市列表
   private gmOptions: any[] = []; // 加盟经理列表
-  private pageTitle:any = {
+  private pageTitle: any = {
     all: '',
     toAudit: '',
     passAudit: '',
     noAudit: ''
-  }
+  };
   // 表单对象
   private listQuery: IState = {
     payId: '',
@@ -162,11 +175,11 @@ export default class extends Vue {
     status: '',
     time: []
   };
-  private searchRules:any = {
-    phone: [
-      { validator: this.checkPhone, trigger: 'blur' }
-    ]
-  }
+  private searchRules: any = {
+    payId: [{ validator: this.checkID, trigger: 'blur' }],
+    driverId: [{ validator: this.checkID, trigger: 'blur' }],
+    phone: [{ validator: this.checkPhone, trigger: 'blur' }]
+  };
   // 表单数组
   private formItem: any[] = [
     {
@@ -217,6 +230,7 @@ export default class extends Vue {
         placeholder: '请输入手机号',
         maxlength: 11,
         clearable: true,
+        // type: 'number',
         name: 'driverList_phone_input'
       }
     },
@@ -293,9 +307,15 @@ export default class extends Vue {
     },
     {
       slot: true,
-      col: 6,
+      col: 12,
       w: '0px',
       type: 'btn1'
+    },
+    {
+      slot: true,
+      label: '审核状态',
+      col: 24,
+      type: 'statusBox'
     }
   ];
   // 表格
@@ -378,12 +398,26 @@ export default class extends Vue {
     total: 0
   };
 
-  private checkPhone(rule:any, value:any, callback:any) {
+  // 手机号验证
+  private checkPhone(rule: any, value: any, callback: any) {
+    if (value === '') {
+      callback()
+    }
     const can = phoneRegExp.test(value)
     if (can) {
       callback()
     } else {
       callback(new Error('请输入正确的手机号'))
+    }
+  }
+
+  // 字母数字校验
+  private checkID(rule: any, value: any, callback: any) {
+    const can = IdRegExp.test(value)
+    if (can) {
+      callback()
+    } else {
+      callback(new Error('请输入正确的编号'))
     }
   }
   /**
@@ -446,15 +480,13 @@ export default class extends Vue {
         page: this.page.page
       }
 
-      this.listQuery.status !== '' &&
-        (params.status = +this.listQuery.status)
+      this.listQuery.status !== '' && (params.status = +this.listQuery.status)
       this.listQuery.status && (params.status = +this.listQuery.status)
       this.listQuery.workCity && (params.workCity = this.listQuery.workCity)
       this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
       this.listQuery.name && (params.name = this.listQuery.name)
       this.listQuery.phone && (params.phone = this.listQuery.phone)
-      this.listQuery.payId !== '' &&
-        (params.payId = this.listQuery.payId)
+      this.listQuery.payId !== '' && (params.payId = this.listQuery.payId)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       if (this.listQuery.time.length > 1) {
         params.startDate = this.listQuery.time[0]
@@ -477,7 +509,7 @@ export default class extends Vue {
     }
   }
 
-  private changeStatus(item:any, index:number) {
+  private changeStatus(item: any, index: number) {
     this.active = index
     this.listQuery.status = item.value
     this.getList()
@@ -529,9 +561,10 @@ export default class extends Vue {
       gmId: '',
       status: '',
       time: []
-    }
+    };
+    ((this.$refs.searchForm) as any).resetForm()
     this.tags = []
-    this.getList()
+    // this.getList()
   }
 
   /**
@@ -555,31 +588,44 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.m15 {
-  margin: 15px;
-}
 .payList {
-  background: #ffffff;
-  border-radius: 8px;
-  .tableTitle {
-    .el-badge{
-      margin-right: 30px;
+  .table_box {
+    padding: 0px 30px;
+    background: #ffffff;
+    -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    overflow: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    .middle {
+      margin: 10px 0px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .count {
+        font-size: 14px;
+        color: #666;
+      }
     }
+  }
+  .tableTitle {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 30px 10px 30px;
     box-sizing: border-box;
-    .statusBox{
+    .el-badge {
+      margin-right: 30px;
+    }
+    .statusBox {
       display: flex;
       align-items: center;
-      .btnBox{
+      .btnBox {
         display: flex;
         align-items: center;
       }
     }
-  }
-  .btnPc {
   }
   .mobile {
     width: 100%;
@@ -590,16 +636,31 @@ export default class extends Vue {
     margin-top: 10px;
     width: 80%;
   }
+  .btnPc {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
 }
 </style>
 
 <style scoped>
+.payList >>> .selfForm {
+  width: 100%;
+  background: #fff;
+  margin-bottom: 10px;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+}
 .payList >>> .el-form-item__label {
   color: #999;
 }
 .doItem {
   color: #649cee;
   margin: 0 5px;
+  cursor: pointer;
 }
 @media screen and (min-width: 700px) {
   .payList >>> .el-collapse-item__wrap {

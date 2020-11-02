@@ -7,9 +7,7 @@
       <template v-slot:rightBox>
         <el-button
           :size="isPC ? 'small' : 'mini'"
-          @click="() => {
-            $router.go(-1)
-          }"
+          @click="handleBackClick"
         >
           返回
         </el-button>
@@ -21,7 +19,6 @@
         :rules="addRules"
         label-width="120px"
         label-position="right"
-        @onPass="onPass"
       />
     </SectionContainer>
     <SectionContainer
@@ -36,6 +33,7 @@
         >
           <el-table
             :data="tableData"
+            class="tableStyle"
             style="width: 100%"
           >
             <el-table-column
@@ -73,6 +71,7 @@
                     v-model="payForm.list[scope.$index].payDate"
                     type="date"
                     placeholder="选择日期"
+                    value-format="timestamp"
                   />
                 </el-form-item>
               </template>
@@ -116,48 +115,57 @@
             >
               <template slot-scope="scope">
                 <el-form-item
+
+                  class="uploadItem"
                   :prop="'list.'+scope.$index+'.payPic'"
-                  :rules="{required: true, message: '请输入上传图片', trigger: 'blur'}"
+                  :rules="{required: true, message: '请选择上传图片', trigger: 'change'}"
                 >
                   <el-upload
-                    v-if="!payForm.list[scope.$index].payType"
+                    :ref="'upload'+scope.$index"
+                    :key="'upload'+scope.$index"
                     :limit="1"
                     action="https://httpbin.org/post"
                     :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload"
+                    :before-upload="beforeAvatarUpload(scope.$index)"
                     :class="'upload'+scope.$index"
                     @click.native="upload(scope)"
                   >
-                    <span class="active">上传</span>
+                    <span
+                      v-if="tableData[scope.$index].canUpload"
+                      :ref="'active'+scope.$index"
+                      class="active"
+                    >上传</span>
+
                     <div
+                      v-if="!tableData[scope.$index].canUpload"
                       slot="file"
                       slot-scope="{file}"
                     >
-                      <img
-                        class="el-upload-list__item-thumbnail"
-                        :src="payForm.list[scope.$index].payPic"
-                        alt=""
+                      <div
+                        class="demo-image__preview"
+                        :a="file"
                       >
-                      <span class="el-upload-list__item-actions">
-                        <span
-                          class="el-upload-list__item-preview"
-                          @click="handlePictureCardPreview(file)"
+                        <el-image
+                          style="width: 100px; height: 100px"
+                          :src="tableData[scope.$index].payPic"
+                          :preview-src-list="[tableData[scope.$index].payPic]"
                         >
-                          <i class="el-icon-zoom-in" />
-                        </span>
-                      </span>
+                          <div
+                            slot="placeholder"
+                            class="image-slot"
+                          >
+                            加载中<span class="dot">...</span>
+                          </div>
+                          <div
+                            slot="error"
+                            class="image-slot"
+                          >
+                            加载中<span class="dot">...</span>
+                          </div>
+                        </el-image>
+                      </div>
                     </div>
                   </el-upload>
-                  <div
-                    v-else-if="payForm.list[scope.$index].payType"
-                    class="demo-image__preview"
-                  >
-                    <el-image
-                      style="width: 100px; height: 100px"
-                      :src="payForm.list[scope.$index].payType"
-                      :preview-src-list="[payForm.list[scope.$index].payType]"
-                    />
-                  </div>
                 </el-form-item>
               </template>
             </el-table-column>
@@ -179,21 +187,21 @@
               </template>
             </el-table-column>
           </el-table>
+
+          <div class="btnBox">
+            <el-button @click="handleBackClick">
+              取消
+            </el-button>
+            <el-button
+              type="primary"
+              @click="handleSaveClick"
+            >
+              提交
+            </el-button>
+          </div>
         </el-form>
       </template>
     </SectionContainer>
-    <div class="btnBox">
-      <el-button>
-        取消
-      </el-button>
-      <el-button
-        type="primary"
-        native-type="sumbit"
-        @click="handleSaveClick"
-      >
-        提交
-      </el-button>
-    </div>
   </div>
 </template>
 <script lang="ts">
@@ -201,6 +209,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/Base/SelfForm.vue'
+import { deleteUser } from '@/api/users'
  @Component({
    name: 'addPay',
    components: {
@@ -223,13 +232,13 @@ export default class extends Vue {
   ]
   private addRules:any = {
     driverInfo: [
-      { required: true, message: '请选择司机', trigger: 'blur' }
+      { required: true, message: '请选择司机', trigger: 'change' }
     ],
     orderId: [
-      { required: true, message: '请选择订单', trigger: 'blur' }
+      { required: true, message: '请选择订单', trigger: 'change' }
     ],
     isReceipt: [
-      { required: true, message: '请选择是否开收据', trigger: 'blur' }
+      { required: true, message: '请选择是否开收据', trigger: 'change' }
     ]
   }
   private formData:any = {
@@ -319,32 +328,17 @@ export default class extends Vue {
     }
   ]
   private tableData:any[] = [{
-    payNumber: '100',
-    payMoney: '',
-    payType: '',
-    payPic: '',
-    payDate: '2016-05-02',
-    name: '王小虎1',
-    address: '上海市普陀区金沙江路 1518 弄'
-  }, {
     payNumber: '',
     payMoney: '',
     payType: '',
     payPic: '',
-    payDate: '2016-05-02',
-    name: '王小虎3',
-    address: '上海市普陀区金沙江路 1518 弄'
+    payDate: '',
+    name: '',
+    canUpload: true
   }]
   private columnIndex:number = 0
   private payForm:any = {
     list: [
-      {
-        payNumber: '',
-        payMoney: '',
-        payType: '',
-        payPic: '',
-        payDate: ''
-      },
       {
         payNumber: '',
         payMoney: '',
@@ -375,14 +369,31 @@ export default class extends Vue {
       payMoney: '',
       payType: '',
       payPic: '',
-      payDate: ''
+      payDate: '',
+      canUpload: true
     }
     this.tableData.splice(index + 1, 0, column)
     this.payForm.list.splice(index + 1, 0, column)
   }
-  private handleDelete(index:number, row:any) {
-    this.tableData.splice(index, 1)
-    this.payForm.list.splice(index, 1)
+  private async handleDelete(index:number, row:any) {
+    if (this.tableData.length === 1) {
+      this.$message({
+        message: '不能再删了，这是最后一条了。',
+        type: 'warning'
+      })
+      return
+    }
+    await ((this.$refs.payForm) as any).clearValidate()
+    await ((this.$refs['upload' + index]) as any).clearFiles()
+    if (this.tableData[index].payPic) {
+      setTimeout(() => {
+        this.tableData.splice(index, 1)
+        this.payForm.list.splice(index, 1)
+      }, 1000)
+    } else {
+      this.tableData.splice(index, 1)
+      this.payForm.list.splice(index, 1)
+    }
   }
   private upload(value:any) {
     this.columnIndex = value.$index
@@ -395,25 +406,59 @@ export default class extends Vue {
     this.tableData[this.columnIndex].payPic = URL.createObjectURL(file.raw)
     this.payForm.list[this.columnIndex].payPic = URL.createObjectURL(file.raw)
   }
-  private beforeAvatarUpload(file:any) {
-    const isJPG = file.type === 'image/jpeg'
-    const isLt2M = file.size / 1024 / 1024 < 2
-
-    if (!isJPG) {
-      this.$message.error('上传头像图片只能是 JPG 格式!')
+  private beforeAvatarUpload(index:number) {
+    return (file:any) => {
+      this.tableData[index].canUpload = false
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
     }
-    if (!isLt2M) {
-      this.$message.error('上传头像图片大小不能超过 2MB!')
-    }
-    return isJPG && isLt2M
+  }
+  private async handleSaveClick() {
+    await this.handleValidateForm()
+    await this.handleValidateTableForm()
+    this.saveData()
   }
 
-  private onPass(val:Boolean) {
-    console.log('formData', this.formData)
-    this.handleValidateTableForm()
+  private handleBackClick() {
+    this.$confirm('确定要放弃已填写的内容返回上一页吗?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      this.$message({
+        type: 'success',
+        message: '成功!'
+      })
+      this.$router.push({
+        path: '/driveraccount/payFee'
+      })
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消'
+      })
+    })
   }
-  private handleSaveClick() {
-    this.handleValidateForm()
+
+  /**
+   * 提交表单
+   */
+  private saveData() {
+    let formData = this.formData
+    let tableData = this.payForm.list
+    // .map((ele:any) => {
+    //   delete ele.canUpload
+    // })
+    let params = { ...formData }
+    params.table = tableData
+    console.log(params)
   }
   /**
    *校验表单
@@ -440,6 +485,20 @@ export default class extends Vue {
   .active {
     color: #649cee;
     cursor: pointer;
+  }
+  .el-upload-list__item-thumbnail{
+    width: 100px;
+    height: 100px;
+  }
+  .tableStyle{
+    .el-form-item{
+      margin-top: 20px;
+    }
+    .el-form-item__content{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 </style>
@@ -476,5 +535,8 @@ export default class extends Vue {
 <style scoped>
 .hide >>> .el-upload--picture-card {
   display: none;
+}
+.uploadItem >>> .el-upload{
+  display: block;
 }
 </style>

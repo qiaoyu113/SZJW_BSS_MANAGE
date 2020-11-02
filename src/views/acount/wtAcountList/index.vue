@@ -11,7 +11,6 @@
       :form-item="formItem"
       label-width="100px"
       class="p15"
-      height=""
     >
       <template
         slot="driverId"

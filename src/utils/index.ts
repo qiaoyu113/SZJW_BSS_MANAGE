@@ -321,3 +321,6 @@ export const isValidPassWord = /^.*(?=.{8,16})(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*$/
 
 // 手机号
 export const phoneRegExp = /^[1][3-9][0-9]{9}$/
+
+// 字母数字校验
+export const IdRegExp = /^[0-9a-zA-Z]*$/
