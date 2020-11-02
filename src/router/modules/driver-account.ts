@@ -100,7 +100,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         title: 'refundApply',
         noCache: false,
-        hidden: false
+        hidden: true
       }
     },
     {
