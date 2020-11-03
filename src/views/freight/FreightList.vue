@@ -415,7 +415,7 @@
                     v-if="scope.row.canConfirm"
                   > -->
                   <el-dropdown-item
-                    v-permission="['/v2/waybill/reportMoneyBatch']"
+                    v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
@@ -432,7 +432,7 @@
                     </div>
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-permission="['/v2/waybill/shippingDetail']"
+                    v-permission="['/v2/waybill/shipping/shippingDetail']"
                     name="ownerlist_detail_dropdown"
                     @click.native="goDetail(scope.row.wayBillId)"
                   >
@@ -841,15 +841,16 @@ export default class extends Vue {
     }
 
     private getPermission(role: any) {
-      const permission = (localStorage as any).getItem('permission')
-      if(!permission){
+      let permission = (localStorage as any).getItem('permission')
+      if (!permission) {
         return false
-      }
-      let permissionArr = (localStorage as any).getItem('permission').split(',')
-      if (permissionArr.indexOf(role) > -1) {
-        return true
       } else {
-        return false
+        let permissionArr = permission.split(',')
+        if (permissionArr.indexOf(role) > -1) {
+          return true
+        } else {
+          return false
+        }
       }
     }
 
@@ -913,7 +914,7 @@ export default class extends Vue {
     // 处理是否展示运费确认的总按钮
     private handleChecked(arr: any) {
       let list = [
-        { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/reportMoneyBatch'] },
+        { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/shipping/reportMoneyBatch'] },
         { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
       ]
       for (let i = 0; i < arr.length; i++) {
@@ -979,6 +980,13 @@ export default class extends Vue {
 
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
+      let purl: any = localStorage.getItem('permission')
+      if (purl) {
+        let purlArr: any = purl.split(',')
+        if (purlArr.indexOf('/v2/waybill/shipping/shippingDetail') < 0) {
+          return
+        }
+      }
       this.$router.push({ name: 'FreightDetail', query: { id: id } })
     }
 
@@ -1126,7 +1134,7 @@ export default class extends Vue {
             this.$message.success('提交成功')
             this.assignShowDialog = false
             if (noCheck.length) {
-              const { data } = await NoCarBatch(noCheck)
+              const { data } = await NoCarBatch(noCheck, this.remarkAll)
               if (data.success) {
                 this.assignShowDialog = false
                 done()
@@ -1152,7 +1160,7 @@ export default class extends Vue {
       this.$alert('确定全部' + noCheck.length + '个出车，全部未出车！', '提示', {
         confirmButtonText: '确定',
         callback: async action => {
-          const { data } = await NoCarBatch(noCheck)
+          const { data } = await NoCarBatch(noCheck, this.remarkAll)
           if (data.success) {
             this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
@@ -1171,7 +1179,7 @@ export default class extends Vue {
       this.freightForm.list.forEach((i: any) => {
         wayBillAmountIdsArr.push(i.wayBillAmountId)
       })
-      const { data } = await NoCarBatch(wayBillAmountIdsArr)
+      const { data } = await NoCarBatch(wayBillAmountIdsArr, this.freightForm.remark)
       if (data.success) {
         this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false
