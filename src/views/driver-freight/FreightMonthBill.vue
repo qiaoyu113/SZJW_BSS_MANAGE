@@ -733,7 +733,9 @@ export default class extends Vue {
     } catch (err) {
       console.log(`save dta:${err}`)
     } finally {
-      this.submitLoading = false
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 重置弹框表单数据
