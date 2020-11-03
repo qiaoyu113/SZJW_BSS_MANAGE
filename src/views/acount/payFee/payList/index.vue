@@ -262,7 +262,7 @@ export default class extends Vue {
       key: 'time',
       label: '创建日期',
       col: 12,
-      dateType: 'datetimerange',
+      // dateType: 'datetimerange',
       tagAttrs: {
         pickerOptions: {
           shortcuts: [
@@ -489,8 +489,8 @@ export default class extends Vue {
       this.listQuery.payId !== '' && (params.payId = this.listQuery.payId)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
       if (this.listQuery.time.length > 1) {
-        params.startDate = this.listQuery.time[0]
-        params.endDate = this.listQuery.time[1] + 86399999
+        params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
+        params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
       }
       let { data: res } = await GetConfirmInfoList(params)
       this.listLoading = false
@@ -499,7 +499,7 @@ export default class extends Vue {
         this.page.total = res.page.total
         this.tableData = res.data
         this.pageTitle = res.title
-        this.statusOptions[0].num = this.pageTitle.all
+        // this.statusOptions[0].num = this.pageTitle.all
       } else {
         this.$message.error(res.errorMsg)
       }

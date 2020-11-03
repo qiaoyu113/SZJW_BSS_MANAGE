@@ -21,8 +21,8 @@ const driverAccountRouter: RouteConfig = {
         title: 'payFee',
         icon: '',
         apiUrl: 'root',
-        noCache: true
-        // hidden: true
+        noCache: true,
+        hidden: true
       }
     },
     {

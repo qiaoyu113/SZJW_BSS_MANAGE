@@ -19,6 +19,7 @@
         :rules="addRules"
         label-width="120px"
         label-position="right"
+        @onPass="handlePassClick"
       />
     </SectionContainer>
     <SectionContainer
@@ -30,11 +31,14 @@
         <el-form
           ref="payForm"
           :model="payForm"
+          :rules="payForm.rules"
         >
           <el-table
-            :data="tableData"
+            :data="payForm.tableData"
             class="tableStyle"
             style="width: 100%"
+            show-summary
+            :summary-method="getSummaries"
           >
             <el-table-column
               label="序号"
@@ -48,11 +52,11 @@
             >
               <template slot-scope="scope">
                 <el-form-item
-                  :prop="'list.'+scope.$index+'.payNumber'"
-                  :rules="{required: true, message: '请输入交易流水号', trigger: 'blur'}"
+                  :prop="'tableData.'+scope.$index+'.payNumber'"
+                  :rules="payForm.rules.payNumber"
                 >
                   <el-input
-                    v-model="payForm.list[scope.$index].payNumber"
+                    v-model="scope.row.payNumber"
                     placeholder="请输入交易流水号"
                   />
                 </el-form-item>
@@ -64,11 +68,11 @@
             >
               <template slot-scope="scope">
                 <el-form-item
-                  :prop="'list.'+scope.$index+'.payDate'"
-                  :rules="{required: true, message: '请选择日期', trigger: 'blur'}"
+                  :prop="'tableData.'+scope.$index+'.payDate'"
+                  :rules="payForm.rules.payDate"
                 >
                   <el-date-picker
-                    v-model="payForm.list[scope.$index].payDate"
+                    v-model="scope.row.payDate"
                     type="date"
                     placeholder="选择日期"
                     value-format="timestamp"
@@ -82,11 +86,11 @@
             >
               <template slot-scope="scope">
                 <el-form-item
-                  :prop="'list.'+scope.$index+'.payMoney'"
-                  :rules="{required: true, message: '请输入交易金额', trigger: 'blur'}"
+                  :prop="'tableData.'+scope.$index+'.payMoney'"
+                  :rules="payForm.rules.payMoney"
                 >
                   <el-input
-                    v-model="payForm.list[scope.$index].payMoney"
+                    v-model="scope.row.payMoney"
                     placeholder="请输入交易金额"
                   />
                 </el-form-item>
@@ -98,11 +102,11 @@
             >
               <template slot-scope="scope">
                 <el-form-item
-                  :prop="'list.'+scope.$index+'.payType'"
-                  :rules="{required: true, message: '请输入支付方式', trigger: 'blur'}"
+                  :prop="'tableData.'+scope.$index+'.payType'"
+                  :rules="payForm.rules.payType"
                 >
                   <el-input
-                    v-model="payForm.list[scope.$index].payType"
+                    v-model="scope.row.payType"
                     placeholder="请输入支付方式"
                   />
                 </el-form-item>
@@ -115,10 +119,9 @@
             >
               <template slot-scope="scope">
                 <el-form-item
-
                   class="uploadItem"
-                  :prop="'list.'+scope.$index+'.payPic'"
-                  :rules="{required: true, message: '请选择上传图片', trigger: 'change'}"
+                  :prop="'tableData.'+scope.$index+'.payPic'"
+                  :rules="payForm.rules.payPic"
                 >
                   <el-upload
                     :ref="'upload'+scope.$index"
@@ -131,13 +134,13 @@
                     @click.native="upload(scope)"
                   >
                     <span
-                      v-if="tableData[scope.$index].canUpload"
+                      v-if="payForm.tableData[scope.$index].canUpload"
                       :ref="'active'+scope.$index"
                       class="active"
                     >上传</span>
 
                     <div
-                      v-if="!tableData[scope.$index].canUpload"
+                      v-if="!payForm.tableData[scope.$index].canUpload"
                       slot="file"
                       slot-scope="{file}"
                     >
@@ -147,8 +150,8 @@
                       >
                         <el-image
                           style="width: 100px; height: 100px"
-                          :src="tableData[scope.$index].payPic"
-                          :preview-src-list="[tableData[scope.$index].payPic]"
+                          :src="payForm.tableData[scope.$index].payPic"
+                          :preview-src-list="[payForm.tableData[scope.$index].payPic]"
                         >
                           <div
                             slot="placeholder"
@@ -169,7 +172,10 @@
                 </el-form-item>
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column
+              label="操作"
+              width="180"
+            >
               <template slot-scope="scope">
                 <el-button
                   size="mini"
@@ -218,6 +224,8 @@ import { deleteUser } from '@/api/users'
    }
  })
 export default class extends Vue {
+  private formStatus:boolean = false
+  private tableStatus:boolean = false
   private ReceiptOptions:any = [
     { label: '否', value: 0 },
     { label: '是', value: 1 }
@@ -231,7 +239,7 @@ export default class extends Vue {
     { label: '是', value: 1 }
   ]
   private addRules:any = {
-    driverInfo: [
+    driverId: [
       { required: true, message: '请选择司机', trigger: 'change' }
     ],
     orderId: [
@@ -242,10 +250,9 @@ export default class extends Vue {
     ]
   }
   private formData:any = {
-    driverInfo: '',
+    driverId: '',
     cashMoney: '',
     orderId: '',
-    driverId: '',
     phone: '',
     workCity: '',
     gmId: '',
@@ -255,7 +262,7 @@ export default class extends Vue {
   private formItem: any[] = [
     {
       type: 2,
-      key: 'driverInfo',
+      key: 'driverId',
       label: '选择司机：',
       col: 24,
       tagAttrs: {
@@ -263,7 +270,9 @@ export default class extends Vue {
         filterable: true
       },
       options: this.driverInfoOptions
-    },
+    }
+  ]
+  private otherFormItem:any[] = [
     {
       type: 7,
       key: 'cashMoney',
@@ -313,7 +322,7 @@ export default class extends Vue {
       options: this.ReceiptOptions
     },
     {
-      type: 1,
+      type: 7,
       key: 'remarks',
       label: '备注：',
       tagAttrs: {
@@ -327,26 +336,34 @@ export default class extends Vue {
       }
     }
   ]
-  private tableData:any[] = [{
-    payNumber: '',
-    payMoney: '',
-    payType: '',
-    payPic: '',
-    payDate: '',
-    name: '',
-    canUpload: true
-  }]
   private columnIndex:number = 0
   private payForm:any = {
-    list: [
-      {
-        payNumber: '',
-        payMoney: '',
-        payType: '',
-        payPic: '',
-        payDate: ''
-      }
-    ]
+    rules: {
+      payNumber: [
+        { required: true, message: '请输入交易流水号', trigger: 'blur' }
+      ],
+      payDate: [
+        { required: true, message: '请选择日期', trigger: 'blur' }
+      ],
+      payMoney: [
+        { required: true, message: '请输入交易金额', trigger: 'blur' }
+      ],
+      payType: [
+        { required: true, message: '请输入支付方式', trigger: 'blur' }
+      ],
+      payPic: [
+        { required: true, message: '请上传交易凭证', trigger: 'change' }
+      ]
+    },
+    tableData: [{
+      payNumber: '',
+      payMoney: '',
+      payType: '',
+      payPic: '',
+      payDate: '',
+      name: '',
+      canUpload: true
+    }]
   }
   private picShow:Boolean = false
   // 判断是否是PC
@@ -354,14 +371,44 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
 
-  // @Watch('payForm.list', { deep: true })
-  // private listChange(val:any) {
-  //   val.forEach((ele:any, index:number) => {
-  //     if (ele.payPic) {
-  //       return index
-  //     }
-  //   })
-  // }
+  @Watch('formData.driverId', { deep: true })
+  private formChange(val:any) {
+    if (val) {
+      console.log(val)
+      // this.formItem.splice(0, this.formItem.length - 1)
+      this.formItem.push(...this.otherFormItem)
+    } else {
+      this.formItem.splice(1, this.formItem.length - 1)
+    }
+  }
+
+  private getSummaries(param:any) {
+    const { columns, data } = param
+    const sums:Array<string | number> = []
+    columns.forEach((column:any, index:any) => {
+      if (index === 0) {
+        sums[index] = '总价'
+      } else if (index === 3) {
+        sums[index] = data.reduce((prev:any, curr:any) => {
+          const value = Number(curr.payMoney)
+          if (!isNaN(value)) {
+            return Number(prev) + value
+          } else {
+            return prev
+          }
+        }, 0)
+        if (sums[index] === 0) {
+          sums[index] = ''
+        } else {
+          sums[index] += ' 元'
+        }
+      } else {
+        sums[index] = ''
+      }
+    })
+
+    return sums
+  }
 
   private handleAdd(index:number, row:any) {
     const column = {
@@ -372,11 +419,10 @@ export default class extends Vue {
       payDate: '',
       canUpload: true
     }
-    this.tableData.splice(index + 1, 0, column)
-    this.payForm.list.splice(index + 1, 0, column)
+    this.payForm.tableData.splice(index + 1, 0, column)
   }
   private async handleDelete(index:number, row:any) {
-    if (this.tableData.length === 1) {
+    if (this.payForm.tableData.length === 1) {
       this.$message({
         message: '不能再删了，这是最后一条了。',
         type: 'warning'
@@ -385,14 +431,12 @@ export default class extends Vue {
     }
     await ((this.$refs.payForm) as any).clearValidate()
     await ((this.$refs['upload' + index]) as any).clearFiles()
-    if (this.tableData[index].payPic) {
+    if (this.payForm.tableData[index].payPic) {
       setTimeout(() => {
-        this.tableData.splice(index, 1)
-        this.payForm.list.splice(index, 1)
+        this.payForm.tableData.splice(index, 1)
       }, 1000)
     } else {
-      this.tableData.splice(index, 1)
-      this.payForm.list.splice(index, 1)
+      this.payForm.tableData.splice(index, 1)
     }
   }
   private upload(value:any) {
@@ -403,12 +447,11 @@ export default class extends Vue {
   }
   private handleAvatarSuccess(res:any, file:any) {
     this.picShow = true
-    this.tableData[this.columnIndex].payPic = URL.createObjectURL(file.raw)
-    this.payForm.list[this.columnIndex].payPic = URL.createObjectURL(file.raw)
+    this.payForm.tableData[this.columnIndex].payPic = URL.createObjectURL(file.raw)
   }
   private beforeAvatarUpload(index:number) {
     return (file:any) => {
-      this.tableData[index].canUpload = false
+      this.payForm.tableData[index].canUpload = false
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG) {
@@ -420,10 +463,15 @@ export default class extends Vue {
       return isJPG && isLt2M
     }
   }
+  private handlePassClick(valid:boolean) {
+    this.formStatus = valid
+  }
   private async handleSaveClick() {
     await this.handleValidateForm()
     await this.handleValidateTableForm()
-    this.saveData()
+    if (this.formStatus && this.tableStatus) {
+      this.saveData()
+    }
   }
 
   private handleBackClick() {
@@ -432,10 +480,6 @@ export default class extends Vue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      this.$message({
-        type: 'success',
-        message: '成功!'
-      })
       this.$router.push({
         path: '/driveraccount/payFee'
       })
@@ -452,7 +496,7 @@ export default class extends Vue {
    */
   private saveData() {
     let formData = this.formData
-    let tableData = this.payForm.list
+    let tableData = this.payForm.tableData
     // .map((ele:any) => {
     //   delete ele.canUpload
     // })
@@ -469,7 +513,8 @@ export default class extends Vue {
   handleValidateTableForm() {
     ((this.$refs['payForm']) as any).validate((valid:any) => {
       if (valid) {
-        console.log('payForm', this.payForm)
+        console.log('handleValidateTableForm:', valid)
+        this.tableStatus = valid
       } else {
         console.log('error submit!!')
         return false
