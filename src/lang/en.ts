@@ -156,7 +156,8 @@ export default {
     billingCreate: 'billingCreate',
     financialFlow: 'financialFlow',
     orderList: 'orderList',
-    adjustmentList: 'adjustmentList'
+    adjustmentList: 'adjustmentList',
+    configManager: 'configManager'
   },
   navbar: {
     logOut: 'Log Out',

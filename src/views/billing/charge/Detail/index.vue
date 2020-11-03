@@ -76,13 +76,8 @@ export default class extends Vue {
     },
     {
       type: 7,
-      label: 'SOP描述:',
+      label: '业务线:',
       key: 'd'
-    },
-    {
-      type: 7,
-      label: '加盟类型:',
-      key: 'e'
     },
     {
       type: 7,
@@ -100,6 +95,11 @@ export default class extends Vue {
       type: 7,
       label: '固定金额:',
       key: 'e'
+    },
+    {
+      type: 7,
+      label: '计费状态:',
+      key: 'h'
     }
   ]
   // 判断是否是PC

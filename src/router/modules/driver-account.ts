@@ -126,7 +126,7 @@ const driverAccountRouter: RouteConfig = {
         hidden: true,
         activeMenu: '/driveraccount/billing',
         title: 'billing',
-        icon: 'cargo',
+        icon: '',
         noCache: false
       }
     },
@@ -138,7 +138,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/driveraccount/billing',
         title: 'billingLog',
-        icon: 'cargo',
+        icon: '',
         hidden: true,
         noCache: false
       }
@@ -151,7 +151,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/driveraccount/billing',
         title: 'billingDetail',
-        icon: 'cargo',
+        icon: '',
         hidden: true,
         noCache: false
       }
@@ -204,7 +204,7 @@ const driverAccountRouter: RouteConfig = {
         hidden: true,
         activeMenu: '/driveraccount/orderList',
         title: 'orderList',
-        icon: 'cargo',
+        icon: '',
         noCache: false
       }
     }
