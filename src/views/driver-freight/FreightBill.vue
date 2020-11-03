@@ -848,6 +848,10 @@ export default class extends Vue {
             value: item.code
           }
         })
+        subjectArr.unshift({
+          label: '全部',
+          value: ''
+        })
         this.subjectOptions.push(...subjectArr)
       } else {
         this.$message.error(res.errorMsg)
