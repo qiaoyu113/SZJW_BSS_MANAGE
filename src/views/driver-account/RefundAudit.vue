@@ -14,7 +14,7 @@
           <template slot="scoped">
             <div class="right">
               <el-button
-                @click="goDetail()"
+                @click="goList()"
               >
                 返回
               </el-button>
@@ -230,6 +230,12 @@ export default class extends Vue {
           type: 'info',
           message: '已取消'
         })
+      })
+    }
+    private goList(id: string | (string | null)[] | null | undefined) {
+      this.$router.push({
+        path: '/driveraccount/refundlist',
+        query: { id: id }
       })
     }
 }
