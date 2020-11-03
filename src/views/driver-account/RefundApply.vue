@@ -59,7 +59,6 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-// import { qianlei1 } from '@/api/qianlei'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { options } from 'numeral'
 interface IState {

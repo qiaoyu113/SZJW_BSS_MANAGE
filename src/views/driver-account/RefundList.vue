@@ -1,13 +1,16 @@
 <template>
   <div
     class="refundList"
+    :class="{
+      p15: isPC
+    }"
   >
     <div class="box">
       <self-form
         :list-query="listQuery"
         :form-item="formItem"
         size="small"
-        label-width="80px"
+        label-width="100px"
         class="p15 SuggestForm"
         :pc-col="8"
       >
@@ -27,13 +30,29 @@
             </el-button>
           </el-badge>
         </template>
+        <template slot="gmId">
+          <el-select
+            v-model="listQuery.gmId"
+            placeholder="请选择"
+            clearable
+            filterable
+          >
+            <el-option
+              v-for="item in gmIdOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </template>
         <!-- 插槽 -->
         <div
           slot="mulBtn"
-          class="btnPc"
+          :class="isPC ? 'btnPc' : 'mobile'"
         >
           <el-button
             size="small"
+            :class="isPC ? '' : 'btnMobile'"
             type="primary"
             @click="handleFilterClick"
           >
@@ -41,6 +60,7 @@
           </el-button>
           <el-button
             size="small"
+            :class="isPC ? '' : 'btnMobile'"
             @click="handleResetClick"
           >
             重置
@@ -49,17 +69,19 @@
         <template>
           <div
             slot="mulBtns"
-            class="btnPc1"
+            :class="isPC ? 'btnPc1' : 'mobile'"
           >
             <el-button
               size="small"
               type="primary"
+              :class="isPC ? '' : 'btnMobile'"
               @click="handleSelect"
             >
               批量下载
             </el-button>
             <el-button
               size="small"
+              :class="isPC ? '' : 'btnMobile'"
               type="primary"
               @click="handleReturn"
             >
@@ -67,6 +89,7 @@
             </el-button>
             <el-button
               size="small"
+              :class="isPC ? '' : 'btnMobile'"
               type="primary"
               @click="goDetail()"
             >
@@ -102,6 +125,7 @@
             <el-button
               type="text"
               size="small"
+              @click="handle1Click()"
             >
               审核
             </el-button>
@@ -146,6 +170,7 @@ interface IState {
 export default class extends Vue {
   private listLoading:boolean = false;
   private tableData:any[] = [];
+  private gmIdOptions:IState[] = [];// 所属加盟经理列表
   private listQuery:IState = {
     refundNumber: '',
     driverNumber: '',
@@ -211,7 +236,7 @@ export default class extends Vue {
       ]
     },
     {
-      type: 2,
+      type: 'gmId',
       tagAttrs: {
         placeholder: '请输入',
         clearable: true,
@@ -219,6 +244,7 @@ export default class extends Vue {
       },
       w: '100px',
       label: '加盟经理:',
+      slot: true,
       key: 'gmId'
     },
     {
@@ -430,10 +456,19 @@ export default class extends Vue {
         query: { id: id }
       })
     }
+    // 详情
     private handleClick(id: string | (string | null)[] | null | undefined) {
     // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
       this.$router.push({
-        path: '/driveraccount/refundapply',
+        path: '/driveraccount/refunddetail',
+        query: { id: id }
+      })
+    }
+    // 审核
+    private handle1Click(id: string | (string | null)[] | null | undefined) {
+    // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
+      this.$router.push({
+        path: '/driveraccount/refundaudit',
         query: { id: id }
       })
     }
@@ -447,6 +482,7 @@ export default class extends Vue {
           this.$message.error('请先选择')
         } else if (this.multipleSelection.length > 0) {
           this.$message.success('下载成功')
+          // console.log(this.multipleSelection)
         }
       }
       // 下载
@@ -463,7 +499,12 @@ export default class extends Vue {
           this.$message.error('请先选择')
         } else if (this.multipleSelection.length > 0) {
           this.$message.success('已退费')
+          // console.log(this.multipleSelection)
         }
+      }
+      // 判断是否是PC
+      get isPC() {
+        return SettingsModule.isPC
       }
       mounted() {
         this.getLists()
