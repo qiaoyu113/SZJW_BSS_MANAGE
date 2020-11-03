@@ -177,6 +177,18 @@ const systemRouter: RouteConfig = {
         icon: '',
         apiUrl: '/v1/base/authority/list'
       }
+    },
+    {
+      path: 'configManager', /* 配置管理 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/configManager/index.vue'),
+      name: 'ConfigManager',
+      meta: {
+        title: 'configManager',
+        activeMenu: '/system/configManager',
+        noCache: false,
+        icon: '',
+        apiUrl: '/v2/line/label/configManager'
+      }
     }
     // {
     //   path: 'systemsetting', /* 系统设置 */

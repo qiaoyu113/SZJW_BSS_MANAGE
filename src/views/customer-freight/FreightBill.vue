@@ -743,7 +743,9 @@ export default class extends Vue {
     } catch (err) {
       console.log(`save data fail:${err}`)
     } finally {
-      this.submitLoading = false
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 关闭弹窗清除数据
