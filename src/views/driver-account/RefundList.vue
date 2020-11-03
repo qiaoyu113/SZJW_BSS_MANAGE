@@ -30,21 +30,6 @@
             </el-button>
           </el-badge>
         </template>
-        <template slot="gmId">
-          <el-select
-            v-model="listQuery.gmId"
-            placeholder="请选择"
-            clearable
-            filterable
-          >
-            <el-option
-              v-for="item in gmIdOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </template>
         <!-- 插槽 -->
         <div
           slot="mulBtn"
@@ -149,10 +134,12 @@ import { SettingsModule } from '@/store/modules/settings'
 import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM } from '@/api/system'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { getLabel, phoneReg } from '@/utils/index.ts'
 import { HandlePages } from '@/utils/index'
 import { refundList } from '@/api/driver-account.ts'
+import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
+  GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
+import { options } from 'numeral'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -170,7 +157,8 @@ interface IState {
 export default class extends Vue {
   private listLoading:boolean = false;
   private tableData:any[] = [];
-  private gmIdOptions:IState[] = [];// 所属加盟经理列表
+  private gmOptions: any[] = []; // 加盟经理列表
+  private workCityOptions: any[] = []; // 工作城市列表
   private listQuery:IState = {
     refundNumber: '',
     driverNumber: '',
@@ -215,37 +203,34 @@ export default class extends Vue {
       key: 'driverName'
     },
     {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请输入',
-        clearable: true,
-        filterable: true
-      },
+      type: 8,
+      key: 'workCity',
+      col: 8,
       w: '100px',
-      label: '所属城市:',
-      key: 'city',
-      options: [
-        {
-          value: 1,
-          label: '北京'
-        },
-        {
-          value: 2,
-          label: '上海'
+      label: '所属城市',
+      tagAttrs: {
+        placeholder: '请选择所属城市',
+        clearable: true,
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'workCity',
+        props: {
+          lazy: true,
+          lazyLoad: this.showWork
         }
-      ]
+      }
     },
     {
-      type: 'gmId',
+      type: 2,
+      key: 'gmId',
+      col: 8,
+      label: '加盟经理',
       tagAttrs: {
-        placeholder: '请输入',
-        clearable: true,
-        filterable: true
+        placeholder: '请选择',
+        filterable: true,
+        clearable: true
       },
-      w: '100px',
-      label: '加盟经理:',
-      slot: true,
-      key: 'gmId'
+      options: this.gmOptions
     },
     {
       type: 3,
@@ -364,7 +349,7 @@ export default class extends Vue {
       {
         key: 'gmId',
         label: '加盟经理',
-        slot: true,
+        // slot: true,
         'min-width': '140px'
       },
       {
@@ -434,7 +419,8 @@ export default class extends Vue {
           limit: this.page.limit
         }
         let { data: res } = await refundList(params)
-        if (res) {
+        if (!res.message) {
+          console.log(res.data)
           this.tableData = res.data
           this.page.total = res.page.total
         } else {
@@ -502,12 +488,111 @@ export default class extends Vue {
           // console.log(this.multipleSelection)
         }
       }
+      // 获取加盟经理列表
+      async getGmOptions() {
+        try {
+          let params:any = {
+            roleTypes: [1],
+            uri: '/v2/wt-driver-account/management/queryGM'
+          }
+          // this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
+          let { data: res } = await GetSpecifiedRoleList(params)
+          if (res.success) {
+            this.gmOptions.splice(0, this.gmOptions.length)
+            let gms = res.data.map(function(item: any) {
+              return {
+                label: item.name,
+                value: item.id
+              }
+            })
+            this.gmOptions.push(...gms)
+          } else {
+            this.$message.error(res.errorMsg)
+          }
+        } catch (err) {
+          console.log(err)
+        }
+      }
+      /**
+   *获取开通城市
+   */
+      async getOpenCitys() {
+        try {
+          let { data: res } = await getOfficeByType({ type: 2 })
+          if (res.success) {
+            let workCity = res.data.map(function(item: any) {
+              return {
+                label: item.name,
+                value: item.code
+              }
+            })
+            this.workCityOptions.push(...workCity)
+          } else {
+            this.$message.error(res.errorMsg)
+          }
+        } catch (err) {
+          console.log(`get`)
+        }
+      }
+      private async showWork(node:any, resolve:any) {
+        let query: any = {
+          parentId: ''
+        }
+        if (node.level === 1) {
+          query.parentId = node.value
+        }
+        try {
+          if (node.level === 0) {
+            let nodes = await this.areaAddress({ type: 2 })
+            resolve(nodes)
+          } else if (node.level === 1) {
+            let nodes = await this.cityDetail(query)
+            resolve(nodes)
+          }
+        } catch (err) {
+          resolve([])
+        }
+      }
+      private async areaAddress(params: any) {
+        try {
+          let { data: res } = await getOfficeByType(params)
+          if (res.success) {
+            const nodes = res.data.map(function(item: any) {
+              return {
+                value: item.id,
+                label: item.name,
+                leaf: false
+              }
+            })
+            return nodes
+          }
+        } catch (err) {
+          console.log(`load city by code fail:${err}`)
+        }
+      }
+
+      private async cityDetail(params: any) {
+        let { data: city } = await getOfficeByTypeAndOfficeId(params)
+        if (city.success) {
+          const nodes = city.data.map(function(item: any) {
+            return {
+              value: item.areaCode,
+              label: item.name,
+              leaf: true
+            }
+          })
+          return nodes
+        }
+      }
+
       // 判断是否是PC
       get isPC() {
         return SettingsModule.isPC
       }
       mounted() {
         this.getLists()
+        this.getGmOptions()
+        this.getOpenCitys()
       }
 }
 </script>
