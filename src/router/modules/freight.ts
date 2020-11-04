@@ -8,9 +8,9 @@ const freightRouter: RouteConfig = {
   name: 'Freight',
   meta: {
     title: 'freightTitle',
-    icon: 'cargo',
+    icon: 'lifeCycle',
     alwaysShow: true,
-    apiUrl: 'root'
+    apiUrl: ['/v2/waybill/getConfirmInfoList']
   },
   children: [
     {
@@ -18,10 +18,10 @@ const freightRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/freight/FreightList.vue'),
       name: 'FreightList',
       meta: {
-        // apiUrl: '/v2/waybill/getConfirmInfoList',
-        apiUrl: 'root',
+        apiUrl: '/v2/waybill/getConfirmInfoList',
+        // apiUrl: 'root',
         title: 'freightList',
-        noCache: false
+        noCache: true
       }
     },
     {
@@ -29,13 +29,13 @@ const freightRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/freight/FreightDetail.vue'),
       name: 'FreightDetail',
       meta: {
-        // apiUrl: '/v2/waybill/shipping/shippingDetail',
-        apiUrl: 'root',
+        apiUrl: '/v2/waybill/shipping/shippingDetail',
+        // apiUrl: 'root',
         activeMenu: '/freight/freightlist',
         title: 'freightDetail',
         icon: 'cargo',
         hidden: true,
-        noCache: false
+        noCache: true
       }
     },
     {

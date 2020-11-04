@@ -413,7 +413,7 @@ export default class extends Vue {
   }
   // 同步crm弹框
   openSendCrmData(row:any) {
-    this.$confirm(`确定要同步生成${row.nickName}用户的CR账户吗?(注意:确认生成后需要前往激活方可生效)`, '提示', {
+    this.$confirm(`确定要同步生成${row.nickName}用户的CRM账户吗?(注意:确认生成后需要前往激活方可生效)`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'

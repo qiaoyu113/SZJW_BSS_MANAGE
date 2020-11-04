@@ -2,8 +2,7 @@
   <div
     class="DriverFreightList"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
@@ -11,8 +10,9 @@
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
+      :pc-col="8"
       label-width="80px"
-      class="p15"
+      class="p15 SuggestForm"
     >
       <div
         slot="btn"
@@ -43,65 +43,67 @@
         </el-button>
       </div>
     </self-form>
-    <div class="middle">
-      <div class="count">
-        筛选结果（1000条）
+    <div class="table_box">
+      <div class="middle">
+        <div class="count">
+          筛选结果（1000条）
+        </div>
       </div>
-    </div>
-    <!-- 表格 -->
-    <self-table
-      v-loading="listLoading"
-      :index="false"
-      :is-p30="false"
-      :indexes="false"
-      :operation-list="[]"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      @onPageSize="handlePageSize"
-    >
-      <template v-slot:createDate="scope">
-        {{ scope.row.createDate }}
-      </template>
-      <template v-slot:op="scope">
-        <el-dropdown
-          :trigger="isPC ? 'hover' : 'click'"
-          @command="(e) => handleCommandChange(e,scope.row)"
-        >
-          <span
-            v-if="isPC"
-            class="el-dropdown-link"
+      <!-- 表格 -->
+      <self-table
+        v-loading="listLoading"
+        :index="false"
+        :is-p30="false"
+        :indexes="false"
+        :operation-list="[]"
+        :table-data="tableData"
+        :columns="columns"
+        :page="page"
+        @onPageSize="handlePageSize"
+      >
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate }}
+        </template>
+        <template v-slot:op="scope">
+          <el-dropdown
+            :trigger="isPC ? 'hover' : 'click'"
+            @command="(e) => handleCommandChange(e,scope.row)"
           >
-            更多操作<i
+            <span
               v-if="isPC"
-              class="el-icon-arrow-down el-icon--right"
-            />
-          </span>
-          <span
-            v-else
-            style="font-size: 18px;"
-            class="el-dropdown-link"
-          >
-            <i class="el-icon-setting el-icon--right" />
-          </span>
+              class="el-dropdown-link"
+            >
+              更多操作<i
+                v-if="isPC"
+                class="el-icon-arrow-down el-icon--right"
+              />
+            </span>
+            <span
+              v-else
+              style="font-size: 18px;"
+              class="el-dropdown-link"
+            >
+              <i class="el-icon-setting el-icon--right" />
+            </span>
 
-          <el-dropdown-menu
-            slot="dropdown"
-          >
-            <el-dropdown-item
-              command="bill"
+            <el-dropdown-menu
+              slot="dropdown"
             >
-              查看账单
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="monthlyBill"
-            >
-              查看月账单
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-    </self-table>
+              <el-dropdown-item
+                command="bill"
+              >
+                查看账单
+              </el-dropdown-item>
+              <el-dropdown-item
+                command="monthlyBill"
+              >
+                查看月账单
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </self-table>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -142,7 +144,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入姓名/手机号',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '司机姓名:',
       key: 'a'
@@ -151,7 +154,8 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入编号',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '司机编号:',
       key: 'b'
@@ -160,7 +164,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '车型:',
       key: 'c',
@@ -175,7 +180,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '加盟经理:',
       key: 'd',
@@ -194,7 +200,8 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '司机城市:',
       key: 'e',
@@ -313,12 +320,7 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  .m15 {
-     margin: 15px;
-  }
   .DriverFreightList{
-    background: #ffffff;
-    border-radius: 8px;
     .btnPc {
        display: flex;
        flex-flow: row nowrap;
@@ -343,6 +345,23 @@ export default class extends Vue {
         font-size:14px;
         color:#666;
       }
+    }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .table_box {
+      padding: 0px 30px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
   }
 </style>

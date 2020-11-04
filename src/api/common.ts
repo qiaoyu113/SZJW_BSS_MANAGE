@@ -99,3 +99,42 @@ export const GetDownFileList = (data:any) =>
     method: 'post',
     data
   })
+
+// 组织大区查询
+export const getOfficeByType = (data:any) =>
+  request({
+    url: `base/v2/base/office/getOfficeByType`,
+    method: 'get',
+    params: data
+  })
+
+// 组织大区下城市查询
+export const getOfficeByTypeAndOfficeId = (data:any) =>
+  request({
+    url: `base/v2/base/office/getOfficeByTypeAndOfficeId`,
+    method: 'get',
+    params: data
+  })
+
+// 加盟经理(1)  外销销售(2) 上岗经理(3)
+export const GetSpecifiedRoleList = (data:any) =>
+  request({
+    url: `/base/v2/base/user/getSpecifiedLowerUserListByCondition`,
+    method: 'post',
+    data
+  })
+// 获取业务线列表
+export const GetDutyListByLevel = (data:any) =>
+  request({
+    url: `/base/v2/base/duty/getPartFirstDutyList`,
+    method: 'get',
+    data,
+    params: data
+  })
+// 获取加盟经理（可塞选）
+export const GetSpecifiedLowerUserListByCondition = (data:any) =>
+  request({
+    url: `/base/v2/base/user/getSpecifiedLowerUserListByCondition`,
+    method: 'post',
+    data
+  })

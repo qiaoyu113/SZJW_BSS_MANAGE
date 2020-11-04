@@ -2,7 +2,7 @@
   <div
     class="selfTable"
     :style="{
-      padding: isPC && isP30 ? '30px' :'0px'
+      padding: isPC && isP30 ? '0px 30px' :'0px'
     }"
   >
     <el-table
@@ -22,17 +22,18 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column
+        v-if="indexes"
+        label="序号"
+        type="index"
+        width="50"
+        align="center"
+      />
+      <el-table-column
         v-if="index"
         :reserve-selection="true"
         type="selection"
         width="50"
         :selectable="func"
-      />
-      <el-table-column
-        v-if="indexes"
-        label="序号"
-        type="index"
-        width="50"
       />
       <el-table-column
         v-for="item in columns"
@@ -41,6 +42,7 @@
         :min-width="item.width || 100"
         :label="item.label"
         :fixed="item.fixed"
+        v-bind="item.attrs"
       >
         <template
           slot-scope="scope"
@@ -128,6 +130,7 @@ export default class extends Vue {
   @Prop({ default: true }) index!:boolean
   @Prop({ default: true }) isP30!:boolean
   @Prop({ default: false }) indexes!:boolean;
+  @Prop({ default: () => SettingsModule.tableHeight }) height!:number;
   @Prop({ default: () => [
     { icon: 'el-icon-phone', name: '1', color: '#999' },
     { icon: 'el-icon-star-off', name: '2', color: '#978374' }
@@ -141,10 +144,7 @@ export default class extends Vue {
 
   // 多选数组
   multipleSelection:any[] =[]
-  // 表格高度
-  get height() {
-    return SettingsModule.tableHeight
-  }
+
   /**
    * 分页和切换页码
    */
@@ -180,7 +180,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
   .selfTable{
     background: #FFFFFF;
-    /*box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);*/
+    // box-shadow: 4px 4px 10px 0 rgba(218,218,218,0.50);
     overflow: hidden;
   }
 </style>

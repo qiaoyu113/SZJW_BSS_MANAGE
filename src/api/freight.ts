@@ -75,9 +75,9 @@ export const WayBillAmountDetail = (data: any) =>
    *
    * 批量未上报
    */
-export const NoCarBatch = (data: any) =>
+export const NoCarBatch = (data: any, value: any) =>
   request({
-    url: `${prefix || '/waybill'}/v2/waybill/shipping/noCarBatch`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/noCarBatch?remark=` + value,
     method: 'post',
     data
   })
@@ -90,4 +90,26 @@ export const GetSpecifiedRoleList = (params: any) =>
   request({
     url: `${prefix2 || '/base'}/v1/base/role/getSpecifiedRoleList?roleId=` + params,
     method: 'post'
+  })
+
+/**
+   *
+   * 获取出车详情运费列表
+   */
+export const freightDetailLog = (params: any) =>
+  request({
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/getFreightDetailLog`,
+    method: 'post',
+    params
+  })
+
+/**
+   *
+   * 获取出车详情运费列表
+   */
+export const freightTripMoney = (params: any) =>
+  request({
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/waybillTripMoney`,
+    method: 'get',
+    params
   })

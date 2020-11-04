@@ -15,7 +15,7 @@
             >
               <el-input
                 v-model="ruleForm.nick"
-                maxlength="10"
+                maxlength="20"
                 placeholder="请输入角色中文名称"
                 clearable
                 name="createrole_chooseNick_input"
@@ -222,16 +222,10 @@ export default class extends Vue {
   ];
   private rules: any = {
     nick: [
-      { required: true, message: '请输入角色中文名称', trigger: 'blur' },
-      {
-        pattern: /^(?:[\u4e00-\u9fa5·]{2,10})$/,
-        message: '请输入2-10个中文',
-        trigger: 'blur'
-      }
+      { required: true, message: '请输入角色中文名称', trigger: 'blur' }
     ],
     name: [
-      { required: true, message: '请输入角色英文名称', trigger: 'blur' },
-      { pattern: /^[a-z]{2,50}$/i, message: '请输入2-50位英文名称', trigger: 'blur' }
+      { required: true, message: '请输入角色英文名称', trigger: 'blur' }
     ],
     productLine: [
       { required: true, message: '请选择产品线', trigger: 'change' }
@@ -289,6 +283,8 @@ export default class extends Vue {
         } else {
           this.$message.error(data)
         }
+      } else {
+        (document.querySelector('.AppMain') as HTMLDivElement).scrollTop = 0
       }
     })
   }

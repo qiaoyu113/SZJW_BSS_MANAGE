@@ -9,7 +9,10 @@ const systemRouter: RouteConfig = {
   meta: {
     title: 'systemTitle',
     icon: 'system',
-    apiUrl: 'root'
+    apiUrl: ['/v1/base/user/menu', '/v2/base/user/create', '/v2/base/user/update',
+      '/v2/base/role/create', '/v2/base/role/list', '/v1/base/authority/list', '/v2/base/duty/list',
+      '/v1/base/office/list', '/v1/base/role/update', '/v2/base/role/getByRoleId'
+    ]
   },
   children: [
     {
@@ -173,6 +176,18 @@ const systemRouter: RouteConfig = {
         noCache: false,
         icon: '',
         apiUrl: '/v1/base/authority/list'
+      }
+    },
+    {
+      path: 'configManager', /* 配置管理 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/configManager/index.vue'),
+      name: 'ConfigManager',
+      meta: {
+        title: 'configManager',
+        activeMenu: '/system/configManager',
+        noCache: false,
+        icon: '',
+        apiUrl: '/v2/line/label/configManager'
       }
     }
     // {

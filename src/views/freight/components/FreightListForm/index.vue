@@ -1,26 +1,34 @@
 <template>
-  <div class="SuggestForm">
+  <div class="FreightListForm">
     <div class-name="sub-navbar">
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
           <el-row>
-            <el-form :label-width="isPC ? '120px' : '30%'">
+            <el-form
+              :label-width="isPC ? '120px' : '30%'"
+              size="small"
+            >
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="出车单号">
                   <el-input
                     v-model="listQuery.wayBillId"
                     name="freightlist_wayBillId_input"
+                    maxlength="50"
                     placeholder="请输入"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="司机城市">
-                  <el-select
+                  <!-- <el-select
                     v-model="listQuery.driverCity"
                     name="freightlist_driverCity_input"
+                    filterable
                     placeholder="请选择"
+                    size="small"
+                    @change="getManager()"
                   >
                     <el-option
                       v-for="item in optionsCity"
@@ -28,7 +36,16 @@
                       :label="item.code"
                       :value="item.codeVal"
                     />
-                  </el-select>
+                  </el-select> -->
+                  <el-cascader
+                    v-model="arrayCity"
+                    :props="{
+                      lazy: true,
+                      lazyLoad: showWork
+                    }"
+                    placeholder="请选择"
+                    @change="getManager()"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
@@ -36,8 +53,10 @@
                   <el-input
                     v-model="listQuery.driver"
                     name="freightlist_driver_input"
+                    maxlength="50"
                     placeholder="请输入姓名/手机号"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
@@ -48,11 +67,12 @@
                     filterable
                     name="freightlist_gmId_input"
                     placeholder="请选择"
+                    size="small"
                   >
                     <el-option
                       v-for="item in optionsJoin"
                       :key="item.id"
-                      :label="item.nick"
+                      :label="item.name"
                       :value="item.id"
                     />
                   </el-select>
@@ -63,18 +83,53 @@
                   <el-input
                     v-model="listQuery.line"
                     name="freightlist_line_input"
+                    maxlength="50"
                     placeholder="线路名称/编号"
                     clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="业务线">
-                  <el-input
-                    v-model="listQuery.line"
-                    name="freightlist_line_input"
+                  <el-select
+                    v-model="listQuery.business"
+                    name="freightlist_business_input"
                     placeholder="请选择"
+                    filterable
+                    size="small"
+                    @change="getManager()"
+                  >
+                    <el-option
+                      v-for="item in businessList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="客户名称">
+                  <el-input
+                    v-model="listQuery.customerName"
+                    name="freightlist_customerName_input"
+                    maxlength="50"
+                    placeholder="请输入"
                     clearable
+                    size="small"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="项目名称">
+                  <el-input
+                    v-model="listQuery.productName"
+                    name="freightlist_productName_input"
+                    maxlength="50"
+                    placeholder="请输入"
+                    clearable
+                    size="small"
                   />
                 </el-form-item>
               </el-col>
@@ -85,11 +140,12 @@
                     filterable
                     name="freightlist_dutyManagerId_input"
                     placeholder="请选择"
+                    size="small"
                   >
                     <el-option
                       v-for="item in optionsClassification"
                       :key="item.id"
-                      :label="item.nick"
+                      :label="item.name"
                       :value="item.id"
                     />
                   </el-select>
@@ -103,6 +159,7 @@
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    size="small"
                   >
                     <el-option
                       v-for="item in hasDiff"
@@ -117,13 +174,14 @@
               <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="司机上报状态">
                   <el-select
-                    v-model="listQuery.feeDiff"
+                    v-model="listQuery.driverUpLoadState"
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    size="small"
                   >
                     <el-option
-                      v-for="item in hasDiff"
+                      v-for="item in uploading"
                       :key="item.dictValue"
                       :label="item.dictLabel"
                       :value="item.dictValue"
@@ -133,15 +191,16 @@
               </el-col>
 
               <el-col :span="isPC ? 6 : 24">
-                <el-form-item label="司机上报状态">
+                <el-form-item label="客户上报状态">
                   <el-select
-                    v-model="listQuery.feeDiff"
+                    v-model="listQuery.clientUpLoadState"
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    size="small"
                   >
                     <el-option
-                      v-for="item in hasDiff"
+                      v-for="item in uploading"
                       :key="item.dictValue"
                       :label="item.dictLabel"
                       :value="item.dictValue"
@@ -153,7 +212,24 @@
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="出车日期">
                   <el-date-picker
+                    v-model="DateValueChild"
+                    size="small"
+                    :class="isPC ? '' : 'el-date-m'"
+                    :editable="false"
+                    :picker-options="pickerOptions"
+                    type="daterange"
+                    value-format="timestamp"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    @change="changData()"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 12 : 24">
+                <el-form-item label="运费更新时间">
+                  <el-date-picker
                     v-model="DateValueChild2"
+                    size="small"
                     :class="isPC ? '' : 'el-date-m'"
                     :editable="false"
                     type="daterange"
@@ -226,7 +302,7 @@
                     name="ownerlist_query_btn"
                     @click="research"
                   >
-                    筛选
+                    查询
                   </el-button>
                 </el-form-item>
               </el-col>
@@ -240,11 +316,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList } from '@/api/common'
+import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel } from '@/api/common'
 import { GetSpecifiedRoleList } from '@/api/freight'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
+
 import '@/styles/common.scss'
 
 @Component({
@@ -261,6 +338,8 @@ export default class extends Vue {
   private optionsCompany: any[] = []
   private optionsJoin: any[] = []
   private optionsSale: any[] = []
+  private arrayCity: any[] = []
+  private dutyListOptions: any[] = []
   private optionsClassification: any[] = []
   private DateValueChild: any[] = []; // DateValue的赋值项
   private DateValueChild2: any[] = []; // DateValue的赋值项
@@ -269,33 +348,81 @@ export default class extends Vue {
     { dictValue: '1', dictLabel: '有' },
     { dictValue: '0', dictLabel: '无' }
   ]
+  private uploading: any[] = [
+    { dictValue: '', dictLabel: '全部' },
+    { dictValue: '0', dictLabel: '待上报' },
+    { dictValue: '1', dictLabel: '已上报' }
+  ]
+  private businessList: any[] = []
+  private pickerOptions: any = {
+    shortcuts: [ {
+      text: '本月',
+      onClick(picker: any) {
+        const end = new Date()
+        // end.setTime(end.getTime() - 3600 * 1000 * 24)
+        end.setTime(end.getTime())
+        const start = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+        picker.$emit('pick', [start, end])
+      }
+    }, {
+      text: '上月',
+      onClick(picker: any) {
+        let now = new Date()// 当前日期
+        let nowYear = now.getFullYear()// 当前年
+        nowYear += (nowYear < 2000) ? 1900 : 0//
+        let lastMonthDate = new Date()// 上月日期
+        lastMonthDate.setDate(1)
+        lastMonthDate.setMonth(lastMonthDate.getMonth() - 1)
+        let lastMonth = lastMonthDate.getMonth()
+        // 获得某月天数
+        let monthStartDate = new Date(nowYear, lastMonth, 1)
+        let monthEndDate = new Date(nowYear, lastMonth + 1, 1)
+        let subtract = Number(monthEndDate) - Number(monthStartDate)
+        let days = subtract / (1000 * 60 * 60 * 24)
+        const start = new Date(nowYear, lastMonth, 1)
+        const end = new Date(nowYear, lastMonth, days)
+        picker.$emit('pick', [start, end])
+      }
+    }, {
+      text: '近三月',
+      onClick(picker: any) {
+        const date = new Date()
+        const endTime = 1000 * 60 * 60 * 24 - 1
+        const y = date.getFullYear()
+        const m = date.getMonth()
+        const d = date.getDate()
+        const start = +new Date(y, m - 3, d)
+        const end = +new Date(y, m, d) + endTime
+        picker.$emit('pick', [start, end])
+      }
+    }]
+  }
 
   @Watch('DateValue', { deep: true })
   private onDateChange(value: any) {
-    this.DateValueChild2 = value
+    this.DateValueChild = value
   }
 
   @Watch('DateValue2', { deep: true })
   private onDateChange2(value: any) {
-    this.DateValueChild = value
+    this.DateValueChild2 = value
   }
 
   // listQuery同步tags公共方法
   @Watch('listQuery', { deep: true })
-  private onListQueryChange(value: any) {
+  private onListQueryChange(value: any, oldValue: any) {
     let tags: any = []
     for (var key in value) {
       if (this.QUERY_KEY_LIST.indexOf(key) < 0) {
-        if (value[key] && key === 'contractEndEndTime') {
+        if (value[key] && key === 'freightEndTime') {
           tags.unshift({
             name:
-              TimestampYMD(value['contractEndStartTime']) +
+              TimestampYMD(value['freightStartTime']) +
               '-' +
-              TimestampYMD(value['contractEndEndTime']),
+              TimestampYMD(value['freightEndTime']),
             type: '',
             key: key
           })
-          console.log(tags)
         } else if (value[key] && key === 'endDate') {
           tags.unshift({
             name:
@@ -334,8 +461,8 @@ export default class extends Vue {
   created() {
     this.getDictionary()
     this.getJoinManageList()
-    this.getOpenCityData()
     this.getLowerStaffInfo()
+    this.getDutyListByLevel()
   }
 
   // 状态点击逻辑
@@ -402,16 +529,39 @@ export default class extends Vue {
     return vodeName
   }
 
-  private async getOpenCityData() {
+  // 获取客户城市
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
     try {
-      let { data: res } = await GetOpenCityData()
+      if (node.level === 0) {
+        let nodes = await this.getOpenCityData({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+
+  private async getOpenCityData(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
       if (res.success) {
-        this.optionsCity = res.data.map(function(item:any) {
+        const nodes = res.data.map(function(item: any) {
           return {
-            code: item.name,
-            codeVal: item.code
+            value: item.id,
+            label: item.name,
+            leaf: false
           }
         })
+        return nodes
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -420,10 +570,33 @@ export default class extends Vue {
     }
   }
 
+  // 根据大区获取城市列表
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
+
   // 获取加盟经理列表
   private async getDictionary() {
     return new Promise((resolve, reject) => {
-      GetSpecifiedRoleList(3)
+      GetSpecifiedLowerUserListByCondition({
+        cityCode: this.listQuery.driverCity,
+        groupId: '',
+        keyword: '',
+        // productLine: this.listQuery.business,
+        productLine: '',
+        roleTypes: ['3'],
+        uri: '/v2/waybill/queryDuty'
+      })
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsClassification = data.data
@@ -438,10 +611,51 @@ export default class extends Vue {
     })
   }
 
+  // 获取业务线
+  private async getDutyListByLevel() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.businessList.push({
+          label: '全部',
+          value: ''
+        })
+        this.businessList.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get duty list fail:${err}`)
+    }
+  }
+
+  // 重新获取加盟经理
+  private getManager() {
+    this.listQuery.driverCity = this.arrayCity[1]
+    this.getDictionary()
+    this.getJoinManageList()
+    this.listQuery.dutyManagerId = ''
+    this.listQuery.gmId = ''
+  }
+
   // 获取加盟经理
   private async getJoinManageList() {
     return new Promise((resolve, reject) => {
-      GetSpecifiedRoleList(1)
+      GetSpecifiedLowerUserListByCondition({
+        cityCode: this.listQuery.driverCity,
+        groupId: '',
+        keyword: '',
+        productLine: this.listQuery.business,
+        roleTypes: ['1'],
+        uri: '/v2/waybill/queryGm'
+      })
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsJoin = data.data
@@ -471,24 +685,23 @@ export default class extends Vue {
     }
   }
 
-  private changData2() {
-    if (this.DateValueChild2) {
-      this.listQuery.startDate = this.DateValueChild2[0]
-      this.listQuery.endDate = this.DateValueChild2[1] + 86399999
+  private changData() {
+    if (this.DateValueChild) {
+      this.listQuery.startDate = this.DateValueChild[0]
+      this.listQuery.endDate = this.DateValueChild[1] + 86399999
     } else {
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
     }
-    console.log(this.listQuery)
   }
 
-  private changData() {
-    if (this.DateValueChild) {
-      this.listQuery.contractEndStartTime = this.DateValueChild[0]
-      this.listQuery.contractEndEndTime = this.DateValueChild[1] + 86399999
+  private changData2() {
+    if (this.DateValueChild2) {
+      this.listQuery.freightStartTime = this.DateValueChild2[0]
+      this.listQuery.freightEndTime = this.DateValueChild2[1] + 86399999
     } else {
-      this.listQuery.contractEndStartTime = ''
-      this.listQuery.contractEndEndTime = ''
+      this.listQuery.freightStartTime = ''
+      this.listQuery.freightEndTime = ''
     }
   }
 
@@ -499,10 +712,11 @@ export default class extends Vue {
 
   private reset() {
     for (let key in this.listQuery) {
-      if (key !== 'page' && key !== 'limit' && key !== 'state') { this.listQuery[key] = '' } else {
+      if (key !== 'page' && key !== 'limit') { this.listQuery[key] = '' } else {
         this.listQuery['page'] = 1
       }
     }
+    this.arrayCity = []
     this.DateValueChild = []
     this.DateValueChild2 = []
   }
@@ -510,7 +724,7 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scope>
-.SuggestForm {
+.FreightListForm {
   width: 100%;
   background: #fff;
   margin-bottom: 10px;
@@ -557,9 +771,9 @@ export default class extends Vue {
     .el-select {
       display: block;
     }
-    .el-input {
-      width: 75%;
-    }
+    // .el-input {
+      // width: 75%;
+    // }
   }
 }
 </style>
@@ -573,5 +787,8 @@ export default class extends Vue {
 }
 .el-badge{
   margin-right: 20px;
+}
+.el-cascader{
+  display: block;
 }
 </style>

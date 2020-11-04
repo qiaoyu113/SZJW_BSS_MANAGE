@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 let prefix = '/driver'
+// let prefix = '/mock/81'
 
 let prefixCarrier = '/carrier_center'
 /**
@@ -265,4 +266,38 @@ export const GetDriverList = (data: any) =>
     url: `${prefixCarrier}/v1/driver/getDriverList`,
     method: 'post',
     data
+  })
+
+// ==============v2====================
+
+// 根据关键字搜索司机
+export const GetDriverListByKerWord = (data: any) =>
+  request({
+    url: `${prefixCarrier}/v2/driver/getDriverList`,
+    method: 'post',
+    data
+  })
+
+// 加盟经理查询司机列表
+export const getDriverListByGmId = (params: any) =>
+  request({
+    url: `${prefix}/v2/driver/getDriverListByGmId`,
+    method: 'get',
+    params
+  })
+
+// 根据加盟经理模糊查询司机列表
+export const getDriverNoAndNameList = (data: any, params:any) =>
+  request({
+    url: `${prefixCarrier}/v2/driver/getDriverNoAndNameList`,
+    method: 'post',
+    data,
+    params
+  })
+// 获取司机名字通过司机id
+export const getDriverNameByNo = (params: any) =>
+  request({
+    url: `${prefixCarrier}/v2/driver/getDriverNameByNo`,
+    method: 'get',
+    params
   })

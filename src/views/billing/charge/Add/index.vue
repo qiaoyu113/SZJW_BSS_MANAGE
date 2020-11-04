@@ -26,26 +26,7 @@
         :rules="rules"
         label-width="100px"
         @onPass="handlePassClick"
-      >
-        <template slot="e">
-          <el-select
-            v-model="listQuery.e"
-            placeholder="请选择"
-            filterable
-            clearable
-            :disabled="$route.name === 'BillingAdjust'"
-          >
-            <el-option
-              label="专车"
-              :value="1"
-            />
-            <el-option
-              label="共享"
-              :value="2"
-            />
-          </el-select>
-        </template>
-      </self-form>
+      />
     </SectionContainer>
     <SectionContainer
       title="扣费标准"
@@ -120,7 +101,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
-
+import { GetDutyListByLevel } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -132,6 +113,8 @@ interface IState {
 })
 export default class extends Vue {
   private formValidate:boolean = false;
+  // 业务线列表
+  private busiType:IState[] = [];
   private listQuery:IState = {
     b: 'SOP计费',
     c: '',
@@ -144,15 +127,20 @@ export default class extends Vue {
   }
   private formItem:any[] = [
     {
-      type: 1,
+      type: 2,
       label: '计费类型:',
       tagAttrs: {
-        placeholder: '请输入',
+        placeholder: '请选择',
         disabled: true,
-        maxlength: 10,
         clearable: true
       },
-      key: 'b'
+      key: 'b',
+      options: [
+        {
+          value: 1,
+          label: 'SOP计费'
+        }
+      ]
     },
     {
       type: 1,
@@ -178,10 +166,14 @@ export default class extends Vue {
       key: 'd'
     },
     {
-      type: 'e',
-      label: '加盟类型:',
-      slot: true,
-      key: 'e'
+      type: 2,
+      label: '业务线:',
+      key: 'e',
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true
+      },
+      options: this.busiType
     },
     {
       type: 1,
@@ -306,6 +298,29 @@ export default class extends Vue {
     setTimeout(() => {
       ((this.$refs.addForm1) as any).submitForm()
     }, 20)
+  }
+  // 获取业务线列表
+  async getBusiType() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.busiType.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get busiType fail:${err}`)
+    }
+  }
+  mounted() {
+    this.getBusiType()
   }
 }
 </script>

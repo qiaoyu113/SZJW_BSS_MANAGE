@@ -41,11 +41,11 @@
         <el-badge
           v-for="item in btns"
           :key="item.text"
-          :value="item.num"
         >
           <el-button
             size="small"
-            :type="item.name === listQuery.status ? 'primary':''"
+            type="primary"
+            :plain="item.name !== listQuery.status"
             @click="listQuery.status =item.name"
           >
             {{ item.text }}
@@ -76,7 +76,7 @@
       @onPageSize="handlePageSize"
     >
       <template v-slot:createDate="scope">
-        {{ scope.row.createDate }}
+        {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
       </template>
       <template v-slot:op="scope">
         <el-dropdown
@@ -140,6 +140,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
+import { GetDutyListByLevel } from '@/api/common'
 
 interface PageObj {
   page:Number,
@@ -157,6 +158,8 @@ interface IState {
   }
 })
 export default class extends Vue {
+  // 业务线列表
+  private busiType:IState[] = [];
   // loading
   private listLoading:Boolean = false;
   // 查询表单
@@ -169,7 +172,7 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        maxlength: 20,
+        maxlength: 50,
         clearable: true
       },
       label: 'SOP类型:',
@@ -206,18 +209,9 @@ export default class extends Vue {
         placeholder: '请选择',
         clearable: true
       },
-      label: '加盟类型:',
+      label: '业务线:',
       key: 'd',
-      options: [
-        {
-          label: '共享',
-          value: 1
-        },
-        {
-          label: '专车',
-          value: 2
-        }
-      ]
+      options: this.busiType
     },
     {
       type: 3,
@@ -271,28 +265,26 @@ export default class extends Vue {
     },
     {
       key: 'f',
-      label: '扣款标准',
-      'min-width': '140px'
-    },
-    {
-      key: 'g',
-      label: '加盟类型',
-      'min-width': '140px'
-    },
-    {
-      key: 'createDate',
-      label: '创建日期',
-      slot: true,
-      'min-width': '140px'
-    },
-    {
-      key: 'h',
-      label: '备注',
+      label: '业务线',
       'min-width': '140px'
     },
     {
       key: 'i',
       label: '计费状态',
+      'min-width': '140px'
+    },
+    {
+      key: 'h',
+      label: '备注',
+      'min-width': '140px',
+      attrs: {
+        'show-overflow-tooltip': true
+      }
+    },
+    {
+      key: 'createDate',
+      label: '创建日期',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -313,17 +305,14 @@ export default class extends Vue {
   private btns:any[] = [
     {
       name: '',
-      num: 10,
       text: '全部'
     },
     {
       name: '1',
-      num: 8,
       text: '启用'
     },
     {
       name: '2',
-      num: 2,
       text: '禁用'
     }
   ]
@@ -386,6 +375,29 @@ export default class extends Vue {
       })
     })
   }
+  // 获取业务线列表
+  async getBusiType() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.busiType.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get busiType fail:${err}`)
+    }
+  }
+  mounted() {
+    this.getBusiType()
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -426,6 +438,6 @@ export default class extends Vue {
 
 <style scoped>
   .billingListContainer >>> .el-badge {
-    margin-right:30px;
+    margin-right:20px;
   }
 </style>

@@ -2,23 +2,40 @@
   <div
     class="DriverFreightBill"
     :class="{
-      p15: isPC,
-      m15: isPC
+      p15: isPC
     }"
   >
     <!-- 查询表单 -->
     <self-form
+      v-permission="['/v2/driverBilling/freightCharge/list']"
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
+      :pc-col="8"
       label-width="90px"
-      class="p15"
+      class="p15 SuggestForm"
     >
+      <template slot="gmId">
+        <el-select
+          v-model="listQuery.gmId"
+          placeholder="请选择"
+          clearable
+          filterable
+        >
+          <el-option
+            v-for="item in gmIdOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </template>
       <div
         slot="btn"
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/driverBilling/freightCharge/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -43,107 +60,135 @@
         </el-button>
       </div>
     </self-form>
-    <div class="middle">
-      <div class="count">
-        筛选结果（1000条）
-      </div>
-    </div>
-    <!-- 表格 -->
-    <self-table
-      ref="freighForm"
-      v-loading="listLoading"
-      :index="true"
-      :is-p30="false"
-      :indexes="false"
-      :operation-list="operationList"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      style="overflow: inherit;"
-      @olclick="handleOlClick"
-      @onPageSize="handlePageSize"
-      @selection-change="handleSelectionChange"
-    >
-      <template v-slot:createDate="scope">
-        {{ scope.row.createDate }}
-      </template>
-      <template v-slot:op="scope">
-        <el-dropdown
-          :trigger="isPC ? 'hover' : 'click'"
-          @command="(e) => handleCommandChange(e,scope.row)"
+    <div class="table_box">
+      <!-- 表格 -->
+      <self-table
+        ref="freighForm"
+        v-loading="listLoading"
+        row-key="id"
+        :height="tableHeight"
+        :index="true"
+        :is-p30="false"
+        :indexes="false"
+        :operation-list="operationList|isPermission"
+        :table-data="tableData"
+        :columns="columns"
+        :func="disabledFunc"
+        :page="page"
+        style="overflow: initial;"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
+        @olclick="handleOlClick"
+        @onPageSize="handlePageSize"
+        @selection-change="handleSelectionChange"
+      >
+        <template v-slot:businessNo="scope">
+          <router-link
+            :to="{path: '/freight/freightlist',query: {wayBillId: scope.row.businessNo}}"
+            style="color:#649CEE;"
+            target="_blank"
+          >
+            {{ scope.row.businessNo }}
+          </router-link>
+        </template>
+        <template v-slot:remarks="scope">
+          {{ scope.row.remarks | DataIsNull }}
+        </template>
+        <template v-slot:departureDate="scope">
+          {{ scope.row.departureDate | parseTime('{y}-{m}-{d}') }}
+        </template>
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        </template>
+        <template v-slot:driverName="scope">
+          {{ scope.row.driverName }}/{{ scope.row.phone }}
+        </template>
+        <template v-slot:paymentReceivedFlag="scope">
+          {{ scope.row.paymentReceivedFlag ? '是':'否' }}
+        </template>
+        <template v-slot:paymentVoucherPath="scope">
+          <a
+            v-if="scope.row.paymentReceivedFlag"
+            type="primary"
+            :href="scope.row.paymentVoucherPath"
+            style="color:#649CEE;cursor: pointer;"
+          >
+            下载凭证
+          </a>
+        </template>
+        <template
+          v-slot:op="scope"
         >
-          <span
-            v-if="isPC"
-            class="el-dropdown-link"
+          <el-dropdown
+            :trigger="isPC ? 'hover' : 'click'"
+            @command="(e) => handleCommandChange(e,scope.row)"
           >
-            更多操作<i
+            <span
               v-if="isPC"
-              class="el-icon-arrow-down el-icon--right"
-            />
-          </span>
-          <span
-            v-else
-            style="font-size: 18px;"
-            class="el-dropdown-link"
-          >
-            <i class="el-icon-setting el-icon--right" />
-          </span>
+              class="el-dropdown-link"
+            >
+              更多操作<i
+                v-if="isPC"
+                class="el-icon-arrow-down el-icon--right"
+              />
+            </span>
+            <span
+              v-else
+              style="font-size: 18px;"
+              class="el-dropdown-link"
+            >
+              <i class="el-icon-setting el-icon--right" />
+            </span>
 
-          <el-dropdown-menu
-            slot="dropdown"
-          >
-            <el-dropdown-item
-              command="1"
+            <el-dropdown-menu
+              slot="dropdown"
             >
-              查看流水
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="2"
-            >
-              司机对账
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="3"
-            >
-              账单下载
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-    </self-table>
+              <el-dropdown-item
+                v-if="!scope.row.paymentReceivedFlag"
+                v-permission="['/v2/driverBilling/freightCharge/receive']"
+                command="1"
+              >
+                标记收款
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </self-table>
+    </div>
+
     <!-- 标记收款弹窗 -->
     <SelfDialog
       :class="'distributionDialog'"
       :visible.sync="showDialog"
       :title="dialogTit"
       :confirm="confirm"
+      :sumbit-again="submitLoading"
       :destroy-on-close="true"
       @closed="handleClosed"
     >
-      <p>已选择{{ multipleSelection.length }}条</p>
+      <p v-if="multipleSelection.length> 0">
+        已选择{{ multipleSelection.length }}条流水
+      </p>
       <self-form
         ref="dialogForm"
         :list-query="dialogForm"
-        :form-item="dialogItem"
+        :form-item="dialogFormItem"
         size="small"
         label-width="90px"
         class="p15"
         :rules="dialogRole"
         @onPass="handlePassClick"
       >
-        <template slot="d">
+        <template v-slot:amount="scope">
+          {{ scope.row.amount }} 元
+        </template>
+        <template slot="fileUrl">
           <el-upload
-            ref="upload"
-            :http-request="customUpload"
-            :on-remove="handleRemove"
-            :on-change="handleChange"
-            :on-exceed="handleExceed"
-            :file-list="fileList"
-            :auto-upload="true"
-            :multiple="false"
+            :http-request="uploadFile"
+            :show-file-list="false"
             :limit="1"
-            action="/line/gmv/importFile"
-            :show-file-list="true"
+            :before-upload="beforeFileUpload"
+            action="/121"
+            :file-list="filelist"
           >
             <el-button
               size="small"
@@ -155,24 +200,12 @@
               slot="tip"
               class="el-upload__tip"
             >
-              支持扩展名：.rar .zip .doc .docx .pdf .jpg...
+              支持扩展名:不超过10M,.rar .zip .doc .docx .pdf
             </div>
           </el-upload>
         </template>
       </self-form>
     </SelfDialog>
-    <PitchBox
-      :drawer.sync="drawer"
-      :drawer-list="multipleSelection"
-      @deletDrawerList="deletDrawerList"
-      @changeDrawer="changeDrawer"
-    >
-      <template slot-scope="slotProp">
-        <span>{{ slotProp.item.bussinessName }}</span>
-        <span>{{ slotProp.item.bussinessPhone }}</span>
-        <span>{{ slotProp.item.cityName }}</span>
-      </template>
-    </PitchBox>
   </div>
 </template>
 <script lang="ts">
@@ -181,11 +214,15 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
-import PitchBox from '@/components/PitchBox/index.vue'
 
 import { month, lastmonth, threemonth } from './components/date'
+
+import { GetFreightChargeList, ExportFreightChargeList, ReceiveFreightChargeList, GetSubjectList } from '@/api/driver-freight.ts'
+import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
+import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
 
 interface PageObj {
   page:Number,
@@ -201,15 +238,35 @@ interface IState {
   components: {
     SelfTable,
     SelfForm,
-    SelfDialog,
-    PitchBox
+    SelfDialog
   }
 })
 export default class extends Vue {
+  private dutyListOptions:IState[] = [];// 业务线列表
+  private gmIdOptions:IState[] = [];// 所属加盟经理列表
+  private filelist:IState[] = []
+  // 变动类型列表
+  private subjectOptions:IState[] = []
+  // 弹框选中的数据的id集合
+  private ids:number|string[] = []
+  private submitLoading:boolean = false;
   // loading
   private listLoading:Boolean = false;
+
   // 查询表单
   private listQuery:IState = {
+    driverName: '',
+    driverId: '',
+    gmId: '',
+    businessType: '',
+    paymentReceivedFlag: '',
+    recordNo: '',
+    businessNo: '',
+    driverCity: [],
+    subject: '',
+    time: [],
+    createTime: [],
+    monthBillDate: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -217,112 +274,106 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入姓名/手机号',
-        clearable: true
+        clearable: true,
+        maxlength: 50
       },
       label: '司机姓名:',
-      key: 'a'
+      key: 'driverName'
     },
     {
-      type: 2,
+      type: 8,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
-      },
-      label: '加盟经理:',
-      key: 'b',
-      options: [
-        {
-          label: '共享',
-          value: 1
-        },
-        {
-          label: '专车',
-          value: 2
+        clearable: true,
+        filterable: true,
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'driverCity',
+        props: {
+          lazy: true,
+          lazyLoad: this.showWork
         }
-      ]
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true
-      },
-      label: '是否已收款:',
-      key: 'c',
-      options: [
-        {
-          label: '全部',
-          value: 1
-        },
-        {
-          label: '专车',
-          value: 2
-        }
-      ]
-    },
-    {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        clearable: true
-      },
-      label: '流水编号:',
-      key: 'd'
-    },
-    {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        clearable: true
-      },
-      label: '出车单编号:',
-      key: 'e'
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true
       },
       label: '司机城市:',
-      key: 'f',
-      options: [
-        {
-          label: '共享',
-          value: 1
-        },
-        {
-          label: '专车',
-          value: 2
-        }
-      ]
+      key: 'driverCity',
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
-      label: '变动类型:',
-      key: 'f',
+      label: '业务线:',
+      key: 'businessType',
+      options: this.dutyListOptions,
+      listeners: {
+        'change': this.resetGmId
+      }
+    },
+    {
+      type: 'gmId',
+      slot: true,
+      label: '加盟经理:',
+      key: 'gmId'
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '是否已收款:',
+      key: 'paymentReceivedFlag',
       options: [
         {
           label: '全部',
+          value: ''
+        },
+        {
+          label: '是',
           value: 1
         },
         {
-          label: '已确认',
-          value: 2
-        },
-        {
-          label: '二次确认',
-          value: 3
-        },
-        {
-          label: '运费调整',
-          value: 4
+          label: '否',
+          value: 0
         }
       ]
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入',
+        clearable: true,
+        maxlength: 50
+      },
+      label: '流水编号:',
+      key: 'recordNo'
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        placeholder: '请输入',
+        clearable: true,
+        maxlength: 50
+      },
+      label: '出车单编号:',
+      key: 'businessNo'
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '变动类型:',
+      key: 'subject',
+      options: this.subjectOptions
     },
     {
       type: 3,
@@ -336,7 +387,7 @@ export default class extends Vue {
         }
       },
       label: '出车日期:',
-      key: 'g'
+      key: 'time'
     },
     {
       type: 3,
@@ -350,79 +401,85 @@ export default class extends Vue {
         }
       },
       label: '创建时间:',
-      key: 'h'
+      key: 'createTime'
     }
   ]
   // 表格数据
-  private tableData:any[] = [
-    {
-      a: 1
-    }
-  ]
+  private tableData:any[] = []
   // 表格列
   private columns:any[] = [
     {
-      key: 'a',
+      key: 'recordNo',
       label: '流水编号',
       'min-width': '140px'
     },
     {
-      key: 'b',
+      key: 'departureDate',
+      slot: true,
       label: '出车日期',
       'min-width': '140px'
     },
     {
-      key: 'c',
+      key: 'driverName',
       label: '司机姓名',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'd',
-      label: '出车单号',
+      key: 'businessNo',
+      label: '出车单编号',
+      slot: true,
       'min-width': '200px'
     },
     {
-      key: 'e',
+      key: 'subjectName',
       label: '变动类型',
       'min-width': '140px'
     },
     {
-      key: 'f',
+      key: 'amount',
       label: '运费金额(元)',
       'min-width': '140px'
     },
     {
-      key: 'g',
+      key: 'createDate',
       label: '创建时间',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'aa',
+      key: 'createName',
       label: '创建人',
       'min-width': '140px'
     },
     {
-      key: 'h',
+      key: 'paymentReceivedFlag',
       label: '是否已收款',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'h1',
+      key: 'paymentVoucherPath',
       label: '收款凭证',
+      slot: true,
       'min-width': '140px'
     },
     {
-      key: 'h2',
+      key: 'remarks',
       label: '收款备注',
-      'min-width': '140px'
+      slot: true,
+      'min-width': '140px',
+      attrs: {
+        'show-overflow-tooltip': true
+      }
     },
     {
-      key: 'h3',
+      key: 'gmName',
       label: '加盟经理',
       'min-width': '140px'
     },
     {
-      key: 'h4',
+      key: 'cityName',
       label: '司机城市',
       'min-width': '140px'
     },
@@ -436,18 +493,15 @@ export default class extends Vue {
   ]
   // 全选
   private operationList: any[] = [
-    { icon: 'el-icon-finished', name: '查看选中', color: '#F2A33A', key: '3' },
-    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1' },
+    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1', pUrl: ['/v2/driverBilling/freightCharge/receive'] },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
   ]
   private multipleSelection: any[] = []
-  private drawer: boolean= false;
-
   // 分页
   private page :PageObj= {
     page: 1,
     limit: 30,
-    total: 100
+    total: 0
   }
   // 弹窗
   private showDialog: boolean = false;
@@ -455,38 +509,44 @@ export default class extends Vue {
   private dialogTit: string = '';
   // 弹窗form
   private dialogForm: IState = {
+    recordNo: '',
+    businessNo: '',
+    amount: '',
+    fileUrl: '',
+    remark: ''
   }
   private fileList: []= [];
   private dialogRole: IState= {
-    d: [
+    fileUrl: [
       { required: true, message: '请上传凭证', trigger: 'change' }
     ]
   }
+  private dialogFormItem:IState[] = [];
   // 弹窗表单容器
-  private dialogItem: any[] = [
+  private dialogItem: IState[] = [
     {
       type: 7,
       col: 12,
-      label: '账单编号:',
-      key: 'a'
+      label: '流水编号:',
+      key: 'recordNo'
     },
     {
       type: 7,
       col: 12,
-      label: '出车编号:',
-      key: 'b'
+      label: '出车单编号:',
+      key: 'businessNo'
     },
     {
-      type: 7,
+      type: 'amount',
       col: 24,
       label: '运费金额:',
-      key: 'c'
+      slot: true
     },
     {
       col: 24,
       label: '上传凭证:',
-      key: 'd',
-      type: 'd',
+      key: 'fileUrl',
+      type: 'fileUrl',
       slot: true
     },
     {
@@ -494,9 +554,9 @@ export default class extends Vue {
       label: '备注:',
       col: 24,
       tagAttrs: {
+        type: 'textarea',
         placeholder: '请输入不超过100字',
         maxlength: 100,
-        type: 'textarea',
         'show-word-limit': true,
         autosize: { minRows: 3, maxRows: 4 },
         clearable: true
@@ -508,17 +568,93 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+  get tableHeight() {
+    let otherHeight = 490
+    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+  }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/driverBilling/freightCharge/receive'
+    })
+  }
+  private disabledFunc(row:any) {
+    if (row && (row.paymentReceivedFlag || !this.isCheck)) {
+      return false
+    }
+    return true
+  }
+  // 重置加盟经理
+  resetGmId() {
+    if (this.listQuery.gmId) {
+      this.listQuery.gmId = ''
+    }
+    this.getGmLists()
+  }
   // 重置表单
   private handleResetClick() {
-
+    this.listQuery = {
+      driverName: '',
+      gmId: '',
+      businessType: '',
+      paymentReceivedFlag: '',
+      recordNo: '',
+      businessNo: '',
+      driverCity: '',
+      subject: '',
+      time: [],
+      createTime: [],
+      monthBillDate: ''
+    }
+    this.getGmLists()
   }
   // 查询表单
   private handleFilterClick() {
-
+    this.page.page = 1
+    this.getLists()
   }
   // 导出
-  private handleExportClick() {
+  private async handleExportClick() {
+    try {
+      let params:IState = {}
+      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
+      this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
+      this.listQuery.recordNo !== '' && (params.recordNo = this.listQuery.recordNo)
+      this.listQuery.businessNo !== '' && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = +this.listQuery.monthBillDate)
+      this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
+      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
+        params.driverCity = this.listQuery.driverCity[1]
+      }
+      this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let departureDateStart = new Date(this.listQuery.time[0])
+        let departureDateEnd = new Date(this.listQuery.time[1])
+        params.departureDateStart = departureDateStart.setHours(0, 0, 0)
+        params.departureDateEnd = departureDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择出车日期')
+      }
+      if (this.listQuery.createTime && this.listQuery.createTime.length > 1) {
+        let createDateStart = new Date(this.listQuery.createTime[0])
+        let createDateEnd = new Date(this.listQuery.createTime[1])
+        params.createDateStart = createDateStart.setHours(0, 0, 0)
+        params.createDateEnd = createDateEnd.setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择创建时间')
+      }
 
+      let { data: res } = await ExportFreightChargeList(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`export excel fail:${err}`)
+    }
   }
   // 分页
   private handlePageSize(page:PageObj) {
@@ -527,60 +663,159 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
-  private getLists() {
+  private async getLists() {
+    try {
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
+      }
+      this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
+      this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
+      this.listQuery.recordNo !== '' && (params.recordNo = this.listQuery.recordNo)
+      this.listQuery.businessNo !== '' && (params.businessNo = this.listQuery.businessNo)
+      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
+        params.driverCity = this.listQuery.driverCity[1]
+      }
+      this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = +this.listQuery.monthBillDate)
+      this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
+
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let departureDateStart = new Date(this.listQuery.time[0])
+        let departureDateEnd = new Date(this.listQuery.time[1])
+        params.departureDateStart = departureDateStart.setHours(0, 0, 0)
+        params.departureDateEnd = departureDateEnd.setHours(23, 59, 59)
+      }
+      if (this.listQuery.createTime && this.listQuery.createTime.length > 1) {
+        let createDateStart = new Date(this.listQuery.createTime[0])
+        let createDateEnd = new Date(this.listQuery.createTime[1])
+        params.createDateStart = createDateStart.setHours(0, 0, 0)
+        params.createDateEnd = createDateEnd.setHours(23, 59, 59)
+      }
+
+      let { data: res } = await GetFreightChargeList(params)
+      if (res.success) {
+        this.tableData = res.data || []
+        res.page = await HandlePages(res.page)
+        this.page.total = res.page.total
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
+    }
   }
   // 更多操作
   private handleCommandChange(key:string, row:any) {
-    if (key === '1') { // 查看流水
-      console.log(`查看流水`)
-    } else if (key === '2') { // 司机对账
-      console.log(`司机对账`)
-    } else if (key === '3') { // 账单下载
-      console.log(`账单下载`)
+    if (key === '1') { // 标记收款
+      this.dialogTit = '标记已收款'
+      this.dialogFormItem = []
+      this.resetDialogForm()
+      this.dialogForm.recordNo = row.recordNo
+      this.dialogForm.businessNo = row.businessNo
+      this.dialogForm.amount = row.amount
+      this.ids = [row.id]
+      setTimeout(() => {
+        this.dialogFormItem.push(...this.dialogItem)
+        this.showDialog = true
+      }, 20)
     }
+  }
+  // 重置弹框表单
+  resetDialogForm() {
+    this.dialogForm.recordNo = ''
+    this.dialogForm.businessNo = ''
+    this.dialogForm.amount = ''
+    this.dialogForm.fileUrl = ''
+    this.dialogForm.remark = ''
+  }
+  // 上传文件
+  async uploadFile(file:any) {
+    try {
+      let params = {
+        expire: -1,
+        folder: 'img',
+        isEncode: true
+      }
+      let formData = new FormData()
+      formData.append('file', file.file)
+      let { data: res } = await Upload(params, formData)
+      if (res.success) {
+        this.dialogForm.fileUrl = res.data.url
+        this.$message.success('上传成功')
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`upload fail:${err}`)
+    }
+  }
+  // 上传文件前的校验
+  beforeFileUpload(file:any) {
+    this.filelist = []
+    const isType = file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1
+    const isSize = file.size / 1024 / 1024
+    if (isType) {
+      this.$message.error('上传文件只能是 .rar .zip .doc .docx jpg等 格式!')
+      return false
+    }
+    if (isSize > 10) {
+      this.$message.error('上传文件大小不能超过 10MB!')
+      return false
+    } else if (isSize <= 0) {
+      this.$message.error('上传文件大小应该大于 0MB!')
+      return false
+    }
+    return true
   }
   // 确认弹窗
   private handlePassClick(valid: any) {
-    console.log('xxxx:', valid)
+    this.saveData()
   }
+  // 弹框确认按钮
+  async saveData() {
+    try {
+      this.submitLoading = true
+      let params:IState = {
+        fileUrl: this.dialogForm.fileUrl,
+        ids: this.ids
+      }
+      this.dialogForm.remark && (params.remark = this.dialogForm.remark)
+      let { data: res } = await ReceiveFreightChargeList(params)
+      if (res.success) {
+        this.showDialog = false
+        this.$message.success('操作已收款成功')
+        this.page.page = 1
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`save data fail:${err}`)
+    } finally {
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
+    }
+  }
+  // 弹框的确定按钮
   private async confirm(done: any) {
     ((this.$refs.dialogForm) as any).submitForm()
   }
   // 关闭弹窗清除数据
   private handleClosed() {
-    console.log('关闭弹窗清楚数据')
+    this.resetDialogForm()
+    this.ids = [];
+    (this.$refs.freighForm as any).toggleRowSelection();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
-  private customUpload(param: any) {
-    // 自定义上传
-    const formData = new FormData()
-    formData.append('file', param.file)
-    fileUpload(formData)
-      .then(({ data } : any) => {
-        if (data.success) {
-          this.$message.success('上传成功')
-        } else {
-          this.fileList = []
-          this.$message({
-            showClose: true,
-            duration: 0,
-            message: data.errorMsg,
-            type: 'error'
-          })
-        }
-      })
-      .catch(() => {
-        this.fileList = []
-      })
-  }
-  private handleRemove(file: any, fileList: any) {
-    this.fileList = fileList
-  }
-  private handleChange(file: any, fileList: any) {
-    this.fileList = fileList.slice(-3)
-  }
-  private handleExceed(files: any, fileList: any) {
-    this.$message.warning(`当前限制选择 1 个文件`)
-  }
+
   // table选择框
   private handleSelectionChange(val: any) {
     this.multipleSelection = val
@@ -588,46 +823,165 @@ export default class extends Vue {
   // 批量操作
   private handleOlClick(item: any) {
     const { key } = item
-    if (key === '3') {
-      if (this.multipleSelection.length > 0) {
-        this.drawer = true
-      } else {
-        this.$message.error('请先选择')
-      }
-    } else if (key === '2') {
+    if (key === '2') {
       (this.$refs.freighForm as any).toggleRowSelection()
     } else if (key === '1') {
       if (this.multipleSelection.length === 0) {
         this.$message.error('请先选择')
         return
       }
-      this.dialogTit = '批量标记收款'
+      this.resetDialogForm()
+      this.ids = this.multipleSelection.map(item => item.id)
+      this.dialogTit = '批量标记已收款'
       this.showDialog = true
-      this.dialogItem = this.dialogItem.slice(3)
+      this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-  // 关闭查看已选
-  private changeDrawer(val: any) {
-    this.drawer = val
+  // 获取调整原因
+  async getSubjectList() {
+    try {
+      let { data: res } = await GetSubjectList()
+      if (res.success) {
+        let subjectArr = res.data.map((item:any) => {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+        subjectArr.unshift({
+          label: '全部',
+          value: ''
+        })
+        this.subjectOptions.push(...subjectArr)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get subject list fail:${err}`)
+    }
   }
+  // 获取客户城市
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
+    try {
+      if (node.level === 0) {
+        let nodes = await this.areaAddress({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+  // 获取大区列表
+  private async areaAddress(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item: any) {
+          return {
+            value: item.id,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+  // 根据大区获取城市列表
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
+  // 获取业务线
+  private async getDutyListByLevel() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
+        this.dutyListOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get duty list fail:${err}`)
+    }
+  }
+  // 获取加盟经理列表
+  async getGmLists() {
+    try {
+      let len:number = this.gmIdOptions.length
+      if (len > 0) {
+        this.gmIdOptions.splice(0, len)
+      }
+      let params:IState = {
+        roleTypes: [1],
+        uri: '/v2/driverBilling/freightCharge/queryGM'
+      }
+      this.listQuery.businessType !== '' && (params.productLine = this.listQuery.businessType)
+      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 1) {
+        params.cityCode = this.listQuery.driverCity[1]
+      }
 
-  // 删除选中项目
-  private deletDrawerList(item: any, i: any) {
-    let arr: any[] = [item];
-    (this.$refs.freighForm as any).toggleRowSelection(arr)
-    if (this.multipleSelection.length === 0) {
-      this.drawer = false
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.name,
+          value: item.id
+        }))
+        this.gmIdOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get gm list fail:${err}`)
     }
+  }
+  mounted() {
+    if (this.$route.query.driverId) {
+      this.listQuery.driverId = this.$route.query.driverId
+    }
+    if (this.$route.query.monthBillDate) {
+      this.listQuery.monthBillDate = this.$route.query.monthBillDate
+    }
+    this.getLists()
+    this.getDutyListByLevel()
+    this.getSubjectList()
+    this.getGmLists()
   }
 }
 </script>
 <style lang="scss" scoped>
-  .m15 {
-     margin: 15px;
-  }
   .DriverFreightBill{
-    background: #ffffff;
-    border-radius: 8px;
     .btnPc {
        display: flex;
        flex-flow: row nowrap;
@@ -652,6 +1006,23 @@ export default class extends Vue {
         font-size:14px;
         color:#666;
       }
+    }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .table_box {
+      padding: 30px 30px 0px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
   }
 </style>

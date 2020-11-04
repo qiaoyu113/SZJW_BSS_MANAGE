@@ -42,6 +42,10 @@ export default {
     driverFreightList: 'driverFreightList',
     driverFreightBillList: 'driverFreightBillList',
     driverFreightMonthBill: 'driverFreightMonthBill',
+    customerFreightAccount: 'customerFreightAccount',
+    customerFreightList: 'customerFreightList',
+    customerFreightBillList: 'customerFreightBillList',
+    customerFreightMonthBill: 'customerFreightMonthBill',
     userManage: 'UserManage',
     createUser: 'createUser',
     editUser: 'editUser',
@@ -151,7 +155,9 @@ export default {
     billingAdjust: 'billingAdjust',
     billingCreate: 'billingCreate',
     financialFlow: 'financialFlow',
-    orderList: 'orderList'
+    orderList: 'orderList',
+    adjustmentList: 'adjustmentList',
+    configManager: 'configManager'
   },
   navbar: {
     logOut: 'Log Out',

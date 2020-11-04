@@ -11,6 +11,11 @@ export default {
     refundDetail: '退费详情',
     refundApply: '申请退费',
     refundAudit: '审核退费',
+    payFee: '缴费管理',
+    payDetail: '缴费详情',
+    payAudit: '缴费审核',
+    addPay: '新建缴费',
+    wtAcountList: '梧桐账户列表',
     driverList: '司机列表',
     editDriver: '编辑司机',
     followDriver: '跟进司机',
@@ -63,6 +68,10 @@ export default {
     driverFreightList: '司机运费列表',
     driverFreightBillList: '司机运费流水',
     driverFreightMonthBill: '司机月账单列表',
+    customerFreightAccount: '客户运费账户',
+    customerFreightList: '客户运费列表',
+    customerFreightBillList: '客户运费流水',
+    customerFreightMonthBill: '客户月账单列表',
     systemTitle: '系统管理',
     userManage: '用户管理',
     createUser: '创建账号',
@@ -166,7 +175,9 @@ export default {
     billingAdjust: '计费调整',
     billingCreate: 'SOP计费',
     financialFlow: '司机财务流水管理',
-    orderList: '订单管理'
+    orderList: '订单管理',
+    adjustmentList: '司机运费调整',
+    configManager: '配置管理'
   },
   navbar: {
     logOut: '退出登录',

@@ -8,27 +8,31 @@ const driverFreight: RouteConfig = {
   name: 'DriverFreightAccount',
   meta: {
     title: 'driverFreightAccount',
-    icon: 'driver',
-    apiUrl: 'root'
+    icon: 'driverFreight',
+    // apiUrl: 'root'
+    apiUrl: [
+      '/v2/driverBilling/freightCharge/list', '/v2/driverBilling/monthlyBill/list',
+      '/v2/driverBilling/shippingChange/list'
+    ]
   },
   children: [
-    // {
-    //   path: 'list',
-    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightList.vue'),
-    //   name: 'DriverFreightList',
-    //   meta: {
-    //     apiUrl: 'root',
-    //     title: 'driverFreightList',
-    //     noCache: false
-    //   }
-    // },
-    // FreightBillList
+    {
+      path: 'list',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightList.vue'),
+      name: 'DriverFreightList',
+      meta: {
+        hidden: true,
+        apiUrl: 'root',
+        title: 'driverFreightList',
+        noCache: false
+      }
+    },
     {
       path: 'bill',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightBill.vue'),
       name: 'DriverFreightBillList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/driverBilling/freightCharge/list',
         title: 'driverFreightBillList',
         noCache: false
       }
@@ -38,8 +42,18 @@ const driverFreight: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightMonthBill.vue'),
       name: 'DriverFreightMonthBill',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/driverBilling/monthlyBill/list',
         title: 'driverFreightMonthBill',
+        noCache: false
+      }
+    },
+    {
+      path: 'adjustmentList',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/AdjustmentList.vue'),
+      name: 'AdjustmentList',
+      meta: {
+        apiUrl: '/v2/driverBilling/shippingChange/list',
+        title: 'adjustmentList',
         noCache: false
       }
     }

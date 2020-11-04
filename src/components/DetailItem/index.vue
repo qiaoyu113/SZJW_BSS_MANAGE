@@ -27,9 +27,10 @@ import { SettingsModule } from '@/store/modules/settings'
 })
 export default class extends Vue {
   @Prop({ default: '' }) private name: any; // 默认无法识别显示空
+  @Prop({ default: false }) private row: any; // 不换行
   @Prop({ default: '暂无数据' }) private value!: string | number; // 默认无法识别显示空type
   @Prop({ default: '' }) private type: any; // 默认无法识别显示空
-  private valueName: any = ''
+  private valueName: any = '';
 
   // created() {
   //   let val = this.value.toString()
@@ -40,7 +41,7 @@ export default class extends Vue {
   //   }
   // }
   @Watch('value', { deep: true, immediate: true })
-  changeVal(val:any) {
+  changeVal(val: any) {
     if (!val) {
       this.valueName = '暂无数据'
     } else {
@@ -59,7 +60,6 @@ export default class extends Vue {
 <style lang="scss" scope>
 .DetailItem {
   width: 100%;
-  // display: flex;
   padding: 0 15px 10px;
   box-sizing: border-box;
   .detail-title {
@@ -85,25 +85,25 @@ export default class extends Vue {
 </style>
 
 <style lang="scss" scope>
-.DetailItem-m{
+.DetailItem-m {
+  width: 100%;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #f8f9fa;
+  .detail-title {
     width: 100%;
-    padding: 10px 14px;
+    font-size: 12px;
+    color: #666;
+    font-weight: 400;
+    text-align: left;
+    padding-right: 15px;
+    padding-bottom: 10px;
     box-sizing: border-box;
-    border-bottom: 1px solid #F8F9FA;
-    .detail-title{
-        width: 100%;
-        font-size: 12px;
-        color: #666;
-        font-weight: 400;
-        text-align: left;
-        padding-right: 15px;
-        padding-bottom: 10px;
-        box-sizing: border-box;
-    }
-    .detail-value{
-        width: 100%;
-        font-size: 14px;
-        font-weight: 400;
-    }
+  }
+  .detail-value {
+    width: 100%;
+    font-size: 14px;
+    font-weight: 400;
+  }
 }
 </style>
