@@ -6,6 +6,8 @@ const driverFix = '/business_center'
 const billFix = '/bill_center'
 const wayBillFix = '/waybill'
 
+const localMock = '/local'
+
 /**
  * XXXX
  */
@@ -198,6 +200,36 @@ export const payAudit = (params: any) =>
     method: 'get',
     params
   })
+  // 获取计费管理列表
+export const GetChargingList = (params:any) =>
+  request({
+    url: `${localMock}/getChargingList`,
+    method: 'get',
+    params
+  })
+
+// 获取计费管理详情
+export const GetChargingDetail = (params:any) =>
+  request({
+    url: `${localMock}/getChargingDetail`,
+    method: 'get',
+    params
+  })
+// 计费管理修改状态
+export const ChangeChargingStatus = (data:any) =>
+  request({
+    url: `${localMock}/changeChargingStatus`,
+    method: 'post',
+    data
+  })
+
+// 计费管理操作日志
+export const GetChargingLog = (params:any) =>
+  request({
+    url: `${localMock}/getChargingLog`,
+    method: 'get',
+    params
+  })
   // 计费管理-新建
 export const AddCharging = (data:any) =>
   request({
@@ -205,7 +237,8 @@ export const AddCharging = (data:any) =>
     method: 'post',
     data
   })
-  // 计费管理-调整
+
+// 计费管理-调整
 export const EditCharging = (data:any) =>
   request({
     url: `${localMock}/editCharging`,
