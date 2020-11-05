@@ -247,7 +247,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户名称:',
+      label: '客户名称',
       key: 'customerName'
     },
     {
@@ -257,7 +257,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户编号:',
+      label: '客户编号',
       key: 'customerId'
     },
     {
@@ -267,7 +267,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '客户属性:',
+      label: '客户属性',
       key: 'customerProperty',
       options: [
         {
@@ -291,7 +291,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '流水编号:',
+      label: '流水编号',
       key: 'recordNo'
     },
     {
@@ -301,7 +301,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '变动类型:',
+      label: '变动类型',
       key: 'subject',
       options: this.subjectOptions
     },
@@ -312,7 +312,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -322,7 +322,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '项目名称:',
+      label: '项目名称',
       key: 'projectName'
     },
     {
@@ -332,7 +332,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '出车单编号:',
+      label: '出车单编号',
       key: 'businessNo'
     },
     {
@@ -342,7 +342,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否已付款:',
+      label: '是否已付款',
       key: 'paymentReceivedFlag',
       options: [
         {
@@ -370,7 +370,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '出车日期:',
+      label: '出车日期',
       key: 'departureDate'
     },
     {
@@ -384,7 +384,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '创建时间:',
+      label: '创建时间',
       key: 'createDate'
     }
   ]

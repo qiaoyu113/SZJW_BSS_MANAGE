@@ -10,7 +10,7 @@
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
-      label-width="80px"
+      label-width="140px"
       class="p15 SuggestForm"
       :pc-col="8"
     >
@@ -363,8 +363,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '所属城市:',
-      w: '100px',
+      label: '所属城市',
       key: 'city',
       listeners: {
         'change': this.resetGmId
@@ -377,8 +376,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      w: '100px',
-      label: '业务线:',
+      label: '业务线',
       key: 'busiType',
       options: this.dutyListOptions,
       listeners: {
@@ -392,26 +390,23 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '所属加盟经理:',
-      w: '100px',
+      label: '所属加盟经理',
       key: 'gmId',
       type: 'gmId'
     },
     {
       type: 'driverCode',
       slot: true,
-      label: '司机姓名(司机编号):',
-      w: '160px'
+      label: '司机姓名(司机编号)'
     },
     {
       type: 3,
-      col: 10,
+      col: 8,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true
       },
-      label: '业务发生时间:',
-      w: '120px',
+      label: '业务发生时间',
       key: 'time'
     },
     {

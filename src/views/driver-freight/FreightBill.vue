@@ -277,7 +277,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -294,7 +294,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '司机城市:',
+      label: '司机城市',
       key: 'driverCity',
       listeners: {
         'change': this.resetGmId
@@ -307,7 +307,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '业务线:',
+      label: '业务线',
       key: 'businessType',
       options: this.dutyListOptions,
       listeners: {
@@ -317,7 +317,7 @@ export default class extends Vue {
     {
       type: 'gmId',
       slot: true,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmId'
     },
     {
@@ -327,7 +327,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否已收款:',
+      label: '是否已收款',
       key: 'paymentReceivedFlag',
       options: [
         {
@@ -351,7 +351,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '流水编号:',
+      label: '流水编号',
       key: 'recordNo'
     },
     {
@@ -361,7 +361,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '出车单编号:',
+      label: '出车单编号',
       key: 'businessNo'
     },
     {
@@ -371,7 +371,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '变动类型:',
+      label: '变动类型',
       key: 'subject',
       options: this.subjectOptions
     },
@@ -386,7 +386,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '出车日期:',
+      label: '出车日期',
       key: 'time'
     },
     {
@@ -400,7 +400,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '创建时间:',
+      label: '创建时间',
       key: 'createTime'
     }
   ]
