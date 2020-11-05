@@ -123,7 +123,7 @@
           </template>
           <template slot="desc">
             <div class="subBtn mt0 desc">
-              须知:给某调业务线勾选肥瘦标签,代表该业务线司机可见该肥瘦类型线路
+              须知:给某条业务线勾选肥瘦标签,代表该业务线司机可见该肥瘦类型线路
             </div>
           </template>
           <template slot="validator" />
