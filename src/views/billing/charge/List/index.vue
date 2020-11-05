@@ -403,17 +403,26 @@ export default class extends Vue {
   handleCommandChange(key:string, row:any) {
     if (key === 'adjust') { // 调整
       this.$router.push({
-        path: '/driveraccount/billingAdjust'
+        path: '/driveraccount/billingAdjust',
+        query: {
+          id: row.id
+        }
       })
     } else if (key === 'log') { // 日志
       this.$router.push({
-        path: '/driveraccount/billingLog'
+        path: '/driveraccount/billingLog',
+        query: {
+          id: row.id
+        }
       })
     } else if (key === 'status') { // 状态
       this.changeStatus(row)
     } else if (key === 'detail') { // 详情
       this.$router.push({
-        path: '/driveraccount/billingDetail'
+        path: '/driveraccount/billingDetail',
+        query: {
+          id: row.id
+        }
       })
     }
   }

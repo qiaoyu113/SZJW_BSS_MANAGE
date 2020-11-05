@@ -42,9 +42,9 @@
         label-width="100px"
         @onPass="handlePassClick1"
       >
-        <template slot="o">
+        <template slot="fixedAmount">
           <el-input
-            v-model="listQuery.o"
+            v-model="listQuery.fixedAmount"
             v-only-number="{min: 0, max: 999999.99, precision: 2}"
             type="text"
             placeholder="请输入"
@@ -54,9 +54,9 @@
             </template>
           </el-input>
         </template>
-        <template slot="p">
+        <template slot="serviceRate">
           <el-input
-            v-model="listQuery.p"
+            v-model="listQuery.serviceRate"
             v-only-number="{min: 0, max: 100, precision: 2}"
             type="text"
             placeholder="请输入"
@@ -66,9 +66,9 @@
             </template>
           </el-input>
         </template>
-        <template slot="q">
+        <template slot="freightRate">
           <el-input
-            v-model="listQuery.q"
+            v-model="listQuery.freightRate"
             v-only-number="{min: 0, max: 100, precision: 2}"
             type="text"
             placeholder="请输入"
@@ -102,6 +102,8 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { GetDutyListByLevel } from '@/api/common'
+import { AddCharging, EditCharging, GetChargingDetail } from '@/api/driver-account'
+import { delayTime } from '@/settings'
 interface IState {
   [key: string]: any;
 }
@@ -116,14 +118,16 @@ export default class extends Vue {
   // 业务线列表
   private busiType:IState[] = [];
   private listQuery:IState = {
-    b: 'SOP计费',
-    c: '',
-    d: '',
-    e: '',
-    f: 1,
-    o: '',
-    p: '',
-    q: ''
+    id: '',
+    chargingType: 1,
+    sopType: '',
+    sopDesc: '',
+    busiType: '',
+    remark: '',
+    deductionType: '',
+    fixedAmount: '',
+    serviceRate: '',
+    freightRate: ''
   }
   private formItem:any[] = [
     {
@@ -134,7 +138,7 @@ export default class extends Vue {
         disabled: true,
         clearable: true
       },
-      key: 'b',
+      key: 'chargingType',
       options: [
         {
           value: 1,
@@ -150,7 +154,7 @@ export default class extends Vue {
         maxlength: 20,
         clearable: true
       },
-      key: 'c'
+      key: 'sopType'
     },
     {
       type: 1,
@@ -163,12 +167,12 @@ export default class extends Vue {
         rows: '5',
         clearable: true
       },
-      key: 'd'
+      key: 'sopDesc'
     },
     {
       type: 2,
       label: '业务线:',
-      key: 'e',
+      key: 'busiType',
       tagAttrs: {
         placeholder: '请选择',
         clearable: true
@@ -193,7 +197,7 @@ export default class extends Vue {
     {
       type: 2,
       label: '扣款类型:',
-      key: 'f',
+      key: 'deductionType',
       tagAttrs: {
         placeholder: '请输入',
         clearable: true,
@@ -219,34 +223,34 @@ export default class extends Vue {
     },
     {
       label: '固定金额',
-      key: 'o',
-      type: 'o',
+      key: 'fixedAmount',
+      type: 'fixedAmount',
       slot: true
     }
   ]
   private rules:IState = {
-    b: [
+    chargingType: [
       { required: true, message: '', trigger: 'blur' }
     ],
-    c: [
+    sopType: [
       { required: true, message: '请输入SOP类型！', trigger: 'blur' }
     ],
-    d: [
+    sopDesc: [
       { required: true, message: '请输入SOP描述！', trigger: 'blur' }
     ],
-    e: [
-      { required: true, message: '请选择加盟类型！', trigger: 'blur' }
+    busiType: [
+      { required: true, message: '请选择业务线！', trigger: 'blur' }
     ],
-    f: [
+    deductionType: [
       { required: true, message: '请选择扣款类型！', trigger: 'blur' }
     ],
-    o: [
+    fixedAmount: [
       { required: true, message: '请输入固定金额！', trigger: 'blur' }
     ],
-    p: [
+    serviceRate: [
       { required: true, message: '请输入运费比例！', trigger: 'blur' }
     ],
-    q: [
+    freightRate: [
       { required: true, message: '请输入服务费比例！', trigger: 'blur' }
     ]
   }
@@ -263,33 +267,92 @@ export default class extends Vue {
     if (val === 1) {
       this.formItem1.splice(1, 1, {
         label: '固定金额',
-        key: 'o',
-        type: 'o',
+        key: 'fixedAmount',
+        type: 'fixedAmount',
         slot: true
       })
     } else if (val === 2) {
       this.formItem1.splice(1, 1, {
         label: '运费比例',
-        key: 'p',
-        type: 'p',
+        key: 'serviceRate',
+        type: 'serviceRate',
         slot: true
       })
     } else if (val === 3) {
       this.formItem1.splice(1, 1, {
         label: '服务费比例',
-        key: 'q',
-        type: 'q',
+        key: 'freightRate',
+        type: 'freightRate',
         slot: true
       })
     }
   }
   handlePassClick(valid:boolean) {
-    console.log('xxxx:', valid)
     this.formValidate = valid
   }
+  // 表单验证通过
   handlePassClick1(valid:boolean) {
     if (this.formValidate) {
-      console.log('yyyyy:', valid)
+      if (this.listQuery.id) {
+        this.update()
+      } else {
+        this.save()
+      }
+    }
+  }
+  // 调整
+  async update() {
+    try {
+      let params:IState = {
+        id: this.listQuery.id,
+        chargingType: this.listQuery.chargingType,
+        sopType: this.listQuery.sopType,
+        sopDesc: this.listQuery.sopDesc,
+        busiType: this.listQuery.busiType,
+        deductionType: this.listQuery.deductionType
+      }
+      this.listQuery.remark !== '' && (params.remark = this.listQuery.remark)
+      this.listQuery.fixedAmount !== '' && (params.fixedAmount = this.listQuery.fixedAmount)
+      this.listQuery.serviceRate !== '' && (params.serviceRate = this.listQuery.serviceRate)
+      this.listQuery.freightRate !== '' && (params.freightRate = this.listQuery.freightRate)
+      let { data: res } = await EditCharging(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.handleBackClick()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`save fail:${err}`)
+    }
+  }
+  // 新建
+  async save() {
+    try {
+      let params:IState = {
+        chargingType: this.listQuery.chargingType,
+        sopType: this.listQuery.sopType,
+        sopDesc: this.listQuery.sopDesc,
+        busiType: this.listQuery.busiType,
+        deductionType: this.listQuery.deductionType
+      }
+      this.listQuery.remark !== '' && (params.remark = this.listQuery.remark)
+      this.listQuery.fixedAmount !== '' && (params.fixedAmount = this.listQuery.fixedAmount)
+      this.listQuery.serviceRate !== '' && (params.serviceRate = this.listQuery.serviceRate)
+      this.listQuery.freightRate !== '' && (params.freightRate = this.listQuery.freightRate)
+      let { data: res } = await AddCharging(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.handleBackClick()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`save fail:${err}`)
     }
   }
   // 表单校验
@@ -319,8 +382,42 @@ export default class extends Vue {
       console.log(`get busiType fail:${err}`)
     }
   }
+  // 获取详情
+  async getDetail() {
+    try {
+      let params:IState = {
+        id: this.listQuery.id
+      }
+      let { data: res } = await GetChargingDetail(params)
+      if (res.success) {
+        let result = res.data
+        this.listQuery = {
+          ...this.listQuery,
+          ...{
+            chargingType: result.chargingType,
+            sopType: result.sopType,
+            sopDesc: result.sopDesc,
+            busiType: result.busiType,
+            remark: result.remark,
+            deductionType: result.deductionType,
+            fixedAmount: result.fixedAmount,
+            serviceRate: result.serviceRate,
+            freightRate: result.freightRate
+          }
+        }
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get detail fail:${err}`)
+    }
+  }
   mounted() {
     this.getBusiType()
+    if (this.$route.query.id) {
+      this.listQuery.id = this.$route.query.id
+      this.getDetail()
+    }
   }
 }
 </script>
