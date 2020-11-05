@@ -255,7 +255,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'sopTypeName',
+      key: 'sopType',
       label: 'SOP类型',
       'min-width': '140px'
     },
