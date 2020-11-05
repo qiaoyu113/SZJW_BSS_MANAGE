@@ -285,13 +285,11 @@ export default class extends Vue {
       label: '司机姓名(司机编号)',
       key: 'driverId',
       col: 8,
-      // w: '160px',
       slot: true
     },
     {
       type: 4,
       col: 12,
-      // w: '150px',
       key: 'balance',
       label: '账户余额低于500元',
       tagAttrs: {
