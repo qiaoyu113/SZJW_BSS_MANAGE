@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// const prefix = '/mock/112'
+const payFix = '/mock/112'
 const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
@@ -171,6 +171,30 @@ export const getListAll = () =>
 export const GetChargeAmountByChargeId = (params:any) =>
   request({
     url: `${prefix}/v2/wt-driver-account/billing/getChargeAmountByChargeId`,
+    method: 'get',
+    params
+  })
+
+// 缴费管理列表
+export const getPayList = (data: any) =>
+  request({
+    url: `${payFix}/v2/wt-driver-account/pay/list`,
+    method: 'post',
+    data
+  })
+
+// 缴费详情
+export const payDetail = (params: any) =>
+  request({
+    url: `${payFix}/billing/paydetail`,
+    method: 'get',
+    params
+  })
+
+// 缴费审核
+export const payAudit = (params: any) =>
+  request({
+    url: `${payFix}/billing/payAudit`,
     method: 'get',
     params
   })

@@ -94,15 +94,18 @@
         <template v-slot:createDate="scope">
           {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
+        <template v-slot:isReceipt="scope">
+          {{ scope.row.isReceipt ? '是' : '否' }}
+        </template>
         <template v-slot:op="scope">
           <div>
             <span
               class="doItem"
-              @click="goRoute('payDetail',scope.row.driverId)"
+              @click="goRoute('payDetail',scope.row.payId)"
             >详情</span>
             <span
               class="doItem"
-              @click="goRoute('payAudit',scope.row.driverId)"
+              @click="goRoute('payAudit',scope.row.payId)"
             >审核</span>
           </div>
         </template>
@@ -117,10 +120,10 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import { getLabel, phoneRegExp, IdRegExp } from '@/utils/index.ts'
-import { GetConfirmInfoList } from '@/api/freight'
+import { getPayList } from '@/api/driver-account'
 import { delayTime } from '@/settings.ts'
 import { HandlePages, phoneReg } from '@/utils/index'
-import { GetManagerLists, GetOpenCityData } from '@/api/common'
+import { getSpecifiedUserListByCondition, GetOpenCityData } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -242,6 +245,7 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请选择所属城市',
         filterable: true,
+        clearable: true,
         name: 'driverList_workCity_select'
       },
       options: this.workCityOptions
@@ -253,6 +257,8 @@ export default class extends Vue {
       label: '加盟经理',
       tagAttrs: {
         placeholder: '请选择加盟经理',
+        filterable: true,
+        clearable: true,
         name: 'driverList_gmId_select'
       },
       options: this.gmOptions
@@ -346,21 +352,23 @@ export default class extends Vue {
     },
     {
       key: 'orderId',
-      label: '订单编号'
+      label: '订单编号',
+      width: '120px'
     },
     {
-      key: 'cashMoney',
+      key: 'canExtractMoney',
       label: '可提现金额（元）',
       width: '120px'
     },
     {
-      key: 'dealMoney',
+      key: 'totalMoney',
       label: '本笔交易金额总计',
       width: '120px'
     },
     {
       key: 'isReceipt',
-      label: '是否开收据'
+      label: '是否开收据',
+      slot: true
     },
     {
       key: 'gmName',
@@ -426,9 +434,9 @@ export default class extends Vue {
   async getManagers() {
     try {
       let params = {
-        uri: '/v1/driver/getDriverList'
+        roleType: 1
       }
-      let { data: res } = await GetManagerLists(params)
+      let { data: res } = await getSpecifiedUserListByCondition(params)
       if (res.success) {
         let gms = res.data.map(function(item: any) {
           return {
@@ -492,7 +500,7 @@ export default class extends Vue {
         params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
         params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
       }
-      let { data: res } = await GetConfirmInfoList(params)
+      let { data: res } = await getPayList(params)
       this.listLoading = false
       if (res.success) {
         res.page = await HandlePages(res.page)
