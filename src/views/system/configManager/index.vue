@@ -353,7 +353,7 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
   get tableHeight() {
-    let otherHeight = 440
+    let otherHeight = 340
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   // 弹框即将关闭
@@ -471,7 +471,7 @@ export default class extends Vue {
           item.busi = true
           return item
         })
-        res.page = await HandlePages(res.page.total)
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)

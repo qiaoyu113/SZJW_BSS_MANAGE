@@ -69,7 +69,7 @@ export default class extends Vue {
     id: '',
     chargingCode: '',
     chargingTypeName: '',
-    sopTypeName: '',
+    sopType: '',
     busiTypeName: '',
     remark: '',
     deductionTypeName: '',
@@ -93,7 +93,7 @@ export default class extends Vue {
     {
       type: 7,
       label: 'SOP类型',
-      key: 'sopTypeName'
+      key: 'sopType'
     },
     {
       type: 7,
@@ -135,7 +135,7 @@ export default class extends Vue {
           ...{
             chargingCode: result.chargingCode,
             chargingTypeName: result.chargingTypeName,
-            sopTypeName: result.sopTypeName,
+            sopType: result.sopType,
             busiTypeName: result.busiTypeName,
             remark: result.remark,
             deductionTypeName: result.deductionTypeName,
