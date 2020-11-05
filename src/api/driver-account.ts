@@ -206,3 +206,17 @@ export const GetChargingLog = (params:any) =>
     method: 'get',
     params
   })
+  // 计费管理-新建
+export const AddCharging = (data:any) =>
+  request({
+    url: `${localMock}/addCharging`,
+    method: 'post',
+    data
+  })
+  // 计费管理-调整
+export const EditCharging = (data:any) =>
+  request({
+    url: `${localMock}/editCharging`,
+    method: 'post',
+    data
+  })
