@@ -1,5 +1,7 @@
 <template>
-  <div :class="isPC ? 'DetailItem' : 'DetailItem-m'">
+  <div
+    :class="isPC ? 'DetailItem' : 'DetailItem-m'"
+  >
     <div class="detail-title">
       {{ name }}
     </div>
@@ -27,7 +29,6 @@ import { SettingsModule } from '@/store/modules/settings'
 })
 export default class extends Vue {
   @Prop({ default: '' }) private name: any; // 默认无法识别显示空
-  @Prop({ default: false }) private row: any; // 不换行
   @Prop({ default: '暂无数据' }) private value!: string | number; // 默认无法识别显示空type
   @Prop({ default: '' }) private type: any; // 默认无法识别显示空
   private valueName: any = '';
