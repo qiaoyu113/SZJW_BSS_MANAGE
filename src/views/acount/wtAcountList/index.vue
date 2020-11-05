@@ -9,9 +9,9 @@
     <self-form
       :list-query="listQuery"
       :form-item="formItem"
-      label-width="100px"
+      label-width="160px"
+      size="small"
       class="p15"
-      height=""
     >
       <template
         slot="driverId"
@@ -242,7 +242,7 @@ export default class extends Vue {
       type: 8,
       key: 'workCity',
       col: 8,
-      w: '80px',
+      // w: '80px',
       label: '所属城市',
       tagAttrs: {
         placeholder: '请选择所属城市',
@@ -282,16 +282,14 @@ export default class extends Vue {
     },
     {
       type: 'driverId',
-      label: '司机姓名（司机编号）',
+      label: '司机姓名(司机编号)',
       key: 'driverId',
       col: 8,
-      w: '160px',
       slot: true
     },
     {
       type: 4,
       col: 12,
-      w: '150px',
       key: 'balance',
       label: '账户余额低于500元',
       tagAttrs: {

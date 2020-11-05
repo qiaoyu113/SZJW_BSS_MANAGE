@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// const prefix = '/mock/112'
+const payFix = '/mock/112'
 const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
