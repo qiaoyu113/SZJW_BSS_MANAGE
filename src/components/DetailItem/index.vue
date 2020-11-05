@@ -1,9 +1,8 @@
 <template>
   <div
     :class="isPC ? 'DetailItem' : 'DetailItem-m'"
-    :style="row ? norow : ''"
   >
-    <div :class="row ? 'detail-title norow' : 'detail-title'">
+    <div class="detail-title">
       {{ name }}
     </div>
     <img
@@ -30,15 +29,9 @@ import { SettingsModule } from '@/store/modules/settings'
 })
 export default class extends Vue {
   @Prop({ default: '' }) private name: any; // 默认无法识别显示空
-  @Prop({ default: false }) private row: any; // 不换行
   @Prop({ default: '暂无数据' }) private value!: string | number; // 默认无法识别显示空type
   @Prop({ default: '' }) private type: any; // 默认无法识别显示空
   private valueName: any = '';
-  private norow:any = {
-    width: 'auto !important',
-    display: 'flex',
-    alignItems: 'center'
-  }
 
   // created() {
   //   let val = this.value.toString()
@@ -88,9 +81,6 @@ export default class extends Vue {
     font-weight: 500;
     overflow-wrap: break-word;
     // line-height: 36px;
-  }
-  .norow{
-    padding-bottom: 0!important;
   }
 }
 </style>

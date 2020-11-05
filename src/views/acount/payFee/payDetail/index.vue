@@ -15,74 +15,64 @@
         </el-button>
       </template>
       <el-row>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="订单编号："
             :value="formData.orderId"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="司机姓名："
             :value="formData.driverName"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="司机编号："
             :value="formData.driverId"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="可提现金额："
             :value="formData.canExtractMoney"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="联系电话："
             :value="formData.phone"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="所属城市："
             :value="formData.workCityName"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="订单编号："
             :value="formData.orderId"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="加盟经理："
             :value="formData.gmName"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="是否开收据："
             :value="formData.isReceipt ? '是' : '否'"
-            row="true"
           />
         </el-col>
-        <el-col>
+        <el-col span="6">
           <DetailItem
             name="备注："
             :value="formData.remark"
-            row="true"
           />
         </el-col>
       </el-row>
