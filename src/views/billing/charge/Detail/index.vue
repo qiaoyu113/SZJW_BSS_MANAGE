@@ -18,10 +18,10 @@
       :md="true"
     >
       <self-form
+        label-position="top"
         :list-query="listQuery"
         :form-item="formItem"
         :m-block="true"
-        :pc-col="24"
         label-width="80px"
       />
     </SectionContainer>
@@ -30,9 +30,9 @@
       :md="true"
     >
       <self-form
+        label-position="top"
         :list-query="listQuery"
         :form-item="formItem1"
-        :pc-col="24"
         :m-block="true"
         label-width="90px"
       >
@@ -82,34 +82,34 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 7,
-      label: '计费编号:',
+      label: '计费编号',
       key: 'chargingCode'
     },
     {
       type: 7,
-      label: '计费类型:',
+      label: '计费类型',
       key: 'chargingTypeName'
     },
     {
       type: 7,
-      label: 'SOP类型:',
+      label: 'SOP类型',
       key: 'sopTypeName'
     },
     {
       type: 7,
-      label: '业务线:',
+      label: '业务线',
       key: 'busiTypeName'
     },
     {
       type: 7,
-      label: '备注:',
+      label: '备注',
       key: 'remark'
     }
   ];
   private formItem1:any[] = [
     {
       type: 7,
-      label: '扣款类型:',
+      label: '扣款类型',
       key: 'deductionTypeName'
     }
   ]
@@ -148,28 +148,28 @@ export default class extends Vue {
         if (this.listQuery.deductionType === 1) {
           this.formItem1.push({
             type: 'fixedAmount',
-            label: '固定金额:',
+            label: '固定金额',
             key: 'fixedAmount',
             slot: true
           })
         } else if (this.listQuery.deductionType === 2) {
           this.formItem1.push({
             type: 'serviceRate',
-            label: '服务费比例:',
+            label: '服务费比例',
             key: 'serviceRate',
             slot: true
           })
         } else if (this.listQuery.deductionType === 3) {
           this.formItem1.push({
             type: 'freightRate',
-            label: '运费比例:',
+            label: '运费比例',
             key: 'freightRate',
             slot: true
           })
         }
         this.formItem1.push({
           type: 7,
-          label: '计费状态:',
+          label: '计费状态',
           key: 'statusName'
         })
       } else {
