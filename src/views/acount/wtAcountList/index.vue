@@ -282,7 +282,7 @@ export default class extends Vue {
     },
     {
       type: 'driverId',
-      label: '司机姓名（司机编号）',
+      label: '司机姓名(司机编号)',
       key: 'driverId',
       col: 8,
       // w: '160px',
