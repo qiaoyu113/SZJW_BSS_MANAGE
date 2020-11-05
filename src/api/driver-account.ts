@@ -5,7 +5,6 @@ const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
 const wayBillFix = '/waybill'
-const localMock = '/local'
 
 /**
  * XXXX
@@ -176,33 +175,26 @@ export const GetChargeAmountByChargeId = (params:any) =>
     params
   })
 
-// 获取计费管理列表
-export const GetChargingList = (params:any) =>
+// 缴费管理列表
+export const getPayList = (data: any) =>
   request({
-    url: `${localMock}/getChargingList`,
-    method: 'get',
-    params
-  })
-
-// 获取计费管理详情
-export const GetChargingDetail = (params:any) =>
-  request({
-    url: `${localMock}/getChargingDetail`,
-    method: 'get',
-    params
-  })
-// 计费管理修改状态
-export const ChangeChargingStatus = (data:any) =>
-  request({
-    url: `${localMock}/changeChargingStatus`,
+    url: `${payFix}/v2/wt-driver-account/pay/list`,
     method: 'post',
     data
   })
 
-// 计费管理操作日志
-export const GetChargingLog = (params:any) =>
+// 缴费详情
+export const payDetail = (params: any) =>
   request({
-    url: `${localMock}/getChargingLog`,
+    url: `${payFix}/billing/paydetail`,
+    method: 'get',
+    params
+  })
+
+// 缴费审核
+export const payAudit = (params: any) =>
+  request({
+    url: `${payFix}/billing/payAudit`,
     method: 'get',
     params
   })
