@@ -103,7 +103,8 @@ export default class extends Vue {
     {
       type: 7,
       label: '备注',
-      key: 'remark'
+      key: 'remark',
+      col: 24
     }
   ];
   private formItem1:any[] = [
