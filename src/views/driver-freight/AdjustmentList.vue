@@ -256,7 +256,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '调整编号:',
+      label: '调整编号',
       key: 'changeId'
     },
     {
@@ -266,7 +266,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '调整原因:',
+      label: '调整原因',
       key: 'subject',
       options: this.subjectOptions
     },
@@ -277,7 +277,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -293,7 +293,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '司机城市:',
+      label: '司机城市',
       key: 'driverCity',
       listeners: {
         'change': this.resetGmId
@@ -306,7 +306,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '业务线:',
+      label: '业务线',
       key: 'businessType',
       options: this.dutyListOptions,
       listeners: {
@@ -316,7 +316,7 @@ export default class extends Vue {
     {
       type: 'gmId',
       slot: true,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmId'
     },
     {
@@ -326,7 +326,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机编号:',
+      label: '司机编号',
       key: 'driverId'
     },
     {
@@ -340,7 +340,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '创建时间:',
+      label: '创建时间',
       key: 'createTime'
     }
   ]

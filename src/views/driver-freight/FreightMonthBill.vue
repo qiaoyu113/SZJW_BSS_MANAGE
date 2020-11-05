@@ -311,7 +311,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '月账单编号:',
+      label: '月账单编号',
       key: 'monthBillId'
     },
     {
@@ -321,7 +321,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -337,7 +337,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '司机城市:',
+      label: '司机城市',
       key: 'driverCity',
       listeners: {
         'change': this.resetGmId
@@ -350,7 +350,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '业务线:',
+      label: '业务线',
       key: 'businessType',
       options: this.dutyListOptions,
       listeners: {
@@ -360,7 +360,7 @@ export default class extends Vue {
     {
       type: 'gmId',
       slot: true,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmId'
     },
     {
@@ -370,7 +370,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否封账:',
+      label: '是否封账',
       key: 'closeStatus',
       options: [
         {
@@ -389,14 +389,14 @@ export default class extends Vue {
     },
     {
       col: 8,
-      label: '月份:',
+      label: '月份',
       key: 'months',
       type: 'months',
       slot: true
     },
     {
       col: 20,
-      label: '对账状态:',
+      label: '对账状态',
       key: 'checkStatus',
       type: 'checkStatus',
       slot: true

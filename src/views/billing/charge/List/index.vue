@@ -11,6 +11,7 @@
       :list-query="listQuery"
       :form-item="formItem"
       :pc-col="8"
+      size="small"
       label-width="80px"
       class="p15"
     >
@@ -46,7 +47,7 @@
             size="small"
             type="primary"
             :plain="item.name !== listQuery.status"
-            @click="listQuery.status =item.name"
+            @click="handleSearchClick(item)"
           >
             {{ item.text }}
           </el-button>
@@ -69,6 +70,8 @@
       :index="false"
       :is-p30="false"
       :indexes="true"
+      :height="tableHeight"
+      :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
       :operation-list="[]"
       :table-data="tableData"
       :columns="columns"
@@ -141,6 +144,8 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { GetDutyListByLevel } from '@/api/common'
+import { GetChargingList, ChangeChargingStatus } from '@/api/driver-account'
+import { delayTime } from '@/settings'
 
 interface PageObj {
   page:Number,
@@ -164,6 +169,11 @@ export default class extends Vue {
   private listLoading:Boolean = false;
   // 查询表单
   private listQuery:IState = {
+    sopType: '',
+    chargingCode: '',
+    chargingType: '',
+    busiType: '',
+    time: [],
     status: ''
   }
   // 查询表单容器
@@ -175,8 +185,8 @@ export default class extends Vue {
         maxlength: 50,
         clearable: true
       },
-      label: 'SOP类型:',
-      key: 'a'
+      label: 'SOP类型',
+      key: 'sopType'
     },
     {
       type: 1,
@@ -185,8 +195,8 @@ export default class extends Vue {
         maxlength: 50,
         clearable: true
       },
-      label: '计费编号:',
-      key: 'b'
+      label: '计费编号',
+      key: 'chargingCode'
     },
     {
       type: 2,
@@ -194,8 +204,8 @@ export default class extends Vue {
         placeholder: '请选择',
         clearable: true
       },
-      label: '计费类型:',
-      key: 'c',
+      label: '计费类型',
+      key: 'chargingType',
       options: [
         {
           label: 'SOP计费',
@@ -209,8 +219,8 @@ export default class extends Vue {
         placeholder: '请选择',
         clearable: true
       },
-      label: '业务线:',
-      key: 'd',
+      label: '业务线',
+      key: 'busiType',
       options: this.busiType
     },
     {
@@ -220,8 +230,8 @@ export default class extends Vue {
         placeholder: '请选择',
         clearable: true
       },
-      label: '创建日期:',
-      key: 'f'
+      label: '创建日期',
+      key: 'time'
     },
     {
       type: 'mulBtn',
@@ -231,52 +241,57 @@ export default class extends Vue {
     }
   ]
   // 表格数据
-  private tableData:any[] = [
-    {
-      a: 1
-    }
-  ]
+  private tableData:IState[] = []
   // 表格列
   private columns:any[] = [
     {
-      key: 'a',
+      key: 'chargingCode',
       label: '计费编号',
       'min-width': '140px'
     },
     {
-      key: 'b',
+      key: 'chargingTypeName',
       label: '计费类型',
       'min-width': '140px'
     },
     {
-      key: 'c',
+      key: 'sopTypeName',
       label: 'SOP类型',
       'min-width': '140px'
     },
     {
-      key: 'd',
+      key: 'sopDesc',
       label: 'SOP描述',
-      'min-width': '200px'
+      'min-width': '200px',
+      'width': '240px',
+      attrs: {
+        'show-overflow-tooltip': true
+      }
     },
     {
-      key: 'e',
+      key: 'deductionTypeName',
       label: '扣款类型',
       'min-width': '140px'
     },
     {
-      key: 'f',
+      key: 'deductionStandard',
+      label: '扣款标准',
+      'min-width': '140px'
+    },
+    {
+      key: 'busiTypeName',
       label: '业务线',
       'min-width': '140px'
     },
     {
-      key: 'i',
+      key: 'statusName',
       label: '计费状态',
       'min-width': '140px'
     },
     {
-      key: 'h',
+      key: 'remark',
       label: '备注',
-      'min-width': '140px',
+      'width': '240px',
       attrs: {
         'show-overflow-tooltip': true
       }
@@ -285,7 +300,7 @@ export default class extends Vue {
       key: 'createDate',
       label: '创建日期',
       slot: true,
-      'min-width': '140px'
+      'width': '160px'
     },
     {
       key: 'op',
@@ -299,7 +314,7 @@ export default class extends Vue {
   private page :PageObj= {
     page: 1,
     limit: 30,
-    total: 100
+    total: 0
   }
   // 按钮组
   private btns:any[] = [
@@ -320,15 +335,30 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+  get tableHeight() {
+    let otherHeight = 440
+    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+  }
   // 重置表单
   handleResetClick() {
     this.listQuery = {
-
+      sopType: '',
+      chargingCode: '',
+      chargingType: '',
+      busiType: '',
+      time: [],
+      status: ''
     }
   }
   // 查询表单
   handleFilterClick() {
-
+    this.page.page = 1
+    this.getLists()
+  }
+  // 切换状态
+  handleSearchClick(item:IState) {
+    this.listQuery.status = item.name
+    this.handleFilterClick()
   }
   // 分页
   handlePageSize(page:PageObj) {
@@ -337,7 +367,37 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
-  getLists() {
+  async getLists() {
+    try {
+      this.listLoading = true
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
+      }
+      this.listQuery.sopType !== '' && (params.sopType = this.listQuery.sopType)
+      this.listQuery.chargingCode !== '' && (params.chargingCode = this.listQuery.chargingCode)
+      this.listQuery.chargingType !== '' && (params.chargingType = this.listQuery.chargingType)
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.status !== '' && (params.status = this.listQuery.status)
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let createStartDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
+        let createEndDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
+        params.createStartDate = createStartDate
+        params.createEndDate = createEndDate
+      }
+      let { data: res } = await GetChargingList(params)
+      if (res.success) {
+        this.tableData = res.data
+        res.page = await HandlePages(res.page)
+        this.page.total = res.page.total
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
+    }
   }
   // 更多操作
   handleCommandChange(key:string, row:any) {
@@ -350,7 +410,7 @@ export default class extends Vue {
         path: '/driveraccount/billingLog'
       })
     } else if (key === 'status') { // 状态
-      this.changeStatus()
+      this.changeStatus(row)
     } else if (key === 'detail') { // 详情
       this.$router.push({
         path: '/driveraccount/billingDetail'
@@ -358,16 +418,13 @@ export default class extends Vue {
     }
   }
   // 改变状态
-  changeStatus() {
-    this.$confirm('此操作将启用或禁用, 是否继续?', '提示', {
+  changeStatus(row:IState) {
+    this.$confirm(`此操作将${row.status === 1 ? '禁用' : '启用'}, 是否继续?`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      this.$message({
-        type: 'success',
-        message: '操作成功!'
-      })
+      this.changeChargingStatus(row)
     }).catch(() => {
       this.$message({
         type: 'info',
@@ -395,8 +452,29 @@ export default class extends Vue {
       console.log(`get busiType fail:${err}`)
     }
   }
+  // 切换状态
+  async changeChargingStatus(row:IState) {
+    try {
+      let params = {
+        id: row.id,
+        status: row.status === 1 ? 2 : 1
+      }
+      let { data: res } = await ChangeChargingStatus(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`change status fail:${err}`)
+    }
+  }
   mounted() {
     this.getBusiType()
+    this.getLists()
   }
 }
 </script>
