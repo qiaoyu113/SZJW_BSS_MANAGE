@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
-// const prefix = '/mock/112'
+const payFix = '/mock/112'
 const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
 const wayBillFix = '/waybill'
+const localMock = '/local'
 
 /**
  * XXXX
@@ -171,6 +172,37 @@ export const getListAll = () =>
 export const GetChargeAmountByChargeId = (params:any) =>
   request({
     url: `${prefix}/v2/wt-driver-account/billing/getChargeAmountByChargeId`,
+    method: 'get',
+    params
+  })
+
+// 获取计费管理列表
+export const GetChargingList = (params:any) =>
+  request({
+    url: `${localMock}/getChargingList`,
+    method: 'get',
+    params
+  })
+
+// 获取计费管理详情
+export const GetChargingDetail = (params:any) =>
+  request({
+    url: `${localMock}/getChargingDetail`,
+    method: 'get',
+    params
+  })
+// 计费管理修改状态
+export const ChangeChargingStatus = (data:any) =>
+  request({
+    url: `${localMock}/changeChargingStatus`,
+    method: 'post',
+    data
+  })
+
+// 计费管理操作日志
+export const GetChargingLog = (params:any) =>
+  request({
+    url: `${localMock}/getChargingLog`,
     method: 'get',
     params
   })

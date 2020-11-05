@@ -293,7 +293,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '月账单编号:',
+      label: '月账单编号',
       key: 'monthBillId'
     },
     {
@@ -303,7 +303,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户名称:',
+      label: '客户名称',
       key: 'customerName'
     },
     {
@@ -329,7 +329,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '上岗经理:',
+      label: '上岗经理',
       key: 'dutyManagerId',
       options: this.postManagerOptions
     },
@@ -340,7 +340,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '外线销售:',
+      label: '外线销售',
       key: 'lineSaleId',
       options: this.outsideSalesOptions
     },
@@ -351,7 +351,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否封账:',
+      label: '是否封账',
       key: 'closeStatus',
       options: [
         {
@@ -375,19 +375,19 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '项目名称:',
+      label: '项目名称',
       key: 'projectId',
       options: this.projectListOptions
     },
     {
-      col: 10,
-      label: '月份:',
+      col: 8,
+      label: '月份',
       type: 'monthBillDate',
       slot: true
     },
     {
       col: 16,
-      label: '对账状态:',
+      label: '对账状态',
       type: 'checkStatus',
       slot: true
     },
