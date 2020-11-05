@@ -441,20 +441,20 @@ export default class extends Vue {
     {
       type: 7,
       key: 'driverId',
-      label: '司机编号',
+      label: '司机编号：',
       col: 24
     },
     {
       type: 7,
       key: 'name',
-      label: '司机姓名',
+      label: '司机姓名：',
       col: 24
     },
     {
       type: 2,
       key: 'orderId',
       col: 24,
-      label: '选择订单',
+      label: '选择订单：',
       tagAttrs: {
         placeholder: '请选择订单'
       },
@@ -463,24 +463,24 @@ export default class extends Vue {
     {
       type: 7,
       key: 'orderStatusName',
-      label: '订单状态',
+      label: '订单状态：',
       col: 24
     },
     {
       type: 7,
       key: 'freezingMoney',
-      label: '冻结金额',
+      label: '冻结金额：',
       col: 24
     },
     {
       type: 7,
       key: 'canExtractMoney',
-      label: '可提现金额',
+      label: '可提现金额：',
       col: 24
     },
     {
       type: 'applyForAccountFrozen',
-      label: '申请冻结金额',
+      label: '申请冻结金额：',
       key: 'applyForAccountFrozen',
       col: 24,
       slot: true
@@ -488,7 +488,7 @@ export default class extends Vue {
     {
       type: 1,
       key: 'reason',
-      label: '冻结原因',
+      label: '冻结原因：',
       col: 24,
       tagAttrs: {
         placeholder: '请填写最多50个字',
@@ -504,20 +504,20 @@ export default class extends Vue {
     {
       type: 7,
       key: 'driverId',
-      label: '司机编号',
+      label: '司机编号：',
       col: 24
     },
     {
       type: 7,
       key: 'name',
-      label: '司机姓名',
+      label: '司机姓名：',
       col: 24
     },
     {
       type: 2,
       key: 'orderId',
       col: 24,
-      label: '选择订单',
+      label: '选择订单：',
       tagAttrs: {
         placeholder: '请选择订单'
       },
@@ -526,38 +526,38 @@ export default class extends Vue {
     {
       type: 7,
       key: 'orderStatusName',
-      label: '订单状态',
+      label: '订单状态：',
       col: 24
     },
     {
       type: 7,
       key: 'isconfirmOrder',
-      label: '订单执行期间运费是否有未确认',
+      label: '订单执行期间运费是否有未确认：',
       col: 24
     },
     {
       type: 7,
       key: 'freezingMoney',
-      label: '冻结金额',
+      label: '冻结金额：',
       col: 24
     },
     {
       type: 7,
       key: 'canExtractMoney',
-      label: '可提现金额',
+      label: '可提现金额：',
       col: 24
     },
     {
       type: 'applyForAccountUnfrozen',
       key: 'applyForAccountUnfrozen',
-      label: '申请解冻金额',
+      label: '申请解冻金额：',
       col: 24,
       slot: true
     },
     {
       type: 1,
       key: 'reason',
-      label: '申请解冻原因',
+      label: '申请解冻原因：',
       col: 24,
       tagAttrs: {
         placeholder: '请填写最多50个字',
