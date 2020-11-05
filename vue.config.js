@@ -31,7 +31,7 @@ module.exports = {
       },
       [process.env.VUE_APP_BASE_API]: {
         // target: `http://localhost:${mockServerPort}/mock-api/v1`,
-        target: `http://szjw-bss-web.m1.yunniao.cn`,
+        target: `http://szjw-bss-web-m1.yunniao.cn`,
         // target: `http://szjw-domain-gateway.d2.yunniao.cn`,
         changeOrigin: true, // needed for virtual hosted sites
         secure: false,
