@@ -197,7 +197,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
@@ -548,9 +548,26 @@ export default class extends Vue {
     }
     this.getGmLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位非数字或6位数字及以上的司机姓名'
+      },
+      {
+        value: this.listQuery.driverId,
+        message: '请输入2位非数字或6位数字及以上的司机编号'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.changeId !== '' && (params.changeId = this.listQuery.changeId)
       this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
@@ -700,6 +717,9 @@ export default class extends Vue {
   // 获取列表
   async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
