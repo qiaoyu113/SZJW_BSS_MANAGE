@@ -7,6 +7,7 @@
   >
     <!-- 查询表单 -->
     <self-form
+      v-permission="['/v2/driverBilling/freightCharge/list']"
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
@@ -34,6 +35,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/driverBilling/freightCharge/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -68,12 +70,13 @@
         :index="true"
         :is-p30="false"
         :indexes="false"
-        :operation-list="operationList"
+        :operation-list="operationList|isPermission"
         :table-data="tableData"
         :columns="columns"
         :func="disabledFunc"
         :page="page"
         style="overflow: initial;"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @olclick="handleOlClick"
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
@@ -141,6 +144,7 @@
             >
               <el-dropdown-item
                 v-if="!scope.row.paymentReceivedFlag"
+                v-permission="['/v2/driverBilling/freightCharge/receive']"
                 command="1"
               >
                 标记收款
@@ -208,7 +212,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
@@ -218,6 +222,7 @@ import { month, lastmonth, threemonth } from './components/date'
 import { GetFreightChargeList, ExportFreightChargeList, ReceiveFreightChargeList, GetSubjectList } from '@/api/driver-freight.ts'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
 
 interface PageObj {
   page:Number,
@@ -251,6 +256,7 @@ export default class extends Vue {
   // 查询表单
   private listQuery:IState = {
     driverName: '',
+    driverId: '',
     gmId: '',
     businessType: '',
     paymentReceivedFlag: '',
@@ -259,7 +265,8 @@ export default class extends Vue {
     driverCity: [],
     subject: '',
     time: [],
-    createTime: []
+    createTime: [],
+    monthBillDate: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -270,7 +277,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -287,7 +294,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '司机城市:',
+      label: '司机城市',
       key: 'driverCity',
       listeners: {
         'change': this.resetGmId
@@ -300,7 +307,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '业务线:',
+      label: '业务线',
       key: 'businessType',
       options: this.dutyListOptions,
       listeners: {
@@ -310,7 +317,7 @@ export default class extends Vue {
     {
       type: 'gmId',
       slot: true,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmId'
     },
     {
@@ -320,7 +327,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否已收款:',
+      label: '是否已收款',
       key: 'paymentReceivedFlag',
       options: [
         {
@@ -344,7 +351,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '流水编号:',
+      label: '流水编号',
       key: 'recordNo'
     },
     {
@@ -354,7 +361,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '出车单编号:',
+      label: '出车单编号',
       key: 'businessNo'
     },
     {
@@ -364,7 +371,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '变动类型:',
+      label: '变动类型',
       key: 'subject',
       options: this.subjectOptions
     },
@@ -379,7 +386,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '出车日期:',
+      label: '出车日期',
       key: 'time'
     },
     {
@@ -393,7 +400,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '创建时间:',
+      label: '创建时间',
       key: 'createTime'
     }
   ]
@@ -486,11 +493,10 @@ export default class extends Vue {
   ]
   // 全选
   private operationList: any[] = [
-    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1' },
+    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1', pUrl: ['/v2/driverBilling/freightCharge/receive'] },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
   ]
   private multipleSelection: any[] = []
-
   // 分页
   private page :PageObj= {
     page: 1,
@@ -566,8 +572,14 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/driverBilling/freightCharge/receive'
+    })
+  }
   private disabledFunc(row:any) {
-    if (row && row.paymentReceivedFlag) {
+    if (row && (row.paymentReceivedFlag || !this.isCheck)) {
       return false
     }
     return true
@@ -591,10 +603,12 @@ export default class extends Vue {
       driverCity: '',
       subject: '',
       time: [],
-      createTime: []
+      createTime: [],
+      monthBillDate: ''
     }
     this.getGmLists()
   }
+
   // 查询表单
   private handleFilterClick() {
     this.page.page = 1
@@ -603,6 +617,9 @@ export default class extends Vue {
   // 导出
   private async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
@@ -610,6 +627,8 @@ export default class extends Vue {
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       this.listQuery.recordNo !== '' && (params.recordNo = this.listQuery.recordNo)
       this.listQuery.businessNo !== '' && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = +this.listQuery.monthBillDate)
+      this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
       if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
         params.driverCity = this.listQuery.driverCity[1]
       }
@@ -630,6 +649,7 @@ export default class extends Vue {
       } else {
         return this.$message.error('请选择创建时间')
       }
+
       let { data: res } = await ExportFreightChargeList(params)
       if (res.success) {
         this.$message.success('操作成功')
@@ -646,9 +666,22 @@ export default class extends Vue {
     this.page.limit = page.limit
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位非数字或6位数字及以上的司机姓名'
+      }
+    ], this)
+    return ret
+  }
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {
         page: this.page.page,
         limit: this.page.limit
@@ -663,6 +696,9 @@ export default class extends Vue {
         params.driverCity = this.listQuery.driverCity[1]
       }
       this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
+      this.listQuery.monthBillDate !== '' && (params.monthBillDate = +this.listQuery.monthBillDate)
+      this.listQuery.driverId !== '' && (params.driverId = this.listQuery.driverId)
+
       if (this.listQuery.time && this.listQuery.time.length > 1) {
         let departureDateStart = new Date(this.listQuery.time[0])
         let departureDateEnd = new Date(this.listQuery.time[1])
@@ -793,7 +829,8 @@ export default class extends Vue {
   private handleClosed() {
     this.resetDialogForm()
     this.ids = [];
-    (this.$refs.freighForm as any).toggleRowSelection()
+    (this.$refs.freighForm as any).toggleRowSelection();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
 
   // table选择框
@@ -827,6 +864,10 @@ export default class extends Vue {
             label: item.name,
             value: item.code
           }
+        })
+        subjectArr.unshift({
+          label: '全部',
+          value: ''
         })
         this.subjectOptions.push(...subjectArr)
       } else {
@@ -920,7 +961,8 @@ export default class extends Vue {
         this.gmIdOptions.splice(0, len)
       }
       let params:IState = {
-        roleType: 1
+        roleTypes: [1],
+        uri: '/v2/driverBilling/freightCharge/queryGM'
       }
       this.listQuery.businessType !== '' && (params.productLine = this.listQuery.businessType)
       if (this.listQuery.driverCity && this.listQuery.driverCity.length > 1) {
@@ -942,6 +984,12 @@ export default class extends Vue {
     }
   }
   mounted() {
+    if (this.$route.query.driverId) {
+      this.listQuery.driverId = this.$route.query.driverId
+    }
+    if (this.$route.query.monthBillDate) {
+      this.listQuery.monthBillDate = this.$route.query.monthBillDate
+    }
     this.getLists()
     this.getDutyListByLevel()
     this.getSubjectList()

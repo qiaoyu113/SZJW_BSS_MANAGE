@@ -19,6 +19,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/waybill/custBilling/freightCharge/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -54,12 +55,13 @@
         :height="tableHeight"
         :is-p30="false"
         :indexes="false"
-        :operation-list="operationList"
+        :operation-list="operationList|isPermission"
         :table-data="tableData"
         :columns="columns"
         :func="disabledFunc"
         :page="page"
         style="overflow: initial;"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @olclick="handleOlClick"
         @onPageSize="handlePageSize"
         @selection-change="handleSelectionChange"
@@ -119,6 +121,7 @@
             >
               <el-dropdown-item
                 v-if="!scope.row.paymentReceivedFlag"
+                v-permission="['/v2/waybill/custBilling/freightCharge/receive']"
                 command="1"
               >
                 标记付款
@@ -185,7 +188,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 
@@ -194,6 +197,7 @@ import { GetFreightChargeList, ExportFreightChargeList, BjfreightChargeReceive }
 import { GetSubjectList } from '@/api/driver-freight'
 import { Upload } from '@/api/common'
 import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
 interface PageObj {
   page:Number,
   limit:Number,
@@ -230,7 +234,9 @@ export default class extends Vue {
     businessNo: '',
     paymentReceivedFlag: '',
     departureDate: [],
-    createDate: []
+    createDate: [],
+    monthBillDate: '',
+    projectId: ''
   }
   // 查询表单容器
   private formItem:any[] = [
@@ -241,7 +247,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户名称:',
+      label: '客户名称',
       key: 'customerName'
     },
     {
@@ -251,7 +257,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户编号:',
+      label: '客户编号',
       key: 'customerId'
     },
     {
@@ -261,7 +267,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '客户属性:',
+      label: '客户属性',
       key: 'customerProperty',
       options: [
         {
@@ -285,7 +291,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '流水编号:',
+      label: '流水编号',
       key: 'recordNo'
     },
     {
@@ -295,7 +301,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '变动类型:',
+      label: '变动类型',
       key: 'subject',
       options: this.subjectOptions
     },
@@ -306,7 +312,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -316,7 +322,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '项目名称:',
+      label: '项目名称',
       key: 'projectName'
     },
     {
@@ -326,7 +332,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '出车单编号:',
+      label: '出车单编号',
       key: 'businessNo'
     },
     {
@@ -336,7 +342,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否已付款:',
+      label: '是否已付款',
       key: 'paymentReceivedFlag',
       options: [
         {
@@ -364,7 +370,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '出车日期:',
+      label: '出车日期',
       key: 'departureDate'
     },
     {
@@ -378,7 +384,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '创建时间:',
+      label: '创建时间',
       key: 'createDate'
     }
   ]
@@ -471,7 +477,7 @@ export default class extends Vue {
   ]
   // 全选
   private operationList: any[] = [
-    { icon: 'el-icon-thumb', name: '批量标记付款', color: '#5E7BBB', key: '1' },
+    { icon: 'el-icon-thumb', name: '批量标记付款', color: '#5E7BBB', key: '1', pUrl: ['/v2/waybill/custBilling/freightCharge/receive'] },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
   ]
   private multipleSelection: any[] = []
@@ -482,8 +488,15 @@ export default class extends Vue {
     limit: 30,
     total: 0
   }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/waybill/custBilling/freightCharge/receive'
+    })
+  }
   private disabledFunc(row:any) {
-    if (row && row.paymentReceivedFlag) {
+    console.log(this.isCheck)
+    if (row && (row.paymentReceivedFlag || !this.isCheck)) {
       return false
     }
     return true
@@ -571,7 +584,9 @@ export default class extends Vue {
       businessNo: '',
       paymentReceivedFlag: '',
       departureDate: [],
-      createDate: []
+      createDate: [],
+      monthBillDate: '',
+      projectId: ''
     }
   }
   // 查询表单
@@ -579,9 +594,30 @@ export default class extends Vue {
     this.page.page = 1
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.customerName,
+        message: '请输入2位非数字或6位数字及以上的客户名称'
+      },
+      {
+        value: this.listQuery.customerId,
+        message: '请输入2位非数字或6位数字及以上的客户编号'
+      },
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位非数字或6位数字及以上的司机姓名'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   private async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.customerName && (params.customerName = this.listQuery.customerName)
       this.listQuery.customerId && (params.customerId = this.listQuery.customerId)
@@ -590,7 +626,9 @@ export default class extends Vue {
       this.listQuery.subject && (params.subject = this.listQuery.subject)
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
+      this.listQuery.projectId && (params.projectId = this.listQuery.projectId)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.monthBillDate && (params.monthBillDate = +this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
@@ -628,6 +666,9 @@ export default class extends Vue {
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
@@ -640,7 +681,9 @@ export default class extends Vue {
       this.listQuery.subject && (params.subject = this.listQuery.subject)
       this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
       this.listQuery.projectName && (params.projectName = this.listQuery.projectName)
+      this.listQuery.projectId && (params.projectId = this.listQuery.projectId)
       this.listQuery.businessNo && (params.businessNo = this.listQuery.businessNo)
+      this.listQuery.monthBillDate && (params.monthBillDate = +this.listQuery.monthBillDate)
       this.listQuery.paymentReceivedFlag !== '' && (params.paymentReceivedFlag = this.listQuery.paymentReceivedFlag)
       if (this.listQuery.departureDate && this.listQuery.departureDate.length > 0) {
         let departureDateStart = new Date(this.listQuery.departureDate[0])
@@ -724,14 +767,17 @@ export default class extends Vue {
     } catch (err) {
       console.log(`save data fail:${err}`)
     } finally {
-      this.submitLoading = false
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     }
   }
   // 关闭弹窗清除数据
   private handleClosed() {
     this.resetDialogForm()
     this.ids = [];
-    (this.$refs.freighForm as any).toggleRowSelection()
+    (this.$refs.freighForm as any).toggleRowSelection();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
   // 上传文件
   async uploadFile(file:any) {
@@ -813,6 +859,15 @@ export default class extends Vue {
     }
   }
   mounted() {
+    if (this.$route.query.customerId) {
+      this.listQuery.customerId = this.$route.query.customerId
+    }
+    if (this.$route.query.monthBillDate) {
+      this.listQuery.monthBillDate = this.$route.query.monthBillDate
+    }
+    if (this.$route.query.projectId) {
+      this.listQuery.projectId = this.$route.query.projectId
+    }
     this.getLists()
     this.getSubjectList()
   }

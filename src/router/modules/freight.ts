@@ -10,7 +10,7 @@ const freightRouter: RouteConfig = {
     title: 'freightTitle',
     icon: 'lifeCycle',
     alwaysShow: true,
-    apiUrl: '/v2/waybill/getConfirmInfoList'
+    apiUrl: ['/v2/waybill/getConfirmInfoList']
   },
   children: [
     {
@@ -29,7 +29,7 @@ const freightRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/freight/FreightDetail.vue'),
       name: 'FreightDetail',
       meta: {
-        apiUrl: '/v2/waybill/shippingDetail',
+        apiUrl: '/v2/waybill/shipping/shippingDetail',
         // apiUrl: 'root',
         activeMenu: '/freight/freightlist',
         title: 'freightDetail',

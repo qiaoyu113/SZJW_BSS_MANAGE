@@ -44,6 +44,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/waybill/custBilling/monthlyBill/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -80,10 +81,11 @@
         :is-p30="false"
         :indexes="false"
         :func="disabledFunc"
-        :operation-list="operationList"
+        :operation-list="operationList|isPermission"
         :table-data="tableData"
         :columns="columns"
         :page="page"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         style="overflow: initial;"
         @olclick="handleOlClick"
         @onPageSize="handlePageSize"
@@ -108,9 +110,7 @@
         </template>
         <template v-slot:closeStatus="scope">
           {{ scope.row.closeStatus ? '是':'否' }}
-          <template v-if="scope.row.closeStatus ===1">
-            / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
-          </template>
+          / {{ scope.row.closeDate | parseTime('{m}/{d}') }}
         </template>
         <template v-slot:op="scope">
           <el-dropdown
@@ -140,10 +140,17 @@
               <el-dropdown-item
                 command="flow"
               >
-                查看流水
+                <router-link
+                  v-permission="['/v2/waybill/custBilling/freightCharge/list']"
+                  :to="{path: '/customerfreight/bill',query: {customerId: scope.row.customerId,monthBillDate: scope.row.monthBillDate,projectId: scope.row.projectId}}"
+                  target="_blank"
+                >
+                  查看流水
+                </router-link>
               </el-dropdown-item>
               <el-dropdown-item
-                v-if="scope.row.closeStatus ===1"
+                v-if="scope.row.closeStatus ===1 && !scope.row.checkStatus"
+                v-permission="['/v2/waybill/custBilling/monthlyBill/check']"
                 command="checkBill"
               >
                 客户对账
@@ -215,13 +222,15 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
 import { GetMonthlyBillList, ExportMonthlyBill, CustomerMonthlyBillCheck, GetProjectSearch } from '@/api/customer-freight'
-import { Upload, GetSpecifiedRoleList, GetOpenCityData } from '@/api/common'
+import { Upload, GetSpecifiedRoleList, getOfficeByType, getOfficeByTypeAndOfficeId } from '@/api/common'
 import { delayTime } from '@/settings'
+import { UserModule } from '@/store/modules/user'
+
 interface PageObj {
   page:Number,
   limit:Number,
@@ -246,7 +255,6 @@ export default class extends Vue {
   private postManagerOptions:IState[] = []; // 上岗经理列表
   private outsideSalesOptions:IState[] = [];// 外线销售列表
   private submitLoading:boolean = false;
-  private workCityOptions:IState[] = [];// 客户城市列表
   private projectListOptions:IState[] = [];// 项目列表
   private ids:string|number[] = []
   private btns:any[] = [
@@ -268,7 +276,7 @@ export default class extends Vue {
     monthBillId: '',
     customerName: '',
     customerId: '',
-    customerCity: '',
+    customerCity: [],
     dutyManagerId: '',
     lineSaleId: '',
     closeStatus: '',
@@ -285,7 +293,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '月账单编号:',
+      label: '月账单编号',
       key: 'monthBillId'
     },
     {
@@ -295,29 +303,24 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户名称:',
+      label: '客户名称',
       key: 'customerName'
     },
     {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        clearable: true,
-        maxlength: 50
-      },
-      label: '客户编号:',
-      key: 'customerId'
-    },
-    {
-      type: 2,
+      type: 8,
       tagAttrs: {
         placeholder: '请选择',
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'driverCity',
         clearable: true,
-        filterable: true
+        props: {
+          lazy: true,
+          lazyLoad: this.showWork
+        }
       },
       label: '客户城市:',
-      key: 'customerCity',
-      options: this.workCityOptions
+      key: 'customerCity'
     },
     {
       type: 2,
@@ -326,7 +329,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '上岗经理:',
+      label: '上岗经理',
       key: 'dutyManagerId',
       options: this.postManagerOptions
     },
@@ -337,7 +340,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '外线销售:',
+      label: '外线销售',
       key: 'lineSaleId',
       options: this.outsideSalesOptions
     },
@@ -348,7 +351,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否封账:',
+      label: '是否封账',
       key: 'closeStatus',
       options: [
         {
@@ -372,19 +375,19 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '项目名称:',
+      label: '项目名称',
       key: 'projectId',
       options: this.projectListOptions
     },
     {
-      col: 10,
-      label: '月份:',
+      col: 8,
+      label: '月份',
       type: 'monthBillDate',
       slot: true
     },
     {
       col: 16,
-      label: '对账状态:',
+      label: '对账状态',
       type: 'checkStatus',
       slot: true
     },
@@ -428,7 +431,7 @@ export default class extends Vue {
     },
     {
       key: 'turnoverTotalCount',
-      label: '账单个数(个)',
+      label: '流水个数(个)',
       'min-width': '140px'
     },
     {
@@ -479,7 +482,7 @@ export default class extends Vue {
   ]
   // 全选
   private operationList: any[] = [
-    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1' },
+    { icon: 'el-icon-thumb', name: '批量标记收款', color: '#5E7BBB', key: '1', pUrl: ['/v2/waybill/custBilling/monthlyBill/check'] },
     { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
   ]
   private multipleSelection: any[] = []
@@ -560,17 +563,76 @@ export default class extends Vue {
     let otherHeight = 490
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
+  get isCheck() {
+    const roles = UserModule.roles
+    return roles.some(role => {
+      return role === '/v2/waybill/custBilling/monthlyBill/check'
+    })
+  }
   private disabledFunc(row:any) {
-    if (row && row.closeStatus) {
+    if (row && (!row.closeStatus || row.checkStatus || !this.isCheck)) {
       return false
     }
     return true
   }
+  // 获取客户城市
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
+    try {
+      if (node.level === 0) {
+        let nodes = await this.areaAddress({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+  // 获取大区列表
+  private async areaAddress(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item: any) {
+          return {
+            value: item.id,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+  // 根据大区获取城市列表
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
   // 获取加盟经理、上岗经理、外线销售
-  async getManagerList(roleType:number) {
+  async getManagerList(roleType:number, uri:string) {
     try {
       let params:IState = {
-        roleType
+        roleTypes: [roleType],
+        uri
       }
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
@@ -592,7 +654,7 @@ export default class extends Vue {
       monthBillId: '',
       customerName: '',
       customerId: '',
-      customerCity: '',
+      customerCity: [],
       dutyManagerId: '',
       lineSaleId: '',
       closeStatus: '',
@@ -606,13 +668,28 @@ export default class extends Vue {
     this.page.page = 1
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.customerName,
+        message: '请输入2位非数字或6位数字及以上的客户名称'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   private handleExportClick() {
+    if (!this.validatorQuery()) {
+      return false
+    }
     let params:IState = {}
     this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
     this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
     this.listQuery.customerId !== '' && (params.customerId = this.listQuery.customerId)
-    this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
+    if (this.listQuery.customerCity && this.listQuery.customerCity.length > 0) {
+      params.customerCity = this.listQuery.customerCity[1]
+    }
     this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
     this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
     this.listQuery.closeStatus !== '' && (params.closeStatus = this.listQuery.closeStatus)
@@ -653,6 +730,9 @@ export default class extends Vue {
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
@@ -661,7 +741,9 @@ export default class extends Vue {
       this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
       this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
       this.listQuery.customerId !== '' && (params.customerId = this.listQuery.customerId)
-      this.listQuery.customerCity !== '' && (params.customerCity = this.listQuery.customerCity)
+      if (this.listQuery.customerCity && this.listQuery.customerCity.length > 0) {
+        params.customerCity = this.listQuery.customerCity[1]
+      }
       this.listQuery.dutyManagerId !== '' && (params.dutyManagerId = this.listQuery.dutyManagerId)
       this.listQuery.lineSaleId !== '' && (params.lineSaleId = this.listQuery.lineSaleId)
       this.listQuery.closeStatus !== '' && (params.closeStatus = this.listQuery.closeStatus)
@@ -694,9 +776,7 @@ export default class extends Vue {
   // 更多操作
   private handleCommandChange(key:string, row:any) {
     if (key === 'flow') { // 查看流水
-      this.$router.push({
-        path: '/customerfreight/bill'
-      })
+
     } else if (key === 'checkBill') { // 客户对账
       this.dialogTit = '月账单客户确认'
       this.dialogFormItem = []
@@ -763,7 +843,8 @@ export default class extends Vue {
   private handleClosed() {
     this.resetDialogForm()
     this.ids = [];
-    (this.$refs.freighForm as any).toggleRowSelection()
+    (this.$refs.freighForm as any).toggleRowSelection();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
   // 上传文件
   async uploadFile(file:any) {
@@ -824,23 +905,6 @@ export default class extends Vue {
       this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-  // 获取城市列表
-  async getCityList() {
-    try {
-      let { data: res } = await GetOpenCityData()
-      if (res.success) {
-        let cityOptions:IState[] = res.data.map((item:any) => ({
-          label: item.name,
-          value: item.code
-        }))
-        this.workCityOptions.push(...cityOptions)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`get open city fail:${err}`)
-    }
-  }
   // 获取项目列表
   async getProjectSearch() {
     try {
@@ -861,11 +925,10 @@ export default class extends Vue {
   }
   async init() {
     // 加盟经理(1)  外销销售(2) 上岗经理(3)
-    let data1 = await this.getManagerList(3)
+    let data1 = await this.getManagerList(3, '/v2/waybill/custBilling/monthlyBill/queryDutyManager')
     this.postManagerOptions.push(...data1)
-    let data2 = await this.getManagerList(2)
+    let data2 = await this.getManagerList(2, '/v2/waybill/custBilling/monthlyBill/queryLineSale')
     this.outsideSalesOptions.push(...data2)
-    this.getCityList()
     this.getProjectSearch()
   }
   // 状态变化

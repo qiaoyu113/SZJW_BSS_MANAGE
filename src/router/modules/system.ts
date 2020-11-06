@@ -9,7 +9,10 @@ const systemRouter: RouteConfig = {
   meta: {
     title: 'systemTitle',
     icon: 'system',
-    apiUrl: 'root'
+    apiUrl: ['/v1/base/user/menu', '/v2/base/user/create', '/v2/base/user/update',
+      '/v2/base/role/create', '/v2/base/role/list', '/v1/base/authority/list', '/v2/base/duty/list',
+      '/v1/base/office/list', '/v1/base/role/update', '/v2/base/role/getByRoleId'
+    ]
   },
   children: [
     {
@@ -174,43 +177,55 @@ const systemRouter: RouteConfig = {
         icon: '',
         apiUrl: '/v1/base/authority/list'
       }
+    },
+    {
+      path: 'configManager', /* 配置管理 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/configManager/index.vue'),
+      name: 'ConfigManager',
+      meta: {
+        title: 'configManager',
+        activeMenu: '/system/configManager',
+        noCache: false,
+        icon: '',
+        apiUrl: '/v2/line/label/configManager'
+      }
+    },
+    {
+      path: 'systemsetting', /* 系统设置 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/SystemSetting.vue'),
+      name: 'SystemSetting',
+      meta: {
+        title: 'systemSetting',
+        activeMenu: '/system/systemsetting',
+        noCache: false,
+        icon: '',
+        apiUrl: '/v1/product/product/system/setting'
+      }
+    },
+    {
+      path: 'buycartype', /* 购车车型 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/BuyCarType.vue'),
+      name: 'BuyCarType',
+      meta: {
+        title: 'carType',
+        activeMenu: '/system/buycartype',
+        noCache: false,
+        icon: '',
+        apiUrl: '/v1/product/product/list/page'
+      }
+    },
+    {
+      path: 'rentcartype', /* 租车车型 */
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RentCarType.vue'),
+      name: 'RentCarType',
+      meta: {
+        title: 'rentCar',
+        activeMenu: '/system/rentcartype',
+        noCache: false,
+        icon: '',
+        apiUrl: '/v1/product/product/list/page'
+      }
     }
-    // {
-    //   path: 'systemsetting', /* 系统设置 */
-    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/SystemSetting.vue'),
-    //   name: 'SystemSetting',
-    //   meta: {
-    //     title: 'systemSetting',
-    //     activeMenu: '/system/systemsetting',
-    //     noCache: false,
-    //     icon: '',
-    //     apiUrl: '/v1/product/product/system/setting'
-    //   }
-    // },
-    // {
-    //   path: 'buycartype', /* 购车车型 */
-    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/BuyCarType.vue'),
-    //   name: 'BuyCarType',
-    //   meta: {
-    //     title: 'carType',
-    //     activeMenu: '/system/buycartype',
-    //     noCache: false,
-    //     icon: '',
-    //     apiUrl: '/v1/product/product/list/page'
-    //   }
-    // },
-    // {
-    //   path: 'rentcartype', /* 租车车型 */
-    //   component: () => import(/* webpackChunkName: "driver" */ '@/views/system/RentCarType.vue'),
-    //   name: 'RentCarType',
-    //   meta: {
-    //     title: 'rentCar',
-    //     activeMenu: '/system/rentcartype',
-    //     noCache: false,
-    //     icon: '',
-    //     apiUrl: '/v1/product/product/list/page'
-    //   }
-    // },
   ]
 }
 

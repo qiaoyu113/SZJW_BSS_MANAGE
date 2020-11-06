@@ -80,3 +80,12 @@ export const GetSubjectList = (params?:any) =>
     method: 'get',
     params
   })
+
+// 获取已终止的司机列表
+export const GetOrderDriverList = (data?:any) =>
+  request({
+    // url: `/carrier_center/v2/driver/getDriverNameAndPhoneList`,
+    url: `/carrier_center/v2/driver/getDriverListByRoute`,
+    method: 'post',
+    data
+  })

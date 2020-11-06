@@ -125,6 +125,10 @@ export default class extends Vue {
 </script>
 
 <style lang="scss">
+.menu-wrapper{
+  position: relative;
+  z-index: 2000;
+}
 .el-submenu>.el-submenu__title {
   i{
     color: $menuText;

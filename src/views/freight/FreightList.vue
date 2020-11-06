@@ -176,10 +176,11 @@
                   slot="reference"
                   type="text"
                 >
-                  <span v-if="row.freightFee !== ''">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
-                  <span v-else>{{ row.freightFee }}</span>
+                  <span v-if="row.status === 20 && row.departStatusCode !== 1">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="row.status !== 20 && row.isLookFee === 1">{{ Number(row.freightFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
+              <span v-if="row.departStatusCode === 1">未出车</span>
             </template>
           </el-table-column>
 
@@ -229,7 +230,7 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('加盟侧运费') > -1"
+            v-if="checkList.indexOf('加盟侧运费') > -1 && getPermission('/canDriverFee')"
             :key="checkList.length + 'gmFee'"
             align="left"
             label="司机运费上报金额（元）"
@@ -237,7 +238,7 @@
           >
             <template slot-scope="scope">
               <el-popover
-                v-if="scope.row.gmFee !== '' && scope.row.gmStatusCode !== 2"
+                v-if="scope.row.gmStatusCode !== 2"
                 placement="right"
                 trigger="hover"
                 @show="getFloowData(scope.row.wayBillId, 'driver')"
@@ -268,10 +269,10 @@
                   slot="reference"
                   type="text"
                 >
-                  <span>{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="scope.row.gmStatusCode === 1">{{ Number(scope.row.gmFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
-              <span v-else>{{ scope.row.gmStatusName }}</span>
+              <span v-else>未出车</span>
             </template>
           </el-table-column>
 
@@ -288,7 +289,7 @@
           </el-table-column>
 
           <el-table-column
-            v-if="checkList.indexOf('外线侧运费') > -1"
+            v-if="checkList.indexOf('外线侧运费') > -1 && getPermission('/canLineFee')"
             :key="checkList.length + 'lineFee'"
             align="left"
             label="客户运费上报金额（元）"
@@ -296,7 +297,7 @@
           >
             <template slot-scope="scope">
               <el-popover
-                v-if="scope.row.lineFee !== '' && scope.row.lineStatusCode !== 2"
+                v-if="scope.row.lineStatusCode !== 2"
                 placement="right"
                 trigger="hover"
                 @show="getFloowData(scope.row.wayBillId, 'line')"
@@ -327,10 +328,10 @@
                   slot="reference"
                   type="text"
                 >
-                  <span>{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
+                  <span v-if="scope.row.lineStatusCode === 1">{{ Number(scope.row.lineFee).toFixed(2) | DataIsNull }}</span>
                 </el-button>
               </el-popover>
-              <span v-else>{{ scope.row.lineStatusName }}</span>
+              <span v-else>未出车</span>
             </template>
           </el-table-column>
 
@@ -378,7 +379,7 @@
             min-width="100"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.freightUpdate | TimestampYMD }}</span>
+              <span>{{ scope.row.freightUpdate | Timestamp }}</span>
             </template>
           </el-table-column>
 
@@ -414,16 +415,24 @@
                     v-if="scope.row.canConfirm"
                   > -->
                   <el-dropdown-item
-                    v-permission="['/v2/waybill/reportMoneyBatch']"
+                    v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
                     name="ownerlist_detail_dropdown"
                     @click.native="checkOption(scope.row.departureDate, scope.row.wayBillId)"
                   >
                     <!-- {{ scope.row.status === 10 ? '单边确认' : '交叉确认' }} -->
-                    <span v-if="scope.row.status === 10">单边确认</span>
-                    <span v-if="scope.row.status === 30">交叉确认</span>
+                    <div v-if="scope.row.status === 10">
+                      <span
+                        v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
+                      >单边确认</span>
+                    </div>
+                    <div v-if="scope.row.status === 30">
+                      <span
+                        v-permission="['/v2/waybill/shipping/reportMoneyBatch']"
+                      >交叉确认</span>
+                    </div>
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-permission="['/v2/waybill/shippingDetail']"
+                    v-permission="['/v2/waybill/shipping/shippingDetail']"
                     name="ownerlist_detail_dropdown"
                     @click.native="goDetail(scope.row.wayBillId)"
                   >
@@ -443,7 +452,7 @@
       </div>
       <pagination
         v-show="total > 0"
-        :operation-list="operationList"
+        :operation-list="operationList | isPermission"
         :small="true"
         :total="total"
         :page.sync="listQuery.page"
@@ -673,7 +682,7 @@ export default class extends Vue {
     private DateValue2: any[] = [];
     private multipleSelection: any[] = []
     private operationList: any[] = [
-      { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3' },
+      { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/shipping/reportMoneyBatch'] },
       { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
     ];
     private dropdownList: any[] = [
@@ -831,6 +840,20 @@ export default class extends Vue {
       })
     }
 
+    private getPermission(role: any) {
+      let permission = (localStorage as any).getItem('permission')
+      if (!permission) {
+        return false
+      } else {
+        let permissionArr = permission.split(',')
+        if (permissionArr.indexOf(role) > -1) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+
     // 判断是否是PC
     get isPC() {
       return SettingsModule.isPC
@@ -888,6 +911,22 @@ export default class extends Vue {
       }
     }
 
+    // 处理是否展示运费确认的总按钮
+    private handleChecked(arr: any) {
+      let list = [
+        { icon: 'el-icon-finished', name: '运费确认', color: '#F2A33A', key: '3', pUrl: ['/v2/waybill/shipping/reportMoneyBatch'] },
+        { icon: 'el-icon-circle-close', name: '清空选择', color: '#F56C6C', key: '2' }
+      ]
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].status === 10 || arr[i].status === 30) {
+          this.operationList = list
+          return true
+        }
+      }
+      list.shift()
+      this.operationList = list
+    }
+
     // 请求列表
     private async getList(value: any) {
       this.listQuery.page = value.page
@@ -896,6 +935,7 @@ export default class extends Vue {
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.handleChecked(data.data)
         // this.tab[0].num = data.title.all
         // this.tab[1].num = data.title.notReported
         // this.tab[2].num = data.title.toBeConfirmed
@@ -940,6 +980,13 @@ export default class extends Vue {
 
     // 按钮操作
     private goDetail(id: string | (string | null)[] | null | undefined) {
+      let purl: any = localStorage.getItem('permission')
+      if (purl) {
+        let purlArr: any = purl.split(',')
+        if (purlArr.indexOf('/v2/waybill/shipping/shippingDetail') < 0) {
+          return
+        }
+      }
       this.$router.push({ name: 'FreightDetail', query: { id: id } })
     }
 
@@ -1087,7 +1134,7 @@ export default class extends Vue {
             this.$message.success('提交成功')
             this.assignShowDialog = false
             if (noCheck.length) {
-              const { data } = await NoCarBatch(noCheck)
+              const { data } = await NoCarBatch(noCheck, this.remarkAll)
               if (data.success) {
                 this.assignShowDialog = false
                 done()
@@ -1113,7 +1160,7 @@ export default class extends Vue {
       this.$alert('确定全部' + noCheck.length + '个出车，全部未出车！', '提示', {
         confirmButtonText: '确定',
         callback: async action => {
-          const { data } = await NoCarBatch(noCheck)
+          const { data } = await NoCarBatch(noCheck, this.remarkAll)
           if (data.success) {
             this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
@@ -1132,7 +1179,7 @@ export default class extends Vue {
       this.freightForm.list.forEach((i: any) => {
         wayBillAmountIdsArr.push(i.wayBillAmountId)
       })
-      const { data } = await NoCarBatch(wayBillAmountIdsArr)
+      const { data } = await NoCarBatch(wayBillAmountIdsArr, this.freightForm.remark)
       if (data.success) {
         this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false

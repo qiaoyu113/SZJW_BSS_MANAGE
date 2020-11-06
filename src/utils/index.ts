@@ -9,6 +9,9 @@ export const parseTime = (
   if (time === undefined) {
     return null
   }
+  if (time === null) {
+    return ''
+  }
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   let date: Date
   if (typeof time === 'object') {
@@ -318,3 +321,22 @@ export const isValidPassWord = /^.*(?=.{8,16})(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*$/
 
 // 手机号
 export const phoneRegExp = /^[1][3-9][0-9]{9}$/
+
+// 字母数字校验
+export const IdRegExp = /^[0-9a-zA-Z]*$/
+
+// 验证司机
+export function validatorValue(array:any[], vm:any) {
+  for (let i = 0; i < array.length; i++) {
+    let item:any = array[i]
+    if (item.value === '') {
+      continue
+    }
+    if (/^\d{6,}$/.test(item.value) || (isNaN(item.value) && /^[\u4E00-\u9FA5A-Za-z0-9]{2,6}$/.test(item.value))) {
+      continue
+    }
+    vm.$message.warning(item.message)
+    return false
+  }
+  return true
+}

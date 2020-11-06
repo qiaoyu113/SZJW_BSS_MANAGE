@@ -9,7 +9,11 @@ const driverFreight: RouteConfig = {
   meta: {
     title: 'driverFreightAccount',
     icon: 'driverFreight',
-    apiUrl: 'root'
+    // apiUrl: 'root'
+    apiUrl: [
+      '/v2/driverBilling/freightCharge/list', '/v2/driverBilling/monthlyBill/list',
+      '/v2/driverBilling/shippingChange/list'
+    ]
   },
   children: [
     {
@@ -28,7 +32,7 @@ const driverFreight: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightBill.vue'),
       name: 'DriverFreightBillList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/driverBilling/freightCharge/list',
         title: 'driverFreightBillList',
         noCache: false
       }
@@ -38,7 +42,7 @@ const driverFreight: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/FreightMonthBill.vue'),
       name: 'DriverFreightMonthBill',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/driverBilling/monthlyBill/list',
         title: 'driverFreightMonthBill',
         noCache: false
       }
@@ -48,7 +52,7 @@ const driverFreight: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-freight/AdjustmentList.vue'),
       name: 'AdjustmentList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/driverBilling/shippingChange/list',
         title: 'adjustmentList',
         noCache: false
       }

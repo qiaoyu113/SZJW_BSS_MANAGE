@@ -10,7 +10,7 @@
       :list-query="listQuery"
       :form-item="formItem"
       size="small"
-      label-width="80px"
+      label-width="140px"
       class="p15 SuggestForm"
       :pc-col="8"
     >
@@ -19,6 +19,8 @@
           v-model.trim="listQuery.driverCode"
           v-loadmore="loadQueryDriverByKeyword"
           placeholder="请选择"
+          reserve-keyword
+          :default-first-option="true"
           clearable
           filterable
           remote
@@ -68,7 +70,9 @@
         >
           重置
         </el-button>
+
         <el-button
+          v-permission="['/v2/wt-driver-account/flow/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           @click="handleExportClick"
@@ -80,6 +84,7 @@
     <div class="table_box">
       <div class="middle">
         <el-button
+          v-permission="['/v2/wt-driver-account/flow/manual/create']"
           icon="el-icon-plus"
           type="primary"
           size="small"
@@ -96,6 +101,7 @@
         :is-p30="false"
         :operation-list="[]"
         :table-data="tableData"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         :columns="columns"
         :page="page"
         @onPageSize="handlePageSize"
@@ -192,6 +198,8 @@
               v-model.trim="addForm.driverCode"
               v-loadmore="loadDialogDriverByKeyword"
               placeholder="请选择"
+              reserve-keyword
+              :default-first-option="true"
               filterable
               remote
               :remote-method="dialogSearchByKeyword"
@@ -240,6 +248,8 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private searchKeyword:string = '';
+  private dialogKeyword:string = '';
   private queryDriverLoading:boolean = false // 查询区下拉司机搜索框的loading
   private dialogDriverLoading:boolean = false // 弹框下拉司机搜索框的loading
   private dialogDriverOptions:IState[] = [] // 弹框下拉司机列表
@@ -353,8 +363,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '所属城市:',
-      w: '100px',
+      label: '所属城市',
       key: 'city',
       listeners: {
         'change': this.resetGmId
@@ -367,8 +376,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      w: '100px',
-      label: '业务线:',
+      label: '业务线',
       key: 'busiType',
       options: this.dutyListOptions,
       listeners: {
@@ -382,26 +390,23 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '所属加盟经理:',
-      w: '100px',
+      label: '所属加盟经理',
       key: 'gmId',
       type: 'gmId'
     },
     {
       type: 'driverCode',
       slot: true,
-      label: '司机姓名(司机编号):',
-      w: '160px'
+      label: '司机姓名(司机编号)'
     },
     {
       type: 3,
-      col: 10,
+      col: 8,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true
       },
-      label: '业务发生时间:',
-      w: '120px',
+      label: '业务发生时间',
       key: 'time'
     },
     {
@@ -488,20 +493,20 @@ export default class extends Vue {
   ]
   private rules:IState = {
     driverCode: [
-      { required: true, message: '请输入司机编号', trigger: 'blur' }
+      { required: true, message: '请输入司机编号', trigger: ['blur', 'change'] }
     ],
     orderCode: [
-      { required: true, message: '请选择订单', trigger: 'blur' }
+      { required: true, message: '请选择订单', trigger: ['blur', 'change'] }
     ],
     billingType: [
-      { required: true, message: '请输入计费类型', trigger: 'blur' }
+      { required: true, message: '请输入计费类型', trigger: ['blur', 'change'] }
     ],
     amount: [
-      { required: true, message: '请输入申请调流水金额', trigger: 'blur' }
+      { required: true, message: '请输入申请调流水金额', trigger: ['blur', 'change'] }
       // { validator: this.validateAmount, trigger: 'blur' }
     ],
     billingId: [
-      { required: false, trigger: 'blur' }
+      { required: false, trigger: ['blur', 'change'] }
     ]
   }
   validateAmount(rule:any, value:any, callback:any) {
@@ -543,15 +548,18 @@ export default class extends Vue {
     }
     this.resetDriver()
     this.getGmLists()
+    this.loadQueryDriverByKeyword()
   }
   // 加盟经理id发生变化
   handleGmIdChange() {
+    this.resetDriver()
     this.queryPage.page = 0
     this.loadQueryDriverByKeyword()
   }
   // 重置司机
   resetDriver() {
     this.listQuery.driverCode = ''
+    this.searchKeyword = ''
     let len:number = this.driverOptions.length
     if (len > 0) {
       this.queryPage.page = 0
@@ -706,7 +714,9 @@ export default class extends Vue {
     this.billOptons = []
     this.resetDialogDriverList()
     this.resetDialogOrderList()
-    this.resetDialogbillingId()
+    this.resetDialogbillingId();
+    ((this.$refs.addFlow) as any).resetForm()
+    this.dialogKeyword = ''
   }
   // 清除订单列表
   resetDialogOrderList() {
@@ -883,7 +893,8 @@ export default class extends Vue {
         this.gmIdOptions.splice(0, len)
       }
       let params:IState = {
-        roleType: 1
+        roleTypes: [1],
+        uri: '/v2/wt-driver-account/flow/queryGM'
       }
       this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
       if (this.listQuery.city && this.listQuery.city.length > 1) {
@@ -946,14 +957,14 @@ export default class extends Vue {
   }
   // 顶部司机关键字搜索
   querySearchByKeyword(val:string) {
-    if (val.trim() === '') {
-      return false
-    }
+    this.queryPage.page = 0
     this.resetDriver()
+    this.searchKeyword = val
     this.loadQueryDriverByKeyword(val)
   }
   // 顶部查询司机列表
   async loadQueryDriverByKeyword(val?:string) {
+    val = this.searchKeyword
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
@@ -970,14 +981,14 @@ export default class extends Vue {
   }
   // 弹框司机关键字搜索
   dialogSearchByKeyword(val:string) {
-    if (val.trim() === '') {
-      return false
-    }
+    this.dialogPage.page = 0
     this.resetDialogDriverList()
+    this.dialogKeyword = val
     this.loadDialogDriverByKeyword(val)
   }
   // 弹框查询司机列表
   async loadDialogDriverByKeyword(val?:string) {
+    val = this.dialogKeyword
     this.dialogPage.page++
     let params:IState = {
       page: this.dialogPage.page,
@@ -1008,7 +1019,9 @@ export default class extends Vue {
       }
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
-      let { data: res } = await getDriverNoAndNameList(params)
+      let { data: res } = await getDriverNoAndNameList(params, {
+        url: '/v2/wt-driver-account/flow/queryDriverList'
+      })
       let result:any[] = res.data.map((item:any) => ({
         label: item.name,
         value: item.driverId
@@ -1021,6 +1034,7 @@ export default class extends Vue {
   }
   // 删除查询区选中的司机
   handleClearQueryDriver() {
+    this.searchKeyword = ''
     this.resetDriver()
     this.loadQueryDriverByKeyword()
   }
@@ -1028,6 +1042,7 @@ export default class extends Vue {
   handleClearDialogDriver() {
     this.resetDialogDriverList()
     this.loadDialogDriverByKeyword()
+    this.dialogKeyword = ''
   }
   init() {
     if (this.$route.query.id) {

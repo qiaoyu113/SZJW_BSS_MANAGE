@@ -1,6 +1,7 @@
 import { RouteConfig } from 'vue-router'
 import Layout from '@/layout/index.vue'
 
+// 司机梧桐账户
 const driverAccountRouter: RouteConfig = {
   path: '/driveraccount',
   component: Layout,
@@ -9,7 +10,7 @@ const driverAccountRouter: RouteConfig = {
   meta: {
     title: 'driverAccount',
     icon: 'driverAccount',
-    apiUrl: 'root'
+    apiUrl: ['/v2/wt-driver-account/flow/list', '/v2/wt-driver-account/management/list']
   },
   children: [
     {
@@ -62,7 +63,7 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "billing" */ '@/views/acount/wtAcountList/index.vue'),
       name: 'wtAcountList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/wt-driver-account/management/list',
         title: 'wtAcountList',
         noCache: true,
         icon: '',
@@ -74,7 +75,7 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundList.vue'),
       name: 'RefundList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v1/base/user/page/list',
         title: 'refundList',
         noCache: false,
         hidden: true
@@ -125,7 +126,7 @@ const driverAccountRouter: RouteConfig = {
         hidden: true,
         activeMenu: '/driveraccount/billing',
         title: 'billing',
-        icon: 'cargo',
+        icon: '',
         noCache: false
       }
     },
@@ -137,7 +138,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/driveraccount/billing',
         title: 'billingLog',
-        icon: 'cargo',
+        icon: '',
         hidden: true,
         noCache: false
       }
@@ -150,7 +151,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         activeMenu: '/driveraccount/billing',
         title: 'billingDetail',
-        icon: 'cargo',
+        icon: '',
         hidden: true,
         noCache: false
       }
@@ -186,7 +187,7 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "billing" */ '@/views/billing/financialFlow/List/index.vue'),
       name: 'FinancialFlow',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/wt-driver-account/flow/list',
         // hidden: true,
         activeMenu: '/driveraccount/financialFlow',
         title: 'financialFlow',
@@ -203,7 +204,7 @@ const driverAccountRouter: RouteConfig = {
         hidden: true,
         activeMenu: '/driveraccount/orderList',
         title: 'orderList',
-        icon: 'cargo',
+        icon: '',
         noCache: false
       }
     }

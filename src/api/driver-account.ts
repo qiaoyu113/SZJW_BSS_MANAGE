@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 
-// const prefix = '/mock/112'
+const payFix = '/mock/112'
 const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
+const wayBillFix = '/waybill'
 
 /**
  * XXXX
@@ -82,11 +83,33 @@ export const orderDetail = (data: any) => {
 }
 
 /**
- * 订单详情
+ * 获取订单冻结金额
+ */
+export const orderMoney = (data: any) => {
+  return request({
+    url: `${prefix}/v2/wt-driver-account/management/order-freezing-money/orderid`,
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * 获取订单冻结金额
+ */
+export const orderCanExtractMoney = (data: any) => {
+  return request({
+    url: `${prefix}/v2/wt-driver-account/management/getCanExtractByUserId`,
+    method: 'post',
+    params: data
+  })
+}
+
+/**
+ * 订单是否确认
  */
 export const countConfirmByDriver = (data: any) => {
   return request({
-    url: `waybill/v2/waybill/shipping/countConfirmByDriver`,
+    url: `${wayBillFix}/v2/waybill/shipping/getWayBillStatusByOrderId`,
     method: 'get',
     params: data
   })
@@ -150,4 +173,73 @@ export const GetChargeAmountByChargeId = (params:any) =>
     url: `${prefix}/v2/wt-driver-account/billing/getChargeAmountByChargeId`,
     method: 'get',
     params
+  })
+
+// 缴费管理列表
+export const getPayList = (data: any) =>
+  request({
+    url: `${payFix}/v2/wt-driver-account/pay/list`,
+    method: 'post',
+    data
+  })
+
+// 缴费详情
+export const payDetail = (params: any) =>
+  request({
+    url: `${payFix}/billing/paydetail`,
+    method: 'get',
+    params
+  })
+
+// 缴费审核
+export const payAudit = (params: any) =>
+  request({
+    url: `${payFix}/billing/payAudit`,
+    method: 'get',
+    params
+  })
+  // 获取计费管理列表
+export const GetChargingList = (params:any) =>
+  request({
+    url: `${payFix}/getChargingList`,
+    method: 'get',
+    params
+  })
+
+// 获取计费管理详情
+export const GetChargingDetail = (params:any) =>
+  request({
+    url: `${payFix}/getChargingDetail`,
+    method: 'get',
+    params
+  })
+// 计费管理修改状态
+export const ChangeChargingStatus = (data:any) =>
+  request({
+    url: `${payFix}/changeChargingStatus`,
+    method: 'post',
+    data
+  })
+
+// 计费管理操作日志
+export const GetChargingLog = (params:any) =>
+  request({
+    url: `${payFix}/getChargingLog`,
+    method: 'get',
+    params
+  })
+  // 计费管理-新建
+export const AddCharging = (data:any) =>
+  request({
+    url: `${payFix}/addCharging`,
+    method: 'post',
+    data
+  })
+
+// 计费管理-调整
+export const EditCharging = (data:any) =>
+  request({
+    url: `${payFix}/editCharging`,
+    method: 'post',
+    data
   })

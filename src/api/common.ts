@@ -138,3 +138,11 @@ export const GetSpecifiedLowerUserListByCondition = (data:any) =>
     method: 'post',
     data
   })
+
+// 查询加盟经理
+export const getSpecifiedUserListByCondition = (data:any) =>
+  request({
+    url: `/base/v2/base/user/getSpecifiedUserListByCondition`,
+    method: 'post',
+    data
+  })

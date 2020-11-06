@@ -34,6 +34,7 @@
         :class="isPC ? 'btnPc' : 'mobile'"
       >
         <el-button
+          v-permission="['/v2/driverBilling/shippingChange/save']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -42,6 +43,7 @@
           新增
         </el-button>
         <el-button
+          v-permission="['/v2/driverBilling/shippingChange/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
@@ -82,16 +84,21 @@
         :columns="columns"
         :page="page"
         style="overflow: initial;"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @onPageSize="handlePageSize"
       >
         <template v-slot:driverName="scope">
           <span>{{ scope.row.driverName }}/{{ scope.row.phone }}</span>
         </template>
-        <template v-slot:voucher_path="scope">
+        <template v-slot:voucherPath="scope">
           <a
-            :href="scope.row.voucher_path"
+            :href="scope.row.voucherPath"
             style="color:#649CEE;cursor: pointer;"
           >下载凭证</a>
+        </template>
+
+        <template v-slot:businessType="scope">
+          {{ businessTypeName(scope.row.businessType) | DataIsNull }}
         </template>
         <template v-slot:remark="scope">
           {{ scope.row.remark | DataIsNull }}
@@ -124,9 +131,12 @@
       >
         <template slot="driverId">
           <el-select
+            ref="select"
             v-model.trim="dialogForm.driverId"
             v-loadmore="loadQueryDriverByKeyword"
             placeholder="请选择"
+            reserve-keyword
+            :default-first-option="true"
             clearable
             filterable
             remote
@@ -137,7 +147,7 @@
             <el-option
               v-for="item in driverOptions"
               :key="item.value"
-              :label="`${item.label}/(${item.value})` "
+              :label="`${item.label}/${item.phone}` "
               :value="item.value"
             />
           </el-select>
@@ -187,12 +197,11 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
-import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList } from '@/api/driver-freight'
-import { GetDriverListByKerWord, getDriverNoAndNameList } from '@/api/driver'
+import { GetShippingChangeList, GetShippingChangeExport, SaveShippingChange, GetSubjectList, GetOrderDriverList } from '@/api/driver-freight'
 import { Upload, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import { delayTime } from '@/settings'
 import { getOrderListByDriverId } from '@/api/driver-account'
@@ -215,6 +224,7 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private searchKeyword:string = ''
   private dutyListOptions:IState[] = [];// 业务线列表
   private gmIdOptions:IState[] = [];// 所属加盟经理列表
   private orderListOptions:IState[] = []; // 订单列表
@@ -246,7 +256,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '调整编号:',
+      label: '调整编号',
       key: 'changeId'
     },
     {
@@ -256,7 +266,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '调整原因:',
+      label: '调整原因',
       key: 'subject',
       options: this.subjectOptions
     },
@@ -267,7 +277,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -283,7 +293,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '司机城市:',
+      label: '司机城市',
       key: 'driverCity',
       listeners: {
         'change': this.resetGmId
@@ -296,7 +306,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '业务线:',
+      label: '业务线',
       key: 'businessType',
       options: this.dutyListOptions,
       listeners: {
@@ -306,7 +316,7 @@ export default class extends Vue {
     {
       type: 'gmId',
       slot: true,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmId'
     },
     {
@@ -316,7 +326,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机编号:',
+      label: '司机编号',
       key: 'driverId'
     },
     {
@@ -330,13 +340,18 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '创建时间:',
+      label: '创建时间',
       key: 'createTime'
     }
   ]
   // 表格数据
   private tableData:any[] = []
-
+  businessTypeName(id:number) {
+    let arr:IState[] = this.dutyListOptions.filter(item => item.value === id)
+    if (arr.length > 0) {
+      return arr[0].label
+    }
+  }
   // 表格列
   private columns:any[] = [
     {
@@ -366,7 +381,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'voucher_path',
+      key: 'voucherPath',
       label: '调整凭证',
       slot: true,
       'min-width': '140px'
@@ -395,6 +410,7 @@ export default class extends Vue {
     {
       key: 'businessType',
       label: '业务线',
+      slot: true,
       'min-width': '140px'
     },
     {
@@ -481,20 +497,28 @@ export default class extends Vue {
   ]
   private dialogRole:any = {
     subject: [
-      { required: true, message: '请选择', trigger: 'blur' }
+      { required: true, message: '请选择', trigger: ['blur', 'change'] }
     ],
     driverId: [
-      { required: true, message: '请选择成交的司机', trigger: 'blur' }
+      { required: true, message: '请选择成交的司机', trigger: ['blur', 'change'] }
     ],
     orderId: [
-      { required: true, message: '请选择', trigger: 'blur' }
+      { required: true, message: '请选择', trigger: ['blur', 'change'] }
     ],
     amount: [
-      { required: true, message: '请输入大于等于0', trigger: 'blur' }
+      { required: true, message: '请输入运费金额', trigger: ['blur', 'change'] },
+      { validator: this.validateAmount, trigger: ['blur', 'change'] }
     ],
     fileUrl: [
-      { required: true, message: '请上传凭证', trigger: 'blur' }
+      { required: true, message: '请上传凭证', trigger: ['blur', 'change'] }
     ]
+  }
+  validateAmount(rule:any, value:any, callback:any) {
+    if (+value <= 0) {
+      return callback(new Error('流水金额不能小于0'))
+    } else {
+      callback()
+    }
   }
   // 查询分页
   private queryPage:PageObj = {
@@ -524,9 +548,26 @@ export default class extends Vue {
     }
     this.getGmLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位非数字或6位数字及以上的司机姓名'
+      },
+      {
+        value: this.listQuery.driverId,
+        message: '请输入2位非数字或6位数字及以上的司机编号'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.changeId !== '' && (params.changeId = this.listQuery.changeId)
       this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
@@ -622,7 +663,8 @@ export default class extends Vue {
       fileUrl: '',
       remark: ''
     }
-    this.resetDriver()
+    this.resetDriver();
+    ((this.$refs.dialogForm) as any).resetForm()
   }
   confirm() {
     ((this.$refs.dialogForm) as any).submitForm()
@@ -675,6 +717,9 @@ export default class extends Vue {
   // 获取列表
   async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
@@ -815,7 +860,8 @@ export default class extends Vue {
         this.gmIdOptions.splice(0, len)
       }
       let params:IState = {
-        roleType: 1
+        roleTypes: [1],
+        uri: '/v2/driverBilling/shippingChange/queryGM'
       }
       this.listQuery.businessType !== '' && (params.productLine = this.listQuery.businessType)
       if (this.listQuery.driverCity.length > 1) {
@@ -837,17 +883,18 @@ export default class extends Vue {
   }
   // 顶部司机关键字搜索
   querySearchByKeyword(val:string) {
-    if (val.trim() === '') {
-      return false
-    }
+    this.queryPage.page = 0
     this.resetDriver()
+    this.searchKeyword = val
     this.loadQueryDriverByKeyword(val)
   }
   async loadQueryDriverByKeyword(val?:string) {
+    val = this.searchKeyword
     this.queryPage.page++
     let params:IState = {
       page: this.queryPage.page,
-      limit: this.queryPage.limit
+      limit: this.queryPage.limit,
+      statuss: [3, 4, 5]
     }
     val !== '' && (params.key = val)
     this.queryDriverLoading = true
@@ -861,15 +908,11 @@ export default class extends Vue {
   // 根据关键字查司机id
   async loadDriverByKeyword(params:IState) {
     try {
-      if (this.listQuery.driverCity && this.listQuery.driverCity.length > 0) {
-        params.workCity = this.listQuery.driverCity[1]
-      }
-      this.listQuery.businessType !== '' && (params.businessType = this.listQuery.businessType)
-      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
-      let { data: res } = await getDriverNoAndNameList(params)
+      let { data: res } = await GetOrderDriverList(params)
       let result:any[] = res.data.map((item:any) => ({
         label: item.name,
-        value: item.driverId
+        value: item.driverId,
+        phone: item.phone
       }))
       return result
     } catch (err) {
@@ -881,6 +924,7 @@ export default class extends Vue {
   handleClearQueryDriver() {
     this.resetDriver()
     this.loadQueryDriverByKeyword()
+    this.searchKeyword = ''
   }
   // 重置司机
   resetDriver() {
@@ -903,6 +947,7 @@ export default class extends Vue {
   // 根据司机id获取已终止订单列表
   async getOrderListByDriverId() {
     try {
+      this.resetOrder()
       let params = {
         driverId: this.dialogForm.driverId,
         operateFlag: 'abort_deal'
