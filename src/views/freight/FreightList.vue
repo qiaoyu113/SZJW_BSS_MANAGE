@@ -906,12 +906,12 @@ export default class extends Vue {
         this.total = data.page.total
         setTimeout(() => {
           this.listLoading = false
-        }, 2 * 1000)
+        }, 1 * 1000)
       } else {
         this.$message.error(data)
         setTimeout(() => {
           this.listLoading = false
-        }, 2 * 1000)
+        }, 1 * 1000)
       }
     }
 
@@ -1210,7 +1210,9 @@ export default class extends Vue {
         }
       }
       this.handleCheck() // 处理选择checked
-      this.getList(this.listQuery)
+      setTimeout(() => {
+        this.getList(this.listQuery)
+      }, 1 * 1500)
     }
 
     // 格式化日期：yyyy-MM-dd
