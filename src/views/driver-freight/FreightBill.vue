@@ -682,6 +682,7 @@ export default class extends Vue {
       if (!this.validatorQuery()) {
         return false
       }
+      this.listLoading = true
       let params:IState = {
         page: this.page.page,
         limit: this.page.limit
