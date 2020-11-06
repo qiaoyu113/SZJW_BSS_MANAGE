@@ -150,10 +150,10 @@ export default class extends Vue {
       dictValue: 2,
       dictLabel: '城市数据'
     },
-    {
-      dictValue: 1,
-      dictLabel: '大区数据'
-    },
+    // {
+    //   dictValue: 1,
+    //   dictLabel: '大区数据'
+    // },
     {
       dictValue: 0,
       dictLabel: '全部数据'
