@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="DriverFreightMonthBill"
     :class="{
       p15: isPC
@@ -89,7 +90,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         :index="true"
         row-key="id"
         :height="tableHeight"

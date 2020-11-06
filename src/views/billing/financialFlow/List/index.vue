@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="financialFlowContainer"
     :class="{
       p15: isPC
@@ -95,7 +96,6 @@
       </div>
       <!-- 表格 -->
       <self-table
-        v-loading="listLoading"
         :index="false"
         :height="tableHeight"
         :is-p30="false"

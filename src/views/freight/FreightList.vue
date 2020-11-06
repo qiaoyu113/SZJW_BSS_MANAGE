@@ -1,5 +1,8 @@
 <template>
-  <div :class="isPC ? 'FreightList' : 'FreightList-m'">
+  <div
+    v-loading="listLoading"
+    :class="isPC ? 'FreightList' : 'FreightList-m'"
+  >
     <FreightListForm
       :tab="tab"
       :dispatch="dispatchTab"
@@ -18,7 +21,6 @@
       >
         <el-table
           ref="multipleTable"
-          v-loading="listLoading"
           :data="list"
           :row-style="{height: '20px'}"
           :cell-style="{padding: '5px 0'}"

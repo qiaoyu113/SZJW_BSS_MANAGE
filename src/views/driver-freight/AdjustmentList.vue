@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="AdjustmentList"
     :class="{
       p15: isPC
@@ -73,7 +74,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         row-key="id"
         :height="tableHeight"
         :index="false"
