@@ -6,8 +6,6 @@ const driverFix = '/business_center'
 const billFix = '/bill_center'
 const wayBillFix = '/waybill'
 
-const localMock = '/local'
-
 /**
  * XXXX
  */
@@ -203,7 +201,7 @@ export const payAudit = (params: any) =>
   // 获取计费管理列表
 export const GetChargingList = (params:any) =>
   request({
-    url: `${localMock}/getChargingList`,
+    url: `${payFix}/getChargingList`,
     method: 'get',
     params
   })
@@ -211,14 +209,14 @@ export const GetChargingList = (params:any) =>
 // 获取计费管理详情
 export const GetChargingDetail = (params:any) =>
   request({
-    url: `${localMock}/getChargingDetail`,
+    url: `${payFix}/getChargingDetail`,
     method: 'get',
     params
   })
 // 计费管理修改状态
 export const ChangeChargingStatus = (data:any) =>
   request({
-    url: `${localMock}/changeChargingStatus`,
+    url: `${payFix}/changeChargingStatus`,
     method: 'post',
     data
   })
@@ -226,14 +224,14 @@ export const ChangeChargingStatus = (data:any) =>
 // 计费管理操作日志
 export const GetChargingLog = (params:any) =>
   request({
-    url: `${localMock}/getChargingLog`,
+    url: `${payFix}/getChargingLog`,
     method: 'get',
     params
   })
   // 计费管理-新建
 export const AddCharging = (data:any) =>
   request({
-    url: `${localMock}/addCharging`,
+    url: `${payFix}/addCharging`,
     method: 'post',
     data
   })
@@ -241,7 +239,7 @@ export const AddCharging = (data:any) =>
 // 计费管理-调整
 export const EditCharging = (data:any) =>
   request({
-    url: `${localMock}/editCharging`,
+    url: `${payFix}/editCharging`,
     method: 'post',
     data
   })

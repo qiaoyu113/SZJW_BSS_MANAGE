@@ -102,7 +102,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import { GetDutyListByLevel } from '@/api/common'
-import { AddCharging, EditCharging, GetChargingDetail } from '@/api/driver-account'
+import { AddCharging, EditCharging, GetChargingDetail, getListAll } from '@/api/driver-account'
 import { delayTime } from '@/settings'
 interface IState {
   [key: string]: any;
@@ -115,6 +115,8 @@ interface IState {
 })
 export default class extends Vue {
   private formValidate:boolean = false;
+  // 计费类型列表
+  private chargeListOption:IState[] = [];
   // 业务线列表
   private busiType:IState[] = [];
   private listQuery:IState = {
@@ -139,12 +141,7 @@ export default class extends Vue {
         clearable: true
       },
       key: 'chargingType',
-      options: [
-        {
-          value: 1,
-          label: 'SOP计费'
-        }
-      ]
+      options: this.chargeListOption
     },
     {
       type: 1,
@@ -265,6 +262,9 @@ export default class extends Vue {
   // 扣款类型发生变化
   handleDeductionTypeChange(val:number) {
     if (val === 1) {
+      this.listQuery.fixedAmount = ''
+      this.listQuery.serviceRate = ''
+      this.listQuery.freightRate = ''
       this.formItem1.splice(1, 1, {
         label: '固定金额',
         key: 'fixedAmount',
@@ -412,8 +412,26 @@ export default class extends Vue {
       console.log(`get detail fail:${err}`)
     }
   }
+  // 获取计费类型列表
+  async getChargeListAll() {
+    try {
+      let { data: res } = await getListAll()
+      if (res.success) {
+        let options:IState[] = res.data.map((item:any) => ({
+          label: item.sopTypeDesc,
+          value: item.id
+        }))
+        this.chargeListOption.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get charge list fail:${err}`)
+    }
+  }
   mounted() {
     this.getBusiType()
+    this.getChargeListAll()
     if (this.$route.query.id) {
       this.listQuery.id = this.$route.query.id
       this.getDetail()

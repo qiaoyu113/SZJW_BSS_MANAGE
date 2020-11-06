@@ -188,7 +188,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 
@@ -594,9 +594,30 @@ export default class extends Vue {
     this.page.page = 1
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.customerName,
+        message: '请输入2位非数字或6位数字及以上的客户名称'
+      },
+      {
+        value: this.listQuery.customerId,
+        message: '请输入2位非数字或6位数字及以上的客户编号'
+      },
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位非数字或6位数字及以上的司机姓名'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   private async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.customerName && (params.customerName = this.listQuery.customerName)
       this.listQuery.customerId && (params.customerId = this.listQuery.customerId)
@@ -645,6 +666,9 @@ export default class extends Vue {
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
