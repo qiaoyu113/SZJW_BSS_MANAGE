@@ -1257,7 +1257,9 @@ export default class extends Vue {
         }
       }
       this.handleCheck() // 处理选择checked
-      this.getList(this.listQuery)
+      setTimeout(() => {
+        this.getList(this.listQuery)
+      }, 1 * 1500)
     }
 
     // 格式化日期：yyyy-MM-dd
