@@ -332,7 +332,7 @@ export function validatorValue(array:any[], vm:any) {
     if (item.value === '') {
       continue
     }
-    if (/^\d{6,}$/.test(item.value) || (isNaN(item.value) && /^[\u4E00-\u9FA5A-Za-z0-9]{2,6}$/.test(item.value))) {
+    if (/^\d{6,}$/.test(item.value) || (isNaN(item.value) && /^[\u4E00-\u9FA5A-Za-z0-9]{2,}$/.test(item.value))) {
       continue
     }
     vm.$message.warning(item.message)
