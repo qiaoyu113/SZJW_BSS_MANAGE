@@ -22,6 +22,7 @@
             v-model="listQuery.driverId"
             v-loadmore="loadmore"
             filterable
+            clearable
             remote
             reserve-keyword
             :default-first-option="true"
@@ -304,6 +305,7 @@ export default class extends Vue {
       label: '司机创建日期',
       col: 12,
       tagAttrs: {
+        clearable: true,
         pickerOptions: {
           shortcuts: [
             {
