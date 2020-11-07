@@ -1,11 +1,14 @@
 <template>
-  <div class="SuggestForm">
+  <div class="SuggestFormNew">
     <div class-name="sub-navbar">
       <div class="filter-container">
         <div :class="isPC ? 'menuBox' : 'menuBox-m'">
           <el-row>
-            <el-form :label-width="isPC ? '120px' : '28%'">
-              <el-col :span="isPC ? 6 : 24">
+            <el-form
+              size="small"
+              :label-width="isPC ? '90px' : '28%'"
+            >
+              <el-col :span="isPC ? 8 : 24">
                 <el-form-item label="租车车型">
                   <el-select
                     v-model="listQuery.carType"
@@ -23,7 +26,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 6 : 24">
+              <el-col :span="isPC ? 8 : 24">
                 <el-form-item label="供应商">
                   <el-input
                     v-model="listQuery.supplier"
@@ -33,7 +36,7 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 6 : 24">
+              <el-col :span="isPC ? 8 : 24">
                 <el-form-item label="城市">
                   <el-select
                     v-model="listQuery.city"
@@ -50,7 +53,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 6 : 24">
+              <el-col :span="isPC ? 8 : 24">
                 <el-form-item label="商品编号">
                   <el-input
                     v-model="listQuery.productCode"
@@ -60,7 +63,30 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 12 : 24">
+              <el-col :span="isPC ? 8 : 24">
+                <el-form-item label="车型状态">
+                  <el-select
+                    v-model="listQuery.status"
+                    placeholder="请选择"
+                    clearable
+                    filterable
+                  >
+                    <el-option
+                      label="全部"
+                      value=""
+                    />
+                    <el-option
+                      label="已上架"
+                      value="10"
+                    />
+                    <el-option
+                      label="已下架"
+                      value="20"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="isPC ? 8 : 24">
                 <el-form-item label="创建日期">
                   <el-date-picker
                     v-model="DateValueChild"
@@ -76,17 +102,9 @@
                 </el-form-item>
               </el-col>
               <el-col
-                :span="isPC ? 12 : 24"
+                :span="isPC ? 24 : 24"
                 class="btn-box"
               >
-                <el-button
-                  size="small"
-                  :class="isPC ? 'filter-item' : 'filter-item-m'"
-                  name="rentcartype_reset_btn"
-                  @click="resetForm"
-                >
-                  重置
-                </el-button>
                 <el-button
                   size="small"
                   :class="isPC ? 'filter-item' : 'filter-item-m'"
@@ -94,7 +112,15 @@
                   name="rentcartype_query_btn"
                   @click="search"
                 >
-                  筛选
+                  查询
+                </el-button>
+                <el-button
+                  size="small"
+                  :class="isPC ? 'filter-item' : 'filter-item-m'"
+                  name="rentcartype_reset_btn"
+                  @click="resetForm"
+                >
+                  重置
                 </el-button>
               </el-col>
             </el-form>
@@ -195,6 +221,9 @@ export default class extends Vue {
       }
     }
     this.DateValueChild = null
+    this.listQuery.status = ''
+    this.listQuery.startDate = ''
+    this.listQuery.endDate = ''
   }
   private changData() {
     if (this.DateValueChild) {
@@ -212,8 +241,16 @@ export default class extends Vue {
 </script>
 
 <style lang="scss">
-.SuggestForm {
+.SuggestFormNew {
   width: 100%;
+  background: #fff;
+  margin-bottom: 10px;
+  margin-left:0px!important;
+  margin-right:0px!important;
+  box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+  .el-form-item{
+    padding: 0 10px;
+  }
   .filter-container {
     padding: 0;
   }
@@ -224,7 +261,6 @@ export default class extends Vue {
       width: 79%;
     }
     .btn-box {
-      text-align: center;
       .filter-item {
         float: right;
         margin-left: 30px;
@@ -242,30 +278,36 @@ export default class extends Vue {
     }
   }
   .menuBox {
-    padding: 20px 30px 0 0;
+    padding: 15px;
     box-sizing: border-box;
-    position: absolute;
+    position: relative;
     z-index: 1000;
     background: #fff;
     box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.85);
-    right: 15px;
-    left: 15px;
+    right: 0;
+    left: 0;
     .btn-box {
       text-align: center;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
       .filter-item {
-        float: right;
-        margin-left: 30px;
+        margin-bottom: 0;
+        // margin-left: 30px;
       }
       .filter-item-m {
         width: 80%;
-        margin: 0 auto 10px;
+        // margin: 0 auto 10px;
       }
     }
     .el-select {
       display: block;
     }
     .el-input {
-      width: 75%;
+      width: 100%;
+    }
+    .el-date-editor{
+      width: 100%;
     }
   }
 }
