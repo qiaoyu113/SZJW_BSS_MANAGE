@@ -53,7 +53,7 @@ export const CustomerMonthlyBillCheck = (data: any) =>
 // 获取项目列表
 export const GetProjectSearch = (data: any) =>
   request({
-    url: `/line_center/v2/line/project/fuzzy/check`,
+    url: `/line_center/v2/line/project/fuzzy/check1`,
     method: 'post',
     data
   })
