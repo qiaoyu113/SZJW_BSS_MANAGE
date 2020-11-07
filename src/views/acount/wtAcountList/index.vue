@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="wtAcountList"
     :class="{
       p15: isPC
@@ -79,7 +80,7 @@
       </div>
       <self-table
         ref="driverListTable"
-        v-loading="listLoading"
+
         :height="tableHeight"
         :is-p30="false"
         :index="false"

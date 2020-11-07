@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="DriverFreightBill"
     :class="{
       p15: isPC
@@ -64,7 +65,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         row-key="id"
         :height="tableHeight"
         :index="true"
@@ -212,7 +212,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
@@ -608,6 +608,7 @@ export default class extends Vue {
     }
     this.getGmLists()
   }
+
   // 查询表单
   private handleFilterClick() {
     this.page.page = 1
@@ -616,6 +617,9 @@ export default class extends Vue {
   // 导出
   private async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
@@ -662,9 +666,23 @@ export default class extends Vue {
     this.page.limit = page.limit
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位非数字或6位数字及以上的司机姓名'
+      }
+    ], this)
+    return ret
+  }
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
+      this.listLoading = true
       let params:IState = {
         page: this.page.page,
         limit: this.page.limit
