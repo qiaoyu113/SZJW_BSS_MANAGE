@@ -495,7 +495,6 @@ export default class extends Vue {
     })
   }
   private disabledFunc(row:any) {
-    console.log(this.isCheck)
     if (row && (row.paymentReceivedFlag || !this.isCheck)) {
       return false
     }
