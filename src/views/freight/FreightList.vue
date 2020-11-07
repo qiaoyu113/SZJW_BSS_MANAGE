@@ -354,7 +354,7 @@
             :key="checkList.length + 'joinManagerName'"
             align="left"
             label="加盟经理"
-            min-width="120"
+            min-width="150"
           >
             <template slot-scope="{row}">
               {{ row.joinManagerName + '/' + row.joinManagerPhone | DataIsNull }}
@@ -366,7 +366,7 @@
             :key="checkList.length + 'dutyManagerName'"
             align="left"
             label="上岗经理"
-            min-width="120"
+            min-width="170"
           >
             <template slot-scope="{row}">
               <span>{{ row.dutyManagerName + '/' + row.dutyManagerPhone | DataIsNull }}</span>
@@ -378,7 +378,7 @@
             :key="checkList.length + 'freightUpdate'"
             align="left"
             label="运费更新时间"
-            min-width="100"
+            min-width="160"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.freightUpdate | Timestamp }}</span>
