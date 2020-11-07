@@ -425,7 +425,7 @@ export default class extends Vue {
       'min-width': '200px'
     },
     {
-      key: 'customerCity',
+      key: 'customerCityName',
       label: '客户城市',
       'min-width': '200px'
     },
