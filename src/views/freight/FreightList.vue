@@ -55,7 +55,7 @@
             :key="checkList.length + 'a'"
             align="left"
             label="出车日期"
-            min-width="90"
+            min-width="100"
           >
             <template slot-scope="scope">
               <span>{{ scope.row.departureDate | TimestampYMD }}</span>
@@ -67,7 +67,7 @@
             :key="checkList.length + 'wayBillId'"
             align="left"
             label="出车单号"
-            min-width="130"
+            min-width="140"
           >
             <template slot-scope="scope">
               <el-link
