@@ -15,6 +15,27 @@
       label-width="90px"
       class="p15 SuggestForm"
     >
+      <template slot="projectId">
+        <el-select
+          v-model.trim="listQuery.projectId"
+          v-loadmore="loadProjectList"
+          placeholder="请选择"
+          reserve-keyword
+          clearable
+          :default-first-option="true"
+          filterable
+          remote
+          :remote-method="searchProjectByKeyword"
+          @clear="handleClearProject"
+        >
+          <el-option
+            v-for="item in projectListOptions"
+            :key="item.value"
+            :label="`${item.label}(${item.value})` "
+            :value="item.value"
+          />
+        </el-select>
+      </template>
       <template slot="monthBillDate">
         <el-date-picker
           v-model="listQuery.monthBillDate"
@@ -232,9 +253,9 @@ import { delayTime } from '@/settings'
 import { UserModule } from '@/store/modules/user'
 
 interface PageObj {
-  page:Number,
-  limit:Number,
-  total?:Number
+  page:number,
+  limit:number,
+  total?:number
 }
 
 interface IState {
@@ -369,14 +390,9 @@ export default class extends Vue {
       ]
     },
     {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请输入',
-        clearable: true,
-        filterable: true
-      },
+      type: 'projectId',
       label: '项目名称',
-      key: 'projectId',
+      slot: true,
       options: this.projectListOptions
     },
     {
@@ -425,7 +441,7 @@ export default class extends Vue {
       'min-width': '200px'
     },
     {
-      key: 'customerCity',
+      key: 'customerCityName',
       label: '客户城市',
       'min-width': '200px'
     },
@@ -493,6 +509,13 @@ export default class extends Vue {
     limit: 30,
     total: 0
   }
+  // 项目列表分页
+  private projectPage:PageObj = {
+    page: 0,
+    limit: 100,
+    total: 0
+  }
+  private projectKeyword:string = ''
   // 弹窗
   private showDialog: boolean = false;
   // 弹窗标题
@@ -673,7 +696,7 @@ export default class extends Vue {
     let ret:boolean = validatorValue([
       {
         value: this.listQuery.customerName,
-        message: '请输入2位非数字或6位数字及以上的客户名称'
+        message: '请输入2位及以上的客户名称(汉字)'
       }
     ], this)
     return ret
@@ -905,22 +928,57 @@ export default class extends Vue {
       this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-  // 获取项目列表
-  async getProjectSearch() {
+  resetProjectList() {
+    this.projectKeyword = ''
+    let len:number = this.projectListOptions.length
+    if (len > 0) {
+      this.projectListOptions.splice(0, len)
+    }
+    this.projectPage.page = 0
+  }
+  // 获取项目通过关键字搜索
+  searchProjectByKeyword(val:string) {
+    this.resetProjectList()
+    this.projectKeyword = val
+    this.loadProjectList()
+  }
+  // 获取项目列表-分页
+  async loadProjectList() {
+    this.projectPage.page++
+    let params:IState = {
+      page: this.projectPage.page,
+      limit: this.projectPage.limit
+    }
+    this.projectKeyword !== '' && (params.key = this.projectKeyword)
     try {
-      let params:IState = {}
+      let result:IState[] = await this.getProjectSearch(params)
+      this.projectListOptions.push(...result)
+    } catch (err) {
+      console.log(`get project list fail:${err}`)
+    }
+  }
+  // 清除项目
+  handleClearProject() {
+    this.resetProjectList()
+    this.loadProjectList()
+  }
+  // 获取项目列表
+  async getProjectSearch(params:IState) {
+    try {
       let { data: res } = await GetProjectSearch(params)
       if (res.success) {
         let options = res.data.map((item:any) => ({
           label: item.projectName,
           value: item.projectId
         }))
-        this.projectListOptions.push(...options)
+        return options
       } else {
         this.$message.error(res.errorMsg)
+        return []
       }
     } catch (err) {
       console.log(`get project list fail:${err}`)
+      return []
     }
   }
   async init() {
@@ -929,7 +987,6 @@ export default class extends Vue {
     this.postManagerOptions.push(...data1)
     let data2 = await this.getManagerList(2, '/v2/waybill/custBilling/monthlyBill/queryLineSale')
     this.outsideSalesOptions.push(...data2)
-    this.getProjectSearch()
   }
   // 状态变化
   handleStatusChange(name:string) {
@@ -940,6 +997,7 @@ export default class extends Vue {
   mounted() {
     this.getLists()
     this.init()
+    this.loadProjectList()
   }
 }
 </script>

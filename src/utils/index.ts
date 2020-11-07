@@ -332,7 +332,11 @@ export function validatorValue(array:any[], vm:any) {
     if (item.value === '') {
       continue
     }
-    if (/^\d{6,}$/.test(item.value) || (isNaN(item.value) && /^[\u4E00-\u9FA5A-Za-z0-9]{2,6}$/.test(item.value))) {
+    let str:string = String(item.value)
+    let reg = new RegExp('[\\u4E00-\\u9FFF]+', 'g')
+    if (reg.test(item.value) && str.length > 1) {
+      continue
+    } else if (str.length > 5) {
       continue
     }
     vm.$message.warning(item.message)

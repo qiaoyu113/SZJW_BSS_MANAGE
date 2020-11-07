@@ -495,7 +495,6 @@ export default class extends Vue {
     })
   }
   private disabledFunc(row:any) {
-    console.log(this.isCheck)
     if (row && (row.paymentReceivedFlag || !this.isCheck)) {
       return false
     }
@@ -599,15 +598,15 @@ export default class extends Vue {
     let ret:boolean = validatorValue([
       {
         value: this.listQuery.customerName,
-        message: '请输入2位非数字或6位数字及以上的客户名称'
+        message: '请输入2位及以上的客户名称(汉字)'
       },
       {
         value: this.listQuery.customerId,
-        message: '请输入2位非数字或6位数字及以上的客户编号'
+        message: '请输入6位及以上的客户编号(非汉字)'
       },
       {
         value: this.listQuery.driverName,
-        message: '请输入2位非数字或6位数字及以上的司机姓名'
+        message: '请输入2位及以上的司机姓名(汉字)'
       }
     ], this)
     return ret
