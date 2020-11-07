@@ -515,6 +515,7 @@ export default class extends Vue {
     limit: 100,
     total: 0
   }
+  private projectKeyword:string = ''
   // 弹窗
   private showDialog: boolean = false;
   // 弹窗标题
@@ -928,6 +929,7 @@ export default class extends Vue {
     }
   }
   resetProjectList() {
+    this.projectKeyword = ''
     let len:number = this.projectListOptions.length
     if (len > 0) {
       this.projectListOptions.splice(0, len)
@@ -937,16 +939,17 @@ export default class extends Vue {
   // 获取项目通过关键字搜索
   searchProjectByKeyword(val:string) {
     this.resetProjectList()
-    this.loadProjectList(val)
+    this.projectKeyword = val
+    this.loadProjectList()
   }
   // 获取项目列表-分页
-  async loadProjectList(val?:string) {
+  async loadProjectList() {
     this.projectPage.page++
     let params:IState = {
       page: this.projectPage.page,
       limit: this.projectPage.limit
     }
-    val !== '' && (params.key = val)
+    this.projectKeyword !== '' && (params.key = this.projectKeyword)
     try {
       let result:IState[] = await this.getProjectSearch(params)
       this.projectListOptions.push(...result)
