@@ -357,18 +357,18 @@ export default class extends Vue {
     {
       key: 'changeId',
       label: '调整编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'driverId',
       label: '司机编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'driverName',
       slot: true,
       label: '司机姓名',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'amount',
@@ -390,7 +390,7 @@ export default class extends Vue {
       key: 'remark',
       label: '备注',
       slot: true,
-      'min-width': '140px',
+      'width': '140px',
       attrs: {
         'show-overflow-tooltip': true
       }
@@ -405,7 +405,7 @@ export default class extends Vue {
       key: 'createDate',
       label: '创建时间',
       slot: true,
-      'min-width': '140px'
+      'width': '160px'
     },
     {
       key: 'businessType',
