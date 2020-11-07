@@ -269,7 +269,7 @@ export default class extends Vue {
       key: 'financialFlowCode',
       label: '财务流水编号',
       slot: true,
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'inFlowDate',
@@ -287,7 +287,7 @@ export default class extends Vue {
       key: 'driverCode',
       label: '司机编号',
       slot: true,
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'driverName',
@@ -317,7 +317,7 @@ export default class extends Vue {
     {
       key: 'busiCode',
       label: '业务流水编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'busiDate',

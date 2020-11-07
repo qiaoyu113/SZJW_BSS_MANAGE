@@ -945,15 +945,10 @@ export default class extends Vue {
         // this.tab[4].num = data.title.secondToBeConfirmed
         // this.tab[5].num = data.title.secondConfirmed
         data.page = await HandlePages(data.page)
-        this.total = data.page.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1 * 1000)
+        this.listLoading = false
       } else {
         this.$message.error(data)
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1 * 1000)
+        this.listLoading = false
       }
     }
 

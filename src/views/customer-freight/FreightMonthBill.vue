@@ -422,7 +422,7 @@ export default class extends Vue {
       key: 'monthBillId',
       label: '月账单编号',
       slot: true,
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'monthBillDate',
@@ -433,12 +433,12 @@ export default class extends Vue {
     {
       key: 'customerName',
       label: '客户名称',
-      'min-width': '140px'
+      'width': '160px'
     },
     {
       key: 'projectName',
       label: '项目名称',
-      'min-width': '200px'
+      'width': '160px'
     },
     {
       key: 'customerCityName',
