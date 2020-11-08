@@ -3,15 +3,13 @@
     <div class="box">
       <div class="table-box">
         <self-form
-          ref="qianForm"
+          ref="RefundForm"
           :list-query="listQuery"
           :form-item="formItem"
           size="small"
           label-width="100px"
           class="p15 SuggestForm"
           :pc-col="13"
-          :rules="rules"
-          @onPass="handlePassClick"
         >
           <template slot="scoped">
             <div class="right">
@@ -27,7 +25,7 @@
             size="medium"
           >
             <p>基础信息</p>
-          </template>
+          </template>x
           <template
             slot="scoped2"
           >
@@ -47,32 +45,34 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
+import { refundDetail } from '@/api/driver-account.ts'
 interface IState {
   [key: string]: any;
 }
 @Component({
+  name: 'refundDetail',
   components: {
     SelfForm
   }
 })
 export default class extends Vue {
     private listQuery:IState = {
-      refundNumber: 'TF20201101001',
-      driverNumber: 'SJ00001',
-      driverName: '小明',
-      city: '北京市',
-      gmId: '小王',
-      sumAmount: '5000.00',
-      withdrawalAmount: '1000.00',
-      refundAmount: '1000.00',
-      reasonsRefund: '合同到期',
-      refundmethod: '银行卡',
-      refundBankCardNumber: '12345678911',
-      bankDeposit: '中国银行',
-      receipt: '是',
-      takeBackReceipt: '是',
-      remark: '无',
-      auditstatus: '审核通过'
+      refundNumber: '',
+      driverNumber: '',
+      driverName: '',
+      city: '',
+      gmId: '',
+      sumAmount: '',
+      withdrawalAmount: '',
+      refundAmount: '',
+      reasonsRefund: '',
+      refundmethod: '',
+      refundBankCardNumber: '',
+      bankDeposit: '',
+      receipt: '',
+      takeBackReceipt: '',
+      remark: '',
+      auditstatus: ''
     }
     private formItem:any[] = [
       {
@@ -186,6 +186,27 @@ export default class extends Vue {
         path: '/driveraccount/refundlist',
         query: { id: id }
       })
+    }
+    private id:string = ''
+    private async getDetail(id:string) {
+      try {
+        let params = {
+          refundId: id
+        }
+        let { data: res } = await refundDetail(params)
+        if (!res.status) {
+          this.$message(res.message)
+          return
+        }
+        console.log(res)
+        this.listQuery = res.data
+        // this.formData = res.data.baseInfo
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    mounted() {
+      this.getDetail(this.id)
     }
 }
 </script>

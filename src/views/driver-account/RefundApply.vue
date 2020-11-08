@@ -1,9 +1,9 @@
-<template>
+x<template>
   <div class="refundApply">
     <div class="box">
       <div class="table-box">
         <self-form
-          ref="qianForm"
+          ref="RefundForm"
           :list-query="listQuery"
           :form-item="formItem"
           size="small"

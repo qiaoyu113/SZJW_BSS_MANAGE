@@ -182,3 +182,15 @@ export const refundList = (data: any) =>
     method: 'post',
     data
   })
+export const refundDetail = (data: any) =>
+  request({
+    url: `${prefix2}/v1/base/role/refundDetail`,
+    method: 'post',
+    data
+  })
+export const refundAudit = (data: any) =>
+  request({
+    url: `${prefix2}/v1/base/role/refundAudit`,
+    method: 'post',
+    data
+  })

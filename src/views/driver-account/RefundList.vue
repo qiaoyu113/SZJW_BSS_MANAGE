@@ -86,7 +86,7 @@
       <div class="table_box">
         <div class="middle" />
         <self-table
-          ref="freighForm"
+          ref="RefundForm"
           :indexes="true"
           :index="true"
           :height="tableHeight"
@@ -149,6 +149,7 @@ interface IState {
   [key: string]: any;
 }
 @Component({
+  name: 'RefundDetail',
   components: {
     SelfTable,
     SelfForm
@@ -177,7 +178,7 @@ export default class extends Vue {
         filterable: true
       },
       w: '100px',
-      label: '退费编号:',
+      label: '退费编号',
       key: 'refundNumber'
     },
     {
@@ -188,7 +189,7 @@ export default class extends Vue {
         filterable: true
       },
       w: '100px',
-      label: '司机编号:',
+      label: '司机编号',
       key: 'driverNumber'
     },
     {
@@ -199,7 +200,7 @@ export default class extends Vue {
         filterable: true
       },
       w: '100px',
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -240,7 +241,7 @@ export default class extends Vue {
         filterable: true
       },
       w: '100px',
-      label: '创建日期:',
+      label: '创建日期',
       col: 12,
       key: 'createDate'
     },
@@ -252,7 +253,7 @@ export default class extends Vue {
     },
     {
       col: 12,
-      label: '审核状态:',
+      label: '审核状态',
       type: 'checkStatus',
       slot: true
     },
@@ -584,7 +585,6 @@ export default class extends Vue {
           return nodes
         }
       }
-
       // 判断是否是PC
       get isPC() {
         return SettingsModule.isPC

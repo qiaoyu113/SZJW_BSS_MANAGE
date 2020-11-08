@@ -3,7 +3,7 @@
     <div class="box">
       <div class="table-box">
         <self-form
-          ref="qianForm"
+          ref="RefundForm"
           :list-query="listQuery"
           :form-item="formItem"
           size="small"
@@ -58,6 +58,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
+import { refundAudit } from '@/api/driver-account.ts'
 interface IState {
   [key: string]: any;
 }
@@ -68,21 +69,21 @@ interface IState {
 })
 export default class extends Vue {
     private listQuery:IState = {
-      refundNumber: 'TF20201101001',
-      driverNumber: 'SJ00001',
-      driverName: '小明',
-      city: '北京市',
-      gmId: '小王',
-      sumAmount: '5000.00',
-      withdrawalAmount: '1000.00',
-      refundAmount: '1000.00',
-      reasonsRefund: '合同到期',
-      refundmethod: '银行卡',
-      refundBankCardNumber: '12345678911',
-      bankDeposit: '中国银行',
-      receipt: '是',
-      takeBackReceipt: '是',
-      remark: '无'
+      refundNumber: '',
+      driverNumber: '',
+      driverName: '',
+      city: '',
+      gmId: '',
+      sumAmount: '',
+      withdrawalAmount: '',
+      refundAmount: '',
+      reasonsRefund: '',
+      refundmethod: '',
+      refundBankCardNumber: '',
+      bankDeposit: '',
+      receipt: '',
+      takeBackReceipt: '',
+      remark: ''
     }
     private formItem:any[] = [
       {
@@ -100,27 +101,27 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '退费编号：',
+        label: '退费编号',
         key: 'refundNumber'
       },
       {
         type: 7,
-        label: '司机编号：',
+        label: '司机编号',
         key: 'driverNumber'
       },
       {
         type: 7,
-        label: '司机姓名：',
+        label: '司机姓名',
         key: 'driverName'
       },
       {
         type: 7,
-        label: '所在城市：',
+        label: '所在城市',
         key: 'city'
       },
       {
         type: 7,
-        label: '加盟经理：',
+        label: '加盟经理',
         key: 'gmId'
       },
       {
@@ -131,12 +132,12 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '账户总金额：',
+        label: '账户总金额',
         key: 'sumAmount'
       },
       {
         type: 7,
-        label: '可退金额：',
+        label: '可退金额',
         key: 'withdrawalAmount'
       },
       {
@@ -147,42 +148,42 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '申请退款金额：',
+        label: '申请退款金额',
         key: 'refundAmount'
       },
       {
         type: 7,
-        label: '退款原因：',
+        label: '退款原因',
         key: 'reasonsRefund'
       },
       {
         type: 7,
-        label: '退款方式：',
+        label: '退款方式',
         key: 'refundmethod'
       },
       {
         type: 7,
-        label: '退款银行卡号：',
+        label: '退款银行卡号',
         key: 'refundBankCardNumber'
       },
       {
         type: 7,
-        label: '开户行：',
+        label: '开户行',
         key: 'bankDeposit'
       },
       {
         type: 7,
-        label: '是否有收据：',
+        label: '是否有收据',
         key: 'receipt'
       },
       {
         type: 7,
-        label: '收据是否回收：',
+        label: '收据是否回收',
         key: 'takeBackReceipt'
       },
       {
         type: 7,
-        label: '备注：',
+        label: '备注',
         key: 'remark'
       }
     ]
@@ -237,6 +238,27 @@ export default class extends Vue {
         path: '/driveraccount/refundlist',
         query: { id: id }
       })
+    }
+    private id:string = ''
+    private async getDetail(id:string) {
+      try {
+        let params = {
+          refundId: id
+        }
+        let { data: res } = await refundAudit(params)
+        if (!res.status) {
+          this.$message(res.message)
+          return
+        }
+        console.log(res)
+        this.listQuery = res.data
+        // this.formData = res.data.baseInfo
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    mounted() {
+      this.getDetail(this.id)
     }
 }
 </script>
