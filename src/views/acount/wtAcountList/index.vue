@@ -103,7 +103,7 @@
             <el-button
               v-permission="['/v2/wt-driver-account/management/freeze']"
               type="text"
-              :disabled="scope.row.haveDealNumber === 0 || scope.row.canExtractMoney <= 0"
+              :disabled="!(scope.row.haveDealNumber > 0 && scope.row.canExtractMoney > 0)"
               @click="isFreeze(scope.row,1)"
             >
               冻结
@@ -111,7 +111,7 @@
 
             <el-button
               v-permission="['/v2/wt-driver-account/management/unfreeze']"
-              :disabled="scope.row.haveAbortNumber === 0 || scope.row.freezingMoney <= 0"
+              :disabled="!(scope.row.haveAbortNumber > 0 && scope.row.freezingMoney > 0)"
               type="text"
               @click="isFreeze(scope.row,2)"
             >
