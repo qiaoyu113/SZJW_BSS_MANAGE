@@ -40,6 +40,7 @@
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
+          :disabled="true"
           @click="handleExportClick"
         >
           导出
@@ -411,7 +412,7 @@ export default class extends Vue {
     {
       key: 'recordNo',
       label: '流水编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'departureDate',
@@ -423,13 +424,13 @@ export default class extends Vue {
       key: 'driverName',
       label: '司机姓名',
       slot: true,
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'businessNo',
       label: '出车单编号',
       slot: true,
-      'min-width': '200px'
+      'width': '140px'
     },
     {
       key: 'subjectName',
@@ -445,7 +446,7 @@ export default class extends Vue {
       key: 'createDate',
       label: '创建时间',
       slot: true,
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'createName',
