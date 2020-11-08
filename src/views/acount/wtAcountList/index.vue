@@ -1064,7 +1064,7 @@ export default class extends Vue {
       this.keyWord = keyWord
       let params = {
         workCity: this.listQuery.workCity[1] || '',
-        busiType: this.listQuery.busiType || '',
+        busiType: this.listQuery.busiType,
         gmId: this.listQuery.joinManagerId || '',
         key: ''
       }
