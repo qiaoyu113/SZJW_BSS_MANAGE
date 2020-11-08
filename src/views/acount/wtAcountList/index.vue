@@ -859,7 +859,7 @@ export default class extends Vue {
       }
       setTimeout(() => {
         this.sumbitAgain = false
-      }, 2500)
+      }, 1500)
     }
   }
   /**
@@ -877,7 +877,7 @@ export default class extends Vue {
       this.$message.success('冻结成功')
       setTimeout(() => {
         this.getList()
-      }, 2500)
+      }, delayTime)
       done()
     } else {
       this.$message.error(res.errorMsg)
@@ -897,7 +897,7 @@ export default class extends Vue {
       this.$message.success('解冻成功')
       setTimeout(() => {
         this.getList()
-      }, 2500)
+      }, delayTime)
       done()
     } else {
       this.$message.error(res.errorMsg)
