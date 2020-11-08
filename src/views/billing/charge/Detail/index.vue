@@ -18,10 +18,10 @@
       :md="true"
     >
       <self-form
+        label-position="top"
         :list-query="listQuery"
         :form-item="formItem"
         :m-block="true"
-        :pc-col="24"
         label-width="80px"
       />
     </SectionContainer>
@@ -30,13 +30,23 @@
       :md="true"
     >
       <self-form
+        label-position="top"
         :list-query="listQuery"
         :form-item="formItem1"
-        :pc-col="24"
         :m-block="true"
-        label-width="80px"
-      />
-    </SectionContainer>
+        label-width="90px"
+      >
+        <template slot="fixedAmount">
+          <span>{{ listQuery.fixedAmount }}</span>
+        </template>
+        <template slot="serviceRate">
+          <span>{{ listQuery.serviceRate }}%</span>
+        </template>
+        <template slot="freightRate">
+          <span>{{ listQuery.freightRate }}%</span>
+        </template>
+      </self-form>
+    </sectioncontainer>
   </div>
 </template>
 <script lang="ts">
@@ -44,7 +54,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SectionContainer from '@/components/SectionContainer/index.vue'
-
+import { GetChargingDetail } from '@/api/driver-account'
 interface IState {
   [key: string]: any;
 }
@@ -56,50 +66,52 @@ interface IState {
 })
 export default class extends Vue {
   private listQuery:IState = {
-
+    id: '',
+    chargingCode: '',
+    chargingTypeName: '',
+    sopType: '',
+    busiTypeName: '',
+    remark: '',
+    deductionTypeName: '',
+    deductionType: '',
+    statusName: '',
+    fixedAmount: '', // 固定金额
+    serviceRate: '', // 服务费比列
+    freightRate: ''// 运费比列
   }
   private formItem:any[] = [
     {
       type: 7,
-      label: '计费编号:',
-      key: 'a'
+      label: '计费编号',
+      key: 'chargingCode'
     },
     {
       type: 7,
-      label: '计费类型:',
-      key: 'b'
+      label: '计费类型',
+      key: 'chargingTypeName'
     },
     {
       type: 7,
-      label: 'SOP类型:',
-      key: 'c'
+      label: 'SOP类型',
+      key: 'sopType'
     },
     {
       type: 7,
-      label: '业务线:',
-      key: 'd'
+      label: '业务线',
+      key: 'busiTypeName'
     },
     {
       type: 7,
-      label: '备注:',
-      key: 'remark'
+      label: '备注',
+      key: 'remark',
+      col: 24
     }
   ];
   private formItem1:any[] = [
     {
       type: 7,
-      label: '扣款类型:',
-      key: 'f'
-    },
-    {
-      type: 7,
-      label: '固定金额:',
-      key: 'e'
-    },
-    {
-      type: 7,
-      label: '计费状态:',
-      key: 'h'
+      label: '扣款类型',
+      key: 'deductionTypeName'
     }
   ]
   // 判断是否是PC
@@ -109,6 +121,70 @@ export default class extends Vue {
   // 返回
   handleBackClick() {
     this.$router.go(-1)
+  }
+  // 获取详情
+  async getDetail() {
+    try {
+      let params:IState = {
+        id: this.listQuery.id
+      }
+      let { data: res } = await GetChargingDetail(params)
+      if (res.success) {
+        let result = res.data
+        this.listQuery = { ...this.listQuery,
+          ...{
+            chargingCode: result.chargingCode,
+            chargingTypeName: result.chargingTypeName,
+            sopType: result.sopType,
+            busiTypeName: result.busiTypeName,
+            remark: result.remark,
+            deductionTypeName: result.deductionTypeName,
+            deductionType: result.deductionType,
+            statusName: result.statusName,
+            fixedAmount: result.fixedAmount,
+            serviceRate: result.serviceRate,
+            freightRate: result.freightRate
+          }
+        }
+        if (this.listQuery.deductionType === 1) {
+          this.formItem1.push({
+            type: 'fixedAmount',
+            label: '固定金额',
+            key: 'fixedAmount',
+            slot: true
+          })
+        } else if (this.listQuery.deductionType === 2) {
+          this.formItem1.push({
+            type: 'serviceRate',
+            label: '服务费比例',
+            key: 'serviceRate',
+            slot: true
+          })
+        } else if (this.listQuery.deductionType === 3) {
+          this.formItem1.push({
+            type: 'freightRate',
+            label: '运费比例',
+            key: 'freightRate',
+            slot: true
+          })
+        }
+        this.formItem1.push({
+          type: 7,
+          label: '计费状态',
+          key: 'statusName'
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get detail fail:${err}`)
+    }
+  }
+  mounted() {
+    if (this.$route.query.id) {
+      this.listQuery.id = this.$route.query.id
+    }
+    this.getDetail()
   }
 }
 </script>

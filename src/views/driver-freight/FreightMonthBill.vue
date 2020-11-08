@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="DriverFreightMonthBill"
     :class="{
       p15: isPC
@@ -63,6 +64,7 @@
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
+          :disabled="true"
           @click="handleExportClick"
         >
           导出
@@ -89,7 +91,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         :index="true"
         row-key="id"
         :height="tableHeight"
@@ -245,7 +246,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetMonthlyBillList, ExportMonthlyBillList, driverMonthlyBillCheck } from '@/api/driver-freight'
@@ -311,7 +312,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '月账单编号:',
+      label: '月账单编号',
       key: 'monthBillId'
     },
     {
@@ -321,7 +322,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -337,7 +338,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '司机城市:',
+      label: '司机城市',
       key: 'driverCity',
       listeners: {
         'change': this.resetGmId
@@ -350,7 +351,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '业务线:',
+      label: '业务线',
       key: 'businessType',
       options: this.dutyListOptions,
       listeners: {
@@ -360,7 +361,7 @@ export default class extends Vue {
     {
       type: 'gmId',
       slot: true,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmId'
     },
     {
@@ -370,7 +371,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否封账:',
+      label: '是否封账',
       key: 'closeStatus',
       options: [
         {
@@ -389,14 +390,14 @@ export default class extends Vue {
     },
     {
       col: 8,
-      label: '月份:',
+      label: '月份',
       key: 'months',
       type: 'months',
       slot: true
     },
     {
       col: 20,
-      label: '对账状态:',
+      label: '对账状态',
       key: 'checkStatus',
       type: 'checkStatus',
       slot: true
@@ -410,7 +411,7 @@ export default class extends Vue {
       key: 'monthBillId',
       label: '月账单编号',
       slot: true,
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'monthBillDate',
@@ -422,7 +423,7 @@ export default class extends Vue {
       key: 'driverName',
       label: '司机姓名',
       slot: true,
-      'min-width': '140px'
+      'width': '210px'
     },
     {
       key: 'cityName',
@@ -598,6 +599,9 @@ export default class extends Vue {
   }
   // 导出
   private async handleExportClick() {
+    if (!this.validatorQuery) {
+      return false
+    }
     let params:IState = {}
     this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
     this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
@@ -640,9 +644,22 @@ export default class extends Vue {
     this.page.limit = page.limit
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位及以上的司机姓名(非汉字)'
+      }
+    ], this)
+    return ret
+  }
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,

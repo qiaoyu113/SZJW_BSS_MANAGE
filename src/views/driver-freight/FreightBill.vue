@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="DriverFreightBill"
     :class="{
       p15: isPC
@@ -39,6 +40,7 @@
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
+          :disabled="true"
           @click="handleExportClick"
         >
           导出
@@ -64,7 +66,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         row-key="id"
         :height="tableHeight"
         :index="true"
@@ -212,7 +213,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
@@ -277,7 +278,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '司机姓名:',
+      label: '司机姓名',
       key: 'driverName'
     },
     {
@@ -294,7 +295,7 @@ export default class extends Vue {
           lazyLoad: this.showWork
         }
       },
-      label: '司机城市:',
+      label: '司机城市',
       key: 'driverCity',
       listeners: {
         'change': this.resetGmId
@@ -307,7 +308,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '业务线:',
+      label: '业务线',
       key: 'businessType',
       options: this.dutyListOptions,
       listeners: {
@@ -317,7 +318,7 @@ export default class extends Vue {
     {
       type: 'gmId',
       slot: true,
-      label: '加盟经理:',
+      label: '加盟经理',
       key: 'gmId'
     },
     {
@@ -327,7 +328,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否已收款:',
+      label: '是否已收款',
       key: 'paymentReceivedFlag',
       options: [
         {
@@ -351,7 +352,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '流水编号:',
+      label: '流水编号',
       key: 'recordNo'
     },
     {
@@ -361,7 +362,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '出车单编号:',
+      label: '出车单编号',
       key: 'businessNo'
     },
     {
@@ -371,7 +372,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '变动类型:',
+      label: '变动类型',
       key: 'subject',
       options: this.subjectOptions
     },
@@ -386,7 +387,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '出车日期:',
+      label: '出车日期',
       key: 'time'
     },
     {
@@ -400,7 +401,7 @@ export default class extends Vue {
           shortcuts: [month, lastmonth, threemonth]
         }
       },
-      label: '创建时间:',
+      label: '创建时间',
       key: 'createTime'
     }
   ]
@@ -411,7 +412,7 @@ export default class extends Vue {
     {
       key: 'recordNo',
       label: '流水编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'departureDate',
@@ -423,13 +424,13 @@ export default class extends Vue {
       key: 'driverName',
       label: '司机姓名',
       slot: true,
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'businessNo',
       label: '出车单编号',
       slot: true,
-      'min-width': '200px'
+      'width': '140px'
     },
     {
       key: 'subjectName',
@@ -445,7 +446,7 @@ export default class extends Vue {
       key: 'createDate',
       label: '创建时间',
       slot: true,
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'createName',
@@ -608,6 +609,7 @@ export default class extends Vue {
     }
     this.getGmLists()
   }
+
   // 查询表单
   private handleFilterClick() {
     this.page.page = 1
@@ -616,6 +618,9 @@ export default class extends Vue {
   // 导出
   private async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.driverName !== '' && (params.driverName = this.listQuery.driverName)
       this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
@@ -662,9 +667,23 @@ export default class extends Vue {
     this.page.limit = page.limit
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位及以上的司机姓名(汉字)'
+      }
+    ], this)
+    return ret
+  }
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
+      this.listLoading = true
       let params:IState = {
         page: this.page.page,
         limit: this.page.limit
@@ -847,6 +866,10 @@ export default class extends Vue {
             label: item.name,
             value: item.code
           }
+        })
+        subjectArr.unshift({
+          label: '全部',
+          value: ''
         })
         this.subjectOptions.push(...subjectArr)
       } else {

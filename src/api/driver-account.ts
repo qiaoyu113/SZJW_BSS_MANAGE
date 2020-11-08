@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// const prefix = '/mock/112'
+const payFix = '/mock/112'
 const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
@@ -191,6 +191,75 @@ export const refundDetail = (data: any) =>
 export const refundAudit = (data: any) =>
   request({
     url: `${prefix2}/v1/base/role/refundAudit`,
+    method: 'post',
+    data
+  })
+
+// 缴费管理列表
+export const getPayList = (data: any) =>
+  request({
+    url: `${payFix}/v2/wt-driver-account/pay/list`,
+    method: 'post',
+    data
+  })
+
+// 缴费详情
+export const payDetail = (params: any) =>
+  request({
+    url: `${payFix}/billing/paydetail`,
+    method: 'get',
+    params
+  })
+
+// 缴费审核
+export const payAudit = (params: any) =>
+  request({
+    url: `${payFix}/billing/payAudit`,
+    method: 'get',
+    params
+  })
+  // 获取计费管理列表
+export const GetChargingList = (params:any) =>
+  request({
+    url: `${payFix}/getChargingList`,
+    method: 'get',
+    params
+  })
+
+// 获取计费管理详情
+export const GetChargingDetail = (params:any) =>
+  request({
+    url: `${payFix}/getChargingDetail`,
+    method: 'get',
+    params
+  })
+// 计费管理修改状态
+export const ChangeChargingStatus = (data:any) =>
+  request({
+    url: `${payFix}/changeChargingStatus`,
+    method: 'post',
+    data
+  })
+
+// 计费管理操作日志
+export const GetChargingLog = (params:any) =>
+  request({
+    url: `${payFix}/getChargingLog`,
+    method: 'get',
+    params
+  })
+  // 计费管理-新建
+export const AddCharging = (data:any) =>
+  request({
+    url: `${payFix}/addCharging`,
+    method: 'post',
+    data
+  })
+
+// 计费管理-调整
+export const EditCharging = (data:any) =>
+  request({
+    url: `${payFix}/editCharging`,
     method: 'post',
     data
   })

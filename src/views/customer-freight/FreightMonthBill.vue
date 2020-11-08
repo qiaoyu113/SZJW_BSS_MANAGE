@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="DriverFreightMonthBill"
     :class="{
       p15: isPC
@@ -14,6 +15,27 @@
       label-width="90px"
       class="p15 SuggestForm"
     >
+      <template slot="projectId">
+        <el-select
+          v-model.trim="listQuery.projectId"
+          v-loadmore="loadProjectList"
+          placeholder="请选择"
+          reserve-keyword
+          clearable
+          :default-first-option="true"
+          filterable
+          remote
+          :remote-method="searchProjectByKeyword"
+          @clear="handleClearProject"
+        >
+          <el-option
+            v-for="item in projectListOptions"
+            :key="item.value"
+            :label="`${item.label}(${item.value})` "
+            :value="item.value"
+          />
+        </el-select>
+      </template>
       <template slot="monthBillDate">
         <el-date-picker
           v-model="listQuery.monthBillDate"
@@ -74,7 +96,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         :index="true"
         row-key="id"
         :height="tableHeight"
@@ -222,7 +243,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { fileUpload } from '@/api/cargo'
@@ -232,9 +253,9 @@ import { delayTime } from '@/settings'
 import { UserModule } from '@/store/modules/user'
 
 interface PageObj {
-  page:Number,
-  limit:Number,
-  total?:Number
+  page:number,
+  limit:number,
+  total?:number
 }
 
 interface IState {
@@ -293,7 +314,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '月账单编号:',
+      label: '月账单编号',
       key: 'monthBillId'
     },
     {
@@ -303,7 +324,7 @@ export default class extends Vue {
         clearable: true,
         maxlength: 50
       },
-      label: '客户名称:',
+      label: '客户名称',
       key: 'customerName'
     },
     {
@@ -329,7 +350,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '上岗经理:',
+      label: '上岗经理',
       key: 'dutyManagerId',
       options: this.postManagerOptions
     },
@@ -340,7 +361,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '外线销售:',
+      label: '外线销售',
       key: 'lineSaleId',
       options: this.outsideSalesOptions
     },
@@ -351,7 +372,7 @@ export default class extends Vue {
         clearable: true,
         filterable: true
       },
-      label: '是否封账:',
+      label: '是否封账',
       key: 'closeStatus',
       options: [
         {
@@ -369,25 +390,20 @@ export default class extends Vue {
       ]
     },
     {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请输入',
-        clearable: true,
-        filterable: true
-      },
-      label: '项目名称:',
-      key: 'projectId',
+      type: 'projectId',
+      label: '项目名称',
+      slot: true,
       options: this.projectListOptions
     },
     {
-      col: 10,
-      label: '月份:',
+      col: 8,
+      label: '月份',
       type: 'monthBillDate',
       slot: true
     },
     {
       col: 16,
-      label: '对账状态:',
+      label: '对账状态',
       type: 'checkStatus',
       slot: true
     },
@@ -406,7 +422,7 @@ export default class extends Vue {
       key: 'monthBillId',
       label: '月账单编号',
       slot: true,
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'monthBillDate',
@@ -417,15 +433,15 @@ export default class extends Vue {
     {
       key: 'customerName',
       label: '客户名称',
-      'min-width': '140px'
+      'width': '160px'
     },
     {
       key: 'projectName',
       label: '项目名称',
-      'min-width': '200px'
+      'width': '160px'
     },
     {
-      key: 'customerCity',
+      key: 'customerCityName',
       label: '客户城市',
       'min-width': '200px'
     },
@@ -493,6 +509,13 @@ export default class extends Vue {
     limit: 30,
     total: 0
   }
+  // 项目列表分页
+  private projectPage:PageObj = {
+    page: 0,
+    limit: 100,
+    total: 0
+  }
+  private projectKeyword:string = ''
   // 弹窗
   private showDialog: boolean = false;
   // 弹窗标题
@@ -668,8 +691,21 @@ export default class extends Vue {
     this.page.page = 1
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.customerName,
+        message: '请输入2位及以上的客户名称(汉字)'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   private handleExportClick() {
+    if (!this.validatorQuery()) {
+      return false
+    }
     let params:IState = {}
     this.listQuery.monthBillId !== '' && (params.monthBillId = this.listQuery.monthBillId)
     this.listQuery.customerName !== '' && (params.customerName = this.listQuery.customerName)
@@ -717,6 +753,9 @@ export default class extends Vue {
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
@@ -889,22 +928,57 @@ export default class extends Vue {
       this.dialogFormItem = this.dialogItem.slice(3)
     }
   }
-  // 获取项目列表
-  async getProjectSearch() {
+  resetProjectList() {
+    this.projectKeyword = ''
+    let len:number = this.projectListOptions.length
+    if (len > 0) {
+      this.projectListOptions.splice(0, len)
+    }
+    this.projectPage.page = 0
+  }
+  // 获取项目通过关键字搜索
+  searchProjectByKeyword(val:string) {
+    this.resetProjectList()
+    this.projectKeyword = val
+    this.loadProjectList()
+  }
+  // 获取项目列表-分页
+  async loadProjectList() {
+    this.projectPage.page++
+    let params:IState = {
+      page: this.projectPage.page,
+      limit: this.projectPage.limit
+    }
+    this.projectKeyword !== '' && (params.key = this.projectKeyword)
     try {
-      let params:IState = {}
+      let result:IState[] = await this.getProjectSearch(params)
+      this.projectListOptions.push(...result)
+    } catch (err) {
+      console.log(`get project list fail:${err}`)
+    }
+  }
+  // 清除项目
+  handleClearProject() {
+    this.resetProjectList()
+    this.loadProjectList()
+  }
+  // 获取项目列表
+  async getProjectSearch(params:IState) {
+    try {
       let { data: res } = await GetProjectSearch(params)
       if (res.success) {
         let options = res.data.map((item:any) => ({
           label: item.projectName,
           value: item.projectId
         }))
-        this.projectListOptions.push(...options)
+        return options
       } else {
         this.$message.error(res.errorMsg)
+        return []
       }
     } catch (err) {
       console.log(`get project list fail:${err}`)
+      return []
     }
   }
   async init() {
@@ -913,7 +987,6 @@ export default class extends Vue {
     this.postManagerOptions.push(...data1)
     let data2 = await this.getManagerList(2, '/v2/waybill/custBilling/monthlyBill/queryLineSale')
     this.outsideSalesOptions.push(...data2)
-    this.getProjectSearch()
   }
   // 状态变化
   handleStatusChange(name:string) {
@@ -924,6 +997,7 @@ export default class extends Vue {
   mounted() {
     this.getLists()
     this.init()
+    this.loadProjectList()
   }
 }
 </script>

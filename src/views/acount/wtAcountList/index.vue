@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="wtAcountList"
     :class="{
       p15: isPC
@@ -9,9 +10,9 @@
     <self-form
       :list-query="listQuery"
       :form-item="formItem"
-      label-width="100px"
+      label-width="160px"
+      size="small"
       class="p15"
-      height=""
     >
       <template
         slot="driverId"
@@ -21,6 +22,7 @@
             v-model="listQuery.driverId"
             v-loadmore="loadmore"
             filterable
+            clearable
             remote
             reserve-keyword
             :default-first-option="true"
@@ -79,7 +81,7 @@
       </div>
       <self-table
         ref="driverListTable"
-        v-loading="listLoading"
+
         :height="tableHeight"
         :is-p30="false"
         :index="false"
@@ -242,7 +244,7 @@ export default class extends Vue {
       type: 8,
       key: 'workCity',
       col: 8,
-      w: '80px',
+      // w: '80px',
       label: '所属城市',
       tagAttrs: {
         placeholder: '请选择所属城市',
@@ -282,16 +284,14 @@ export default class extends Vue {
     },
     {
       type: 'driverId',
-      label: '司机姓名（司机编号）',
+      label: '司机姓名(司机编号)',
       key: 'driverId',
       col: 8,
-      w: '160px',
       slot: true
     },
     {
       type: 4,
       col: 12,
-      w: '150px',
       key: 'balance',
       label: '账户余额低于500元',
       tagAttrs: {
@@ -305,6 +305,7 @@ export default class extends Vue {
       label: '司机创建日期',
       col: 12,
       tagAttrs: {
+        clearable: true,
         pickerOptions: {
           shortcuts: [
             {
