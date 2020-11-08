@@ -64,6 +64,7 @@
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           type="primary"
+          :disabled="true"
           @click="handleExportClick"
         >
           导出
