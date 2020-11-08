@@ -11,42 +11,42 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="出车单号"
-              :value="OwnerDetail.wayBillInfoVO.wayBillId"
+              :value="OwnerDetail.wayBillInfoVO.wayBillId | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="出车日期"
-              :value="OwnerDetail.wayBillInfoVO.departureDate"
+              :value="OwnerDetail.wayBillInfoVO.departureDate | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="线路名称"
-              :value="OwnerDetail.wayBillInfoVO.lineName + '/' + OwnerDetail.wayBillInfoVO.lineId"
+              :value="OwnerDetail.wayBillInfoVO.lineName ? OwnerDetail.wayBillInfoVO.lineName + '/' + OwnerDetail.wayBillInfoVO.lineId : '暂无数据'"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="出车趟数(趟)"
-              :value="OwnerDetail.wayBillInfoVO.deliverNum"
+              :value="OwnerDetail.wayBillInfoVO.deliverNum | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="仓位置"
-              :value="OwnerDetail.wayBillInfoVO.warehouseLocation"
+              :value="OwnerDetail.wayBillInfoVO.warehouseLocation | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="仓名称"
-              :value="OwnerDetail.wayBillInfoVO.warehouseName"
+              :value="OwnerDetail.wayBillInfoVO.warehouseName | DataIsNull"
             />
           </el-col>
         </el-row>
@@ -60,42 +60,42 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="司机姓名"
-              :value="OwnerDetail.driverBusiInfoVO.name"
+              :value="OwnerDetail.driverBusiInfoVO.name | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="司机电话"
-              :value="OwnerDetail.driverBusiInfoVO.phone"
+              :value="OwnerDetail.driverBusiInfoVO.phone | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="工作城市"
-              :value="OwnerDetail.driverBusiInfoVO.workCityName"
+              :value="OwnerDetail.driverBusiInfoVO.workCityName | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="车牌号"
-              :value="OwnerDetail.driverBusiInfoVO.carNo"
+              :value="OwnerDetail.driverBusiInfoVO.carNo | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="车型"
-              :value="OwnerDetail.driverBusiInfoVO.carTypeName"
+              :value="OwnerDetail.driverBusiInfoVO.carTypeName | DataIsNull"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="加盟经理"
-              :value="OwnerDetail.driverBusiInfoVO.gmName + '/' + OwnerDetail.driverBusiInfoVO.gmPhone"
+              :value="OwnerDetail.driverBusiInfoVO.gmName ? OwnerDetail.driverBusiInfoVO.gmName + '/' + OwnerDetail.driverBusiInfoVO.gmPhone : '暂无数据'"
             />
           </el-col>
         </el-row>
@@ -158,28 +158,28 @@
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="客户名称"
-              :value="OwnerDetail.lineInfoVO.customerName + '/' + OwnerDetail.lineInfoVO.customerId"
+              :value="OwnerDetail.lineInfoVO.customerName ? OwnerDetail.lineInfoVO.customerName + '/' + OwnerDetail.lineInfoVO.customerId : '暂无数据'"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="项目名称"
-              :value="OwnerDetail.lineInfoVO.projectName + '/' + OwnerDetail.lineInfoVO.projectId"
+              :value="OwnerDetail.lineInfoVO.projectName ? OwnerDetail.lineInfoVO.projectName + '/' + OwnerDetail.lineInfoVO.projectId : '暂无数据'"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="上岗经理"
-              :value="OwnerDetail.lineInfoVO.dutyManagerIdName + '/' + OwnerDetail.lineInfoVO.dutyManagerPhone"
+              :value="OwnerDetail.lineInfoVO.dutyManagerIdName ? OwnerDetail.lineInfoVO.dutyManagerIdName + '/' + OwnerDetail.lineInfoVO.dutyManagerPhone : '暂无数据'"
             />
           </el-col>
 
           <el-col :span="isPC ? 6 : 24">
             <DetailItem
               name="外线销售"
-              :value="OwnerDetail.lineInfoVO.lineSaleName + '/' + OwnerDetail.lineInfoVO.lineSalePhone"
+              :value="OwnerDetail.lineInfoVO.lineSaleName ? OwnerDetail.lineInfoVO.lineSaleName + '/' + OwnerDetail.lineInfoVO.lineSalePhone : '暂无数据'"
             />
           </el-col>
         </el-row>
@@ -192,7 +192,7 @@
         <el-col :span="isPC ? 24 : 24">
           <DetailItem
             name="运费金额"
-            :value="OwnerDetail.wayBillFee"
+            :value="OwnerDetail.wayBillFee | DataIsNull"
           />
           <!--table表单-->
           <div
@@ -221,7 +221,7 @@
                 label="变动类型"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.changeType }}</span>
+                  <span>{{ scope.row.changeType | DataIsNull }}</span>
                 </template>
               </el-table-column>
 
@@ -229,7 +229,7 @@
                 label="变更前"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.beforeStateName }}</span>
+                  <span>{{ scope.row.beforeStateName | DataIsNull }}</span>
                 </template>
               </el-table-column>
 
@@ -238,7 +238,7 @@
                 label="变更后"
               >
                 <template slot-scope="scope">
-                  <span>{{ scope.row.afterStateName }}</span>
+                  <span>{{ scope.row.afterStateName | DataIsNull }}</span>
                 </template>
               </el-table-column>
 
@@ -247,7 +247,7 @@
                 label="变更记录"
               >
                 <template slot-scope="{row}">
-                  {{ row.changeLog }}
+                  {{ row.changeLog | DataIsNull }}
                 </template>
               </el-table-column>
             </el-table>
@@ -526,6 +526,9 @@ export default class extends Vue {
     private async fetchData(value: any) {
       const { data } = await freightDetail({ wayBillId: value })
       if (data.success) {
+        !data.data.driverBusiInfoVO && (data.data.driverBusiInfoVO = this.OwnerDetail.driverBusiInfoVO)
+        !data.data.lineInfoVO && (data.data.lineInfoVO = this.OwnerDetail.lineInfoVO)
+        !data.data.wayBillInfoVO && (data.data.wayBillInfoVO = this.OwnerDetail.wayBillInfoVO)
         this.OwnerDetail = data.data
       } else {
         this.$message.error(data.errorMsg)
