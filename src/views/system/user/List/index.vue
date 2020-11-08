@@ -5,44 +5,38 @@
       p15: isPC
     }"
   >
-    <suggest-container
-      :tab="tab"
-      :tags="tags"
-      :active-name="listQuery.status"
-      @handle-query="handleQuery"
+    <!-- 查询表单 -->
+    <self-form
+      :list-query="listQuery"
+      :form-item="formItem"
+      size="small"
+      :pc-col="8"
+      label-width="90px"
+      class="p15 SuggestForm"
     >
-      <!-- 查询表单 -->
-      <self-form
-        :list-query="listQuery"
-        :form-item="formItem"
-        label-width="80px"
-        class="p15"
+      <div
+        slot="btn"
+        :class="isPC ? 'btnPc' : 'mobile'"
       >
-        <div
-          slot="btn"
-          :class="isPC ? 'btnPc' : 'mobile'"
+        <el-button
+          size="small"
+          :class="isPC ? '' : 'btnMobile'"
+          type="primary"
+          name="driverclue_filter_btn"
+          @click="handleFilterClick"
         >
-          <el-button
-            size="small"
-            type="warning"
-            :class="isPC ? '' : 'btnMobile'"
-            name="driverclue_reset_btn"
-            @click="handleResetClick"
-          >
-            重置
-          </el-button>
-          <el-button
-            size="small"
-            :class="isPC ? '' : 'btnMobile'"
-            type="primary"
-            name="driverclue_filter_btn"
-            @click="handleFilterClick"
-          >
-            筛选
-          </el-button>
-        </div>
-      </self-form>
-    </suggest-container>
+          查询
+        </el-button>
+        <el-button
+          size="small"
+          :class="isPC ? '' : 'btnMobile'"
+          name="driverclue_reset_btn"
+          @click="handleResetClick"
+        >
+          重置
+        </el-button>
+      </div>
+    </self-form>
 
     <table-header
       :tab="[
@@ -71,6 +65,7 @@
       v-loading="listLoading"
       :operation-list="[]"
       :index="false"
+      :height="'auto'"
       :table-data="tableData"
       :columns="columns"
       :page="page"
@@ -147,7 +142,6 @@ import SelfTable from '@/components/Base/SelfTable.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM } from '@/api/system'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { getLabel, phoneReg } from '@/utils/index.ts'
 import { HandlePages } from '@/utils/index'
 import TableHeader from '@/components/TableHeader/index.vue'
@@ -195,7 +189,6 @@ interface IState {
   components: {
     SelfTable,
     SelfForm,
-    SuggestContainer,
     TableHeader
   }
 })
@@ -289,6 +282,30 @@ export default class extends Vue {
       },
       label: '电话',
       key: 'mobile'
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '状态',
+      key: 'status',
+      options: [
+        {
+          label: '全部',
+          value: ''
+        },
+        {
+          label: '启用',
+          value: 1
+        },
+        {
+          label: '禁用',
+          value: 2
+        }
+      ]
     }
   ]
   // 判断是否是PC
@@ -516,6 +533,14 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .userManager {
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
     .subTitle {
       display: flex;
       flex-direction: row;

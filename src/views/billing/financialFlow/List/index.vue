@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="financialFlowContainer"
     :class="{
       p15: isPC
@@ -95,7 +96,6 @@
       </div>
       <!-- 表格 -->
       <self-table
-        v-loading="listLoading"
         :index="false"
         :height="tableHeight"
         :is-p30="false"
@@ -269,7 +269,7 @@ export default class extends Vue {
       key: 'financialFlowCode',
       label: '财务流水编号',
       slot: true,
-      'min-width': '140px'
+      'width': '160px'
     },
     {
       key: 'inFlowDate',
@@ -287,12 +287,12 @@ export default class extends Vue {
       key: 'driverCode',
       label: '司机编号',
       slot: true,
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'driverName',
       label: '司机姓名',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'city',
@@ -317,13 +317,13 @@ export default class extends Vue {
     {
       key: 'busiCode',
       label: '业务流水编号',
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'busiDate',
       label: '业务发生时间',
       slot: true,
-      'width': '150px'
+      'width': '160px'
     },
     {
       key: 'busiMoney',

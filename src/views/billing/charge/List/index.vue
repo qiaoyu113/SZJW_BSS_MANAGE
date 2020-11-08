@@ -144,7 +144,7 @@ import { HandlePages } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 import { GetDutyListByLevel } from '@/api/common'
-import { GetChargingList, ChangeChargingStatus } from '@/api/driver-account'
+import { GetChargingList, ChangeChargingStatus, getListAll } from '@/api/driver-account'
 import { delayTime } from '@/settings'
 
 interface PageObj {
@@ -167,6 +167,8 @@ export default class extends Vue {
   private busiType:IState[] = [];
   // loading
   private listLoading:Boolean = false;
+  // 计费类型列表
+  private chargeListOption:IState[] = [];
   // 查询表单
   private listQuery:IState = {
     sopType: '',
@@ -182,7 +184,7 @@ export default class extends Vue {
       type: 1,
       tagAttrs: {
         placeholder: '请输入',
-        maxlength: 50,
+        maxlength: 20,
         clearable: true
       },
       label: 'SOP类型',
@@ -202,22 +204,19 @@ export default class extends Vue {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '计费类型',
       key: 'chargingType',
-      options: [
-        {
-          label: 'SOP计费',
-          value: 1
-        }
-      ]
+      options: this.chargeListOption
     },
     {
       type: 2,
       tagAttrs: {
         placeholder: '请选择',
-        clearable: true
+        clearable: true,
+        filterable: true
       },
       label: '业务线',
       key: 'busiType',
@@ -255,7 +254,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'sopTypeName',
+      key: 'sopType',
       label: 'SOP类型',
       'min-width': '140px'
     },
@@ -399,6 +398,23 @@ export default class extends Vue {
       this.listLoading = false
     }
   }
+  // 获取计费类型列表
+  async getChargeListAll() {
+    try {
+      let { data: res } = await getListAll()
+      if (res.success) {
+        let options:IState[] = res.data.map((item:any) => ({
+          label: item.sopTypeDesc,
+          value: item.id
+        }))
+        this.chargeListOption.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get charge list fail:${err}`)
+    }
+  }
   // 更多操作
   handleCommandChange(key:string, row:any) {
     if (key === 'adjust') { // 调整
@@ -482,6 +498,7 @@ export default class extends Vue {
     }
   }
   mounted() {
+    this.getChargeListAll()
     this.getBusiType()
     this.getLists()
   }

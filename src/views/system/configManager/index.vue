@@ -123,7 +123,7 @@
           </template>
           <template slot="desc">
             <div class="subBtn mt0 desc">
-              须知:给某调业务线勾选肥瘦标签,代表该业务线司机可见该肥瘦类型线路
+              须知:给某条业务线勾选肥瘦标签,代表该业务线司机可见该肥瘦类型线路
             </div>
           </template>
           <template slot="validator" />
@@ -353,7 +353,7 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
   get tableHeight() {
-    let otherHeight = 440
+    let otherHeight = 340
     return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   // 弹框即将关闭
@@ -471,7 +471,7 @@ export default class extends Vue {
           item.busi = true
           return item
         })
-        res.page = await HandlePages(res.page.total)
+        res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
         this.$message.error(res.errorMsg)

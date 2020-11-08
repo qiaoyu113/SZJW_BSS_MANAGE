@@ -1,28 +1,20 @@
 <template>
   <div :class="isPC ? 'RentCarType' : 'RentCarType-m'">
-    <SuggestContainer
-      :tab="tab"
-      :tags="tags"
-      :active-name="listQuery.status"
-      @handle-date="handleDate"
-      @handle-query="handleQuery"
-    >
-      <RentCarForm
-        :list-query="listQuery"
-        :date-value="DateValue"
-        :data-types="{
-          optionsCity,
-          optionsCar
-        }"
-        @handle-tags="handleTags"
-        @handle-query="search"
-      />
-    </SuggestContainer>
+    <RentCarForm
+      :list-query="listQuery"
+      :date-value="DateValue"
+      :data-types="{
+        optionsCity,
+        optionsCar
+      }"
+      @handle-tags="handleTags"
+      @handle-query="search"
+    />
     <div class="table_box">
       <!--操作栏-->
       <TableHeader
-        :tab="tab"
-        :active-name="listQuery.status"
+        :tab="[]"
+        :active-name="''"
       >
         <el-button
           v-permission="['/v1/product/product/rentalCar/download']"
@@ -83,7 +75,7 @@
           :row-style="{height: '20px'}"
           :cell-style="{padding: '5px 0'}"
           size="mini"
-          :max-height="tableHeight"
+          :max-height="'auto'"
           fit
           :border="isPC"
           stripe
@@ -318,7 +310,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { RentCarForm } from './components'
 import TableHeader from '@/components/TableHeader/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
@@ -337,7 +328,6 @@ interface IState {
 @Component({
   name: 'RentCarType',
   components: {
-    SuggestContainer,
     RentCarForm,
     TableHeader,
     Pagination,
@@ -660,7 +650,6 @@ export default class extends Vue {
 <style lang="scss" scoped>
 .RentCarType {
   padding: 15px;
-  padding-bottom: 0;
   box-sizing: border-box;
   .el-select{
     display: block;

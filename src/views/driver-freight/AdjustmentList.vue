@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="AdjustmentList"
     :class="{
       p15: isPC
@@ -73,7 +74,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         row-key="id"
         :height="tableHeight"
         :index="false"
@@ -197,7 +197,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
@@ -357,18 +357,18 @@ export default class extends Vue {
     {
       key: 'changeId',
       label: '调整编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'driverId',
       label: '司机编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'driverName',
       slot: true,
       label: '司机姓名',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'amount',
@@ -390,7 +390,7 @@ export default class extends Vue {
       key: 'remark',
       label: '备注',
       slot: true,
-      'min-width': '140px',
+      'width': '140px',
       attrs: {
         'show-overflow-tooltip': true
       }
@@ -405,7 +405,7 @@ export default class extends Vue {
       key: 'createDate',
       label: '创建时间',
       slot: true,
-      'min-width': '140px'
+      'width': '160px'
     },
     {
       key: 'businessType',
@@ -548,9 +548,26 @@ export default class extends Vue {
     }
     this.getGmLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位及以上的司机姓名(汉字)'
+      },
+      {
+        value: this.listQuery.driverId,
+        message: '请输入6位及以上的司机编号(非汉字)'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.changeId !== '' && (params.changeId = this.listQuery.changeId)
       this.listQuery.subject !== '' && (params.subject = this.listQuery.subject)
@@ -700,6 +717,9 @@ export default class extends Vue {
   // 获取列表
   async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,

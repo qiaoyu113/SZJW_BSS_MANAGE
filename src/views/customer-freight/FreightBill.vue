@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="DriverFreightBill"
     :class="{
       p15: isPC
@@ -49,7 +50,6 @@
       <!-- 表格 -->
       <self-table
         ref="freighForm"
-        v-loading="listLoading"
         :index="true"
         row-key="id"
         :height="tableHeight"
@@ -188,7 +188,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, validatorValue } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 
@@ -395,34 +395,34 @@ export default class extends Vue {
     {
       key: 'recordNo',
       label: '流水编号',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'customerName',
       label: '客户名称',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'projectName',
       label: '项目名称',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'departureDate',
       slot: true,
       label: '出车日期',
-      'min-width': '140px'
+      'width': '120px'
     },
     {
       key: 'driverName',
       label: '司机姓名',
-      'min-width': '140px'
+      'width': '140px'
     },
     {
       key: 'businessNo',
       label: '出车单号',
       slot: true,
-      'min-width': '200px'
+      'width': '140px'
     },
     {
       key: 'subjectName',
@@ -438,7 +438,7 @@ export default class extends Vue {
       key: 'createDate',
       slot: true,
       label: '创建时间',
-      'min-width': '140px'
+      'width': '150px'
     },
     {
       key: 'createName',
@@ -495,7 +495,6 @@ export default class extends Vue {
     })
   }
   private disabledFunc(row:any) {
-    console.log(this.isCheck)
     if (row && (row.paymentReceivedFlag || !this.isCheck)) {
       return false
     }
@@ -594,9 +593,30 @@ export default class extends Vue {
     this.page.page = 1
     this.getLists()
   }
+  // 查询表单校验
+  validatorQuery() {
+    let ret:boolean = validatorValue([
+      {
+        value: this.listQuery.customerName,
+        message: '请输入2位及以上的客户名称(汉字)'
+      },
+      {
+        value: this.listQuery.customerId,
+        message: '请输入6位及以上的客户编号(非汉字)'
+      },
+      {
+        value: this.listQuery.driverName,
+        message: '请输入2位及以上的司机姓名(汉字)'
+      }
+    ], this)
+    return ret
+  }
   // 导出
   private async handleExportClick() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       let params:IState = {}
       this.listQuery.customerName && (params.customerName = this.listQuery.customerName)
       this.listQuery.customerId && (params.customerId = this.listQuery.customerId)
@@ -645,6 +665,9 @@ export default class extends Vue {
   // 获取列表
   private async getLists() {
     try {
+      if (!this.validatorQuery()) {
+        return false
+      }
       this.listLoading = true
       let params:IState = {
         page: this.page.page,

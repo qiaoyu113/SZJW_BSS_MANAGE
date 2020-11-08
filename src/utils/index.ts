@@ -324,3 +324,23 @@ export const phoneRegExp = /^[1][3-9][0-9]{9}$/
 
 // 字母数字校验
 export const IdRegExp = /^[0-9a-zA-Z]*$/
+
+// 验证司机
+export function validatorValue(array:any[], vm:any) {
+  for (let i = 0; i < array.length; i++) {
+    let item:any = array[i]
+    if (item.value === '') {
+      continue
+    }
+    let str:string = String(item.value)
+    let reg = new RegExp('[\\u4E00-\\u9FFF]+', 'g')
+    if (reg.test(item.value) && str.length > 1) {
+      continue
+    } else if (str.length > 5) {
+      continue
+    }
+    vm.$message.warning(item.message)
+    return false
+  }
+  return true
+}
