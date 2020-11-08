@@ -945,6 +945,7 @@ export default class extends Vue {
         // this.tab[4].num = data.title.secondToBeConfirmed
         // this.tab[5].num = data.title.secondConfirmed
         data.page = await HandlePages(data.page)
+        this.total = data.page.total
         this.listLoading = false
       } else {
         this.$message.error(data)
