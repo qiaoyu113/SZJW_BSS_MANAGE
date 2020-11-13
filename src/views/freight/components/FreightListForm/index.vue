@@ -461,7 +461,7 @@ export default class extends Vue {
   created() {
     this.getDictionary()
     this.getJoinManageList()
-    this.getLowerStaffInfo()
+    // this.getLowerStaffInfo()
     this.getDutyListByLevel()
   }
 
