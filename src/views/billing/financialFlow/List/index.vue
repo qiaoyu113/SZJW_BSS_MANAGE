@@ -74,6 +74,7 @@
 
         <el-button
           v-permission="['/v2/wt-driver-account/flow/export']"
+          :disabled="true"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           @click="handleExportClick"
