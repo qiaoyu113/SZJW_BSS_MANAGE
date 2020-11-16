@@ -63,6 +63,7 @@ export default {
     i18n: 'I18n',
     externalLink: 'Enlace externo',
     profile: 'Profile',
+    resetPassword: 'resetPassword',
     user: 'UserManage'
   },
   navbar: {
