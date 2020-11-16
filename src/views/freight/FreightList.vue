@@ -1097,7 +1097,7 @@ export default class extends Vue {
           if (data.success) {
             this.$message.success('提交成功')
             this.assignShowDialogMin = false
-            this.reset()
+            this.getList(this.listQuery)
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -1128,7 +1128,7 @@ export default class extends Vue {
             wayBillAmountIds: wayBillAmountIdsArr
           }, this.remarkAll)
           if (data.success) {
-            this.reset()
+            this.getList(this.listQuery)
             this.$message.success('提交成功')
             this.assignShowDialog = false
             if (noCheck.length) {
@@ -1162,7 +1162,7 @@ export default class extends Vue {
           if (data.success) {
             this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
-            this.reset()
+            this.getList(this.listQuery)
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -1181,7 +1181,7 @@ export default class extends Vue {
       if (data.success) {
         this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false
-        this.reset()
+        this.getList(this.listQuery)
         done()
       } else {
         this.$message.error(data.errorMsg)
