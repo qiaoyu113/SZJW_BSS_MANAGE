@@ -62,6 +62,7 @@
         </el-button>
         <el-button
           v-permission="['/v2/wt-driver-account/management/export']"
+          :disabled="true"
           :class="isPC ? '' : 'btnMobile'"
           name="driverlist_offout_btn"
           size="small"
@@ -103,7 +104,7 @@
             <el-button
               v-permission="['/v2/wt-driver-account/management/freeze']"
               type="text"
-              :disabled="scope.row.haveDealNumber === 0 || scope.row.canExtractMoney <= 0"
+              :disabled="!(scope.row.haveDealNumber > 0 && scope.row.canExtractMoney > 0)"
               @click="isFreeze(scope.row,1)"
             >
               冻结
@@ -111,7 +112,7 @@
 
             <el-button
               v-permission="['/v2/wt-driver-account/management/unfreeze']"
-              :disabled="scope.row.haveAbortNumber === 0 || scope.row.freezingMoney <= 0"
+              :disabled="!(scope.row.haveAbortNumber > 0 && scope.row.freezingMoney > 0)"
               type="text"
               @click="isFreeze(scope.row,2)"
             >
@@ -859,7 +860,7 @@ export default class extends Vue {
       }
       setTimeout(() => {
         this.sumbitAgain = false
-      }, 2500)
+      }, 1500)
     }
   }
   /**
@@ -877,7 +878,7 @@ export default class extends Vue {
       this.$message.success('冻结成功')
       setTimeout(() => {
         this.getList()
-      }, 2500)
+      }, delayTime)
       done()
     } else {
       this.$message.error(res.errorMsg)
@@ -897,7 +898,7 @@ export default class extends Vue {
       this.$message.success('解冻成功')
       setTimeout(() => {
         this.getList()
-      }, 2500)
+      }, delayTime)
       done()
     } else {
       this.$message.error(res.errorMsg)
@@ -1064,7 +1065,7 @@ export default class extends Vue {
       this.keyWord = keyWord
       let params = {
         workCity: this.listQuery.workCity[1] || '',
-        busiType: this.listQuery.busiType || '',
+        busiType: this.listQuery.busiType,
         gmId: this.listQuery.joinManagerId || '',
         key: ''
       }

@@ -9,10 +9,7 @@ const systemRouter: RouteConfig = {
   meta: {
     title: 'systemTitle',
     icon: 'system',
-    apiUrl: ['/v1/base/user/menu', '/v2/base/user/create', '/v2/base/user/update',
-      '/v2/base/role/create', '/v2/base/role/list', '/v1/base/authority/list', '/v2/base/duty/list',
-      '/v1/base/office/list', '/v1/base/role/update', '/v2/base/role/getByRoleId'
-    ]
+    apiUrl: 'root'
   },
   children: [
     {
@@ -224,6 +221,17 @@ const systemRouter: RouteConfig = {
         noCache: false,
         icon: '',
         apiUrl: '/v1/product/product/list/page'
+      }
+    },
+    {
+      path: 'resetpassword',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/setPassword/index.vue'),
+      name: 'ResetPassword',
+      meta: {
+        title: 'resetPassword',
+        // hidden: true,
+        icon: 'system',
+        apiUrl: 'root'
       }
     }
   ]

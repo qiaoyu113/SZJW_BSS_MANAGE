@@ -74,6 +74,7 @@ export default {
     customerFreightMonthBill: '客户月账单列表',
     systemTitle: '系统管理',
     userManage: '用户管理',
+    resetPassword: '修改密码',
     createUser: '创建账号',
     editUser: '编辑账号',
     roleManage: '角色管理',
@@ -180,6 +181,7 @@ export default {
     configManager: '配置管理'
   },
   navbar: {
+    setPassword: '修改密码',
     logOut: '退出登录',
     dashboard: '首页',
     github: '项目地址',

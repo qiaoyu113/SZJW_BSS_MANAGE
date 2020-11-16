@@ -63,7 +63,8 @@ export default {
     clipboard: 'Clipboard',
     i18n: '多言語',
     externalLink: '外部リンク',
-    profile: 'プロフィール'
+    profile: 'プロフィール',
+    resetPassword: '修改密码'
   },
   navbar: {
     dashboard: 'トップ',

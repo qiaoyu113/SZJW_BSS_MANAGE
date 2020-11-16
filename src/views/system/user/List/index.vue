@@ -454,8 +454,11 @@ export default class extends Vue {
         this.$message.success(`同步CRM账号成功！`)
         this.getLists()
       } else {
-        // this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
-        this.$message.error(res.errorMsg)
+        if (res.errorMsg.indexOf('already') > -1) {
+          this.$message.error('用户账号已同步CRM')
+        } else {
+          this.$message.error(res.errorMsg)
+        }
       }
     } catch (err) {
       console.log(`push userto crm fail:${err}`)

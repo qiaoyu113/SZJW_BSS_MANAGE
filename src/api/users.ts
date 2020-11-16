@@ -40,6 +40,13 @@ export const login = (data: any) =>
     data
   })
 
+export const resetPass = (data: any) =>
+  request({
+    url: '/base/v2/base/user/updateUserPwd',
+    method: 'post',
+    data
+  })
+
 export const resetPwd = (token: any, data: any) =>
   request({
     url: '/base/v1/base/user/updateUserPwd',

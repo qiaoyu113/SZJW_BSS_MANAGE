@@ -145,6 +145,7 @@ export default {
     clipboard: 'Clipboard',
     i18n: 'I18n',
     externalLink: 'External Link',
+    resetPassword: 'resetPassword',
     profile: 'Profile',
     user: 'UserManage',
     addUser: 'AddUser',
