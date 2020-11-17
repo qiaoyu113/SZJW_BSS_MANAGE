@@ -119,7 +119,7 @@ export const constantRoutes: RouteConfig[] = [
       // 方法接收 目标路由 作为参数
       // return 重定向的 字符串路径/路径对象
       if (store.state.user.isWeakPwd) {
-        return '/system/resetpassword?setAll=true'
+        return '/profile/resetpassword?setAll=true'
       } else {
         return '/profile/index'
       }
@@ -184,7 +184,7 @@ export const constantRoutes: RouteConfig[] = [
       // 方法接收 目标路由 作为参数
       // return 重定向的 字符串路径/路径对象
       if (store.state.user.isWeakPwd) {
-        return '/system/resetpassword?setAll=true'
+        return '/profile/resetpassword?setAll=true'
       } else {
         return '/profile/index'
       }
@@ -199,6 +199,17 @@ export const constantRoutes: RouteConfig[] = [
           title: 'profile',
           icon: 'user',
           noCache: true
+        }
+      },
+      {
+        path: 'resetpassword',
+        component: () => import(/* webpackChunkName: "driver" */ '@/views/system/setPassword/index.vue'),
+        name: 'ResetPassword',
+        meta: {
+          title: 'resetPassword',
+          hidden: true,
+          icon: 'system',
+          apiUrl: 'root'
         }
       }
     ]

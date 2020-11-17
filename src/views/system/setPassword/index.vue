@@ -192,17 +192,13 @@ export default class extends Vue {
   };
 
   private validateReg(str = '') {
-    // const str = ''
-    const notAZ = /([A-Z])([a-z])/
+    const notAZ = /^([A-Z])([a-z])([1])([2])([3])([4])([5])([6])$/
     const regPWd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z0-9]{8,16}$/
-    var s = str.substring(0, 2)
+    var s = str.substring(0, 16)
     if (notAZ.test(s)) {
       s = s.toUpperCase()
       if (s[0] === s[1]) {
-        const arr:any = /\d+/gi.exec(str)
-        if (arr.length && arr[0] === '123456') {
-          return false
-        }
+        return false
       }
     }
     return regPWd.test(str)
