@@ -15,7 +15,7 @@ export interface IUserState {
   introduction: string
   roles: string[]
   email: string
-  isWeakPwd:any
+  isWeakPwd:boolean
 }
 
 @Module({ dynamic: true, store, name: 'user' })
@@ -27,7 +27,7 @@ class User extends VuexModule implements IUserState {
   public introduction = ''
   public roles: string[] = []
   public email = ''
-  public isWeakPwd = window.localStorage.getItem('isWeakPwd') || false
+  public isWeakPwd = JSON.parse(window.localStorage.getItem('isWeakPwd') as string) || false
 
   @Mutation
   private SET_TOKEN(token: string) {
