@@ -6,6 +6,7 @@ import SvgIcon from 'vue-svgicon'
 
 import '@/styles/element-variables.scss'
 import '@/styles/index.scss'
+import Component from 'vue-class-component'
 
 import App from '@/App.vue'
 import store from '@/store'
@@ -29,6 +30,12 @@ Vue.use(SvgIcon, {
   defaultWidth: '1em',
   defaultHeight: '1em'
 })
+
+Component.registerHooks([
+  'beforeRouteEnter', // 进入路由之前
+  'beforeRouteLeave', // 离开路由之前
+  'beforeRouteUpdate'
+])
 
 // Register global directives
 Object.keys(directives).forEach(key => {

@@ -9,7 +9,8 @@ const customerFreight: RouteConfig = {
   meta: {
     title: 'customerFreightAccount',
     icon: 'clientFreight',
-    apiUrl: ['/v2/waybill/custBilling/freightCharge/list', '/v2/waybill/custBilling/monthlyBill/list']
+    apiUrl: ['/v2/waybill/custBilling/freightCharge/list', '/v2/waybill/custBilling/monthlyBill/list'],
+    alwaysShow: true
     // hidden: true
   },
   children: [

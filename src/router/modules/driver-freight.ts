@@ -13,7 +13,8 @@ const driverFreight: RouteConfig = {
     apiUrl: [
       '/v2/driverBilling/freightCharge/list', '/v2/driverBilling/monthlyBill/list',
       '/v2/driverBilling/shippingChange/list'
-    ]
+    ],
+    alwaysShow: true
   },
   children: [
     {

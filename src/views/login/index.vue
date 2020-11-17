@@ -267,7 +267,6 @@ export default class extends Vue {
         setTimeout(() => {
           this.loading = false
         }, 0.5 * 1000)
-        console.log(data)
         if (data && data.isWeakPwd) {
           // 强制修改密码
           this.token = data.token
@@ -286,13 +285,13 @@ export default class extends Vue {
           return
         }
 
-        if (data && !data.settingFlag) {
-          // 强制修改密码
-          // this.reCreat.id = data.
-          this.token = data.token
-          this.assignShowDialog = true
-          return
-        }
+        // if (data && !data.settingFlag) {
+        //   // 强制修改密码
+        //   // this.reCreat.id = data.
+        //   this.token = data.token
+        //   this.assignShowDialog = true
+        //   return
+        // }
 
         this.$router.replace({
           path: this.redirect || '/',
