@@ -118,7 +118,7 @@ export default class extends Vue {
   }
 
   mounted() {
-    this.isSetAll = (this.$route.query as any).setAll
+    this.isSetAll = JSON.parse((this.$route.query as any).setAll)
     if (this.isSetAll) {
       this.toggleSideBar();
       (history as any).pushState(null, null, document.URL)
@@ -195,7 +195,7 @@ export default class extends Vue {
   private validateReg(str = '') {
     // const str = ''
     const notAZ = /([A-Z])([a-z])/
-    const regPWd = /(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/
+    const regPWd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z0-9]{8,16}$/
     var s = str.substring(0, 2)
     if (notAZ.test(s)) {
       s = s.toUpperCase()
