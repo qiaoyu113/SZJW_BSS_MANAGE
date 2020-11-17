@@ -45,7 +45,7 @@ export const setUser = (user: any) => {
   localStorage.setItem('uuid', user.uuid)
   localStorage.setItem('roleName', user.roleName)
   localStorage.setItem('avatar', user.avatar)
-  localStorage.setItem('isWeakPwd', user.isWeakPwd)
+  localStorage.setItem('isWeakPwd', String(user.isWeakPwd))
 }
 export const removeToken = () => Cookies.remove(tokenKey)
 
