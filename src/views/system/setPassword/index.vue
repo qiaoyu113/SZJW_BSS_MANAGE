@@ -84,7 +84,7 @@
               v-if="isSetAll !== true"
               size="small"
               @click="() => {
-                $router.go(-1)
+                this.$router.push('/profile/index')
               }"
             >
               取消
@@ -116,7 +116,6 @@ export default class extends Vue {
   private clearPassword(val: string) {
     this.ruleForm.password2 = ''
   }
-
   mounted() {
     this.isSetAll = JSON.parse((this.$route.query as any).setAll)
     if (this.isSetAll) {
@@ -260,12 +259,17 @@ export default class extends Vue {
         this.$message.success('密码修改成功')
         window.localStorage.setItem('isWeakPwd', 'false')
         if (this.isSetAll) {
-          (history as any).pushState(null, null, '/profile/index')
+          (history as any).pushState(null, null, '/')
           window.removeEventListener('popstate', function() {})
           window.removeEventListener('historychange', function() {})
+          setTimeout(() => {
+            this.$router.push('/profile/index')
+          }, 0)
         }
-        this.isSetAll = false
-        this.$router.push('/profile/index')
+        setTimeout(() => {
+          this.isSetAll = false
+          this.$router.push('/profile/index')
+        }, 0)
       }
     } else {
       if (res.errorMsg === '输入的原密码错误') {

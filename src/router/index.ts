@@ -115,6 +115,15 @@ export const constantRoutes: RouteConfig[] = [
   {
     path: '/redirect',
     component: Layout,
+    redirect: (to:any):string => {
+      // 方法接收 目标路由 作为参数
+      // return 重定向的 字符串路径/路径对象
+      if (store.state.user.isWeakPwd) {
+        return '/system/resetpassword?setAll=true'
+      } else {
+        return '/profile/index'
+      }
+    },
     meta: { hidden: true },
     children: [
       {
