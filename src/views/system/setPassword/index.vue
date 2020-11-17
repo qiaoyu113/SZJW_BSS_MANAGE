@@ -131,7 +131,6 @@ export default class extends Vue {
   }
 
   private isSetAll:boolean = false
-
   private changeOld: boolean = true;
 
   private type: any = {
@@ -252,7 +251,13 @@ export default class extends Vue {
     if (res.success) {
       if (res.data) {
         this.$message.success('密码修改成功')
-        this.$router.go(-1)
+        if (this.isSetAll) {
+          (history as any).pushState(null, null, '/profile/index')
+          window.removeEventListener('popstate', function() {})
+          window.removeEventListener('historychange', function() {})
+        }
+        this.isSetAll = false
+        this.$router.push('/profile/index')
       }
     } else {
       if (res.errorMsg === '输入的原密码错误') {
@@ -279,7 +284,7 @@ export default class extends Vue {
   }
 
   private toggleSideBar() {
-    AppModule.ToggleSideBar(false)
+    AppModule.CloseSideBar(false)
   }
 }
 </script>
