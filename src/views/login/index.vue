@@ -277,7 +277,7 @@ export default class extends Vue {
                 setAll: true
               }
               this.$router.push({
-                path: '/system/resetpassword',
+                path: '/profile/resetpassword',
                 query: query
               })
             }
