@@ -116,7 +116,6 @@ export default class extends Vue {
   private clearPassword(val: string) {
     this.ruleForm.password2 = ''
   }
-
   mounted() {
     this.isSetAll = JSON.parse((this.$route.query as any).setAll)
     if (this.isSetAll) {
@@ -263,6 +262,9 @@ export default class extends Vue {
           (history as any).pushState(null, null, '/profile/index')
           window.removeEventListener('popstate', function() {})
           window.removeEventListener('historychange', function() {})
+          this.isSetAll = false
+          this.$router.push('/profile/index')
+          return
         }
         this.isSetAll = false
         this.$router.push('/profile/index')
