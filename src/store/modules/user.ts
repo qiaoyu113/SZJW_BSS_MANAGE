@@ -1,4 +1,5 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
+import vue from 'vue'
 import { login, logout, getUserInfo, resetPwd } from '@/api/users'
 import { getToken, setToken, removeToken, setUser, getPermission } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
@@ -71,6 +72,7 @@ class User extends VuexModule implements IUserState {
         if (!data.data.settingFlag) {
           return data.data
         }
+
         data.data.avatar = 'https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0'
         setToken(data.data.token)
         setUser(data.data)
@@ -88,6 +90,9 @@ class User extends VuexModule implements IUserState {
         router.addRoutes(PermissionModule.dynamicRoutes)
         // // Reset visited views and cached views
         TagsViewModule.delAllViews()
+        if (data.data.isWeakPwd) {
+          return data.data
+        }
       } else {
         Message.error(data.data.msg)
       }
