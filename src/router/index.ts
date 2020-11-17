@@ -19,6 +19,7 @@ import driverFreight from './modules/driver-freight'
 import customerFreight from './modules/customer-freight'
 import freightRouter from './modules/freight'
 import driverAccountRouter from './modules/driver-account'
+import driverCloudRouter from './modules/driver-cloud'
 // import customerRouter from './modules/customer'
 
 Vue.use(Router)
@@ -207,6 +208,8 @@ export const asyncRoutes: RouteConfig[] = [
   // 运费管理
   freightRouter,
   driverAccountRouter,
+  // 司机云
+  driverCloudRouter,
   // 系统管理
   systemRouter,
   {

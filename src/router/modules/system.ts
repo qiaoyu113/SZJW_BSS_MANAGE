@@ -13,7 +13,8 @@ const systemRouter: RouteConfig = {
       '/v2/base/role/create', '/v2/base/role/list', '/v1/base/authority/list', '/v2/base/duty/list',
       '/v1/base/office/list', '/v1/base/role/update', '/v2/base/role/getByRoleId', '/v2/line/label/configManager', '/v1/product/product/list/page',
       '/v1/product/product/system/setting'
-    ]
+    ],
+    alwaysShow: true
   },
   children: [
     {

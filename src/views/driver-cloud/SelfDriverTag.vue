@@ -1,0 +1,657 @@
+<template>
+  <div
+    v-loading="listLoading"
+    class="SelfDriverTag"
+    :class="{
+      p15: isPC
+    }"
+  >
+    <!-- 查询表单 -->
+    <self-form
+      :list-query="listQuery"
+      :form-item="formItem"
+      size="small"
+      label-width="140px"
+      class="p15 SuggestForm"
+      :pc-col="8"
+    >
+      <div
+        slot="mulBtn"
+        :class="isPC ? 'btnPc' : 'mobile'"
+      >
+        <el-button
+          size="small"
+          :class="isPC ? '' : 'btnMobile'"
+          type="primary"
+          @click="handleFilterClick"
+        >
+          查询
+        </el-button>
+        <el-button
+          size="small"
+          :class="isPC ? '' : 'btnMobile'"
+          @click="handleExportClick"
+        >
+          导出
+        </el-button>
+        <el-button
+          size="small"
+          :class="isPC ? '' : 'btnMobile'"
+          @click="handleAddClick"
+        >
+          新增
+        </el-button>
+      </div>
+    </self-form>
+    <div class="table_box">
+      <!-- 表格 -->
+      <self-table
+        ref="selfDriverTag"
+        :height="tableHeight"
+        :is-p30="false"
+        :operation-list="[]"
+        :table-data="tableData"
+        :columns="columns"
+        :indexes="true"
+        :index="false"
+        :page="page"
+        style="overflow: initial;"
+        :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
+        @onPageSize="handlePageSize"
+      >
+        <template v-slot:createTime="scope">
+          {{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        </template>
+        <template
+          v-slot:op="scope"
+        >
+          <el-button
+            type="text"
+            @click="handleEditClick(scope.row)"
+          >
+            编辑
+          </el-button>
+        </template>
+      </self-table>
+    </div>
+    <!-- 标记收款弹窗 -->
+    <SelfDialog
+      :visible.sync="showDialog"
+      :title="dialogTit"
+      :confirm="confirm"
+      :sumbit-again="submitLoading"
+      :destroy-on-close="true"
+      @closed="handleClosed"
+    >
+      <self-form
+        ref="dialogSelfTag"
+        :rules="dialogRules"
+        :list-query="dialogQuery"
+        :form-item="dialogFormItem"
+        size="small"
+        label-width="140px"
+        :pc-col="24"
+        @onPass="handlePassClick"
+      >
+        <template slot="driverName">
+          <el-select
+            v-model.trim="dialogQuery.driverName"
+            v-loadmore="loadQueryDriverByKeyword"
+            placeholder="请选择"
+            reserve-keyword
+            :default-first-option="true"
+            clearable
+            filterable
+            remote
+            :remote-method="querySearchByKeyword"
+            @clear="handleClearQueryDriver"
+            @change="handleDriverChange"
+          >
+            <el-option
+              v-for="item in driverOptions"
+              :key="item.driverCode"
+              :label="`${item.label}` "
+              :value="item.value"
+            />
+          </el-select>
+        </template>
+      </self-form>
+    </SelfDialog>
+  </div>
+</template>
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import SelfTable from '@/components/Base/SelfTable.vue'
+import SelfForm from '@/components/Base/SelfForm.vue'
+import { HandlePages } from '@/utils/index'
+import { SettingsModule } from '@/store/modules/settings'
+import SelfDialog from '@/components/SelfDialog/index.vue'
+import { today, yesterday, month, lastmonth, threemonth } from '../driver-freight/components/date'
+import { GetDutyListByLevel, GetDictionaryCity } from '@/api/common'
+import { GetDriverTagList, ExportDriverTagList, AddOrEditDriverTag, GetDriverByDriverName } from '@/api/driver-cloud'
+interface PageObj {
+  page:number,
+  limit:number,
+  total?:number
+}
+
+interface IState {
+  [key: string]: any;
+}
+@Component({
+  name: 'SelfDriverTag',
+  components: {
+    SelfTable,
+    SelfForm,
+    SelfDialog
+  }
+})
+export default class extends Vue {
+  private showDialog:boolean = false;
+  private listLoading:boolean = false;
+  private dialogTableVisible:boolean = false;
+  private submitLoading:boolean = false;
+  private searchKeyword:string = ''
+  private driverOptions:IState[] = [];
+  private tableData:any[] = [];
+  private openCityList:IState = [];
+  private busiTypeList:IState = [];
+  private dialogTit:string = ''
+  private columns:any[] = [
+    {
+      key: 'driverCity',
+      label: '梧桐司机城市',
+      'width': '140px'
+    },
+    {
+      key: 'driverName',
+      label: '梧桐司机姓名',
+      'width': '100px'
+    },
+    {
+      key: 'driverCode',
+      label: '梧桐司机编号',
+      'width': '160px'
+    },
+    {
+      key: 'aDriverCode',
+      label: 'A端司机编号',
+      'width': '160px'
+    },
+    {
+      key: 'businessTypeName',
+      label: '司机业务线',
+      'width': '100px'
+    },
+    {
+      key: 'statusName',
+      label: '司机状态',
+      'width': '100px'
+    },
+    {
+      key: 'createName',
+      label: '创建人',
+      'width': '100px'
+    },
+    {
+      key: 'createTime',
+      label: '创建时间',
+      slot: true,
+      'width': '150px'
+    },
+    {
+      key: 'op',
+      label: '操作',
+      fixed: 'right',
+      slot: true,
+      'min-width': this.isPC ? '200px' : '50px'
+    }
+  ];
+  private listQuery:IState = {
+    driverName: '',
+    driverCode: '',
+    aDriverCode: '',
+    driverCity: '',
+    businessType: '',
+    status: '',
+    time: []
+  };
+  private formItem:any[] = [
+    {
+      type: 1,
+      label: '梧桐司机姓名:',
+      key: 'driverName',
+      tagAttrs: {
+        placeholder: '请输入姓名/手机号',
+        maxlength: 20
+      }
+    },
+    {
+      type: 1,
+      label: '梧桐司机编号:',
+      key: 'driverCode',
+      tagAttrs: {
+        placeholder: '请输入',
+        maxlength: 50
+      }
+    },
+    {
+      type: 1,
+      label: 'A端司机编号:',
+      key: 'aDriverCode',
+      tagAttrs: {
+        placeholder: '请输入',
+        maxlength: 50
+      }
+    },
+    {
+      type: 2,
+      label: '梧桐司机城市:',
+      key: 'driverCity',
+      tagAttrs: {
+        placeholder: '请选择',
+        filterable: true
+      },
+      options: this.openCityList
+    },
+    {
+      type: 2,
+      label: '司机业务线:',
+      key: 'businessType',
+      tagAttrs: {
+        placeholder: '请选择',
+        filterable: true
+      },
+      options: this.busiTypeList
+    },
+    {
+      type: 2,
+      label: '司机状态:',
+      key: 'status',
+      tagAttrs: {
+        placeholder: '请选择',
+        filterable: true
+      },
+      options: []
+    },
+    {
+      type: 3,
+      col: 8,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        'default-time': ['00:00:00', '23:59:59'],
+        pickerOptions: {
+          shortcuts: [today, yesterday, month, lastmonth, threemonth]
+        }
+      },
+      label: '创建日期',
+      key: 'time'
+    },
+    {
+      type: 'mulBtn',
+      col: 16,
+      slot: true,
+      w: '0px'
+    }
+  ];
+  // 分页
+  private page :PageObj= {
+    page: 1,
+    limit: 30,
+    total: 0
+  }
+  // 搜索司机分页
+  private queryPage:PageObj = {
+    page: 1,
+    limit: 10,
+    total: 0
+  }
+  private dialogQuery:IState = {
+    id: '',
+    driverName: '',
+    driverCode: '',
+    businessTypeName: '',
+    aDriverCode: ''
+  }
+  private dialogFormItem:IState[] = [
+    {
+      type: 7,
+      label: '梧桐司机编号:',
+      key: 'driverCode'
+    },
+    {
+      type: 7,
+      label: '业务线:',
+      key: 'businessTypeName'
+    },
+    {
+      type: 1,
+      label: 'A端司机编号:',
+      key: 'aDriverCode',
+      tagAttrs: {
+        placeholder: '请输入7位自承运司机编号',
+        maxlength: 7
+      }
+    }
+  ]
+  private dialogRules = {
+    aDriverCode: [
+      { required: true, message: '请输入7位自承运司机编号', trigger: 'blur' },
+      { validator: this.validateADriverCode, trigger: 'blur' }
+    ]
+  }
+  private validateADriverCode(rule:any, value:any, callback:any) {
+    if (value.length !== 7 || isNaN(Number(value))) {
+      callback(new Error('请输入7位数字!'))
+    } else {
+      callback()
+    }
+  }
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+  get tableHeight() {
+    let otherHeight = 400
+    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
+  }
+  // 获取开通城市
+  async getOpenCity() {
+    try {
+      let { data: res } = await GetDictionaryCity()
+      if (res.success) {
+        let options:IState[] = res.data.map((item:any) => ({
+          value: item.code,
+          label: item.name
+        }))
+        options.unshift({
+          label: '全部',
+          value: ''
+        })
+        this.openCityList.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get open city list fail:${err}`)
+    }
+  }
+  // 获取业务线
+  async getGetDutyListByLevel() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options:IState[] = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        options.unshift({
+          label: '全部',
+          value: ''
+        })
+        this.busiTypeList.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get busiType fail:${err}`)
+    }
+  }
+  // 查询
+  handleFilterClick() {
+    this.page.page = 1
+    this.getLists()
+  }
+  // 导出
+  private async handleExportClick(row:IState) {
+    try {
+      let params:IState = {}
+      this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
+      this.listQuery.driverCode && (params.driverCode = this.listQuery.driverCode)
+      this.listQuery.aDriverCode && (params.aDriverCode = this.listQuery.aDriverCode)
+      this.listQuery.driverCity && (params.driverCity = this.listQuery.driverCity)
+      this.listQuery.businessType && (params.businessType = this.listQuery.businessType)
+      this.listQuery.status && (params.status = this.listQuery.status)
+      if (this.listQuery.time && this.listQuery.time.length > 0) {
+        let startTime = new Date(this.listQuery.time[0])
+        let endTime = new Date(this.listQuery.time[1])
+        startTime.setHours(0, 0, 0)
+        endTime.setHours(23, 59, 59)
+        params.startTime = startTime
+        params.endTime = endTime
+      }
+      let { data: res } = await GetDriverTagList(params)
+      if (res.success) {
+        this.tableData = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    }
+  }
+  // 新增
+  handleAddClick() {
+    this.dialogTit = '新增司机标签'
+    this.dialogFormItem.unshift({
+      key: 'driverName',
+      label: '梧桐司机姓名:',
+      type: 'driverName',
+      slot: true
+    })
+    this.loadQueryDriverByKeyword()
+    this.showDialog = true
+  }
+  // 编辑
+  handleEditClick(row:IState) {
+    this.dialogTit = '编辑司机标签'
+    this.dialogFormItem.unshift({
+      label: '梧桐司机姓名:',
+      type: 7,
+      key: 'driverName'
+    })
+    this.showDialog = true
+    this.dialogQuery.id = row.id
+    this.dialogQuery.driverName = row.driverName
+    this.dialogQuery.driverCode = row.driverCode
+    this.dialogQuery.businessTypeName = row.businessTypeName
+    this.dialogQuery.aDriverCode = row.aDriverCode
+  }
+
+  // 表单验证通过
+  handlePassClick(valid:boolean) {
+    this.saveData()
+  }
+  // 弹框确认按钮
+  confirm() {
+    ((this.$refs.dialogSelfTag) as any).submitForm()
+  }
+  // 保存-编辑或新增
+  private async saveData() {
+    try {
+      this.submitLoading = true
+      let params:IState = {
+        driverName: this.dialogQuery.driverName,
+        driverCode: this.dialogQuery.driverCode,
+        businessTypeName: this.dialogQuery.businessTypeName,
+        aDriverCode: this.dialogQuery.aDriverCode
+      }
+      this.dialogQuery.id && (params.id = this.dialogQuery.id)
+      let { data: res } = await AddOrEditDriverTag(params)
+      if (res.success) {
+        this.showDialog = false
+        setTimeout(() => {
+          this.submitLoading = false
+        }, 1000)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    }
+  }
+  // 弹框关闭后
+  handleClosed() {
+    ((this.$refs.dialogSelfTag) as any).resetForm()
+    this.reset()
+    this.dialogFormItem.shift()
+  }
+  // 搜索司机
+  async loadQueryDriverByKeyword(val?:string) {
+    val = this.searchKeyword
+    this.queryPage.page++
+    let params:IState = {
+      page: this.queryPage.page,
+      limit: this.queryPage.limit
+    }
+    val !== '' && (params.key = val)
+    try {
+      let result:IState[] = await this.loadDriverByKeyword(params)
+      this.driverOptions.push(...result)
+    } catch (err) {
+      console.log(`get driver fail:${err}`)
+    }
+  }
+  // 根据关键字查司机信息
+  async loadDriverByKeyword(params:IState) {
+    try {
+      let params:IState = {
+        page: this.queryPage.page,
+        limit: this.queryPage.limit
+      }
+      this.dialogQuery.driverName && (params.driverName = this.dialogQuery.driverName)
+      let { data: res } = await GetDriverByDriverName(params)
+      let result = res.data.map((item:IState) => {
+        item.label = `${item.driverName}/${item.phone}`
+        item.value = item.driverName
+        return item
+      })
+      return result
+    } catch (err) {
+      console.log(`get driver list fail:${err}`)
+      return []
+    }
+  }
+  // 搜索
+  querySearchByKeyword(val:string) {
+    this.queryPage.page = 0
+    this.reset()
+    this.searchKeyword = val
+    this.loadQueryDriverByKeyword(val)
+  }
+  // 重置弹框司机信息
+  reset() {
+    this.dialogQuery.id = ''
+    this.dialogQuery.driverName = ''
+    this.dialogQuery.driverCode = ''
+    this.dialogQuery.businessTypeName = ''
+    this.dialogQuery.aDriverCode = ''
+    this.searchKeyword = ''
+  }
+  // 删除司机
+  handleClearQueryDriver() {
+    this.searchKeyword = ''
+    this.reset()
+    this.loadQueryDriverByKeyword()
+  }
+  // 分页
+  private handlePageSize(page:PageObj) {
+    this.page.page = page.page
+    this.page.limit = page.limit
+    this.getLists()
+  }
+  // 获取列表
+  private async getLists() {
+    try {
+      this.listLoading = true
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
+      }
+      this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
+      this.listQuery.driverCode && (params.driverCode = this.listQuery.driverCode)
+      this.listQuery.aDriverCode && (params.aDriverCode = this.listQuery.aDriverCode)
+      this.listQuery.driverCity && (params.driverCity = this.listQuery.driverCity)
+      this.listQuery.businessType && (params.businessType = this.listQuery.businessType)
+      this.listQuery.status && (params.status = this.listQuery.status)
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        let startTime = new Date(this.listQuery.time[0])
+        let endTime = new Date(this.listQuery.time[1])
+        params.startTime = startTime.setHours(0, 0, 0)
+        params.endTime = endTime.setHours(23, 59, 59)
+      }
+      let { data: res } = await GetDriverTagList(params)
+      if (res.success) {
+        res.page = await HandlePages(res.page)
+        this.page.total = res.page.total
+        this.tableData = res.data
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
+    }
+  }
+  // 新增选择完司机
+  handleDriverChange() {
+    let array:IState[] = this.driverOptions.filter((item:any) => item.driverName === this.dialogQuery.driverName)
+    if (array.length > 0) {
+      this.dialogQuery.driverName = array[0].driverName
+      this.dialogQuery.driverCode = array[0].driverCode
+      this.dialogQuery.businessTypeName = array[0].businessTypeName
+      this.dialogQuery.aDriverCode = array[0].aDriverCode
+    }
+  }
+  mounted() {
+    this.getOpenCity()
+    this.getGetDutyListByLevel()
+    this.getLists()
+  }
+}
+</script>
+<style lang="scss" scoped>
+  .SelfDriverTag {
+     .btnPc {
+       width: 100%;
+       display: flex;
+       flex-flow: row nowrap;
+       justify-content: flex-end;
+     }
+    .mobile {
+      width:100%;
+      text-align: center;
+      .btnMobile {
+        margin-left: 0;
+        margin-top: 10px;
+        width:80%;
+      }
+    }
+    .middle {
+      margin: 10px 0px;
+    }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .table_box {
+      padding: 10px 30px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+
+  }
+</style>

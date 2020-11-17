@@ -157,7 +157,9 @@ export default {
     financialFlow: 'financialFlow',
     orderList: 'orderList',
     adjustmentList: 'adjustmentList',
-    configManager: 'configManager'
+    configManager: 'configManager',
+    driverClond: 'driverClond',
+    selfDriverTag: 'selfDriverTag'
   },
   navbar: {
     logOut: 'Log Out',
