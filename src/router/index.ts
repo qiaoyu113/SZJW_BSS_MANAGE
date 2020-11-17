@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from '@/store'
 import Router, { RouteConfig } from 'vue-router'
 
 /* Layout */
@@ -19,6 +20,7 @@ import driverFreight from './modules/driver-freight'
 import customerFreight from './modules/customer-freight'
 import freightRouter from './modules/freight'
 import driverAccountRouter from './modules/driver-account'
+import driverCloudRouter from './modules/driver-cloud'
 // import customerRouter from './modules/customer'
 
 Vue.use(Router)
@@ -169,7 +171,15 @@ export const constantRoutes: RouteConfig[] = [
   {
     path: '/profile',
     component: Layout,
-    redirect: '/profile/index',
+    redirect: (to:any):string => {
+      // 方法接收 目标路由 作为参数
+      // return 重定向的 字符串路径/路径对象
+      if (store.state.user.isWeakPwd) {
+        return '/system/resetpassword?setAll=true'
+      } else {
+        return '/profile/index'
+      }
+    },
     meta: { hidden: true },
     children: [
       {
@@ -207,6 +217,8 @@ export const asyncRoutes: RouteConfig[] = [
   // 运费管理
   freightRouter,
   driverAccountRouter,
+  // 司机云
+  driverCloudRouter,
   // 系统管理
   systemRouter,
   {

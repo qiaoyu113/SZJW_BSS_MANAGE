@@ -45,6 +45,7 @@
                 clearable
                 :type="type.password1"
               >
+                <!-- @change="changePassword1" -->
                 <el-button
                   slot="append"
                   @click="checkType('password1')"
@@ -151,6 +152,12 @@ export default class extends Vue {
     password2: ''
   };
 
+  // private changePassword1(val:string) {
+  //   if (this.ruleForm.password2) {
+  //     (this.$refs.ruleForm as any).validateField('password2')
+  //   }
+  // }
+
   private isTypeVal(type: string) {
     if (type === 'password') {
       return 'text'
@@ -178,6 +185,7 @@ export default class extends Vue {
     if (value === '') {
       callback(new Error('请再次输入密码'))
     } else if (value !== this.ruleForm.password1) {
+      console.log(value, this.ruleForm.password1)
       callback(new Error('两次输入密码不一致!'))
     } else {
       callback()
@@ -187,7 +195,7 @@ export default class extends Vue {
   private validateReg(str = '') {
     // const str = ''
     const notAZ = /([A-Z])([a-z])/
-    const regPWd = /^.*(?=.{8,16})(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*$/
+    const regPWd = /(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/
     var s = str.substring(0, 2)
     if (notAZ.test(s)) {
       s = s.toUpperCase()
@@ -237,8 +245,7 @@ export default class extends Vue {
     ],
     password2: [
       { required: true, message: '请确认新密码', trigger: 'blur' },
-      { min: 8, max: 16, message: '确认新密码与新密码不一致', trigger: 'blur' },
-      { validator: this.checkPassed, trigger: 'blur' }
+      { validator: this.checkPassed, trigger: ['change', 'blur'] }
     ]
   };
 
@@ -251,6 +258,7 @@ export default class extends Vue {
     if (res.success) {
       if (res.data) {
         this.$message.success('密码修改成功')
+        window.localStorage.setItem('isWeakPwd', 'false')
         if (this.isSetAll) {
           (history as any).pushState(null, null, '/profile/index')
           window.removeEventListener('popstate', function() {})
@@ -305,6 +313,7 @@ export default class extends Vue {
     .passwordInfo {
       margin-left: 100px;
       margin-top: 50px;
+      color: #9e9e9e;
       span {
         display: block;
         line-height: 25px;
