@@ -117,7 +117,15 @@ export default class extends Vue {
     this.ruleForm.password2 = ''
   }
   mounted() {
-    this.isSetAll = JSON.parse((this.$route.query as any).setAll)
+    let routerUrl = (this.$route.query as any).setAll
+    if (routerUrl) {
+      if (typeof routerUrl === 'string') {
+        this.isSetAll = JSON.parse(routerUrl)
+      } else {
+        this.isSetAll = routerUrl
+      }
+    }
+
     if (this.isSetAll) {
       this.toggleSideBar();
       (history as any).pushState(null, null, document.URL)
