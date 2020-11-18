@@ -14,6 +14,7 @@ const systemRouter: RouteConfig = {
       '/v1/base/office/list', '/v1/base/role/update', '/v2/base/role/getByRoleId', '/v2/line/label/configManager', '/v1/product/product/list/page',
       '/v1/product/product/system/setting'
     ]
+
   },
   children: [
     {
@@ -225,6 +226,17 @@ const systemRouter: RouteConfig = {
         noCache: false,
         icon: '',
         apiUrl: '/v1/product/product/list/page'
+      }
+    },
+    {
+      path: 'resetpassword',
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/setPassword/index.vue'),
+      name: 'ResetPassword',
+      meta: {
+        title: 'resetPassword',
+        hidden: true,
+        icon: 'system',
+        apiUrl: 'root'
       }
     }
   ]

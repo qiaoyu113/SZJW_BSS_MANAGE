@@ -64,7 +64,7 @@ const driverAccountRouter: RouteConfig = {
       name: 'wtAcountList',
       meta: {
         apiUrl: '/v2/wt-driver-account/management/list',
-        title: 'wtAcountList',
+        title: 'driverAccount',
         noCache: true,
         icon: '',
         activeMenu: '/driveraccount/wtAcountList'

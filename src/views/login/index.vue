@@ -221,7 +221,9 @@ export default class extends Vue {
   private onRouteChange(route: Route) {
     // TODO: remove the "as Dictionary<string>" hack after v4 release for vue-router
     // See https://github.com/vuejs/vue-router/pull/2050 for details
+
     const query = route.query as Dictionary<string>
+    console.log(query)
     if (query) {
       this.redirect = query.redirect
       this.otherQuery = this.getOtherQuery(query)
@@ -265,13 +267,32 @@ export default class extends Vue {
         setTimeout(() => {
           this.loading = false
         }, 0.5 * 1000)
-        if (data && !data.settingFlag) {
+        if (data && data.isWeakPwd) {
           // 强制修改密码
-          // this.reCreat.id = data.
           this.token = data.token
-          this.assignShowDialog = true
+          this.$alert('您的登录密码过于简单，具有安全隐患，需要重新设置登录密码。', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              let query:any = {
+                setAll: true
+              }
+              this.$router.push({
+                path: '/profile/resetpassword',
+                query: query
+              })
+            }
+          })
           return
         }
+
+        // if (data && !data.settingFlag) {
+        //   // 强制修改密码
+        //   // this.reCreat.id = data.
+        //   this.token = data.token
+        //   this.assignShowDialog = true
+        //   return
+        // }
+
         this.$router.replace({
           path: this.redirect || '/',
           query: this.otherQuery
