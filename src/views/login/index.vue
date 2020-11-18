@@ -223,7 +223,6 @@ export default class extends Vue {
     // See https://github.com/vuejs/vue-router/pull/2050 for details
 
     const query = route.query as Dictionary<string>
-    console.log(query)
     if (query) {
       this.redirect = query.redirect
       this.otherQuery = this.getOtherQuery(query)
