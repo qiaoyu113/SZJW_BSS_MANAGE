@@ -104,7 +104,6 @@
               style="display:block;"
             >{{ userName }}</span>
           </el-dropdown-item>
-
           <el-dropdown-item divided>
             <span
               style="display:block;"
