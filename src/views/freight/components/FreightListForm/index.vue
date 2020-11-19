@@ -304,6 +304,14 @@
                   >
                     查询
                   </el-button>
+                  <el-button
+                    :class="isPC ? 'filter-item' : 'filter-item-m'"
+                    size="small"
+                    name="ownerlist_derive_btn"
+                    @click="handleDeriveClick"
+                  >
+                    导出
+                  </el-button>
                 </el-form-item>
               </el-col>
             </el-form>
@@ -317,11 +325,10 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel } from '@/api/common'
-import { GetSpecifiedRoleList } from '@/api/freight'
+import { GetSpecifiedRoleList, managementDerive } from '@/api/freight'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
-
 import '@/styles/common.scss'
 
 @Component({
@@ -719,6 +726,19 @@ export default class extends Vue {
     this.arrayCity = []
     this.DateValueChild = []
     this.DateValueChild2 = []
+  }
+  // 导出
+  private async handleDeriveClick() {
+    if (this.DateValueChild && this.DateValueChild.length === 2) {
+      const { data } = await managementDerive(this.listQuery)
+      if (data.success) {
+        this.$message.success('导出成功')
+      } else {
+        this.$message.error(data.errorMsg || data.message)
+      }
+    } else {
+      this.$message.error('请选择出车日期')
+    }
   }
 }
 </script>

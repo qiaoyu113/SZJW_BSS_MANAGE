@@ -70,6 +70,7 @@ const driverAccountRouter: RouteConfig = {
         activeMenu: '/driveraccount/wtAcountList'
       }
     },
+    // 退费管理
     {
       path: 'refundlist',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundList.vue'),
@@ -78,7 +79,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         title: 'refundList',
         noCache: false,
-        hidden: false
+        hidden: true
       }
     },
     {
