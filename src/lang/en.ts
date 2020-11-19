@@ -145,6 +145,7 @@ export default {
     clipboard: 'Clipboard',
     i18n: 'I18n',
     externalLink: 'External Link',
+    resetPassword: 'resetPassword',
     profile: 'Profile',
     user: 'UserManage',
     addUser: 'AddUser',
@@ -157,7 +158,9 @@ export default {
     financialFlow: 'financialFlow',
     orderList: 'orderList',
     adjustmentList: 'adjustmentList',
-    configManager: 'configManager'
+    configManager: 'configManager',
+    driverClond: 'driverClond',
+    selfDriverTag: 'selfDriverTag'
   },
   navbar: {
     logOut: 'Log Out',

@@ -71,12 +71,16 @@
             v-model.trim="listQuery.passwd"
             onkeyup="this.value=this.value.replace(' ','')"
             :disabled="!!userId"
+            :readonly="!userId"
             placeholder="请输入"
-            type="password"
-            show-password
+            :type="!userId ? 'text' :'password'"
+            :show-password="!!userId"
           />
         </template>
-        <template slot="confirmPassword">
+        <template
+          v-if="userId"
+          slot="confirmPassword"
+        >
           <el-input
             v-model.trim="listQuery.confirmPassword"
             onkeyup="this.value=this.value.replace(' ','')"
@@ -178,7 +182,7 @@ export default class extends Vue {
     mobile: '',
     officeId: [],
     roleId: [],
-    passwd: '',
+    passwd: 'Aa123456',
     confirmPassword: '',
     nickName: '',
     roleName: '',
@@ -225,12 +229,6 @@ export default class extends Vue {
       key: 'passwd',
       type: 'passwd',
       label: '密码:',
-      slot: true
-    },
-    {
-      key: 'confirmPassword',
-      type: 'confirmPassword',
-      label: '确认密码:',
       slot: true
     }
   ]
@@ -462,6 +460,7 @@ export default class extends Vue {
         officeId: this.listQuery.officeId[this.listQuery.officeId.length - 1],
         roleId: (this.listQuery.roleId as [])[(this.listQuery.roleId as []).length - 1]
       }
+      params.confirmPassword = params.passwd
       delete params.id
       delete params.roleName
       delete params.crmUserStatus
@@ -544,7 +543,7 @@ export default class extends Vue {
 
   // 重置表单
   resetForm() {
-    ((this.$refs.addUserForm) as any).resetFields()
+    ((this.$refs.addUserForm) as any).resetForm()
     this.listQuery = {
       id: '',
       userName: '',
@@ -562,6 +561,15 @@ export default class extends Vue {
   }
   async mounted() {
     this.userId = +this.$route.query.userId || ''
+    if (this.userId) {
+      let add = {
+        key: 'confirmPassword',
+        type: 'confirmPassword',
+        label: '确认密码:',
+        slot: true
+      }
+      this.formItem.push(add)
+    }
     await this.getOfficeByCurrentUser()
     this.getUserDetail()
   }

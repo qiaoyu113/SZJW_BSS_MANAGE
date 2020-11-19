@@ -1,4 +1,5 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
+import vue from 'vue'
 import { login, logout, getUserInfo, resetPwd } from '@/api/users'
 import { getToken, setToken, removeToken, setUser, getPermission } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
@@ -14,6 +15,7 @@ export interface IUserState {
   introduction: string
   roles: string[]
   email: string
+  isWeakPwd:boolean
 }
 
 @Module({ dynamic: true, store, name: 'user' })
@@ -25,6 +27,7 @@ class User extends VuexModule implements IUserState {
   public introduction = ''
   public roles: string[] = []
   public email = ''
+  public isWeakPwd = JSON.parse(window.localStorage.getItem('isWeakPwd') as string) || false
 
   @Mutation
   private SET_TOKEN(token: string) {
@@ -61,6 +64,11 @@ class User extends VuexModule implements IUserState {
     this.email = email
   }
 
+  @Mutation
+  private SET_PWD(isWeakPwd: boolean) {
+    this.isWeakPwd = isWeakPwd
+  }
+
   @Action
   public async Login(userInfo: { username: string, password: string}) {
     let { username, password } = userInfo
@@ -68,15 +76,17 @@ class User extends VuexModule implements IUserState {
     const { data } = await login({ username, password })
     if (data.success) {
       if (data.data.flag) {
-        if (!data.data.settingFlag) {
-          return data.data
-        }
+        // if (!data.data.settingFlag) {
+        //   return data.data
+        // }
+
         data.data.avatar = 'https://qizhiniao-dev.oss-cn-beijing.aliyuncs.com/img/02c52c498d874ecfbca3685d4d1d6fd0'
         setToken(data.data.token)
         setUser(data.data)
         let roleName = data.data.roleName
 
         this.SET_EMAIL(roleName)
+        this.SET_PWD(data.data.isWeakPwd)
         this.SET_TOKEN(data.data.token)
         this.SET_UUID(data.data.uuid)
         this.SET_AVATAR(data.data.avatar)
@@ -88,6 +98,9 @@ class User extends VuexModule implements IUserState {
         router.addRoutes(PermissionModule.dynamicRoutes)
         // // Reset visited views and cached views
         TagsViewModule.delAllViews()
+        if (data.data.isWeakPwd) {
+          return data.data
+        }
       } else {
         Message.error(data.data.msg)
       }

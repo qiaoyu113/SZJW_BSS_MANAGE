@@ -74,6 +74,7 @@ export default {
     customerFreightMonthBill: '客户月账单列表',
     systemTitle: '系统管理',
     userManage: '用户管理',
+    resetPassword: '修改密码',
     createUser: '创建账号',
     editUser: '编辑账号',
     roleManage: '角色管理',
@@ -177,9 +178,12 @@ export default {
     financialFlow: '司机财务流水管理',
     orderList: '订单管理',
     adjustmentList: '司机运费调整',
-    configManager: '配置管理'
+    configManager: '配置管理',
+    driverClond: '司机云',
+    selfDriverTag: '自承运'
   },
   navbar: {
+    setPassword: '修改密码',
     logOut: '退出登录',
     dashboard: '首页',
     github: '项目地址',
