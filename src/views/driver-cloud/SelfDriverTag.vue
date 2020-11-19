@@ -30,6 +30,7 @@
         <el-button
           size="small"
           :class="isPC ? '' : 'btnMobile'"
+          :loading="ExportClick"
           @click="handleExportClick"
         >
           导出
@@ -152,6 +153,7 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private ExportClick:boolean = false
   private showDialog:boolean = false;
   private listLoading:boolean = false;
   private dialogTableVisible:boolean = false;
@@ -461,6 +463,7 @@ export default class extends Vue {
   // 导出
   private async handleExportClick(row:IState) {
     try {
+      this.ExportClick = true
       let params:IState = {}
       this.listQuery.key && (params.key = this.listQuery.key)
       this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
@@ -478,11 +481,13 @@ export default class extends Vue {
       }
       let { data: res } = await ExportDriverTagList(params)
       if (res.success) {
+        this.ExportClick = false
         this.$message({
           type: 'success',
           message: '导出成功!'
         })
       } else {
+        this.ExportClick = false
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
@@ -533,8 +538,12 @@ export default class extends Vue {
         driverId: this.dialogQuery.driverCode,
         otherDriverId: this.dialogQuery.aDriverCode
       }
-      this.chooseAddorUpdata(params)
+      await this.chooseAddorUpdata(params)
+      setTimeout(() => {
+        this.submitLoading = false
+      }, 1000)
     } catch (err) {
+      this.submitLoading = false
       console.log(`submit fail:${err}`)
     }
   }
@@ -545,11 +554,7 @@ export default class extends Vue {
       if (res.success) {
         this.showDialog = false
         this.$message.success('提交成功')
-        setTimeout(() => {
-          this.submitLoading = false
-        }, 1000)
       } else {
-        this.submitLoading = false
         this.$message.error(res.errorMsg)
       }
     } else {
@@ -557,11 +562,7 @@ export default class extends Vue {
       if (res.success) {
         this.showDialog = false
         this.$message.success('提交成功')
-        setTimeout(() => {
-          this.submitLoading = false
-        }, 1000)
       } else {
-        this.submitLoading = false
         this.$message.error(res.errorMsg)
       }
     }
@@ -683,6 +684,7 @@ export default class extends Vue {
     this.getLists()
   }
 }
+
 </script>
 <style lang="scss" scoped>
   .SelfDriverTag {
