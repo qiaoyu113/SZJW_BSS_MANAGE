@@ -106,7 +106,7 @@
           </el-dropdown-item>
 
           <el-dropdown-item password>
-            <router-link to="/system/resetpassword">
+            <router-link to="/profile/resetpassword">
               <span
                 style="display:block;"
               >{{ $t('navbar.setPassword') }}</span>

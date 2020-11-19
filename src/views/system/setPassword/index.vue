@@ -45,6 +45,7 @@
                 clearable
                 :type="type.password1"
               >
+                <!-- @change="changePassword1" -->
                 <el-button
                   slot="append"
                   @click="checkType('password1')"
@@ -83,7 +84,7 @@
               v-if="isSetAll !== true"
               size="small"
               @click="() => {
-                $router.go(-1)
+                this.$router.push('/profile/index')
               }"
             >
               取消
@@ -115,9 +116,16 @@ export default class extends Vue {
   private clearPassword(val: string) {
     this.ruleForm.password2 = ''
   }
-
   mounted() {
-    this.isSetAll = (this.$route.query as any).setAll
+    let routerUrl = (this.$route.query as any).setAll
+    if (routerUrl) {
+      if (typeof routerUrl === 'string') {
+        this.isSetAll = JSON.parse(routerUrl)
+      } else {
+        this.isSetAll = routerUrl
+      }
+    }
+
     if (this.isSetAll) {
       this.toggleSideBar();
       (history as any).pushState(null, null, document.URL)
@@ -131,7 +139,6 @@ export default class extends Vue {
   }
 
   private isSetAll:boolean = false
-
   private changeOld: boolean = true;
 
   private type: any = {
@@ -151,6 +158,12 @@ export default class extends Vue {
     password1: '',
     password2: ''
   };
+
+  // private changePassword1(val:string) {
+  //   if (this.ruleForm.password2) {
+  //     (this.$refs.ruleForm as any).validateField('password2')
+  //   }
+  // }
 
   private isTypeVal(type: string) {
     if (type === 'password') {
@@ -186,17 +199,13 @@ export default class extends Vue {
   };
 
   private validateReg(str = '') {
-    // const str = ''
-    const notAZ = /([A-Z])([a-z])/
-    const regPWd = /^.*(?=.{8,16})(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*$/
-    var s = str.substring(0, 2)
+    const notAZ = /^([A-Z])([a-z])([1])([2])([3])([4])([5])([6])$/
+    const regPWd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z0-9]{8,16}$/
+    var s = str.substring(0, 16)
     if (notAZ.test(s)) {
       s = s.toUpperCase()
       if (s[0] === s[1]) {
-        const arr:any = /\d+/gi.exec(str)
-        if (arr.length && arr[0] === '123456') {
-          return false
-        }
+        return false
       }
     }
     return regPWd.test(str)
@@ -238,8 +247,7 @@ export default class extends Vue {
     ],
     password2: [
       { required: true, message: '请确认新密码', trigger: 'blur' },
-      { min: 8, max: 16, message: '确认新密码与新密码不一致', trigger: 'blur' },
-      { validator: this.checkPassed, trigger: 'blur' }
+      { validator: this.checkPassed, trigger: ['change', 'blur'] }
     ]
   };
 
@@ -252,7 +260,19 @@ export default class extends Vue {
     if (res.success) {
       if (res.data) {
         this.$message.success('密码修改成功')
-        this.$router.go(-1)
+        window.localStorage.setItem('isWeakPwd', 'false')
+        if (this.isSetAll) {
+          (history as any).pushState(null, null, '/')
+          window.removeEventListener('popstate', function() {})
+          window.removeEventListener('historychange', function() {})
+          setTimeout(() => {
+            this.$router.push('/profile/index')
+          }, 0)
+        }
+        setTimeout(() => {
+          this.isSetAll = false
+          this.$router.push('/profile/index')
+        }, 0)
       }
     } else {
       if (res.errorMsg === '输入的原密码错误') {
@@ -279,7 +299,7 @@ export default class extends Vue {
   }
 
   private toggleSideBar() {
-    AppModule.ToggleSideBar(false)
+    AppModule.CloseSideBar(false)
   }
 }
 </script>
@@ -300,6 +320,7 @@ export default class extends Vue {
     .passwordInfo {
       margin-left: 100px;
       margin-top: 50px;
+      color: #9e9e9e;
       span {
         display: block;
         line-height: 25px;

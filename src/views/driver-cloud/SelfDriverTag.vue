@@ -216,6 +216,35 @@ export default class extends Vue {
     status: '',
     time: []
   };
+
+  // 司机状态
+  private driverStatus:any = [
+    {
+      label: '全部',
+      value: ''
+    },
+    {
+      label: '已面试',
+      value: 1
+    },
+    {
+      label: '待成交',
+      value: 2
+    },
+    {
+      label: '已成交',
+      value: 3
+    },
+    {
+      label: '已上岗',
+      value: 4
+    },
+    {
+      label: '已终止服务',
+      value: 5
+    }
+  ]
+
   private formItem:any[] = [
     {
       type: 1,
@@ -223,7 +252,8 @@ export default class extends Vue {
       key: 'driverName',
       tagAttrs: {
         placeholder: '请输入姓名/手机号',
-        maxlength: 20
+        maxlength: 20,
+        'show-word-limit': true
       }
     },
     {
@@ -232,7 +262,8 @@ export default class extends Vue {
       key: 'driverCode',
       tagAttrs: {
         placeholder: '请输入',
-        maxlength: 50
+        maxlength: 50,
+        'show-word-limit': true
       }
     },
     {
@@ -272,7 +303,7 @@ export default class extends Vue {
         placeholder: '请选择',
         filterable: true
       },
-      options: []
+      options: this.driverStatus
     },
     {
       type: 3,
@@ -295,6 +326,7 @@ export default class extends Vue {
       w: '0px'
     }
   ];
+
   // 分页
   private page :PageObj= {
     page: 1,
