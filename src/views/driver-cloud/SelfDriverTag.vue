@@ -59,8 +59,8 @@
         :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @onPageSize="handlePageSize"
       >
-        <template v-slot:createTime="scope">
-          {{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
         <template
           v-slot:op="scope"
@@ -74,7 +74,6 @@
         </template>
       </self-table>
     </div>
-    <!-- 标记收款弹窗 -->
     <SelfDialog
       :visible.sync="showDialog"
       :title="dialogTit"
@@ -83,6 +82,12 @@
       :destroy-on-close="true"
       @closed="handleClosed"
     >
+      <p
+        v-if="dialogTit === '新增司机标签'"
+        class="addInfo"
+      >
+        说明：只有梧桐司机状态是已成交或已上岗或没有被新增标签的司机可新增
+      </p>
       <self-form
         ref="dialogSelfTag"
         :rules="dialogRules"
@@ -95,7 +100,7 @@
       >
         <template slot="driverName">
           <el-select
-            v-model.trim="dialogQuery.driverName"
+            v-model.trim="dialogQuery.driverCode"
             v-loadmore="loadQueryDriverByKeyword"
             placeholder="请选择"
             reserve-keyword
@@ -120,7 +125,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { HandlePages } from '@/utils/index'
@@ -128,7 +133,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { today, yesterday, month, lastmonth, threemonth } from '../driver-freight/components/date'
 import { GetDutyListByLevel, GetDictionaryCity } from '@/api/common'
-import { GetDriverTagList, ExportDriverTagList, AddOrEditDriverTag, GetDriverByDriverName } from '@/api/driver-cloud'
+import { GetDriverTagList, ExportDriverTagList, EditDriverTag, AddDriverTag, GetDriverByDriverName } from '@/api/driver-cloud'
 interface PageObj {
   page:number,
   limit:number,
@@ -159,27 +164,27 @@ export default class extends Vue {
   private dialogTit:string = ''
   private columns:any[] = [
     {
-      key: 'driverCity',
+      key: 'workCityName',
       label: '梧桐司机城市',
       'width': '140px'
     },
     {
-      key: 'driverName',
+      key: 'name',
       label: '梧桐司机姓名',
       'width': '100px'
     },
     {
-      key: 'driverCode',
+      key: 'driverId',
       label: '梧桐司机编号',
       'width': '160px'
     },
     {
-      key: 'aDriverCode',
+      key: 'adriverId',
       label: 'A端司机编号',
       'width': '160px'
     },
     {
-      key: 'businessTypeName',
+      key: 'busiTypeName',
       label: '司机业务线',
       'width': '100px'
     },
@@ -194,7 +199,7 @@ export default class extends Vue {
       'width': '100px'
     },
     {
-      key: 'createTime',
+      key: 'createDate',
       label: '创建时间',
       slot: true,
       'width': '150px'
@@ -208,15 +213,14 @@ export default class extends Vue {
     }
   ];
   private listQuery:IState = {
-    driverName: '',
-    driverCode: '',
-    aDriverCode: '',
-    driverCity: '',
-    businessType: '',
+    key: '',
+    driverId: '',
+    aDriverId: '',
+    workCity: '',
+    busiType: '',
     status: '',
     time: []
   };
-
   // 司机状态
   private driverStatus:any = [
     {
@@ -244,54 +248,59 @@ export default class extends Vue {
       value: 5
     }
   ]
-
   private formItem:any[] = [
     {
       type: 1,
       label: '梧桐司机姓名:',
-      key: 'driverName',
+      key: 'key',
       tagAttrs: {
         placeholder: '请输入姓名/手机号',
         maxlength: 20,
-        'show-word-limit': true
+        'show-word-limit': true,
+        clearable: true
       }
     },
     {
       type: 1,
       label: '梧桐司机编号:',
-      key: 'driverCode',
+      key: 'driverId',
       tagAttrs: {
         placeholder: '请输入',
         maxlength: 50,
-        'show-word-limit': true
+        'show-word-limit': true,
+        clearable: true
       }
     },
     {
       type: 1,
       label: 'A端司机编号:',
-      key: 'aDriverCode',
+      key: 'aDriverId',
       tagAttrs: {
         placeholder: '请输入',
-        maxlength: 50
+        maxlength: 50,
+        'show-word-limit': true,
+        clearable: true
       }
     },
     {
       type: 2,
       label: '梧桐司机城市:',
-      key: 'driverCity',
+      key: 'workCity',
       tagAttrs: {
         placeholder: '请选择',
-        filterable: true
+        filterable: true,
+        clearable: true
       },
       options: this.openCityList
     },
     {
       type: 2,
       label: '司机业务线:',
-      key: 'businessType',
+      key: 'busiType',
       tagAttrs: {
         placeholder: '请选择',
-        filterable: true
+        filterable: true,
+        clearable: true
       },
       options: this.busiTypeList
     },
@@ -301,7 +310,8 @@ export default class extends Vue {
       key: 'status',
       tagAttrs: {
         placeholder: '请选择',
-        filterable: true
+        filterable: true,
+        clearable: true
       },
       options: this.driverStatus
     },
@@ -326,7 +336,6 @@ export default class extends Vue {
       w: '0px'
     }
   ];
-
   // 分页
   private page :PageObj= {
     page: 1,
@@ -335,8 +344,8 @@ export default class extends Vue {
   }
   // 搜索司机分页
   private queryPage:PageObj = {
-    page: 1,
-    limit: 10,
+    page: 0,
+    limit: 20,
     total: 0
   }
   private dialogQuery:IState = {
@@ -350,12 +359,14 @@ export default class extends Vue {
     {
       type: 7,
       label: '梧桐司机编号:',
-      key: 'driverCode'
+      key: 'driverCode',
+      isNull: true
     },
     {
       type: 7,
       label: '业务线:',
-      key: 'businessTypeName'
+      key: 'businessTypeName',
+      isNull: true
     },
     {
       type: 1,
@@ -363,21 +374,30 @@ export default class extends Vue {
       key: 'aDriverCode',
       tagAttrs: {
         placeholder: '请输入7位自承运司机编号',
-        maxlength: 7
+        maxlength: 7,
+        'show-word-limit': true,
+        type: 'number'
       }
     }
   ]
+
   private dialogRules = {
     aDriverCode: [
       { required: true, message: '请输入7位自承运司机编号', trigger: 'blur' },
       { validator: this.validateADriverCode, trigger: 'blur' }
-    ]
+    ],
+    driverName: { required: true, message: '请输入选择司机', trigger: 'blur' }
   }
   private validateADriverCode(rule:any, value:any, callback:any) {
-    if (value.length !== 7 || isNaN(Number(value))) {
-      callback(new Error('请输入7位数字!'))
+    const isInteger = Number.isInteger(Number(value))
+    if (!isInteger) {
+      callback(new Error('A端司机编号格式错误!'))
     } else {
-      callback()
+      if (value.length !== 7 || isNaN(Number(value))) {
+        callback(new Error('A端司机编号格式错误!'))
+      } else {
+        callback()
+      }
     }
   }
   // 判断是否是PC
@@ -442,11 +462,11 @@ export default class extends Vue {
   private async handleExportClick(row:IState) {
     try {
       let params:IState = {}
-      this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
-      this.listQuery.driverCode && (params.driverCode = this.listQuery.driverCode)
-      this.listQuery.aDriverCode && (params.aDriverCode = this.listQuery.aDriverCode)
-      this.listQuery.driverCity && (params.driverCity = this.listQuery.driverCity)
-      this.listQuery.businessType && (params.businessType = this.listQuery.businessType)
+      this.listQuery.key && (params.key = this.listQuery.key)
+      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.aDriverId && (params.otherDriverId = this.listQuery.aDriverId)
+      this.listQuery.workCity && (params.workCity = this.listQuery.workCity)
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.status && (params.status = this.listQuery.status)
       if (this.listQuery.time && this.listQuery.time.length > 0) {
         let startTime = new Date(this.listQuery.time[0])
@@ -456,9 +476,12 @@ export default class extends Vue {
         params.startTime = startTime
         params.endTime = endTime
       }
-      let { data: res } = await GetDriverTagList(params)
+      let { data: res } = await ExportDriverTagList(params)
       if (res.success) {
-        this.tableData = res.data
+        this.$message({
+          type: 'success',
+          message: '导出成功!'
+        })
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -488,10 +511,10 @@ export default class extends Vue {
     })
     this.showDialog = true
     this.dialogQuery.id = row.id
-    this.dialogQuery.driverName = row.driverName
-    this.dialogQuery.driverCode = row.driverCode
-    this.dialogQuery.businessTypeName = row.businessTypeName
-    this.dialogQuery.aDriverCode = row.aDriverCode
+    this.dialogQuery.driverName = row.name
+    this.dialogQuery.driverCode = row.driverId
+    this.dialogQuery.businessTypeName = row.busiTypeName
+    this.dialogQuery.aDriverCode = row.adriverId
   }
 
   // 表单验证通过
@@ -507,41 +530,60 @@ export default class extends Vue {
     try {
       this.submitLoading = true
       let params:IState = {
-        driverName: this.dialogQuery.driverName,
-        driverCode: this.dialogQuery.driverCode,
-        businessTypeName: this.dialogQuery.businessTypeName,
-        aDriverCode: this.dialogQuery.aDriverCode
+        driverId: this.dialogQuery.driverCode,
+        otherDriverId: this.dialogQuery.aDriverCode
       }
-      this.dialogQuery.id && (params.id = this.dialogQuery.id)
-      let { data: res } = await AddOrEditDriverTag(params)
-      if (res.success) {
-        this.showDialog = false
-        setTimeout(() => {
-          this.submitLoading = false
-        }, 1000)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
+      this.chooseAddorUpdata(params)
     } catch (err) {
       console.log(`submit fail:${err}`)
     }
   }
+
+  private async chooseAddorUpdata(params:any) {
+    if (this.dialogTit === '编辑司机标签') {
+      let { data: res } = await EditDriverTag(params)
+      if (res.success) {
+        this.showDialog = false
+        this.$message.success('提交成功')
+        setTimeout(() => {
+          this.submitLoading = false
+        }, 1000)
+      } else {
+        this.submitLoading = false
+        this.$message.error(res.errorMsg)
+      }
+    } else {
+      let { data: res } = await AddDriverTag(params)
+      if (res.success) {
+        this.showDialog = false
+        this.$message.success('提交成功')
+        setTimeout(() => {
+          this.submitLoading = false
+        }, 1000)
+      } else {
+        this.submitLoading = false
+        this.$message.error(res.errorMsg)
+      }
+    }
+  }
+
   // 弹框关闭后
   handleClosed() {
     ((this.$refs.dialogSelfTag) as any).resetForm()
     this.reset()
     this.dialogFormItem.shift()
+    this.submitLoading = false
   }
   // 搜索司机
   async loadQueryDriverByKeyword(val?:string) {
-    val = this.searchKeyword
-    this.queryPage.page++
-    let params:IState = {
-      page: this.queryPage.page,
-      limit: this.queryPage.limit
-    }
-    val !== '' && (params.key = val)
     try {
+      val = this.searchKeyword
+      this.queryPage.page++
+      let params:IState = {
+        page: this.queryPage.page,
+        limit: this.queryPage.limit
+      }
+      val !== '' && (params.key = val)
       let result:IState[] = await this.loadDriverByKeyword(params)
       this.driverOptions.push(...result)
     } catch (err) {
@@ -551,15 +593,10 @@ export default class extends Vue {
   // 根据关键字查司机信息
   async loadDriverByKeyword(params:IState) {
     try {
-      let params:IState = {
-        page: this.queryPage.page,
-        limit: this.queryPage.limit
-      }
-      this.dialogQuery.driverName && (params.driverName = this.dialogQuery.driverName)
       let { data: res } = await GetDriverByDriverName(params)
       let result = res.data.map((item:IState) => {
-        item.label = `${item.driverName}/${item.phone}`
-        item.value = item.driverName
+        item.label = `${item.name}(${item.phone})`
+        item.value = item.driverId
         return item
       })
       return result
@@ -604,11 +641,11 @@ export default class extends Vue {
         page: this.page.page,
         limit: this.page.limit
       }
-      this.listQuery.driverName && (params.driverName = this.listQuery.driverName)
-      this.listQuery.driverCode && (params.driverCode = this.listQuery.driverCode)
-      this.listQuery.aDriverCode && (params.aDriverCode = this.listQuery.aDriverCode)
-      this.listQuery.driverCity && (params.driverCity = this.listQuery.driverCity)
-      this.listQuery.businessType && (params.businessType = this.listQuery.businessType)
+      this.listQuery.key && (params.key = this.listQuery.key)
+      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.aDriverId && (params.otherDriverId = this.listQuery.aDriverId)
+      this.listQuery.workCity && (params.workCity = this.listQuery.workCity)
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.status && (params.status = this.listQuery.status)
       if (this.listQuery.time && this.listQuery.time.length > 1) {
         let startTime = new Date(this.listQuery.time[0])
@@ -631,12 +668,12 @@ export default class extends Vue {
     }
   }
   // 新增选择完司机
-  handleDriverChange() {
-    let array:IState[] = this.driverOptions.filter((item:any) => item.driverName === this.dialogQuery.driverName)
+  handleDriverChange(val:string) {
+    let array:IState[] = this.driverOptions.filter((item:any) => item.driverId === val)
     if (array.length > 0) {
-      this.dialogQuery.driverName = array[0].driverName
-      this.dialogQuery.driverCode = array[0].driverCode
-      this.dialogQuery.businessTypeName = array[0].businessTypeName
+      this.dialogQuery.driverName = array[0].name
+      this.dialogQuery.driverCode = array[0].driverId
+      this.dialogQuery.businessTypeName = array[0].busiTypeName
       this.dialogQuery.aDriverCode = array[0].aDriverCode
     }
   }
@@ -683,6 +720,11 @@ export default class extends Vue {
       overflow: hidden;
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
+    }
+    .addInfo{
+      margin-left: 50px;
+      font-size: 13px;
+      color: #FF5D5D;
     }
 
   }

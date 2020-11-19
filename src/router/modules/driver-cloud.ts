@@ -7,7 +7,6 @@ const driverCloud: RouteConfig = {
   redirect: '/driverClond/selfDriverTag',
   name: 'DriverClond',
   meta: {
-    hidden: true,
     title: 'driverClond',
     icon: 'driver-cloud',
     apiUrl: 'root',
