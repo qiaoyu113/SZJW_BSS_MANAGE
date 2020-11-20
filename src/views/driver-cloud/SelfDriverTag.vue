@@ -581,7 +581,6 @@ export default class extends Vue {
       }
     }
   }
-
   // 弹框关闭后
   handleClosed() {
     ((this.$refs.dialogSelfTag) as any).resetForm()
