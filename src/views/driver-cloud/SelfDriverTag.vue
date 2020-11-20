@@ -176,6 +176,11 @@ export default class extends Vue {
       'width': '100px'
     },
     {
+      key: 'phone',
+      label: '梧桐司机手机号',
+      'width': '100px'
+    },
+    {
       key: 'driverId',
       label: '梧桐司机编号',
       'width': '160px'
@@ -472,12 +477,12 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.status && (params.status = this.listQuery.status)
       if (this.listQuery.time && this.listQuery.time.length > 0) {
-        let startTime = new Date(this.listQuery.time[0])
-        let endTime = new Date(this.listQuery.time[1])
-        startTime.setHours(0, 0, 0)
-        endTime.setHours(23, 59, 59)
-        params.startTime = startTime
-        params.endTime = endTime
+        let startDate = new Date(this.listQuery.time[0])
+        let endDate = new Date(this.listQuery.time[1])
+        startDate.setHours(0, 0, 0)
+        endDate.setHours(23, 59, 59)
+        params.startDate = startDate
+        params.endDate = endDate
       }
       let { data: res } = await ExportDriverTagList(params)
       if (res.success) {
@@ -539,6 +544,7 @@ export default class extends Vue {
         otherDriverId: this.dialogQuery.aDriverCode
       }
       await this.chooseAddorUpdata(params)
+      this.getLists()
       setTimeout(() => {
         this.submitLoading = false
       }, 1000)
@@ -649,10 +655,10 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.status && (params.status = this.listQuery.status)
       if (this.listQuery.time && this.listQuery.time.length > 1) {
-        let startTime = new Date(this.listQuery.time[0])
-        let endTime = new Date(this.listQuery.time[1])
-        params.startTime = startTime.setHours(0, 0, 0)
-        params.endTime = endTime.setHours(23, 59, 59)
+        let startDate = new Date(this.listQuery.time[0])
+        let endDate = new Date(this.listQuery.time[1])
+        params.startDate = startDate.setHours(0, 0, 0)
+        params.endDate = endDate.setHours(23, 59, 59)
       }
       let { data: res } = await GetDriverTagList(params)
       if (res.success) {
