@@ -109,6 +109,7 @@
             filterable
             remote
             :remote-method="querySearchByKeyword"
+            :loading="driverLoading"
             @clear="handleClearQueryDriver"
             @change="handleDriverChange"
           >
@@ -152,6 +153,8 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private driverOver:Boolean = false
+  private driverLoading:Boolean = false
   private ExportClick:boolean = false
   private showDialog:boolean = false;
   private listLoading:boolean = false;
@@ -355,7 +358,7 @@ export default class extends Vue {
   }
   // 搜索司机分页
   private queryPage:PageObj = {
-    page: 0,
+    page: 1,
     limit: 20,
     total: 0
   }
@@ -587,10 +590,9 @@ export default class extends Vue {
     this.submitLoading = false
   }
   // 搜索司机
-  async loadQueryDriverByKeyword(val?:string) {
+  async loadQueryDriverByKeyword(val:string = '') {
     try {
       val = this.searchKeyword
-      this.queryPage.page++
       let params:IState = {
         page: this.queryPage.page,
         limit: this.queryPage.limit
@@ -604,8 +606,16 @@ export default class extends Vue {
   }
   // 根据关键字查司机信息
   async loadDriverByKeyword(params:IState) {
+    if (this.driverOver) {
+      return
+    }
     try {
       let { data: res } = await GetDriverByDriverName(params)
+      if (res.data.length && res.data.length > 0 && res.data.length === this.queryPage.limit) {
+        this.queryPage.page++
+      } else {
+        this.driverOver = true
+      }
       let result = res.data.map((item:IState) => {
         item.label = `${item.name}(${item.phone})`
         item.value = item.driverId
@@ -618,20 +628,25 @@ export default class extends Vue {
     }
   }
   // 搜索
-  querySearchByKeyword(val:string) {
-    this.queryPage.page = 0
+  async querySearchByKeyword(val:string) {
     this.reset()
+    this.driverLoading = true
     this.searchKeyword = val
-    this.loadQueryDriverByKeyword(val)
+    this.driverOptions.splice(0, this.driverOptions.length)
+    await this.loadQueryDriverByKeyword(this.searchKeyword)
+    this.driverLoading = false
   }
   // 重置弹框司机信息
   reset() {
+    this.queryPage.page = 1
     this.dialogQuery.id = ''
     this.dialogQuery.driverName = ''
     this.dialogQuery.driverCode = ''
     this.dialogQuery.businessTypeName = ''
     this.dialogQuery.aDriverCode = ''
     this.searchKeyword = ''
+    this.driverOver = false
+    this.driverOptions.splice(0, this.driverOptions.length)
   }
   // 删除司机
   handleClearQueryDriver() {
