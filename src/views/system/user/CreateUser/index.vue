@@ -543,7 +543,7 @@ export default class extends Vue {
 
   // 重置表单
   resetForm() {
-    ((this.$refs.addUserForm) as any).resetFields()
+    ((this.$refs.addUserForm) as any).resetForm()
     this.listQuery = {
       id: '',
       userName: '',
