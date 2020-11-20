@@ -488,8 +488,8 @@ export default class extends Vue {
         let endDate = new Date(this.listQuery.time[1])
         startDate.setHours(0, 0, 0)
         endDate.setHours(23, 59, 59)
-        params.startDate = startDate
-        params.endDate = endDate
+        params.startDate = startDate.setHours(0, 0, 0)
+        params.endDate = endDate.setHours(23, 59, 59)
       }
       let { data: res } = await ExportDriverTagList(params)
       if (res.success) {
