@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // let prefix = '/mock/67'
 let prefix = ''
-let prefix3 = '/mock/25'
+// let prefix2 = '/mock/25'
 let prefix2 = ''
 // let prefix = '/api/waybill_center'
 
@@ -115,11 +115,11 @@ export const freightTripMoney = (params: any) =>
   })
 /**
    *
-   *出车列表导出
+   *出车列表运费导出
    */
 export const managementDerive = (params: any) =>
   request({
-    url: `${prefix3}/v2/waybill/derive`,
+    url: `${prefix || '/waybill'}/v2/waybill/amount/export`,
     method: 'get',
     params
   })

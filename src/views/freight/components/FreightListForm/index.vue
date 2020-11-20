@@ -306,6 +306,7 @@
                   </el-button>
                   <el-button
                     :class="isPC ? 'filter-item' : 'filter-item-m'"
+                    type="primary"
                     size="small"
                     name="ownerlist_derive_btn"
                     @click="handleDeriveClick"
