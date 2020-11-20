@@ -46,7 +46,6 @@
     </self-form>
     <div class="table_box">
       <!-- 表格 -->
-      <!-- :indexes="true" -->
       <self-table
         ref="selfDriverTag"
         :height="tableHeight"
