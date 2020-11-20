@@ -46,6 +46,7 @@
     </self-form>
     <div class="table_box">
       <!-- 表格 -->
+      <!-- :indexes="true" -->
       <self-table
         ref="selfDriverTag"
         :height="tableHeight"
@@ -53,7 +54,6 @@
         :operation-list="[]"
         :table-data="tableData"
         :columns="columns"
-        :indexes="true"
         :index="false"
         :page="page"
         style="overflow: initial;"
@@ -165,6 +165,11 @@ export default class extends Vue {
   private busiTypeList:IState = [];
   private dialogTit:string = ''
   private columns:any[] = [
+    {
+      key: 'id',
+      label: '序号',
+      width: '50px'
+    },
     {
       key: 'workCityName',
       label: '梧桐司机城市',
@@ -324,7 +329,7 @@ export default class extends Vue {
     },
     {
       type: 3,
-      col: 8,
+      col: 10,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true,
@@ -338,7 +343,7 @@ export default class extends Vue {
     },
     {
       type: 'mulBtn',
-      col: 16,
+      col: 14,
       slot: true,
       w: '0px'
     }
@@ -544,7 +549,6 @@ export default class extends Vue {
         otherDriverId: this.dialogQuery.aDriverCode
       }
       await this.chooseAddorUpdata(params)
-      this.getLists()
       setTimeout(() => {
         this.submitLoading = false
       }, 1000)
@@ -559,6 +563,7 @@ export default class extends Vue {
       let { data: res } = await EditDriverTag(params)
       if (res.success) {
         this.showDialog = false
+        this.getLists()
         this.$message.success('提交成功')
       } else {
         this.$message.error(res.errorMsg)
@@ -567,6 +572,7 @@ export default class extends Vue {
       let { data: res } = await AddDriverTag(params)
       if (res.success) {
         this.showDialog = false
+        this.getLists()
         this.$message.success('提交成功')
       } else {
         this.$message.error(res.errorMsg)
