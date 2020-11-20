@@ -9,7 +9,7 @@ const driverCloud: RouteConfig = {
   meta: {
     title: 'driverClond',
     icon: 'driver-cloud',
-    apiUrl: 'root',
+    apiUrl: '/v2/driver/label-sync/list',
     alwaysShow: true
   },
   children: [
@@ -18,7 +18,7 @@ const driverCloud: RouteConfig = {
       component: () => import(/* webpackChunkName: "driverCloud" */ '@/views/driver-cloud/SelfDriverTag.vue'),
       name: 'SelfDriverTag',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/driver/label-sync/list',
         title: 'selfDriverTag',
         noCache: false
       }

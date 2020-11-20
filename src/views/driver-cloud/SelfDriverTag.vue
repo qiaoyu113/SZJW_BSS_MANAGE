@@ -28,6 +28,7 @@
           查询
         </el-button>
         <el-button
+          v-permission="['/v2/driver/label-sync/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           :loading="ExportClick"
@@ -36,6 +37,7 @@
           导出
         </el-button>
         <el-button
+          v-permission="['/v2/driver/label-sync/create']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           @click="handleAddClick"
@@ -66,6 +68,7 @@
           v-slot:op="scope"
         >
           <el-button
+            v-permission="['/v2/driver/label-sync/update']"
             type="text"
             @click="handleEditClick(scope.row)"
           >
