@@ -268,7 +268,7 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 1,
-      label: '梧桐司机姓名:',
+      label: '梧桐司机姓名',
       key: 'key',
       tagAttrs: {
         placeholder: '请输入姓名/手机号',
@@ -279,7 +279,7 @@ export default class extends Vue {
     },
     {
       type: 1,
-      label: '梧桐司机编号:',
+      label: '梧桐司机编号',
       key: 'driverId',
       tagAttrs: {
         placeholder: '请输入',
@@ -290,7 +290,7 @@ export default class extends Vue {
     },
     {
       type: 1,
-      label: 'A端司机编号:',
+      label: 'A端司机编号',
       key: 'aDriverId',
       tagAttrs: {
         placeholder: '请输入',
@@ -301,7 +301,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      label: '梧桐司机城市:',
+      label: '梧桐司机城市',
       key: 'workCity',
       tagAttrs: {
         placeholder: '请选择',
@@ -312,7 +312,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      label: '司机业务线:',
+      label: '司机业务线',
       key: 'busiType',
       tagAttrs: {
         placeholder: '请选择',
@@ -323,7 +323,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      label: '司机状态:',
+      label: '司机状态',
       key: 'status',
       tagAttrs: {
         placeholder: '请选择',
