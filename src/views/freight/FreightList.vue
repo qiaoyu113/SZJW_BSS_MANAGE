@@ -1084,7 +1084,8 @@ export default class extends Vue {
     private async confirmAssignMin(done: any) {
       (this.$refs.freightForm as any).validate(async(valid: boolean) => {
         if (valid) {
-          this.saveData()
+          await this.saveData()
+          done()
         }
       })
     }
@@ -1105,7 +1106,6 @@ export default class extends Vue {
           this.$message.success('提交成功')
           this.assignShowDialogMin = false
           this.getList(this.listQuery)
-          done()
         } else {
           this.$message.error(data.errorMsg)
         }
@@ -1118,9 +1118,10 @@ export default class extends Vue {
 
     // 批量弹窗操作
     private async confirmAssign(done: any) {
-      (this.$refs.freightFormAll as any).validate((valid: boolean) => {
+      (this.$refs.freightFormAll as any).validate(async(valid: boolean) => {
         if (valid) {
-          this.saveData1()
+          await this.saveData1()
+          done()
         }
       })
     }
@@ -1152,12 +1153,9 @@ export default class extends Vue {
             const { data } = await NoCarBatch(noCheck, this.remarkAll)
             if (data.success) {
               this.assignShowDialog = false
-              done()
             } else {
               this.$message.error(data.errorMsg)
             }
-          } else {
-            done()
           }
         } else {
           this.$message.error(data.errorMsg)
