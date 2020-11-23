@@ -85,6 +85,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { GetDictionaryCity } from '@/api/common'
 import { getSettingSystem, settingSystem } from '@/api/product'
 import '@/styles/common.scss'
+import { lock } from '@/utils/index'
 @Component({
   name: 'SystemSetting',
   components: {
@@ -131,18 +132,28 @@ export default class extends Vue {
     this.isIndeterminate = checkedCount > 0 && checkedCount < this.optionsCity.length
   }
   private submitForm(formName:any) {
-    (this.$refs[formName] as any).validate(async(valid: boolean) => {
+    (this.$refs[formName] as any).validate((valid: boolean) => {
       if (valid) {
-        const formData = new FormData()
-        formData.append('jsonStr', JSON.stringify(this.ruleForm))
-        const { data } = await settingSystem(formData)
-        if (data.success) {
-          this.$message.success(`系统设置保存成功`)
-        } else {
-          this.$message.error(data)
-        }
+        this.saveData()
       }
     })
+  }
+  @lock
+  async saveData() {
+    try {
+      const formData = new FormData()
+      formData.append('jsonStr', JSON.stringify(this.ruleForm))
+      const { data } = await settingSystem(formData)
+      if (data.success) {
+        this.$message.success(`系统设置保存成功`)
+      } else {
+        this.$message.error(data)
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
+    }
   }
 
   private resetForm(formName:any) {

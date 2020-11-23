@@ -132,7 +132,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { today, yesterday, month, lastmonth, threemonth } from '../driver-freight/components/date'
@@ -476,6 +476,7 @@ export default class extends Vue {
     this.getLists()
   }
   // 导出
+  @lock
   private async handleExportClick(row:IState) {
     try {
       this.ExportClick = true
@@ -562,26 +563,32 @@ export default class extends Vue {
       console.log(`submit fail:${err}`)
     }
   }
-
+  @lock
   private async chooseAddorUpdata(params:any) {
-    if (this.dialogTit === '编辑司机标签') {
-      let { data: res } = await EditDriverTag(params)
-      if (res.success) {
-        this.showDialog = false
-        this.getLists()
-        this.$message.success('提交成功')
+    try {
+      if (this.dialogTit === '编辑司机标签') {
+        let { data: res } = await EditDriverTag(params)
+        if (res.success) {
+          this.showDialog = false
+          this.getLists()
+          this.$message.success('提交成功')
+        } else {
+          this.$message.error(res.errorMsg)
+        }
       } else {
-        this.$message.error(res.errorMsg)
+        let { data: res } = await AddDriverTag(params)
+        if (res.success) {
+          this.showDialog = false
+          this.getLists()
+          this.$message.success('提交成功')
+        } else {
+          this.$message.error(res.errorMsg)
+        }
       }
-    } else {
-      let { data: res } = await AddDriverTag(params)
-      if (res.success) {
-        this.showDialog = false
-        this.getLists()
-        this.$message.success('提交成功')
-      } else {
-        this.$message.error(res.errorMsg)
-      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
     }
   }
   // 弹框关闭后

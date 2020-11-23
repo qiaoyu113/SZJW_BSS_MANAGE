@@ -637,7 +637,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch, freightTripMoney } from '@/api/freight'
 import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
@@ -1084,69 +1084,89 @@ export default class extends Vue {
     private async confirmAssignMin(done: any) {
       (this.$refs.freightForm as any).validate(async(valid: boolean) => {
         if (valid) {
-          let moneysArr: any = []
-          let wayBillAmountIdsArr: any = []
-          this.freightForm.list.forEach((i: any) => {
-            moneysArr.push(i.preMoney)
-            wayBillAmountIdsArr.push(i.wayBillAmountId)
-          })
-          const { data } = await ReportMoneyBatch({
-            moneys: moneysArr,
-            wayBillAmountIds: wayBillAmountIdsArr
-          }, this.freightForm.remark)
-          if (data.success) {
-            this.$message.success('提交成功')
-            this.assignShowDialogMin = false
-            this.getList(this.listQuery)
-            done()
-          } else {
-            this.$message.error(data.errorMsg)
-          }
+          this.saveData()
         }
       })
+    }
+    @lock
+    async saveData() {
+      try {
+        let moneysArr: any = []
+        let wayBillAmountIdsArr: any = []
+        this.freightForm.list.forEach((i: any) => {
+          moneysArr.push(i.preMoney)
+          wayBillAmountIdsArr.push(i.wayBillAmountId)
+        })
+        const { data } = await ReportMoneyBatch({
+          moneys: moneysArr,
+          wayBillAmountIds: wayBillAmountIdsArr
+        }, this.freightForm.remark)
+        if (data.success) {
+          this.$message.success('提交成功')
+          this.assignShowDialogMin = false
+          this.getList(this.listQuery)
+          done()
+        } else {
+          this.$message.error(data.errorMsg)
+        }
+      } catch (err) {
+        console.log(`submit fail:${err}`)
+      } finally {
+        console.log(`finally`)
+      }
     }
 
     // 批量弹窗操作
     private async confirmAssign(done: any) {
-      (this.$refs.freightFormAll as any).validate(async(valid: boolean) => {
+      (this.$refs.freightFormAll as any).validate((valid: boolean) => {
         if (valid) {
-          let moneysArr: any = []
-          let wayBillAmountIdsArr: any = []
-          let noCheck: any = []
-          this.freightFormAll.lists.forEach((i: any) => {
-            i.list.forEach((element: any) => {
-              if (element.check) {
-                moneysArr.push(element.preMoney)
-                wayBillAmountIdsArr.push(element.wayBillAmountId)
-              } else {
-                noCheck.push(element.wayBillAmountId)
-              }
-            })
-          })
-          const { data } = await ReportMoneyBatch({
-            moneys: moneysArr,
-            wayBillAmountIds: wayBillAmountIdsArr
-          }, this.remarkAll)
-          if (data.success) {
-            this.getList(this.listQuery)
-            this.$message.success('提交成功')
-            this.assignShowDialog = false
-            if (noCheck.length) {
-              const { data } = await NoCarBatch(noCheck, this.remarkAll)
-              if (data.success) {
-                this.assignShowDialog = false
-                done()
-              } else {
-                this.$message.error(data.errorMsg)
-              }
-            } else {
-              done()
-            }
-          } else {
-            this.$message.error(data.errorMsg)
-          }
+          this.saveData1()
         }
       })
+    }
+    @lock
+    async saveData1() {
+      try {
+        let moneysArr: any = []
+        let wayBillAmountIdsArr: any = []
+        let noCheck: any = []
+        this.freightFormAll.lists.forEach((i: any) => {
+          i.list.forEach((element: any) => {
+            if (element.check) {
+              moneysArr.push(element.preMoney)
+              wayBillAmountIdsArr.push(element.wayBillAmountId)
+            } else {
+              noCheck.push(element.wayBillAmountId)
+            }
+          })
+        })
+        const { data } = await ReportMoneyBatch({
+          moneys: moneysArr,
+          wayBillAmountIds: wayBillAmountIdsArr
+        }, this.remarkAll)
+        if (data.success) {
+          this.getList(this.listQuery)
+          this.$message.success('提交成功')
+          this.assignShowDialog = false
+          if (noCheck.length) {
+            const { data } = await NoCarBatch(noCheck, this.remarkAll)
+            if (data.success) {
+              this.assignShowDialog = false
+              done()
+            } else {
+              this.$message.error(data.errorMsg)
+            }
+          } else {
+            done()
+          }
+        } else {
+          this.$message.error(data.errorMsg)
+        }
+      } catch (err) {
+        console.log(`submit fail:${err}`)
+      } finally {
+        console.log(`finally`)
+      }
     }
 
     // 全部未出车

@@ -104,6 +104,7 @@ import { RoleTree } from './components'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import '@/styles/common.scss'
 import '@/styles/tree-line.scss'
+import { lock } from '@/utils/index'
 import {
   dutyList,
   createDuty,
@@ -155,28 +156,38 @@ export default class extends Vue {
   }
   // 弹窗提交
   private confirm(done: any) {
-    (this.$refs['dialogForm'] as any).validate(async(valid: boolean) => {
+    (this.$refs['dialogForm'] as any).validate((valid: boolean) => {
       if (valid) {
-        const postData = {
-          ...this.dialogForm
-        }
-        delete postData.parentDutyName
-        const submitForm = this.isAdd ? createDuty : updateDuty
-        const success = this.isAdd ? '创建成功' : '编辑成功'
-        const { data } = await submitForm(postData)
-        if (data.success) {
-          this.$message.success(success)
-          if (this.isAdd) {
-            this.append(data.data)
-          } else {
-            this.update(postData, this.dialogForm.childDuty)
-          }
-          this.showDialog = false
-        } else {
-          this.$message.error(data)
-        }
+        this.saveData()
       }
     })
+  }
+  @lock
+  async saveData() {
+    try {
+      const postData = {
+        ...this.dialogForm
+      }
+      delete postData.parentDutyName
+      const submitForm = this.isAdd ? createDuty : updateDuty
+      const success = this.isAdd ? '创建成功' : '编辑成功'
+      const { data } = await submitForm(postData)
+      if (data.success) {
+        this.$message.success(success)
+        if (this.isAdd) {
+          this.append(data.data)
+        } else {
+          this.update(postData, this.dialogForm.childDuty)
+        }
+        this.showDialog = false
+      } else {
+        this.$message.error(data)
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
+    }
   }
   // 添加职责
   private async appendDuty(node: any, data: any) {

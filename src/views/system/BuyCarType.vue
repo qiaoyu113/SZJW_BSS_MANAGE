@@ -1,5 +1,8 @@
 <template>
-  <div :class="isPC ? 'BuyCarType' : 'BuyCarType-m'">
+  <div
+    v-loading="listLoading"
+    :class="isPC ? 'BuyCarType' : 'BuyCarType-m'"
+  >
     <BuyCarForm
       :list-query="listQuery"
       :date-value="DateValue"
@@ -71,7 +74,6 @@
       <div class="table_center">
         <el-table
           ref="multipleTable"
-          v-loading="listLoading"
           :data="list"
           :row-style="{height: '20px'}"
           :cell-style="{padding: '5px 0'}"
@@ -336,7 +338,7 @@ import { GetDictionaryList } from '@/api/common'
 import { GetCustomerOff } from '@/api/cargo'
 import { getProductList, shelvesOrTheshelves, createProduct, updateProduct, GetCarModelList, ProductDownload } from '@/api/product'
 import { SettingsModule } from '@/store/modules/settings'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import '@/styles/common.scss'
 
 interface IState {
@@ -601,37 +603,47 @@ export default class extends Vue {
     })
   }
   private confirm(done: any) {
-    ((this.$refs['dialogForm']) as any).validate(async(valid:boolean) => {
+    ((this.$refs['dialogForm']) as any).validate((valid:boolean) => {
       if (valid) {
-        const postData = {
-          ...this.dialogForm
-        }
-        postData.city = postData.city.join()
-        postData.name = this.optionsCar.find((item: any) => Number(item.dictValue) === postData.carType).dictLabel + postData.model
-        if (this.isAdd) {
-          // 添加
-          delete postData.id
-          const { data } = await createProduct(postData)
-          if (data.success) {
-            this.$message.success(`创建成功`)
-            this.dialogVisible = false
-            this.search()
-          } else {
-            this.$message.error(data)
-          }
-        } else {
-          // 编辑
-          const { data } = await updateProduct(postData)
-          if (data.success) {
-            this.$message.success(`编辑成功`)
-            this.dialogVisible = false
-            this.search()
-          } else {
-            this.$message.error(data)
-          }
-        }
+        this.saveData()
       }
     })
+  }
+  @lock
+  async saveData() {
+    try {
+      const postData = {
+        ...this.dialogForm
+      }
+      postData.city = postData.city.join()
+      postData.name = this.optionsCar.find((item: any) => Number(item.dictValue) === postData.carType).dictLabel + postData.model
+      if (this.isAdd) {
+        // 添加
+        delete postData.id
+        const { data } = await createProduct(postData)
+        if (data.success) {
+          this.$message.success(`创建成功`)
+          this.dialogVisible = false
+          this.search()
+        } else {
+          this.$message.error(data)
+        }
+      } else {
+        // 编辑
+        const { data } = await updateProduct(postData)
+        if (data.success) {
+          this.$message.success(`编辑成功`)
+          this.dialogVisible = false
+          this.search()
+        } else {
+          this.$message.error(data)
+        }
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
+    }
   }
   private async getDictionary() {
     const { data } = await GetDictionaryList(['Intentional_compartment'])
@@ -651,19 +663,24 @@ export default class extends Vue {
       this.$message.error(data)
     }
   }
+  @lock
   private async downLoad() {
-    const postData = this.filterObj(this.listQuery)
-    delete postData.page
-    delete postData.limit
-    ProductDownload(postData)
-      .then((res) => {
-        this.$message({
-          type: 'success',
-          message: '导出成功!'
-        })
-        const fileName = res.headers['content-disposition'].split('fileName=')[1]
-        this.download(res.data, decodeURI(fileName))
+    try {
+      const postData = this.filterObj(this.listQuery)
+      delete postData.page
+      delete postData.limit
+      let res = await ProductDownload(postData)
+      this.$message({
+        type: 'success',
+        message: '导出成功!'
       })
+      const fileName = res.headers['content-disposition'].split('fileName=')[1]
+      this.download(res.data, decodeURI(fileName))
+    } catch (err) {
+      console.log(`download fail:${err}`)
+    } finally {
+      console.log(`finally`)
+    }
   }
   private download(data: any, name: any) {
     if (!data) {
