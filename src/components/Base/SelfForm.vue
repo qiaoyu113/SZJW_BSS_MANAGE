@@ -101,7 +101,8 @@
           <span
             v-else-if="item.type ===7"
             v-bind="item.tagAttrs || {}"
-          >{{ listQuery[item.key] | DataIsNull }}</span>
+            v-text="canNull(listQuery[item.key],item.isNull)"
+          />
           <el-cascader
             v-else-if="item.type ===8"
             ref="cascader"
@@ -179,6 +180,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
+import { DataIsNull } from '@/utils/index'
 import '@/styles/common.scss'
 
   interface IState {
@@ -200,6 +202,19 @@ export default class extends Vue {
     // 区分设备
     get isPC() {
       return SettingsModule.isPC
+    }
+
+    // 没有数据的情况下，是否展示暂无数据，默认展示否则为空
+    canNull(val:any, isNull:any) {
+      if (isNull) {
+        if (val || val === 0) {
+          return val
+        } else {
+          return ''
+        }
+      } else {
+        return DataIsNull(val)
+      }
     }
     // 提交表单
     submitForm(args:any) {
