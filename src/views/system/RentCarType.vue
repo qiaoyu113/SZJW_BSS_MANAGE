@@ -580,7 +580,7 @@ export default class extends Vue {
     })
   }
   @lock
-  async savaData() {
+  async saveData() {
     try {
       const postData = {
         ...this.dialogForm
