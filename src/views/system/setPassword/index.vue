@@ -107,6 +107,7 @@
 import { resetPass } from '@/api/users'
 import { AppModule } from '@/store/modules/app'
 import { Vue, Component, Watch } from 'vue-property-decorator'
+import { lock } from '@/utils/index'
 @Component({
   name: 'resetPassowrd',
   components: {}
@@ -250,40 +251,46 @@ export default class extends Vue {
       { validator: this.checkPassed, trigger: ['change', 'blur'] }
     ]
   };
-
+  @lock
   private async sendData() {
-    let param = {
-      oldPassword: this.ruleForm.oldPassword,
-      password: this.ruleForm.password2
-    }
-    let { data: res } = await resetPass(param)
-    if (res.success) {
-      if (res.data) {
-        this.$message.success('密码修改成功')
-        window.localStorage.setItem('isWeakPwd', 'false')
-        if (this.isSetAll) {
-          (history as any).pushState(null, null, '/')
-          window.removeEventListener('popstate', function() {})
-          window.removeEventListener('historychange', function() {})
+    try {
+      let param = {
+        oldPassword: this.ruleForm.oldPassword,
+        password: this.ruleForm.password2
+      }
+      let { data: res } = await resetPass(param)
+      if (res.success) {
+        if (res.data) {
+          this.$message.success('密码修改成功')
+          window.localStorage.setItem('isWeakPwd', 'false')
+          if (this.isSetAll) {
+            (history as any).pushState(null, null, '/')
+            window.removeEventListener('popstate', function() {})
+            window.removeEventListener('historychange', function() {})
+            setTimeout(() => {
+              this.$router.push('/profile/index')
+            }, 0)
+          }
           setTimeout(() => {
+            this.isSetAll = false
             this.$router.push('/profile/index')
           }, 0)
         }
-        setTimeout(() => {
-          this.isSetAll = false
-          this.$router.push('/profile/index')
-        }, 0)
-      }
-    } else {
-      if (res.errorMsg === '输入的原密码错误') {
-        this.changeOld = true
-        let addOldpass = { validator: this.checkOld, trigger: 'change' }
-        this.rules.oldPassword.push(addOldpass);
-        (this.$refs.ruleForm as any).validateField('oldPassword')
-        this.changeOld = false
       } else {
-        this.$message.error('密码修改失败，请稍后重试')
+        if (res.errorMsg === '输入的原密码错误') {
+          this.changeOld = true
+          let addOldpass = { validator: this.checkOld, trigger: 'change' }
+          this.rules.oldPassword.push(addOldpass);
+          (this.$refs.ruleForm as any).validateField('oldPassword')
+          this.changeOld = false
+        } else {
+          this.$message.error('密码修改失败，请稍后重试')
+        }
       }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
     }
   }
 

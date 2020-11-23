@@ -344,3 +344,22 @@ export function validatorValue(array:any[], vm:any) {
   }
   return true
 }
+
+/**
+ *
+ * @param target 防止重复点击
+ * @param key
+ * @param desc
+ */
+export function lock(target:any, key:string, desc:any) {
+  const fn = desc.value
+  //* 没有使用箭头函数是为了让this能指回到vue，这样就可以获取到vue的data，从而做更多的事情，下面会讲到
+  desc.value = async function() {
+    if (this.$lock) return
+    this.$lock = true
+    await fn.apply(this).finally(() => {
+      this.$lock = false
+    })
+    return target
+  }
+}

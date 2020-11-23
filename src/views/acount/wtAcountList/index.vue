@@ -174,7 +174,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
-import { getLabel } from '@/utils/index.ts'
+import { getLabel, lock } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver, orderMoney, orderCanExtractMoney } from '@/api/driver-account'
 import { getDriverNoAndNameList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
@@ -866,6 +866,7 @@ export default class extends Vue {
   /**
    * 冻结
    */
+  @lock
   private async freezed(done:any) {
     let params = { ...this.freezeForm }
     delete params.applyForAccountUnfrozen
@@ -887,6 +888,7 @@ export default class extends Vue {
   /**
    * 解冻
    */
+  @lock
   private async unfreezed(done:any) {
     let params = { ...this.freezeForm }
     delete params.applyForAccountFrozen

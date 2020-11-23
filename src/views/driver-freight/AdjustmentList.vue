@@ -197,7 +197,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages, validatorValue } from '@/utils/index'
+import { HandlePages, validatorValue, lock } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import PitchBox from '@/components/PitchBox/index.vue'
 import { month, lastmonth, threemonth } from './components/date'
@@ -624,6 +624,7 @@ export default class extends Vue {
     this.saveData()
   }
   // 弹框提交表单
+  @lock
   async saveData() {
     try {
       this.submitLoading = true
