@@ -83,22 +83,13 @@
         </el-button>
       </div>
     </self-form>
-    <div class="table_box">
-      <div class="middle">
-        <el-button
-          v-permission="['/v2/wt-driver-account/flow/manual/create']"
-          icon="el-icon-plus"
-          type="primary"
-          size="small"
-          @click="handleOpenClick"
-        >
-          手动添加流水
-        </el-button>
-      </div>
+    <div
+      class="table_box"
+      style="padding-top:30px;"
+    >
       <!-- 表格 -->
       <self-table
         :index="false"
-        :height="tableHeight"
         :is-p30="false"
         :operation-list="[]"
         :table-data="tableData"
@@ -140,6 +131,17 @@
           </template>
         </template>
       </self-table>
+      <div class="middle">
+        <el-button
+          v-permission="['/v2/wt-driver-account/flow/manual/create']"
+          icon="el-icon-plus"
+          type="primary"
+          size="small"
+          @click="handleOpenClick"
+        >
+          手动添加流水
+        </el-button>
+      </div>
     </div>
 
     <SelfDialog
@@ -359,6 +361,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'city',
+        clearable: true,
         props: {
           lazy: true,
           lazyLoad: this.showWork
@@ -537,10 +540,6 @@ export default class extends Vue {
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
-  }
-  get tableHeight() {
-    let otherHeight = 440
-    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   // 重置加盟经理
   resetGmId() {
@@ -1077,7 +1076,7 @@ export default class extends Vue {
       }
     }
     .middle {
-      margin: 10px 0px;
+      margin: 20px 0px;
     }
     .SuggestForm {
       width: 100%;
@@ -1088,6 +1087,7 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     }
     .table_box {
+      position: relative;
       padding: 0px 30px;
       background: #ffffff;
       -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
@@ -1096,5 +1096,13 @@ export default class extends Vue {
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
     }
+  }
+</style>
+
+<style scoped>
+
+  .financialFlowContainer >>> .pagination-container {
+    position: absolute;
+    right: 30px;
   }
 </style>
