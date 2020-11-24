@@ -173,7 +173,7 @@ export default class extends Vue {
     {
       key: 'id',
       label: '序号',
-      width: '50px'
+      width: '70px'
     },
     {
       key: 'workCityName',
@@ -188,7 +188,7 @@ export default class extends Vue {
     {
       key: 'phone',
       label: '梧桐司机手机号',
-      'width': '100px'
+      'width': '120px'
     },
     {
       key: 'driverId',

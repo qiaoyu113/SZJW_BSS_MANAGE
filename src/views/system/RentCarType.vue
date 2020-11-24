@@ -89,6 +89,7 @@
             v-if="checkList.includes('商品编号')"
             :key="checkList.length + 'productId'"
             prop="productId"
+            width="130px"
             label="商品编号"
             fixed
           />
@@ -144,6 +145,7 @@
             v-if="checkList.includes('创建时间')"
             :key="checkList.length + 'createDate'"
             prop="createDate"
+            width="150px"
             label="创建时间"
           >
             <template slot-scope="{row}">
