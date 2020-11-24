@@ -91,6 +91,7 @@
             :key="checkList.length + 'productId'"
             prop="productId"
             label="商品编号"
+            width="150px"
             fixed
           />
           <el-table-column
@@ -106,6 +107,7 @@
             v-if="checkList.includes('车辆型号')"
             :key="checkList.length + 'model'"
             prop="model"
+            width="170px"
             label="车辆型号"
           />
           <el-table-column
@@ -151,6 +153,7 @@
             :key="checkList.length + 'createDate'"
             prop="createDate"
             label="创建时间"
+            width="160px"
           >
             <template slot-scope="{row}">
               {{ row.createDate | Timestamp }}
@@ -161,6 +164,7 @@
             :key="checkList.length + 'createrName'"
             prop="createrName"
             label="创建人"
+            width="100px"
           />
           <el-table-column
             v-if="checkList.includes('操作')"
