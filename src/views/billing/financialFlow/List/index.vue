@@ -81,6 +81,14 @@
         >
           导出
         </el-button>
+        <el-button
+          v-permission="['/v2/wt-driver-account/flow/manual/create']"
+          type="primary"
+          size="small"
+          @click="handleOpenClick"
+        >
+          手动添加流水
+        </el-button>
       </div>
     </self-form>
     <div
@@ -131,17 +139,6 @@
           </template>
         </template>
       </self-table>
-      <div class="middle">
-        <el-button
-          v-permission="['/v2/wt-driver-account/flow/manual/create']"
-          icon="el-icon-plus"
-          type="primary"
-          size="small"
-          @click="handleOpenClick"
-        >
-          手动添加流水
-        </el-button>
-      </div>
     </div>
 
     <SelfDialog
@@ -1075,9 +1072,6 @@ export default class extends Vue {
         width:80%;
       }
     }
-    .middle {
-      margin: 20px 0px;
-    }
     .SuggestForm {
       width: 100%;
       background: #fff;
@@ -1087,7 +1081,6 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     }
     .table_box {
-      position: relative;
       padding: 0px 30px;
       background: #ffffff;
       -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
@@ -1096,13 +1089,5 @@ export default class extends Vue {
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
     }
-  }
-</style>
-
-<style scoped>
-
-  .financialFlowContainer >>> .pagination-container {
-    position: absolute;
-    right: 30px;
   }
 </style>
