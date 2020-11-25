@@ -117,9 +117,9 @@ export const freightTripMoney = (params: any) =>
    *
    *出车列表运费导出
    */
-export const managementDerive = (params: any) =>
+export const managementDerive = (data: any) =>
   request({
-    url: `${prefix || '/waybill'}/v2/waybill/amount/export`,
-    method: 'get',
-    params
+    url: `${prefix || '/waybill_center'}/v2/waybill/amount/export`,
+    method: 'post',
+    data
   })

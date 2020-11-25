@@ -730,8 +730,11 @@ export default class extends Vue {
   }
   // 导出
   private async handleDeriveClick() {
+    let params = { ...this.listQuery }
+    delete params.page
+    delete params.limit
     if (this.DateValueChild && this.DateValueChild.length === 2) {
-      const { data } = await managementDerive(this.listQuery)
+      const { data } = await managementDerive(params)
       if (data.success) {
         this.$message.success('导出成功')
       } else {
