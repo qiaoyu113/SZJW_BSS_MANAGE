@@ -227,17 +227,6 @@ const systemRouter: RouteConfig = {
         icon: '',
         apiUrl: '/v1/product/product/list/page'
       }
-    },
-    {
-      path: 'resetpassword',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/system/setPassword/index.vue'),
-      name: 'ResetPassword',
-      meta: {
-        title: 'resetPassword',
-        hidden: true,
-        icon: 'system',
-        apiUrl: 'root'
-      }
     }
   ]
 }
