@@ -46,6 +46,18 @@
           <el-button
             size="small"
             :class="isPC ? '' : 'btnMobile'"
+          >
+            批量驳回
+          </el-button>
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
+          >
+            批量退费
+          </el-button>
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
             @click="handleFilterClick"
           >
             查询
@@ -150,8 +162,9 @@ import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM }
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { HandlePages } from '@/utils/index'
-import { refundList } from '@/api/driver-account.ts'
+import { refundList, refundExport } from '@/api/driver-account.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
+import { getDriverNoAndNameList, getDriverNameByNo } from '@/api/driver'
 import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
   GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
@@ -175,10 +188,12 @@ interface IState {
 export default class extends Vue {
   private listLoading:boolean = false;
   private tableData:any[] = [];
+  private dutyListOptions:IState[] = [];// 业务线列表
   private gmOptions: any[] = []; // 加盟经理列表
   private workCityOptions: any[] = []; // 工作城市列表
   private multipleSelection: any[] = []
   private showDialog: boolean = false
+  private createDate: any[] = []
   private listQuery:IState = {
     refundNumber: '',
     driverId: '',
@@ -209,13 +224,16 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '选择',
+        placeholder: '请选择',
         clearable: true,
         filterable: true
       },
-      w: '100px',
       label: '业务线',
-      key: 'line'
+      key: 'businessType',
+      options: this.dutyListOptions,
+      listeners: {
+        'change': this.resetGmId
+      }
     },
     {
       type: 2,
@@ -300,15 +318,15 @@ export default class extends Vue {
     },
     {
       name: '1',
-      text: '审核通过'
+      text: '待退费'
     },
     {
       name: '2',
-      text: '审核未通过'
+      text: '已退费'
     },
     {
       name: '3',
-      text: '已退款'
+      text: '审核不通过'
     }
   ]
   private columns:any[] = [
@@ -492,13 +510,20 @@ export default class extends Vue {
   handleSelectionChange(val:any) {
     this.multipleSelection = val
   }
-  // 批量下载
-  private handleSelect() {
-    if (this.multipleSelection.length === 0) {
-      this.$message.error('请先选择')
-    } else if (this.multipleSelection.length > 0) {
-      this.$message.success('下载成功')
-      // console.log(this.multipleSelection)
+  // 导出
+  private async handleSelect() {
+    let params = { ...this.listQuery }
+    delete params.page
+    delete params.limit
+    if (this.createDate && this.createDate.length === 2) {
+      const { data } = await refundExport(params)
+      if (data.success) {
+        this.$message.success('导出成功')
+      } else {
+        this.$message.error(data.errorMsg || data.message)
+      }
+    } else {
+      this.$message.error('请选择退费申请日期')
     }
   }
   // 下载
@@ -517,6 +542,36 @@ export default class extends Vue {
       this.$message.success('已退费')
       // console.log(this.multipleSelection)
     }
+  }
+  // 获取业务线
+  private async getDutyListByLevel() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
+        this.dutyListOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get duty list fail:${err}`)
+    }
+  }
+  resetGmId() {
+    if (this.listQuery.gmId) {
+      this.listQuery.gmId = ''
+    }
+    this.getGmOptions()
   }
   // 获取加盟经理列表
   async getGmOptions() {
@@ -541,6 +596,26 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(err)
+    }
+  }
+  async loadDriverByKeyword(params:IState) {
+    try {
+      if (this.listQuery.city && this.listQuery.city.length > 0) {
+        params.workCity = this.listQuery.city[1]
+      }
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      let { data: res } = await getDriverNoAndNameList(params, {
+        url: '/v2/wt-driver-account/flow/queryDriverList'
+      })
+      let result:any[] = res.data.map((item:any) => ({
+        label: item.name,
+        value: item.driverId
+      }))
+      return result
+    } catch (err) {
+      console.log(`get driver list fail:${err}`)
+      return []
     }
   }
   /**
@@ -622,6 +697,7 @@ export default class extends Vue {
     this.getLists()
     this.getGmOptions()
     this.getOpenCitys()
+    this.getDutyListByLevel()
   }
 }
 </script>

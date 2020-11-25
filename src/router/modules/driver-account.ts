@@ -82,6 +82,7 @@ const driverAccountRouter: RouteConfig = {
         hidden: false
       }
     },
+    // 退费详情
     {
       path: 'refunddetail',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundDetail.vue'),
@@ -93,6 +94,7 @@ const driverAccountRouter: RouteConfig = {
         hidden: true
       }
     },
+    // 退费申请
     {
       path: 'refundapply',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundApply.vue'),
@@ -104,6 +106,7 @@ const driverAccountRouter: RouteConfig = {
         hidden: true
       }
     },
+    // 退费审核
     {
       path: 'refundaudit',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundDetail.vue'),
