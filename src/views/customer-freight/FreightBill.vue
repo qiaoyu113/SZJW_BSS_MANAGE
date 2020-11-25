@@ -188,7 +188,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages, validatorValue } from '@/utils/index'
+import { HandlePages, validatorValue, lock } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component } from 'vue-property-decorator'
 
@@ -745,6 +745,7 @@ export default class extends Vue {
     }
   }
   // 弹框表单提交
+  @lock
   async saveData() {
     try {
       this.submitLoading = true

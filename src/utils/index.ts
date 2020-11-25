@@ -344,3 +344,24 @@ export function validatorValue(array:any[], vm:any) {
   }
   return true
 }
+
+/**
+ *
+ * @param target 防止重复点击
+ * @param key
+ * @param desc
+ */
+export function lock(target:any, key:string, desc:any) {
+  const fn = desc.value
+  desc.value = async function() {
+    if (this.$lock) return
+    this.$lock = true // 上锁 🔐
+    await fn.apply(this, [...arguments]).finally(() => {
+      // 此处的延时时在dialog关闭动画结束后在解锁 🔓
+      setTimeout(() => {
+        this.$lock = false
+      }, 350)
+    })
+    return target
+  }
+}

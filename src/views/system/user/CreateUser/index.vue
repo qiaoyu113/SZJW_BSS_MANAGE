@@ -138,7 +138,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { Form as ElForm } from 'element-ui'
 import { ValidateFieldCallback } from 'element-ui/types/form.d'
-import { phoneReg, isValidPassWord } from '@/utils/index.ts'
+import { phoneReg, isValidPassWord, lock } from '@/utils/index.ts'
 import { getOfficeByCurrentUserV2 as getOfficeByCurrentUser, getDutyAndRoleList, RoleParams, addUser, modifyUser, userDetail } from '@/api/system'
 import { delayTime } from '@/settings'
 import { SettingsModule } from '@/store/modules/settings'
@@ -451,6 +451,7 @@ export default class extends Vue {
     return brrs
   }
   // 新增用户
+  @lock
   async addUser() {
     try {
       this.listLoading = true

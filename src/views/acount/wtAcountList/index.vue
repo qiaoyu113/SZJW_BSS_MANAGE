@@ -174,7 +174,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfTable from '@/components/Base/SelfTable.vue'
-import { getLabel } from '@/utils/index.ts'
+import { getLabel, lock } from '@/utils/index.ts'
 import { getAcountList, accountFreeze, accountUnfreeze, managementExport, orderList, orderDetail, countConfirmByDriver, orderMoney, orderCanExtractMoney } from '@/api/driver-account'
 import { getDriverNoAndNameList } from '@/api/driver'
 import { delayTime } from '@/settings.ts'
@@ -850,23 +850,30 @@ export default class extends Vue {
   }
   // 确认弹窗
   private async confirm(done:any) {
-    this.handleValidateForm()
-    if (this.isPass) {
-      this.sumbitAgain = true
-      if (this.showDialog.name === 1) {
-        await this.freezed(done)
-      } else {
-        await this.unfreezed(done)
+    try {
+      this.handleValidateForm()
+      if (this.isPass) {
+        this.sumbitAgain = true
+        if (this.showDialog.name === 1) {
+          await this.freezed()
+        } else {
+          await this.unfreezed()
+        }
+        setTimeout(() => {
+          this.sumbitAgain = false
+        }, 1500)
       }
-      setTimeout(() => {
-        this.sumbitAgain = false
-      }, 1500)
+    } catch (err) {
+      console.log(`err:${err}`)
+    } finally {
+      done()
     }
   }
   /**
    * 冻结
    */
-  private async freezed(done:any) {
+  @lock
+  private async freezed() {
     let params = { ...this.freezeForm }
     delete params.applyForAccountUnfrozen
     delete params.isconfirmOrder
@@ -879,7 +886,6 @@ export default class extends Vue {
       setTimeout(() => {
         this.getList()
       }, delayTime)
-      done()
     } else {
       this.$message.error(res.errorMsg)
     }
@@ -887,7 +893,8 @@ export default class extends Vue {
   /**
    * 解冻
    */
-  private async unfreezed(done:any) {
+  @lock
+  private async unfreezed() {
     let params = { ...this.freezeForm }
     delete params.applyForAccountFrozen
     delete params.reason
@@ -899,7 +906,6 @@ export default class extends Vue {
       setTimeout(() => {
         this.getList()
       }, delayTime)
-      done()
     } else {
       this.$message.error(res.errorMsg)
     }
