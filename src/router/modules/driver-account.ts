@@ -106,7 +106,7 @@ const driverAccountRouter: RouteConfig = {
     },
     {
       path: 'refundaudit',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundAudit.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundDetail.vue'),
       name: 'RefundAudit',
       meta: {
         apiUrl: 'root',

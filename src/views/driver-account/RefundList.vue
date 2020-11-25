@@ -1,5 +1,6 @@
 <template>
   <div
+    v-loading="listLoading"
     class="refundList"
     :class="{
       p15: isPC
@@ -89,7 +90,6 @@
           ref="RefundForm"
           :indexes="true"
           :index="true"
-          :height="tableHeight"
           :is-p30="false"
           :operation-list="[]"
           :table-data="tableData"
@@ -160,6 +160,7 @@ export default class extends Vue {
   private tableData:any[] = [];
   private gmOptions: any[] = []; // 加盟经理列表
   private workCityOptions: any[] = []; // 工作城市列表
+  private multipleSelection: any[] = []
   private listQuery:IState = {
     refundNumber: '',
     driverNumber: '',
@@ -271,336 +272,327 @@ export default class extends Vue {
       w: '0px'
     }
   ]
-    private btns:any[] = [
-      {
-        name: '',
-        text: '全部'
-      },
-      {
-        name: '0',
-        text: '待审核'
-      },
-      {
-        name: '1',
-        text: '审核通过'
-      },
-      {
-        name: '2',
-        text: '审核未通过'
-      },
-      {
-        name: '3',
-        text: '已退款'
+  private btns:any[] = [
+    {
+      name: '',
+      text: '全部'
+    },
+    {
+      name: '0',
+      text: '待审核'
+    },
+    {
+      name: '1',
+      text: '审核通过'
+    },
+    {
+      name: '2',
+      text: '审核未通过'
+    },
+    {
+      name: '3',
+      text: '已退款'
+    }
+  ]
+  private columns:any[] = [
+    {
+      key: 'refundNumber',
+      label: '退费编号',
+      'width': '140px'
+    },
+    {
+      key: 'driverNumber',
+      label: '司机编号',
+      'width': '140px'
+    },
+    {
+      key: 'driverName',
+      label: '司机姓名',
+      'min-width': '140px'
+    },
+    {
+      key: 'city',
+      label: '所在城市',
+      'min-width': '140px'
+    },
+    {
+      key: 'sumAmount',
+      label: '账户总金额',
+      'min-width': '140px'
+    },
+    {
+      key: 'withdrawalAmount',
+      label: '可提现金额',
+      'min-width': '140px'
+    },
+    {
+      key: 'refundAmount',
+      label: '申请退款金额',
+      'width': '120px'
+    },
+    {
+      key: 'refundmethod',
+      label: '退款方式',
+      'min-width': '140px'
+    },
+    {
+      key: 'refundBankCardNumber',
+      label: '退款银行卡号',
+      'width': '180px'
+    },
+    {
+      key: 'bankDeposit',
+      label: '开户行',
+      'min-width': '140px'
+    },
+    {
+      key: 'reasonsRefund',
+      label: '退款原因',
+      'min-width': '140px'
+    },
+    {
+      key: 'gmId',
+      label: '加盟经理',
+      // slot: true,
+      'min-width': '140px'
+    },
+    {
+      key: 'receipt',
+      label: '是否有收据',
+      'min-width': '160px'
+    },
+    {
+      key: 'takeBackReceipt',
+      label: '收据是否回收',
+      'min-width': '120px'
+    },
+    {
+      key: 'checkStatus',
+      label: '审核状态',
+      'min-width': '120px'
+    },
+    {
+      key: 'creator',
+      label: '创建人',
+      'min-width': '120px'
+    },
+    {
+      key: 'createDate',
+      label: '创建日期',
+      'width': '150px'
+    },
+    {
+      key: 'op',
+      label: '操作',
+      slot: true,
+      'width': '160px'
+    }
+  ];
+  // 查询
+  handleFilterClick() {
+    this.page.page = 1
+    this.getLists()
+  }
+  // 重置
+  handleResetClick() {
+    this.listQuery = {
+      city: [],
+      busiType: '',
+      gmId: '',
+      driverCode: '',
+      driverName: '',
+      time: []
+    }
+  }
+  private page :PageObj= {
+    page: 1,
+    limit: 30,
+    total: 0
+  }
+  // 分页
+  handlePageSize(page:PageObj) {
+    this.page.page = page.page
+    this.page.limit = page.limit
+    this.getLists()
+  }
+  // 获取列表
+  private async getLists() {
+    try {
+      this.listLoading = true
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
       }
-    ]
-    private columns:any[] = [
-      {
-        key: 'refundNumber',
-        label: '退费编号',
-        'min-width': '140px'
-      },
-      {
-        key: 'driverNumber',
-        label: '司机编号',
-        'min-width': '140px'
-      },
-      {
-        key: 'driverName',
-        label: '司机姓名',
-        'min-width': '140px'
-      },
-      {
-        key: 'city',
-        label: '所在城市',
-        'min-width': '140px'
-      },
-      {
-        key: 'sumAmount',
-        label: '账户总金额',
-        'min-width': '140px'
-      },
-      {
-        key: 'withdrawalAmount',
-        label: '可提现金额',
-        'min-width': '140px'
-      },
-      {
-        key: 'refundAmount',
-        label: '申请退款金额',
-        'width': '120px'
-      },
-      {
-        key: 'refundmethod',
-        label: '退款方式',
-        'min-width': '140px'
-      },
-      {
-        key: 'refundBankCardNumber',
-        label: '退款银行卡号',
-        'min-width': '140px'
-      },
-      {
-        key: 'bankDeposit',
-        label: '开户行',
-        'min-width': '140px'
-      },
-      {
-        key: 'reasonsRefund',
-        label: '退款原因',
-        'min-width': '140px'
-      },
-      {
-        key: 'gmId',
-        label: '加盟经理',
-        // slot: true,
-        'min-width': '140px'
-      },
-      {
-        key: 'receipt',
-        label: '是否有收据',
-        'min-width': '160px'
-      },
-      {
-        key: 'takeBackReceipt',
-        label: '收据是否回收',
-        'min-width': '120px'
-      },
-      {
-        key: 'checkStatus',
-        label: '审核状态',
-        'min-width': '120px'
-      },
-      {
-        key: 'creator',
-        label: '创建人',
-        'min-width': '120px'
-      },
-      {
-        key: 'createDate',
-        label: '创建日期',
-        'min-width': '120px'
-      },
-      {
-        key: 'op',
-        label: '操作',
-        slot: true,
-        'width': '160px'
+      let { data: res } = await refundList(params)
+      if (!res.message) {
+        console.log(res.data)
+        this.tableData = res.data
+        res.page = await HandlePages(res.page)
+        this.page.total = res.page.total
+      } else {
+        this.$message.error(res.errorMsg)
       }
-    ];
-    // 查询
-    handleFilterClick() {
-      this.page.page = 1
-      this.getLists()
+    } catch (err) {
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
     }
-    // 重置
-    handleResetClick() {
-      this.listQuery = {
-        city: [],
-        busiType: '',
-        gmId: '',
-        driverCode: '',
-        driverName: '',
-        time: []
+  }
+  private goDetail(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({
+      path: '/driveraccount/refundapply',
+      query: { id: id }
+    })
+  }
+  // 详情
+  private handleClick(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({
+      path: '/driveraccount/refunddetail',
+      query: { id: id }
+    })
+  }
+  // 审核
+  private handle1Click(id: string | (string | null)[] | null | undefined) {
+    this.$router.push({
+      path: '/driveraccount/refundaudit',
+      query: { id: id }
+    })
+  }
+
+  handleSelectionChange(val:any) {
+    this.multipleSelection = val
+  }
+  // 批量下载
+  private handleSelect() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.error('请先选择')
+    } else if (this.multipleSelection.length > 0) {
+      this.$message.success('下载成功')
+      // console.log(this.multipleSelection)
+    }
+  }
+  // 下载
+  private handle1Select() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.success('下载成功')
+    }
+    // this.getLists()
+    console.log(this.multipleSelection)
+  }
+  // 批量退费
+  private handleReturn() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.error('请先选择')
+    } else if (this.multipleSelection.length > 0) {
+      this.$message.success('已退费')
+      // console.log(this.multipleSelection)
+    }
+  }
+  // 获取加盟经理列表
+  async getGmOptions() {
+    try {
+      let params:any = {
+        roleTypes: [1],
+        uri: '/v2/wt-driver-account/management/queryGM'
       }
-    }
-    private page :PageObj= {
-      page: 1,
-      limit: 30,
-      total: 0
-    }
-    // 分页
-    handlePageSize(page:PageObj) {
-      this.page.page = page.page
-      this.page.limit = page.limit
-      this.getLists()
-    }
-    // 获取列表
-    private async getLists() {
-      try {
-        let params:IState = {
-          page: this.page.page,
-          limit: this.page.limit
-        }
-        let { data: res } = await refundList(params)
-        if (!res.message) {
-          console.log(res.data)
-          this.tableData = res.data
-          this.page.total = res.page.total
-        } else {
-          this.$message.error(res.errorMsg)
-        }
-      } catch (err) {
-        console.log(`get list fail:${err}`)
-      } finally {
-        this.listLoading = false
+      // this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        this.gmOptions.splice(0, this.gmOptions.length)
+        let gms = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+        this.gmOptions.push(...gms)
+      } else {
+        this.$message.error(res.errorMsg)
       }
+    } catch (err) {
+      console.log(err)
     }
-    get tableHeight() {
-      let otherHeight = 440
-      return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
-    }
-    private goDetail(id: string | (string | null)[] | null | undefined) {
-      this.$router.push({
-        path: '/driveraccount/refundapply',
-        query: { id: id }
-      })
-    }
-    // 详情
-    private handleClick(id: string | (string | null)[] | null | undefined) {
-    // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
-      this.$router.push({
-        path: '/driveraccount/refunddetail',
-        query: { id: id }
-      })
-    }
-    // 审核
-    private handle1Click(id: string | (string | null)[] | null | undefined) {
-    // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
-      this.$router.push({
-        path: '/driveraccount/refundaudit',
-        query: { id: id }
-      })
-    }
-      private multipleSelection: any[] = []
-      handleSelectionChange(val:any) {
-        this.multipleSelection = val
-      }
-      // 批量下载
-      private handleSelect() {
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请先选择')
-        } else if (this.multipleSelection.length > 0) {
-          this.$message.success('下载成功')
-          // console.log(this.multipleSelection)
-        }
-      }
-      // 下载
-      private handle1Select() {
-        if (this.multipleSelection.length === 0) {
-          this.$message.success('下载成功')
-        }
-        // this.getLists()
-        console.log(this.multipleSelection)
-      }
-      // 批量退费
-      private handleReturn() {
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请先选择')
-        } else if (this.multipleSelection.length > 0) {
-          this.$message.success('已退费')
-          // console.log(this.multipleSelection)
-        }
-      }
-       private rules:any = {
-         refundNumber: [
-           { required: true, message: '不超过20个字符', trigger: 'blur' }
-         ]
-       }
-       // 获取加盟经理列表
-       async getGmOptions() {
-         try {
-           let params:any = {
-             roleTypes: [1],
-             uri: '/v2/wt-driver-account/management/queryGM'
-           }
-           // this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
-           let { data: res } = await GetSpecifiedRoleList(params)
-           if (res.success) {
-             this.gmOptions.splice(0, this.gmOptions.length)
-             let gms = res.data.map(function(item: any) {
-               return {
-                 label: item.name,
-                 value: item.id
-               }
-             })
-             this.gmOptions.push(...gms)
-           } else {
-             this.$message.error(res.errorMsg)
-           }
-         } catch (err) {
-           console.log(err)
-         }
-       }
-       /**
+  }
+  /**
    *获取开通城市
    */
-       async getOpenCitys() {
-         try {
-           let { data: res } = await getOfficeByType({ type: 2 })
-           if (res.success) {
-             let workCity = res.data.map(function(item: any) {
-               return {
-                 label: item.name,
-                 value: item.code
-               }
-             })
-             this.workCityOptions.push(...workCity)
-           } else {
-             this.$message.error(res.errorMsg)
-           }
-         } catch (err) {
-           console.log(`get`)
-         }
-       }
-       private async showWork(node:any, resolve:any) {
-         let query: any = {
-           parentId: ''
-         }
-         if (node.level === 1) {
-           query.parentId = node.value
-         }
-         try {
-           if (node.level === 0) {
-             let nodes = await this.areaAddress({ type: 2 })
-             resolve(nodes)
-           } else if (node.level === 1) {
-             let nodes = await this.cityDetail(query)
-             resolve(nodes)
-           }
-         } catch (err) {
-           resolve([])
-         }
-       }
-       private async areaAddress(params: any) {
-         try {
-           let { data: res } = await getOfficeByType(params)
-           if (res.success) {
-             const nodes = res.data.map(function(item: any) {
-               return {
-                 value: item.id,
-                 label: item.name,
-                 leaf: false
-               }
-             })
-             return nodes
-           }
-         } catch (err) {
-           console.log(`load city by code fail:${err}`)
-         }
-       }
+  async getOpenCitys() {
+    try {
+      let { data: res } = await getOfficeByType({ type: 2 })
+      if (res.success) {
+        let workCity = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+        this.workCityOptions.push(...workCity)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get`)
+    }
+  }
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
+    try {
+      if (node.level === 0) {
+        let nodes = await this.areaAddress({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+  private async areaAddress(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item: any) {
+          return {
+            value: item.id,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
 
-       private async cityDetail(params: any) {
-         let { data: city } = await getOfficeByTypeAndOfficeId(params)
-         if (city.success) {
-           const nodes = city.data.map(function(item: any) {
-             return {
-               value: item.areaCode,
-               label: item.name,
-               leaf: true
-             }
-           })
-           return nodes
-         }
-       }
-       // 判断是否是PC
-       get isPC() {
-         return SettingsModule.isPC
-       }
-       mounted() {
-         this.getLists()
-         this.getGmOptions()
-         this.getOpenCitys()
-       }
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+  mounted() {
+    this.getLists()
+    this.getGmOptions()
+    this.getOpenCitys()
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -611,14 +603,14 @@ export default class extends Vue {
     }
     .btnPc{
        width: 100%;
-       padding: 0 40px;
+       padding: 0 10px;
        display: flex;
        flex-flow: row nowrap;
-       justify-content: flex-start;
+       justify-content: flex-end;
     }
     .btnPc1{
        width: 100%;
-       padding: 0 40px;
+       padding: 0 10px;
        display: flex;
        flex-flow: row nowrap;
        justify-content: flex-end;
