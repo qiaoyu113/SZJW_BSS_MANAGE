@@ -356,7 +356,7 @@ export function lock(target:any, key:string, desc:any) {
   desc.value = async function() {
     if (this.$lock) return
     this.$lock = true // 上锁 🔐
-    await fn.apply(this).finally(() => {
+    await fn.apply(this, [...arguments]).finally(() => {
       // 此处的延时时在dialog关闭动画结束后在解锁 🔓
       setTimeout(() => {
         this.$lock = false

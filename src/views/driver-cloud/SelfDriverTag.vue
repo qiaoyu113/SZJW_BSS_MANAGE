@@ -555,6 +555,7 @@ export default class extends Vue {
         otherDriverId: this.dialogQuery.aDriverCode
       }
       await this.chooseAddorUpdata(params)
+
       setTimeout(() => {
         this.submitLoading = false
       }, 1000)

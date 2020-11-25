@@ -850,24 +850,30 @@ export default class extends Vue {
   }
   // 确认弹窗
   private async confirm(done:any) {
-    this.handleValidateForm()
-    if (this.isPass) {
-      this.sumbitAgain = true
-      if (this.showDialog.name === 1) {
-        await this.freezed(done)
-      } else {
-        await this.unfreezed(done)
+    try {
+      this.handleValidateForm()
+      if (this.isPass) {
+        this.sumbitAgain = true
+        if (this.showDialog.name === 1) {
+          await this.freezed()
+        } else {
+          await this.unfreezed()
+        }
+        setTimeout(() => {
+          this.sumbitAgain = false
+        }, 1500)
       }
-      setTimeout(() => {
-        this.sumbitAgain = false
-      }, 1500)
+    } catch (err) {
+      console.log(`err:${err}`)
+    } finally {
+      done()
     }
   }
   /**
    * 冻结
    */
   @lock
-  private async freezed(done:any) {
+  private async freezed() {
     let params = { ...this.freezeForm }
     delete params.applyForAccountUnfrozen
     delete params.isconfirmOrder
@@ -880,7 +886,6 @@ export default class extends Vue {
       setTimeout(() => {
         this.getList()
       }, delayTime)
-      done()
     } else {
       this.$message.error(res.errorMsg)
     }
@@ -889,7 +894,7 @@ export default class extends Vue {
    * 解冻
    */
   @lock
-  private async unfreezed(done:any) {
+  private async unfreezed() {
     let params = { ...this.freezeForm }
     delete params.applyForAccountFrozen
     delete params.reason
@@ -901,7 +906,6 @@ export default class extends Vue {
       setTimeout(() => {
         this.getList()
       }, delayTime)
-      done()
     } else {
       this.$message.error(res.errorMsg)
     }
