@@ -113,6 +113,13 @@
             <el-button
               type="text"
               size="small"
+              @click="handlerefundClick"
+            >
+              退费
+            </el-button>
+            <el-button
+              type="text"
+              size="small"
               @click="handle1Select"
             >
               下载
@@ -120,11 +127,23 @@
           </template>
         </self-table>
       </div>
+      <SelfDialog
+        :class="'distributionDialog'"
+        :visible.sync="showDialog"
+        :confirm="confirm"
+        :show-other-button="true"
+        other-button-text="驳回"
+        title="退费"
+        :destroy-on-close="true"
+        :on-other="handleRejectClick"
+      >
+        请审核此条待退费数据
+      </SelfDialog>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM } from '@/api/system'
@@ -132,6 +151,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { HandlePages } from '@/utils/index'
 import { refundList } from '@/api/driver-account.ts'
+import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
   GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
@@ -148,7 +168,8 @@ interface IState {
   name: 'RefundDetail',
   components: {
     SelfTable,
-    SelfForm
+    SelfForm,
+    SelfDialog
   }
 })
 export default class extends Vue {
@@ -157,6 +178,7 @@ export default class extends Vue {
   private gmOptions: any[] = []; // 加盟经理列表
   private workCityOptions: any[] = []; // 工作城市列表
   private multipleSelection: any[] = []
+  private showDialog: boolean = false
   private listQuery:IState = {
     refundNumber: '',
     driverId: '',
@@ -380,7 +402,7 @@ export default class extends Vue {
       key: 'op',
       label: '操作',
       slot: true,
-      'width': '160px'
+      'width': '200px'
     }
   ];
   // 查询
@@ -455,6 +477,18 @@ export default class extends Vue {
     })
   }
 
+  // 退费
+  private handlerefundClick() {
+    this.showDialog = true
+  }
+  // 确认
+  private async confirm(done: any) {
+    done()
+  }
+  // 驳回
+  private handleRejectClick(done:any) {
+    done()
+  }
   handleSelectionChange(val:any) {
     this.multipleSelection = val
   }
