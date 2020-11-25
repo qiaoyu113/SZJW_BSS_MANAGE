@@ -163,8 +163,7 @@ export default class extends Vue {
   private multipleSelection: any[] = []
   private listQuery:IState = {
     refundNumber: '',
-    driverNumber: '',
-    driverName: '',
+    driverId: '',
     city: '',
     gmId: '',
     createDate: '',
@@ -193,7 +192,7 @@ export default class extends Vue {
       },
       w: '110px',
       label: '司机编号/姓名',
-      key: 'driverNumberName'
+      key: 'driverId'
     },
     // {
     //   type: 1,
@@ -301,7 +300,7 @@ export default class extends Vue {
       'width': '140px'
     },
     {
-      key: 'driverNumber',
+      key: 'driverId',
       label: '司机编号',
       'width': '140px'
     },
@@ -438,6 +437,7 @@ export default class extends Vue {
       this.listLoading = false
     }
   }
+  // 申请
   private goDetail(id: string | (string | null)[] | null | undefined) {
     this.$router.push({
       path: '/driveraccount/refundapply',

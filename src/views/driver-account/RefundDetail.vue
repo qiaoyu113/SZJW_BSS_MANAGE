@@ -50,8 +50,15 @@
               slot="refundBtn"
               class="refundBtn"
             >
-              <el-button>审核未通过</el-button>
-              <el-button type="primary">
+              <el-button
+                @click="unAudit()"
+              >
+                审核未通过
+              </el-button>
+              <el-button
+                type="primary"
+                @click="audit"
+              >
                 审核通过
               </el-button>
             </div>
@@ -220,6 +227,52 @@ export default class extends Vue {
           key: 'auditstatus'
         })
       }
+    }
+    // 审核通过
+    private audit(id: string | (string | null)[] | null | undefined) {
+      // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
+      this.$confirm('确定要审核通过此退款信息吗？', '提示', {
+        confirmButtonText: '继续',
+        cancelButtonText: '返回',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '成功!'
+        })
+        this.$router.push({
+          path: '/driveraccount/refundlist',
+          query: { id: id }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    }
+    // 审核未通过
+    private unAudit(id: string | (string | null)[] | null | undefined) {
+      // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
+      this.$confirm('确定要审核未通过并驳回此退款信息吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '成功!'
+        })
+        this.$router.push({
+          path: '/driveraccount/refundlist',
+          query: { id: id }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     }
 }
 </script>
