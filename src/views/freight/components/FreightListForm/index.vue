@@ -305,10 +305,12 @@
                     查询
                   </el-button>
                   <el-button
+                    v-permission="['/v2/waybill/amount/export']"
                     :class="isPC ? 'filter-item' : 'filter-item-m'"
                     type="primary"
                     size="small"
                     name="ownerlist_derive_btn"
+                    :loading="isExport"
                     @click="handleDeriveClick"
                   >
                     导出
@@ -346,6 +348,7 @@ export default class extends Vue {
   private optionsCompany: any[] = []
   private optionsJoin: any[] = []
   private optionsSale: any[] = []
+  private isExport: boolean = false
   private arrayCity: any[] = []
   private dutyListOptions: any[] = []
   private optionsClassification: any[] = []
@@ -730,18 +733,25 @@ export default class extends Vue {
   }
   // 导出
   private async handleDeriveClick() {
-    let params = { ...this.listQuery }
-    delete params.page
-    delete params.limit
-    if (this.DateValueChild && this.DateValueChild.length === 2) {
-      const { data } = await managementDerive(params)
-      if (data.success) {
-        this.$message.success('导出成功')
+    try {
+      this.isExport = true
+      let params = { ...this.listQuery }
+      delete params.page
+      delete params.limit
+      if (this.DateValueChild && this.DateValueChild.length === 2) {
+        const { data } = await managementDerive(params)
+        if (data.success) {
+          this.$message.success('导出成功')
+        } else {
+          this.$message.error(data.errorMsg || data.message)
+        }
       } else {
-        this.$message.error(data.errorMsg || data.message)
+        this.$message.error('请选择出车日期')
       }
-    } else {
-      this.$message.error('请选择出车日期')
+    } catch (err) {
+      console.log('export fail:', err)
+    } finally {
+      this.isExport = false
     }
   }
 }
