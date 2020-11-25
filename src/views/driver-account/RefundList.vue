@@ -39,7 +39,13 @@
           <el-button
             size="small"
             :class="isPC ? '' : 'btnMobile'"
-            type="primary"
+            @click="goDetail()"
+          >
+            申请退费
+          </el-button>
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
             @click="handleFilterClick"
           >
             查询
@@ -51,44 +57,34 @@
           >
             重置
           </el-button>
-        </div>
+          <!-- </div>
         <template>
           <div
             slot="mulBtns"
             :class="isPC ? 'btnPc1' : 'mobile'"
+          > -->
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
+            @click="handleSelect"
           >
-            <el-button
-              size="small"
-              type="primary"
-              :class="isPC ? '' : 'btnMobile'"
-              @click="handleSelect"
-            >
-              批量下载
-            </el-button>
-            <el-button
+            导出
+          </el-button>
+          <!-- <el-button
               size="small"
               :class="isPC ? '' : 'btnMobile'"
               type="primary"
               @click="handleReturn"
             >
               批量退费
-            </el-button>
-            <el-button
-              size="small"
-              :class="isPC ? '' : 'btnMobile'"
-              type="primary"
-              @click="goDetail()"
-            >
-              申请退费
-            </el-button>
-          </div>
-        </template>
+            </el-button> -->
+        </div>
+        <!-- </template> -->
       </self-form>
       <div class="table_box">
         <div class="middle" />
         <self-table
           ref="RefundForm"
-          :indexes="true"
           :index="true"
           :is-p30="false"
           :operation-list="[]"
@@ -171,41 +167,6 @@ export default class extends Vue {
   }
   private formItem:any[] = [
     {
-      type: 1,
-      tagAttrs: {
-        maxlength: '20',
-        placeholder: '请输入',
-        clearable: true,
-        filterable: true
-      },
-      w: '100px',
-      label: '退费编号',
-      key: 'refundNumber'
-    },
-    {
-      type: 1,
-      tagAttrs: {
-        maxlength: '20',
-        placeholder: '请输入司机编号/姓名',
-        clearable: true,
-        filterable: true
-      },
-      w: '110px',
-      label: '司机编号/姓名',
-      key: 'driverId'
-    },
-    // {
-    //   type: 1,
-    //   tagAttrs: {
-    //     placeholder: '请输入',
-    //     clearable: true,
-    //     filterable: true
-    //   },
-    //   w: '100px',
-    //   label: '司机姓名',
-    //   key: 'driverName'
-    // },
-    {
       type: 8,
       key: 'workCity',
       col: 8,
@@ -225,9 +186,20 @@ export default class extends Vue {
     },
     {
       type: 2,
+      tagAttrs: {
+        placeholder: '选择',
+        clearable: true,
+        filterable: true
+      },
+      w: '100px',
+      label: '业务线',
+      key: 'line'
+    },
+    {
+      type: 2,
       key: 'gmId',
       col: 8,
-      label: '加盟经理',
+      label: '所属加盟经理',
       tagAttrs: {
         placeholder: '请选择',
         filterable: true,
@@ -236,32 +208,56 @@ export default class extends Vue {
       options: this.gmOptions
     },
     {
+      type: 1,
+      tagAttrs: {
+        maxlength: '20',
+        placeholder: '请输入',
+        clearable: true,
+        filterable: true
+      },
+      w: '190px',
+      label: '司机姓名(司机编号/手机号)',
+      key: 'driverId'
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        maxlength: '20',
+        placeholder: '请输入',
+        clearable: true,
+        filterable: true
+      },
+      w: '100px',
+      label: '退费编号',
+      key: 'refundNumber'
+    },
+    {
       type: 3,
       tagAttrs: {
         placeholder: '请输入',
         clearable: true,
         filterable: true
       },
-      w: '110px',
-      label: '创建日期',
-      col: 12,
+      w: '100px',
+      label: '退费申请日期',
+      col: 8,
       key: 'createDate'
     },
     {
-      type: 'mulBtn',
-      col: 4,
-      slot: true,
-      w: '0px'
-    },
-    {
       col: 12,
-      label: '审核状态',
+      label: '退费状态',
       type: 'checkStatus',
       slot: true
     },
     {
-      type: 'mulBtns',
+      type: 'mulBtn',
       col: 12,
+      slot: true,
+      w: '0px'
+    },
+    {
+      type: 'mulBtns',
+      col: 8,
       slot: true,
       w: '0px'
     },
