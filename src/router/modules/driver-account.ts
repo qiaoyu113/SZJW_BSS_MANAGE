@@ -79,7 +79,7 @@ const driverAccountRouter: RouteConfig = {
         apiUrl: 'root',
         title: 'refundList',
         noCache: false,
-        hidden: true
+        hidden: false
       }
     },
     {
