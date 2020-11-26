@@ -31,6 +31,27 @@
             </el-button>
           </el-badge>
         </template>
+        <template slot="driverId">
+          <el-select
+            v-model.trim="listQuery.driverId"
+            v-loadmore="loadQueryDriverByKeyword"
+            placeholder="请选择"
+            reserve-keyword
+            :default-first-option="true"
+            clearable
+            filterable
+            remote
+            :remote-method="querySearchByKeyword"
+            @clear="handleClearQueryDriver"
+          >
+            <el-option
+              v-for="item in driverOptions"
+              :key="item.value"
+              :label="`${item.label}(${item.value})` "
+              :value="item.value"
+            />
+          </el-select>
+        </template>
         <!-- 插槽 -->
         <div
           slot="mulBtn"
@@ -187,11 +208,17 @@ export default class extends Vue {
   private tableData:any[] = [];
   private dutyListOptions:IState[] = [];// 业务线列表
   private gmOptions: any[] = []; // 加盟经理列表
-  private workCityOptions: any[] = []; // 工作城市列表
   private multipleSelection: any[] = []
   private showDialog: boolean = false
   private time: any[] = []
   private endDate: any[] = []
+  private createDate: any[] = []
+  private driverOptions:IState[] = []
+  private searchKeyword:string = ''
+  private queryPage:PageObj = {
+    page: 0,
+    limit: 10
+  }
   private listQuery:IState = {
     workCity: [],
     busiType: '',
@@ -247,13 +274,8 @@ export default class extends Vue {
       options: this.gmOptions
     },
     {
-      type: 1,
-      tagAttrs: {
-        maxlength: '20',
-        placeholder: '请输入',
-        clearable: true,
-        filterable: true
-      },
+      type: 'driverId',
+      slot: true,
       w: '190px',
       label: '司机姓名(司机编号/手机号)',
       key: 'driverId'
@@ -567,7 +589,6 @@ export default class extends Vue {
       this.$message.error('请选择退费申请日期')
     }
   }
-
   // 下载
   private handle1Select() {
     if (this.multipleSelection.length === 0) {
@@ -686,16 +707,16 @@ export default class extends Vue {
   }
   async loadDriverByKeyword(params:IState) {
     try {
-      if (this.listQuery.city && this.listQuery.city.length > 0) {
-        params.workCity = this.listQuery.city[1]
+      if (this.listQuery.workCity && this.listQuery.workCity.length > 0) {
+        params.workCity = this.listQuery.workCity[1]
       }
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
-      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      this.listQuery.joinManagerId !== '' && (params.gmId = this.listQuery.joinManagerId)
       let { data: res } = await getDriverNoAndNameList(params, {
         url: '/v2/wt-driver-account/flow/queryDriverList'
       })
       let result:any[] = res.data.map((item:any) => ({
-        label: item.name,
+        label: `${item.name}/${item.phone}`,
         value: item.driverId
       }))
       return result
@@ -704,27 +725,7 @@ export default class extends Vue {
       return []
     }
   }
-  /**
-   *获取开通城市
-   */
-  async getOpenCitys() {
-    try {
-      let { data: res } = await getOfficeByType({ type: 2 })
-      if (res.success) {
-        let workCity = res.data.map(function(item: any) {
-          return {
-            label: item.name,
-            value: item.code
-          }
-        })
-        this.workCityOptions.push(...workCity)
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`get`)
-    }
-  }
+  // 获取大区和城市
   private async showWork(node:any, resolve:any) {
     let query: any = {
       parentId: ''
@@ -779,11 +780,51 @@ export default class extends Vue {
   get isPC() {
     return SettingsModule.isPC
   }
+  // 获取更多司机
+  async loadQueryDriverByKeyword(val?:string) {
+    val = this.searchKeyword
+    this.queryPage.page++
+    let params:IState = {
+      page: this.queryPage.page,
+      limit: this.queryPage.limit
+    }
+    val !== '' && (params.key = val)
+
+    try {
+      let result:IState[] = await this.loadDriverByKeyword(params)
+      this.driverOptions.push(...result)
+    } finally {
+      console.log('finally')
+    }
+  }
+  // 搜索司机
+  querySearchByKeyword(val:string) {
+    this.queryPage.page = 0
+    this.resetDriver()
+    this.searchKeyword = val
+    this.loadQueryDriverByKeyword(val)
+  }
+  // 清除司机
+  handleClearQueryDriver() {
+    this.searchKeyword = ''
+    this.resetDriver()
+    this.loadQueryDriverByKeyword()
+  }
+  // 重置司机
+  resetDriver() {
+    this.listQuery.driverCode = ''
+    this.searchKeyword = ''
+    let len:number = this.driverOptions.length
+    if (len > 0) {
+      this.queryPage.page = 0
+      this.driverOptions.splice(0, len)
+    }
+  }
   mounted() {
     this.getLists()
     this.getGmOptions()
-    this.getOpenCitys()
     this.getDutyListByLevel()
+    this.loadQueryDriverByKeyword()
   }
 }
 </script>
