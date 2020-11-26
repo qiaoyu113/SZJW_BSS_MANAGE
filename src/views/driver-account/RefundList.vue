@@ -39,7 +39,25 @@
           <el-button
             size="small"
             :class="isPC ? '' : 'btnMobile'"
-            type="primary"
+            @click="goDetail()"
+          >
+            申请退费
+          </el-button>
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
+          >
+            批量驳回
+          </el-button>
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
+          >
+            批量退费
+          </el-button>
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
             @click="handleFilterClick"
           >
             查询
@@ -51,44 +69,34 @@
           >
             重置
           </el-button>
-        </div>
+          <!-- </div>
         <template>
           <div
             slot="mulBtns"
             :class="isPC ? 'btnPc1' : 'mobile'"
+          > -->
+          <el-button
+            size="small"
+            :class="isPC ? '' : 'btnMobile'"
+            @click="handleSelect"
           >
-            <el-button
-              size="small"
-              type="primary"
-              :class="isPC ? '' : 'btnMobile'"
-              @click="handleSelect"
-            >
-              批量下载
-            </el-button>
-            <el-button
+            导出
+          </el-button>
+          <!-- <el-button
               size="small"
               :class="isPC ? '' : 'btnMobile'"
               type="primary"
               @click="handleReturn"
             >
               批量退费
-            </el-button>
-            <el-button
-              size="small"
-              :class="isPC ? '' : 'btnMobile'"
-              type="primary"
-              @click="goDetail()"
-            >
-              申请退费
-            </el-button>
-          </div>
-        </template>
+            </el-button> -->
+        </div>
+        <!-- </template> -->
       </self-form>
       <div class="table_box">
         <div class="middle" />
         <self-table
           ref="RefundForm"
-          :indexes="true"
           :index="true"
           :is-p30="false"
           :operation-list="[]"
@@ -117,6 +125,13 @@
             <el-button
               type="text"
               size="small"
+              @click="handlerefundClick"
+            >
+              退费
+            </el-button>
+            <el-button
+              type="text"
+              size="small"
               @click="handle1Select"
             >
               下载
@@ -124,18 +139,32 @@
           </template>
         </self-table>
       </div>
+      <SelfDialog
+        :class="'distributionDialog'"
+        :visible.sync="showDialog"
+        :confirm="confirm"
+        :show-other-button="true"
+        other-button-text="驳回"
+        title="退费"
+        :destroy-on-close="true"
+        :on-other="handleRejectClick"
+      >
+        请审核此条待退费数据
+      </SelfDialog>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM } from '@/api/system'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { HandlePages } from '@/utils/index'
-import { refundList } from '@/api/driver-account.ts'
+import { refundList, refundExport } from '@/api/driver-account.ts'
+import SelfDialog from '@/components/SelfDialog/index.vue'
+import { getDriverNoAndNameList, getDriverNameByNo } from '@/api/driver'
 import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
   GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
@@ -152,60 +181,29 @@ interface IState {
   name: 'RefundDetail',
   components: {
     SelfTable,
-    SelfForm
+    SelfForm,
+    SelfDialog
   }
 })
 export default class extends Vue {
   private listLoading:boolean = false;
   private tableData:any[] = [];
+  private dutyListOptions:IState[] = [];// 业务线列表
   private gmOptions: any[] = []; // 加盟经理列表
   private workCityOptions: any[] = []; // 工作城市列表
   private multipleSelection: any[] = []
+  private showDialog: boolean = false
+  private createDate: any[] = []
   private listQuery:IState = {
     refundNumber: '',
-    driverNumber: '',
-    driverName: '',
+    driverId: '',
     city: '',
     gmId: '',
+    businessType: '',
     createDate: '',
     checkStatus: ''
   }
   private formItem:any[] = [
-    {
-      type: 1,
-      tagAttrs: {
-        maxlength: '20',
-        placeholder: '请输入',
-        clearable: true,
-        filterable: true
-      },
-      w: '100px',
-      label: '退费编号',
-      key: 'refundNumber'
-    },
-    {
-      type: 1,
-      tagAttrs: {
-        maxlength: '20',
-        placeholder: '请输入司机编号/姓名',
-        clearable: true,
-        filterable: true
-      },
-      w: '110px',
-      label: '司机编号/姓名',
-      key: 'driverNumberName'
-    },
-    // {
-    //   type: 1,
-    //   tagAttrs: {
-    //     placeholder: '请输入',
-    //     clearable: true,
-    //     filterable: true
-    //   },
-    //   w: '100px',
-    //   label: '司机姓名',
-    //   key: 'driverName'
-    // },
     {
       type: 8,
       key: 'workCity',
@@ -226,9 +224,23 @@ export default class extends Vue {
     },
     {
       type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '业务线',
+      key: 'businessType',
+      options: this.dutyListOptions,
+      listeners: {
+        'change': this.resetGmId
+      }
+    },
+    {
+      type: 2,
       key: 'gmId',
       col: 8,
-      label: '加盟经理',
+      label: '所属加盟经理',
       tagAttrs: {
         placeholder: '请选择',
         filterable: true,
@@ -237,32 +249,56 @@ export default class extends Vue {
       options: this.gmOptions
     },
     {
+      type: 1,
+      tagAttrs: {
+        maxlength: '20',
+        placeholder: '请输入',
+        clearable: true,
+        filterable: true
+      },
+      w: '190px',
+      label: '司机姓名(司机编号/手机号)',
+      key: 'driverId'
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        maxlength: '20',
+        placeholder: '请输入',
+        clearable: true,
+        filterable: true
+      },
+      w: '100px',
+      label: '退费编号',
+      key: 'refundNumber'
+    },
+    {
       type: 3,
       tagAttrs: {
         placeholder: '请输入',
         clearable: true,
         filterable: true
       },
-      w: '110px',
-      label: '创建日期',
-      col: 12,
+      w: '100px',
+      label: '退费申请日期',
+      col: 8,
       key: 'createDate'
     },
     {
-      type: 'mulBtn',
-      col: 4,
-      slot: true,
-      w: '0px'
-    },
-    {
       col: 12,
-      label: '审核状态',
+      label: '退费状态',
       type: 'checkStatus',
       slot: true
     },
     {
-      type: 'mulBtns',
+      type: 'mulBtn',
       col: 12,
+      slot: true,
+      w: '0px'
+    },
+    {
+      type: 'mulBtns',
+      col: 8,
       slot: true,
       w: '0px'
     },
@@ -283,15 +319,15 @@ export default class extends Vue {
     },
     {
       name: '1',
-      text: '审核通过'
+      text: '待退费'
     },
     {
       name: '2',
-      text: '审核未通过'
+      text: '已退费'
     },
     {
       name: '3',
-      text: '已退款'
+      text: '审核不通过'
     }
   ]
   private columns:any[] = [
@@ -301,7 +337,7 @@ export default class extends Vue {
       'width': '140px'
     },
     {
-      key: 'driverNumber',
+      key: 'driverId',
       label: '司机编号',
       'width': '140px'
     },
@@ -312,7 +348,22 @@ export default class extends Vue {
     },
     {
       key: 'city',
-      label: '所在城市',
+      label: '所属城市',
+      'min-width': '140px'
+    },
+    {
+      key: 'gmId',
+      label: '所属加盟经理',
+      'min-width': '140px'
+    },
+    {
+      key: 'businessType',
+      label: '业务线',
+      'min-width': '140px'
+    },
+    {
+      key: 'driverstatus',
+      label: '司机状态',
       'min-width': '140px'
     },
     {
@@ -336,9 +387,9 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'refundBankCardNumber',
-      label: '退款银行卡号',
-      'width': '180px'
+      key: 'driverName',
+      label: '持卡人姓名',
+      'min-width': '140px'
     },
     {
       key: 'bankDeposit',
@@ -346,46 +397,50 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
+      key: 'refundBankCardNumber',
+      label: '银行卡号',
+      'width': '180px'
+    },
+    {
       key: 'reasonsRefund',
       label: '退款原因',
       'min-width': '140px'
     },
+    // {
+    //   key: 'receipt',
+    //   label: '是否有收据',
+    //   'min-width': '160px'
+    // },
+    // {
+    //   key: 'takeBackReceipt',
+    //   label: '收据是否回收',
+    //   'min-width': '120px'
+    // },
     {
-      key: 'gmId',
-      label: '加盟经理',
-      // slot: true,
-      'min-width': '140px'
+      key: 'createDate',
+      label: '申请时间',
+      'width': '150px'
     },
     {
-      key: 'receipt',
-      label: '是否有收据',
-      'min-width': '160px'
+      key: 'auditDate',
+      label: '审核时间',
+      'width': '150px'
     },
     {
-      key: 'takeBackReceipt',
-      label: '收据是否回收',
+      key: 'creator',
+      label: '操作人',
       'min-width': '120px'
     },
     {
       key: 'checkStatus',
-      label: '审核状态',
+      label: '退费状态',
       'min-width': '120px'
-    },
-    {
-      key: 'creator',
-      label: '创建人',
-      'min-width': '120px'
-    },
-    {
-      key: 'createDate',
-      label: '创建日期',
-      'width': '150px'
     },
     {
       key: 'op',
       label: '操作',
       slot: true,
-      'width': '160px'
+      'width': '200px'
     }
   ];
   // 查询
@@ -438,6 +493,7 @@ export default class extends Vue {
       this.listLoading = false
     }
   }
+  // 申请
   private goDetail(id: string | (string | null)[] | null | undefined) {
     this.$router.push({
       path: '/driveraccount/refundapply',
@@ -459,16 +515,35 @@ export default class extends Vue {
     })
   }
 
+  // 退费
+  private handlerefundClick() {
+    this.showDialog = true
+  }
+  // 确认
+  private async confirm(done: any) {
+    done()
+  }
+  // 驳回
+  private handleRejectClick(done:any) {
+    done()
+  }
   handleSelectionChange(val:any) {
     this.multipleSelection = val
   }
-  // 批量下载
-  private handleSelect() {
-    if (this.multipleSelection.length === 0) {
-      this.$message.error('请先选择')
-    } else if (this.multipleSelection.length > 0) {
-      this.$message.success('下载成功')
-      // console.log(this.multipleSelection)
+  // 导出
+  private async handleSelect() {
+    let params = { ...this.listQuery }
+    delete params.page
+    delete params.limit
+    if (this.createDate && this.createDate.length === 2) {
+      const { data } = await refundExport(params)
+      if (data.success) {
+        this.$message.success('导出成功')
+      } else {
+        this.$message.error(data.errorMsg || data.message)
+      }
+    } else {
+      this.$message.error('请选择退费申请日期')
     }
   }
   // 下载
@@ -487,6 +562,36 @@ export default class extends Vue {
       this.$message.success('已退费')
       // console.log(this.multipleSelection)
     }
+  }
+  // 获取业务线
+  private async getDutyListByLevel() {
+    try {
+      let params = {
+        dutyLevel: 1
+      }
+      let { data: res } = await GetDutyListByLevel(params)
+      if (res.success) {
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        this.dutyListOptions.push({
+          label: '全部',
+          value: ''
+        })
+        this.dutyListOptions.push(...options)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get duty list fail:${err}`)
+    }
+  }
+  resetGmId() {
+    if (this.listQuery.gmId) {
+      this.listQuery.gmId = ''
+    }
+    this.getGmOptions()
   }
   // 获取加盟经理列表
   async getGmOptions() {
@@ -511,6 +616,26 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(err)
+    }
+  }
+  async loadDriverByKeyword(params:IState) {
+    try {
+      if (this.listQuery.city && this.listQuery.city.length > 0) {
+        params.workCity = this.listQuery.city[1]
+      }
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.gmId !== '' && (params.gmId = this.listQuery.gmId)
+      let { data: res } = await getDriverNoAndNameList(params, {
+        url: '/v2/wt-driver-account/flow/queryDriverList'
+      })
+      let result:any[] = res.data.map((item:any) => ({
+        label: item.name,
+        value: item.driverId
+      }))
+      return result
+    } catch (err) {
+      console.log(`get driver list fail:${err}`)
+      return []
     }
   }
   /**
@@ -592,6 +717,7 @@ export default class extends Vue {
     this.getLists()
     this.getGmOptions()
     this.getOpenCitys()
+    this.getDutyListByLevel()
   }
 }
 </script>
