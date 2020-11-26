@@ -567,21 +567,6 @@ export default class extends Vue {
     this.multipleSelection = val
   }
 
-  get comAdd() {
-    let count = 0
-    this.multipleSelection.forEach((item) => {
-      count += item.refundAmount
-    })
-    return `是否确认将"${this.multipleSelection.length}"条待退费数据，总计退费金额"${count}元",批量退费成功？`
-  }
-  get comAdd1() {
-    let count = 0
-    this.multipleSelection.forEach((item) => {
-      count += item.refundAmount
-    })
-    return `是否确认将"${this.multipleSelection.length}"条待退费数据，批量退费驳回？`
-  }
-
   // 导出
   @lock
   private async handleExportClick() {
