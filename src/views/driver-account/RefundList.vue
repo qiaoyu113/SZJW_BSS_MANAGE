@@ -199,6 +199,7 @@ export default class extends Vue {
     driverId: '',
     city: '',
     gmId: '',
+    businessType: '',
     createDate: '',
     checkStatus: ''
   }
@@ -347,7 +348,22 @@ export default class extends Vue {
     },
     {
       key: 'city',
-      label: '所在城市',
+      label: '所属城市',
+      'min-width': '140px'
+    },
+    {
+      key: 'gmId',
+      label: '所属加盟经理',
+      'min-width': '140px'
+    },
+    {
+      key: 'businessType',
+      label: '业务线',
+      'min-width': '140px'
+    },
+    {
+      key: 'driverstatus',
+      label: '司机状态',
       'min-width': '140px'
     },
     {
@@ -371,9 +387,9 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'refundBankCardNumber',
-      label: '退款银行卡号',
-      'width': '180px'
+      key: 'driverName',
+      label: '持卡人姓名',
+      'min-width': '140px'
     },
     {
       key: 'bankDeposit',
@@ -381,40 +397,44 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
+      key: 'refundBankCardNumber',
+      label: '银行卡号',
+      'width': '180px'
+    },
+    {
       key: 'reasonsRefund',
       label: '退款原因',
       'min-width': '140px'
     },
+    // {
+    //   key: 'receipt',
+    //   label: '是否有收据',
+    //   'min-width': '160px'
+    // },
+    // {
+    //   key: 'takeBackReceipt',
+    //   label: '收据是否回收',
+    //   'min-width': '120px'
+    // },
     {
-      key: 'gmId',
-      label: '加盟经理',
-      // slot: true,
-      'min-width': '140px'
+      key: 'createDate',
+      label: '申请时间',
+      'width': '150px'
     },
     {
-      key: 'receipt',
-      label: '是否有收据',
-      'min-width': '160px'
+      key: 'auditDate',
+      label: '审核时间',
+      'width': '150px'
     },
     {
-      key: 'takeBackReceipt',
-      label: '收据是否回收',
+      key: 'creator',
+      label: '操作人',
       'min-width': '120px'
     },
     {
       key: 'checkStatus',
-      label: '审核状态',
+      label: '退费状态',
       'min-width': '120px'
-    },
-    {
-      key: 'creator',
-      label: '创建人',
-      'min-width': '120px'
-    },
-    {
-      key: 'createDate',
-      label: '创建日期',
-      'width': '150px'
     },
     {
       key: 'op',
