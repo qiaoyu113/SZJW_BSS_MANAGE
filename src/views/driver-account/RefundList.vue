@@ -59,7 +59,7 @@
         >
           <el-button
             v-if="listQuery.status!=='1'"
-            size="small"
+            size="mini"
             :class="isPC ? '' : 'btnMobile'"
             @click="goDetail()"
           >
@@ -67,13 +67,14 @@
           </el-button>
           <template v-else>
             <el-button
-              size="small"
+              size="mini"
               :class="isPC ? '' : 'btnMobile'"
+              @click="handleReject"
             >
               批量驳回
             </el-button>
             <el-button
-              size="small"
+              size="mini"
               :class="isPC ? '' : 'btnMobile'"
               @click="handleReturn"
             >
@@ -81,7 +82,7 @@
             </el-button>
           </template>
           <el-button
-            size="small"
+            size="mini"
             :class="isPC ? '' : 'btnMobile'"
             @click="handleFilterClick"
           >
@@ -181,9 +182,9 @@ import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
 import TableHeader from '@/components/TableHeader/index.vue'
 import { options } from 'numeral'
 interface PageObj {
-  page:number,
-  limit:number,
-  total?:number
+  page:Number,
+  limit:Number,
+  total?:Number
 }
 interface IState {
   [key: string]: any;
@@ -203,6 +204,8 @@ export default class extends Vue {
   private gmOptions: any[] = []; // 加盟经理列表
   private multipleSelection: any[] = []
   private showDialog: boolean = false
+  private time: any[] = []
+  private endDate: any[] = []
   private createDate: any[] = []
   private driverOptions:IState[] = []
   private searchKeyword:string = ''
@@ -211,7 +214,7 @@ export default class extends Vue {
     limit: 10
   }
   private listQuery:IState = {
-    workCity: '',
+    workCity: [],
     busiType: '',
     joinManagerId: '',
     driverId: '',
@@ -388,11 +391,6 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'withdrawalAmount',
-      label: '可退费金额',
-      'min-width': '140px'
-    },
-    {
       key: 'refundAmount',
       label: '申请退款金额',
       'width': '120px'
@@ -422,16 +420,6 @@ export default class extends Vue {
       label: '退款原因',
       'min-width': '140px'
     },
-    // {
-    //   key: 'receipt',
-    //   label: '是否有收据',
-    //   'min-width': '160px'
-    // },
-    // {
-    //   key: 'takeBackReceipt',
-    //   label: '收据是否回收',
-    //   'min-width': '120px'
-    // },
     {
       key: 'createDate',
       label: '申请时间',
@@ -467,7 +455,7 @@ export default class extends Vue {
   // 重置
   handleResetClick() {
     this.listQuery = {
-      workCity: '',
+      workCity: [],
       busiType: '',
       joinManagerId: '',
       driverId: '',
@@ -494,14 +482,31 @@ export default class extends Vue {
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
-        limit: this.page.limit,
-        ...this.listQuery
+        limit: this.page.limit
       }
       if (this.listQuery.time && this.listQuery.time.length > 1) {
         params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
         params.endData = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
       }
       delete params.time
+      if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
+        params.workCity = this.listQuery.workCity[1]
+      }
+      if (this.listQuery.busiType) {
+        params.busiType = this.listQuery.busiType
+      }
+      if (this.listQuery.joinManagerId) {
+        params.joinManagerId = this.listQuery.joinManagerId
+      }
+      if (this.listQuery.driverId) {
+        params.driverId = this.listQuery.driverId
+      }
+      if (this.listQuery.refundApplyId) {
+        params.refundApplyId = this.listQuery.refundApplyId
+      }
+      if (this.listQuery.status) {
+        params.status = this.listQuery.status
+      }
       let { data: res } = await refundList(params)
       if (!res.message) {
         console.log(res.data)
@@ -559,7 +564,7 @@ export default class extends Vue {
     let params = { ...this.listQuery }
     delete params.page
     delete params.limit
-    if (this.createDate && this.createDate.length === 2) {
+    if (this.time && this.time.length === 2) {
       const { data } = await refundExport(params)
       if (data.success) {
         this.$message.success('导出成功')
@@ -578,6 +583,7 @@ export default class extends Vue {
     // this.getLists()
     console.log(this.multipleSelection)
   }
+
   // 批量退费
   private handleReturn() {
     if (this.multipleSelection.length === 0) {
@@ -587,6 +593,32 @@ export default class extends Vue {
       // console.log(this.multipleSelection)
     }
   }
+  // 批量驳回
+  private handleReject() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.error('请先选择')
+    } else if (this.$confirm) {
+      this.$confirm('确定要审核未通过并驳回此退款信息吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '成功!'
+        })
+        this.$router.push({
+          path: '/driveraccount/refundlist'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    }
+  }
+
   // 获取业务线
   private async getDutyListByLevel() {
     try {
