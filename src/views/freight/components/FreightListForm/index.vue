@@ -44,6 +44,10 @@
                       lazyLoad: showWork
                     }"
                     placeholder="请选择"
+                    clearable
+                    @clear="() => {
+                      arrayCity = []
+                    }"
                     @change="getManager()"
                   />
                 </el-form-item>
