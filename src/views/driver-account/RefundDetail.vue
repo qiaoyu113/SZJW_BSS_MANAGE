@@ -72,7 +72,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { refundDetail, refundAudit } from '@/api/driver-account.ts'
+import { refundDetail, refundAudit } from '@/api/driver-refund.ts'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 interface IState {
   [key: string]: any;
