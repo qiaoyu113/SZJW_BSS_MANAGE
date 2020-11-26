@@ -85,6 +85,12 @@
       </self-form>
       <div class="table_box">
         <div class="middle" />
+        <div class="middle">
+          <div
+            class="count"
+            v-text="`筛选结果（${page.total}条）`"
+          />
+        </div>
         <self-table
           ref="RefundForm"
           :index="true"
@@ -535,7 +541,15 @@ export default class extends Vue {
     done()
   }
   handleSelectionChange(val:any) {
+    console.log(val)
     this.multipleSelection = val
+  }
+  get comAdd() {
+    let count = 0
+    this.multipleSelection.forEach((item) => {
+      count += item.refundAmount
+    })
+    return `是否确认将${this.multipleSelection.length}条待退费数据，总计金额${count}批量退费成功？`
   }
   // 导出
   private async handleSelect() {
@@ -567,9 +581,25 @@ export default class extends Vue {
   private handleReturn() {
     if (this.multipleSelection.length === 0) {
       this.$message.error('请先选择')
-    } else if (this.multipleSelection.length > 0) {
-      this.$message.success('已退费')
-      // console.log(this.multipleSelection)
+    } else if (this.$confirm) {
+      this.$confirm(this.comAdd, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '成功!'
+        })
+        this.$router.push({
+          path: '/driveraccount/refundlist'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     }
   }
   // 批量驳回
@@ -577,7 +607,7 @@ export default class extends Vue {
     if (this.multipleSelection.length === 0) {
       this.$message.error('请先选择')
     } else if (this.$confirm) {
-      this.$confirm('确定要审核未通过并驳回此退款信息吗？', '提示', {
+      this.$confirm('是否确认将""条待退费数据，批量退费驳回？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
