@@ -199,7 +199,7 @@ export const refundAudit = (data: any) =>
 // 退费管理导出
 export const refundExport = (data: any) =>
   request({
-    url: `${prefix2}/v2/waybill/amount/export`,
+    url: `${billFix}/v2/waybill/amount/export`,
     method: 'post',
     data
   })
