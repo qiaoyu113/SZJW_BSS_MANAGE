@@ -160,7 +160,12 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '退款银行卡号',
+        label: '持卡人姓名',
+        key: 'refundName'
+      },
+      {
+        type: 7,
+        label: '银行卡号',
         key: 'refundBankCardNumber'
       },
       {
@@ -170,12 +175,12 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '是否有收据',
+        label: '缴费时是否有收据',
         key: 'receipt'
       },
       {
         type: 7,
-        label: '收据是否回收',
+        label: '收据是否已提供给财务',
         key: 'takeBackReceipt'
       },
       {
