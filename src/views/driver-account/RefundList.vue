@@ -580,9 +580,10 @@ export default class extends Vue {
       this.multipleSelection.forEach((item:any) => {
         totalMoney += item.refundAmount
       })
-      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,总计退费金额"${totalMoney}",批量退费成功?`, '提示', {
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,总计退费金额"${totalMoney}",<span style="color:red;">批量退费成功</span>?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
         type: 'warning'
       }).then(() => {
         // 此处写个方法调接口
@@ -642,12 +643,13 @@ export default class extends Vue {
     if (this.multipleSelection.length === 0) {
       this.$message.error('请先选择')
     } else {
-      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,批量退费驳回?`, '提示', {
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,<span style="color:red;">批量退费驳回</span>?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
         type: 'warning'
       }).then(async() => {
-        // 此处写个方法调接口
+      // 此处写个方法调接口
         let params = this.getRefundApplyIds
         let res = await this.handleRefundReject(params)
         if (res) {
