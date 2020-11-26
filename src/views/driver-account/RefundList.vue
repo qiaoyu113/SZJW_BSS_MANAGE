@@ -21,11 +21,13 @@
             :key="item.text"
           >
             <el-button
-              size="mini"
               type="primary"
               margin-right="20px"
               :plain="item.name !== listQuery.status"
-              @click="listQuery.status =item.name"
+              @click="() => {
+                listQuery.status = item.name
+                handleFilterClick()
+              }"
             >
               {{ item.text }}
             </el-button>
@@ -59,22 +61,19 @@
         >
           <el-button
             v-if="listQuery.status!=='1'"
-            size="mini"
             :class="isPC ? '' : 'btnMobile'"
-            @click="goDetail()"
+            @click="goDetail"
           >
             申请退费
           </el-button>
           <template v-else>
             <el-button
-              size="mini"
               :class="isPC ? '' : 'btnMobile'"
               @click="handleReject"
             >
               批量驳回
             </el-button>
             <el-button
-              size="mini"
               :class="isPC ? '' : 'btnMobile'"
               @click="handleReturn"
             >
@@ -82,25 +81,24 @@
             </el-button>
           </template>
           <el-button
-            size="mini"
+            type="primary"
             :class="isPC ? '' : 'btnMobile'"
             @click="handleFilterClick"
           >
             查询
           </el-button>
           <el-button
-            size="small"
+            type="primary"
+            :class="isPC ? '' : 'btnMobile'"
+            @click="handleExportClick"
+          >
+            导出
+          </el-button>
+          <el-button
             :class="isPC ? '' : 'btnMobile'"
             @click="handleResetClick"
           >
             重置
-          </el-button>
-          <el-button
-            size="small"
-            :class="isPC ? '' : 'btnMobile'"
-            @click="handleSelect"
-          >
-            导出
           </el-button>
         </div>
       </self-form>
@@ -108,7 +106,7 @@
         <div class="middle" />
         <self-table
           ref="RefundForm"
-          :index="true"
+          :index="listQuery.status === '1'"
           :is-p30="false"
           :operation-list="[]"
           :table-data="tableData"
@@ -118,32 +116,32 @@
           @onPageSize="handlePageSize"
           @selection-change="handleSelectionChange"
         >
-          <template slot="op">
+          <template v-slot:op="scope">
             <el-button
               type="text"
               size="small"
-              @click="handleClick()"
+              @click="handleClick(scope.row)"
             >
               详情
             </el-button>
             <el-button
               type="text"
               size="small"
-              @click="handle1Click()"
+              @click="handle1Click(scope.row)"
             >
               审核
             </el-button>
             <el-button
               type="text"
               size="small"
-              @click="handlerefundClick"
+              @click="handlerefundClick(scope.row)"
             >
               退费
             </el-button>
             <el-button
               type="text"
               size="small"
-              @click="handle1Select"
+              @click="handleDownLoad(scope.row)"
             >
               下载
             </el-button>
@@ -160,8 +158,11 @@
         width="500px"
         :destroy-on-close="true"
         :on-other="handleRejectClick"
+        @closed="() => {
+          row = {}
+        }"
       >
-        请审核此条待退费数据
+        <p>请审核此条待退费数据,总计退费金额"{{ row.refundAmount }}元"。</p>
       </SelfDialog>
     </div>
   </div>
@@ -182,9 +183,9 @@ import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
 import TableHeader from '@/components/TableHeader/index.vue'
 import { options } from 'numeral'
 interface PageObj {
-  page:Number,
-  limit:Number,
-  total?:Number
+  page:number,
+  limit:number,
+  total?:number
 }
 interface IState {
   [key: string]: any;
@@ -208,6 +209,7 @@ export default class extends Vue {
   private endDate: any[] = []
   private createDate: any[] = []
   private driverOptions:IState[] = []
+  private row:IState = {} // 表格操作传递中间变量
   private searchKeyword:string = ''
   private queryPage:PageObj = {
     page: 0,
@@ -239,6 +241,12 @@ export default class extends Vue {
           lazy: true,
           lazyLoad: this.showWork
         }
+      },
+      listeners: {
+        'change': () => {
+          this.handleClearQueryDriver()
+          this.getGmOptions()
+        }
       }
     },
     {
@@ -252,7 +260,7 @@ export default class extends Vue {
       key: 'busiType',
       options: this.dutyListOptions,
       listeners: {
-        'change': this.resetGmId
+        'change': this.handleClearQueryDriver
       }
     },
     {
@@ -265,7 +273,10 @@ export default class extends Vue {
         filterable: true,
         clearable: true
       },
-      options: this.gmOptions
+      options: this.gmOptions,
+      listeners: {
+        'change': this.handleClearQueryDriver
+      }
     },
     {
       type: 'driverId',
@@ -486,31 +497,20 @@ export default class extends Vue {
       }
       if (this.listQuery.time && this.listQuery.time.length > 1) {
         params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
-        params.endData = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
+        params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
       }
-      delete params.time
       if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
         params.workCity = this.listQuery.workCity[1]
       }
-      if (this.listQuery.busiType) {
-        params.busiType = this.listQuery.busiType
-      }
-      if (this.listQuery.joinManagerId) {
-        params.joinManagerId = this.listQuery.joinManagerId
-      }
-      if (this.listQuery.driverId) {
-        params.driverId = this.listQuery.driverId
-      }
-      if (this.listQuery.refundApplyId) {
-        params.refundApplyId = this.listQuery.refundApplyId
-      }
-      if (this.listQuery.status) {
-        params.status = this.listQuery.status
-      }
+      this.listQuery.busiType && (params.busiType = this.listQuery.busiType)
+      this.listQuery.joinManagerId && (params.joinManagerId = this.listQuery.joinManagerId)
+      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.refundApplyId && (params.refundApplyId = this.listQuery.refundApplyId)
+      this.listQuery.status !== '' && (params.status = this.listQuery.status)
+
       let { data: res } = await refundList(params)
-      if (!res.message) {
-        console.log(res.data)
-        this.tableData = res.data
+      if (res.success) {
+        this.tableData = res.data || []
         res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
@@ -522,30 +522,30 @@ export default class extends Vue {
       this.listLoading = false
     }
   }
-  // 申请
-  private goDetail(id: string | (string | null)[] | null | undefined) {
+  // 申请退费
+  private goDetail() {
     this.$router.push({
-      path: '/driveraccount/refundapply',
-      query: { id: id }
+      path: '/driveraccount/refundapply'
     })
   }
   // 详情
-  private handleClick(id: string | (string | null)[] | null | undefined) {
+  private handleClick(row:IState) {
     this.$router.push({
       path: '/driveraccount/refunddetail',
-      query: { id: id }
+      query: { id: row.id }
     })
   }
   // 审核
-  private handle1Click(id: string | (string | null)[] | null | undefined) {
+  private handle1Click(row:IState) {
     this.$router.push({
       path: '/driveraccount/refundaudit',
-      query: { id: id }
+      query: { id: row.id }
     })
   }
 
   // 退费
-  private handlerefundClick() {
+  private handlerefundClick(row:any) {
+    this.row = row
     this.showDialog = true
   }
   // 确认
@@ -560,56 +560,86 @@ export default class extends Vue {
     this.multipleSelection = val
   }
   // 导出
-  private async handleSelect() {
-    let params = { ...this.listQuery }
-    delete params.page
-    delete params.limit
-    if (this.time && this.time.length === 2) {
+  @lock
+  private async handleExportClick() {
+    try {
+      let params:IState = {}
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
+        params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
+      } else {
+        return this.$message.error('请选择退费申请日期')
+      }
+      if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
+        params.workCity = this.listQuery.workCity[1]
+      }
+      this.listQuery.busiType && (params.busiType = this.listQuery.busiType)
+      this.listQuery.joinManagerId && (params.joinManagerId = this.listQuery.joinManagerId)
+      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.refundApplyId && (params.refundApplyId = this.listQuery.refundApplyId)
+      this.listQuery.status !== '' && (params.status = this.listQuery.status)
+
       const { data } = await refundExport(params)
       if (data.success) {
         this.$message.success('导出成功')
       } else {
         this.$message.error(data.errorMsg || data.message)
       }
-    } else {
-      this.$message.error('请选择退费申请日期')
+    } catch (err) {
+      console.log(`export fail:${err}`)
+    } finally {
+      console.log(`export finish`)
     }
   }
   // 下载
-  private handle1Select() {
-    if (this.multipleSelection.length === 0) {
-      this.$message.success('下载成功')
-    }
-    // this.getLists()
-    console.log(this.multipleSelection)
+  private handleDownLoad(row:any) {
+  //  此处调接口
   }
 
   // 批量退费
   private handleReturn() {
     if (this.multipleSelection.length === 0) {
       this.$message.error('请先选择')
-    } else if (this.multipleSelection.length > 0) {
-      this.$message.success('已退费')
-      // console.log(this.multipleSelection)
+    } else {
+      let totalMoney = 0
+      this.multipleSelection.forEach((item:any) => {
+        totalMoney += item.refundAmount
+      })
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,总计退费金额"${totalMoney}",批量退费成功?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 此处写个方法调接口
+        this.$message({
+          type: 'success',
+          message: `${this.multipleSelection.length}条退费数据已退费成功;`
+        })
+        this.getLists()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     }
   }
   // 批量驳回
   private handleReject() {
     if (this.multipleSelection.length === 0) {
       this.$message.error('请先选择')
-    } else if (this.$confirm) {
-      this.$confirm('确定要审核未通过并驳回此退款信息吗？', '提示', {
+    } else {
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,批量退费驳回?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // 此处写个方法调接口
         this.$message({
           type: 'success',
-          message: '成功!'
+          message: `${this.multipleSelection.length}条退费数据已审核驳回;`
         })
-        this.$router.push({
-          path: '/driveraccount/refundlist'
-        })
+        this.getLists()
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -643,13 +673,6 @@ export default class extends Vue {
       console.log(`get duty list fail:${err}`)
     }
   }
-  resetGmId() {
-    if (this.listQuery.gmId) {
-      this.listQuery.gmId = ''
-    }
-    this.getGmOptions()
-  }
-
   // 获取加盟经理列表
   async getGmOptions() {
     try {
@@ -657,7 +680,7 @@ export default class extends Vue {
         roleTypes: [1],
         uri: '/v2/wt-driver-account/management/queryGM'
       }
-      // this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
+      this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
         this.gmOptions.splice(0, this.gmOptions.length)
@@ -675,6 +698,7 @@ export default class extends Vue {
       console.log(err)
     }
   }
+  // 获取司机列表接口
   async loadDriverByKeyword(params:IState) {
     try {
       if (this.listQuery.workCity && this.listQuery.workCity.length > 0) {
