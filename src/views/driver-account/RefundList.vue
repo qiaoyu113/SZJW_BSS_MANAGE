@@ -104,6 +104,12 @@
       </self-form>
       <div class="table_box">
         <div class="middle" />
+        <div class="middle">
+          <div
+            class="count"
+            v-text="`筛选结果（${page.total}条）`"
+          />
+        </div>
         <self-table
           ref="RefundForm"
           :index="listQuery.status === '1'"
@@ -175,7 +181,7 @@ import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM }
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { HandlePages, lock } from '@/utils/index'
-import { refundList, refundExport } from '@/api/driver-account.ts'
+import { refundList, refundExport } from '@/api/driver-refund.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { getDriverNoAndNameList, getDriverNameByNo } from '@/api/driver'
 import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
@@ -288,7 +294,7 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        maxlength: '20',
+        maxlength: '14',
         placeholder: '请输入',
         clearable: true,
         filterable: true
@@ -428,7 +434,7 @@ export default class extends Vue {
     },
     {
       key: 'reasonsRefund',
-      label: '退款原因',
+      label: '退费原因',
       'min-width': '140px'
     },
     {
@@ -557,8 +563,25 @@ export default class extends Vue {
     done()
   }
   handleSelectionChange(val:any) {
+    console.log(val)
     this.multipleSelection = val
   }
+
+  get comAdd() {
+    let count = 0
+    this.multipleSelection.forEach((item) => {
+      count += item.refundAmount
+    })
+    return `是否确认将"${this.multipleSelection.length}"条待退费数据，总计退费金额"${count}元",批量退费成功？`
+  }
+  get comAdd1() {
+    let count = 0
+    this.multipleSelection.forEach((item) => {
+      count += item.refundAmount
+    })
+    return `是否确认将"${this.multipleSelection.length}"条待退费数据，批量退费驳回？`
+  }
+
   // 导出
   @lock
   private async handleExportClick() {

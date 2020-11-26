@@ -72,7 +72,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { refundDetail } from '@/api/driver-account.ts'
+import { refundDetail, refundAudit } from '@/api/driver-refund.ts'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 interface IState {
   [key: string]: any;
@@ -107,12 +107,12 @@ export default class extends Vue {
       {
         type: 7,
         label: '退费编号',
-        key: 'refundNumber'
+        key: 'refundApplyId'
       },
       {
         type: 7,
         label: '司机编号',
-        key: 'driverNumber'
+        key: 'driverId'
       },
       {
         type: 7,
@@ -121,12 +121,17 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '所在城市',
-        key: 'city'
+        label: '司机手机号',
+        key: 'driverPhone'
       },
       {
         type: 7,
-        label: '加盟经理',
+        label: '所属城市',
+        key: 'workCity'
+      },
+      {
+        type: 7,
+        label: '所属加盟经理',
         key: 'gmId'
       }
     ]
@@ -134,12 +139,12 @@ export default class extends Vue {
       {
         type: 7,
         label: '账户总金额',
-        key: 'sumAmount'
+        key: 'accountBalance'
       },
       {
         type: 7,
-        label: '可退金额',
-        key: 'withdrawalAmount'
+        label: '可提现金额',
+        key: 'canExtractMoney'
       }
     ]
     private formItem2:IState[] = [
@@ -150,18 +155,18 @@ export default class extends Vue {
       },
       {
         type: 7,
-        label: '退款原因',
+        label: '退费原因',
         key: 'reasonsRefund'
       },
       {
         type: 7,
-        label: '退款方式',
-        key: 'refundmethod'
+        label: '退费方式',
+        key: 'refundMethodName'
       },
       {
         type: 7,
         label: '持卡人姓名',
-        key: 'refundName'
+        key: 'payeeName'
       },
       {
         type: 7,
@@ -278,6 +283,23 @@ export default class extends Vue {
           message: '已取消'
         })
       })
+    }
+    private async getAudit(id:string) {
+      try {
+        let params = {
+          refundId: id
+        }
+        let { data: res } = await refundAudit(params)
+        if (!res.status) {
+          this.$message(res.message)
+          return
+        }
+        console.log(res)
+        this.listQuery = res.data
+        // this.formData = res.data.baseInfo
+      } catch (err) {
+        console.log(err)
+      }
     }
 }
 </script>
