@@ -74,6 +74,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { refundDetail, refundAudit } from '@/api/driver-refund.ts'
 import SectionContainer from '@/components/SectionContainer/index.vue'
+import { driverList } from '@/api/transport'
 interface IState {
   [key: string]: any;
 }
@@ -284,10 +285,12 @@ export default class extends Vue {
         })
       })
     }
-    private async getAudit(id:string) {
+    private async getAudit(driverId:string, status:number) {
       try {
         let params = {
-          refundId: id
+          driverId,
+          status
+
         }
         let { data: res } = await refundAudit(params)
         if (!res.status) {
