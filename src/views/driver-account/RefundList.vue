@@ -49,7 +49,7 @@
             <el-option
               v-for="item in driverOptions"
               :key="item.value"
-              :label="`${item.label}(${item.value})` "
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
