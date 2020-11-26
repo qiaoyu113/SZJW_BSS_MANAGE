@@ -104,12 +104,6 @@
       </self-form>
       <div class="table_box">
         <div class="middle" />
-        <div class="middle">
-          <div
-            class="count"
-            v-text="`筛选结果（${page.total}条）`"
-          />
-        </div>
         <self-table
           ref="RefundForm"
           :index="listQuery.status === '1'"
@@ -133,6 +127,7 @@
             <el-button
               type="text"
               size="small"
+              :disabled="+scope.row.status === 1 ? false :true"
               @click="handle1Click(scope.row)"
             >
               审核
@@ -140,6 +135,7 @@
             <el-button
               type="text"
               size="small"
+              :disabled="+scope.row.status === 2 ? false :true"
               @click="handlerefundClick(scope.row)"
             >
               退费
@@ -149,7 +145,7 @@
               size="small"
               @click="handleDownLoad(scope.row)"
             >
-              下载
+              下载报销模板
             </el-button>
           </template>
         </self-table>
@@ -181,13 +177,14 @@ import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM }
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { HandlePages, lock } from '@/utils/index'
-import { refundList, refundExport } from '@/api/driver-refund.ts'
+import { refundList, refundExport, refundExecute, refundRejection, batchRefundExecute, refundDownLod } from '@/api/driver-refund.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { getDriverNoAndNameList, getDriverNameByNo } from '@/api/driver'
 import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
   GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
 import { options } from 'numeral'
+import { identity } from 'lodash'
 interface PageObj {
   page:number,
   limit:number,
@@ -461,9 +458,17 @@ export default class extends Vue {
       key: 'op',
       label: '操作',
       slot: true,
-      'width': '200px'
+      'width': '250px'
     }
   ];
+  private page :PageObj= {
+    page: 1,
+    limit: 30,
+    total: 0
+  }
+  get getRefundApplyIds() {
+    return this.multipleSelection.map((item:any) => item.refundApplyId)
+  }
   // 查询
   handleFilterClick() {
     this.page.page = 1
@@ -481,11 +486,7 @@ export default class extends Vue {
       time: []
     }
   }
-  private page :PageObj= {
-    page: 1,
-    limit: 30,
-    total: 0
-  }
+
   // 分页
   handlePageSize(page:PageObj) {
     this.page.page = page.page
@@ -536,32 +537,151 @@ export default class extends Vue {
   }
   // 详情
   private handleClick(row:IState) {
+    console.log(row)
     this.$router.push({
       path: '/driveraccount/refunddetail',
-      query: { id: row.id }
+      query: { id: row.refundApplyId }
     })
   }
   // 审核
   private handle1Click(row:IState) {
     this.$router.push({
       path: '/driveraccount/refundaudit',
-      query: { id: row.id }
+      query: { id: row.refundApplyId }
     })
   }
-
+  // 批量退费api
+  @lock
+  private async handMulRefund() {
+    try {
+      let params = this.getRefundApplyIds
+      const { data: res } = await batchRefundExecute(params)
+      if (res.success) {
+        this.$message({
+          type: 'success',
+          message: `${this.multipleSelection.length}条退费数据已退费成功;`
+        })
+        this.getLists()
+      } else {
+        this.$message.error(res.errorMsg || res.message)
+      }
+    } catch (err) {
+      console.log('退费失败')
+    } finally {
+      console.log('1')
+    }
+  }
+  // 批量退费
+  private handleReturn() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.error('请先选择')
+    } else {
+      let totalMoney = 0
+      this.multipleSelection.forEach((item:any) => {
+        totalMoney += item.refundAmount
+      })
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,总计退费金额"${totalMoney}",批量退费成功?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 此处写个方法调接口
+        this.handMulRefund()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    }
+  }
   // 退费
-  private handlerefundClick(row:any) {
+  private async handlerefundClick(row:any) {
     this.row = row
     this.showDialog = true
   }
-  // 确认
+  // 确认---单条退费
+  @lock
   private async confirm(done: any) {
-    done()
+    try {
+      let params = {
+        refundApplyId: this.row.refundApplyId
+      }
+      const { data: res } = await refundExecute(params)
+      if (res.success) {
+        done()
+        this.getLists()
+      } else {
+        this.$message.error(res.errorMsg || res.message)
+      }
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.log('1')
+    }
   }
   // 驳回
-  private handleRejectClick(done:any) {
-    done()
+  private async handleRejectClick(done:any) {
+    try {
+      let params = {
+        refundApplyId: this.row.refundApplyId
+      }
+      const res = await refundRejection(params)
+      if (res) {
+        done()
+        this.getLists()
+      }
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.log('1')
+    }
   }
+  // 批量驳回
+  private handleReject() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.error('请先选择')
+    } else {
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,批量退费驳回?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        // 此处写个方法调接口
+        let params = this.getRefundApplyIds
+        let res = await this.handleRefundReject(params)
+        if (res) {
+          this.$message({
+            type: 'success',
+            message: `${this.multipleSelection.length}条退费数据已审核驳回;`
+          })
+          this.getLists()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    }
+  }
+  // 批量驳回 和驳回 api
+  @lock
+  private async handleRefundReject(refundApplyIds: string[]) {
+    try {
+      const { data: res } = await refundRejection(refundApplyIds)
+      if (res.success) {
+        return true
+      } else {
+        this.$message.error(res.errorMsg || res.message)
+      }
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.log('1')
+    }
+  }
+
   handleSelectionChange(val:any) {
     console.log(val)
     this.multipleSelection = val
@@ -600,60 +720,23 @@ export default class extends Vue {
     }
   }
   // 下载
-  private handleDownLoad(row:any) {
-  //  此处调接口
-  }
-
-  // 批量退费
-  private handleReturn() {
-    if (this.multipleSelection.length === 0) {
-      this.$message.error('请先选择')
-    } else {
-      let totalMoney = 0
-      this.multipleSelection.forEach((item:any) => {
-        totalMoney += item.refundAmount
-      })
-      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,总计退费金额"${totalMoney}",批量退费成功?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // 此处写个方法调接口
+  @lock
+  private async handleDownLoad(row:any) {
+    try {
+      let params = { applyRefundId: row.refundApplyId }
+      const { data: res } = await refundDownLod(params)
+      if (res.success) {
         this.$message({
           type: 'success',
-          message: `${this.multipleSelection.length}条退费数据已退费成功;`
+          message: `下载成功;`
         })
-        this.getLists()
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      })
-    }
-  }
-  // 批量驳回
-  private handleReject() {
-    if (this.multipleSelection.length === 0) {
-      this.$message.error('请先选择')
-    } else {
-      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,批量退费驳回?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // 此处写个方法调接口
-        this.$message({
-          type: 'success',
-          message: `${this.multipleSelection.length}条退费数据已审核驳回;`
-        })
-        this.getLists()
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      })
+      } else {
+        this.$message.error(res.errorMsg || res.message)
+      }
+    } catch (err) {
+      console.log('下载失败', err)
+    } finally {
+      console.log('1')
     }
   }
 
