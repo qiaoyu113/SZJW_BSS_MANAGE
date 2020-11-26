@@ -167,7 +167,7 @@
         :destroy-on-close="true"
         :on-other="handleRejectClick"
       >
-        请审核此条待退费数据
+        请审核此条待退费数据,
       </SelfDialog>
     </div>
   </div>
@@ -188,9 +188,9 @@ import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
 import TableHeader from '@/components/TableHeader/index.vue'
 import { options } from 'numeral'
 interface PageObj {
-  page:Number,
-  limit:Number,
-  total?:Number
+  page:number,
+  limit:number,
+  total?:number
 }
 interface IState {
   [key: string]: any;
@@ -283,7 +283,7 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        maxlength: '20',
+        maxlength: '14',
         placeholder: '请输入',
         clearable: true,
         filterable: true
@@ -423,7 +423,7 @@ export default class extends Vue {
     },
     {
       key: 'reasonsRefund',
-      label: '退款原因',
+      label: '退费原因',
       'min-width': '140px'
     },
     {
@@ -566,13 +566,22 @@ export default class extends Vue {
     console.log(val)
     this.multipleSelection = val
   }
+
   get comAdd() {
     let count = 0
     this.multipleSelection.forEach((item) => {
       count += item.refundAmount
     })
-    return `是否确认将${this.multipleSelection.length}条待退费数据，总计金额${count}批量退费成功？`
+    return `是否确认将"${this.multipleSelection.length}"条待退费数据，总计退费金额"${count}元",批量退费成功？`
   }
+  get comAdd1() {
+    let count = 0
+    this.multipleSelection.forEach((item) => {
+      count += item.refundAmount
+    })
+    return `是否确认将"${this.multipleSelection.length}"条待退费数据，批量退费驳回？`
+  }
+
   // 导出
   private async handleSelect() {
     let params = { ...this.listQuery }
@@ -628,7 +637,7 @@ export default class extends Vue {
     if (this.multipleSelection.length === 0) {
       this.$message.error('请先选择')
     } else if (this.$confirm) {
-      this.$confirm('是否确认将""条待退费数据，批量退费驳回？', '提示', {
+      this.$confirm(this.comAdd1, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
