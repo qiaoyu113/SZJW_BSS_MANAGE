@@ -246,7 +246,7 @@
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { HandlePages, validatorValue } from '@/utils/index'
+import { HandlePages, validatorValue, lock } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { GetMonthlyBillList, ExportMonthlyBillList, driverMonthlyBillCheck } from '@/api/driver-freight'
@@ -729,6 +729,7 @@ export default class extends Vue {
     ((this.$refs.dialogForm) as any).submitForm()
   }
   // 单匡表单提交
+  @lock
   private async saveData() {
     try {
       this.submitLoading = true

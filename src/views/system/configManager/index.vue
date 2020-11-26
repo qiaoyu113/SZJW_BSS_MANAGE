@@ -158,7 +158,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { GetDictionaryCity, GetDictionary } from '@/api/common'
 import { getLableLists, checkCityIsExist, saveLineLabel, updateLineLabel, getLineLabelById } from '@/api/line'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import { delayTime } from '@/settings'
 
 interface PageObj {
@@ -504,6 +504,7 @@ export default class extends Vue {
     }
   }
   // 保存标签
+  @lock
   async saveLineLabel() {
     try {
       this.submitLoading = true
@@ -533,6 +534,7 @@ export default class extends Vue {
     }
   }
   // 更新标签
+  @lock
   async updateLineLabel() {
     try {
       this.submitLoading = true

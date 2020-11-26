@@ -177,6 +177,7 @@ import SectionContainer from '@/components/SectionContainer/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
 import SelfDialog from '@/components/SelfDialog/index.vue'
+import { lock } from '@/utils/index'
 import {
   authorityList,
   createAuthority,
@@ -249,46 +250,56 @@ export default class extends Vue {
     return SettingsModule.isPC
   }
   private confirm(done: any) {
-    (this.$refs['dialogForm'] as any).validate(async(valid: boolean) => {
+    (this.$refs['dialogForm'] as any).validate((valid: boolean) => {
       if (valid) {
-        if (this.isAdd) {
-          // 添加
-          const postData = {
-            ...this.dialogForm
-          }
-          const { id, parentsId } = this.addData
-          postData.controlType = postData.controlType || 0
-          postData.authType = Number(this.activeName)
-          postData.parentId = id
-          postData.parentsId =
-            parentsId + (parentsId ? ',' : '') + `${this.addData.id}`
-          delete postData.id
-          delete postData.childAuth
-          const { data } = await createAuthority(postData)
-          if (data.success) {
-            this.$message.success(`创建成功`)
-            this.append(data.data)
-            this.showDialog = false
-          } else {
-            this.$message.error(data)
-          }
-        } else {
-          const postData = {
-            ...this.dialogForm
-          }
-          postData.authType = Number(this.activeName)
-          delete postData.childAuth
-          const { data } = await updateAuthority(postData)
-          if (data.success) {
-            this.$message.success(`编辑成功`)
-            this.update(postData, this.dialogForm.childAuth)
-            this.showDialog = false
-          } else {
-            this.$message.error(data)
-          }
-        }
+        this.saveData()
       }
     })
+  }
+  @lock
+  async saveData() {
+    try {
+      if (this.isAdd) {
+        // 添加
+        const postData = {
+          ...this.dialogForm
+        }
+        const { id, parentsId } = this.addData
+        postData.controlType = postData.controlType || 0
+        postData.authType = Number(this.activeName)
+        postData.parentId = id
+        postData.parentsId =
+            parentsId + (parentsId ? ',' : '') + `${this.addData.id}`
+        delete postData.id
+        delete postData.childAuth
+        const { data } = await createAuthority(postData)
+        if (data.success) {
+          this.$message.success(`创建成功`)
+          this.append(data.data)
+          this.showDialog = false
+        } else {
+          this.$message.error(data)
+        }
+      } else {
+        const postData = {
+          ...this.dialogForm
+        }
+        postData.authType = Number(this.activeName)
+        delete postData.childAuth
+        const { data } = await updateAuthority(postData)
+        if (data.success) {
+          this.$message.success(`编辑成功`)
+          this.update(postData, this.dialogForm.childAuth)
+          this.showDialog = false
+        } else {
+          this.$message.error(data)
+        }
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
+    }
   }
   private async authorityList() {
     this.loading = true

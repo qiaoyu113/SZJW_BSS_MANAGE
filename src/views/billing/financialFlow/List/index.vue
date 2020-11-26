@@ -223,7 +223,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { getFlowList, exportFlowList, saveFlowData, getOrderListByDriverId, getOrderDetailByDriverId, getDriverListByGmId, getListAll, GetChargeAmountByChargeId } from '@/api/driver-account'
@@ -733,6 +733,7 @@ export default class extends Vue {
     this.addForm.billingType = ''
   }
   // 提交弹框表单
+  @lock
   async saveData() {
     try {
       this.submitLoading = true
