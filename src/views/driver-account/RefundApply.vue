@@ -1,13 +1,13 @@
-x<template>
+<template>
   <div class="refundApply">
     <div class="box">
       <div class="table-box">
         <self-form
           ref="RefundForm"
           :list-query="listQuery"
-          :form-item="formItem"
+          :form-item="createFrom"
           size="small"
-          label-width="180px"
+          label-width="200px"
           class="p15 SuggestForm"
           :pc-col="13"
           :rules="rules"
@@ -35,7 +35,7 @@ x<template>
               :default-first-option="true"
               :remote-method="remoteMethod"
               :loading="driverLoading"
-              placeholder="请选择"
+              placeholder="请选择司机"
               @change="driverSelect"
               @clear="handleClearQueryDriver"
             >
@@ -58,7 +58,7 @@ x<template>
               label="加盟经理:"
               style="width: 100%"
             >
-              <span>{{ driverCity.gmid }}</span>
+              <span>{{ driverCity.gmName }}</span>
             </el-form-item>
             <p class="title-label">
               账户信息
@@ -71,12 +71,6 @@ x<template>
             </el-form-item>
             <el-form-item
               label="可提现金额:"
-              style="width: 100%"
-            >
-              <span>{{ listQuery.extracting }}</span>
-            </el-form-item>
-            <el-form-item
-              label="可退费金额:"
               style="width: 100%"
             >
               <span>{{ listQuery.canRefund }}</span>
@@ -94,7 +88,7 @@ x<template>
               <el-radio :label="1">
                 有
               </el-radio>
-              <el-radio :label="2">
+              <el-radio :label="0">
                 没有
               </el-radio>
             </el-radio-group>
@@ -104,7 +98,7 @@ x<template>
               <el-radio :label="1">
                 有
               </el-radio>
-              <el-radio :label="2">
+              <el-radio :label="0">
                 没有
               </el-radio>
             </el-radio-group>
@@ -145,16 +139,21 @@ interface listQuerys{
   bankCardNo: string // 银行卡号
   bankName: string // 开户行
   balance: number|undefined // 账户余额
-  canRefund: number
-  extracting: number
+  canRefund: number|undefined
+  extracting: number|undefined
   remarks:string // 备注
-  money:number // 申请退款金额
+  money:number|undefined // 申请退款金额
   hasReceipt:number // 是否有收据
   recoveryReceipt?:number // 是否回收收据
   driverId:string // 司机ID
   reason:string // 退款原因
   payMethod:number // 退款方式
   payeeName:string
+}
+interface dirverGMC {
+  city:string,
+  gmName:string
+
 }
 @Component({
   name: 'RefundApply',
@@ -167,20 +166,20 @@ export default class extends Vue {
     driverId: '',
     bankCardNo: '',
     balance: undefined,
-    canRefund: 0,
-    extracting: 0,
-    money: 0,
-    hasReceipt: 0,
-    recoveryReceipt: 0,
+    canRefund: undefined,
+    extracting: undefined,
+    money: undefined,
+    hasReceipt: 3,
+    recoveryReceipt: 3,
     bankName: '',
     remarks: '',
     reason: '',
-    payMethod: 0,
+    payMethod: 6,
     payeeName: ''
   }
-  private driverCity = {
+  private driverCity: dirverGMC = {
     city: '',
-    gmid: ''
+    gmName: ''
   }
   private activeFrom: Array<any> = [
     {
@@ -197,7 +196,7 @@ export default class extends Vue {
     }
   ]
   get activeFromC() {
-    if (this.listQuery.hasReceipt === 2) {
+    if (this.listQuery.hasReceipt === 0) {
       return [this.activeFrom[0]]
     }
     return this.activeFrom
@@ -209,14 +208,15 @@ export default class extends Vue {
     )
     let splicInx: number
     splicInx = inxs !== -1 ? 2 : 1
-    if (this.listQuery.hasReceipt === 2) {
+    if (this.listQuery.hasReceipt === 1) {
       this.formItem.splice(inx, 2, ...this.activeFromC)
       delete this.listQuery.recoveryReceipt
-    } else if (this.listQuery.hasReceipt === 1) {
+    } else if (this.listQuery.hasReceipt === 0) {
       this.formItem.splice(inx, splicInx, ...this.activeFromC)
     }
   }
-  private formItem: any[] = [
+  private isKillSumbit:boolean = true // 校验是否有订单
+  private createFrom:any[]=[
     {
       type: 'backBtn',
       w: '0',
@@ -229,7 +229,9 @@ export default class extends Vue {
       label: '司机姓名(司机编号/手机号):',
       key: 'driverId',
       slot: true
-    },
+    }
+  ]
+  private formItem: any[] = [
     {
       type: 'information',
       w: '0',
@@ -271,7 +273,7 @@ export default class extends Vue {
       key: 'payMethod',
       options: [
         {
-          value: 1,
+          value: 6,
           label: '银行卡'
         }
       ]
@@ -292,7 +294,8 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入',
         clearable: true,
-        filterable: true
+        filterable: true,
+        maxlength: 10
       },
       label: '持卡人姓名',
       key: 'payeeName'
@@ -324,15 +327,19 @@ export default class extends Vue {
   ]
   private validateMaxMoney(rule: any, value: any, callback: any) {
     console.log(value)
-    if (this.listQuery.money > this.listQuery.canRefund) {
+
+    if ((this.listQuery.money as number) > (this.listQuery.canRefund as number)) {
       return callback(new Error('申请退款金额不可超过可提现金额，请确认！'))
     }
+    // if ((this.listQuery.money as number) <= 0) {
+    //   return callback(new Error('退款金额不能为0'))
+    // }
     callback()
   }
   // 校验规则
   private rules: any = {
     driverId: [
-      { required: true, message: '选择是姓名+（手机号）', trigger: 'blur' }
+      { required: true, message: '选择是姓名+（手机号）', trigger: 'change' }
     ],
     money: [
       { required: true, message: '请输入申请退款金额!', trigger: 'blur' },
@@ -350,7 +357,7 @@ export default class extends Vue {
     ],
     bankName: [
       { required: true, message: '请选择开户行！', trigger: 'blur' },
-      { pattern: /^[a-zA-Z0-9\u4e00-\u9fa5]{1,50}$/, message: '银行卡号不可有特殊字符、空格，文字等', trigger: 'blur' }
+      { pattern: /^[a-zA-Z0-9\u4e00-\u9fa5]{1,50}$/, message: '开户行信息不可有特殊字符、空格', trigger: 'blur' }
     ],
     hasReceipt: [
       { required: true, message: '请选择是否有收据！', trigger: 'change' }
@@ -360,31 +367,22 @@ export default class extends Vue {
     ],
     payeeName: [
       { required: true, message: '请输入持卡人姓名！', trigger: 'blur' },
-      { max: 10, message: '持卡人姓名不可超过10个字', trigger: 'blur' }
+      { pattern: /^[\u4e00-\u9fa5]{1,10}$/, message: '持卡人姓名不可超过10个字', trigger: 'blur' }
     ]
   }
   private goDetail(id: string | (string | null)[] | null | undefined) {
     // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
-    this.$confirm('text', '提示', {
+    this.$confirm('确认要放弃已填写内容返回上一页面？', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
       .then(() => {
-        this.$message({
-          type: 'success',
-          message: '成功!'
-        })
         this.$router.push({
-          path: '/driveraccount/refundlist',
-          query: { id: id }
+          path: '/driveraccount/refundlist'
         })
       })
       .catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
       })
   }
   // 司机列表收索
@@ -422,7 +420,10 @@ export default class extends Vue {
         let driverInfos = res.data.map(function(item: any) {
           return {
             label: `${item.name}/${item.phone}`,
-            value: item.driverId
+            value: item.driverId,
+            workCityName: item.workCityName,
+            gmName: item.gmName
+            // name:
           }
         })
         this.driverOtions.push(...driverInfos)
@@ -434,7 +435,25 @@ export default class extends Vue {
     }
   }
   private handleClearQueryDriver() {
+    this.createFrom.splice(2)
+    this.isOnceCreate = true
+    this.driverOtions.splice(0)
     this.getDriverInfo()
+    this.listQuery = {
+      driverId: '',
+      bankCardNo: '',
+      balance: undefined,
+      canRefund: undefined,
+      extracting: undefined,
+      money: undefined,
+      hasReceipt: 0,
+      recoveryReceipt: 0,
+      bankName: '',
+      remarks: '',
+      reason: '',
+      payMethod: 6,
+      payeeName: ''
+    }
   }
   private async remoteMethod(query: any) {
     this.keyWord = query
@@ -447,41 +466,96 @@ export default class extends Vue {
   }
   // 去触发表单校验
   private Submit(this:any) {
-    // (this.$refs.qianForm as any).submitForm()
-    this.$refs.RefundForm.validateField()
-    this.$refs.RefundForm.validate(async(valid:Boolean) => {
-      if (!valid) return
-      console.log(12321)
+    let isSumbit = this.$refs.RefundForm.submitForm()
+    if (!isSumbit === false) return
+    console.log(isSumbit, '----')
+    if (!this.isKillSumbit) {
+      return this.$message({
+        type: 'error',
+        message: '该司机当前已存在待退款状态退款申请，请完成后再操作'
+      })
     }
-    )
     console.log(1231)
+  }
+  async createRefundSure(params:object) {
+    try {
+      const { data } = await createRefund(params)
+      if (!data.success) {
+        return this.$message({
+          type: 'error',
+          message: data.errorMsg
+        })
+      }
+      this.$message({
+        type: 'success',
+        message: '退费成功'
+      })
+      this.$router.push({
+        path: '/driveraccount/refundlist'
+      })
+    } catch (error) {
+      return error
+    }
   }
   // 表单检验通过
   private handlePassClick(valid: any) {
-    console.log(this.listQuery)
+    // const { bankCardNo, bankName, driverId, hasReceipt, money, payMethod, payeeName, reason, recoveryReceipt, remarks } = this.listQuery
+    this.createRefundSure(this.listQuery)
   }
   changeDriver() {
     console.log('xxxxxxxxxxxxxxxxx')
     // this.listQuery.city = ''
     // this.listQuery.gmId = ''
   }
-  async driverSelect(e:Event) {
+  private isOnceCreate = true
+  async driverSelect(e:string) {
+    if (this.isOnceCreate) {
+      this.createFrom.push(...this.formItem)
+      this.isOnceCreate = true
+    }
     console.log(e)
     // 判断是否有已经退费的订单
-
     try {
+      const inx = this.driverOtions.findIndex(item => item.value === e)
+      this.driverCity.city = this.driverOtions[inx].workCityName
+      this.driverCity.gmName = this.driverOtions[inx].gmName
+      this.getRefundEchoSure(e)
       const { data } = await haveRecordToBeApproved({ driverId: e })
-      console.log(data)
-    } catch (error) {
-      return error
-    }
-    try {
-      const { data } = await getRefundEcho({ driverId: e })
-      console.log(data, 1)
+      this.isKillSumbit = !data.data
+      if (!data.success) return
+      if (!data.data) return
+      this.$confirm('该司机当前已存在待退款状态退款申请，请完成后再操作', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.handleClearQueryDriver()
+        })
+        .catch((err) => {
+          return err
+        })
+      // console.log(aa)
+      // console.log(data)
     } catch (error) {
       return error
     }
     // 获取用户账户信息
+  }
+  async getRefundEchoSure(driverId:string) {
+    try {
+      const { data: res } = await getRefundEcho({ driverId })
+      if (!res.success) return
+      const { data } = res
+      console.log(data)
+      this.listQuery.balance = data.balance || 0
+      this.listQuery.bankCardNo = data.bankCardNo || ''
+      this.listQuery.bankName = data.bankName || ''
+      this.listQuery.canRefund = data.canRefund || 0
+      this.listQuery.extracting = data.extracting || 0
+    } catch (error) {
+      return error
+    }
   }
   created() {
     this.getDriverInfo('')

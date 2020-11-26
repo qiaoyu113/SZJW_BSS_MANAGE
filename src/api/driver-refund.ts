@@ -33,7 +33,7 @@ export const refundExport = (data: any) =>
 // /v2/wt-driver-account/refund/create
 // 创建申请退费
 export const createRefund = (data:any) => request({
-  url: `${billFix}/v2/wt-driver-account/refund/create`,
+  url: `/bill/v2/wt-driver-account/refund/create`,
   method: 'post',
   data
 })
@@ -41,7 +41,7 @@ export const createRefund = (data:any) => request({
 /// v2/wt-driver-account/refund/create/echo
 // 用户账户信息回显
 export const getRefundEcho = (params:any) => request({
-  url: `${billFix}/v2/wt-driver-account/refund/create/echo`,
+  url: `/bill/v2/wt-driver-account/refund/create/echo`,
   method: 'get',
   params
 })
@@ -49,7 +49,7 @@ export const getRefundEcho = (params:any) => request({
 // 是否有待退款
 // http://szjw-domain-bill.m2.yunniao.cn/v2/wt-driver-account/refund/haveRecordToBeApproved?driverId=ewqweqeqe
 export const haveRecordToBeApproved = (params:any) => request({
-  url: `${billFix}/v2/wt-driver-account/refund/haveRecordToBeApproved`,
+  url: `/bill/v2/wt-driver-account/refund/haveRecordToBeApproved`,
   method: 'get',
   params
 })
