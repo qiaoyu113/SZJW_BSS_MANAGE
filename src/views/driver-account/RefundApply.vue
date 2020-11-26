@@ -50,13 +50,13 @@ x<template>
               label="所在城市:"
               style="width: 100%"
             >
-              <span>{{ autoDriver.city }}</span>
+              <span>{{ driverCity.city }}</span>
             </el-form-item>
             <el-form-item
               label="加盟经理:"
               style="width: 100%"
             >
-              <span>{{ autoDriver.Gmid }}</span>
+              <span>{{ driverCity.gmid }}</span>
             </el-form-item>
             <p class="title-label">
               账户信息
@@ -65,19 +65,19 @@ x<template>
               label="账户总金额:"
               style="width: 100%"
             >
-              <span>{{ autoDriver.totalAmount }}</span>
+              <span>{{ listQuery.balance }}</span>
             </el-form-item>
             <el-form-item
               label="可提现金额:"
               style="width: 100%"
             >
-              <span>{{ autoDriver.withdrawalAmount }}</span>
+              <span>{{ listQuery.extracting }}</span>
             </el-form-item>
             <el-form-item
               label="可退费金额:"
               style="width: 100%"
             >
-              <span>{{ autoDriver.refundAmount }}</span>
+              <span>{{ listQuery.canRefund }}</span>
             </el-form-item>
             <p class="title-label">
               退款信息
@@ -137,12 +137,20 @@ import { options } from 'numeral'
 interface IState {
   [key: string]: any
 }
-type autoDriver = {
-  city: string
-  Gmid: string
-  totalAmount: number
-  withdrawalAmount: number
-  refundAmount: number
+interface listQuerys{
+  bankCardNo: string // 银行卡号
+  bankName: string // 开户行
+  balance: number|undefined // 账户余额
+  canRefund: number
+  extracting: number
+  remarks:string // 备注
+  money:number // 申请退款金额
+  hasReceipt:number // 是否有收据
+  recoveryReceipt?:number // 是否回收收据
+  driverId:string // 司机ID
+  reason:string
+  payMethod:number
+  payeeName:string
 }
 @Component({
   name: 'RefundApply',
@@ -151,44 +159,41 @@ type autoDriver = {
   }
 })
 export default class extends Vue {
-  private listQuery: IState = {
+  private listQuery: listQuerys = {
     driverId: '',
-    city: '',
-    gmId: '',
-    sumAmount: '',
-    withdrawalAmount: 100,
-    // refundAmount: '',
-    reasonsRefund: '',
-    refundmethod: '',
-    refundBankCardNumber: '',
-    bankDeposit: '',
-    receipt: '',
-    takeBackReceipt: '',
-    remark: ''
+    bankCardNo: '',
+    balance: undefined,
+    canRefund: 0,
+    extracting: 0,
+    money: 0,
+    hasReceipt: 0,
+    recoveryReceipt: 0,
+    bankName: '',
+    remarks: '',
+    reason: '',
+    payMethod: 0,
+    payeeName: ''
   }
-  private autoDriver:autoDriver = {
+  private driverCity = {
     city: '',
-    Gmid: '',
-    totalAmount: 0,
-    withdrawalAmount: 0,
-    refundAmount: 0
+    gmid: ''
   }
   private activeFrom: Array<any> = [
     {
-      type: 'receipt',
+      type: 'hasReceipt',
       label: '缴费时是否有收据:',
-      key: 'receipt',
+      key: 'hasReceipt',
       slot: true
     },
     {
-      type: 'takeBackReceipt',
+      type: 'recoveryReceipt',
       label: '收据是否已提供给财务:',
-      key: 'takeBackReceipt',
+      key: 'recoveryReceipt',
       slot: true
     }
   ]
   get activeFromC() {
-    if (this.listQuery.receipt === 2) {
+    if (this.listQuery.hasReceipt === 2) {
       return [this.activeFrom[0]]
     }
     return this.activeFrom
@@ -200,10 +205,10 @@ export default class extends Vue {
     )
     let splicInx: number
     splicInx = inxs !== -1 ? 2 : 1
-    if (this.listQuery.receipt === 2) {
+    if (this.listQuery.hasReceipt === 2) {
       this.formItem.splice(inx, 2, ...this.activeFromC)
-      delete this.listQuery.takeBackReceipt
-    } else if (this.listQuery.receipt === 1) {
+      delete this.listQuery.recoveryReceipt
+    } else if (this.listQuery.hasReceipt === 1) {
       this.formItem.splice(inx, splicInx, ...this.activeFromC)
     }
   }
@@ -238,7 +243,7 @@ export default class extends Vue {
         precision: 2
       },
       label: '申请退款金额:',
-      key: 'refundAmount'
+      key: 'money'
     },
     {
       type: 13,
@@ -249,7 +254,7 @@ export default class extends Vue {
         maxlength: '300'
       },
       label: '退款原因:',
-      key: 'reasonsRefund'
+      key: 'reason'
     },
     {
       type: 2,
@@ -259,7 +264,7 @@ export default class extends Vue {
         readonly: true
       },
       label: '退款方式:',
-      key: 'refundmethod',
+      key: 'payMethod',
       options: [
         {
           value: 1,
@@ -272,10 +277,11 @@ export default class extends Vue {
       tagAttrs: {
         placeholder: '请输入',
         clearable: true,
-        filterable: true
+        filterable: true,
+        maxlength: '30'
       },
       label: '退款银行卡号:',
-      key: 'refundBankCardNumber'
+      key: 'bankCardNo'
     },
     {
       type: 1,
@@ -285,17 +291,19 @@ export default class extends Vue {
         filterable: true
       },
       label: '持卡人姓名',
-      key: 'cardPensen'
+      key: 'payeeName'
     },
     {
       type: 1,
       tagAttrs: {
         placeholder: '请选择',
         clearable: true,
-        filterable: true
+        filterable: true,
+        maxlength: '50'
+
       },
       label: '开户行:',
-      key: 'bankDeposit'
+      key: 'bankName'
     },
     ...this.activeFromC,
     {
@@ -307,12 +315,12 @@ export default class extends Vue {
         maxlength: 300
       },
       label: '备注:',
-      key: 'remark'
+      key: 'remarks'
     }
   ]
   private validateMaxMoney(rule: any, value: any, callback: any) {
     console.log(value)
-    if (this.listQuery.refundAmount > this.listQuery.withdrawalAmount) {
+    if (this.listQuery.money > this.listQuery.canRefund) {
       return callback(new Error('申请退款金额不可超过可提现金额，请确认！'))
     }
     callback()
@@ -330,13 +338,15 @@ export default class extends Vue {
       { required: true, message: '请输入退款原因！', trigger: 'blur' }
     ],
     refundmethod: [
-      { required: true, message: '请选择的退款方式！', trigger: 'change' }
+      { required: true, message: '请选择的退款方式！', trigger: 'blur' }
     ],
     refundBankCardNumber: [
-      { required: true, message: '请输入退款银行卡号！', trigger: 'blur' }
+      { required: true, message: '请输入退款银行卡号！', trigger: 'blur' },
+      { pattern: /^[0-9]{0,30}$/, message: '银行卡号不可有特殊字符、空格，文字等', trigger: 'blur' }
     ],
     bankDeposit: [
-      { required: true, message: '请选择开户行！', trigger: 'change' }
+      { required: true, message: '请选择开户行！', trigger: 'blur' },
+      { pattern: /^[a-zA-Z0-9\u4e00-\u9fa5]{1,50}$/, message: '银行卡号不可有特殊字符、空格，文字等', trigger: 'blur' }
     ],
     receipt: [
       { required: true, message: '请选择是否有收据！', trigger: 'change' }
@@ -345,12 +355,13 @@ export default class extends Vue {
       { required: true, message: '请选择收据是否收回', trigger: 'change' }
     ],
     cardPensen: [
-      { required: true, message: '请选择收据是否收回', trigger: 'change' }
+      { required: true, message: '请输入持卡人姓名！', trigger: 'blur' },
+      { max: 10, message: '持卡人姓名不可超过10个字', trigger: 'blur' }
     ]
   }
   private goDetail(id: string | (string | null)[] | null | undefined) {
     // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
-    this.$confirm('确定要放弃已填写的内容返回上一页吗?', '提示', {
+    this.$confirm('text', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
@@ -395,8 +406,14 @@ export default class extends Vue {
     this.driverLoading = false
   }
   // 去触发表单校验
-  private Submit() {
+  private Submit(this:any) {
     // (this.$refs.qianForm as any).submitForm()
+    this.$refs.RefundForm.validateField()
+    this.$refs.RefundForm.validate(async(valid:Boolean) => {
+      if (!valid) return
+      console.log(12321)
+    }
+    )
     console.log(1231)
   }
   // 表单检验通过
@@ -405,8 +422,8 @@ export default class extends Vue {
   }
   changeDriver() {
     console.log('xxxxxxxxxxxxxxxxx')
-    this.listQuery.city = ''
-    this.listQuery.gmId = ''
+    // this.listQuery.city = ''
+    // this.listQuery.gmId = ''
   }
   created() {}
 }
