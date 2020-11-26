@@ -61,6 +61,7 @@
         >
           <el-button
             v-if="listQuery.status!=='1'"
+            v-permission="['/v2/wt-driver-account/refund/create']"
             :class="isPC ? '' : 'btnMobile'"
             @click="goDetail"
           >
@@ -68,12 +69,14 @@
           </el-button>
           <template v-else>
             <el-button
+              v-permission="['/v2/wt-driver-account/refund/batch/reject']"
               :class="isPC ? '' : 'btnMobile'"
               @click="handleReject"
             >
               批量驳回
             </el-button>
             <el-button
+              v-permission="['/v2/wt-driver-account/refund/batch/execute']"
               :class="isPC ? '' : 'btnMobile'"
               @click="handleReturn"
             >
@@ -88,6 +91,7 @@
             查询
           </el-button>
           <el-button
+            v-permission="['/v2/wt-driver-account/refund/export']"
             type="primary"
             :class="isPC ? '' : 'btnMobile'"
             @click="handleExportClick"
@@ -125,6 +129,7 @@
               详情
             </el-button>
             <el-button
+              v-permission="['/v2/wt-driver-account/refund/approve']"
               type="text"
               size="small"
               :disabled="+scope.row.status === 1 ? false :true"
@@ -133,14 +138,16 @@
               审核
             </el-button>
             <el-button
+              v-permission="['/v2/wt-driver-account/refund/execute']"
               type="text"
               size="small"
-              :disabled="+scope.row.status === 2 ? false :true"
+              :disabled="+scope.row.status === '2' ? false :true"
               @click="handlerefundClick(scope.row)"
             >
               退费
             </el-button>
             <el-button
+              v-permission="['/v2/wt-driver-account/refund/downTemplate']"
               type="text"
               size="small"
               @click="handleDownLoad(scope.row)"

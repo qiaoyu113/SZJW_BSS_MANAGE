@@ -76,7 +76,7 @@ const driverAccountRouter: RouteConfig = {
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundList.vue'),
       name: 'RefundList',
       meta: {
-        apiUrl: 'root',
+        apiUrl: '/v2/wt-driver-account/refund/list',
         title: 'refundList',
         noCache: false,
         hidden: false
