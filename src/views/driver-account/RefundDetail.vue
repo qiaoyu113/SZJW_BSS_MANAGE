@@ -74,7 +74,9 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { refundDetail, refundAudit } from '@/api/driver-refund.ts'
 import SectionContainer from '@/components/SectionContainer/index.vue'
+import { lock } from '@/utils/index'
 import { driverList } from '@/api/transport'
+import RefundApplyVue from './RefundApply.vue'
 interface IState {
   [key: string]: any;
 }
@@ -87,22 +89,23 @@ interface IState {
 })
 export default class extends Vue {
     private listQuery:IState = {
-      refundNumber: '',
-      driverNumber: '',
-      driverName: '',
-      city: '',
-      gmId: '',
-      sumAmount: '',
-      withdrawalAmount: '',
-      refundAmount: '',
-      reasonsRefund: '',
-      refundmethod: '',
-      refundBankCardNumber: '',
-      bankDeposit: '',
-      receipt: '',
-      takeBackReceipt: '',
-      remark: '',
-      auditstatus: ''
+      refundApplyId: '',
+      driverId: '',
+      name: '',
+      driverPhone: '',
+      cityName: '',
+      gmName: '',
+      balance: '',
+      canExtract: '',
+      money: '',
+      reason: '',
+      payMethodName: '',
+      payeeName: '',
+      bankCardNo: '',
+      bankName: '',
+      hasReceiptName: '',
+      recoveryReceiptName: '',
+      remarks: ''
     }
     private formItem:IState[] = [
       {
@@ -118,7 +121,7 @@ export default class extends Vue {
       {
         type: 7,
         label: '司机姓名',
-        key: 'driverName'
+        key: 'name'
       },
       {
         type: 7,
@@ -128,71 +131,71 @@ export default class extends Vue {
       {
         type: 7,
         label: '所属城市',
-        key: 'workCity'
+        key: 'cityName'
       },
       {
         type: 7,
         label: '所属加盟经理',
-        key: 'gmId'
+        key: 'gmName'
       }
     ]
     private formItem1:IState[] = [
       {
         type: 7,
         label: '账户总金额',
-        key: 'accountBalance'
+        key: 'balance'
       },
       {
         type: 7,
         label: '可提现金额',
-        key: 'canExtractMoney'
+        key: 'canExtract'
       }
     ]
     private formItem2:IState[] = [
       {
         type: 7,
         label: '申请退款金额',
-        key: 'refundAmount'
+        key: 'money'
       },
       {
         type: 7,
         label: '退费原因',
-        key: 'reasonsRefund'
+        key: 'reason'
       },
       {
         type: 7,
         label: '退费方式',
-        key: 'refundMethodName'
+        key: 'payMethodName'
       },
       {
         type: 7,
         label: '持卡人姓名',
-        key: 'payeeName'
+        key: 'name'
       },
       {
         type: 7,
         label: '银行卡号',
-        key: 'refundBankCardNumber'
+        key: 'bankCardNo'
       },
       {
         type: 7,
         label: '开户行',
-        key: 'bankDeposit'
+        key: 'bankName'
       },
       {
         type: 7,
         label: '缴费时是否有收据',
-        key: 'receipt'
+        key: 'hasReceiptName'
       },
       {
         type: 7,
         label: '收据是否已提供给财务',
-        key: 'takeBackReceipt'
+        key: 'recoveryReceiptName'
       },
       {
         type: 7,
         label: '备注',
-        key: 'remark'
+        key: 'remarks'
       }
     ]
     private goList(id: string | (string | null)[] | null | undefined) {
@@ -205,21 +208,20 @@ export default class extends Vue {
     private async getDetail(id:string) {
       try {
         let params = {
-          refundId: id
+          refundApplyId: id
         }
         let { data: res } = await refundDetail(params)
-        if (!res.status) {
-          this.$message(res.message)
-          return
+        if (res.success) {
+          this.listQuery = { ...res.data }
+        } else {
+          this.$message.warning(res.message)
         }
-        console.log(res)
-        this.listQuery = res.data
-        // this.formData = res.data.baseInfo
       } catch (err) {
         console.log(err)
       }
     }
     mounted() {
+      this.id = (this.$route.query.id) as string
       this.getDetail(this.id)
       // 审核
       if (this.$route.path === '/driveraccount/refundaudit') {
@@ -235,7 +237,7 @@ export default class extends Vue {
         this.formItem2.push({
           type: 7,
           label: '审核状态',
-          key: 'auditstatus'
+          key: 'statusName'
         })
       }
     }
@@ -247,14 +249,7 @@ export default class extends Vue {
         cancelButtonText: '返回',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '成功!'
-        })
-        this.$router.push({
-          path: '/driveraccount/refundlist',
-          query: { id: id }
-        })
+        this.getAudit(this.id, 3)
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -270,14 +265,7 @@ export default class extends Vue {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '成功!'
-        })
-        this.$router.push({
-          path: '/driveraccount/refundlist',
-          query: { id: id }
-        })
+        this.getAudit(this.id, 2)
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -285,23 +273,29 @@ export default class extends Vue {
         })
       })
     }
-    private async getAudit(driverId:string, status:number) {
+    @lock
+    private async getAudit(refundApplyId:string, type:number) {
       try {
         let params = {
-          driverId,
-          status
-
+          refundApplyId: refundApplyId,
+          type: type
         }
         let { data: res } = await refundAudit(params)
-        if (!res.status) {
-          this.$message(res.message)
-          return
+        if (res.success) {
+          this.$message({
+            type: 'success',
+            message: '成功!'
+          })
+          this.$router.push({
+            path: '/driveraccount/refundlist'
+          })
+        } else {
+          this.$message.warning(res.message)
         }
-        console.log(res)
-        this.listQuery = res.data
-        // this.formData = res.data.baseInfo
       } catch (err) {
         console.log(err)
+      } finally {
+        console.log('1')
       }
     }
 }
