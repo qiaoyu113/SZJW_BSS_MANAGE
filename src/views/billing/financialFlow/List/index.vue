@@ -421,7 +421,6 @@ export default class extends Vue {
   @Watch('dialogTableVisible')
   onDialogTableVisibleChange(newVal:boolean) {
     if (newVal) {
-      this.getBillListAll()
       if (this.$route.query.id && this.listQuery.driverCode) {
         this.addForm.driverCode = this.listQuery.driverCode
         this.driverCodeChange(this.addForm.driverCode)
@@ -799,6 +798,7 @@ export default class extends Vue {
       if (res.success) {
         this.addForm.orderStatus = res.data.statusName
         this.orderStatus = res.data.status
+        this.getBillListAll(res.data.busiType)
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -914,13 +914,16 @@ export default class extends Vue {
   }
 
   // 获取计费类型列表
-  async getBillListAll() {
+  async getBillListAll(busiType:number) {
     try {
       let len = this.billOptons.length
       if (len > 0) {
         this.billOptons.splice(0, len)
       }
-      let { data: res } = await getListAll()
+      let params:IState = {
+        busiType
+      }
+      let { data: res } = await getListAll(params)
       if (res.success) {
         let options = res.data.map((item:any) => ({
           label: item.sopTypeDesc,

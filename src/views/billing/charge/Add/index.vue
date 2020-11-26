@@ -415,7 +415,7 @@ export default class extends Vue {
   // 获取计费类型列表
   async getChargeListAll() {
     try {
-      let { data: res } = await getListAll()
+      let { data: res } = await getListAll({})
       if (res.success) {
         let options:IState[] = res.data.map((item:any) => ({
           label: item.sopTypeDesc,
