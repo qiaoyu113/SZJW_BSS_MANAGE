@@ -15,7 +15,7 @@
         class="p15 SuggestForm"
         :pc-col="8"
       >
-        <template slot="checkStatus">
+        <template slot="status">
           <el-badge
             v-for="item in btns"
             :key="item.text"
@@ -24,8 +24,8 @@
               size="mini"
               type="primary"
               margin-right="20px"
-              :plain="item.name !== listQuery.checkStatus"
-              @click="listQuery.checkStatus =item.name"
+              :plain="item.name !== listQuery.status"
+              @click="listQuery.status =item.name"
             >
               {{ item.text }}
             </el-button>
@@ -37,24 +37,28 @@
           :class="isPC ? 'btnPc' : 'mobile'"
         >
           <el-button
+            v-if="listQuery.status!=='1'"
             size="small"
             :class="isPC ? '' : 'btnMobile'"
             @click="goDetail()"
           >
             申请退费
           </el-button>
-          <el-button
-            size="small"
-            :class="isPC ? '' : 'btnMobile'"
-          >
-            批量驳回
-          </el-button>
-          <el-button
-            size="small"
-            :class="isPC ? '' : 'btnMobile'"
-          >
-            批量退费
-          </el-button>
+          <template v-else>
+            <el-button
+              size="small"
+              :class="isPC ? '' : 'btnMobile'"
+            >
+              批量驳回
+            </el-button>
+            <el-button
+              size="small"
+              :class="isPC ? '' : 'btnMobile'"
+              @click="handleReturn"
+            >
+              批量退费
+            </el-button>
+          </template>
           <el-button
             size="small"
             :class="isPC ? '' : 'btnMobile'"
@@ -69,12 +73,6 @@
           >
             重置
           </el-button>
-          <!-- </div>
-        <template>
-          <div
-            slot="mulBtns"
-            :class="isPC ? 'btnPc1' : 'mobile'"
-          > -->
           <el-button
             size="small"
             :class="isPC ? '' : 'btnMobile'"
@@ -82,16 +80,7 @@
           >
             导出
           </el-button>
-          <!-- <el-button
-              size="small"
-              :class="isPC ? '' : 'btnMobile'"
-              type="primary"
-              @click="handleReturn"
-            >
-              批量退费
-            </el-button> -->
         </div>
-        <!-- </template> -->
       </self-form>
       <div class="table_box">
         <div class="middle" />
@@ -146,6 +135,7 @@
         :show-other-button="true"
         other-button-text="驳回"
         title="退费"
+        width="500px"
         :destroy-on-close="true"
         :on-other="handleRejectClick"
       >
@@ -161,7 +151,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM } from '@/api/system'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import { refundList, refundExport } from '@/api/driver-account.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { getDriverNoAndNameList, getDriverNameByNo } from '@/api/driver'
@@ -195,13 +185,13 @@ export default class extends Vue {
   private showDialog: boolean = false
   private createDate: any[] = []
   private listQuery:IState = {
-    refundNumber: '',
+    workCity: '',
+    busiType: '',
+    joinManagerId: '',
     driverId: '',
-    city: '',
-    gmId: '',
-    businessType: '',
-    createDate: '',
-    checkStatus: ''
+    refundApplyId: '',
+    status: '',
+    time: []
   }
   private formItem:any[] = [
     {
@@ -230,7 +220,7 @@ export default class extends Vue {
         filterable: true
       },
       label: '业务线',
-      key: 'businessType',
+      key: 'busiType',
       options: this.dutyListOptions,
       listeners: {
         'change': this.resetGmId
@@ -238,7 +228,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      key: 'gmId',
+      key: 'joinManagerId',
       col: 8,
       label: '所属加盟经理',
       tagAttrs: {
@@ -270,7 +260,7 @@ export default class extends Vue {
       },
       w: '100px',
       label: '退费编号',
-      key: 'refundNumber'
+      key: 'refundApplyId'
     },
     {
       type: 3,
@@ -282,12 +272,12 @@ export default class extends Vue {
       w: '100px',
       label: '退费申请日期',
       col: 8,
-      key: 'createDate'
+      key: 'time'
     },
     {
       col: 12,
       label: '退费状态',
-      type: 'checkStatus',
+      type: 'status',
       slot: true
     },
     {
@@ -332,7 +322,7 @@ export default class extends Vue {
   ]
   private columns:any[] = [
     {
-      key: 'refundNumber',
+      key: 'refundApplyId',
       label: '退费编号',
       'width': '140px'
     },
@@ -347,7 +337,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'city',
+      key: 'workCity',
       label: '所属城市',
       'min-width': '140px'
     },
@@ -357,23 +347,28 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'businessType',
+      key: 'busiTypeName',
       label: '业务线',
       'min-width': '140px'
     },
     {
-      key: 'driverstatus',
+      key: 'driverStatusName',
       label: '司机状态',
       'min-width': '140px'
     },
     {
-      key: 'sumAmount',
+      key: 'accountBalance',
       label: '账户总金额',
       'min-width': '140px'
     },
     {
-      key: 'withdrawalAmount',
+      key: 'canExtractMoney',
       label: '可提现金额',
+      'min-width': '140px'
+    },
+    {
+      key: 'withdrawalAmount',
+      label: '可退费金额',
       'min-width': '140px'
     },
     {
@@ -382,12 +377,12 @@ export default class extends Vue {
       'width': '120px'
     },
     {
-      key: 'refundmethod',
-      label: '退款方式',
+      key: 'refundMethodName',
+      label: '退费方式',
       'min-width': '140px'
     },
     {
-      key: 'driverName',
+      key: 'payeeName',
       label: '持卡人姓名',
       'min-width': '140px'
     },
@@ -398,7 +393,7 @@ export default class extends Vue {
     },
     {
       key: 'refundBankCardNumber',
-      label: '银行卡号',
+      label: '卡号',
       'width': '180px'
     },
     {
@@ -422,7 +417,7 @@ export default class extends Vue {
       'width': '150px'
     },
     {
-      key: 'auditDate',
+      key: 'toExamineDate',
       label: '审核时间',
       'width': '150px'
     },
@@ -451,11 +446,12 @@ export default class extends Vue {
   // 重置
   handleResetClick() {
     this.listQuery = {
-      city: [],
+      workCity: '',
       busiType: '',
-      gmId: '',
-      driverCode: '',
-      driverName: '',
+      joinManagerId: '',
+      driverId: '',
+      refundApplyId: '',
+      status: '',
       time: []
     }
   }
@@ -471,13 +467,20 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
+  @lock
   private async getLists() {
     try {
       this.listLoading = true
       let params:IState = {
         page: this.page.page,
-        limit: this.page.limit
+        limit: this.page.limit,
+        ...this.listQuery
       }
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
+        params.endData = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
+      }
+      delete params.time
       let { data: res } = await refundList(params)
       if (!res.message) {
         console.log(res.data)
@@ -593,6 +596,7 @@ export default class extends Vue {
     }
     this.getGmOptions()
   }
+
   // 获取加盟经理列表
   async getGmOptions() {
     try {

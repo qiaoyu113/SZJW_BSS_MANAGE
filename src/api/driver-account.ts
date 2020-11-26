@@ -178,7 +178,7 @@ export const GetChargeAmountByChargeId = (params:any) =>
 // 退费管理列表
 export const refundList = (data: any) =>
   request({
-    url: `${prefix2}/v1/base/role/refundList`,
+    url: `${billFix}/v2/wt-driver-account/refund/list`,
     method: 'post',
     data
   })
