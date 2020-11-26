@@ -882,7 +882,7 @@ export default class extends Vue {
 
     // 判断是否可以选中
     private selectable(row: any) {
-      if (row.status === 40 || row.status === 20) {
+      if (row.status === 5 || row.status === 40 || row.status === 20) {
         return false
       }
       // return row.canConfirm
