@@ -272,7 +272,10 @@ export default class extends Vue {
       key: 'busiType',
       options: this.dutyListOptions,
       listeners: {
-        'change': this.handleClearQueryDriver
+        'change': () => {
+          this.listQuery.joinManagerId = ''
+          this.handleClearQueryDriver()
+        }
       }
     },
     {
