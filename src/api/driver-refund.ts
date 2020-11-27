@@ -83,3 +83,11 @@ export const haveRecordToBeApproved = (params:any) => request({
   method: 'get',
   params
 })
+
+//
+// 批量驳回/退费 前置校验是否有非待退费数据
+export const checkBatch = (data:any) => request({
+  url: `/bill/v2/wt-driver-account/refund/batch/check`,
+  method: 'post',
+  data
+})

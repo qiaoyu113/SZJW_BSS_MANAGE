@@ -184,7 +184,7 @@ import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM }
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
 import { HandlePages, lock } from '@/utils/index'
-import { refundList, refundExport, refundExecute, refundRejection, batchRefundExecute, refundDownLod } from '@/api/driver-refund.ts'
+import { refundList, refundExport, refundExecute, refundRejection, batchRefundExecute, refundDownLod, checkBatch } from '@/api/driver-refund.ts'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { getDriverNoAndNameList, getDriverNameByNo } from '@/api/driver'
 import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
@@ -577,8 +577,18 @@ export default class extends Vue {
       console.log('1')
     }
   }
+
+  private async checkBefore(ids:string[]) {
+    const { data: res } = await checkBatch(ids)
+    if (res.success) {
+      return true
+    } else {
+      this.$message.error(res.errorMsg || res.message)
+    }
+  }
+
   // 批量退费
-  private handleReturn() {
+  private async handleReturn() {
     if (this.multipleSelection.length === 0) {
       this.$message.error('未勾选待退费数据')
     } else {
@@ -586,6 +596,12 @@ export default class extends Vue {
       this.multipleSelection.forEach((item:any) => {
         totalMoney += item.refundAmount
       })
+
+      let params = this.getRefundApplyIds
+      let check = await this.checkBefore(params)
+      if (!check) {
+        return
+      }
       this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,总计退费金额"${totalMoney}",<span style="color:red;">批量退费成功</span>?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -595,6 +611,7 @@ export default class extends Vue {
         // 此处写个方法调接口
         this.handMulRefund()
       }).catch(() => {
+        this.multipleSelection.splice(0, this.multipleSelection.length)
         this.$message({
           type: 'info',
           message: '已取消'
@@ -644,10 +661,17 @@ export default class extends Vue {
     }
   }
   // 批量驳回
-  private handleReject() {
+  private async handleReject() {
     if (this.multipleSelection.length === 0) {
       this.$message.error('未勾选待退费数据')
     } else {
+      let params = this.getRefundApplyIds
+      let check = await this.checkBefore(params)
+      console.log(check)
+      if (!check) {
+        console.log(check)
+        return
+      }
       this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,<span style="color:red;">批量退费驳回</span>?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
