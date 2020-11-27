@@ -96,7 +96,7 @@ export default class extends Vue {
       cityName: '',
       gmName: '',
       balance: '',
-      canFefund: '',
+      canRefund: '',
       money: '',
       reason: '',
       payMethodName: '',
@@ -148,7 +148,7 @@ export default class extends Vue {
       {
         type: 7,
         label: '可提现金额',
-        key: 'canFefund'
+        key: 'canRefund'
       }
     ]
     private formItem2:IState[] = [
