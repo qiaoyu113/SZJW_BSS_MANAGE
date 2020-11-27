@@ -96,7 +96,7 @@ export default class extends Vue {
       cityName: '',
       gmName: '',
       balance: '',
-      canExtract: '',
+      canRefund: '',
       money: '',
       reason: '',
       payMethodName: '',
@@ -126,7 +126,7 @@ export default class extends Vue {
       {
         type: 7,
         label: '司机手机号',
-        key: 'driverPhone'
+        key: 'phone'
       },
       {
         type: 7,
@@ -148,7 +148,7 @@ export default class extends Vue {
       {
         type: 7,
         label: '可提现金额',
-        key: 'canExtract'
+        key: 'canRefund'
       }
     ]
     private formItem2:IState[] = [
@@ -212,7 +212,7 @@ export default class extends Vue {
         }
         let { data: res } = await refundDetail(params)
         if (res.success) {
-          this.listQuery = { ...res.data }
+          this.listQuery = { ...this.listQuery, ...res.data }
         } else {
           this.$message.warning(res.message)
         }

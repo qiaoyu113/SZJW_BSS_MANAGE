@@ -60,14 +60,14 @@
           :class="isPC ? 'btnPc' : 'mobile'"
         >
           <el-button
-            v-if="listQuery.status!=='1'"
+            v-if="listQuery.status!=='3'"
             v-permission="['/v2/wt-driver-account/refund/create']"
             :class="isPC ? '' : 'btnMobile'"
             @click="goDetail"
           >
             申请退费
           </el-button>
-          <template v-else>
+          <template v-if="listQuery.status==='3'">
             <el-button
               v-permission="['/v2/wt-driver-account/refund/batch/reject']"
               :class="isPC ? '' : 'btnMobile'"
@@ -110,7 +110,7 @@
         <div class="middle" />
         <self-table
           ref="RefundForm"
-          :index="listQuery.status === '1'"
+          :index="listQuery.status === '3'"
           :is-p30="false"
           :operation-list="[]"
           :table-data="tableData"
@@ -141,7 +141,7 @@
               v-permission="['/v2/wt-driver-account/refund/execute']"
               type="text"
               size="small"
-              :disabled="+scope.row.status === 2 ? false :true"
+              :disabled="+scope.row.status === 3 ? false :true"
               @click="handlerefundClick(scope.row)"
             >
               退费
@@ -298,7 +298,7 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        maxlength: '14',
+        maxlength: '20',
         placeholder: '请输入',
         clearable: true,
         filterable: true
@@ -353,15 +353,15 @@ export default class extends Vue {
       text: '待审核'
     },
     {
-      name: '2',
-      text: '待退费'
-    },
-    {
       name: '3',
-      text: '已退费'
+      text: '待退费'// 审核通过
     },
     {
       name: '4',
+      text: '已退费'
+    },
+    {
+      name: '2',
       text: '审核不通过'
     }
   ]
@@ -387,7 +387,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'gmId',
+      key: 'gmName',
       label: '所属加盟经理',
       'min-width': '140px'
     },
@@ -516,9 +516,9 @@ export default class extends Vue {
       if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
         params.workCity = this.listQuery.workCity[1]
       }
-      this.listQuery.busiType && (params.busiType = this.listQuery.busiType)
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.joinManagerId && (params.joinManagerId = this.listQuery.joinManagerId)
-      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.driverId && (params.key = this.listQuery.driverId)
       this.listQuery.refundApplyId && (params.refundApplyId = this.listQuery.refundApplyId)
       this.listQuery.status !== '' && (params.status = this.listQuery.status)
 
@@ -778,7 +778,7 @@ export default class extends Vue {
     try {
       let params:any = {
         roleTypes: [1],
-        uri: '/v2/wt-driver-account/management/queryGM'
+        uri: '/v2/wt-driver-account/refund/queryGM'
       }
       this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
       let { data: res } = await GetSpecifiedRoleList(params)
@@ -807,7 +807,7 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.joinManagerId !== '' && (params.gmId = this.listQuery.joinManagerId)
       let { data: res } = await getDriverNoAndNameList(params, {
-        url: '/v2/wt-driver-account/flow/queryDriverList'
+        url: '/v2/wt-driver-account/refund/queryDriverList'
       })
       let result:any[] = res.data.map((item:any) => ({
         label: `${item.name}/${item.phone}`,
