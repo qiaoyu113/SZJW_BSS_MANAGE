@@ -141,7 +141,7 @@
               v-permission="['/v2/wt-driver-account/refund/execute']"
               type="text"
               size="small"
-              :disabled="+scope.row.status === '2' ? false :true"
+              :disabled="+scope.row.status === 2 ? false :true"
               @click="handlerefundClick(scope.row)"
             >
               退费
@@ -349,19 +349,19 @@ export default class extends Vue {
       text: '全部'
     },
     {
-      name: '0',
+      name: '1',
       text: '待审核'
     },
     {
-      name: '1',
+      name: '2',
       text: '待退费'
     },
     {
-      name: '2',
+      name: '3',
       text: '已退费'
     },
     {
-      name: '3',
+      name: '4',
       text: '审核不通过'
     }
   ]
