@@ -166,7 +166,7 @@
         title="退费"
         width="500px"
         :destroy-on-close="true"
-        :on-other="handleRejectClick"
+        :other="handleRejectClick"
         @closed="() => {
           row = {}
         }"
@@ -291,8 +291,8 @@ export default class extends Vue {
     {
       type: 'driverId',
       slot: true,
-      w: '190px',
-      label: '司机姓名(司机编号/手机号)',
+      w: '180px',
+      label: '司机姓名/编号/手机号',
       key: 'driverId'
     },
     {
@@ -320,25 +320,14 @@ export default class extends Vue {
       key: 'time'
     },
     {
-      col: 12,
+      col: 14,
       label: '退费状态',
       type: 'status',
       slot: true
     },
     {
       type: 'mulBtn',
-      col: 12,
-      slot: true,
-      w: '0px'
-    },
-    {
-      type: 'mulBtns',
-      col: 8,
-      slot: true,
-      w: '0px'
-    },
-    {
-      type: 'fileUrl',
+      col: 10,
       slot: true,
       w: '0px'
     }
@@ -442,7 +431,7 @@ export default class extends Vue {
       attrs: {
         'show-overflow-tooltip': true
       },
-      'width': '140px'
+      'min-width': '140px'
     },
     {
       key: 'createDate',
@@ -468,7 +457,8 @@ export default class extends Vue {
       key: 'op',
       label: '操作',
       slot: true,
-      'width': '250px'
+      'width': '250px',
+      fixed: 'right'
     }
   ];
   private page :PageObj= {
@@ -504,8 +494,8 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
-  @lock
-  private async getLists() {
+  // @lock
+  private async getLists(this:any) {
     try {
       this.listLoading = true
       let params:IState = {
@@ -528,6 +518,7 @@ export default class extends Vue {
       let { data: res } = await refundList(params)
       if (res.success) {
         this.tableData = res.data || []
+        this.$refs['RefundForm'].toggleRowSelection()
         res.page = await HandlePages(res.page)
         this.page.total = res.page.total
       } else {
@@ -561,17 +552,17 @@ export default class extends Vue {
     })
   }
   // 批量退费api
-  @lock
+  // @lock
   private async handMulRefund() {
     try {
       let params = this.getRefundApplyIds
       const { data: res } = await batchRefundExecute(params)
       if (res.success) {
+        this.getLists()
         this.$message({
           type: 'success',
           message: `${this.multipleSelection.length}条退费数据已退费成功;`
         })
-        this.getLists()
       } else {
         this.$message.error(res.errorMsg || res.message)
       }
@@ -584,7 +575,7 @@ export default class extends Vue {
   // 批量退费
   private handleReturn() {
     if (this.multipleSelection.length === 0) {
-      this.$message.error('请先选择')
+      this.$message.error('未勾选待退费数据')
     } else {
       let totalMoney = 0
       this.multipleSelection.forEach((item:any) => {
@@ -634,10 +625,9 @@ export default class extends Vue {
   // 驳回
   private async handleRejectClick(done:any) {
     try {
-      let params = {
-        refundApplyId: this.row.refundApplyId
-      }
+      let params = [this.row.refundApplyId]
       const res = await refundRejection(params)
+
       if (res) {
         done()
         this.getLists()
@@ -651,7 +641,7 @@ export default class extends Vue {
   // 批量驳回
   private handleReject() {
     if (this.multipleSelection.length === 0) {
-      this.$message.error('请先选择')
+      this.$message.error('未勾选待退费数据')
     } else {
       this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,<span style="color:red;">批量退费驳回</span>?`, '提示', {
         confirmButtonText: '确定',
@@ -663,11 +653,11 @@ export default class extends Vue {
         let params = this.getRefundApplyIds
         let res = await this.handleRefundReject(params)
         if (res) {
+          this.getLists()
           this.$message({
             type: 'success',
             message: `${this.multipleSelection.length}条退费数据已审核驳回;`
           })
-          this.getLists()
         }
       }).catch(() => {
         this.$message({
@@ -708,7 +698,7 @@ export default class extends Vue {
         params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
         params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
       } else {
-        return this.$message.error('请选择退费申请日期')
+        return this.$message.error('需要按申请退费时间段进行导出')
       }
       if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
         params.workCity = this.listQuery.workCity[1]
@@ -927,10 +917,7 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .refundList {
-    .box{
-      width: 100%;
-      padding: 20px;
-    }
+    min-width: 860px;
     .btnPc{
        width: 100%;
        padding: 0 10px;
@@ -971,7 +958,7 @@ export default class extends Vue {
       box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
     }
     .el-button{
-      margin-right: 10px;
+      margin-right: 8px;
     }
     .table_box {
       padding: 0px 20px 20px 20px;
@@ -991,5 +978,8 @@ export default class extends Vue {
   }
   .refundList >>> .el-card__header {
     border-bottom: none;
+  }
+  .refundList .SuggestForm >>> .el-button + .el-button{
+    margin-left: 0!important;
   }
 </style>

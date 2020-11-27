@@ -33,7 +33,7 @@
           />
         </SectionContainer>
         <SectionContainer
-          title="退款信息"
+          title="退费信息"
           :md="true"
         >
           <self-form
@@ -62,6 +62,44 @@
                 审核通过
               </el-button>
             </div>
+            <template
+              slot="reason"
+              slot-scope="scope"
+            >
+              <el-popover
+                placement="right-start"
+                width="400"
+                title="退费原因"
+                trigger="hover"
+                :content="scope.row.reason"
+              >
+                <p
+                  slot="reference"
+                  class="one-line"
+                >
+                  {{ scope.row.reason }}
+                </p>
+              </el-popover>
+            </template>
+            <template
+              slot="remarks"
+              slot-scope="scope"
+            >
+              <el-popover
+                placement="right-start"
+                width="400"
+                title="备注"
+                trigger="hover"
+                :content="scope.row.remarks"
+              >
+                <p
+                  slot="reference"
+                  class="one-line"
+                >
+                  {{ scope.row.remarks }}
+                </p>
+              </el-popover>
+            </template>
           </self-form>
         </SectionContainer>
       </div>
@@ -142,23 +180,24 @@ export default class extends Vue {
     private formItem1:IState[] = [
       {
         type: 7,
-        label: '账户总金额',
+        label: '账户总金额(元)',
         key: 'balance'
       },
       {
         type: 7,
-        label: '可提现金额',
+        label: '可提现金额(元)',
         key: 'canRefund'
       }
     ]
     private formItem2:IState[] = [
       {
         type: 7,
-        label: '申请退款金额',
+        label: '申请退费金额(元)',
         key: 'money'
       },
       {
-        type: 7,
+        type: 'reason',
+        slot: true,
         label: '退费原因',
         key: 'reason'
       },
@@ -193,7 +232,8 @@ export default class extends Vue {
         key: 'recoveryReceiptName'
       },
       {
-        type: 7,
+        type: 'remarks',
+        slot: true,
         label: '备注',
         key: 'remarks'
       }
@@ -236,7 +276,7 @@ export default class extends Vue {
       } else { // 详情
         this.formItem2.push({
           type: 7,
-          label: '审核状态',
+          label: '退费状态',
           key: 'statusName'
         })
       }
@@ -318,6 +358,14 @@ export default class extends Vue {
   width: 100%;
   display: flex;
   justify-content: flex-end
+}
+.one-line{
+  margin: 0;
+  white-space: nowrap;
+overflow: hidden;
+width: 100%;
+max-width: 150px;
+text-overflow: ellipsis;
 }
 </style>
 
