@@ -578,6 +578,7 @@ export default class extends Vue {
     }
   }
 
+  // 批量操作前置效验
   private async checkBefore(ids:string[]) {
     const { data: res } = await checkBatch(ids)
     if (res.success) {
