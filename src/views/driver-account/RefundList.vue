@@ -60,14 +60,14 @@
           :class="isPC ? 'btnPc' : 'mobile'"
         >
           <el-button
-            v-if="listQuery.status!=='1'"
+            v-if="listQuery.status!=='3'"
             v-permission="['/v2/wt-driver-account/refund/create']"
             :class="isPC ? '' : 'btnMobile'"
             @click="goDetail"
           >
             申请退费
           </el-button>
-          <template v-else>
+          <template v-if="listQuery.status==='3'">
             <el-button
               v-permission="['/v2/wt-driver-account/refund/batch/reject']"
               :class="isPC ? '' : 'btnMobile'"
@@ -110,7 +110,7 @@
         <div class="middle" />
         <self-table
           ref="RefundForm"
-          :index="listQuery.status === '1'"
+          :index="listQuery.status === '3'"
           :is-p30="false"
           :operation-list="[]"
           :table-data="tableData"
@@ -141,7 +141,7 @@
               v-permission="['/v2/wt-driver-account/refund/execute']"
               type="text"
               size="small"
-              :disabled="+scope.row.status === 2 ? false :true"
+              :disabled="+scope.row.status === 3 ? false :true"
               @click="handlerefundClick(scope.row)"
             >
               退费
@@ -353,15 +353,15 @@ export default class extends Vue {
       text: '待审核'
     },
     {
-      name: '2',
-      text: '待退费'
-    },
-    {
       name: '3',
-      text: '已退费'
+      text: '待退费'// 审核通过
     },
     {
       name: '4',
+      text: '已退费'
+    },
+    {
+      name: '2',
       text: '审核不通过'
     }
   ]
