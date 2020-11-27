@@ -107,7 +107,7 @@
             <div class="sumbitBtn">
               <el-button
                 style="float: center"
-                @click="goDetail()"
+                @click="backToList()"
               >
                 取消
               </el-button>
