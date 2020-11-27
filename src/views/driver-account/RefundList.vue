@@ -254,6 +254,8 @@ export default class extends Vue {
       },
       listeners: {
         'change': () => {
+          this.listQuery.joinManagerId = ''
+          this.resetDriver()
           this.handleClearQueryDriver()
           this.getGmOptions()
         }
@@ -899,7 +901,9 @@ export default class extends Vue {
   }
   // 重置司机
   resetDriver() {
-    this.listQuery.driverCode = ''
+    this.listQuery.driverId = ''
+
+    // this.listQuery.joinManagerId = ''
     this.searchKeyword = ''
     let len:number = this.driverOptions.length
     if (len > 0) {

@@ -209,7 +209,7 @@ export default class extends Vue {
       {
         type: 7,
         label: '持卡人姓名',
-        key: 'name'
+        key: 'payeeName'
       },
       {
         type: 7,
@@ -283,7 +283,6 @@ export default class extends Vue {
     }
     // 审核通过
     private audit(id: string | (string | null)[] | null | undefined) {
-      // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
       this.$confirm('确定要审核通过此退款信息吗？', '提示', {
         confirmButtonText: '继续',
         cancelButtonText: '返回',
@@ -299,7 +298,6 @@ export default class extends Vue {
     }
     // 审核未通过
     private unAudit(id: string | (string | null)[] | null | undefined) {
-      // this.$router.push({ name: 'accountManageDetail', query: { id: id } })
       this.$confirm('确定要审核未通过并驳回此退款信息吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
