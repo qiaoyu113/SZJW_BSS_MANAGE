@@ -439,7 +439,10 @@ export default class extends Vue {
     {
       key: 'reasonsRefund',
       label: '退费原因',
-      'min-width': '140px'
+      attrs: {
+        'show-overflow-tooltip': true
+      },
+      'width': '140px'
     },
     {
       key: 'createDate',
