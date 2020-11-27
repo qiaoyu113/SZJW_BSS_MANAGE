@@ -298,7 +298,7 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        maxlength: '14',
+        maxlength: '20',
         placeholder: '请输入',
         clearable: true,
         filterable: true
@@ -516,9 +516,9 @@ export default class extends Vue {
       if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
         params.workCity = this.listQuery.workCity[1]
       }
-      this.listQuery.busiType && (params.busiType = this.listQuery.busiType)
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.joinManagerId && (params.joinManagerId = this.listQuery.joinManagerId)
-      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.driverId && (params.key = this.listQuery.driverId)
       this.listQuery.refundApplyId && (params.refundApplyId = this.listQuery.refundApplyId)
       this.listQuery.status !== '' && (params.status = this.listQuery.status)
 
@@ -778,7 +778,7 @@ export default class extends Vue {
     try {
       let params:any = {
         roleTypes: [1],
-        uri: '/v2/wt-driver-account/management/queryGM'
+        uri: '/v2/wt-driver-account/refund/queryGM'
       }
       this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
       let { data: res } = await GetSpecifiedRoleList(params)
@@ -807,7 +807,7 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.joinManagerId !== '' && (params.gmId = this.listQuery.joinManagerId)
       let { data: res } = await getDriverNoAndNameList(params, {
-        url: '/v2/wt-driver-account/flow/queryDriverList'
+        url: '/v2/wt-driver-account/refund/queryDriverList'
       })
       let result:any[] = res.data.map((item:any) => ({
         label: `${item.name}/${item.phone}`,
