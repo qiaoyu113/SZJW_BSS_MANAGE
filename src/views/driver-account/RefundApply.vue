@@ -15,7 +15,7 @@
         >
           <template slot="backBtn">
             <div class="right">
-              <el-button @click="backToList()">
+              <el-button @click="backToList">
                 返回
               </el-button>
             </div>
@@ -107,7 +107,7 @@
             <div class="sumbitBtn">
               <el-button
                 style="float: center"
-                @click="goDetail()"
+                @click="backToList"
               >
                 取消
               </el-button>
@@ -334,7 +334,7 @@ export default class extends Vue {
     let splicInx: number
     splicInx = inxs !== -1 ? 2 : 1
     if (this.listQuery.hasReceipt === 1) {
-      this.createFrom.splice(inx, 2, ...this.activeFromC)
+      this.createFrom.splice(inx, splicInx, ...this.activeFromC)
       delete this.listQuery.recoveryReceipt
     } else if (this.listQuery.hasReceipt === 0) {
       this.createFrom.splice(inx, splicInx, ...this.activeFromC)
@@ -390,9 +390,9 @@ export default class extends Vue {
     ) {
       return callback(new Error('申请退款金额不可超过可提现金额，请确认！'))
     }
-    // if ((this.listQuery.money as number) <= 0) {
-    //   return callback(new Error('退款金额不能为0'))
-    // }
+    if ((this.listQuery.money as number) <= 0) {
+      return callback(new Error('申请退费金额要大于0！'))
+    }
     callback()
   }
   // 校验规则
@@ -458,7 +458,7 @@ export default class extends Vue {
       if (!this.isKillSumbit) {
         return this.$message({
           type: 'error',
-          message: '该司机当前已存在待退款状态退款申请，请完成后再操作'
+          message: '该司机当前有待退费记录，请处理完毕后在申请退费！'
         })
       }
       if ((this.listQuery.hasReceipt as number) === 0) {
@@ -503,7 +503,7 @@ export default class extends Vue {
       this.isKillSumbit = !data.data
       if (data.data) {
         this.$confirm(
-          '该司机当前已存在待退款状态退款申请，请完成后再操作',
+          '该司机当前有待退费记录，请处理完毕后在申请退费！',
           '提示',
           {
             confirmButtonText: '确定',
