@@ -566,7 +566,7 @@ export default class extends Vue {
         this.getLists()
         this.$message({
           type: 'success',
-          message: `${this.multipleSelection.length}条退费数据已退费成功;`
+          message: `${this.multipleSelection.length}条退费数据已退费成功`
         })
       } else {
         this.$message.error(res.errorMsg || res.message)
@@ -608,7 +608,7 @@ export default class extends Vue {
     this.showDialog = true
   }
   // 确认---单条退费
-  @lock
+  // @lock
   private async confirm(done: any) {
     try {
       let params = {
@@ -658,10 +658,12 @@ export default class extends Vue {
         let params = this.getRefundApplyIds
         let res = await this.handleRefundReject(params)
         if (res) {
-          this.getLists()
+          setTimeout(() => {
+            this.getLists()
+          }, 2000)
           this.$message({
             type: 'success',
-            message: `${this.multipleSelection.length}条退费数据已审核驳回;`
+            message: `${this.multipleSelection.length}条退费数据已审核驳回`
           })
         }
       }).catch(() => {
@@ -673,7 +675,7 @@ export default class extends Vue {
     }
   }
   // 批量驳回 和驳回 api
-  @lock
+  // @lock
   private async handleRefundReject(refundApplyIds: string[]) {
     try {
       const { data: res } = await refundRejection(refundApplyIds)
