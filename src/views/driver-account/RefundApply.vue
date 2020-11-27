@@ -35,7 +35,7 @@
               :default-first-option="true"
               :remote-method="remoteMethod"
               :loading="driverLoading"
-              placeholder="请选择司机"
+              placeholder="请输入"
               @change="driverSelect"
               @clear="handleClearQueryDriver"
             >
@@ -131,6 +131,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { options } from 'numeral'
 import { getDriverNoAndNameList } from '@/api/driver'
+import { lock } from '@/utils/index.ts'
 import {
   haveRecordToBeApproved,
   getRefundEcho,
@@ -289,7 +290,7 @@ export default class extends Vue {
     {
       type: 1,
       tagAttrs: {
-        placeholder: '请选择',
+        placeholder: '请输入',
         clearable: true,
         filterable: true,
         maxlength: '50'
@@ -360,7 +361,7 @@ export default class extends Vue {
       }
     ],
     bankName: [
-      { required: true, message: '请选择开户行！', trigger: 'blur' },
+      { required: true, message: '请输入开户行！', trigger: 'blur' },
       {
         pattern: /^[a-zA-Z0-9\u4e00-\u9fa5]{1,50}$/,
         message: '开户行信息不可有特殊字符、空格',
@@ -453,13 +454,20 @@ export default class extends Vue {
   }
   // 表单检验通过
   private handlePassClick(valid: any) {
-    if (!this.isKillSumbit) {
-      return this.$message({
-        type: 'error',
-        message: '该司机当前已存在待退款状态退款申请，请完成后再操作'
-      })
+    try {
+      if (!this.isKillSumbit) {
+        return this.$message({
+          type: 'error',
+          message: '该司机当前已存在待退款状态退款申请，请完成后再操作'
+        })
+      }
+      if ((this.listQuery.hasReceipt as number) === 0) {
+        this.listQuery.recoveryReceipt = 0
+      }
+      this.createRefundSure(this.listQuery)
+    } catch (error) {
+      return error
     }
-    this.createRefundSure(this.listQuery)
   }
 
   // 接口
@@ -532,6 +540,7 @@ export default class extends Vue {
       return error
     }
   }
+  @lock
   async createRefundSure(params: object) {
     try {
       const { data } = await createRefund(params)
@@ -543,13 +552,15 @@ export default class extends Vue {
       }
       this.$message({
         type: 'success',
-        message: '退费成功'
+        message: '提交成功'
       })
       this.$router.push({
         path: '/driveraccount/refundlist'
       })
     } catch (error) {
       return error
+    } finally {
+      console.log('')
     }
   }
   async getDriverInfo(keyWord: string = '') {
