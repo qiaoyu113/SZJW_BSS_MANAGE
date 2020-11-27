@@ -387,7 +387,7 @@ export default class extends Vue {
       'min-width': '140px'
     },
     {
-      key: 'gmId',
+      key: 'gmName',
       label: '所属加盟经理',
       'min-width': '140px'
     },
