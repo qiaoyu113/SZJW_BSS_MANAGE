@@ -256,7 +256,7 @@ export default class extends Vue {
       listeners: {
         'change': () => {
           this.listQuery.joinManagerId = ''
-          this.resetDriver()
+          // this.resetDriver()
           this.handleClearQueryDriver()
           this.getGmOptions()
         }
@@ -811,6 +811,7 @@ export default class extends Vue {
   // 获取加盟经理列表
   async getGmOptions() {
     try {
+      this.listQuery.joinManagerId = ''
       let params:any = {
         roleTypes: [1],
         uri: '/v2/wt-driver-account/refund/queryGM'
@@ -825,6 +826,10 @@ export default class extends Vue {
             value: item.id
           }
         })
+        let lenGm:number = this.gmOptions.length
+        if (lenGm > 0) {
+          this.gmOptions.splice(0, lenGm)
+        }
         this.gmOptions.push(...gms)
         if (this.gmOptions.length === 1) {
           this.listQuery.joinManagerId = this.gmOptions[0].value
@@ -951,10 +956,6 @@ export default class extends Vue {
     if (len > 0) {
       this.queryPage.page = 0
       this.driverOptions.splice(0, len)
-    }
-    let lenGm:number = this.gmOptions.length
-    if (len > 0) {
-      this.gmOptions.splice(0, len)
     }
   }
   mounted() {
