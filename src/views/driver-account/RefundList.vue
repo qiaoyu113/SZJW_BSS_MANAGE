@@ -68,22 +68,26 @@
               申请退费
             </el-button>
           </div>
-          <div v-if="listQuery.status==='3'">
-            <el-button
-              v-permission="['/v2/wt-driver-account/refund/batch/reject']"
-              :class="isPC ? '' : 'btnMobile'"
-              @click="handleReject"
-            >
-              批量驳回
-            </el-button>
-            <el-button
-              v-permission="['/v2/wt-driver-account/refund/batch/execute']"
-              :class="isPC ? '' : 'btnMobile'"
-              @click="handleReturn"
-            >
-              批量退费
-            </el-button>
-          </div>
+          <template>
+            <div class="rejectBox">
+              <el-button
+                v-if="listQuery.status==='3'"
+                v-permission="['/v2/wt-driver-account/refund/batch/reject']"
+                :class="isPC ? '' : 'btnMobile'"
+                @click="handleReject"
+              >
+                批量驳回
+              </el-button>
+              <el-button
+                v-if="listQuery.status==='3'"
+                v-permission="['/v2/wt-driver-account/refund/batch/execute']"
+                :class="isPC ? '' : 'btnMobile'"
+                @click="handleReturn"
+              >
+                批量退费
+              </el-button>
+            </div>
+          </template>
           <el-button
             type="primary"
             :class="isPC ? '' : 'btnMobile'"
@@ -969,6 +973,10 @@ export default class extends Vue {
 </script>
 <style lang="scss" scoped>
   .refundList {
+    .rejectBox{
+      display: flex;
+      align-items: center;
+    }
     min-width: 860px;
     .btnPc{
        width: 100%;
