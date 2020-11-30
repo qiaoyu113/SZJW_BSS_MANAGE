@@ -191,7 +191,7 @@ import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
   GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
 import { options } from 'numeral'
-import { identity } from 'lodash'
+import { identity, zipWith } from 'lodash'
 import { delayTime } from '@/settings'
 interface PageObj {
   page:number,
@@ -635,6 +635,10 @@ export default class extends Vue {
     try {
       let params = {
         refundApplyId: this.row.refundApplyId
+      }
+      let check = await this.checkBefore([this.row.refundApplyId])
+      if (!check) {
+        return
       }
       const { data: res } = await refundExecute(params)
       if (res.success) {

@@ -100,6 +100,37 @@
                 </p>
               </el-popover>
             </template>
+            <template
+              slot="bankName"
+              slot-scope="scope"
+            >
+              <el-popover
+                placement="right-start"
+                width="400"
+                title="开户行"
+                trigger="hover"
+                :content="scope.row.bankName"
+              >
+                <p
+                  slot="reference"
+                  class="one-line"
+                >
+                  {{ scope.row.bankName }}
+                </p>
+              </el-popover>
+            </template>
+            <!-- <template
+              slot="bankCardNo"
+              slot-scope="scope"
+            >
+              <div
+                slot="reference"
+                style="
+                margin:0;max-width:100px"
+              >
+                {{ scope.row.bankCardNo }}
+              </div>
+            </template> -->
           </self-form>
         </SectionContainer>
       </div>
@@ -217,7 +248,8 @@ export default class extends Vue {
         key: 'bankCardNo'
       },
       {
-        type: 7,
+        type: 'bankName',
+        slot: true,
         label: '开户行',
         key: 'bankName'
       },
