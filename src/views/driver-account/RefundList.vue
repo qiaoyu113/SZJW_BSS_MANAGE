@@ -718,7 +718,7 @@ export default class extends Vue {
   }
 
   handleSelectionChange(val:any) {
-    console.log(val)
+    // console.log(val)
     this.multipleSelection = val
   }
 
