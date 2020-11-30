@@ -192,6 +192,7 @@ import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
 import TableHeader from '@/components/TableHeader/index.vue'
 import { options } from 'numeral'
 import { identity } from 'lodash'
+import { delayTime } from '@/settings'
 interface PageObj {
   page:number,
   limit:number,
@@ -499,7 +500,7 @@ export default class extends Vue {
     this.getLists()
   }
   // 获取列表
-  // @lock
+  @lock
   private async getLists(this:any) {
     try {
       this.listLoading = true
@@ -557,13 +558,15 @@ export default class extends Vue {
     })
   }
   // 批量退费api
-  // @lock
+  @lock
   private async handMulRefund() {
     try {
       let params = this.getRefundApplyIds
       const { data: res } = await batchRefundExecute(params)
       if (res.success) {
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
         this.$message({
           type: 'success',
           message: `${this.multipleSelection.length}条退费数据已退费成功`
@@ -626,7 +629,7 @@ export default class extends Vue {
     this.showDialog = true
   }
   // 确认---单条退费
-  // @lock
+  @lock
   private async confirm(done: any) {
     try {
       let params = {
@@ -635,7 +638,9 @@ export default class extends Vue {
       const { data: res } = await refundExecute(params)
       if (res.success) {
         done()
-        this.getLists()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg || res.message)
       }
@@ -649,12 +654,7 @@ export default class extends Vue {
   private async handleRejectClick(done:any) {
     try {
       let params = [this.row.refundApplyId]
-      const res = await refundRejection(params)
-
-      if (res) {
-        done()
-        this.getLists()
-      }
+      await this.handleRefundReject(params, 'single', done)
     } catch (err) {
       console.log(err)
     } finally {
@@ -679,16 +679,7 @@ export default class extends Vue {
       }).then(async() => {
       // 此处写个方法调接口
         let params = this.getRefundApplyIds
-        let res = await this.handleRefundReject(params)
-        if (res) {
-          setTimeout(() => {
-            this.getLists()
-          }, 2000)
-          this.$message({
-            type: 'success',
-            message: `${this.multipleSelection.length}条退费数据已审核驳回`
-          })
-        }
+        await this.handleRefundReject(params, 'mul')
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -698,12 +689,22 @@ export default class extends Vue {
     }
   }
   // 批量驳回 和驳回 api
-  // @lock
-  private async handleRefundReject(refundApplyIds: string[]) {
+  @lock
+  private async handleRefundReject(refundApplyIds: string[], flag:string, done?:any) {
     try {
       const { data: res } = await refundRejection(refundApplyIds)
       if (res.success) {
-        return true
+        if (flag === 'single') {
+          done()
+        } else if (flag === 'mul') {
+          this.$message({
+            type: 'success',
+            message: `${this.multipleSelection.length}条退费数据已审核驳回`
+          })
+        }
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
       } else {
         this.$message.error(res.errorMsg || res.message)
       }
@@ -1013,5 +1014,8 @@ export default class extends Vue {
   }
   .refundList .SuggestForm >>> .el-button + .el-button{
     margin-left: 0!important;
+  }
+  .refundList >>> .el-badge {
+    margin-right:0px;
   }
 </style>
