@@ -59,15 +59,16 @@
           slot="mulBtn"
           :class="isPC ? 'btnPc' : 'mobile'"
         >
-          <el-button
-            v-if="listQuery.status!=='3'"
-            v-permission="['/v2/wt-driver-account/refund/create']"
-            :class="isPC ? '' : 'btnMobile'"
-            @click="goDetail"
-          >
-            申请退费
-          </el-button>
-          <template v-if="listQuery.status==='3'">
+          <div v-if="listQuery.status!=='3'">
+            <el-button
+              v-permission="['/v2/wt-driver-account/refund/create']"
+              :class="isPC ? '' : 'btnMobile'"
+              @click="goDetail"
+            >
+              申请退费
+            </el-button>
+          </div>
+          <div v-if="listQuery.status==='3'">
             <el-button
               v-permission="['/v2/wt-driver-account/refund/batch/reject']"
               :class="isPC ? '' : 'btnMobile'"
@@ -82,7 +83,7 @@
             >
               批量退费
             </el-button>
-          </template>
+          </div>
           <el-button
             type="primary"
             :class="isPC ? '' : 'btnMobile'"

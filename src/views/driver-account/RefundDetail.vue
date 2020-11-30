@@ -53,7 +53,7 @@
               <el-button
                 @click="unAudit()"
               >
-                审核未通过
+                审核不通过
               </el-button>
               <el-button
                 type="primary"
@@ -331,9 +331,9 @@ export default class extends Vue {
         })
       })
     }
-    // 审核未通过
+    // 审核不通过
     private unAudit(id: string | (string | null)[] | null | undefined) {
-      this.$confirm('确定要审核未通过并驳回此退款信息吗？', '提示', {
+      this.$confirm('确定要审核不通过并驳回此退款信息吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
