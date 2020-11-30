@@ -276,6 +276,7 @@ export default class extends Vue {
         'change': () => {
           this.listQuery.joinManagerId = ''
           this.handleClearQueryDriver()
+          this.getGmOptions()
         }
       }
     },
@@ -637,6 +638,7 @@ export default class extends Vue {
       }
       const { data: res } = await refundExecute(params)
       if (res.success) {
+        this.$message.success('退费成功')
         done()
         setTimeout(() => {
           this.getLists()
@@ -695,6 +697,7 @@ export default class extends Vue {
       const { data: res } = await refundRejection(refundApplyIds)
       if (res.success) {
         if (flag === 'single') {
+          this.$message.success('驳回成功')
           done()
         } else if (flag === 'mul') {
           this.$message({
@@ -805,6 +808,7 @@ export default class extends Vue {
         uri: '/v2/wt-driver-account/refund/queryGM'
       }
       this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
+      this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
         this.gmOptions.splice(0, this.gmOptions.length)
@@ -931,13 +935,16 @@ export default class extends Vue {
   // 重置司机
   resetDriver() {
     this.listQuery.driverId = ''
-
     // this.listQuery.joinManagerId = ''
     this.searchKeyword = ''
     let len:number = this.driverOptions.length
     if (len > 0) {
       this.queryPage.page = 0
       this.driverOptions.splice(0, len)
+    }
+    let lenGm:number = this.gmOptions.length
+    if (len > 0) {
+      this.gmOptions.splice(0, len)
     }
   }
   mounted() {

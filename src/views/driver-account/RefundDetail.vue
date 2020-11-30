@@ -227,11 +227,6 @@ export default class extends Vue {
         key: 'hasReceiptName'
       },
       {
-        type: 7,
-        label: '收据是否已提供给财务',
-        key: 'recoveryReceiptName'
-      },
-      {
         type: 'remarks',
         slot: true,
         label: '备注',
@@ -252,7 +247,15 @@ export default class extends Vue {
         }
         let { data: res } = await refundDetail(params)
         if (res.success) {
+          const isReport = {
+            type: 7,
+            label: '收据是否已提供给财务',
+            key: 'recoveryReceiptName'
+          }
           this.listQuery = { ...this.listQuery, ...res.data }
+          if (this.listQuery.hasReceipt === 1) {
+            this.formItem2.splice(7, 0, isReport)
+          }
         } else {
           this.$message.warning(res.message)
         }
