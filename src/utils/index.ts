@@ -345,6 +345,15 @@ export function validatorValue(array:any[], vm:any) {
   return true
 }
 
+// 睡眠函数
+function sleep(time = 0) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
+
 /**
  *
  * @param target 防止重复点击
@@ -356,11 +365,10 @@ export function lock(target:any, key:string, desc:any) {
   desc.value = async function() {
     if (this.$lock) return
     this.$lock = true // 上锁 🔐
-    await fn.apply(this, [...arguments]).finally(() => {
+    await fn.apply(this, [...arguments]).finally(async() => {
       // 此处的延时时在dialog关闭动画结束后在解锁 🔓
-      setTimeout(() => {
-        this.$lock = false
-      }, 350)
+      await sleep(350)
+      this.$lock = false
     })
     return target
   }
