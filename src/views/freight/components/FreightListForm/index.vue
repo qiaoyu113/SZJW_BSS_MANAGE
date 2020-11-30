@@ -304,6 +304,17 @@
                   >
                     查询
                   </el-button>
+                  <el-button
+                    v-permission="['/v2/waybill/amount/export']"
+                    :class="isPC ? 'filter-item' : 'filter-item-m'"
+                    type="primary"
+                    size="small"
+                    name="ownerlist_derive_btn"
+                    :loading="isExport"
+                    @click="handleDeriveClick"
+                  >
+                    导出
+                  </el-button>
                 </el-form-item>
               </el-col>
             </el-form>
@@ -317,11 +328,10 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel } from '@/api/common'
-import { GetSpecifiedRoleList } from '@/api/freight'
+import { GetSpecifiedRoleList, managementDerive } from '@/api/freight'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'
 import { TimestampYMD } from '@/utils/index'
-
 import '@/styles/common.scss'
 
 @Component({
@@ -338,6 +348,7 @@ export default class extends Vue {
   private optionsCompany: any[] = []
   private optionsJoin: any[] = []
   private optionsSale: any[] = []
+  private isExport: boolean = false
   private arrayCity: any[] = []
   private dutyListOptions: any[] = []
   private optionsClassification: any[] = []
@@ -719,6 +730,29 @@ export default class extends Vue {
     this.arrayCity = []
     this.DateValueChild = []
     this.DateValueChild2 = []
+  }
+  // 导出
+  private async handleDeriveClick() {
+    try {
+      this.isExport = true
+      let params = { ...this.listQuery }
+      delete params.page
+      delete params.limit
+      if (this.DateValueChild && this.DateValueChild.length === 2) {
+        const { data } = await managementDerive(params)
+        if (data.success) {
+          this.$message.success('导出成功')
+        } else {
+          this.$message.error(data.errorMsg || data.message)
+        }
+      } else {
+        this.$message.error('请选择出车日期')
+      }
+    } catch (err) {
+      console.log('export fail:', err)
+    } finally {
+      this.isExport = false
+    }
   }
 }
 </script>

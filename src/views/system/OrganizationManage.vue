@@ -299,6 +299,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { RoleTree } from './components'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetArea } from '@/api/common'
+import { lock } from '@/utils/index'
 import {
   getOfficeList,
   createOffice,
@@ -548,67 +549,77 @@ export default class extends Vue {
     }
   }
   private async confirm(done: any) {
-    (this.$refs['dialogForm'] as any).validate(async(valid: boolean) => {
+    (this.$refs['dialogForm'] as any).validate((valid: boolean) => {
       if (valid) {
-        this.dialogForm.parentId = this.addData.id
-        this.dialogForm.parentIds =
-          this.addData.parentIds + ',' + this.addData.id
-        if (this.isAdd) {
-          // 添加
-          let params = {
-            name: '',
-            parentId: 0,
-            parentIds: '',
-            type: 0,
-            dutyId: '',
-            areaCode: ''
-          }
-          params.name = this.dialogForm.name
-          params.type = this.addData.type + 1
-          params.parentIds = this.addData.parentIds
-          params.parentIds = `${this.addData.parentIds},${this.addData.id}`
-          if (this.addData.type === 2) {
-            params.areaCode = this.dialogForm.areaCode
-          }
-          if (this.addData.type === 3) {
-            params.dutyId = this.dialogForm.dutyId
-          }
-          if (this.addData.type === 4) {
-            params.dutyId = this.addData.dutyId
-          }
-          params.parentId = this.addData.id
-          const { data } = await createOffice(params)
-          if (data.success) {
-            this.$message.success(`创建成功`)
-            this.append(data.data)
-            this.showDialog = false
-            this.resetDialog()
-          } else {
-            this.$message.error(data)
-          }
-        } else {
-          // 编辑
-          let params = {
-            id: this.addData.id,
-            name: this.dialogForm.name,
-            areaCode: this.dialogForm.areaCode,
-            dutyId: ''
-          }
-          if (this.addData.type === 4) {
-            params.dutyId = this.dialogForm.dutyId
-          }
-          const { data } = await updateOffice(params)
-          if (data.success) {
-            this.$message.success(`编辑成功`)
-            this.update(this.dialogForm)
-            this.showDialog = false
-            this.resetDialog()
-          } else {
-            this.$message.error(data)
-          }
-        }
+        this.saveData()
       }
     })
+  }
+  @lock
+  async saveData() {
+    try {
+      this.dialogForm.parentId = this.addData.id
+      this.dialogForm.parentIds =
+          this.addData.parentIds + ',' + this.addData.id
+      if (this.isAdd) {
+        // 添加
+        let params = {
+          name: '',
+          parentId: 0,
+          parentIds: '',
+          type: 0,
+          dutyId: '',
+          areaCode: ''
+        }
+        params.name = this.dialogForm.name
+        params.type = this.addData.type + 1
+        params.parentIds = this.addData.parentIds
+        params.parentIds = `${this.addData.parentIds},${this.addData.id}`
+        if (this.addData.type === 2) {
+          params.areaCode = this.dialogForm.areaCode
+        }
+        if (this.addData.type === 3) {
+          params.dutyId = this.dialogForm.dutyId
+        }
+        if (this.addData.type === 4) {
+          params.dutyId = this.addData.dutyId
+        }
+        params.parentId = this.addData.id
+        const { data } = await createOffice(params)
+        if (data.success) {
+          this.$message.success(`创建成功`)
+          this.append(data.data)
+          this.showDialog = false
+          this.resetDialog()
+        } else {
+          this.$message.error(data)
+        }
+      } else {
+        // 编辑
+        let params = {
+          id: this.addData.id,
+          name: this.dialogForm.name,
+          areaCode: this.dialogForm.areaCode,
+          dutyId: ''
+        }
+        if (this.addData.type === 4) {
+          params.dutyId = this.dialogForm.dutyId
+        }
+        const { data } = await updateOffice(params)
+        if (data.success) {
+          this.$message.success(`编辑成功`)
+          this.update(this.dialogForm)
+          this.showDialog = false
+          this.resetDialog()
+        } else {
+          this.$message.error(data)
+        }
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
+    }
   }
   // 清楚dialog
   private resetDialog() {

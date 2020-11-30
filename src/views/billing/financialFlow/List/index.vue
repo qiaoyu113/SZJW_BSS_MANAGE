@@ -81,13 +81,8 @@
         >
           导出
         </el-button>
-      </div>
-    </self-form>
-    <div class="table_box">
-      <div class="middle">
         <el-button
           v-permission="['/v2/wt-driver-account/flow/manual/create']"
-          icon="el-icon-plus"
           type="primary"
           size="small"
           @click="handleOpenClick"
@@ -95,10 +90,14 @@
           手动添加流水
         </el-button>
       </div>
+    </self-form>
+    <div
+      class="table_box"
+      style="padding-top:30px;"
+    >
       <!-- 表格 -->
       <self-table
         :index="false"
-        :height="tableHeight"
         :is-p30="false"
         :operation-list="[]"
         :table-data="tableData"
@@ -224,7 +223,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { getFlowList, exportFlowList, saveFlowData, getOrderListByDriverId, getOrderDetailByDriverId, getDriverListByGmId, getListAll, GetChargeAmountByChargeId } from '@/api/driver-account'
@@ -359,6 +358,7 @@ export default class extends Vue {
         'default-expanded-keys': true,
         'default-checked-keys': true,
         'node-key': 'city',
+        clearable: true,
         props: {
           lazy: true,
           lazyLoad: this.showWork
@@ -537,10 +537,6 @@ export default class extends Vue {
   // 判断是否是PC
   get isPC() {
     return SettingsModule.isPC
-  }
-  get tableHeight() {
-    let otherHeight = 440
-    return document.body.offsetHeight - otherHeight || document.documentElement.offsetHeight - otherHeight
   }
   // 重置加盟经理
   resetGmId() {
@@ -737,6 +733,7 @@ export default class extends Vue {
     this.addForm.billingType = ''
   }
   // 提交弹框表单
+  @lock
   async saveData() {
     try {
       this.submitLoading = true
@@ -1075,9 +1072,6 @@ export default class extends Vue {
         margin-top: 10px;
         width:80%;
       }
-    }
-    .middle {
-      margin: 10px 0px;
     }
     .SuggestForm {
       width: 100%;

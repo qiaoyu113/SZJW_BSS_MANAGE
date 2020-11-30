@@ -1,538 +1,998 @@
 <template>
   <div
+    v-loading="listLoading"
     class="refundList"
     :class="{
       p15: isPC
     }"
   >
-    <suggest-container
-      :tab="tab"
-      :tags="tags"
-      :active-name="listQuery.status"
-      @handle-query="handleQuery"
-    >
-      <!-- 查询表单 -->
+    <div class="box">
       <self-form
         :list-query="listQuery"
         :form-item="formItem"
-        label-width="80px"
-        class="p15"
+        size="small"
+        label-width="100px"
+        class="p15 SuggestForm"
+        :pc-col="8"
       >
+        <template slot="status">
+          <el-badge
+            v-for="item in btns"
+            :key="item.text"
+          >
+            <el-button
+              type="primary"
+              margin-right="20px"
+              :plain="item.name !== listQuery.status"
+              @click="() => {
+                listQuery.status = item.name
+                handleFilterClick()
+              }"
+            >
+              {{ item.text }}
+            </el-button>
+          </el-badge>
+        </template>
+        <template slot="driverId">
+          <el-select
+            v-model.trim="listQuery.driverId"
+            v-loadmore="loadQueryDriverByKeyword"
+            placeholder="请选择"
+            reserve-keyword
+            :default-first-option="true"
+            clearable
+            filterable
+            remote
+            :remote-method="querySearchByKeyword"
+            @clear="handleClearQueryDriver"
+          >
+            <el-option
+              v-for="item in driverOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </template>
+        <!-- 插槽 -->
         <div
-          slot="btn"
+          slot="mulBtn"
           :class="isPC ? 'btnPc' : 'mobile'"
         >
+          <div v-if="listQuery.status!=='3'">
+            <el-button
+              v-permission="['/v2/wt-driver-account/refund/create']"
+              :class="isPC ? '' : 'btnMobile'"
+              @click="goDetail"
+            >
+              申请退费
+            </el-button>
+          </div>
+          <template>
+            <div class="rejectBox">
+              <el-button
+                v-if="listQuery.status==='3'"
+                v-permission="['/v2/wt-driver-account/refund/batch/reject']"
+                :class="isPC ? '' : 'btnMobile'"
+                @click="handleReject"
+              >
+                批量驳回
+              </el-button>
+              <el-button
+                v-if="listQuery.status==='3'"
+                v-permission="['/v2/wt-driver-account/refund/batch/execute']"
+                :class="isPC ? '' : 'btnMobile'"
+                @click="handleReturn"
+              >
+                批量退费
+              </el-button>
+            </div>
+          </template>
           <el-button
-            size="small"
-            type="warning"
+            type="primary"
             :class="isPC ? '' : 'btnMobile'"
-            name="driverclue_reset_btn"
+            @click="handleFilterClick"
+          >
+            查询
+          </el-button>
+          <el-button
+            v-permission="['/v2/wt-driver-account/refund/export']"
+            type="primary"
+            :class="isPC ? '' : 'btnMobile'"
+            @click="handleExportClick"
+          >
+            导出
+          </el-button>
+          <el-button
+            :class="isPC ? '' : 'btnMobile'"
             @click="handleResetClick"
           >
             重置
           </el-button>
-          <el-button
-            size="small"
-            :class="isPC ? '' : 'btnMobile'"
-            type="primary"
-            name="driverclue_filter_btn"
-            @click="handleFilterClick"
-          >
-            筛选
-          </el-button>
         </div>
       </self-form>
-    </suggest-container>
-
-    <table-header
-      :tab="[
-        {
-          name: '用户管理',
-          label: '用户管理'
-        }
-      ]"
-      active-name="用户管理"
-    >
-      <div class="subTitle">
-        <router-link :to="{path: '/system/addUser'}">
-          <el-button
-            v-permission="['/v2/base/user/create']"
-            class="createUser"
-            icon="el-icon-plus"
-            type="primary"
-            size="small"
-          >
-            新建用户
-          </el-button>
-        </router-link>
-      </div>
-    </table-header>
-    <self-table
-      v-loading="listLoading"
-      :operation-list="[]"
-      :index="false"
-      :table-data="tableData"
-      :columns="columns"
-      :page="page"
-      @onPageSize="handlePageSize"
-    >
-      <template v-slot:status="scope">
-        <span v-if="scope.row.status ===1">启用</span>
-        <span v-else>禁用</span>
-      </template>
-      <template v-slot:op="scope">
-        <el-dropdown
-          :trigger="isPC ? 'hover' : 'click'"
-          name="driverclue_moreMenu_dropdown"
-          @command="(e) => handleCommandChange(e,scope.row)"
+      <div class="table_box">
+        <div class="middle" />
+        <self-table
+          ref="RefundForm"
+          :index="listQuery.status === '3'"
+          :is-p30="false"
+          :operation-list="[]"
+          :table-data="tableData"
+          :columns="columns"
+          row-key="id"
+          :page="page"
+          @onPageSize="handlePageSize"
+          @selection-change="handleSelectionChange"
         >
-          <span
-            v-if="isPC"
-            class="el-dropdown-link"
-          >
-            更多操作<i
-              v-if="isPC"
-              class="el-icon-arrow-down el-icon--right"
-            />
-          </span>
-          <span
-            v-else
-            style="font-size: 18px;"
-            class="el-dropdown-link"
-          >
-            <i class="el-icon-setting el-icon--right" />
-          </span>
-
-          <el-dropdown-menu
-            slot="dropdown"
-          >
-            <el-dropdown-item
-              v-permission="['/v2/base/user/enableOrDisable']"
-              command="status"
+          <template v-slot:op="scope">
+            <el-button
+              type="text"
+              size="small"
+              @click="handleClick(scope.row)"
             >
-              <template v-if="scope.row.status ===1">
-                禁用
-              </template>
-              <template v-else>
-                启用
-              </template>
-            </el-dropdown-item>
-            <el-dropdown-item
-              v-permission="['/v1/base/user/password/reset']"
-              command="resetPwd"
+              详情
+            </el-button>
+            <el-button
+              v-permission="['/v2/wt-driver-account/refund/approve']"
+              type="text"
+              size="small"
+              :disabled="+scope.row.status === 1 ? false :true"
+              @click="handle1Click(scope.row)"
             >
-              重置密码
-            </el-dropdown-item>
-            <el-dropdown-item
-              v-permission="['/v2/base/user/update']"
-              command="edit"
+              审核
+            </el-button>
+            <el-button
+              v-permission="['/v2/wt-driver-account/refund/execute']"
+              type="text"
+              size="small"
+              :disabled="+scope.row.status === 3 ? false :true"
+              @click="handlerefundClick(scope.row)"
             >
-              编辑
-            </el-dropdown-item>
-            <el-dropdown-item
-              v-if="scope.row.syncPermission"
-              command="crm"
+              退费
+            </el-button>
+            <el-button
+              v-permission="['/v2/wt-driver-account/refund/downTemplate']"
+              type="text"
+              size="small"
+              @click="handleDownLoad(scope.row)"
             >
-              同步CRM账号
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-    </self-table>
+              下载报销模板
+            </el-button>
+          </template>
+        </self-table>
+      </div>
+      <SelfDialog
+        :class="'distributionDialog'"
+        :visible.sync="showDialog"
+        :confirm="confirm"
+        :show-other-button="true"
+        other-button-text="驳回"
+        title="退费"
+        width="500px"
+        :destroy-on-close="true"
+        :other="handleRejectClick"
+        @closed="() => {
+          row = {}
+        }"
+      >
+        <p>请审核此条待退费数据,总计退费金额"{{ row.refundAmount }}元"。</p>
+      </SelfDialog>
+    </div>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import { getUserManagerList, enableOrDisableUser, resetPassword, pushUserToCRM } from '@/api/system'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
-import { getLabel, phoneReg } from '@/utils/index.ts'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
+import { refundList, refundExport, refundExecute, refundRejection, batchRefundExecute, refundDownLod, checkBatch } from '@/api/driver-refund.ts'
+import SelfDialog from '@/components/SelfDialog/index.vue'
+import { getDriverNoAndNameList, getDriverNameByNo } from '@/api/driver'
+import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
+  GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
+import { options } from 'numeral'
+import { identity, zipWith } from 'lodash'
+import { delayTime } from '@/settings'
 interface PageObj {
-  page:Number,
-  limit:Number,
-  total?:Number
+  page:number,
+  limit:number,
+  total?:number
 }
-
-interface ColumnsObj {
-  key: string;
-  label: string;
-  width?: string;
-  'min-width'?:string;
-  slot?:boolean;
-  fixed?:string;
-}
-
-interface tableObj {
-  nickName: string;
-  roleName: string;
-  officeName: string;
-  mobile: string;
-  status: number;
-}
-
-interface Tab {
-  label:String,
-  name:String,
-  id:Number,
-  num?:Number | undefined
-}
-
-interface FormObj {
-  status:number|string;
-  mobile:number|string;
-  nickName:string;
-}
-
 interface IState {
   [key: string]: any;
 }
-
 @Component({
+  name: 'RefundDetail',
   components: {
     SelfTable,
     SelfForm,
-    SuggestContainer,
-    TableHeader
+    SelfDialog
   }
 })
 export default class extends Vue {
-  // 状态
-  private tab:Tab[] = [
+  private listLoading:boolean = false;
+  private tableData:any[] = [];
+  private dutyListOptions:IState[] = [];// 业务线列表
+  private gmOptions: any[] = []; // 加盟经理列表
+  private multipleSelection: any[] = []
+  private showDialog: boolean = false
+  private time: any[] = []
+  private endDate: any[] = []
+  private createDate: any[] = []
+  private driverOptions:IState[] = []
+  private row:IState = {} // 表格操作传递中间变量
+  private searchKeyword:string = ''
+  private queryPage:PageObj = {
+    page: 0,
+    limit: 10
+  }
+  private listQuery:IState = {
+    workCity: [],
+    busiType: '',
+    joinManagerId: '',
+    driverId: '',
+    refundApplyId: '',
+    status: '',
+    time: []
+  }
+  private formItem:any[] = [
     {
-      label: '全部',
-      name: '',
-      id: 0,
-      num: 0
+      type: 8,
+      key: 'workCity',
+      col: 8,
+      w: '100px',
+      label: '所属城市',
+      tagAttrs: {
+        placeholder: '请选择所属城市',
+        clearable: true,
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'workCity',
+        props: {
+          lazy: true,
+          lazyLoad: this.showWork
+        }
+      },
+      listeners: {
+        'change': () => {
+          this.listQuery.joinManagerId = ''
+          // this.resetDriver()
+          this.handleClearQueryDriver()
+          this.getGmOptions()
+        }
+      }
     },
     {
-      label: '启用',
-      name: '1',
-      id: 1,
-      num: 0
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '业务线',
+      key: 'busiType',
+      options: this.dutyListOptions,
+      listeners: {
+        'change': () => {
+          this.listQuery.joinManagerId = ''
+          this.handleClearQueryDriver()
+          this.getGmOptions()
+        }
+      }
     },
     {
-      label: '禁用',
-      name: '2',
-      id: 2,
-      num: 0
+      type: 2,
+      key: 'joinManagerId',
+      col: 8,
+      label: '所属加盟经理',
+      tagAttrs: {
+        placeholder: '请选择',
+        filterable: true,
+        clearable: true
+      },
+      options: this.gmOptions,
+      listeners: {
+        'change': this.handleClearQueryDriver
+      }
+    },
+    {
+      type: 'driverId',
+      slot: true,
+      w: '180px',
+      label: '司机姓名/编号/手机号',
+      key: 'driverId'
+    },
+    {
+      type: 1,
+      tagAttrs: {
+        maxlength: '20',
+        placeholder: '请输入',
+        clearable: true,
+        filterable: true
+      },
+      w: '100px',
+      label: '退费编号',
+      key: 'refundApplyId'
+    },
+    {
+      type: 3,
+      tagAttrs: {
+        placeholder: '请输入',
+        clearable: true,
+        filterable: true
+      },
+      w: '100px',
+      label: '退费申请日期',
+      col: 8,
+      key: 'time'
+    },
+    {
+      col: 14,
+      label: '退费状态',
+      type: 'status',
+      slot: true
+    },
+    {
+      type: 'mulBtn',
+      col: 10,
+      slot: true,
+      w: '0px'
     }
   ]
-  private tags:any[] = []// 顶部查询按钮回显的数组
-  private listLoading:boolean = false
-  private tableData:tableObj[] = []
-  private columns:ColumnsObj[] = [
+  private btns:any[] = [
     {
-      key: 'nickName',
-      label: '姓名',
+      name: '',
+      text: '全部'
+    },
+    {
+      name: '1',
+      text: '待审核'
+    },
+    {
+      name: '3',
+      text: '待退费'// 审核通过
+    },
+    {
+      name: '4',
+      text: '已退费'
+    },
+    {
+      name: '2',
+      text: '审核不通过'
+    }
+  ]
+  private columns:any[] = [
+    {
+      key: 'refundApplyId',
+      label: '退费编号',
+      'width': '140px'
+    },
+    {
+      key: 'driverId',
+      label: '司机编号',
+      'width': '140px'
+    },
+    {
+      key: 'driverName',
+      label: '司机姓名',
       'min-width': '140px'
     },
     {
-      key: 'roleName',
-      label: '角色',
+      key: 'workCity',
+      label: '所属城市',
       'min-width': '140px'
     },
     {
-      key: 'officeName',
-      label: '组织架构',
-      'min-width': '200px'
-    },
-    {
-      key: 'mobile',
-      label: '电话',
+      key: 'gmName',
+      label: '所属加盟经理',
       'min-width': '140px'
     },
     {
-      key: 'status',
-      label: '状态',
-      'min-width': '140px',
-      slot: true
+      key: 'busiTypeName',
+      label: '业务线',
+      'min-width': '140px'
+    },
+    {
+      key: 'driverStatusName',
+      label: '司机状态',
+      'min-width': '140px'
+    },
+    {
+      key: 'accountBalance',
+      label: '账户总金额',
+      'min-width': '140px'
+    },
+    {
+      key: 'canExtractMoney',
+      label: '可提现金额',
+      'min-width': '140px'
+    },
+    {
+      key: 'refundAmount',
+      label: '申请退款金额',
+      'width': '120px'
+    },
+    {
+      key: 'refundMethodName',
+      label: '退费方式',
+      'min-width': '140px'
+    },
+    {
+      key: 'payeeName',
+      label: '持卡人姓名',
+      'min-width': '140px'
+    },
+    {
+      key: 'bankDeposit',
+      label: '开户行',
+      'min-width': '140px'
+    },
+    {
+      key: 'refundBankCardNumber',
+      label: '卡号',
+      'width': '180px'
+    },
+    {
+      key: 'reasonsRefund',
+      label: '退费原因',
+      attrs: {
+        'show-overflow-tooltip': true
+      },
+      'min-width': '140px'
+    },
+    {
+      key: 'createDate',
+      label: '申请时间',
+      'width': '150px'
+    },
+    {
+      key: 'toExamineDate',
+      label: '审核时间',
+      'width': '150px'
+    },
+    {
+      key: 'creator',
+      label: '操作人',
+      'min-width': '120px'
+    },
+    {
+      key: 'checkStatus',
+      label: '退费状态',
+      'min-width': '120px'
     },
     {
       key: 'op',
       label: '操作',
-      fixed: 'right',
       slot: true,
-      'min-width': this.isPC ? '200px' : '50px'
+      'width': '250px',
+      fixed: 'right'
     }
-  ]
+  ];
   private page :PageObj= {
     page: 1,
     limit: 30,
     total: 0
   }
-  private listQuery:IState = {
-    status: '',
-    mobile: '',
-    nickName: ''
+  get getRefundApplyIds() {
+    return this.multipleSelection.map((item:any) => item.refundApplyId)
   }
-  private formItem:any[] = [
-    {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 10,
-        clearable: true
-      },
-      label: '姓名',
-      key: 'nickName'
-    },
-    {
-      type: 1,
-      tagAttrs: {
-        placeholder: '请输入',
-        maxlength: 11,
-        clearable: true
-      },
-      label: '电话',
-      key: 'mobile'
-    }
-  ]
-  // 判断是否是PC
-  get isPC() {
-    return SettingsModule.isPC
-  }
-
-  mounted() {
+  // 查询
+  handleFilterClick() {
+    this.page.page = 1
     this.getLists()
   }
-  // 获取用户列表
-  async getLists() {
-    try {
-      this.listLoading = true
-      interface Params {
-        limit:number;
-        page:number;
-        nickName?:string;
-        mobile?:string;
-        status?:string|number
-      }
-      let params:Params = {
-        limit: +this.page.limit,
-        page: +this.page.page,
-        status: this.listQuery.status
-      }
-      this.listQuery.nickName && (params.nickName = this.listQuery.nickName)
-      this.listQuery.mobile && (params.mobile = this.listQuery.mobile)
-      let { data: res } = await getUserManagerList(params)
-      if (res.success) {
-        res.page = await HandlePages(res.page)
-        this.tableData = res.data
-        this.page.total = res.page.total
-        for (let i = 0; i < this.tab.length; i++) {
-          let item:Tab = this.tab[i]
-          if (item.name === '') {
-            item.num = res.title.totalCount
-          } else if (item.name === '1') {
-            item.num = res.title.enableCount
-          } else if (item.name === '2') {
-            item.num = res.title.disableCount
-          }
-        }
-      } else {
-        this.$message.error(res.errorMsg)
-      }
-    } catch (err) {
-      console.log(`get lists fail:${err}`)
-    } finally {
-      this.listLoading = false
+  // 重置
+  handleResetClick() {
+    this.listQuery = {
+      workCity: [],
+      busiType: '',
+      joinManagerId: '',
+      driverId: '',
+      refundApplyId: '',
+      status: '',
+      time: []
     }
   }
-  // 启用、禁用
-  async enableOrDisableUser(row:any) {
-    try {
-      let params = {
-        id: row.id,
-        status: row.status === 1 ? 2 : 1
-      }
-      let { data: res } = await enableOrDisableUser(params)
-      if (res.success) {
-        if (row.syncStatus) {
-          this.$message.success(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态成功！`)
-        } else {
-          this.$message.success('操作成功')
-        }
-        this.getLists()
-      } else {
-        if (row.syncStatus) {
-          this.$message.error(`${row.status === 1 ? '禁用' : '启用'}状态同步CRM系统状态失败！请联系系统管理员或在CRM中操作${row.status === 1 ? '禁用' : '启用'}`)
-        } else {
-          this.$message.error(res.errorMsg)
-        }
-      }
-    } catch (err) {
-      console.log(`enable or disable fail:${err}`)
-    }
-  }
+
   // 分页
   handlePageSize(page:PageObj) {
     this.page.page = page.page
     this.page.limit = page.limit
     this.getLists()
   }
-  // 打开禁用确认框
-  openDisableUser(row:any) {
-    this.$confirm(`您确定要禁用${row.nickName}吗?`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      this.enableOrDisableUser(row)
-    }).catch(() => {
-      this.$message({
-        type: 'info',
-        message: '已取消操作'
-      })
-    })
-  }
-  // 更多操作
-  handleCommandChange(key:string|number, row:any) {
-    if (key === 'edit') { // 编辑
-      this.$router.push({
-        path: '/system/modifyUser',
-        query: {
-          userId: row.id
-        }
-      })
-    } else if (key === 'resetPwd') { // 重置密码
-      this.openResetPassword(row)
-    } else if (key === 'status') { // 重置密码
-      if (row.status === 1) { // 启用
-        this.openDisableUser(row)
-      } else {
-        this.enableOrDisableUser(row)
-      }
-    } else if (key === 'crm') {
-      this.openSendCrmData(row)
-      console.log('crm')
-    }
-  }
-  // 同步crm弹框
-  openSendCrmData(row:any) {
-    this.$confirm(`确定要同步生成${row.nickName}用户的CR账户吗?(注意:确认生成后需要前往激活方可生效)`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      this.pushUserToCRM(row)
-    }).catch(() => {
-      this.$message({
-        type: 'info',
-        message: '已取消操作'
-      })
-    })
-  }
-  // 同步用户到crm
-  async pushUserToCRM(row:any) {
+  // 获取列表
+  @lock
+  private async getLists(this:any) {
     try {
-      let params = {
-        userId: row.id
+      this.listLoading = true
+      let params:IState = {
+        page: this.page.page,
+        limit: this.page.limit
       }
-      let { data: res } = await pushUserToCRM(params)
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
+        params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
+      }
+      if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
+        params.workCity = this.listQuery.workCity[1]
+      }
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.joinManagerId && (params.joinManagerId = this.listQuery.joinManagerId)
+      this.listQuery.driverId && (params.key = this.listQuery.driverId)
+      this.listQuery.refundApplyId && (params.refundApplyId = this.listQuery.refundApplyId)
+      this.listQuery.status !== '' && (params.status = this.listQuery.status)
+
+      let { data: res } = await refundList(params)
       if (res.success) {
-        this.$message.success(`同步CRM账号成功！`)
-        this.getLists()
+        this.tableData = res.data || []
+        this.$refs['RefundForm'].toggleRowSelection()
+        res.page = await HandlePages(res.page)
+        this.page.total = res.page.total
       } else {
-        // this.$message.error(`同步CRM账号失败！请重新激活或联系统管理员！`)
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
-      console.log(`push userto crm fail:${err}`)
+      console.log(`get list fail:${err}`)
+    } finally {
+      this.listLoading = false
     }
   }
-  // 删除顶部表单的选项
-  handleQuery(value:any, key:keyof FormObj | 'state') {
-    if (key === 'state') {
-      this.page.page = 1
-      this.listQuery.status = value
+  // 申请退费
+  private goDetail() {
+    this.$router.push({
+      path: '/driveraccount/refundapply'
+    })
+  }
+  // 详情
+  private handleClick(row:IState) {
+    console.log(row)
+    this.$router.push({
+      path: '/driveraccount/refunddetail',
+      query: { id: row.refundApplyId }
+    })
+  }
+  // 审核
+  private handle1Click(row:IState) {
+    this.$router.push({
+      path: '/driveraccount/refundaudit',
+      query: { id: row.refundApplyId }
+    })
+  }
+  // 批量退费api
+  @lock
+  private async handMulRefund() {
+    try {
+      let params = this.getRefundApplyIds
+      const { data: res } = await batchRefundExecute(params)
+      if (res.success) {
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
+        this.$message({
+          type: 'success',
+          message: `${this.multipleSelection.length}条退费数据已退费成功`
+        })
+      } else {
+        this.$message.error(res.errorMsg || res.message)
+      }
+    } catch (err) {
+      console.log('退费失败')
+    } finally {
+      console.log('1')
+    }
+  }
+
+  // 批量操作前置效验
+  private async checkBefore(ids:string[]) {
+    const { data: res } = await checkBatch(ids)
+    if (res.success) {
+      return true
     } else {
-      this.listQuery[key] = value
+      this.$message.error(res.errorMsg || res.message)
     }
-    this.getLists()
   }
-  // 重置表单
-  handleResetClick() {
-    this.listQuery = {
-      status: '',
-      mobile: '',
-      nickName: ''
+
+  // 批量退费
+  private async handleReturn() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.error('未勾选待退费数据')
+    } else {
+      let totalMoney = 0
+      this.multipleSelection.forEach((item:any) => {
+        totalMoney += item.refundAmount
+      })
+
+      let params = this.getRefundApplyIds
+      let check = await this.checkBefore(params)
+      if (!check) {
+        return
+      }
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,总计退费金额"${totalMoney}",<span style="color:red;">批量退费成功</span>?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
+        type: 'warning'
+      }).then(() => {
+        // 此处写个方法调接口
+        this.handMulRefund()
+      }).catch(() => {
+        this.multipleSelection.splice(0, this.multipleSelection.length)
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     }
-    this.tags = []
-    // this.getLists()
   }
-  handleFilterClick() {
-    let blackLists = ['status']
-    this.tags = []
-    for (let key in this.listQuery) {
-      if (this.listQuery[key] !== '' && (this.tags.findIndex(item => item.key === key) === -1) && !blackLists.includes(key)) {
-        let name = getLabel(this.formItem, this.listQuery, key)
-        if (name) {
-          this.tags.push({
-            type: 'info',
-            name: name,
-            key: key
+  // 退费
+  private async handlerefundClick(row:any) {
+    this.row = row
+    let check = await this.checkBefore([this.row.refundApplyId])
+    if (!check) {
+      return
+    }
+    this.showDialog = true
+  }
+  // 确认---单条退费
+  @lock
+  private async confirm(done: any) {
+    try {
+      let params = {
+        refundApplyId: this.row.refundApplyId
+      }
+      const { data: res } = await refundExecute(params)
+      if (res.success) {
+        this.$message.success('退费成功')
+        done()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg || res.message)
+      }
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.log('1')
+    }
+  }
+  // 驳回
+  private async handleRejectClick(done:any) {
+    try {
+      let params = [this.row.refundApplyId]
+      await this.handleRefundReject(params, 'single', done)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.log('1')
+    }
+  }
+  // 批量驳回
+  private async handleReject() {
+    if (this.multipleSelection.length === 0) {
+      this.$message.error('未勾选待退费数据')
+    } else {
+      let params = this.getRefundApplyIds
+      let check = await this.checkBefore(params)
+      if (!check) {
+        return
+      }
+      this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,<span style="color:red;">批量退费驳回</span>?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
+        type: 'warning'
+      }).then(async() => {
+      // 此处写个方法调接口
+        let params = this.getRefundApplyIds
+        await this.handleRefundReject(params, 'mul')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    }
+  }
+  // 批量驳回 和驳回 api
+  @lock
+  private async handleRefundReject(refundApplyIds: string[], flag:string, done?:any) {
+    try {
+      const { data: res } = await refundRejection(refundApplyIds)
+      if (res.success) {
+        if (flag === 'single') {
+          this.$message.success('驳回成功')
+          done()
+        } else if (flag === 'mul') {
+          this.$message({
+            type: 'success',
+            message: `${this.multipleSelection.length}条退费数据已审核驳回`
           })
         }
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg || res.message)
       }
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.log('1')
     }
-    this.getLists()
   }
-  // 打开重置密码的弹框
-  openResetPassword(row:any) {
-    this.$confirm(`确定要将密码重置为手机号吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      this.resetPassword(row)
-    }).catch(() => {
-      this.$message({
-        type: 'info',
-        message: '已取消操作'
-      })
-    })
+
+  handleSelectionChange(val:any) {
+    // console.log(val)
+    this.multipleSelection = val
   }
-  // 重置密码
-  async resetPassword(row:any) {
+
+  // 导出
+  @lock
+  private async handleExportClick() {
+    try {
+      let params:IState = {}
+      if (this.listQuery.time && this.listQuery.time.length > 1) {
+        params.startDate = new Date(this.listQuery.time[0]).setHours(0, 0, 0)
+        params.endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
+      } else {
+        return this.$message.error('需要按申请退费时间段进行导出')
+      }
+      if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
+        params.workCity = this.listQuery.workCity[1]
+      }
+      this.listQuery.busiType && (params.busiType = this.listQuery.busiType)
+      this.listQuery.joinManagerId && (params.joinManagerId = this.listQuery.joinManagerId)
+      this.listQuery.driverId && (params.driverId = this.listQuery.driverId)
+      this.listQuery.refundApplyId && (params.refundApplyId = this.listQuery.refundApplyId)
+      this.listQuery.status !== '' && (params.status = this.listQuery.status)
+
+      const { data } = await refundExport(params)
+      if (data.success) {
+        this.$message.success('导出成功')
+      } else {
+        this.$message.error(data.errorMsg || data.message)
+      }
+    } catch (err) {
+      console.log(`export fail:${err}`)
+    } finally {
+      console.log(`export finish`)
+    }
+  }
+  // 下载
+  @lock
+  private async handleDownLoad(row:any) {
+    try {
+      let params = { applyRefundId: row.refundApplyId }
+      const { data: res } = await refundDownLod(params)
+      if (res.success) {
+        this.$message({
+          type: 'success',
+          message: `下载成功;`
+        })
+      } else {
+        this.$message.error(res.errorMsg || res.message)
+      }
+    } catch (err) {
+      console.log('下载失败', err)
+    } finally {
+      console.log('1')
+    }
+  }
+
+  // 获取业务线
+  private async getDutyListByLevel() {
     try {
       let params = {
-        id: row.id
+        dutyLevel: 1
       }
-      let { data: res } = await resetPassword(params)
+      let { data: res } = await GetDutyListByLevel(params)
       if (res.success) {
-        this.$message.success('操作成功')
+        let options = res.data.map((item:any) => ({
+          label: item.dutyName,
+          value: item.id
+        }))
+        if (options.length === 1) {
+          this.listQuery.busiType = options[0].value
+        } else {
+          this.dutyListOptions.unshift({
+            label: '全部',
+            value: ''
+          })
+        }
+        this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
-      console.log(`reset password fail:${err}`)
+      console.log(`get duty list fail:${err}`)
     }
+  }
+  // 获取加盟经理列表
+  async getGmOptions() {
+    try {
+      this.listQuery.joinManagerId = ''
+      let params:any = {
+        roleTypes: [1],
+        uri: '/v2/wt-driver-account/refund/queryGM'
+      }
+      this.listQuery.workCity[1] !== '' && (params.cityCode = this.listQuery.workCity[1])
+      this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        let gms = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+        let lenGm:number = this.gmOptions.length
+        if (lenGm > 0) {
+          this.gmOptions.splice(0, lenGm)
+        }
+        this.gmOptions.push(...gms)
+        if (this.gmOptions.length === 1) {
+          this.listQuery.joinManagerId = this.gmOptions[0].value
+        }
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  // 获取司机列表接口
+  async loadDriverByKeyword(params:IState) {
+    try {
+      if (this.listQuery.workCity && this.listQuery.workCity.length > 0) {
+        params.workCity = this.listQuery.workCity[1]
+      }
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      this.listQuery.joinManagerId !== '' && (params.gmId = this.listQuery.joinManagerId)
+      let { data: res } = await getDriverNoAndNameList(params, {
+        url: '/v2/wt-driver-account/refund/queryDriverList'
+      })
+      let result:any[] = res.data.map((item:any) => ({
+        label: `${item.name}/${item.phone}`,
+        value: item.driverId
+      }))
+      return result
+    } catch (err) {
+      console.log(`get driver list fail:${err}`)
+      return []
+    }
+  }
+  // 获取大区和城市
+  private async showWork(node:any, resolve:any) {
+    let query: any = {
+      parentId: ''
+    }
+    if (node.level === 1) {
+      query.parentId = node.value
+    }
+    try {
+      if (node.level === 0) {
+        let nodes = await this.areaAddress({ type: 2 })
+        resolve(nodes)
+      } else if (node.level === 1) {
+        let nodes = await this.cityDetail(query)
+        resolve(nodes)
+      }
+    } catch (err) {
+      resolve([])
+    }
+  }
+  private async areaAddress(params: any) {
+    try {
+      let { data: res } = await getOfficeByType(params)
+      if (res.success) {
+        const nodes = res.data.map(function(item: any) {
+          return {
+            value: item.id,
+            label: item.name,
+            leaf: false
+          }
+        })
+        return nodes
+      }
+    } catch (err) {
+      console.log(`load city by code fail:${err}`)
+    }
+  }
+
+  private async cityDetail(params: any) {
+    let { data: city } = await getOfficeByTypeAndOfficeId(params)
+    if (city.success) {
+      const nodes = city.data.map(function(item: any) {
+        return {
+          value: item.areaCode,
+          label: item.name,
+          leaf: true
+        }
+      })
+      return nodes
+    }
+  }
+  // 判断是否是PC
+  get isPC() {
+    return SettingsModule.isPC
+  }
+  // 获取更多司机
+  async loadQueryDriverByKeyword(val?:string) {
+    val = this.searchKeyword
+    this.queryPage.page++
+    let params:IState = {
+      page: this.queryPage.page,
+      limit: this.queryPage.limit
+    }
+    val !== '' && (params.key = val)
+
+    try {
+      let result:IState[] = await this.loadDriverByKeyword(params)
+      this.driverOptions.push(...result)
+    } finally {
+      console.log('finally')
+    }
+  }
+  // 搜索司机
+  querySearchByKeyword(val:string) {
+    this.queryPage.page = 0
+    this.resetDriver()
+    this.searchKeyword = val
+    this.loadQueryDriverByKeyword(val)
+  }
+  // 清除司机
+  handleClearQueryDriver() {
+    this.searchKeyword = ''
+    this.resetDriver()
+    this.loadQueryDriverByKeyword()
+  }
+  // 重置司机
+  resetDriver() {
+    this.listQuery.driverId = ''
+    // this.listQuery.joinManagerId = ''
+    this.searchKeyword = ''
+    let len:number = this.driverOptions.length
+    if (len > 0) {
+      this.queryPage.page = 0
+      this.driverOptions.splice(0, len)
+    }
+  }
+  mounted() {
+    this.getLists()
+    this.getGmOptions()
+    this.getDutyListByLevel()
+    this.loadQueryDriverByKeyword()
   }
 }
 </script>
 <style lang="scss" scoped>
   .refundList {
-    .subTitle {
+    .rejectBox{
       display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      justify-content: flex-end;
       align-items: center;
-      h4 {
-        margin: 0px;
-      }
-      .createUser {
-        margin-bottom:10px;
-      }
     }
-    .btnPc {
+    min-width: 860px;
+    .btnPc{
+       width: 100%;
+       padding: 0 10px;
        display: flex;
        flex-flow: row nowrap;
        justify-content: flex-end;
-     }
+    }
+    .btnPc1{
+       width: 100%;
+       padding: 0 10px;
+       display: flex;
+       flex-flow: row nowrap;
+       justify-content: flex-end;
+    }
+//flex布局   row横向排列
     .mobile {
       width:100%;
       text-align: center;
@@ -541,6 +1001,33 @@ export default class extends Vue {
         margin-top: 10px;
         width:80%;
       }
+    }
+    .middle {
+      margin: 10px 0px;
+      .count {
+        font-size:14px;
+        color:#666;
+      }
+    }
+    .SuggestForm {
+      width: 100%;
+      background: #fff;
+      margin-bottom: 10px;
+      margin-left:0px!important;
+      margin-right:0px!important;
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    }
+    .el-button{
+      margin-right: 8px;
+    }
+    .table_box {
+      padding: 0px 20px 20px 20px;
+      background: #ffffff;
+      -webkit-box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+      overflow: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
   }
 </style>
@@ -551,5 +1038,11 @@ export default class extends Vue {
   }
   .refundList >>> .el-card__header {
     border-bottom: none;
+  }
+  .refundList .SuggestForm >>> .el-button + .el-button{
+    margin-left: 0!important;
+  }
+  .refundList >>> .el-badge {
+    margin-right:0px;
   }
 </style>

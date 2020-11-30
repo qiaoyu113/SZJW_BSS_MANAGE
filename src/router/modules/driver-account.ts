@@ -70,22 +70,23 @@ const driverAccountRouter: RouteConfig = {
         activeMenu: '/driveraccount/wtAcountList'
       }
     },
+    // 退费管理
     {
       path: 'refundlist',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundList.vue'),
       name: 'RefundList',
       meta: {
-        apiUrl: '/v1/base/user/page/list',
+        apiUrl: '/v2/wt-driver-account/refund/list',
         title: 'refundList',
         noCache: false,
-        hidden: true
+        hidden: false
       }
     },
+    // 退费详情
     {
       path: 'refunddetail',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundDetail.vue'),
       name: 'RefundDetail',
-      redirect: '/driveraccount/refundlist',
       meta: {
         apiUrl: 'root',
         title: 'refundDetail',
@@ -93,23 +94,23 @@ const driverAccountRouter: RouteConfig = {
         hidden: true
       }
     },
+    // 退费申请
     {
       path: 'refundapply',
       component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundApply.vue'),
       name: 'RefundApply',
-      redirect: '/driveraccount/refundlist',
       meta: {
         apiUrl: 'root',
         title: 'refundApply',
-        noCache: false,
+        noCache: true,
         hidden: true
       }
     },
+    // 退费审核
     {
       path: 'refundaudit',
-      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundAudit.vue'),
+      component: () => import(/* webpackChunkName: "driver" */ '@/views/driver-account/RefundDetail.vue'),
       name: 'RefundAudit',
-      redirect: '/driveraccount/refundlist',
       meta: {
         apiUrl: 'root',
         title: 'refundAudit',

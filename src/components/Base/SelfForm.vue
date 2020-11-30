@@ -32,6 +32,20 @@
             v-bind="item.tagAttrs || {}"
             v-on="item.listeners"
           />
+          <el-input-number
+            v-if="item.type === 14"
+            v-model.number="listQuery[item.key]"
+            style="width:100%"
+            v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
+          />
+          <el-input
+            v-if="item.type === 13"
+            v-model.trim="listQuery[item.key]"
+            type="textarea"
+            v-bind="item.tagAttrs || {}"
+            v-on="item.listeners"
+          />
           <!-- 下拉框 -->
           <el-select
             v-else-if="item.type === 2"

@@ -158,6 +158,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { TagsViewModule } from '@/store/modules/tags-view'
 import { RoleTree } from './components'
 // import { GetDictionaryList } from '@/api/common'
+import { lock } from '@/utils/index'
 import {
   authorityList,
   createRole,
@@ -256,37 +257,47 @@ export default class extends Vue {
   }
   // 提交表单
   private submitForm(formName: any) {
-    (this.$refs[formName] as any).validate(async(valid: boolean) => {
+    (this.$refs[formName] as any).validate((valid: boolean) => {
       if (valid) {
-        if (this.isEdit) {
-          this.submitEditForm()
-          return
-        }
-        const postData = {
-          ...this.ruleForm
-        }
-        postData.authorities = this.getCheckedNodes()
-        postData.dutyId = postData.dutyId.slice(0).pop()
-        const { data } = await createRole(postData)
-        if (data.success) {
-          this.$message.success(`创建成功`)
-          setTimeout(() => {
-            (TagsViewModule as any).delView(this.$route); // 关闭当前页面
-            (TagsViewModule as any).delCachedView({
-              // 删除指定页面缓存（进行刷新操作）
-              name: 'RoleManage'
-            })
-            this.$nextTick(() => {
-              this.$router.push({ name: 'RoleManage' })
-            })
-          }, 800)
-        } else {
-          this.$message.error(data)
-        }
+        this.saveData()
       } else {
         (document.querySelector('.AppMain') as HTMLDivElement).scrollTop = 0
       }
     })
+  }
+  @lock
+  async saveData() {
+    try {
+      if (this.isEdit) {
+        this.submitEditForm()
+        return
+      }
+      const postData = {
+        ...this.ruleForm
+      }
+      postData.authorities = this.getCheckedNodes()
+      postData.dutyId = postData.dutyId.slice(0).pop()
+      const { data } = await createRole(postData)
+      if (data.success) {
+        this.$message.success(`创建成功`)
+        setTimeout(() => {
+          (TagsViewModule as any).delView(this.$route); // 关闭当前页面
+          (TagsViewModule as any).delCachedView({
+            // 删除指定页面缓存（进行刷新操作）
+            name: 'RoleManage'
+          })
+          this.$nextTick(() => {
+            this.$router.push({ name: 'RoleManage' })
+          })
+        }, 800)
+      } else {
+        this.$message.error(data)
+      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log('finally')
+    }
   }
   // 编辑角色提交
   private async submitEditForm() {

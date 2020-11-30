@@ -132,7 +132,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { HandlePages } from '@/utils/index'
+import { HandlePages, lock } from '@/utils/index'
 import { SettingsModule } from '@/store/modules/settings'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { today, yesterday, month, lastmonth, threemonth } from '../driver-freight/components/date'
@@ -173,7 +173,7 @@ export default class extends Vue {
     {
       key: 'id',
       label: '序号',
-      width: '50px'
+      width: '70px'
     },
     {
       key: 'workCityName',
@@ -188,7 +188,7 @@ export default class extends Vue {
     {
       key: 'phone',
       label: '梧桐司机手机号',
-      'width': '100px'
+      'width': '120px'
     },
     {
       key: 'driverId',
@@ -268,7 +268,7 @@ export default class extends Vue {
   private formItem:any[] = [
     {
       type: 1,
-      label: '梧桐司机姓名:',
+      label: '梧桐司机姓名',
       key: 'key',
       tagAttrs: {
         placeholder: '请输入姓名/手机号',
@@ -279,7 +279,7 @@ export default class extends Vue {
     },
     {
       type: 1,
-      label: '梧桐司机编号:',
+      label: '梧桐司机编号',
       key: 'driverId',
       tagAttrs: {
         placeholder: '请输入',
@@ -290,7 +290,7 @@ export default class extends Vue {
     },
     {
       type: 1,
-      label: 'A端司机编号:',
+      label: 'A端司机编号',
       key: 'aDriverId',
       tagAttrs: {
         placeholder: '请输入',
@@ -301,7 +301,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      label: '梧桐司机城市:',
+      label: '梧桐司机城市',
       key: 'workCity',
       tagAttrs: {
         placeholder: '请选择',
@@ -312,7 +312,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      label: '司机业务线:',
+      label: '司机业务线',
       key: 'busiType',
       tagAttrs: {
         placeholder: '请选择',
@@ -323,7 +323,7 @@ export default class extends Vue {
     },
     {
       type: 2,
-      label: '司机状态:',
+      label: '司机状态',
       key: 'status',
       tagAttrs: {
         placeholder: '请选择',
@@ -476,6 +476,7 @@ export default class extends Vue {
     this.getLists()
   }
   // 导出
+  @lock
   private async handleExportClick(row:IState) {
     try {
       this.ExportClick = true
@@ -554,6 +555,7 @@ export default class extends Vue {
         otherDriverId: this.dialogQuery.aDriverCode
       }
       await this.chooseAddorUpdata(params)
+
       setTimeout(() => {
         this.submitLoading = false
       }, 1000)
@@ -562,26 +564,32 @@ export default class extends Vue {
       console.log(`submit fail:${err}`)
     }
   }
-
+  @lock
   private async chooseAddorUpdata(params:any) {
-    if (this.dialogTit === '编辑司机标签') {
-      let { data: res } = await EditDriverTag(params)
-      if (res.success) {
-        this.showDialog = false
-        this.getLists()
-        this.$message.success('提交成功')
+    try {
+      if (this.dialogTit === '编辑司机标签') {
+        let { data: res } = await EditDriverTag(params)
+        if (res.success) {
+          this.showDialog = false
+          this.getLists()
+          this.$message.success('提交成功')
+        } else {
+          this.$message.error(res.errorMsg)
+        }
       } else {
-        this.$message.error(res.errorMsg)
+        let { data: res } = await AddDriverTag(params)
+        if (res.success) {
+          this.showDialog = false
+          this.getLists()
+          this.$message.success('提交成功')
+        } else {
+          this.$message.error(res.errorMsg)
+        }
       }
-    } else {
-      let { data: res } = await AddDriverTag(params)
-      if (res.success) {
-        this.showDialog = false
-        this.getLists()
-        this.$message.success('提交成功')
-      } else {
-        this.$message.error(res.errorMsg)
-      }
+    } catch (err) {
+      console.log(`submit fail:${err}`)
+    } finally {
+      console.log(`finally`)
     }
   }
   // 弹框关闭后

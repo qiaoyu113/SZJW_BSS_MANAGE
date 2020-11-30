@@ -5,6 +5,7 @@ const prefix = '/bill'
 const driverFix = '/business_center'
 const billFix = '/bill_center'
 const wayBillFix = '/waybill'
+let prefix2 = '/mock/25'
 
 /**
  * XXXX

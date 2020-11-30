@@ -9,7 +9,6 @@
       ref="multipleTable"
       :row-style="{height: '20px'}"
       :cell-style="{padding: '5px 0'}"
-      :max-height="height"
       :data="tableData"
       :border="isPC"
       size="mini"
