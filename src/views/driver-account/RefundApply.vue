@@ -444,6 +444,8 @@ export default class extends Vue {
   }
   // 给加盟经理赋值
   private putDriverCity(e: string) {
+    console.log('1231313')
+    if (e.length === 0) return
     const inx = this.driverOtions.findIndex(item => item.value === e)
     this.driverCity.city = this.driverOtions[inx].workCityName
     this.driverCity.gmName = this.driverOtions[inx].gmName
@@ -472,14 +474,16 @@ export default class extends Vue {
 
   // 接口
   driverSelect(e: string) {
-    if (this.isOneCreate) {
-      this.createFrom.push(...this.formItem)
-      this.isOneCreate = false
-    }
     this.haveRecordToBeApprovedSure(e)
     // 判断是否有已经退费的订单
-    this.putDriverCity(e)
-    this.getRefundEchoSure(e)
+    if (e.length !== 0) {
+      this.putDriverCity(e)
+      let check = this.getRefundEchoSure(e)
+    } else {
+      this.driverPage.page = 1
+      this.driverOver = false
+    }
+
     this.listQuery = {
       driverId: '',
       bankCardNo: '',
@@ -495,6 +499,10 @@ export default class extends Vue {
     this.listQuery.driverId = e
     // 是否有存在的记录
     // 获取用户账户信息
+    if (this.isOneCreate) {
+      this.createFrom.push(...this.formItem)
+      this.isOneCreate = false
+    }
   }
   async haveRecordToBeApprovedSure(driverId: string) {
     try {
@@ -530,6 +538,7 @@ export default class extends Vue {
           type: 'error',
           message: res.errorMsg
         })
+        return false
       }
       const { data } = res
       this.listQuery.bankCardNo = data.bankCardNo || ''
