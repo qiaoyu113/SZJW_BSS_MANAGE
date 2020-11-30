@@ -598,7 +598,7 @@ export default class extends Vue {
   }
 
   // 批量退费
-  private async handleReturn() {
+  private async handleReturn(this:any) {
     if (this.multipleSelection.length === 0) {
       this.$message.error('未勾选待退费数据')
     } else {
@@ -622,6 +622,7 @@ export default class extends Vue {
         this.handMulRefund()
       }).catch(() => {
         this.multipleSelection.splice(0, this.multipleSelection.length)
+        this.$refs['RefundForm'].toggleRowSelection()
         this.$message({
           type: 'info',
           message: '已取消'
@@ -673,7 +674,7 @@ export default class extends Vue {
     }
   }
   // 批量驳回
-  private async handleReject() {
+  private async handleReject(this:any) {
     if (this.multipleSelection.length === 0) {
       this.$message.error('未勾选待退费数据')
     } else {
@@ -692,6 +693,7 @@ export default class extends Vue {
         let params = this.getRefundApplyIds
         await this.handleRefundReject(params, 'mul')
       }).catch(() => {
+        this.$refs['RefundForm'].toggleRowSelection()
         this.$message({
           type: 'info',
           message: '已取消'
