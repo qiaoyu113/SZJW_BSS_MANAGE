@@ -144,9 +144,9 @@ interface listQuerys {
   bankCardNo: string // 银行卡号
   bankName: string // 开户行
   remarks: string // 备注
-  money: number | undefined // 申请退款金额
-  hasReceipt: number // 是否有收据
-  recoveryReceipt?: number // 是否回收收据
+  money: number|undefined // 申请退款金额
+  hasReceipt?: number|undefined // 是否有收据
+  recoveryReceipt?: number|undefined // 是否回收收据
   driverId: string // 司机ID
   reason: string // 退款原因
   payMethod: number // 退款方式
@@ -172,8 +172,8 @@ export default class extends Vue {
     driverId: '',
     bankCardNo: '',
     money: undefined,
-    hasReceipt: 3,
-    recoveryReceipt: 3,
+    hasReceipt: undefined,
+    recoveryReceipt: undefined,
     bankName: '',
     remarks: '',
     reason: '',
@@ -424,8 +424,8 @@ export default class extends Vue {
       driverId: '',
       bankCardNo: '',
       money: undefined,
-      hasReceipt: 3,
-      recoveryReceipt: 3,
+      // hasReceipt: undefined,
+      // recoveryReceipt: undefined,
       bankName: '',
       remarks: '',
       reason: '',
@@ -444,7 +444,6 @@ export default class extends Vue {
   }
   // 给加盟经理赋值
   private putDriverCity(e: string) {
-    console.log('1231313')
     if (e.length === 0) return
     const inx = this.driverOtions.findIndex(item => item.value === e)
     this.driverCity.city = this.driverOtions[inx].workCityName
@@ -473,8 +472,9 @@ export default class extends Vue {
   }
 
   // 接口
-  driverSelect(e: string) {
+  driverSelect(this:any, e: string) {
     this.haveRecordToBeApprovedSure(e)
+    this.$refs.RefundForm.resetForm()
     // 判断是否有已经退费的订单
     if (e.length !== 0) {
       this.putDriverCity(e)
@@ -488,8 +488,8 @@ export default class extends Vue {
       driverId: '',
       bankCardNo: '',
       money: undefined,
-      hasReceipt: 3,
-      recoveryReceipt: 3,
+      hasReceipt: undefined,
+      recoveryReceipt: undefined,
       bankName: '',
       remarks: '',
       reason: '',
