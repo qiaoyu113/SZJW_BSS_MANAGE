@@ -788,10 +788,14 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
-        this.dutyListOptions.push({
-          label: '全部',
-          value: ''
-        })
+        if (options.length === 1) {
+          this.listQuery.busiType = options[0].value
+        } else {
+          this.dutyListOptions.unshift({
+            label: '全部',
+            value: ''
+          })
+        }
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
@@ -811,7 +815,6 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
-        this.gmOptions.splice(0, this.gmOptions.length)
         let gms = res.data.map(function(item: any) {
           return {
             label: item.name,
@@ -819,6 +822,9 @@ export default class extends Vue {
           }
         })
         this.gmOptions.push(...gms)
+        if (this.gmOptions.length === 1) {
+          this.listQuery.joinManagerId = this.gmOptions[0].value
+        }
       } else {
         this.$message.error(res.errorMsg)
       }
