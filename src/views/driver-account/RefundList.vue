@@ -632,6 +632,10 @@ export default class extends Vue {
   // 退费
   private async handlerefundClick(row:any) {
     this.row = row
+    let check = await this.checkBefore([this.row.refundApplyId])
+    if (!check) {
+      return
+    }
     this.showDialog = true
   }
   // 确认---单条退费
@@ -640,10 +644,6 @@ export default class extends Vue {
     try {
       let params = {
         refundApplyId: this.row.refundApplyId
-      }
-      let check = await this.checkBefore([this.row.refundApplyId])
-      if (!check) {
-        return
       }
       const { data: res } = await refundExecute(params)
       if (res.success) {
