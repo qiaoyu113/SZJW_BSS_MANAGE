@@ -1253,7 +1253,7 @@ export default class extends Vue {
     margin-bottom: 10px;
     margin-left: 0px !important;
     margin-right: 0px !important;
-    box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5);
+    /* box-shadow: 4px 4px 10px 0 rgba(218, 218, 218, 0.5); */
 }
 .wtAcountList >>> .el-form-item__content div{
   width: 100%;
