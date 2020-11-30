@@ -1017,4 +1017,7 @@ export default class extends Vue {
   .refundList .SuggestForm >>> .el-button + .el-button{
     margin-left: 0!important;
   }
+  .refundList >>> .el-badge {
+    margin-right:0px;
+  }
 </style>
