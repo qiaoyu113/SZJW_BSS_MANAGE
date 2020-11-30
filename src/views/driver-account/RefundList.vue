@@ -59,15 +59,16 @@
           slot="mulBtn"
           :class="isPC ? 'btnPc' : 'mobile'"
         >
-          <el-button
-            v-if="listQuery.status!=='3'"
-            v-permission="['/v2/wt-driver-account/refund/create']"
-            :class="isPC ? '' : 'btnMobile'"
-            @click="goDetail"
-          >
-            申请退费
-          </el-button>
-          <template v-if="listQuery.status==='3'">
+          <div v-if="listQuery.status!=='3'">
+            <el-button
+              v-permission="['/v2/wt-driver-account/refund/create']"
+              :class="isPC ? '' : 'btnMobile'"
+              @click="goDetail"
+            >
+              申请退费
+            </el-button>
+          </div>
+          <div v-if="listQuery.status==='3'">
             <el-button
               v-permission="['/v2/wt-driver-account/refund/batch/reject']"
               :class="isPC ? '' : 'btnMobile'"
@@ -82,7 +83,7 @@
             >
               批量退费
             </el-button>
-          </template>
+          </div>
           <el-button
             type="primary"
             :class="isPC ? '' : 'btnMobile'"
@@ -191,7 +192,7 @@ import { GetOpenCityData, getOfficeByType, getOfficeByTypeAndOfficeId,
   GetDutyListByLevel, GetSpecifiedRoleList } from '@/api/common'
 import TableHeader from '@/components/TableHeader/index.vue'
 import { options } from 'numeral'
-import { identity } from 'lodash'
+import { identity, zipWith } from 'lodash'
 import { delayTime } from '@/settings'
 interface PageObj {
   page:number,
@@ -256,7 +257,7 @@ export default class extends Vue {
       listeners: {
         'change': () => {
           this.listQuery.joinManagerId = ''
-          this.resetDriver()
+          // this.resetDriver()
           this.handleClearQueryDriver()
           this.getGmOptions()
         }
@@ -636,6 +637,10 @@ export default class extends Vue {
       let params = {
         refundApplyId: this.row.refundApplyId
       }
+      let check = await this.checkBefore([this.row.refundApplyId])
+      if (!check) {
+        return
+      }
       const { data: res } = await refundExecute(params)
       if (res.success) {
         this.$message.success('退费成功')
@@ -788,10 +793,14 @@ export default class extends Vue {
           label: item.dutyName,
           value: item.id
         }))
-        this.dutyListOptions.push({
-          label: '全部',
-          value: ''
-        })
+        if (options.length === 1) {
+          this.listQuery.busiType = options[0].value
+        } else {
+          this.dutyListOptions.unshift({
+            label: '全部',
+            value: ''
+          })
+        }
         this.dutyListOptions.push(...options)
       } else {
         this.$message.error(res.errorMsg)
@@ -803,6 +812,7 @@ export default class extends Vue {
   // 获取加盟经理列表
   async getGmOptions() {
     try {
+      this.listQuery.joinManagerId = ''
       let params:any = {
         roleTypes: [1],
         uri: '/v2/wt-driver-account/refund/queryGM'
@@ -811,14 +821,20 @@ export default class extends Vue {
       this.listQuery.busiType !== '' && (params.productLine = this.listQuery.busiType)
       let { data: res } = await GetSpecifiedRoleList(params)
       if (res.success) {
-        this.gmOptions.splice(0, this.gmOptions.length)
         let gms = res.data.map(function(item: any) {
           return {
             label: item.name,
             value: item.id
           }
         })
+        let lenGm:number = this.gmOptions.length
+        if (lenGm > 0) {
+          this.gmOptions.splice(0, lenGm)
+        }
         this.gmOptions.push(...gms)
+        if (this.gmOptions.length === 1) {
+          this.listQuery.joinManagerId = this.gmOptions[0].value
+        }
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -941,10 +957,6 @@ export default class extends Vue {
     if (len > 0) {
       this.queryPage.page = 0
       this.driverOptions.splice(0, len)
-    }
-    let lenGm:number = this.gmOptions.length
-    if (len > 0) {
-      this.gmOptions.splice(0, len)
     }
   }
   mounted() {

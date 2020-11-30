@@ -53,7 +53,7 @@
               <el-button
                 @click="unAudit()"
               >
-                审核未通过
+                审核不通过
               </el-button>
               <el-button
                 type="primary"
@@ -99,6 +99,36 @@
                   {{ scope.row.remarks }}
                 </p>
               </el-popover>
+            </template>
+            <template
+              slot="bankName"
+              slot-scope="scope"
+            >
+              <el-popover
+                placement="right-start"
+                width="400"
+                title="开户行"
+                trigger="hover"
+                :content="scope.row.bankName"
+              >
+                <p
+                  slot="reference"
+                  class="one-line"
+                >
+                  {{ scope.row.bankName }}
+                </p>
+              </el-popover>
+            </template>
+            <template
+              slot="bankCardNo"
+              slot-scope="scope"
+            >
+              <div
+                slot="reference"
+                style="width: 100%;word-break: break-word"
+              >
+                {{ scope.row.bankCardNo }}
+              </div>
             </template>
           </self-form>
         </SectionContainer>
@@ -212,12 +242,14 @@ export default class extends Vue {
         key: 'payeeName'
       },
       {
-        type: 7,
+        type: 'bankCardNo',
+        slot: true,
         label: '银行卡号',
         key: 'bankCardNo'
       },
       {
-        type: 7,
+        type: 'bankName',
+        slot: true,
         label: '开户行',
         key: 'bankName'
       },
@@ -299,9 +331,9 @@ export default class extends Vue {
         })
       })
     }
-    // 审核未通过
+    // 审核不通过
     private unAudit(id: string | (string | null)[] | null | undefined) {
-      this.$confirm('确定要审核未通过并驳回此退款信息吗？', '提示', {
+      this.$confirm('确定要审核不通过并驳回此退款信息吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
