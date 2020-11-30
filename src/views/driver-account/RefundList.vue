@@ -668,9 +668,7 @@ export default class extends Vue {
     } else {
       let params = this.getRefundApplyIds
       let check = await this.checkBefore(params)
-      console.log(check)
       if (!check) {
-        console.log(check)
         return
       }
       this.$confirm(`是否确认将"${this.multipleSelection.length}"条待退费数据,<span style="color:red;">批量退费驳回</span>?`, '提示', {
