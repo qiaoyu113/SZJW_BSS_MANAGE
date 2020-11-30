@@ -119,18 +119,17 @@
                 </p>
               </el-popover>
             </template>
-            <!-- <template
+            <template
               slot="bankCardNo"
               slot-scope="scope"
             >
               <div
                 slot="reference"
-                style="
-                margin:0;max-width:100px"
+                style="width: 100%;word-break: break-word"
               >
                 {{ scope.row.bankCardNo }}
               </div>
-            </template> -->
+            </template>
           </self-form>
         </SectionContainer>
       </div>
@@ -243,7 +242,8 @@ export default class extends Vue {
         key: 'payeeName'
       },
       {
-        type: 7,
+        type: 'bankCardNo',
+        slot: true,
         label: '银行卡号',
         key: 'bankCardNo'
       },
