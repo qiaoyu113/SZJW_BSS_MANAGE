@@ -575,7 +575,7 @@ export default class extends Vue {
         return
       }
       let { data: res } = await getDriverNoAndNameList(params, {
-        url: '/v2/wt-driver-account/flow/queryDriverList'
+        url: '/v2/wt-driver-account/refund/queryDriverList'
       })
       if (res.success) {
         if (
@@ -600,7 +600,7 @@ export default class extends Vue {
         this.$message.error(res.errorMsg)
       }
     } catch (err) {
-      console.log(err)
+      return err
     }
   }
   // 计算属性
