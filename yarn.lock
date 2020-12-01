@@ -1051,7 +1051,6 @@
 "@types/numeral@0.0.28":
   version "0.0.28"
   resolved "https://registry.npm.taobao.org/@types/numeral/download/@types/numeral-0.0.28.tgz#e43928f0bda10b169b6f7ecf99e3ddf836b8ebe4"
-  integrity sha1-5Dko8L2hCxabb37PmePd+Da46+Q=
 
 "@types/q@^1.5.1":
   version "1.5.2"
@@ -1239,11 +1238,11 @@
     babel-loader "^8.0.5"
     webpack ">=4 < 4.29"
 
-"@vue/cli-plugin-e2e-cypress@^3.10.0":
-  version "3.10.0"
-  resolved "https://registry.npm.taobao.org/@vue/cli-plugin-e2e-cypress/download/@vue/cli-plugin-e2e-cypress-3.10.0.tgz#7bd029bd39540a284fe5a5dca8b4f90d7437f6f7"
+"@vue/cli-plugin-e2e-cypress@^3.12.1":
+  version "3.12.1"
+  resolved "https://registry.npm.taobao.org/@vue/cli-plugin-e2e-cypress/download/@vue/cli-plugin-e2e-cypress-3.12.1.tgz?cache=0&sync_timestamp=1605596148422&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40vue%2Fcli-plugin-e2e-cypress%2Fdownload%2F%40vue%2Fcli-plugin-e2e-cypress-3.12.1.tgz#7cc52a11f159fdbcf61ecac244ede54bfd663ac9"
   dependencies:
-    "@vue/cli-shared-utils" "^3.10.0"
+    "@vue/cli-shared-utils" "^3.12.1"
     cypress "^3.2.0"
     eslint-plugin-cypress "^2.2.1"
 
@@ -1359,6 +1358,23 @@
 "@vue/cli-shared-utils@^3.10.0":
   version "3.10.0"
   resolved "https://registry.npm.taobao.org/@vue/cli-shared-utils/download/@vue/cli-shared-utils-3.10.0.tgz#9d156f3c0ef675a939319062489e98c8d3d80f7e"
+  dependencies:
+    "@hapi/joi" "^15.0.1"
+    chalk "^2.4.1"
+    execa "^1.0.0"
+    launch-editor "^2.2.1"
+    lru-cache "^5.1.1"
+    node-ipc "^9.1.1"
+    open "^6.3.0"
+    ora "^3.4.0"
+    request "^2.87.0"
+    request-promise-native "^1.0.7"
+    semver "^6.0.0"
+    string.prototype.padstart "^3.0.0"
+
+"@vue/cli-shared-utils@^3.12.1":
+  version "3.12.1"
+  resolved "https://registry.npm.taobao.org/@vue/cli-shared-utils/download/@vue/cli-shared-utils-3.12.1.tgz#bcf076287ddadeebbb97c6a748dfe9ff50ec8df0"
   dependencies:
     "@hapi/joi" "^15.0.1"
     chalk "^2.4.1"
@@ -7993,7 +8009,6 @@ number-is-nan@^1.0.0:
 numeral@^2.0.6:
   version "2.0.6"
   resolved "https://registry.npm.taobao.org/numeral/download/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
-  integrity sha1-StCAk21EPCVhrtnyGX7//iX05QY=
 
 nwsapi@^2.0.7:
   version "2.1.4"
