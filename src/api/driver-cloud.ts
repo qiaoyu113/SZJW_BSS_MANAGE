@@ -40,3 +40,24 @@ export const GetDriverByDriverName = (data: any) =>
     method: 'post',
     data
   })
+// 获取司机线索列表
+export const GetDriverClueList = (data: any) =>
+  request({
+    url: `${prefix}/getDriverClueList`,
+    method: 'post',
+    data
+  })
+  // 导出司机线索
+export const ExportDriverClue = (data: any) =>
+  request({
+    url: `${prefix}/exportDriverClue`,
+    method: 'post',
+    data
+  })
+// 获取司机线索详情
+export const GetDriverClueDetail = (params: any) =>
+  request({
+    url: `${prefix}/getDriverClueDetail`,
+    method: 'get',
+    params
+  })

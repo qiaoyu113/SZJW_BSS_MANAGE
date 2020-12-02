@@ -55,6 +55,8 @@ export default {
     editorTransport: '编辑运力',
     transportDetail: '运力详情',
     driverClue: '司机线索',
+    DriverClueNew: '线索列表',
+    DriverClueDetail: '线索详情',
     createDriverClue: '创建司机线索',
     editDriverClue: '编辑司机线索',
     driverInterview: '司机面试',
