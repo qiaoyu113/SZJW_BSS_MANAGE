@@ -15,6 +15,12 @@
     />
     <div class="table_box">
       <!--table表单-->
+      <div class="table-title">
+        筛选结果（<span>{{ tableTitle.all }}</span>条）：
+        司机侧已上报<span>{{ tableTitle.gmStatusCount }}</span>条，<span>{{ tableTitle.gmStatusCount }}</span>元；
+        客户侧已上报<span>{{ tableTitle.lineStatusCount }}</span>条，<span>{{ tableTitle.lineStatusSum }}</span>元；
+        已确认<span>{{ tableTitle.crossCheckCount }}</span>条，<span>{{ tableTitle.crossCheckCount }}</span>元
+      </div>
       <div
         class="table_center"
         :style="total > 0 ? '' : 'padding-bottom: 30px;'"
@@ -544,6 +550,7 @@
 
     <!-- 批量运费确认 -->
     <SelfDialog
+      v-if="assignShowDialog"
       :visible.sync="assignShowDialog"
       :title="`批量运费确认`"
       :confirm-button-text="`全部提交`"
@@ -570,18 +577,27 @@
           class="freightSelfDialog"
         >
           <div style="box-sizing:border-box;">
-            <el-switch
-              v-model="item.check"
-              style="padding:25px 15px;display: block"
-              active-color="#13ce66"
-              inactive-color="#F56C6C"
-              active-text="已出车"
-              inactive-text="未出车"
-            />
+            <el-row>
+              <el-col :span="8">
+                <el-switch
+                  v-model="item.check"
+                  style="padding:25px 15px;display: block"
+                  active-color="#13ce66"
+                  inactive-color="#F56C6C"
+                  active-text="已出车"
+                  inactive-text="未出车"
+                />
+              </el-col>
+              <el-col :span="16">
+                <p style="line-hight:16px;margin-top:25px">
+                  出车日期：{{ item.departureDate }}
+                </p>
+              </el-col>
+            </el-row>
           </div>
           <DetailItem
-            name="出车单号"
-            :value="item.wayBillId"
+            name="出车单号/线路名称"
+            :value="item.wayBillId+'/'+item.lineName"
           />
           <DetailItem
             name="司机姓名/手机号"
@@ -610,10 +626,32 @@
                 />
               </el-form-item>
               <div
-                v-if="i.status === 10 && i.gmIsNoCar"
-                class="addNoFreight"
+                style="color:#FF5D5D"
+                class="slot-info"
               >
-                司机侧：<span>未出车</span>
+                <template v-if="i.status===30&&!item.confirmFee">
+                  <template v-if="i.status===30&&item.gmIsNoCar">
+                    <span>运费金额(已确认)：未出车；</span>
+                    <span>司机侧：未出车；</span>
+                  </template>
+                  <template v-if="i.status===30&&!item.gmIsNoCar">
+                    <span>运费金额(已确认)：未出车；</span>
+                    <span>司机侧：{{ item.gmStatus === 2?item.gmStatusName:item.gmFee+'元' }}；</span>
+                  </template>
+                </template>
+                <template v-if="i.status===30&&item.confirmFee">
+                  <span> 运费金额(已确认)：{{ item.gmFee }}元；</span>
+                  <span>司机侧：{{ item.gmFee }}元；</span>
+                </template>
+                <template
+                  v-if="(i.status === 10 && item.gmStatus === 2)"
+                  class="addNoFreight"
+                >
+                  <span> 加盟侧：未出车；</span>
+                </template>
+                <template v-if="i.status===30">
+                  <span> 客户侧：{{ item.lineStatus===2?item.lineStatusName:item.lineFee+'元' }}；</span>
+                </template>
               </div>
             </div>
           </div>
@@ -805,7 +843,8 @@ export default class extends Vue {
       dispatchState: '',
       business: '',
       clientUpLoadState: '',
-      driverUpLoadState: ''
+      driverUpLoadState: '',
+      lineSaleId: ''
     };
     private freightForm: any = {
       list: [
@@ -943,7 +982,15 @@ export default class extends Vue {
       list.shift()
       this.operationList = list
     }
-
+    private tableTitle = {
+      all: '',
+      gmStatusCount: '',
+      gmStatusSum: '',
+      lineStatusCount: '',
+      lineStatusSum: '',
+      crossCheckCount: '',
+      crossCheckSum: ''
+    }
     // 请求列表
     private async getList(value: any) {
       this.listQuery.page = value.page
@@ -952,6 +999,7 @@ export default class extends Vue {
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
         this.list = data.data
+        this.tableTitle = data.title
         this.handleChecked(data.data)
         // this.tab[0].num = data.title.all
         // this.tab[1].num = data.title.notReported
@@ -1338,9 +1386,9 @@ export default class extends Vue {
   box-sizing: border-box;
   .addNoFreight{
     margin-top: -15px;
-    color: #9e9e9e;
     margin-bottom: 10px;
     margin-left: 10px;
+    color: #FF5D5D;
     span{
       color: #FF5D5D;
     }
@@ -1367,7 +1415,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       // height: calc(100vh - 360px) !important;
-      padding: 30px 30px 0;
+      padding: 0px 30px 0;
       box-sizing: border-box;
       background: #ffffff;
       overflow-y: scroll;
@@ -1388,6 +1436,22 @@ export default class extends Vue {
     padding-bottom: 15px;
     border-bottom: 1px solid #eeeeee;
     box-sizing: border-box;
+  }
+  .slot-info{
+    color:#FF5D5D;
+    span{
+      margin-right: 8px;
+    }
+  }
+  .table-title{
+    line-height: 30px;
+    margin-left: 30px;
+    color: #000;
+    font-size: 14px;
+    span{
+      color: #649cee;
+      cursor:pointer;
+    }
   }
 }
 </style>
