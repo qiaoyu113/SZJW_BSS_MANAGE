@@ -61,3 +61,40 @@ export const GetDriverClueDetail = (params: any) =>
     method: 'get',
     params
   })
+// 司机线索详情添加跟进
+export const AddContactInfo = (data: any) =>
+  request({
+    url: `${prefix}/addContactInfo`,
+    method: 'post',
+    data
+  })
+// 司机线索详情取消面试
+export const CancelInteview = (data: any) =>
+  request({
+    url: `${prefix}/cancelInteview`,
+    method: 'post',
+    data
+  })
+
+//  司机线索详情邀请面试
+export const InvitelInteview = (data: any) =>
+  request({
+    url: `${prefix}/invitelInteview`,
+    method: 'post',
+    data
+  })
+
+// 司机线索详情调整面试
+export const AdjustmentlInteview = (data: any) =>
+  request({
+    url: `${prefix}/adjustmentlInteview`,
+    method: 'post',
+    data
+  })
+  // 司机线索详情日志列表
+export const GetDriverClueLogList = (data: any) =>
+  request({
+    url: `${prefix}/getDriverClueLogList`,
+    method: 'post',
+    data
+  })

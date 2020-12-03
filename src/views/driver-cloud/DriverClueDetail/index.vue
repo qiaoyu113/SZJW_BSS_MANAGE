@@ -2,13 +2,16 @@
   <div class="driverClueDetailContainer">
     <div class="box">
       <div class="top">
-        <el-button type="text">
+        <el-button
+          type="text"
+          @click="handleEditClick"
+        >
           编辑
         </el-button>
         <el-button
           type="text"
           @click="() => {
-            showDialog1 = true
+            showDialog1 = true;
           }"
         >
           添加跟进
@@ -16,7 +19,8 @@
         <el-button
           type="text"
           @click="() => {
-            showDialog2 = true
+            isInvite = true;
+            showDialog2 = true;
           }"
         >
           邀请面试
@@ -24,7 +28,7 @@
         <el-button
           type="text"
           @click="() => {
-            showDialog3 = true
+            showDialog3 = true;
           }"
         >
           取消面试
@@ -32,8 +36,9 @@
         <el-button
           type="text"
           @click="() => {
-            dialogListQuery2.interviewDate = new Date(listQuery.interviewDate)
-            showDialog2 = true
+            isInvite = false;
+            dialogListQuery2.interviewDate = new Date(listQuery.interviewDate);
+            showDialog2 = true;
           }"
         >
           调整面试时间
@@ -114,9 +119,7 @@
       :confirm="confirm1"
       width="60%"
       title="跟进情况"
-      :destroy-on-close="true"
       @closed="handleClosedClick1"
-      @onPass="handlePassClick1"
     >
       <self-form
         ref="driverClueDetailDialog1"
@@ -128,6 +131,7 @@
         label-width="100px"
         class="p15 SuggestForm"
         :pc-col="24"
+        @onPass="handlePassClick1"
       >
         <template slot="contactInfo">
           <el-button
@@ -148,10 +152,8 @@
       :visible.sync="showDialog2"
       :confirm="confirm2"
       width="500px"
-      title="邀请面试"
-      :destroy-on-close="true"
+      :title="isInvite ? '邀请面试':'调整面试'"
       @closed="handleClosedClick2"
-      @onPass="handlePassClick2"
     >
       <self-form
         ref="driverClueDetailDialog2"
@@ -162,6 +164,7 @@
         label-width="100px"
         class="p15 SuggestForm"
         :pc-col="24"
+        @onPass="handlePassClick2"
       />
     </SelfDialog>
     <!-- 取消面试 -->
@@ -170,9 +173,7 @@
       :confirm="confirm3"
       width="500px"
       title="取消面试"
-      :destroy-on-close="true"
       @closed="handleClosedClick3"
-      @onPass="handlePassClick3"
     >
       <self-form
         ref="driverClueDetailDialog3"
@@ -183,16 +184,26 @@
         label-width="100px"
         class="p15 SuggestForm"
         :pc-col="24"
+        @onPass="handlePassClick3"
       />
     </SelfDialog>
+    <SelfEdit
+      ref="editDialog"
+      :list-query="form"
+    />
+    <LogList />
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import SectionContainer from '@/components/SectionContainer/index.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { GetDriverClueDetail } from '@/api/driver-cloud'
+import { GetDriverClueDetail, AddContactInfo, CancelInteview, InvitelInteview, AdjustmentlInteview } from '@/api/driver-cloud'
 import SelfDialog from '@/components/SelfDialog/index.vue'
+import SelfEdit from './components/EditDriverClue.vue'
+import LogList from './components/opLogs.vue'
+import { lock } from '@/utils/index'
+import { delayTime } from '@/settings'
 interface IState {
   [key: string]: any;
 }
@@ -200,19 +211,35 @@ interface IState {
   components: {
     SectionContainer,
     SelfForm,
-    SelfDialog
+    SelfDialog,
+    SelfEdit,
+    LogList
   }
 })
 export default class extends Vue {
   private showDialog1:boolean = false; // 添加跟进弹框
   private showDialog2:boolean = false; // 邀请面试弹框or调整时间
   private showDialog3:boolean = false; // 取消面试弹框
+  private isInvite:boolean = false ; // 是邀请面试还是调整面试
+  private form:IState = {
+    driverName: '',
+    phone: '',
+    hasCar: false,
+    carType: [],
+    experience: '',
+    age: '',
+    occupation: '',
+    address: '',
+    city: []
+  }; // 编辑
   private listQuery:IState = {
+    id: '',
     contactInfo: '',
     remark: '',
     interviewDate: '',
     driverName: '',
     hasCar: false,
+    carType: '',
     carTypeName: '',
     phone: '',
     experience: '',
@@ -227,7 +254,9 @@ export default class extends Vue {
     busiTypeName: '',
     sourceChannelName: '',
     sourceChannelUrl: '',
-    cityName: ''
+    cityName: '',
+    city: [],
+    occupation: ''
   };
   private formItem:any[] = [
     {
@@ -349,7 +378,8 @@ export default class extends Vue {
     }
   ]
   private dialogListQuery1:IState = {
-    contactInfo: ''
+    contactInfo: '',
+    remark: ''
   }; // 添加跟进表单
   private dialogFormItem1:any[] = [
     {
@@ -384,10 +414,17 @@ export default class extends Vue {
   // 邀请面试表单容器
   private dialogFormItem2:any[] = [
     {
-      type: 6,
+      type: 9,
       key: 'interviewDate',
       label: '',
-      w: '0px'
+      w: '0px',
+      tagAttrs: {
+        pickerOptions: {
+          disabledDate(time:any) {
+            return time.getTime() < Date.now() - 86400000
+          }
+        }
+      }
     }
   ];
   // 邀请面试表单校验
@@ -424,7 +461,9 @@ export default class extends Vue {
   // 获取司机线索详情
   async getDriverClueDetail() {
     try {
-      let params:IState = {}
+      let params:IState = {
+        id: this.$route.query.id
+      }
       let { data: res } = await GetDriverClueDetail(params)
       if (res.success) {
         this.listQuery = { ...this.listQuery, ...res.data }
@@ -439,9 +478,7 @@ export default class extends Vue {
   }
   // 添加跟进弹框关闭后
   handleClosedClick1() {
-    this.showDialog1 = false;
     (this.$refs.driverClueDetailDialog1 as any).resetForm()
-    this.dialogListQuery1.contactInfo = ''
   }
   // 添加跟进弹框确认
   confirm1() {
@@ -449,13 +486,36 @@ export default class extends Vue {
   }
   // 添加跟进弹框校验通过
   handlePassClick1(val:boolean) {
-    this.getDriverClueDetail()
+    this.addContactInfo()
+  }
+  // 添加跟进-api
+  @lock
+  async addContactInfo() {
+    try {
+      let params:IState = {
+        id: this.listQuery.id,
+        remark: this.dialogListQuery1.remark,
+        contactInfo: this.dialogListQuery1.contactInfo
+      }
+      let { data: res } = await AddContactInfo(params)
+      if (res.success) {
+        this.showDialog1 = false
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.getDriverClueDetail()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`add fail:${err}`)
+    } finally {
+      //
+    }
   }
   // 邀请面试表单弹框关闭
   handleClosedClick2() {
-    this.showDialog2 = false;
     (this.$refs.driverClueDetailDialog2 as any).resetForm()
-    this.dialogListQuery2.interviewDate = ''
   }
   // 邀请面试表单弹框确认
   confirm2() {
@@ -463,13 +523,63 @@ export default class extends Vue {
   }
   // 邀请面试表单弹框确认校验通过
   handlePassClick2(val:boolean) {
-    this.getDriverClueDetail()
+    if (this.isInvite) {
+      this.invitelInteview()
+    } else {
+      this.adjustmentlInteview()
+    }
+  }
+  // 调整时间
+  @lock
+  async adjustmentlInteview() {
+    try {
+      let params = {
+        id: this.listQuery.id,
+        interviewDate: this.dialogListQuery2.interviewDate
+      }
+      let { data: res } = await AdjustmentlInteview(params)
+      if (res.success) {
+        this.showDialog2 = false
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.getDriverClueDetail()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`invite fail:${err}`)
+    } finally {
+      //
+    }
+  }
+  // 邀请面试
+  @lock
+  async invitelInteview() {
+    try {
+      let params = {
+        id: this.listQuery.id,
+        interviewDate: this.dialogListQuery2.interviewDate
+      }
+      let { data: res } = await InvitelInteview(params)
+      if (res.success) {
+        this.showDialog2 = false
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.getDriverClueDetail()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`invite fail:${err}`)
+    } finally {
+      //
+    }
   }
   // 取消面试弹框
   handleClosedClick3() {
-    this.showDialog3 = false;
     (this.$refs.driverClueDetailDialog3 as any).resetForm()
-    this.dialogListQuery3.remark = ''
   }
   // 取消面试弹框确认
   confirm3() {
@@ -477,7 +587,49 @@ export default class extends Vue {
   }
   // 取消面试弹框确认校验通过
   handlePassClick3(val:boolean) {
-    this.getDriverClueDetail()
+    this.cancelInteview()
+  }
+  // 取消面试
+  @lock
+  async cancelInteview() {
+    try {
+      let params:IState = {
+        id: this.listQuery.id,
+        remark: this.dialogListQuery3.remark
+      }
+      let { data: res } = await CancelInteview(params)
+      if (res.success) {
+        this.showDialog3 = false
+        this.$message.success('操作成功')
+        setTimeout(() => {
+          this.getDriverClueDetail()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`cancel interview fail:${err}`)
+    } finally {
+      //
+    }
+  }
+  // 编辑
+  handleEditClick() {
+    this.form = {
+      ...this.form,
+      ...{
+        driverName: this.listQuery.driverName,
+        phone: this.listQuery.phone,
+        hasCar: this.listQuery.hasCar,
+        carType: this.listQuery.carType,
+        experience: this.listQuery.experience,
+        age: this.listQuery.age,
+        occupation: this.listQuery.occupation,
+        address: this.listQuery.address,
+        city: this.listQuery.city
+      }
+    };
+    (this.$refs.editDialog as any).showDialog = true
   }
 
   mounted() {

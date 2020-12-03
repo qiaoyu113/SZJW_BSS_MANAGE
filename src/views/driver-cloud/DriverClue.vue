@@ -163,7 +163,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDutyListByLevel, getOfficeByTypeAndOfficeId, getOfficeByType } from '@/api/common'
+import { GetDutyListByLevel, getOfficeByTypeAndOfficeId, getOfficeByType, GetDictionaryList } from '@/api/common'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
@@ -192,6 +192,7 @@ export default class extends Vue {
   private rows:IState[] = []; // 弹框选中的数据
   private dutyListOptions:IState[] = [];// 业务线
   private multipleSelection:IState[] = [];// 多选选中
+  private carOptions:IState[] = [];// 车型列表
   private listQuery:IState = {
     driverName: '',
     phone: '',
@@ -236,10 +237,6 @@ export default class extends Vue {
       key: 'hasCar',
       options: [
         {
-          label: '全部',
-          value: ''
-        },
-        {
           label: '有',
           value: true
         },
@@ -259,7 +256,7 @@ export default class extends Vue {
       },
       label: '车型',
       key: 'carType',
-      options: []
+      options: this.carOptions
     },
     {
       type: 2,
@@ -705,9 +702,32 @@ export default class extends Vue {
     }
     this.rows = []
   }
+  // 获取车型
+  async getBaseInfo() {
+    try {
+      let carLen = this.carOptions.length
+      if (carLen > 0) {
+        this.carOptions.splice(0, carLen)
+      }
+      let params = ['Intentional_compartment']
+      let { data: res } = await GetDictionaryList(params)
+      if (res.success) {
+        let cars = res.data.Intentional_compartment.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+
+        this.carOptions.push(...cars)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
+  }
   mounted() {
     this.getLists()
     this.getDutyListByLevel()
+    this.getBaseInfo()
   }
 }
 </script>

@@ -35,7 +35,7 @@ const driverCloud: RouteConfig = {
     },
     {
       path: 'driverClueDetail',
-      component: () => import(/* webpackChunkName: "driverCloud" */ '@/views/driver-cloud/DriverClueDetail.vue'),
+      component: () => import(/* webpackChunkName: "driverCloud" */ '@/views/driver-cloud/DriverClueDetail/index.vue'),
       name: 'DriverClueDetail',
       meta: {
         apiUrl: 'root',
