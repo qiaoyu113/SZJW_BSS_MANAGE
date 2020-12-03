@@ -180,7 +180,8 @@ export default {
     adjustmentList: '司机运费调整',
     configManager: '配置管理',
     driverClond: '司机云',
-    selfDriverTag: '自承运司机标签'
+    selfDriverTag: '自承运司机标签',
+    marketClue: '市场待分配线索'
   },
   navbar: {
     setPassword: '修改密码',

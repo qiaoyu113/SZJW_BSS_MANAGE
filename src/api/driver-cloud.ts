@@ -40,3 +40,11 @@ export const GetDriverByDriverName = (data: any) =>
     method: 'post',
     data
   })
+
+// 带分配线索泪飙
+export const marketClue = (data: any) =>
+  request({
+    url: `${prefix}/marketClue`,
+    method: 'post',
+    data
+  })
