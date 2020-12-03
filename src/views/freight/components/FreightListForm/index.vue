@@ -215,7 +215,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 12 : 24">
+              <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="外线销售">
                   <el-select
                     v-model="listQuery.lineSaleId"
@@ -516,7 +516,6 @@ export default class extends Vue {
         uri: '/v2/waybill/queryDuty'
       })
       if (res.success) {
-        console.log(res.data)
         this.lineSaleList.splice(0)
         let driverInfos = res.data.map(function(item: any) {
           return {

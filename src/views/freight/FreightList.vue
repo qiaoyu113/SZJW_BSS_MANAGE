@@ -484,6 +484,7 @@
 
     <!-- 运费确认 -->
     <SelfDialog
+      v-if="assignShowDialogMin"
       :visible.sync="assignShowDialogMin"
       :title="`运费确认`"
       :confirm-button-text="`确认`"
@@ -495,8 +496,12 @@
       other-type="danger"
     >
       <DetailItem
+        name="出车日期"
+        :value="formatDate(new Date(freightForm.list[0].departureDate))"
+      />
+      <DetailItem
         name="出车单号"
-        :value="freightForm.list[0].wayBillId"
+        :value="freightForm.list[0].wayBillId+'/'+freightForm.list[0].lineName"
       />
       <DetailItem
         name="司机姓名/手机号"
@@ -525,10 +530,32 @@
             />
           </el-form-item>
           <div
-            v-if="item.status === 10 && item.gmIsNoCar"
-            class="addNoFreight"
+            style="color:#FF5D5D"
+            class="slot-info"
           >
-            司机侧：<span>未出车</span>
+            <template v-if="item.status===30&&!item.confirmFee">
+              <template v-if="item.status===30&&item.gmIsNoCar">
+                <span>运费金额(已确认)：未出车；</span>
+                <span>司机侧：未出车；</span>
+              </template>
+              <template v-if="item.status===30&&!item.gmIsNoCar">
+                <span>运费金额(已确认)：未出车；</span>
+                <span>司机侧：{{ item.gmStatus === 2?item.gmStatusName:item.gmFee+'元' }}；</span>
+              </template>
+            </template>
+            <template v-if="item.status===30&&item.confirmFee">
+              <span> 运费金额(已确认)：{{ item.gmFee }}元；</span>
+              <span>司机侧：{{ item.gmFee }}元；</span>
+            </template>
+            <template
+              v-if="(item.status === 10 && item.gmStatus === 2)"
+              class="addNoFreight"
+            >
+              <span> 加盟侧：未出车；</span>
+            </template>
+            <template v-if="item.status===30">
+              <span> 客户侧：{{ item.lineStatus===2?item.lineStatusName:item.lineFee+'元' }}；</span>
+            </template>
           </div>
         </div>
         <el-form-item
@@ -590,7 +617,7 @@
               </el-col>
               <el-col :span="16">
                 <p style="line-hight:16px;margin-top:25px">
-                  出车日期：{{ item.departureDate }}
+                  出车日期：{{ formatDate(new Date(item.departureDate)) }}
                 </p>
               </el-col>
             </el-row>
@@ -690,7 +717,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch, freightTripMoney } from '@/api/freight'
 import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
-import { HandlePages, lock } from '@/utils/index'
+import { HandlePages, lock, parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
@@ -701,6 +728,7 @@ import { FreightListForm } from './components'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
+// import {parseTime} from '@/utils/index'
 
 interface IState {
   [key: string]: any;
@@ -922,7 +950,6 @@ export default class extends Vue {
       // return value
       return 'auto'
     }
-
     // 确认清除
     private confirm(done:any) {
       if (this.showDialog.name === '1') {
@@ -992,12 +1019,13 @@ export default class extends Vue {
       crossCheckSum: ''
     }
     // 请求列表
-    private async getList(value: any) {
+    private async getList(this:any, value: any) {
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
+        this.$refs['multipleTable'].clearSelection()
         this.list = data.data
         this.tableTitle = data.title
         this.handleChecked(data.data)
@@ -1440,7 +1468,7 @@ export default class extends Vue {
   .slot-info{
     color:#FF5D5D;
     span{
-      margin-right: 8px;
+      margin-right: 5px;
     }
   }
   .table-title{
