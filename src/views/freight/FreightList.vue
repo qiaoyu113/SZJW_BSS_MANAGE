@@ -15,12 +15,12 @@
     />
     <div class="table_box">
       <!--table表单-->
-      <div class="table-title">
+      <!-- <div class="table-title">
         筛选结果（<span>{{ tableTitle.all }}</span>条）：
         司机侧已上报<span>{{ tableTitle.gmStatusCount }}</span>条，<span>{{ tableTitle.gmStatusCount }}</span>元；
         客户侧已上报<span>{{ tableTitle.lineStatusCount }}</span>条，<span>{{ tableTitle.lineStatusSum }}</span>元；
         已确认<span>{{ tableTitle.crossCheckCount }}</span>条，<span>{{ tableTitle.crossCheckCount }}</span>元
-      </div>
+      </div> -->
       <div
         class="table_center"
         :style="total > 0 ? '' : 'padding-bottom: 30px;'"
@@ -1415,7 +1415,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       // height: calc(100vh - 360px) !important;
-      padding: 0px 30px 0;
+      padding: 30px 30px 0;
       box-sizing: border-box;
       background: #ffffff;
       overflow-y: scroll;
@@ -1506,9 +1506,9 @@ export default class extends Vue {
 </style>
 
 <style lang="scss" scope>
-.el-collapse-item__content {
-  padding-bottom: 0;
-}
+// .el-collapse-item__content {
+//   padding-bottom: 0;
+// }
 
 .el-form-item__content{
   font-size: 13px;
