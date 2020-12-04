@@ -163,7 +163,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { SettingsModule } from '@/store/modules/settings'
-import { GetDutyListByLevel, getOfficeByTypeAndOfficeId, getOfficeByType, GetDictionaryList } from '@/api/common'
+import { GetDutyListByLevel, getOfficeByTypeAndOfficeId, getOfficeByType, GetDictionaryList, GetOpenCityData, getGroupInfoByCityCodeAndProductLine, GetSpecifiedRoleList } from '@/api/common'
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
@@ -252,7 +252,8 @@ export default class extends Vue {
         placeholder: '请选择',
         clearable: true,
         filterable: true,
-        multiple: true
+        multiple: true,
+        'collapse-tags': true
       },
       label: '车型',
       key: 'carType',
@@ -264,7 +265,8 @@ export default class extends Vue {
         placeholder: '请选择',
         clearable: true,
         filterable: true,
-        multiple: true
+        multiple: true,
+        'collapse-tags': true
       },
       label: '联系情况',
       key: 'contactInfo',
@@ -458,8 +460,8 @@ export default class extends Vue {
         'node-key': 'city',
         clearable: true,
         props: {
-          lazy: true
-          // lazyLoad: this.showWork
+          lazy: true,
+          lazyLoad: this.showCityGroupPerson
         }
       },
       label: '选择跟进人',
@@ -722,6 +724,96 @@ export default class extends Vue {
       }
     } catch (err) {
       console.log(`get base info fail:${err}`)
+    }
+  }
+  // 获取城市、小组、跟进人
+  async showCityGroupPerson(node: any, resolve: any) {
+    if (node.level === 0) {
+      let citys = await this.getOpenCitys()
+      resolve(citys)
+    } else if (node.level === 1) {
+      let groups = await this.getGroupInfoByCityCodeAndProductLine(+node.value)
+      resolve(groups)
+    } else if (node.level === 2) {
+      console.log(node.value, node.parent.value)
+      let data = [
+        {
+          value: '1',
+          label: 'tom',
+          leaf: true
+        },
+        {
+          value: '2',
+          label: 'jack',
+          leaf: true,
+          disabled: true
+        }
+      ]
+      resolve(data)
+    }
+  }
+  // 获取开通城市
+  async getOpenCitys() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        return res.data.map((item:any) => ({
+          value: item.code,
+          label: item.name
+        }))
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get open city fail:${err}`)
+    } finally {
+      //
+    }
+  }
+  // 获取小组
+  async getGroupInfoByCityCodeAndProductLine(cityCode:number) {
+    try {
+      let params:IState = {
+        busiLine: 1,
+        cityCode
+      }
+      let { data: res } = await getGroupInfoByCityCodeAndProductLine(params)
+      if (res.success) {
+        return res.data.map((item:any) => ({
+          value: item.id,
+          label: item.name
+        }))
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get group fail:${err}`)
+    } finally {
+      //
+    }
+  }
+  // 获取小组下的人
+  async getGmOptions(cityCode:number, busiType:number) {
+    try {
+      let params:IState = {
+        roleTypes: [1],
+        cityCode,
+        busiType
+      }
+
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        return res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(err)
     }
   }
   mounted() {
