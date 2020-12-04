@@ -44,6 +44,10 @@
                       lazyLoad: showWork
                     }"
                     placeholder="请选择"
+                    clearable
+                    @clear="() => {
+                      arrayCity = []
+                    }"
                     @change="getManager()"
                   />
                 </el-form-item>
@@ -68,6 +72,7 @@
                     name="freightlist_gmId_input"
                     placeholder="请选择"
                     size="small"
+                    clearable
                   >
                     <el-option
                       v-for="item in optionsJoin"
@@ -138,6 +143,7 @@
                   <el-select
                     v-model="listQuery.dutyManagerId"
                     filterable
+                    clearable
                     name="freightlist_dutyManagerId_input"
                     placeholder="请选择"
                     size="small"
@@ -159,6 +165,7 @@
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    clearable
                     size="small"
                   >
                     <el-option
@@ -356,6 +363,7 @@ export default class extends Vue {
   private DateValueChild2: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate', 'contractEndStartTime']; // 添加过滤listQuery中key的名称
   private hasDiff: any[] = [
+    { dictValue: '', dictLabel: '全部' },
     { dictValue: '1', dictLabel: '有' },
     { dictValue: '0', dictLabel: '无' }
   ]
@@ -611,6 +619,10 @@ export default class extends Vue {
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsClassification = data.data
+            this.optionsClassification.push({
+              name: '全部',
+              id: ''
+            })
           } else {
             this.$message.error(data)
           }
@@ -670,6 +682,10 @@ export default class extends Vue {
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsJoin = data.data
+            this.optionsJoin.unshift({
+              name: '全部',
+              id: ''
+            })
           } else {
             this.$message.error(data)
           }

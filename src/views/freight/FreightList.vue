@@ -518,6 +518,12 @@
               clearable
             />
           </el-form-item>
+          <div
+            v-if="item.status === 10 && item.gmIsNoCar"
+            class="addNoFreight"
+          >
+            司机侧：<span>未出车</span>
+          </div>
         </div>
         <el-form-item
           label="备注"
@@ -584,23 +590,32 @@
           <div
             v-if="item.check"
           >
-            <el-form-item
+            <div
               v-for="(i, index) in item.list"
               :key="index"
-              :label="`趟数` + (index + 1) + `: ` + i.deliverTime"
-              :prop="'lists[' + itemindex + '].list.' + index + '.preMoney'"
-              :rules="{required: true, message: '请输入金额', trigger: 'change'}"
             >
-              <el-input
-                v-model="i.preMoney"
-                v-only-number="{min: 0, max: 999999.99, precision: 2}"
-                placeholder="请输入"
-                name="freight_price_input"
-                maxlength="10"
-                type="number"
-                clearable
-              />
-            </el-form-item>
+              <el-form-item
+                :label="`趟数` + (index + 1) + `: ` + i.deliverTime"
+                :prop="'lists[' + itemindex + '].list.' + index + '.preMoney'"
+                :rules="{required: true, message: '请输入金额', trigger: 'change'}"
+              >
+                <el-input
+                  v-model="i.preMoney"
+                  v-only-number="{min: 0, max: 999999.99, precision: 2}"
+                  placeholder="请输入"
+                  name="freight_price_input"
+                  maxlength="10"
+                  type="number"
+                  clearable
+                />
+              </el-form-item>
+              <div
+                v-if="i.status === 10 && i.gmIsNoCar"
+                class="addNoFreight"
+              >
+                司机侧：<span>未出车</span>
+              </div>
+            </div>
           </div>
         </div>
         <el-form-item
@@ -882,7 +897,7 @@ export default class extends Vue {
 
     // 判断是否可以选中
     private selectable(row: any) {
-      if (row.status === 40 || row.status === 20) {
+      if (row.status === 5 || row.status === 40 || row.status === 20) {
         return false
       }
       // return row.canConfirm
@@ -1032,7 +1047,9 @@ export default class extends Vue {
                   wayBillId: lists.wayBillId,
                   wayBillAmountId: lists.wayBillAmountId,
                   check: lists.check,
-                  preMoney: lists.preMoney
+                  preMoney: lists.preMoney,
+                  status: lists.status,
+                  gmIsNoCar: lists.gmIsNoCar
                 })
                 list.push(lists)
               } else {
@@ -1045,7 +1062,9 @@ export default class extends Vue {
                       wayBillId: lists.wayBillId,
                       wayBillAmountId: lists.wayBillAmountId,
                       check: lists.check,
-                      preMoney: lists.preMoney
+                      preMoney: lists.preMoney,
+                      status: lists.status,
+                      gmIsNoCar: lists.gmIsNoCar
                     })
                   }
                 })
@@ -1317,6 +1336,15 @@ export default class extends Vue {
   padding: 15px;
   // padding-bottom: 0;
   box-sizing: border-box;
+  .addNoFreight{
+    margin-top: -15px;
+    color: #9e9e9e;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    span{
+      color: #FF5D5D;
+    }
+  }
   .btn-item {
     background: #649cee;
     border-radius: 4px;
