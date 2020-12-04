@@ -375,7 +375,7 @@
             min-width="170"
           >
             <template slot-scope="{row}">
-              <span>{{ row.dutyManagerName + '/' + row.dutyManagerPhone | DataIsNull }}</span>
+              <span>{{ row.dutyManagerName && row.dutyManagerPhone ? row.dutyManagerName+ '/' +row.dutyManagerPhone:'' }}</span>
             </template>
           </el-table-column>
 
@@ -544,8 +544,8 @@
               </template>
             </template>
             <template v-if="item.status===30&&item.confirmFee">
-              <span> 运费金额(已确认)：{{ item.gmFee }}元；</span>
-              <span>司机侧：{{ item.gmFee }}元；</span>
+              <span> 运费金额(已确认)：{{ item.gmcFee }}元；</span>
+              <span>司机侧：{{ item.gmcFee }}元；</span>
             </template>
             <template
               v-if="(item.status === 10 && item.gmStatus === 2)"
@@ -656,28 +656,28 @@
                 style="color:#FF5D5D"
                 class="slot-info"
               >
-                <template v-if="i.status===30&&!item.confirmFee">
-                  <template v-if="i.status===30&&item.gmIsNoCar">
+                <template v-if="i.status===30&&!i.confirmFee">
+                  <template v-if="i.status===30&&i.gmIsNoCar">
                     <span>运费金额(已确认)：未出车；</span>
                     <span>司机侧：未出车；</span>
                   </template>
-                  <template v-if="i.status===30&&!item.gmIsNoCar">
+                  <template v-if="i.status===30&&!i.gmIsNoCar">
                     <span>运费金额(已确认)：未出车；</span>
-                    <span>司机侧：{{ item.gmStatus === 2?item.gmStatusName:item.gmFee+'元' }}；</span>
+                    <span>司机侧：{{ i.gmStatus === 2?i.gmStatusName:i.gmFee+'元' }}；</span>
                   </template>
                 </template>
-                <template v-if="i.status===30&&item.confirmFee">
-                  <span> 运费金额(已确认)：{{ item.gmFee }}元；</span>
-                  <span>司机侧：{{ item.gmFee }}元；</span>
+                <template v-if="i.status===30&&i.confirmFee">
+                  <span> 运费金额(已确认)：{{ i.gmcFee }}元；</span>
+                  <span>司机侧：{{ i.gmcFee }}元；</span>
                 </template>
                 <template
-                  v-if="(i.status === 10 && item.gmStatus === 2)"
+                  v-if="(i.status === 10 && i.gmStatus === 2)"
                   class="addNoFreight"
                 >
                   <span> 加盟侧：未出车；</span>
                 </template>
                 <template v-if="i.status===30">
-                  <span> 客户侧：{{ item.lineStatus===2?item.lineStatusName:item.lineFee+'元' }}；</span>
+                  <span> 客户侧：{{ i.lineStatus===2?i.lineStatusName:i.lineFee+'元' }}；</span>
                 </template>
               </div>
             </div>
@@ -1111,7 +1111,9 @@ export default class extends Vue {
             let ret: any = []
             let list: any = []
             let datas = data.data
+            console.log(datas)
             datas.forEach((i: any, index: any) => {
+              console.log(i)
               // this.freightForm[index].list = i
               if (ret.indexOf(i.wayBillId) === -1) {
                 ret.push(i.wayBillId)
@@ -1125,7 +1127,15 @@ export default class extends Vue {
                   check: lists.check,
                   preMoney: lists.preMoney,
                   status: lists.status,
-                  gmIsNoCar: lists.gmIsNoCar
+                  gmIsNoCar: lists.gmIsNoCar,
+                  confirmFee: lists.confirmFee,
+                  gmStatus: lists.gmStatus,
+                  gmStatusName: lists.gmStatusName,
+                  gmFee: lists.gmFee,
+                  gmcFee: lists.gmcFee,
+                  lineStatus: lists.lineStatus,
+                  lineStatusName: lists.lineStatusName,
+                  lineFee: lists.lineFee
                 })
                 list.push(lists)
               } else {
@@ -1140,7 +1150,15 @@ export default class extends Vue {
                       check: lists.check,
                       preMoney: lists.preMoney,
                       status: lists.status,
-                      gmIsNoCar: lists.gmIsNoCar
+                      gmIsNoCar: lists.gmIsNoCar,
+                      confirmFee: lists.confirmFee,
+                      gmStatus: lists.gmStatus,
+                      gmStatusName: lists.gmStatusName,
+                      gmFee: lists.gmFee,
+                      gmcFee: lists.gmcFee,
+                      lineStatus: lists.lineStatus,
+                      lineStatusName: lists.lineStatusName,
+                      lineFee: lists.lineFee
                     })
                   }
                 })
