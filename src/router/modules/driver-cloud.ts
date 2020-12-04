@@ -9,8 +9,8 @@ const driverCloud: RouteConfig = {
   meta: {
     title: 'driverClond',
     icon: 'driver-cloud',
-    apiUrl: '/v2/driver/label-sync/list',
-    alwaysShow: true
+    apiUrl: '/v2/driver/label-sync/list'
+    // alwaysShow: true
   },
   children: [
     {
@@ -20,6 +20,16 @@ const driverCloud: RouteConfig = {
       meta: {
         apiUrl: '/v2/driver/label-sync/list',
         title: 'selfDriverTag',
+        noCache: false
+      }
+    },
+    {
+      path: 'marketclue',
+      component: () => import(/* webpackChunkName: "driverCloud" */ '@/views/driver-cloud/MarketClue.vue'),
+      name: 'MarketClue',
+      meta: {
+        apiUrl: '/v2/driver/label-sync/list',
+        title: 'marketClue',
         noCache: false
       }
     },
