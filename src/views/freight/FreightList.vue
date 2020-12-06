@@ -1151,33 +1151,39 @@ export default class extends Vue {
         let wayBillAmountIdsArr: any = []
         let noCheck: any = []
         this.freightFormAll.lists.forEach((i: any) => {
-          i.list.forEach((element: any) => {
-            if (element.check) {
+          if (i.check) {
+            i.list.forEach((element: any) => {
               moneysArr.push(element.preMoney)
               wayBillAmountIdsArr.push(element.wayBillAmountId)
-            } else {
+            })
+          } else {
+            i.list.forEach((element: any) => {
               noCheck.push(element.wayBillAmountId)
-            }
-          })
-        })
-        const { data } = await ReportMoneyBatch({
-          moneys: moneysArr,
-          wayBillAmountIds: wayBillAmountIdsArr
-        }, this.remarkAll)
-        if (data.success) {
-          this.getList(this.listQuery)
-          this.$message.success('提交成功')
-          this.assignShowDialog = false
-          if (noCheck.length) {
-            const { data } = await NoCarBatch(noCheck, this.remarkAll)
-            if (data.success) {
-              this.assignShowDialog = false
-            } else {
-              this.$message.error(data.errorMsg)
-            }
+            })
           }
-        } else {
-          this.$message.error(data.errorMsg)
+        })
+        if (noCheck.length) {
+          const { data } = await NoCarBatch(noCheck, this.remarkAll)
+          if (data.success) {
+            this.assignShowDialog = false
+          } else {
+            this.$message.error(data.errorMsg)
+          }
+        }
+        if (wayBillAmountIdsArr.length) {
+          const { data } = await ReportMoneyBatch({
+            moneys: moneysArr,
+            wayBillAmountIds: wayBillAmountIdsArr
+          }, this.remarkAll)
+          if (data.success) {
+            setTimeout(() => {
+              this.getList(this.listQuery)
+              this.$message.success('提交成功')
+            }, 1000)
+            this.assignShowDialog = false
+          } else {
+            this.$message.error(data.errorMsg)
+          }
         }
       } catch (err) {
         console.log(`submit fail:${err}`)
