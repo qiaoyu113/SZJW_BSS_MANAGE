@@ -849,6 +849,7 @@ export default class extends Vue {
       page: 1,
       limit: 20
     };
+    private delay: number = 1000;
 
     @Watch('checkList', { deep: true })
     private checkListChange(val:any) {
@@ -946,6 +947,7 @@ export default class extends Vue {
 
     // 请求列表
     private async getList(value: any) {
+      this.list = []
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
@@ -1122,9 +1124,13 @@ export default class extends Vue {
           wayBillAmountIds: wayBillAmountIdsArr
         }, this.freightForm.remark)
         if (data.success) {
-          this.$message.success('提交成功')
           this.assignShowDialogMin = false
-          this.getList(this.listQuery)
+          this.handleCheck()
+          setTimeout(() => {
+            this.getList(this.listQuery)
+            this.$message.success('提交成功')
+            document.body.scrollTop = document.documentElement.scrollTop = 0
+          }, this.delay)
         } else {
           this.$message.error(data.errorMsg)
         }
@@ -1165,6 +1171,15 @@ export default class extends Vue {
         if (noCheck.length) {
           const { data } = await NoCarBatch(noCheck, this.remarkAll)
           if (data.success) {
+            if (!wayBillAmountIdsArr.length) {
+              this.handleCheck()
+              this.assignShowDialog = false
+              setTimeout(() => {
+                this.getList(this.listQuery)
+                this.$message.success('提交成功')
+                document.body.scrollTop = document.documentElement.scrollTop = 0
+              }, this.delay)
+            }
             this.assignShowDialog = false
           } else {
             this.$message.error(data.errorMsg)
@@ -1176,11 +1191,13 @@ export default class extends Vue {
             wayBillAmountIds: wayBillAmountIdsArr
           }, this.remarkAll)
           if (data.success) {
+            this.handleCheck()
+            this.assignShowDialog = false
             setTimeout(() => {
               this.getList(this.listQuery)
               this.$message.success('提交成功')
-            }, 1000)
-            this.assignShowDialog = false
+              document.body.scrollTop = document.documentElement.scrollTop = 0
+            }, this.delay)
           } else {
             this.$message.error(data.errorMsg)
           }
@@ -1203,9 +1220,13 @@ export default class extends Vue {
         callback: async action => {
           const { data } = await NoCarBatch(noCheck, this.remarkAll)
           if (data.success) {
-            this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
-            this.getList(this.listQuery)
+            this.handleCheck()
+            setTimeout(() => {
+              this.getList(this.listQuery)
+              this.$message.success('已成功操作全部未出车')
+              document.body.scrollTop = document.documentElement.scrollTop = 0
+            }, this.delay)
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -1222,9 +1243,13 @@ export default class extends Vue {
       })
       const { data } = await NoCarBatch(wayBillAmountIdsArr, this.freightForm.remark)
       if (data.success) {
-        this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false
-        this.getList(this.listQuery)
+        this.handleCheck()
+        setTimeout(() => {
+          this.getList(this.listQuery)
+          this.$message.success('已成功操作未出车')
+          document.body.scrollTop = document.documentElement.scrollTop = 0
+        }, this.delay)
         done()
       } else {
         this.$message.error(data.errorMsg)
