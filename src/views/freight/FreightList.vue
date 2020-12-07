@@ -532,31 +532,8 @@
           <div
             style="color:#FF5D5D"
             class="slot-info"
-            v-html="renderRefund(item)"
           >
-            <!-- <template v-if="item.status===30&&!item.confirmFee">
-              <template v-if="item.status===30&&item.gmIsNoCar">
-                <span>运费金额(已确认)：未出车；</span>
-                <span>司机侧：未出车；</span>
-              </template>
-              <template v-if="item.status===30&&!item.gmIsNoCar">
-                <span>运费金额(已确认)：未出车；</span>
-                <span>司机侧：{{ item.gmStatus === 2?item.gmStatusName:item.gmFee+'元' }}；</span>
-              </template>
-            </template>
-            <template v-if="item.status===30&&item.confirmFee">
-              <span> 运费金额(已确认)：{{ item.gmcFee }}元；</span>
-              <span>司机侧：{{ item.gmcFee }}元；</span>
-            </template>
-            <template
-              v-if="(item.status === 10 && item.gmStatus === 2)"
-              class="addNoFreight"
-            >
-              <span> 加盟侧：未出车；</span>
-            </template>
-            <template v-if="item.status===30">
-              <span> 客户侧：{{ item.lineStatus===2?item.lineStatusName:item.lineFee+'元' }}；</span>
-            </template> -->
+            <span>{{ renderRefund(item) }}</span>
           </div>
         </div>
         <el-form-item
@@ -654,36 +631,11 @@
                 />
               </el-form-item>
 
-              <!-- eslint-disable-next-line vue/no-v-html -->
-              <!-- <RenderRefund :status="i" /> -->
               <div
                 style="color:#FF5D5D"
                 class="slot-info"
-                v-html="renderRefund(i)"
               >
-                <!-- <template v-if="i.status===30&&!i.confirmFee">
-                  <template v-if="i.status===30&&i.gmIsNoCar">
-                    <span>运费金额(已确认)：未出车；</span>
-                    <span>司机侧：未出车；</span>
-                  </template>
-                  <template v-if="i.status===30&&!i.gmIsNoCar">
-                    <span>运费金额(已确认)：未出车；</span>
-                    <span>司机侧：{{ i.gmStatus === 2?i.gmStatusName:i.gmFee+'元' }}；</span>
-                  </template>
-                </template>
-                <template v-if="i.status===30&&i.confirmFee">
-                  <span> 运费金额(已确认)：{{ i.gmcFee }}元；</span>
-                  <span>司机侧：{{ i.gmcFee }}元；</span>
-                </template>
-                <template
-                  v-if="(i.status === 10 && i.gmStatus === 2)"
-                  class="addNoFreight"
-                >
-                  <span> 加盟侧：未出车；</span>
-                </template>
-                <template v-if="i.status===30">
-                  <span> 客户侧：{{ i.lineStatus===2?i.lineStatusName:i.lineFee+'元' }}；</span>
-                </template> -->
+                <span>{{ renderRefund(i) }}</span>
               </div>
             </div>
           </div>
@@ -1015,19 +967,19 @@ export default class extends Vue {
           }
           if (gmcIsNoCar) {
             shipping = ''
-            driverFreight = gmStatus === 2 ? gmStatusName : gmFee || 0 + '元'
+            driverFreight = gmStatus === 2 ? gmStatusName : (gmFee || 0) + '元'
           }
         } else {
-          shipping = gmcFee || 0 + '元'
-          driverFreight = gmcFee || 0 + '元'
+          shipping = (gmcFee || 0) + '元'
+          driverFreight = (gmcFee || 0) + '元'
         }
         customerFreight = lineStatus === 2 ? lineStatusName : lineFee + '元'
-        return `<span>运费金额(已单边确认)：${shipping}；</span>
-              <span>司机侧：${driverFreight}；</span>
-              <span>客户侧：${customerFreight}；</span>
+        return `运费金额(已单边确认)：${shipping}；
+              司机侧：${driverFreight}；
+              客户侧：${customerFreight}；
               `
       } else if (status === 10 && gmStatus === 2) {
-        return `<span>加盟侧：未出车；</span>`
+        return '加盟侧：未出车'
       }
       return ''
     }
@@ -1148,9 +1100,7 @@ export default class extends Vue {
             let ret: any = []
             let list: any = []
             let datas = data.data
-            console.log(datas)
             datas.forEach((i: any, index: any) => {
-              console.log(i)
               // this.freightForm[index].list = i
               if (ret.indexOf(i.wayBillId) === -1) {
                 ret.push(i.wayBillId)
