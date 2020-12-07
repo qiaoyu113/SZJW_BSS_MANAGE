@@ -215,7 +215,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="isPC ? 6 : 24">
+              <!-- <el-col :span="isPC ? 6 : 24">
                 <el-form-item label="外线销售">
                   <el-select
                     v-model="listQuery.lineSaleId"
@@ -233,7 +233,7 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="出车日期">
                   <el-date-picker
