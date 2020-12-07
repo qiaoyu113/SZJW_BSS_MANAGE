@@ -582,19 +582,28 @@
           class="freightSelfDialog"
         >
           <div style="box-sizing:border-box;">
-            <el-switch
-              v-model="item.check"
-              style="padding:25px 15px;display: block"
-              active-color="#13ce66"
-              inactive-color="#F56C6C"
-              active-text="已出车"
-              inactive-text="未出车"
-            />
+            <el-row>
+              <el-col :span="12">
+                <el-switch
+                  v-model="item.check"
+                  style="padding:25px 15px;display: block"
+                  active-color="#13ce66"
+                  inactive-color="#F56C6C"
+                  active-text="已出车"
+                  inactive-text="未出车"
+                />
+              </el-col>
+              <el-col :span="12">
+                <div
+                  class="DetailItem"
+                  style="margin-top: 20px;"
+                >
+                  <span class="detail-title">出车日期</span>
+                  <span class="detail-value">{{ formatDate(new Date(item.departureDate)) }}</span>
+                </div>
+              </el-col>
+            </el-row>
           </div>
-          <DetailItem
-            name="出车日期"
-            :value="formatDate(new Date(item.departureDate))"
-          />
           <DetailItem
             name="出车单号/线路名称"
             :value="item.wayBillId+'/'+item.lineName"
@@ -950,27 +959,34 @@ export default class extends Vue {
       let shipping = ''
       let driverFreight = ''
       let customerFreight = ''
+      let statusName = ''
       const { status, confirmFee, gmIsNoCar,
         gmcFee, gmFee, gmStatus, gmStatusName,
         lineStatus, lineStatusName, lineFee,
         gmcIsNoCar
       } = item
       if (status === 30) {
-        if (!confirmFee && typeof confirmFee !== 'number') {
-          if (!gmcIsNoCar) {
-            shipping = '未出车'
-            driverFreight = '未出车'
-          }
-          if (gmcIsNoCar) {
-            shipping = ''
-            driverFreight = gmStatus === 2 ? gmStatusName : (gmFee || 0) + '元'
-          }
+        if (gmcIsNoCar) {
+          shipping = '未出车'
+          driverFreight = '未出车'
+          statusName = '（已单边确认）'
         } else {
-          shipping = (gmcFee || 0) + '元'
-          driverFreight = (gmcFee || 0) + '元'
+          if (!confirmFee && typeof confirmFee !== 'number') {
+            if (gmIsNoCar) {
+              shipping = ''
+              driverFreight = (gmStatusName || 0 + '元')
+            } else {
+              shipping = ''
+              driverFreight = (gmFee || 0) + '元'
+            }
+          } else {
+            shipping = (gmcFee || 0) + '元'
+            driverFreight = (gmcFee || 0) + '元'
+            statusName = '（已单边确认）'
+          }
         }
         customerFreight = lineStatus === 2 ? lineStatusName : lineFee + '元'
-        return `运费金额(已单边确认)：${shipping}；
+        return `运费金额${statusName}：${shipping}；
               司机侧：${driverFreight}；
               客户侧：${customerFreight}；
               `
