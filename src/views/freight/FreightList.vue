@@ -532,8 +532,9 @@
           <div
             style="color:#FF5D5D"
             class="slot-info"
+            v-html="renderRefund(item)"
           >
-            <template v-if="item.status===30&&!item.confirmFee">
+            <!-- <template v-if="item.status===30&&!item.confirmFee">
               <template v-if="item.status===30&&item.gmIsNoCar">
                 <span>运费金额(已确认)：未出车；</span>
                 <span>司机侧：未出车；</span>
@@ -555,7 +556,7 @@
             </template>
             <template v-if="item.status===30">
               <span> 客户侧：{{ item.lineStatus===2?item.lineStatusName:item.lineFee+'元' }}；</span>
-            </template>
+            </template> -->
           </div>
         </div>
         <el-form-item
@@ -647,11 +648,15 @@
                   clearable
                 />
               </el-form-item>
+
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <!-- <RenderRefund :status="i" /> -->
               <div
                 style="color:#FF5D5D"
                 class="slot-info"
+                v-html="renderRefund(i)"
               >
-                <template v-if="i.status===30&&!i.confirmFee">
+                <!-- <template v-if="i.status===30&&!i.confirmFee">
                   <template v-if="i.status===30&&i.gmIsNoCar">
                     <span>运费金额(已确认)：未出车；</span>
                     <span>司机侧：未出车；</span>
@@ -673,7 +678,7 @@
                 </template>
                 <template v-if="i.status===30">
                   <span> 客户侧：{{ i.lineStatus===2?i.lineStatusName:i.lineFee+'元' }}；</span>
-                </template>
+                </template> -->
               </div>
             </div>
           </div>
@@ -723,12 +728,12 @@ import { FreightListForm } from './components'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
+// import RenderRefund from './components/renderRefund.js'
 // import {parseTime} from '@/utils/index'
 
 interface IState {
   [key: string]: any;
 }
-
 @Component({
   name: 'FreightList',
   components: {
@@ -988,7 +993,39 @@ export default class extends Vue {
         this.DateValue2 = value
       }
     }
-
+    private renderRefund(item:any) {
+      let shipping = ''
+      let driverFreight = ''
+      let customerFreight = ''
+      const { status, confirmFee, gmIsNoCar,
+        gmcFee, gmFee, gmStatus, gmStatusName,
+        lineStatus, lineStatusName, lineFee,
+        gmcIsNoCar
+      } = item
+      if (status === 30) {
+        if (!confirmFee && typeof confirmFee !== 'number') {
+          if (!gmcIsNoCar) {
+            shipping = '未出车'
+            driverFreight = '未出车'
+          }
+          if (gmcIsNoCar) {
+            shipping = ''
+            driverFreight = gmStatus === 2 ? gmStatusName : gmFee || 0 + '元'
+          }
+        } else {
+          shipping = gmcFee || 0 + '元'
+          driverFreight = gmcFee || 0 + '元'
+        }
+        customerFreight = lineStatus === 2 ? lineStatusName : lineFee + '元'
+        return `<span>运费金额(已单边确认)：${shipping}；</span>
+              <span>司机侧：${driverFreight}；</span>
+              <span>客户侧：${customerFreight}；</span>
+              `
+      } else if (status === 10 && gmStatus === 2) {
+        return `<span>加盟侧：未出车；</span>`
+      }
+      return ''
+    }
     // 处理是否展示运费确认的总按钮
     private handleChecked(arr: any) {
       let list = [
@@ -1130,7 +1167,8 @@ export default class extends Vue {
                   gmcFee: lists.gmcFee,
                   lineStatus: lists.lineStatus,
                   lineStatusName: lists.lineStatusName,
-                  lineFee: lists.lineFee
+                  lineFee: lists.lineFee,
+                  gmcIsNoCar: lists.gmcIsNoCar
                 })
                 list.push(lists)
               } else {
@@ -1153,7 +1191,8 @@ export default class extends Vue {
                       gmcFee: lists.gmcFee,
                       lineStatus: lists.lineStatus,
                       lineStatusName: lists.lineStatusName,
-                      lineFee: lists.lineFee
+                      lineFee: lists.lineFee,
+                      gmcIsNoCar: lists.gmcIsNoCar
                     })
                   }
                 })
