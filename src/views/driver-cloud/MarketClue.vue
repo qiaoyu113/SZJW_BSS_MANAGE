@@ -382,8 +382,8 @@ export default class extends Vue {
   private async handlePassClick(val:boolean) {
     try {
       let params = {
-        gmId: Number(this.dialogListQuery.follow[2]),
-        clueIds: this.getMarketIds
+        followerId: Number(this.dialogListQuery.follow[2]),
+        marketClueId: this.getMarketIds
       }
       const { data: res } = await allocationClue(params)
       if (res.success) {
