@@ -48,3 +48,11 @@ export const marketClue = (data: any) =>
     method: 'post',
     data
   })
+
+// 分配带市场分配线索
+export const allocationClue = (data: any) =>
+  request({
+    url: `${prefix}/allocationClue`,
+    method: 'post',
+    data
+  })

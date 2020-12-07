@@ -82,32 +82,22 @@
       :visible.sync="showDialog"
       :title="dialogTit"
       :confirm="confirm"
+      width="500px"
       :sumbit-again="submitLoading"
       :destroy-on-close="true"
-      @closed="handleClosed"
+      @closed="handleDialogClosed"
     >
       <template v-if="showDialog">
-        <el-form class="followChoose">
-          <el-form-item label="选择跟进人">
-            <el-cascader
-              v-model="followPeople"
-              placeholder="请选择所属城市"
-              clearable
-              default-expanded-keys="true"
-              default-checked-keys="true"
-              node-key="followPeople"
-              :props="{
-                lazy: true,
-                lazyLoad: cityArea
-              }"
-            >
-              <template slot-scope="{data}">
-                <span>{{ data.label }}</span>
-                <span v-if="data.value === 1301"> (停用) </span>
-              </template>
-            </el-cascader>
-          </el-form-item>
-        </el-form>
+        <self-form
+          ref="dialogMarketClue"
+          :rules="rules"
+          :list-query="dialogListQuery"
+          :form-item="dialogFormItem"
+          size="small"
+          label-width="100px"
+          :pc-col="24"
+          @onPass="handlePassClick"
+        />
       </template>
     </SelfDialog>
   </div>
@@ -131,10 +121,12 @@ import {
   getOfficeByTypeAndOfficeId,
   getOfficeByType
 } from '@/api/common'
-import { showWork, followPeople } from '@/utils'
+import { showWork, showCityGroupPerson } from '@/utils'
 import {
-  marketClue
+  marketClue,
+  allocationClue
 } from '@/api/driver-cloud'
+import { delayTime } from '@/settings'
 interface PageObj {
   page: number;
   limit: number;
@@ -153,7 +145,6 @@ interface IState {
   }
 })
 export default class extends Vue {
-  private multipleSelectionAll:any = []; // 所有选中的数据包含跨页数据
   private multipleSelection: any[] = []; // 当前页选中的数据
   private idKey:string = 'phone'; // 标识列表数据中每一行的唯一键的名称
   private cityArea:any = {};
@@ -283,7 +274,34 @@ export default class extends Vue {
       w: '0px'
     }
   ];
-  private followPeople: Array<number | string> = [];
+  private dialogListQuery:IState = {
+    follow: []
+  };
+  private dialogFormItem:any[] = [
+    {
+      type: 8,
+      tagAttrs: {
+        placeholder: '请选择',
+        'default-expanded-keys': true,
+        'default-checked-keys': true,
+        'node-key': 'city',
+        clearable: true,
+        props: {
+          lazy: true,
+          lazyLoad: showCityGroupPerson
+        }
+      },
+      label: '选择跟进人',
+      key: 'follow'
+    }
+  ];
+  private rules:IState = {
+    follow: [
+      { required: true, message: '请选择跟进人', trigger: 'blur' }
+    ]
+  };
+
+  private rowData:any[] = []
   // 分页
   private page: PageObj = {
     page: 1,
@@ -291,12 +309,7 @@ export default class extends Vue {
     total: 0
   };
   get getMarketIds() {
-    return this.multipleSelection.map((item:any) => {
-      return {
-        busiType: item.busiType,
-        phone: item.phone
-      }
-    })
+    return this.rowData.map((item:any) => item.phone)
   }
   // 判断是否是PC
   get isPC() {
@@ -310,7 +323,7 @@ export default class extends Vue {
     )
   }
   // 获取业务线
-  async getGetDutyListByLevel() {
+  private async getGetDutyListByLevel() {
     try {
       let params = {
         dutyLevel: 1
@@ -334,44 +347,22 @@ export default class extends Vue {
     }
   }
   // 查询
-  handleFilterClick() {
+  private handleFilterClick() {
     this.page.page = 1
     this.getLists()
   }
   // 重置
-  @lock
   private async handleResetClick(row: IState) {
     (this.$refs['suggestForm'] as any).resetForm()
   }
   // 分配
-  handleAllotClick(row: IState) {
+  private handleAllotClick(row: IState) {
     this.dialogTit = '分配'
     this.showDialog = true
-    const params = {
-      busiType: row.busiType,
-      phone: row.phone
-    }
-    console.log('params1', params)
+    this.rowData.push(row)
   }
 
-  handleSelectionChange(val:any) {
-    // if (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0) {
-    //   return
-    // }
-    // // 标识当前行的唯一键的名称
-    // let idKey = this.idKey
-    // let selectAllIds:string[] = []
-    // let that = this
-    // this.multipleSelectionAll.forEach((row:any) => {
-    //   selectAllIds.push(row[idKey])
-    // });
-    // (this.$refs.MarketClueTable as any).clearSelection()
-    // for (var i = 0; i < this.tableData.length; i++) {
-    //   if (selectAllIds.indexOf(this.tableData[i][idKey]) >= 0) {
-    //     // 设置选中，记住table组件需要使用ref="table"
-    //     (this.$refs.MarketClueTable as any).toggleRowSelection(this.tableData[i], true)
-    //   }
-    // }
+  private handleSelectionChange(val:any) {
     this.multipleSelection = val
   }
 
@@ -379,17 +370,41 @@ export default class extends Vue {
   private handleallAllotClick() {
     this.dialogTit = '批量分配'
     this.showDialog = true
-    console.log('params2', this.getMarketIds)
+    this.rowData.push(...this.multipleSelection)
   }
 
-  // 弹框确认按钮
-  confirm() {
-    (this.$refs.dialogSelfTag as any).submitForm()
+  // 弹框确认
+  private confirm() {
+    (this.$refs.dialogMarketClue as any).submitForm()
   }
-
+  // 表单验证通过
+  @lock
+  private async handlePassClick(val:boolean) {
+    try {
+      let params = {
+        gmId: Number(this.dialogListQuery.follow[2]),
+        clueIds: this.getMarketIds
+      }
+      const { data: res } = await allocationClue(params)
+      if (res.success) {
+        this.$message(`${this.dialogTit}成功`)
+        this.showDialog = false;
+        (this.$refs.MarketClueTable as any).toggleRowSelection()
+        this.handleDialogClosed()
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
+      } else {
+        this.$message.warning(res.errMsg)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
   // 弹框关闭后
-  handleClosed() {
-    this.followPeople = []
+  handleDialogClosed() {
+    this.dialogListQuery.follow = []
+    this.rowData = []
   }
   // 分页
   private handlePageSize(page: PageObj) {
@@ -415,6 +430,7 @@ export default class extends Vue {
     return params
   }
   // 获取列表
+  @lock
   private async getLists() {
     try {
       this.listLoading = true
@@ -440,7 +456,7 @@ export default class extends Vue {
   mounted() {
     this.getGetDutyListByLevel()
     this.getLists()
-    this.cityArea = followPeople
+    this.cityArea = showCityGroupPerson
   }
 }
 </script>
@@ -486,10 +502,5 @@ export default class extends Vue {
     font-size: 13px;
     color: #ff5d5d;
   }
-}
-</style>
-<style scoped>
-.followChoose >>> .el-cascader {
-  width: 70%;
 }
 </style>

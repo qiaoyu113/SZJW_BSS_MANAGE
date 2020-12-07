@@ -146,3 +146,11 @@ export const getSpecifiedUserListByCondition = (data:any) =>
     method: 'post',
     data
   })
+
+// 根据城市、业务线获取小组
+export const getGroupInfoByCityCodeAndProductLine = (params:any) =>
+  request({
+    url: `/base/v2/base/office/getGroupInfoByCityCodeAndProductLine`,
+    method: 'get',
+    params
+  })
