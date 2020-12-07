@@ -44,6 +44,10 @@
                       lazyLoad: showWork
                     }"
                     placeholder="请选择"
+                    clearable
+                    @clear="() => {
+                      arrayCity = []
+                    }"
                     @change="getManager()"
                   />
                 </el-form-item>
@@ -68,6 +72,7 @@
                     name="freightlist_gmId_input"
                     placeholder="请选择"
                     size="small"
+                    clearable
                   >
                     <el-option
                       v-for="item in optionsJoin"
@@ -138,6 +143,7 @@
                   <el-select
                     v-model="listQuery.dutyManagerId"
                     filterable
+                    clearable
                     name="freightlist_dutyManagerId_input"
                     placeholder="请选择"
                     size="small"
@@ -159,6 +165,7 @@
                     name="freightlist_feeDiff_input"
                     placeholder="请选择"
                     filterable
+                    clearable
                     size="small"
                   >
                     <el-option
@@ -208,7 +215,25 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-
+              <!-- <el-col :span="isPC ? 6 : 24">
+                <el-form-item label="外线销售">
+                  <el-select
+                    v-model="listQuery.lineSaleId"
+                    name="freightlist_feeDiff_input"
+                    placeholder="请选择"
+                    filterable
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in lineSaleList"
+                      :key="item.id"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col> -->
               <el-col :span="isPC ? 12 : 24">
                 <el-form-item label="出车日期">
                   <el-date-picker
@@ -356,6 +381,7 @@ export default class extends Vue {
   private DateValueChild2: any[] = []; // DateValue的赋值项
   private QUERY_KEY_LIST: any[] = ['page', 'limit', 'state', 'startDate', 'contractEndStartTime']; // 添加过滤listQuery中key的名称
   private hasDiff: any[] = [
+    { dictValue: '', dictLabel: '全部' },
     { dictValue: '1', dictLabel: '有' },
     { dictValue: '0', dictLabel: '无' }
   ]
@@ -474,8 +500,40 @@ export default class extends Vue {
     this.getJoinManageList()
     // this.getLowerStaffInfo()
     this.getDutyListByLevel()
+    this.getDriverInfo()
   }
-
+  // 外线销售列表
+  // 司机列表收索
+  private lineSaleList: any[] = []
+  async getDriverInfo() {
+    try {
+      let { data: res } = await GetSpecifiedLowerUserListByCondition({
+        cityCode: this.listQuery.driverCity,
+        groupId: '',
+        keyword: '',
+        productLine: '',
+        roleTypes: ['2'],
+        uri: '/v2/waybill/queryDuty'
+      })
+      if (res.success) {
+        this.lineSaleList.splice(0)
+        let driverInfos = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+        driverInfos.unshift(
+          { label: '全部',
+            value: '' })
+        this.lineSaleList.push(...driverInfos)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      return err
+    }
+  }
   // 状态点击逻辑
   private handleClick(tab:any, type:any) {
     if (type) {
@@ -603,14 +661,18 @@ export default class extends Vue {
         cityCode: this.listQuery.driverCity,
         groupId: '',
         keyword: '',
-        // productLine: this.listQuery.business,
-        productLine: '',
+        productLine: this.listQuery.business,
+        // productLine: '',
         roleTypes: ['3'],
         uri: '/v2/waybill/queryDuty'
       })
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsClassification = data.data
+            this.optionsClassification.unshift({
+              name: '全部',
+              id: ''
+            })
           } else {
             this.$message.error(data)
           }
@@ -652,6 +714,8 @@ export default class extends Vue {
     this.listQuery.driverCity = this.arrayCity[1]
     this.getDictionary()
     this.getJoinManageList()
+    this.getDriverInfo()
+    this.listQuery.lineSaleId = ''
     this.listQuery.dutyManagerId = ''
     this.listQuery.gmId = ''
   }
@@ -670,6 +734,10 @@ export default class extends Vue {
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsJoin = data.data
+            this.optionsJoin.unshift({
+              name: '全部',
+              id: ''
+            })
           } else {
             this.$message.error(data)
           }
