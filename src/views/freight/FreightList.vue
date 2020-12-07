@@ -970,9 +970,6 @@ export default class extends Vue {
           driverFreight = '未出车'
         } else {
           if (!confirmFee && typeof confirmFee !== 'number') {
-            shipping = (gmcFee || 0) + '元'
-            driverFreight = (gmcFee || 0) + '元'
-          } else {
             if (gmIsNoCar) {
               shipping = ''
               driverFreight = (gmStatusName || 0) + '元'
@@ -980,10 +977,13 @@ export default class extends Vue {
               shipping = ''
               driverFreight = (gmFee || 0) + '元'
             }
+          } else {
+            shipping = (gmcFee || 0) + '元'
+            driverFreight = (gmcFee || 0) + '元'
           }
         }
         customerFreight = lineStatus === 2 ? lineStatusName : lineFee + '元'
-        return `运费金额(已单边确认)：${shipping}；
+        return `运费金额：${shipping}；
               司机侧：${driverFreight}；
               客户侧：${customerFreight}；
               `
