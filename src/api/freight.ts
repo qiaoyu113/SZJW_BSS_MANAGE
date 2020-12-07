@@ -66,7 +66,8 @@ export const ReportMoneyBatch = (data: any, parmas: any) =>
    */
 export const WayBillAmountDetail = (data: any) =>
   request({
-    url: `${prefix || '/waybill'}/v2/waybill/shipping/wayBillAmountDetail`,
+    url: `${prefix || '/waybill'}/v2/waybill/shipping/wayBillAmountDetailWebConfirm`,
+    // url: `/waybill_center/v2/waybill/wayBillAmountDetailWebConfirm`,
     method: 'post',
     data
   })
