@@ -735,21 +735,9 @@ export default class extends Vue {
       let groups = await this.getGroupInfoByCityCodeAndProductLine(+node.value)
       resolve(groups)
     } else if (node.level === 2) {
-      console.log(node.value, node.parent.value)
-      let data = [
-        {
-          value: '1',
-          label: 'tom',
-          leaf: true
-        },
-        {
-          value: '2',
-          label: 'jack',
-          leaf: true,
-          disabled: true
-        }
-      ]
-      resolve(data)
+      let [groupId, busiType] = node.value.split(',')
+      let users = await this.getGmOptions(node.parent.value, busiType, groupId)
+      resolve(users)
     }
   }
   // 获取开通城市
@@ -774,13 +762,13 @@ export default class extends Vue {
   async getGroupInfoByCityCodeAndProductLine(cityCode:number) {
     try {
       let params:IState = {
-        busiLine: 1,
+        busiLine: [0, 1].toString(),
         cityCode
       }
       let { data: res } = await getGroupInfoByCityCodeAndProductLine(params)
       if (res.success) {
         return res.data.map((item:any) => ({
-          value: item.id,
+          value: item.id + ',' + item.dutyId,
           label: item.name
         }))
       } else {
@@ -793,12 +781,14 @@ export default class extends Vue {
     }
   }
   // 获取小组下的人
-  async getGmOptions(cityCode:number, busiType:number) {
+  async getGmOptions(cityCode:number, busiType:number, groupId:number) {
     try {
       let params:IState = {
         roleTypes: [1],
         cityCode,
-        busiType
+        busiType,
+        groupId,
+        uri: '/v2/driverBilling/shippingChange/queryGM'
       }
 
       let { data: res } = await GetSpecifiedRoleList(params)
@@ -806,7 +796,9 @@ export default class extends Vue {
         return res.data.map(function(item: any) {
           return {
             label: item.name,
-            value: item.id
+            value: item.id,
+            disabled: item.status === 2,
+            leaf: true
           }
         })
       } else {
