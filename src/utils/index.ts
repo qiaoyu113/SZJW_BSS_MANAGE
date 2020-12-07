@@ -3,7 +3,9 @@ import Vue from 'vue'
 import {
   getOfficeByTypeAndOfficeId,
   getOfficeByType,
-  GetOpenCityData
+  GetOpenCityData,
+  getGroupInfoByCityCodeAndProductLine,
+  GetSpecifiedRoleList
 } from '@/api/common'
 let context = new Vue()
 
@@ -432,42 +434,85 @@ async function cityDetail(params: any, node: any) {
   }
 }
 
-// 选择线索跟进人
-export async function followPeople(node: any, resolve: any) {
-  let query: any = {
-    parentId: ''
-  }
-  if (node.level > 0) {
-    query.parentId = node.value
-  }
-  try {
-    if (node.level === 0) {
-      let nodes = await getOpenCity(node)
-      resolve(nodes)
-    } else if (node.level === 1) {
-      console.log('query', query)
-      let nodes = await cityDetail(query, node)
-      resolve(nodes)
-    }
-  } catch (err) {
-    resolve([])
+// 获取城市、小组、跟进人
+export async function showCityGroupPerson(node: any, resolve: any) {
+  if (node.level === 0) {
+    let citys = await getOpenCitys()
+    resolve(citys)
+  } else if (node.level === 1) {
+    let groups = await GroupInfoByCityCodeAndProductLine(+node.value)
+    resolve(groups)
+  } else if (node.level === 2) {
+    let [groupId, busiType] = node.value.split(',')
+    let users = await getGmOptions(node.parent.value, busiType, groupId)
+    resolve(users)
   }
 }
-
-async function getOpenCity(node: any) {
+// 获取开通城市
+async function getOpenCitys() {
   try {
     let { data: res } = await GetOpenCityData()
     if (res.success) {
-      const nodes = res.data.map(function(item: any) {
-        return {
-          value: item.code,
-          label: item.name,
-          leaf: false
-        }
-      })
-      return nodes
+      return res.data.map((item:any) => ({
+        value: item.code,
+        label: item.name
+      }))
+    } else {
+      context.$message.error(res.errorMsg)
     }
   } catch (err) {
-    console.log(`load city by code fail:${err}`)
+    console.log(`get open city fail:${err}`)
+  } finally {
+    //
+  }
+}
+// 获取小组
+async function GroupInfoByCityCodeAndProductLine(cityCode:number) {
+  try {
+    let params:any = {
+      busiLine: [0, 1].toString(),
+      cityCode
+    }
+    let { data: res } = await getGroupInfoByCityCodeAndProductLine(params)
+    if (res.success) {
+      return res.data.map((item:any) => ({
+        value: item.id + ',' + item.dutyId,
+        label: item.name
+      }))
+    } else {
+      context.$message.error(res.errorMsg)
+    }
+  } catch (err) {
+    console.log(`get group fail:${err}`)
+  } finally {
+    //
+  }
+}
+// 获取小组下的人
+async function getGmOptions(cityCode:number, busiType:number, groupId:number) {
+  try {
+    let params:any = {
+      roleTypes: [1],
+      cityCode,
+      busiType,
+      groupId,
+      uri: '/v2/driverBilling/shippingChange/queryGM'
+    }
+
+    let { data: res } = await GetSpecifiedRoleList(params)
+    if (res.success) {
+      return res.data.map(function(item: any) {
+        return {
+          label: item.name,
+          value: item.id,
+          disabled: item.status === 2,
+          leaf: true
+        }
+      })
+    } else {
+      context.$message.error(res.errorMsg)
+    }
+  } catch (err) {
+    console.log(err)
   }
 }
