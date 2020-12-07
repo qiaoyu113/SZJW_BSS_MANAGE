@@ -50,7 +50,7 @@
     <div class="table_box">
       <!-- 表格 -->
       <self-table
-        ref="selfDriverTag"
+        ref="MarketClueTable"
         :height="tableHeight"
         :is-p30="false"
         :operation-list="[]"
@@ -58,7 +58,7 @@
         :columns="columns"
         :index="true"
         :page="page"
-        row-key="id"
+        row-key="phone"
         style="overflow: initial;"
         :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @onPageSize="handlePageSize"
@@ -131,7 +131,7 @@ import {
   getOfficeByTypeAndOfficeId,
   getOfficeByType
 } from '@/api/common'
-import { showWork } from '@/utils'
+import { showWork, followPeople } from '@/utils'
 import {
   marketClue
 } from '@/api/driver-cloud'
@@ -153,6 +153,9 @@ interface IState {
   }
 })
 export default class extends Vue {
+  private multipleSelectionAll:any = []; // 所有选中的数据包含跨页数据
+  private multipleSelection: any[] = []; // 当前页选中的数据
+  private idKey:string = 'phone'; // 标识列表数据中每一行的唯一键的名称
   private cityArea:any = {};
   private driverOver: Boolean = false;
   private driverLoading: Boolean = false;
@@ -162,7 +165,7 @@ export default class extends Vue {
   private submitLoading: boolean = false;
   private tableData: any[] = [];
   private busiTypeList: IState = [];
-  private multipleSelection: any[] = []
+
   private dialogTit: string = '';
   private hasCarList: any[] = [
     { label: '有', value: true },
@@ -352,6 +355,23 @@ export default class extends Vue {
   }
 
   handleSelectionChange(val:any) {
+    // if (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0) {
+    //   return
+    // }
+    // // 标识当前行的唯一键的名称
+    // let idKey = this.idKey
+    // let selectAllIds:string[] = []
+    // let that = this
+    // this.multipleSelectionAll.forEach((row:any) => {
+    //   selectAllIds.push(row[idKey])
+    // });
+    // (this.$refs.MarketClueTable as any).clearSelection()
+    // for (var i = 0; i < this.tableData.length; i++) {
+    //   if (selectAllIds.indexOf(this.tableData[i][idKey]) >= 0) {
+    //     // 设置选中，记住table组件需要使用ref="table"
+    //     (this.$refs.MarketClueTable as any).toggleRowSelection(this.tableData[i], true)
+    //   }
+    // }
     this.multipleSelection = val
   }
 
@@ -420,7 +440,7 @@ export default class extends Vue {
   mounted() {
     this.getGetDutyListByLevel()
     this.getLists()
-    this.cityArea = showWork
+    this.cityArea = followPeople
   }
 }
 </script>

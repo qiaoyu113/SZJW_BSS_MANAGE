@@ -2,7 +2,8 @@
 import Vue from 'vue'
 import {
   getOfficeByTypeAndOfficeId,
-  getOfficeByType
+  getOfficeByType,
+  GetOpenCityData
 } from '@/api/common'
 let context = new Vue()
 
@@ -393,9 +394,6 @@ export async function showWork(node: any, resolve: any) {
     } else if (node.level === 1) {
       let nodes = await cityDetail(query, node)
       resolve(nodes)
-    } else {
-      let nodes = await cityDetail(query, node)
-      resolve(nodes)
     }
   } catch (err) {
     resolve([])
@@ -431,5 +429,45 @@ async function cityDetail(params: any, node: any) {
       }
     })
     return nodes
+  }
+}
+
+// 选择线索跟进人
+export async function followPeople(node: any, resolve: any) {
+  let query: any = {
+    parentId: ''
+  }
+  if (node.level > 0) {
+    query.parentId = node.value
+  }
+  try {
+    if (node.level === 0) {
+      let nodes = await getOpenCity(node)
+      resolve(nodes)
+    } else if (node.level === 1) {
+      console.log('query', query)
+      let nodes = await cityDetail(query, node)
+      resolve(nodes)
+    }
+  } catch (err) {
+    resolve([])
+  }
+}
+
+async function getOpenCity(node: any) {
+  try {
+    let { data: res } = await GetOpenCityData()
+    if (res.success) {
+      const nodes = res.data.map(function(item: any) {
+        return {
+          value: item.code,
+          label: item.name,
+          leaf: false
+        }
+      })
+      return nodes
+    }
+  } catch (err) {
+    console.log(`load city by code fail:${err}`)
   }
 }
