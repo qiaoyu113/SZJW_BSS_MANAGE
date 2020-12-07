@@ -669,7 +669,7 @@ export default class extends Vue {
         .then(({ data }: any) => {
           if (data.success) {
             this.optionsClassification = data.data
-            this.optionsClassification.push({
+            this.optionsClassification.unshift({
               name: '全部',
               id: ''
             })

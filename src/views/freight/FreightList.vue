@@ -604,24 +604,19 @@
           class="freightSelfDialog"
         >
           <div style="box-sizing:border-box;">
-            <el-row>
-              <el-col :span="8">
-                <el-switch
-                  v-model="item.check"
-                  style="padding:25px 15px;display: block"
-                  active-color="#13ce66"
-                  inactive-color="#F56C6C"
-                  active-text="已出车"
-                  inactive-text="未出车"
-                />
-              </el-col>
-              <el-col :span="16">
-                <p style="line-hight:16px;margin-top:25px">
-                  出车日期：{{ formatDate(new Date(item.departureDate)) }}
-                </p>
-              </el-col>
-            </el-row>
+            <el-switch
+              v-model="item.check"
+              style="padding:25px 15px;display: block"
+              active-color="#13ce66"
+              inactive-color="#F56C6C"
+              active-text="已出车"
+              inactive-text="未出车"
+            />
           </div>
+          <DetailItem
+            name="出车日期"
+            :value="formatDate(new Date(item.departureDate))"
+          />
           <DetailItem
             name="出车单号/线路名称"
             :value="item.wayBillId+'/'+item.lineName"
