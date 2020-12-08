@@ -983,7 +983,7 @@ export default class extends Vue {
         this.$message.error(data.errorMsg)
       }
     } else {
-      this.$message.error('需要按时间段进行导出')
+      this.$message.error('司机创建日期必填')
     }
   }
 
