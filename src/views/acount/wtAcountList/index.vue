@@ -983,7 +983,7 @@ export default class extends Vue {
         this.$message.error(data.errorMsg)
       }
     } else {
-      this.$message.error('司机创建日期必填')
+      this.$message.error('请选择司机创建日期')
     }
   }
 
