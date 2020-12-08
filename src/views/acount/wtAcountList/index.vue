@@ -62,7 +62,6 @@
         </el-button>
         <el-button
           v-permission="['/v2/wt-driver-account/management/export']"
-          :disabled="true"
           :class="isPC ? '' : 'btnMobile'"
           name="driverlist_offout_btn"
           size="small"
@@ -969,6 +968,7 @@ export default class extends Vue {
   /**
    * 导出
    */
+  @lock
   private async handleExportClick() {
     if (this.listQuery.time && this.listQuery.time.length === 2) {
       let params: any = {}

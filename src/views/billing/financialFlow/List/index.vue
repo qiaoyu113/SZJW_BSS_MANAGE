@@ -74,7 +74,6 @@
 
         <el-button
           v-permission="['/v2/wt-driver-account/flow/export']"
-          :disabled="true"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           @click="handleExportClick"
@@ -581,6 +580,7 @@ export default class extends Vue {
     this.loadQueryDriverByKeyword()
   }
   // 导出
+  @lock
   async handleExportClick() {
     try {
       let params:IState = {}
