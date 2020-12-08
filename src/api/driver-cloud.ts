@@ -114,3 +114,11 @@ export const allocationClue = (data: any) =>
     method: 'post',
     data
   })
+
+// 编辑司机线索
+export const editClue = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/edit`,
+    method: 'post',
+    data
+  })
