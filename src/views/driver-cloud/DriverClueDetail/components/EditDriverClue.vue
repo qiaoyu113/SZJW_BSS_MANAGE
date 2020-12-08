@@ -6,7 +6,6 @@
       width="500px"
       title="取消面试"
       @closed="handleClosedClick"
-      @onPass="handlePassClick"
     >
       <self-form
         ref="driverClueEditDialog"
@@ -17,6 +16,7 @@
         label-width="120px"
         class="p15 SuggestForm"
         :pc-col="24"
+        @onPass="handlePassClick"
       >
         <template slot="experience">
           <el-input
@@ -49,6 +49,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import { GetCityByCode, GetDictionaryList } from '@/api/common'
+import { editClue } from '@/api/driver-cloud'
 interface IState {
   [key: string]: any;
 }
@@ -176,22 +177,31 @@ export default class extends Vue {
   }
   // 表单验证通过后触发
   handlePassClick(val:boolean) {
-
+    this.editClue()
   }
+  // 编辑线索
+  async editClue() {
+    try {
+      let params:IState = {
+        ...this.listQuery
+      }
+      let { data: res } = await editClue(params)
+      if (res.success) {
+        this.showDialog = false
+        this.$message.success('操作成功')
+        this.getBaseInfo()
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`edit clue fail:${err}`)
+    } finally {
+      //
+    }
+  }
+
   // 关闭弹框后触发
   handleClosedClick() {
-    this.showDialog = false
-    this.listQuery = {
-      driverName: '',
-      phone: '',
-      hasCar: false,
-      carType: [],
-      experience: '',
-      age: '',
-      occupation: '',
-      address: '',
-      city: []
-    };
     (this.$refs.driverClueEditDialog as any).resetForm()
   }
   /**
@@ -259,7 +269,9 @@ export default class extends Vue {
     }
   }
   mounted() {
-    this.getBaseInfo()
+    if (this.carOptions.length === 0) {
+      this.getBaseInfo()
+    }
   }
 }
 </script>

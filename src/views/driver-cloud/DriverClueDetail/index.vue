@@ -225,12 +225,13 @@ export default class extends Vue {
     driverName: '',
     phone: '',
     hasCar: false,
-    carType: [],
+    carType: '',
     experience: '',
     age: '',
     occupation: '',
     address: '',
-    city: []
+    city: [],
+    id: ''
   }; // 编辑
   private listQuery:IState = {
     id: '',
@@ -626,7 +627,8 @@ export default class extends Vue {
         age: this.listQuery.age,
         occupation: this.listQuery.occupation,
         address: this.listQuery.address,
-        city: this.listQuery.city
+        city: this.listQuery.city,
+        id: this.listQuery.id
       }
     };
     (this.$refs.editDialog as any).showDialog = true

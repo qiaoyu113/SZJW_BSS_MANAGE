@@ -144,7 +144,7 @@
       :visible.sync="showDialog"
       :confirm="confirm"
       width="500px"
-      :destroy-on-close="true"
+      :destroy-on-close="false"
       @closed="handleDialogClosed"
     >
       <self-form
@@ -167,7 +167,7 @@ import { GetDutyListByLevel, getOfficeByTypeAndOfficeId, getOfficeByType, GetDic
 import SelfTable from '@/components/Base/SelfTable.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
-import { GetDriverClueList, ExportDriverClue } from '@/api/driver-cloud'
+import { GetDriverClueList, ExportDriverClue, allocationClue } from '@/api/driver-cloud'
 import { delayTime } from '@/settings'
 import { HandlePages, lock, parseTime } from '@/utils/index'
 interface PageObj {
@@ -193,6 +193,7 @@ export default class extends Vue {
   private dutyListOptions:IState[] = [];// 业务线
   private multipleSelection:IState[] = [];// 多选选中
   private carOptions:IState[] = [];// 车型列表
+  private contactsOption:IState[] = [];// 联系情况列表
   private listQuery:IState = {
     driverName: '',
     phone: '',
@@ -270,7 +271,7 @@ export default class extends Vue {
       },
       label: '联系情况',
       key: 'contactInfo',
-      options: []
+      options: this.contactsOption
     },
     {
       type: 2,
@@ -694,7 +695,35 @@ export default class extends Vue {
   }
   // 表单验证通过
   handlePassClick(val:boolean) {
-    this.showDialog = false
+    this.allocationClue()
+  }
+  // 分配、批量分配
+  @lock
+  async allocationClue() {
+    try {
+      if (this.dialogListQuery.follow.length !== 3) {
+        this.$message.warning('请选择跟进人')
+        return false
+      }
+      let params:IState = {
+        marketClueId: this.rows.map((item:any) => item.id + ''),
+        followerId: this.dialogListQuery.follow[2]
+      }
+      let { data: res } = await allocationClue(params)
+      if (res.success) {
+        this.$message.success('操作成功')
+        this.showDialog = false
+        setTimeout(() => {
+          this.getLists()
+        }, delayTime)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`fenpei fail:${err}`)
+    } finally {
+      //
+    }
   }
   // 弹框关闭后
   handleDialogClosed() {
@@ -707,18 +736,26 @@ export default class extends Vue {
   // 获取车型
   async getBaseInfo() {
     try {
-      let carLen = this.carOptions.length
+      let carLen:number = this.carOptions.length
       if (carLen > 0) {
         this.carOptions.splice(0, carLen)
       }
-      let params = ['Intentional_compartment']
+      let contactsLen:number = this.contactsOption.length
+      if (contactsLen > 0) {
+        this.contactsOption.splice(0, contactsLen)
+      }
+      let params = ['Intentional_compartment', 'driver_clue_contact_situation']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
         let cars = res.data.Intentional_compartment.map(function(item:any) {
           return { label: item.dictLabel, value: item.dictValue }
         })
+        let contactsOption = res.data.Intentional_compartment.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
 
         this.carOptions.push(...cars)
+        this.contactsOption.push(...contactsOption)
       } else {
         this.$message.error(res.errorMsg)
       }
