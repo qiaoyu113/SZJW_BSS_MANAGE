@@ -99,10 +99,18 @@ export const GetDriverClueLogList = (data: any) =>
     data
   })
 
-// 带分配线索泪飙
+// 带分配线索列表
 export const marketClue = (data: any) =>
   request({
     url: `${prefix}/marketClue`,
+    method: 'post',
+    data
+  })
+
+// 分配带市场分配线索
+export const allocationClue = (data: any) =>
+  request({
+    url: `${prefix}/allocationClue`,
     method: 'post',
     data
   })
