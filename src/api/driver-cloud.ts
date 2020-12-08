@@ -102,7 +102,7 @@ export const GetDriverClueLogList = (data: any) =>
 // 带分配线索列表
 export const marketClue = (data: any) =>
   request({
-    url: `${prefix}/marketClue`,
+    url: `${prefix}/v2/clueH5/waitAllocate/list`,
     method: 'post',
     data
   })
@@ -110,7 +110,7 @@ export const marketClue = (data: any) =>
 // 分配带市场分配线索
 export const allocationClue = (data: any) =>
   request({
-    url: `${prefix}/allocationClue`,
+    url: `${prefix}/v2/clueH5/updateFollowerByMarketClueId`,
     method: 'post',
     data
   })
