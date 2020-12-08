@@ -146,7 +146,6 @@
       width="500px"
       :destroy-on-close="true"
       @closed="handleDialogClosed"
-      @onPass="handlePassClick"
     >
       <self-form
         ref="dialogDriverClue"
@@ -156,6 +155,7 @@
         size="small"
         label-width="100px"
         :pc-col="24"
+        @onPass="handlePassClick"
       />
     </SelfDialog>
   </div>
