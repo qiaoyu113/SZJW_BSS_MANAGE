@@ -199,6 +199,7 @@ export default class extends Vue {
   private multipleSelection:IState[] = [];// 多选选中
   private carOptions:IState[] = [];// 车型列表
   private contactsOption:IState[] = [];// 联系情况列表
+  private followerListOptions:IState[] = [];// 跟进人列表
   private listQuery:IState = {
     name: '',
     phone: '',
@@ -271,7 +272,12 @@ export default class extends Vue {
         }
       },
       label: '城市',
-      key: 'workCity'
+      key: 'workCity',
+      listeners: {
+        'change': () => {
+          this.getGmOptions()
+        }
+      }
     },
     {
       type: 2,
@@ -282,7 +288,12 @@ export default class extends Vue {
       },
       label: '业务线',
       key: 'busiType',
-      options: this.dutyListOptions
+      options: this.dutyListOptions,
+      listeners: {
+        'change': () => {
+          this.getGmOptions()
+        }
+      }
     },
     {
       type: 2,
@@ -293,7 +304,7 @@ export default class extends Vue {
       },
       label: '跟进人',
       key: 'followerId',
-      options: []
+      options: this.followerListOptions
     },
     {
       type: 2,
@@ -720,11 +731,40 @@ export default class extends Vue {
       console.log(`get base info fail:${err}`)
     }
   }
+  // 获取跟进人列表
+  async getGmOptions() {
+    try {
+      let params:any = {
+        roleTypes: [1],
+        uri: '/v2/driverBilling/shippingChange/queryGM'
+      }
+      this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
+      if (this.listQuery.workCity && this.listQuery.workCity.length > 1) {
+        params.cityCode = this.listQuery.workCity[1]
+      }
+
+      let { data: res } = await GetSpecifiedRoleList(params)
+      if (res.success) {
+        let arr = res.data.map(function(item: any) {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+        this.followerListOptions.push(...arr)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   mounted() {
     this.getLists()
     this.getDutyListByLevel()
     this.getBaseInfo()
+    this.getGmOptions()
   }
 }
 </script>

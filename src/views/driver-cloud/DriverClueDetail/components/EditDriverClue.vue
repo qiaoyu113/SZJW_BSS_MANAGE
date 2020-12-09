@@ -21,8 +21,8 @@
         <template slot="experience">
           <el-input
             v-model="listQuery.experience"
-            type="number"
             maxlength="2"
+            oninput="value=value.replace(/[^\d]/g,'')"
           >
             <template slot="append">
               年
@@ -32,8 +32,8 @@
         <template slot="age">
           <el-input
             v-model="listQuery.age"
-            type="number"
             maxlength="2"
+            oninput="value=value.replace(/[^\d]/g,'')"
           >
             <template slot="append">
               岁
@@ -65,7 +65,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfForm from '@/components/Base/SelfForm.vue'
-import { GetCityByCode, GetDictionaryList } from '@/api/common'
+import { GetCityByCode, GetDictionaryList, GetOpenCityData } from '@/api/common'
 import { editClue } from '@/api/driver-cloud'
 interface IState {
   [key: string]: any;
@@ -227,20 +227,33 @@ export default class extends Vue {
   async loadWorkCity(node:any, resolve:any) {
     let params:string[] = []
     if (node.level === 0) {
-      params = ['100000']
+      let nodes = await this.getOpenCity()
+      resolve(nodes)
     } else if (node.level === 1) {
       params = ['100000']
+      params.push(node.value.toString().slice(0, 2) + '0000')
       params.push(node.value)
-    } else if (node.level === 2) {
-      params = ['100000']
-      params.push(node.parent.value)
-      params.push(node.value)
-    }
-    try {
       let nodes = await this.loadCityByCode(params)
       resolve(nodes)
+    }
+  }
+  // 获取开通城市
+  async getOpenCity() {
+    try {
+      let { data: res } = await GetOpenCityData()
+      if (res.success) {
+        let arr = res.data.map((item:any) => ({
+          value: item.code,
+          label: item.name
+        }))
+        return arr
+      } else {
+        this.$message.error(res.errorMsg)
+      }
     } catch (err) {
-      resolve([])
+      console.log(`get open city list fail:${err}`)
+    } finally {
+      //
     }
   }
   /**
@@ -254,7 +267,7 @@ export default class extends Vue {
           return {
             value: item.code,
             label: item.name,
-            leaf: params.length > 2
+            leaf: params.length > 1
           }
         })
         return nodes

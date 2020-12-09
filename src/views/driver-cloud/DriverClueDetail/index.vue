@@ -627,7 +627,6 @@ export default class extends Vue {
         nowProfession: this.listQuery.nowProfession,
         nowAddress: this.listQuery.nowAddress,
         city: [
-          this.listQuery.expectAddressCity.toString().slice(0, 2) + '0000',
           this.listQuery.expectAddressCity + '',
           this.listQuery.expectAddressCounty + ''
         ]
