@@ -159,8 +159,8 @@ export default class extends Vue {
 
   private dialogTit: string = '';
   private hasCarList: any[] = [
-    { label: '有', value: true },
-    { label: '无', value: false }
+    { label: '有', value: 1 },
+    { label: '无', value: 0 }
   ];
   private columns: any[] = [
     {
@@ -169,11 +169,11 @@ export default class extends Vue {
       width: '120px'
     },
     {
-      key: 'hasCarName',
+      key: 'haveCar',
       label: '是否有车'
     },
     {
-      key: 'workCityName',
+      key: 'cityName',
       label: '城市'
     },
     {
@@ -199,7 +199,7 @@ export default class extends Vue {
     workCity: '',
     busiType: '',
     phone: '',
-    hasCar: '',
+    haveCar: '',
     time: []
   };
   private formItem: any[] = [
@@ -245,7 +245,7 @@ export default class extends Vue {
     {
       type: 2,
       label: '是否有车',
-      key: 'hasCar',
+      key: 'haveCar',
       tagAttrs: {
         placeholder: '请选择',
         filterable: true,
@@ -395,7 +395,7 @@ export default class extends Vue {
           this.getLists()
         }, delayTime)
       } else {
-        this.$message.warning(res.errMsg)
+        this.$message.warning(res.errorMsg)
       }
     } catch (err) {
       console.log(err)
@@ -420,7 +420,7 @@ export default class extends Vue {
     this.listQuery.busiType !== '' &&
       (params.busiType = this.listQuery.busiType)
     this.listQuery.phone && (params.phone = this.listQuery.phone)
-    this.listQuery.hasCar !== '' && (params.hasCar = this.listQuery.hasCar)
+    this.listQuery.haveCar !== '' && (params.haveCar = this.listQuery.haveCar)
     if (this.listQuery.time && this.listQuery.time.length > 1) {
       let startDate = new Date(this.listQuery.time[0])
       let endDate = new Date(this.listQuery.time[1])
