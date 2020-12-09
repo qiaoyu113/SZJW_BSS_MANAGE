@@ -503,9 +503,9 @@ async function getGmOptions(cityCode:number, busiType:number, groupId:number) {
     if (res.success) {
       return res.data.map(function(item: any) {
         return {
-          label: item.status === 2 ? item.name + `(停用)` : item.name,
+          label: item.status === null ? item.name + `(停用)` : item.name,
           value: item.id,
-          disabled: item.status === 2,
+          disabled: item.status === null,
           leaf: true
         }
       })

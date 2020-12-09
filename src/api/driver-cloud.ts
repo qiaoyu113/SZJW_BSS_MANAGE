@@ -44,7 +44,7 @@ export const GetDriverByDriverName = (data: any) =>
 // 带分配线索列表
 export const marketClue = (data: any) =>
   request({
-    url: `${prefix}/v2/clueH5/waitAllocate/list`,
+    url: `${prefix}/api/carrier_center/v2/clueH5/waitAllocate/list`,
     method: 'post',
     data
   })
@@ -52,7 +52,7 @@ export const marketClue = (data: any) =>
 // 分配带市场分配线索
 export const allocationClue = (data: any) =>
   request({
-    url: `${prefix}/v2/clueH5/updateFollowerByMarketClueId`,
+    url: `${prefix}/api/carrier_center/v2/clueH5/updateFollowerByMarketClueId`,
     method: 'post',
     data
   })

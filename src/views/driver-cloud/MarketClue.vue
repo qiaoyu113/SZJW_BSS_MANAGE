@@ -58,7 +58,7 @@
         :columns="columns"
         :index="true"
         :page="page"
-        row-key="phone"
+        row-key="marketClueId"
         style="overflow: initial;"
         :style="tableData.length ===0 ? 'margin-bottom: 30px;':''"
         @onPageSize="handlePageSize"
@@ -309,7 +309,7 @@ export default class extends Vue {
     total: 0
   };
   get getMarketIds() {
-    return this.rowData.map((item:any) => item.phone)
+    return this.rowData.map((item:any) => item.marketClueId)
   }
   // 判断是否是PC
   get isPC() {
@@ -354,6 +354,7 @@ export default class extends Vue {
   // 重置
   private async handleResetClick(row: IState) {
     (this.$refs['suggestForm'] as any).resetForm()
+    this.getLists()
   }
   // 分配
   private handleAllotClick(row: IState) {
@@ -387,7 +388,7 @@ export default class extends Vue {
       }
       const { data: res } = await allocationClue(params)
       if (res.success) {
-        this.$message(`${this.dialogTit}成功`)
+        this.$message(res.data.msg)
         this.showDialog = false;
         (this.$refs.MarketClueTable as any).toggleRowSelection()
         this.handleDialogClosed()
