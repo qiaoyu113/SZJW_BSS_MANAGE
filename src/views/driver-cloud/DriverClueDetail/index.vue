@@ -11,6 +11,9 @@
         <el-button
           type="text"
           @click="() => {
+            if (btns.length === 0) {
+              getBaseInfo()
+            }
             showDialog1 = true;
           }"
         >
@@ -37,7 +40,7 @@
           type="text"
           @click="() => {
             isInvite = false;
-            dialogListQuery2.interviewDate = new Date(listQuery.interviewDate);
+            dialogListQuery2.interviewDate = new Date(listQuery.interviewTime);
             showDialog2 = true;
           }"
         >
@@ -73,6 +76,9 @@
                 </el-button>
               </el-tooltip>
             </template>
+            <template v-slot:interviewTime="scope">
+              {{ scope.row.interviewTime | parseTime('{y}-{m}-{d} {h}:{i}') }}
+            </template>
           </self-form>
         </SectionContainer>
         <SectionContainer
@@ -88,9 +94,9 @@
             class="p15 SuggestForm"
             :pc-col="6"
           >
-            <template v-slot:hasCar="scope">
-              <span v-if="scope.row.hasCar">
-                有；{{ scope.row.carTypeName }}
+            <template v-slot:haveCar="scope">
+              <span v-if="scope.row.haveCar ===1">
+                有；{{ scope.row.haveCarName }}
               </span>
               <span v-else>无</span>
             </template>
@@ -101,13 +107,13 @@
               {{ scope.row.age }}岁
             </template>
             <template v-slot:followPerson="scope">
-              {{ scope.row.followPerson }} ({{ scope.row.followPersonPhone }})
+              {{ scope.row.followName }} ({{ scope.row.followPhone }})
             </template>
             <template v-slot:prevFollowPerson="scope">
-              {{ scope.row.prevFollowPerson }} ({{ scope.row.prevFollowPersonPhone }})
+              {{ scope.row.beforeFollowerName }} ({{ scope.row.beforeFollowerPhone }})
             </template>
-            <template v-slot:sourceChannel="scope">
-              {{ scope.row.sourceChannelName }} ({{ scope.row.sourceChannelUrl }})
+            <template v-slot:createSourceName="scope">
+              {{ scope.row.createSourceName }}
             </template>
           </self-form>
         </SectionContainer>
@@ -133,17 +139,19 @@
         :pc-col="24"
         @onPass="handlePassClick1"
       >
-        <template slot="contactInfo">
-          <el-button
-            v-for="item in btns"
-            :key="item.value"
-            :type="dialogListQuery1.contactInfo === item.value ? 'primary':''"
-            @click="() => {
-              dialogListQuery1.contactInfo = item.value
-            }"
-          >
-            {{ item.label }}
-          </el-button>
+        <template slot="contactSituation">
+          <div class="btnInline">
+            <el-button
+              v-for="item in btns"
+              :key="item.value"
+              :type="dialogListQuery1.contactSituation === item.value ? 'primary':''"
+              @click="() => {
+                dialogListQuery1.contactSituation = item.value
+              }"
+            >
+              {{ item.label }}
+            </el-button>
+          </div>
         </template>
       </self-form>
     </SelfDialog>
@@ -190,6 +198,7 @@
     <SelfEdit
       ref="editDialog"
       :list-query="form"
+      @fresh="getDriverClueDetail"
     />
     <LogList />
   </div>
@@ -204,6 +213,7 @@ import SelfEdit from './components/EditDriverClue.vue'
 import LogList from './components/opLogs.vue'
 import { lock } from '@/utils/index'
 import { delayTime } from '@/settings'
+import { GetDictionaryList } from '@/api/common'
 interface IState {
   [key: string]: any;
 }
@@ -222,40 +232,39 @@ export default class extends Vue {
   private showDialog3:boolean = false; // 取消面试弹框
   private isInvite:boolean = false ; // 是邀请面试还是调整面试
   private form:IState = {
-    driverName: '',
+    marketClueId: '',
+    name: '',
     phone: '',
-    hasCar: false,
+    haveCar: 0,
     carType: '',
     experience: '',
     age: '',
-    occupation: '',
-    address: '',
-    city: [],
-    id: ''
+    nowProfession: '',
+    nowAddress: '',
+    city: []
   }; // 编辑
   private listQuery:IState = {
-    id: '',
-    contactInfo: '',
+    marketClueId: '',
+    contactSituationName: '',
     remark: '',
-    interviewDate: '',
-    driverName: '',
-    hasCar: false,
+    interviewTime: '',
+    name: '',
+    haveCar: 0,
+    haveCarName: '',
     carType: '',
     carTypeName: '',
     phone: '',
     experience: '',
     age: '',
-    address: '',
+    nowAddress: '',
     statusName: '',
-    followPerson: '',
-    followPersonPhone: '',
-    driverClueId: '',
-    prevFollowPerson: '',
-    prevFollowPersonPhone: '',
+    followName: '',
+    followPhone: '',
+    beforeFollowerName: '',
+    beforeFollowerPhone: '',
     busiTypeName: '',
-    sourceChannelName: '',
-    sourceChannelUrl: '',
-    cityName: '',
+    createSourceName: '',
+    expectAddressCityName: '',
     city: [],
     occupation: ''
   };
@@ -263,7 +272,7 @@ export default class extends Vue {
     {
       type: 7,
       label: '联系情况',
-      key: 'contactInfoName'
+      key: 'contactSituationName'
     },
     {
       type: 'remark',
@@ -272,21 +281,20 @@ export default class extends Vue {
       slot: true
     },
     {
-      type: 7,
+      type: 'interviewTime',
       label: '已约面试',
-      key: 'interviewDate'
+      slot: true
     }
   ];
   private formItem1:any[] = [
     {
       type: 7,
       label: '姓名',
-      key: 'driverName'
+      key: 'name'
     },
     {
-      type: 'hasCar',
+      type: 'haveCar',
       label: '是否有车',
-      key: 'hasCar',
       slot: true
     },
     {
@@ -309,7 +317,7 @@ export default class extends Vue {
     {
       type: 7,
       label: '现住址',
-      key: 'address'
+      key: 'nowAddress'
     },
     {
       type: 7,
@@ -325,7 +333,7 @@ export default class extends Vue {
     {
       type: 7,
       label: '线索编号',
-      key: 'driverClueId'
+      key: 'marketClueId'
     },
     {
       type: 'prevFollowPerson',
@@ -341,51 +349,25 @@ export default class extends Vue {
     {
       type: 7,
       label: '所属城市',
-      key: 'cityName'
+      key: 'expectAddressCityName'
     },
     {
-      type: 'sourceChannel',
+      type: 'createSourceName',
       label: '来源渠道',
-      key: 'sourceChannel',
       col: 12,
       slot: true
     }
   ]
 
-  private btns:IState[] = [
-    {
-      label: '无意向',
-      value: 1
-    },
-    {
-      label: '有意向',
-      value: 2
-    },
-    {
-      label: '高意向',
-      value: 3
-    },
-    {
-      label: '稍后联系',
-      value: 4
-    },
-    {
-      label: '无人接听',
-      value: 5
-    },
-    {
-      label: '号码错误',
-      value: 6
-    }
-  ]
+  private btns:IState[] = []
   private dialogListQuery1:IState = {
-    contactInfo: '',
+    contactSituation: '',
     remark: ''
   }; // 添加跟进表单
   private dialogFormItem1:any[] = [
     {
-      type: 'contactInfo',
-      key: 'contactInfo',
+      type: 'contactSituation',
+      key: 'contactSituation',
       label: '联系情况:',
       slot: true
     },
@@ -463,7 +445,7 @@ export default class extends Vue {
   async getDriverClueDetail() {
     try {
       let params:IState = {
-        id: this.$route.query.id
+        marketClueId: +this.$route.query.id
       }
       let { data: res } = await GetDriverClueDetail(params)
       if (res.success) {
@@ -494,9 +476,9 @@ export default class extends Vue {
   async addContactInfo() {
     try {
       let params:IState = {
-        id: this.listQuery.id,
+        marketClueId: this.listQuery.marketClueId,
         remark: this.dialogListQuery1.remark,
-        contactInfo: this.dialogListQuery1.contactInfo
+        contactSituation: +this.dialogListQuery1.contactSituation
       }
       let { data: res } = await AddContactInfo(params)
       if (res.success) {
@@ -535,8 +517,8 @@ export default class extends Vue {
   async adjustmentlInteview() {
     try {
       let params = {
-        id: this.listQuery.id,
-        interviewDate: this.dialogListQuery2.interviewDate
+        marketClueId: this.listQuery.marketClueId,
+        interviewDate: new Date(this.dialogListQuery2.interviewDate).getTime()
       }
       let { data: res } = await AdjustmentlInteview(params)
       if (res.success) {
@@ -559,7 +541,7 @@ export default class extends Vue {
   async invitelInteview() {
     try {
       let params = {
-        id: this.listQuery.id,
+        marketClueId: this.listQuery.marketClueId,
         interviewDate: this.dialogListQuery2.interviewDate
       }
       let { data: res } = await InvitelInteview(params)
@@ -595,7 +577,7 @@ export default class extends Vue {
   async cancelInteview() {
     try {
       let params:IState = {
-        id: this.listQuery.id,
+        marketClueId: this.listQuery.marketClueId,
         remark: this.dialogListQuery3.remark
       }
       let { data: res } = await CancelInteview(params)
@@ -619,19 +601,46 @@ export default class extends Vue {
     this.form = {
       ...this.form,
       ...{
-        driverName: this.listQuery.driverName,
+        marketClueId: this.listQuery.marketClueId,
+        name: this.listQuery.name,
         phone: this.listQuery.phone,
-        hasCar: this.listQuery.hasCar,
+        haveCar: this.listQuery.haveCar,
         carType: this.listQuery.carType,
         experience: this.listQuery.experience,
         age: this.listQuery.age,
-        occupation: this.listQuery.occupation,
-        address: this.listQuery.address,
-        city: this.listQuery.city,
-        id: this.listQuery.id
+        nowProfession: this.listQuery.nowProfession,
+        nowAddress: this.listQuery.nowAddress,
+        city: [
+          this.listQuery.expectAddressCity.toString().slice(0, 2) + '0000',
+          this.listQuery.expectAddressCity + '',
+          this.listQuery.expectAddressCounty + ''
+        ]
       }
     };
+
     (this.$refs.editDialog as any).showDialog = true
+  }
+  // 获取联系情况列表
+  async getBaseInfo() {
+    try {
+      let len:number = this.btns.length
+      if (len > 0) {
+        this.btns.splice(0, len)
+      }
+      let params = ['driver_clue_contact_situation']
+      let { data: res } = await GetDictionaryList(params)
+      if (res.success) {
+        let contactsOption = res.data.driver_clue_contact_situation.map(function(item:any) {
+          return { label: item.dictLabel, value: item.dictValue }
+        })
+
+        this.btns.push(...contactsOption)
+      } else {
+        this.$message.error(res.errorMsg)
+      }
+    } catch (err) {
+      console.log(`get base info fail:${err}`)
+    }
   }
 
   mounted() {
@@ -655,5 +664,9 @@ export default class extends Vue {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .btnInline {
+    display: flex;
+    overflow-x: auto;
   }
 </style>

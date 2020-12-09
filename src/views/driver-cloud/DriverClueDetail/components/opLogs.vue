@@ -15,8 +15,8 @@
         :page="page"
         @onPageSize="handlePageSize"
       >
-        <template v-slot:createTime="scope">
-          {{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+        <template v-slot:createDate="scope">
+          {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
       </self-table>
     </div>
@@ -45,12 +45,11 @@ export default class extends Vue {
   private tableData:IState[] = [];
   private columns:IState[] = [
     {
-      key: 'msg',
-      label: '',
-      'width': '140px'
+      key: 'detail',
+      label: ''
     },
     {
-      key: 'createTime',
+      key: 'createDate',
       label: '',
       slot: true,
       'width': '140px'
@@ -74,7 +73,7 @@ export default class extends Vue {
       let params:IState = {
         page: this.page.page,
         limit: this.page.limit,
-        id: this.$route.query.id
+        marketClueId: this.$route.query.id
       }
 
       let { data: res } = await GetDriverClueLogList(params)

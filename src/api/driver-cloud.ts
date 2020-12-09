@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 // 司机运费账户
 
-let prefix = '/mock/81'
+let prefix = '/mock/81/api/carrier_center'
 const driverPrefix = '/driver'
 const carrierPrefix = '/carrier_center'
 // 获取自承运司机标签列表
@@ -92,11 +92,11 @@ export const AdjustmentlInteview = (data: any) =>
     data
   })
   // 司机线索详情日志列表
-export const GetDriverClueLogList = (data: any) =>
+export const GetDriverClueLogList = (params: any) =>
   request({
     url: `${prefix}/v2/clueH5/log`,
-    method: 'post',
-    data
+    method: 'get',
+    params
   })
 
 // 带分配线索列表

@@ -4,7 +4,7 @@
       :visible.sync="showDialog"
       :confirm="confirm"
       width="500px"
-      title="取消面试"
+      title="编辑"
       @closed="handleClosedClick"
     >
       <self-form
@@ -40,6 +40,23 @@
             </template>
           </el-input>
         </template>
+        <template
+          v-if="listQuery.haveCar"
+          slot="carType"
+        >
+          <el-select
+            v-model="listQuery.carType"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in carOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </template>
       </self-form>
     </SelfDialog>
   </div>
@@ -72,7 +89,7 @@ export default class extends Vue {
         maxlength: 10
       },
       label: '姓名',
-      key: 'driverName'
+      key: 'name'
     },
     {
       type: 1,
@@ -88,49 +105,46 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择',
-        clearable: true
+        placeholder: '请选择'
+      },
+      listeners: {
+        'change': () => {
+          this.listQuery.carType = ''
+        }
       },
       options: [
         {
           label: '有',
-          value: true
+          value: 1
         },
         {
           label: '无',
-          value: false
+          value: 0
         }
       ],
       label: '是否有车',
-      key: 'hasCar',
+      key: 'haveCar',
       col: 12
     },
     {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true
-      },
-      options: this.carOptions,
+      type: 'carType',
       w: '0px',
-      key: 'carType',
+      slot: true,
       col: 12
     },
     {
       type: 'experience',
-      key: 'experience',
       slot: true,
       label: '货运经验'
     },
     {
       type: 'age',
-      key: 'age',
       slot: true,
       label: '年龄'
     },
     {
       type: 1,
-      key: 'occupation',
+      key: 'nowProfession',
       label: '当前职业',
       tagAttrs: {
         placeholder: '请选择',
@@ -140,7 +154,7 @@ export default class extends Vue {
     },
     {
       type: 1,
-      key: 'address',
+      key: 'nowAddress',
       label: '现住址',
       tagAttrs: {
         placeholder: '请输入',
@@ -183,13 +197,16 @@ export default class extends Vue {
   async editClue() {
     try {
       let params:IState = {
-        ...this.listQuery
+        ...this.listQuery,
+        expectAddressCity: this.listQuery.city[1],
+        expectAddressCounty: this.listQuery.city[2]
       }
+      delete params.haveCar
       let { data: res } = await editClue(params)
       if (res.success) {
         this.showDialog = false
         this.$message.success('操作成功')
-        this.getBaseInfo()
+        this.$emit('fresh')
       } else {
         this.$message.error(res.errorMsg)
       }
@@ -253,6 +270,7 @@ export default class extends Vue {
       if (carLen > 0) {
         this.carOptions.splice(0, carLen)
       }
+
       let params = ['Intentional_compartment']
       let { data: res } = await GetDictionaryList(params)
       if (res.success) {
