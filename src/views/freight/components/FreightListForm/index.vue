@@ -334,7 +334,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GetDictionary, GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel } from '@/api/common'
+import { GetOpenCityData, GetDictionaryList, GetManagerLists, GetJoinManageList, GetSpecifiedLowerUserListByCondition, getOfficeByType, getOfficeByTypeAndOfficeId, GetDutyListByLevel } from '@/api/common'
 import { GetSpecifiedRoleList, managementDerive } from '@/api/freight'
 import { PermissionModule } from '@/store/modules/permission'
 import { SettingsModule } from '@/store/modules/settings'

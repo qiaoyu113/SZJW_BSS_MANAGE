@@ -88,19 +88,31 @@
         @selection-change="handleSelectionChange"
       >
         <template v-slot:name="scope">
-          <p class="text">
-            {{ scope.row.name }}
+          <p
+            v-if="scope.row.name"
+            class="text"
+          >
+            {{ scope.row.name | DataIsNull }}
           </p>
-          <p class="text">
-            {{ scope.row.phone }}
+          <p
+            v-if="scope.row.phone"
+            class="text"
+          >
+            {{ scope.row.phone | DataIsNull }}
           </p>
         </template>
         <template v-slot:followPerson="scope">
-          <p class="text">
-            {{ scope.row.followerName }}
+          <p
+            v-if="scope.row.followerName"
+            class="text"
+          >
+            {{ scope.row.followerName | DataIsNull }}
           </p>
-          <p class="text">
-            {{ scope.row.followerPhone }}
+          <p
+            v-if="scope.row.followerPhone"
+            class="text"
+          >
+            {{ scope.row.followerPhone | DataIsNull }}
           </p>
         </template>
         <template v-slot:city="scope">
@@ -122,6 +134,7 @@
             详情
           </el-button>
           <el-button
+            v-if="[10,20,30,40].includes(scope.row.status)"
             type="text"
             size="small"
             @click="handleDistributionClick(scope.row)"
@@ -161,7 +174,7 @@ import SelfForm from '@/components/Base/SelfForm.vue'
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import { GetDriverClueList, ExportDriverClue, allocationClue } from '@/api/driver-cloud'
 import { delayTime } from '@/settings'
-import { HandlePages, lock, parseTime, showCityGroupPerson, showWork } from '@/utils/index'
+import { HandlePages, lock, parseTime, showCityGroupPerson, showWork, DataIsNull } from '@/utils/index'
 interface PageObj {
   page:number,
   limit:number,
@@ -190,13 +203,13 @@ export default class extends Vue {
     name: '',
     phone: '',
     haveCar: '',
-    carType: [],
-    contactSituation: [],
+    carTypes: [],
+    contactSituations: [],
     followerId: '',
     time: [],
     workCity: [],
     busiType: '',
-    onlyMe: 0,
+    onlyMe: '',
     status: ''
   };
   private formItem:any[] = [
@@ -245,53 +258,6 @@ export default class extends Vue {
       ]
     },
     {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true,
-        multiple: true,
-        'collapse-tags': true
-      },
-      label: '车型',
-      key: 'carType',
-      options: this.carOptions
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true,
-        multiple: true,
-        'collapse-tags': true
-      },
-      label: '联系情况',
-      key: 'contactSituation',
-      options: this.contactsOption
-    },
-    {
-      type: 2,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true,
-        filterable: true
-      },
-      label: '跟进人',
-      key: 'followerId',
-      options: []
-    },
-    {
-      type: 3,
-      col: 8,
-      tagAttrs: {
-        placeholder: '请选择',
-        clearable: true
-      },
-      label: '分配时间',
-      key: 'time'
-    },
-    {
       type: 8,
       tagAttrs: {
         placeholder: '请选择',
@@ -319,17 +285,60 @@ export default class extends Vue {
       options: this.dutyListOptions
     },
     {
-      type: 4,
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true
+      },
+      label: '跟进人',
+      key: 'followerId',
+      options: []
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true,
+        multiple: true,
+        'collapse-tags': true
+      },
+      label: '车型',
+      key: 'carTypes',
+      options: this.carOptions
+    },
+    {
+      type: 2,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true,
+        filterable: true,
+        multiple: true,
+        'collapse-tags': true
+      },
+      label: '联系情况',
+      key: 'contactSituations',
+      options: this.contactsOption
+    },
+    {
+      type: 3,
+      col: 8,
+      tagAttrs: {
+        placeholder: '请选择',
+        clearable: true
+      },
+      label: '分配时间',
+      key: 'time'
+    },
+    {
+      type: 5,
       label: '只看自己',
       key: 'onlyMe',
       options: [
         {
-          label: '是',
+          label: '',
           value: 1
-        },
-        {
-          label: '否',
-          value: 0
         }
       ]
     },
@@ -525,7 +534,7 @@ export default class extends Vue {
   }
   // 表格是否禁用
   private disabledFunc(row:any) {
-    if (row.id) {
+    if ([10, 20, 30, 40].includes(row.status)) {
       return false
     }
     return true
@@ -559,13 +568,15 @@ export default class extends Vue {
     try {
       try {
         let params:IState = {
-          haveCar: this.listQuery.haveCar,
-          onlyMe: this.listQuery.onlyMe
+          limit: this.page.limit,
+          page: this.page.page,
+          haveCar: this.listQuery.haveCar
         }
+        this.listQuery.onlyMe && (params.onlyMe = 1)
         this.listQuery.name && (params.name = this.listQuery.name)
         this.listQuery.phone && (params.phone = this.listQuery.phone)
-        this.listQuery.carType && this.listQuery.carType.length !== 0 && (params.carType = this.listQuery.carType)
-        this.listQuery.contactSituation && this.listQuery.contactSituation.length !== 0 && (params.contactSituation = this.listQuery.contactSituation)
+        this.listQuery.carTypes && this.listQuery.carTypes.length !== 0 && (params.carTypes = this.listQuery.carTypes)
+        this.listQuery.contactSituations && this.listQuery.contactSituations.length !== 0 && (params.contactSituations = this.listQuery.contactSituations)
         this.listQuery.followerId !== '' && (params.followerId = this.listQuery.followerId)
         this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
         this.listQuery.status !== '' && (params.status = +this.listQuery.status)
@@ -606,13 +617,13 @@ export default class extends Vue {
       let params:IState = {
         limit: this.page.limit,
         page: this.page.page,
-        haveCar: this.listQuery.haveCar,
-        onlyMe: this.listQuery.onlyMe
+        haveCar: this.listQuery.haveCar
       }
+      this.listQuery.onlyMe && (params.onlyMe = 1)
       this.listQuery.name && (params.name = this.listQuery.name)
       this.listQuery.phone && (params.phone = this.listQuery.phone)
-      this.listQuery.carType && this.listQuery.carType.length !== 0 && (params.carType = this.listQuery.carType)
-      this.listQuery.contactSituation && this.listQuery.contactSituation.length !== 0 && (params.contactSituation = this.listQuery.contactSituation)
+      this.listQuery.carTypes && this.listQuery.carTypes.length !== 0 && (params.carTypes = this.listQuery.carTypes)
+      this.listQuery.contactSituations && this.listQuery.contactSituations.length !== 0 && (params.contactSituations = this.listQuery.contactSituations)
       this.listQuery.followerId !== '' && (params.followerId = this.listQuery.followerId)
       this.listQuery.busiType !== '' && (params.busiType = this.listQuery.busiType)
       this.listQuery.status !== '' && (params.status = +this.listQuery.status)

@@ -3,12 +3,14 @@
     <div class="box">
       <div class="top">
         <el-button
+          v-if="[20,30,40].includes(listQuery.status)"
           type="text"
           @click="handleEditClick"
         >
           编辑
         </el-button>
         <el-button
+          v-if="[20,30,40].includes(listQuery.status)"
           type="text"
           @click="() => {
             if (btns.length === 0) {
@@ -20,6 +22,7 @@
           添加跟进
         </el-button>
         <el-button
+          v-if="[20,30].includes(listQuery.status)"
           type="text"
           @click="() => {
             isInvite = true;
@@ -29,6 +32,7 @@
           邀请面试
         </el-button>
         <el-button
+          v-if="[40].includes(listQuery.status)"
           type="text"
           @click="() => {
             showDialog3 = true;
@@ -37,6 +41,7 @@
           取消面试
         </el-button>
         <el-button
+          v-if="[40].includes(listQuery.status)"
           type="text"
           @click="() => {
             isInvite = false;
@@ -49,6 +54,7 @@
       </div>
       <div class="table-box">
         <SectionContainer
+          v-if="[10,50,60].includes(listQuery.status)"
           title="最近跟进信息"
           :md="true"
         >
@@ -72,7 +78,7 @@
                   type="text"
                   class="overflow"
                 >
-                  {{ scope.row.remark }}
+                  {{ scope.row.remark | DataIsNull }}
                 </el-button>
               </el-tooltip>
             </template>
@@ -96,24 +102,33 @@
           >
             <template v-slot:haveCar="scope">
               <span v-if="scope.row.haveCar ===1">
-                有；{{ scope.row.haveCarName }}
+                有；{{ scope.row.haveCarName | DataIsNull }}
               </span>
               <span v-else>无</span>
             </template>
             <template v-slot:experience="scope">
-              {{ scope.row.experience }}年
+              {{ scope.row.experience | DataIsNull }} <template v-if="scope.row.experience">
+                年
+              </template>
             </template>
             <template v-slot:age="scope">
-              {{ scope.row.age }}岁
+              {{ scope.row.age | DataIsNull }}<template v-if="scope.row.age">
+                岁
+              </template>
             </template>
             <template v-slot:followPerson="scope">
               {{ scope.row.followName }} ({{ scope.row.followPhone }})
             </template>
             <template v-slot:prevFollowPerson="scope">
-              {{ scope.row.beforeFollowerName }} ({{ scope.row.beforeFollowerPhone }})
+              <template v-if="scope.row.beforeFollowerName || scope.row.beforeFollowerPhone">
+                {{ scope.row.beforeFollowerName }} ({{ scope.row.beforeFollowerPhone }})
+              </template>
+              <template v-else>
+                暂无数据
+              </template>
             </template>
-            <template v-slot:createSourceName="scope">
-              {{ scope.row.createSourceName }}
+            <template v-slot:sourceChannelName="scope">
+              {{ scope.row.sourceChannelName | DataIsNull }}
             </template>
           </self-form>
         </SectionContainer>
@@ -211,7 +226,7 @@ import { GetDriverClueDetail, AddContactInfo, CancelInteview, InvitelInteview, A
 import SelfDialog from '@/components/SelfDialog/index.vue'
 import SelfEdit from './components/EditDriverClue.vue'
 import LogList from './components/opLogs.vue'
-import { lock } from '@/utils/index'
+import { lock, DataIsNull } from '@/utils/index'
 import { delayTime } from '@/settings'
 import { GetDictionaryList } from '@/api/common'
 interface IState {
@@ -257,13 +272,14 @@ export default class extends Vue {
     experience: '',
     age: '',
     nowAddress: '',
+    status: '',
     statusName: '',
     followName: '',
     followPhone: '',
     beforeFollowerName: '',
     beforeFollowerPhone: '',
     busiTypeName: '',
-    createSourceName: '',
+    sourceChannelName: '',
     expectAddressCityName: '',
     city: [],
     occupation: ''
@@ -352,7 +368,7 @@ export default class extends Vue {
       key: 'expectAddressCityName'
     },
     {
-      type: 'createSourceName',
+      type: 'sourceChannelName',
       label: '来源渠道',
       col: 12,
       slot: true
