@@ -236,10 +236,14 @@ export default class extends Vue {
       label: '手机号',
       key: 'phone',
       tagAttrs: {
+        type: 'tel',
         placeholder: '请输入',
         maxlength: 11,
         'show-word-limit': true,
         clearable: true
+      },
+      listeners: {
+        'input': this.oninputOnlyNum
       }
     },
     {
@@ -374,6 +378,10 @@ export default class extends Vue {
     this.rowData.push(...this.multipleSelection)
   }
 
+  private oninputOnlyNum(value:string) {
+    this.listQuery.phone = value.replace(/[^\d]/g, '')
+  }
+
   // 弹框确认
   private confirm() {
     (this.$refs.dialogMarketClue as any).submitForm()
@@ -388,7 +396,11 @@ export default class extends Vue {
       }
       const { data: res } = await allocationClue(params)
       if (res.success) {
-        this.$message(res.data.msg)
+        if (res.data.flag) {
+          this.$message.success(res.data.msg)
+        } else {
+          this.$message.warning(res.data.msg)
+        }
         this.showDialog = false;
         (this.$refs.MarketClueTable as any).toggleRowSelection()
         this.handleDialogClosed()
