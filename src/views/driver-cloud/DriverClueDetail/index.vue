@@ -29,7 +29,7 @@
             showDialog2 = true;
           }"
         >
-          邀请面试
+          邀约面试
         </el-button>
         <el-button
           v-if="[40].includes(listQuery.status)"
@@ -129,6 +129,14 @@
             </template>
             <template v-slot:sourceChannelName="scope">
               {{ scope.row.sourceChannelName | DataIsNull }}
+            </template>
+            <template v-slot:expectAddressCityName="scope">
+              <template v-if="scope.row.expectAddressCityName || scope.row.expectAddressCountyName">
+                {{ scope.row.expectAddressCityName }} ({{ scope.row.expectAddressCountyName }})
+              </template>
+              <template v-else>
+                暂无数据
+              </template>
             </template>
           </self-form>
         </SectionContainer>
@@ -281,6 +289,7 @@ export default class extends Vue {
     busiTypeName: '',
     sourceChannelName: '',
     expectAddressCityName: '',
+    expectAddressCountyName: '',
     city: [],
     occupation: ''
   };
@@ -334,6 +343,16 @@ export default class extends Vue {
       type: 7,
       label: '现住址',
       key: 'nowAddress'
+    },
+    {
+      type: 7,
+      label: '当前职业',
+      key: 'nowProfession'
+    },
+    {
+      type: 'expectAddressCityName',
+      label: '期望工作区域',
+      slot: true
     },
     {
       type: 7,
@@ -402,7 +421,7 @@ export default class extends Vue {
   ]
   // 添加跟进校验
   private rules1:IState = {
-    contactInfo: [
+    contactSituation: [
       { required: true, message: '请选择联系情况', trigger: 'change' }
     ]
   };
@@ -418,6 +437,7 @@ export default class extends Vue {
       label: '',
       w: '0px',
       tagAttrs: {
+        placeholder: '请选择面试时间',
         pickerOptions: {
           disabledDate(time:any) {
             return time.getTime() < Date.now() - 86400000

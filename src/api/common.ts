@@ -1,15 +1,18 @@
 import request from '@/utils/request'
 const baseURL = '/base'
+const baseCenterUrl = '/base_center'
 export const GetDictionary = (data: any) =>
   request({
-    url: `${baseURL}/v1/base/dict/dictData/list`,
+    // url: `${baseURL}/v1/base/dict/dictData/list`, //旧 12.10
+    url: `${baseCenterUrl}/open/v1/dict/dictData/list`,
     method: 'get',
     params: data
   })
 // 批量查询字典
 export const GetDictionaryList = (data: any) =>
   request({
-    url: `${baseURL}/v1/base/dict/dict/list/types`,
+    // url: `${baseURL}/v1/base/dict/dict/list/types`, //旧 12.10
+    url: `${baseCenterUrl}/open/v1/dict/list/types`,
     method: 'post',
     data
   })
@@ -35,7 +38,8 @@ export const GetOpenCityData = () => request({
 })
 // 获取字典城市
 export const GetDictionaryCity = () => request({
-  url: `${baseURL}/v1/base/area/getOpenCityData`,
+  // url: `${baseURL}/v1/base/area/getOpenCityData`,//旧 12.10
+  url: `${baseCenterUrl}/open/v1/area/getCityCodeByCityName`,
   method: 'get'
 })
 // 运营经理
@@ -68,7 +72,8 @@ export const GetManagerLists = (params:any) =>
 // 获取城市详情
 export const detailCity = (data:any) =>
   request({
-    url: `${baseURL}/v1/base/area/getTownByCountryCode`,
+    // url: `${baseURL}/v1/base/area/getTownByCountryCode`,//旧 12.10
+    url: `${baseCenterUrl}/open/v1/area/getTownByCountryCode`,
     method: 'get',
     params: data
   })
