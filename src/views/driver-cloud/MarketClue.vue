@@ -159,6 +159,7 @@ export default class extends Vue {
 
   private dialogTit: string = '';
   private hasCarList: any[] = [
+    { label: '全部', value: '' },
     { label: '有', value: 1 },
     { label: '无', value: 0 }
   ];
