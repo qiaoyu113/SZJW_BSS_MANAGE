@@ -3,6 +3,7 @@
     <el-dialog
       :visible.sync="show"
       :width="isPC ? width : '90%'"
+      :close-on-click-modal="false"
       :custom-class="`${isPC ? customClass : (customClass + 'dialog-content-m')}`"
       v-bind="$attrs"
       v-on="$listeners"
