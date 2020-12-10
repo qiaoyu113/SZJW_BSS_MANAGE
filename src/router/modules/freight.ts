@@ -21,7 +21,7 @@ const freightRouter: RouteConfig = {
         apiUrl: '/v2/waybill/getConfirmInfoList',
         // apiUrl: 'root',
         title: 'freightList',
-        noCache: true
+        noCache: false
       }
     },
     {
