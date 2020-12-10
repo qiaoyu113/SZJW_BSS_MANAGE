@@ -21,4 +21,21 @@
     //custom page code end here
     gio('send');
     </script>
-</html>
+    <!--frontjs-->
+    <!--fundebug-->
+    <script type="text/javascript">
+      if(window.location.host === 'szjw-bss-web.yunniao.cn'){
+        // fundebug
+        loadScript("https://js.fundebug.cn/fundebug.2.0.0.min.js", "71b6c125c570c24fbdbb900b726f3b99281b41d28c7e60e4ace2f025c503bdcd")
+        // frontjs
+        (function (w) {w.frontjsConfig={token:"008e33533cb62aaca4a76665c2e14cf6",behaviour:15,trustVendor:true,optimisedForSPA:true,useHistory:true,FPSThreshold:10};w.frontjsTmpData = {r:[],e:[],l:[]};w.frontjsTmpCollector = function (ev) {(ev.message ? window.frontjsTmpData.e : window.frontjsTmpData.r).push([new Date().getTime(), ev])};w.FrontJS = {addEventListener: function (t, f) {w.frontjsTmpData.l.push([t, f]);return f;},removeEventListener: function (t, f) {for (var i = 0; i < w.frontjsTmpData.l.length; i++) {t === w.frontjsTmpData.l[i][0] && f === w.frontjsTmpData.l[i][1] && w.frontjsTmpData.l.splice(i, 1);}return f;}};w.document.addEventListener("error", w.frontjsTmpCollector, true);w.addEventListener("error", w.frontjsTmpCollector, true);w.addEventListener("load", function () {var n = w.document.createElement("script");n.src = "https://static.frontjs.com/dist/current/frontjs.web.min.js"; w.document.body.appendChild(n);}, true);})(window);
+      }
+      function loadScript(url, apikey) {
+          var script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = url;
+          script.setAttribute("apikey", apikey);
+          document.body.appendChild(script);
+      }
+      </script>
+  </html>
