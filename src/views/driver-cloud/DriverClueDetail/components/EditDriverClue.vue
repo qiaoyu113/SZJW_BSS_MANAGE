@@ -22,7 +22,7 @@
           <el-input
             v-model="listQuery.experience"
             maxlength="2"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=Number(value.replace(/[^\d]/g,''))"
           >
             <template slot="append">
               年
@@ -33,7 +33,7 @@
           <el-input
             v-model="listQuery.age"
             maxlength="2"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=Number(value.replace(/[^\d]/g,''))"
           >
             <template slot="append">
               岁
@@ -105,7 +105,7 @@ export default class extends Vue {
     {
       type: 2,
       tagAttrs: {
-        placeholder: '请选择'
+        placeholder: '请选择车型'
       },
       listeners: {
         'change': () => {
