@@ -32,6 +32,27 @@ const driverCloud: RouteConfig = {
         title: 'marketClue',
         noCache: false
       }
+    },
+    {
+      path: 'driverClue',
+      component: () => import(/* webpackChunkName: "driverCloud" */ '@/views/driver-cloud/DriverClue.vue'),
+      name: 'DriverClue',
+      meta: {
+        apiUrl: 'root',
+        title: 'DriverClueNew',
+        noCache: false
+      }
+    },
+    {
+      path: 'driverClueDetail',
+      component: () => import(/* webpackChunkName: "driverCloud" */ '@/views/driver-cloud/DriverClueDetail/index.vue'),
+      name: 'DriverClueDetail',
+      meta: {
+        apiUrl: 'root',
+        hidden: true,
+        title: 'DriverClueDetail',
+        noCache: false
+      }
     }
   ]
 }

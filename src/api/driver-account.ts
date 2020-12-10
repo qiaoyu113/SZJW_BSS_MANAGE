@@ -162,10 +162,11 @@ export const getDriverListByGmId = (params: any) =>
   })
 
 // 获取计费类型列表
-export const getListAll = () =>
+export const getListAll = (params:any) =>
   request({
-    url: `/bill/v2/wt-driver-account/billing/currUserChargeList`,
-    method: 'get'
+    url: `/bill/v2/wt-driver-account/billing/getChargeByBusiType`,
+    method: 'get',
+    params
   })
 
 // 获取计费金额

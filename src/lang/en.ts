@@ -19,6 +19,8 @@ export default {
     clueList: 'ClueList',
     addClue: 'addClue',
     editClue: 'editClue',
+    DriverClueNew: 'DriverClueNew',
+    DriverClueDetail: 'DriverClueDetail',
     followUpClue: 'followUpClue',
     conversionClue: 'conversionClue',
     editcustomer: 'editcustomer',

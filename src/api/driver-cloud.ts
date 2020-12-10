@@ -40,6 +40,64 @@ export const GetDriverByDriverName = (data: any) =>
     method: 'post',
     data
   })
+// 获取司机线索列表
+export const GetDriverClueList = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/list`,
+    method: 'post',
+    data
+  })
+  // 导出司机线索
+export const ExportDriverClue = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/amount/export`,
+    method: 'post',
+    data
+  })
+// 获取司机线索详情
+export const GetDriverClueDetail = (params: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/detail`,
+    method: 'get',
+    params
+  })
+// 司机线索详情添加跟进
+export const AddContactInfo = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/addFollow`,
+    method: 'post',
+    data
+  })
+// 司机线索详情取消面试
+export const CancelInteview = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/abolishInterview`,
+    method: 'post',
+    data
+  })
+
+//  司机线索详情邀请面试
+export const InvitelInteview = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/inviteInterview`,
+    method: 'post',
+    data
+  })
+
+// 司机线索详情调整面试
+export const AdjustmentlInteview = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/updateInterviewTime`,
+    method: 'post',
+    data
+  })
+  // 司机线索详情日志列表
+export const GetDriverClueLogList = (params: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/log`,
+    method: 'get',
+    params
+  })
 
 // 带分配线索列表
 export const marketClue = (data: any) =>
@@ -53,6 +111,14 @@ export const marketClue = (data: any) =>
 export const allocationClue = (data: any) =>
   request({
     url: `${prefix}/v2/clueH5/updateFollowerByMarketClueId`,
+    method: 'post',
+    data
+  })
+
+// 编辑司机线索
+export const editClue = (data: any) =>
+  request({
+    url: `${prefix}/v2/clueH5/edit`,
     method: 'post',
     data
   })
