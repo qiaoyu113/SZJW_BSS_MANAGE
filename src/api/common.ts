@@ -39,7 +39,7 @@ export const GetOpenCityData = () => request({
 // 获取字典城市
 export const GetDictionaryCity = () => request({
   // url: `${baseURL}/v1/base/area/getOpenCityData`,//旧 12.10
-  url: `${baseCenterUrl}/open/v1/area/getCityCodeByCityName`,
+  url: `${baseCenterUrl}/open/v1/area/getOpenCityData`,
   method: 'get'
 })
 // 运营经理
@@ -155,7 +155,7 @@ export const getSpecifiedUserListByCondition = (data:any) =>
 // 根据城市、业务线获取小组
 export const getGroupInfoByCityCodeAndProductLine = (params:any) =>
   request({
-    url: `/base/v2/base/office/getGroupInfoByCityCodeAndProductLine`,
+    url: `/base/v2/base/office/getGroupInfoByCondition`,
     method: 'get',
     params
   })

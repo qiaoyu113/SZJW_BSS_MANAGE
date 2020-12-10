@@ -354,17 +354,18 @@ export default class extends Vue {
       ]
     },
     {
-      type: 'mulBtn',
-      col: 16,
-      slot: true,
-      w: '0px'
-    },
-    {
       type: 'status',
       col: 24,
       slot: true,
       w: '50px'
+    },
+    {
+      type: 'mulBtn',
+      col: 24,
+      slot: true,
+      w: '0px'
     }
+
   ];
   private btns:any[] = [
     {
