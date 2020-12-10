@@ -513,7 +513,7 @@ export default class extends Vue {
         keyword: '',
         productLine: '',
         roleTypes: ['2'],
-        uri: '/v2/waybill/queryDuty'
+        uri: '/v2/waybill/queryLineSale'
       })
       if (res.success) {
         this.lineSaleList.splice(0)
