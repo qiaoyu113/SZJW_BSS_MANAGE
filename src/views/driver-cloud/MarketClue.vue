@@ -21,8 +21,8 @@
         slot="mulBtn"
         :class="isPC ? 'btnPc' : 'mobile'"
       >
+        <!-- v-permission="['/api/carrier_center/v2/clueH5/updateFollowerByMarketClueId']" -->
         <el-button
-          v-permission="['/v2/driver/label-sync/export']"
           size="small"
           :class="isPC ? '' : 'btnMobile'"
           :disabled="multipleSelection.length > 0 ? false :true"
@@ -68,8 +68,8 @@
           {{ scope.row.createDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
         </template>
         <template v-slot:op="scope">
+          <!-- v-permission="['/api/carrier_center/v2/clueH5/updateFollowerByMarketClueId']" -->
           <el-button
-            v-permission="['/v2/driver/label-sync/update']"
             type="text"
             @click="handleAllotClick(scope.row)"
           >
