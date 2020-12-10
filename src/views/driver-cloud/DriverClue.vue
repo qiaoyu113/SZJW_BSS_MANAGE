@@ -812,7 +812,7 @@ export default class extends Vue {
    .driverClueContainer >>> .el-badge{
       margin-right: 20px;
    }
-   .driverClueContainer >>> .el-checkbox__inner {
+   .SuggestForm >>> .el-checkbox__inner {
      border-radius: 50%;
    }
 </style>
