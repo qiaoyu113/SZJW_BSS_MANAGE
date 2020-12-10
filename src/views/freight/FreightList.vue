@@ -15,6 +15,12 @@
     />
     <div class="table_box">
       <!--table表单-->
+      <div class="table-title">
+        筛选结果（<span>{{ tableTitle.all }}</span>条）：
+        司机侧已上报<span>{{ tableTitle.gmStatusCount }}</span>条，<span>{{ tableTitle.gmStatusSum }}</span>元；
+        客户侧已上报<span>{{ tableTitle.lineStatusCount }}</span>条，<span>{{ tableTitle.lineStatusSum }}</span>元；
+        已确认<span>{{ tableTitle.crossCheckCount }}</span>条，<span>{{ tableTitle.crossCheckSum }}</span>元
+      </div>
       <div
         class="table_center"
         :style="total > 0 ? '' : 'padding-bottom: 30px;'"
@@ -369,7 +375,7 @@
             min-width="170"
           >
             <template slot-scope="{row}">
-              <span>{{ row.dutyManagerName + '/' + row.dutyManagerPhone | DataIsNull }}</span>
+              <span>{{ row.dutyManagerName && row.dutyManagerPhone ? row.dutyManagerName+ '/' +row.dutyManagerPhone:'' }}</span>
             </template>
           </el-table-column>
 
@@ -478,6 +484,7 @@
 
     <!-- 运费确认 -->
     <SelfDialog
+      v-if="assignShowDialogMin"
       :visible.sync="assignShowDialogMin"
       :title="`运费确认`"
       :confirm-button-text="`确认`"
@@ -489,8 +496,12 @@
       other-type="danger"
     >
       <DetailItem
+        name="出车日期"
+        :value="formatDate(new Date(freightForm.list[0].departureDate))"
+      />
+      <DetailItem
         name="出车单号"
-        :value="freightForm.list[0].wayBillId"
+        :value="freightForm.list[0].wayBillId+'/'+freightForm.list[0].lineName"
       />
       <DetailItem
         name="司机姓名/手机号"
@@ -519,10 +530,10 @@
             />
           </el-form-item>
           <div
-            v-if="item.status === 10 && item.gmIsNoCar"
-            class="addNoFreight"
+            style="color:#FF5D5D"
+            class="slot-info"
           >
-            司机侧：<span>未出车</span>
+            <span>{{ renderRefund(item) }}</span>
           </div>
         </div>
         <el-form-item
@@ -544,6 +555,7 @@
 
     <!-- 批量运费确认 -->
     <SelfDialog
+      v-if="assignShowDialog"
       :visible.sync="assignShowDialog"
       :title="`批量运费确认`"
       :confirm-button-text="`全部提交`"
@@ -570,18 +582,31 @@
           class="freightSelfDialog"
         >
           <div style="box-sizing:border-box;">
-            <el-switch
-              v-model="item.check"
-              style="padding:25px 15px;display: block"
-              active-color="#13ce66"
-              inactive-color="#F56C6C"
-              active-text="已出车"
-              inactive-text="未出车"
-            />
+            <el-row>
+              <el-col :span="12">
+                <el-switch
+                  v-model="item.check"
+                  style="padding:25px 15px;display: block"
+                  active-color="#13ce66"
+                  inactive-color="#F56C6C"
+                  active-text="已出车"
+                  inactive-text="未出车"
+                />
+              </el-col>
+              <el-col :span="12">
+                <div
+                  class="DetailItem"
+                  style="margin-top: 20px;"
+                >
+                  <span class="detail-title">出车日期</span>
+                  <span class="detail-value">{{ formatDate(new Date(item.departureDate)) }}</span>
+                </div>
+              </el-col>
+            </el-row>
           </div>
           <DetailItem
-            name="出车单号"
-            :value="item.wayBillId"
+            name="出车单号/线路名称"
+            :value="item.wayBillId+'/'+item.lineName"
           />
           <DetailItem
             name="司机姓名/手机号"
@@ -609,11 +634,12 @@
                   clearable
                 />
               </el-form-item>
+
               <div
-                v-if="i.status === 10 && i.gmIsNoCar"
-                class="addNoFreight"
+                style="color:#FF5D5D"
+                class="slot-info"
               >
-                司机侧：<span>未出车</span>
+                <span>{{ renderRefund(i) }}</span>
               </div>
             </div>
           </div>
@@ -652,7 +678,7 @@ import { Form as ElForm, Input } from 'element-ui'
 import { GetConfirmInfoList, ReportMoneyBatch, WayBillAmountDetail, NoCarBatch, freightTripMoney } from '@/api/freight'
 import { GetFindBusinessPhone } from '@/api/cargo'
 import { CargoListData } from '@/api/types'
-import { HandlePages, lock } from '@/utils/index'
+import { HandlePages, lock, parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import TableHeader from '@/components/TableHeader/index.vue'
 import SuggestContainer from '@/components/SuggestContainer/index.vue'
@@ -663,11 +689,12 @@ import { FreightListForm } from './components'
 import DetailItem from '@/components/DetailItem/index.vue'
 import { SettingsModule } from '@/store/modules/settings'
 import '@/styles/common.scss'
+// import RenderRefund from './components/renderRefund.js'
+// import {parseTime} from '@/utils/index'
 
 interface IState {
   [key: string]: any;
 }
-
 @Component({
   name: 'FreightList',
   components: {
@@ -805,7 +832,8 @@ export default class extends Vue {
       dispatchState: '',
       business: '',
       clientUpLoadState: '',
-      driverUpLoadState: ''
+      driverUpLoadState: '',
+      lineSaleId: ''
     };
     private freightForm: any = {
       list: [
@@ -849,6 +877,7 @@ export default class extends Vue {
       page: 1,
       limit: 20
     };
+    private delay: number = 1000;
 
     @Watch('checkList', { deep: true })
     private checkListChange(val:any) {
@@ -883,7 +912,6 @@ export default class extends Vue {
       // return value
       return 'auto'
     }
-
     // 确认清除
     private confirm(done:any) {
       if (this.showDialog.name === '1') {
@@ -927,7 +955,46 @@ export default class extends Vue {
         this.DateValue2 = value
       }
     }
-
+    private renderRefund(item:any) {
+      let shipping = ''
+      let driverFreight = ''
+      let customerFreight = ''
+      let statusName = ''
+      const { status, confirmFee, gmIsNoCar,
+        gmcFee, gmFee, gmStatus, gmStatusName,
+        lineStatus, lineStatusName, lineFee,
+        gmcIsNoCar
+      } = item
+      if (status === 30) {
+        if (gmcIsNoCar) {
+          shipping = '未出车'
+          driverFreight = '未出车'
+          statusName = '（已单边确认）'
+        } else {
+          if (!confirmFee && typeof confirmFee !== 'number') {
+            if (gmIsNoCar) {
+              shipping = ''
+              driverFreight = (gmStatusName || 0 + '元')
+            } else {
+              shipping = ''
+              driverFreight = (gmFee || 0) + '元'
+            }
+          } else {
+            shipping = (gmcFee || 0) + '元'
+            driverFreight = (gmcFee || 0) + '元'
+            statusName = '（已单边确认）'
+          }
+        }
+        customerFreight = lineStatus === 2 ? lineStatusName : lineFee + '元'
+        return `运费金额${statusName}：${shipping}；
+              司机侧：${driverFreight}；
+              客户侧：${customerFreight}；
+              `
+      } else if (status === 10 && gmStatus === 2) {
+        return '加盟侧：未出车'
+      }
+      return ''
+    }
     // 处理是否展示运费确认的总按钮
     private handleChecked(arr: any) {
       let list = [
@@ -943,15 +1010,25 @@ export default class extends Vue {
       list.shift()
       this.operationList = list
     }
-
-    // 请求列表
-    private async getList(value: any) {
+    private tableTitle = {
+      all: '',
+      gmStatusCount: '',
+      gmStatusSum: '',
+      lineStatusCount: '',
+      lineStatusSum: '',
+      crossCheckCount: '',
+      crossCheckSum: ''
+    }
+    private async getList(this:any, value: any) {
+      this.list = []
       this.listQuery.page = value.page
       this.listQuery.limit = value.limit
       this.listLoading = true
       const { data } = await GetConfirmInfoList(this.listQuery)
       if (data.success) {
+        this.$refs['multipleTable'].clearSelection()
         this.list = data.data
+        this.tableTitle = data.title
         this.handleChecked(data.data)
         // this.tab[0].num = data.title.all
         // this.tab[1].num = data.title.notReported
@@ -1049,7 +1126,16 @@ export default class extends Vue {
                   check: lists.check,
                   preMoney: lists.preMoney,
                   status: lists.status,
-                  gmIsNoCar: lists.gmIsNoCar
+                  gmIsNoCar: lists.gmIsNoCar,
+                  confirmFee: lists.confirmFee,
+                  gmStatus: lists.gmStatus,
+                  gmStatusName: lists.gmStatusName,
+                  gmFee: lists.gmFee,
+                  gmcFee: lists.gmcFee,
+                  lineStatus: lists.lineStatus,
+                  lineStatusName: lists.lineStatusName,
+                  lineFee: lists.lineFee,
+                  gmcIsNoCar: lists.gmcIsNoCar
                 })
                 list.push(lists)
               } else {
@@ -1064,7 +1150,16 @@ export default class extends Vue {
                       check: lists.check,
                       preMoney: lists.preMoney,
                       status: lists.status,
-                      gmIsNoCar: lists.gmIsNoCar
+                      gmIsNoCar: lists.gmIsNoCar,
+                      confirmFee: lists.confirmFee,
+                      gmStatus: lists.gmStatus,
+                      gmStatusName: lists.gmStatusName,
+                      gmFee: lists.gmFee,
+                      gmcFee: lists.gmcFee,
+                      lineStatus: lists.lineStatus,
+                      lineStatusName: lists.lineStatusName,
+                      lineFee: lists.lineFee,
+                      gmcIsNoCar: lists.gmcIsNoCar
                     })
                   }
                 })
@@ -1122,9 +1217,13 @@ export default class extends Vue {
           wayBillAmountIds: wayBillAmountIdsArr
         }, this.freightForm.remark)
         if (data.success) {
-          this.$message.success('提交成功')
           this.assignShowDialogMin = false
-          this.getList(this.listQuery)
+          this.handleCheck()
+          setTimeout(() => {
+            this.getList(this.listQuery)
+            this.$message.success('提交成功')
+            document.body.scrollTop = document.documentElement.scrollTop = 0
+          }, this.delay)
         } else {
           this.$message.error(data.errorMsg)
         }
@@ -1151,33 +1250,50 @@ export default class extends Vue {
         let wayBillAmountIdsArr: any = []
         let noCheck: any = []
         this.freightFormAll.lists.forEach((i: any) => {
-          i.list.forEach((element: any) => {
-            if (element.check) {
+          if (i.check) {
+            i.list.forEach((element: any) => {
               moneysArr.push(element.preMoney)
               wayBillAmountIdsArr.push(element.wayBillAmountId)
-            } else {
+            })
+          } else {
+            i.list.forEach((element: any) => {
               noCheck.push(element.wayBillAmountId)
-            }
-          })
-        })
-        const { data } = await ReportMoneyBatch({
-          moneys: moneysArr,
-          wayBillAmountIds: wayBillAmountIdsArr
-        }, this.remarkAll)
-        if (data.success) {
-          this.getList(this.listQuery)
-          this.$message.success('提交成功')
-          this.assignShowDialog = false
-          if (noCheck.length) {
-            const { data } = await NoCarBatch(noCheck, this.remarkAll)
-            if (data.success) {
-              this.assignShowDialog = false
-            } else {
-              this.$message.error(data.errorMsg)
-            }
+            })
           }
-        } else {
-          this.$message.error(data.errorMsg)
+        })
+        if (noCheck.length) {
+          const { data } = await NoCarBatch(noCheck, this.remarkAll)
+          if (data.success) {
+            if (!wayBillAmountIdsArr.length) {
+              this.handleCheck()
+              this.assignShowDialog = false
+              setTimeout(() => {
+                this.getList(this.listQuery)
+                this.$message.success('提交成功')
+                document.body.scrollTop = document.documentElement.scrollTop = 0
+              }, this.delay)
+            }
+            this.assignShowDialog = false
+          } else {
+            this.$message.error(data.errorMsg)
+          }
+        }
+        if (wayBillAmountIdsArr.length) {
+          const { data } = await ReportMoneyBatch({
+            moneys: moneysArr,
+            wayBillAmountIds: wayBillAmountIdsArr
+          }, this.remarkAll)
+          if (data.success) {
+            this.handleCheck()
+            this.assignShowDialog = false
+            setTimeout(() => {
+              this.getList(this.listQuery)
+              this.$message.success('提交成功')
+              document.body.scrollTop = document.documentElement.scrollTop = 0
+            }, this.delay)
+          } else {
+            this.$message.error(data.errorMsg)
+          }
         }
       } catch (err) {
         console.log(`submit fail:${err}`)
@@ -1197,9 +1313,13 @@ export default class extends Vue {
         callback: async action => {
           const { data } = await NoCarBatch(noCheck, this.remarkAll)
           if (data.success) {
-            this.$message.success('已成功操作全部未出车')
             this.assignShowDialogMin = false
-            this.getList(this.listQuery)
+            this.handleCheck()
+            setTimeout(() => {
+              this.getList(this.listQuery)
+              this.$message.success('已成功操作全部未出车')
+              document.body.scrollTop = document.documentElement.scrollTop = 0
+            }, this.delay)
             done()
           } else {
             this.$message.error(data.errorMsg)
@@ -1216,9 +1336,13 @@ export default class extends Vue {
       })
       const { data } = await NoCarBatch(wayBillAmountIdsArr, this.freightForm.remark)
       if (data.success) {
-        this.$message.success('已成功操作未出车')
         this.assignShowDialogMin = false
-        this.getList(this.listQuery)
+        this.handleCheck()
+        setTimeout(() => {
+          this.getList(this.listQuery)
+          this.$message.success('已成功操作未出车')
+          document.body.scrollTop = document.documentElement.scrollTop = 0
+        }, this.delay)
         done()
       } else {
         this.$message.error(data.errorMsg)
@@ -1338,9 +1462,9 @@ export default class extends Vue {
   box-sizing: border-box;
   .addNoFreight{
     margin-top: -15px;
-    color: #9e9e9e;
     margin-bottom: 10px;
     margin-left: 10px;
+    color: #FF5D5D;
     span{
       color: #FF5D5D;
     }
@@ -1367,7 +1491,7 @@ export default class extends Vue {
     transform: translateZ(0);
     .table_center {
       // height: calc(100vh - 360px) !important;
-      padding: 30px 30px 0;
+      padding: 15px 30px 0;
       box-sizing: border-box;
       background: #ffffff;
       overflow-y: scroll;
@@ -1388,6 +1512,23 @@ export default class extends Vue {
     padding-bottom: 15px;
     border-bottom: 1px solid #eeeeee;
     box-sizing: border-box;
+  }
+  .slot-info{
+    color:#FF5D5D;
+    span{
+      margin-right: 5px;
+    }
+  }
+  .table-title{
+    margin-top: 15px;
+    line-height: 30px;
+    margin-left: 30px;
+    color: #000;
+    font-size: 14px;
+    span{
+      color: #649cee;
+      cursor:pointer;
+    }
   }
 }
 </style>
@@ -1442,9 +1583,9 @@ export default class extends Vue {
 </style>
 
 <style lang="scss" scope>
-.el-collapse-item__content {
-  padding-bottom: 0;
-}
+// .el-collapse-item__content {
+//   padding-bottom: 0;
+// }
 
 .el-form-item__content{
   font-size: 13px;
