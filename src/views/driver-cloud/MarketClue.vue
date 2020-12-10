@@ -301,7 +301,8 @@ export default class extends Vue {
   ];
   private rules:IState = {
     follow: [
-      { required: true, message: '请选择跟进人', trigger: 'blur' }
+      { required: true, message: '请选择跟进人', trigger: 'blur' },
+      { validator: this.validateFollow, trigger: 'change' }
     ]
   };
 
@@ -325,6 +326,16 @@ export default class extends Vue {
       document.body.offsetHeight - otherHeight ||
       document.documentElement.offsetHeight - otherHeight
     )
+  }
+
+  private validateFollow(rule:any, value:any, callback:Function) {
+    if (value === '') {
+      callback(new Error('请选择跟进人!'))
+    } else if (value.length !== 3) {
+      callback(new Error('该组织下无跟进人!'))
+    } else {
+      callback()
+    }
   }
   // 获取业务线
   private async getGetDutyListByLevel() {
@@ -397,7 +408,7 @@ export default class extends Vue {
       const { data: res } = await allocationClue(params)
       if (res.success) {
         if (res.data.flag) {
-          this.$message.success(res.data.msg)
+          this.$message(res.data.msg)
         } else {
           this.$message.warning(res.data.msg)
         }
