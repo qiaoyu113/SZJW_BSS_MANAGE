@@ -418,6 +418,7 @@ export default class extends Vue {
       label: '',
       w: '0px',
       tagAttrs: {
+        format: 'yyyy-MM-dd HH:mm',
         pickerOptions: {
           disabledDate(time:any) {
             return time.getTime() < Date.now() - 86400000
