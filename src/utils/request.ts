@@ -62,6 +62,9 @@ service.interceptors.response.use(
     }
   },
   (error) => {
+    if (error.message === 'timeout of 8000ms exceeded') {
+      error.message = '网络连接超时'
+    }
     Message({
       message: error.message,
       type: 'error',
