@@ -29,6 +29,7 @@ const driverCloud: RouteConfig = {
       name: 'MarketClue',
       meta: {
         // apiUrl: '/api/carrier_center/v2/clueH5/waitAllocate/list',
+        apiUrl: 'root',
         title: 'marketClue',
         noCache: false
       }
