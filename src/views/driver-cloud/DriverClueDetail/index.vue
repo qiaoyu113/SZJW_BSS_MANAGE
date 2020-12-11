@@ -45,7 +45,7 @@
           type="text"
           @click="() => {
             isInvite = false;
-            dialogListQuery2.interviewDate = new Date(listQuery.interviewTime);
+            dialogListQuery2.interviewDate = new Date(listQuery.interviewDate);
             showDialog2 = true;
           }"
         >
@@ -82,8 +82,8 @@
                 </el-button>
               </el-tooltip>
             </template>
-            <template v-slot:interviewTime="scope">
-              {{ scope.row.interviewTime | parseTime('{y}-{m}-{d} {h}:{i}') }}
+            <template v-slot:interviewDate="scope">
+              {{ scope.row.interviewDate | parseTime('{y}-{m}-{d} {h}:{i}') }}
             </template>
           </self-form>
         </SectionContainer>
@@ -270,7 +270,7 @@ export default class extends Vue {
     marketClueId: '',
     contactSituationName: '',
     remark: '',
-    interviewTime: '',
+    interviewDate: '',
     name: '',
     haveCar: 0,
     haveCarName: '',
@@ -306,7 +306,7 @@ export default class extends Vue {
       slot: true
     },
     {
-      type: 'interviewTime',
+      type: 'interviewDate',
       label: '已约面试',
       slot: true
     }
