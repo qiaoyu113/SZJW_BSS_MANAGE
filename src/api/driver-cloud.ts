@@ -92,11 +92,11 @@ export const AdjustmentlInteview = (data: any) =>
     data
   })
   // 司机线索详情日志列表
-export const GetDriverClueLogList = (params: any) =>
+export const GetDriverClueLogList = (data: any) =>
   request({
     url: `${prefix}/v2/clueH5/log`,
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 
 // 带分配线索列表

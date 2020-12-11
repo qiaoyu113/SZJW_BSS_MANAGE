@@ -579,11 +579,8 @@ export default class extends Vue {
   async handleExportClick() {
     try {
       try {
-        let params:IState = {
-          limit: this.page.limit,
-          page: this.page.page,
-          haveCar: this.listQuery.haveCar
-        }
+        let params:IState = {}
+        this.listQuery.haveCar !== '' && (params.haveCar = this.listQuery.haveCar)
         this.listQuery.onlyMe && (params.onlyMe = 1)
         this.listQuery.name && (params.name = this.listQuery.name)
         this.listQuery.phone && (params.phone = this.listQuery.phone)
@@ -597,6 +594,8 @@ export default class extends Vue {
           let endDate = new Date(this.listQuery.time[1]).setHours(23, 59, 59)
           params.startDate = startDate
           params.endDate = endDate
+        } else {
+          return this.$message.warning('请选择分配时间')
         }
         let { data: res } = await ExportDriverClue(params)
         if (res.success) {
@@ -628,9 +627,9 @@ export default class extends Vue {
       this.listLoading = true
       let params:IState = {
         limit: this.page.limit,
-        page: this.page.page,
-        haveCar: this.listQuery.haveCar
+        page: this.page.page
       }
+      this.listQuery.haveCar !== '' && (params.haveCar = this.listQuery.haveCar)
       this.listQuery.onlyMe && (params.onlyMe = 1)
       this.listQuery.name && (params.name = this.listQuery.name)
       this.listQuery.phone && (params.phone = this.listQuery.phone)
