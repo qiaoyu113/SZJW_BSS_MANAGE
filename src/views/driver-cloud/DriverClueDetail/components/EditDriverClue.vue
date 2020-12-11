@@ -46,7 +46,7 @@
         >
           <el-select
             v-model="listQuery.carType"
-            placeholder="请选择"
+            placeholder="请选择车型"
             clearable
           >
             <el-option
@@ -104,9 +104,6 @@ export default class extends Vue {
     },
     {
       type: 2,
-      tagAttrs: {
-        placeholder: '请选择车型'
-      },
       listeners: {
         'change': () => {
           this.listQuery.carType = ''
