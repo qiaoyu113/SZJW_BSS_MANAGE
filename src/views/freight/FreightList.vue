@@ -19,7 +19,7 @@
         筛选结果（<span>{{ tableTitle.all }}</span>条）：
         司机侧已上报<span>{{ tableTitle.gmStatusCount }}</span>条，<span>{{ tableTitle.gmStatusSum }}</span>元；
         客户侧已上报<span>{{ tableTitle.lineStatusCount }}</span>条，<span>{{ tableTitle.lineStatusSum }}</span>元；
-        已确认<span>{{ tableTitle.crossCheckCount }}</span>条，<span>{{ tableTitle.crossCheckSum }}</span>元
+        单边或交叉已确认<span>{{ tableTitle.crossCheckCount }}</span>条，<span>{{ tableTitle.crossCheckSum }}</span>元
       </div>
       <div
         class="table_center"
