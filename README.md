@@ -111,7 +111,7 @@ npm run lint -- --fix
 [M1环境](http://firmiana-bss.m1.yunniao.cn)
 
 ## 生产环境
-[生产环境](http://firmiana-bss.yunniao.cn)
+[生产环境](http://szjw-bss-web.yunniao.cn/)
 
 ## 代码规范
 
